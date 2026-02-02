@@ -104,36 +104,15 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
         <div className="lg:w-1/2 relative overflow-hidden">
           {/* Blue gradient background with decorative shapes */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5">
-            {/* Decorative shapes */}
-            <div className="absolute bottom-0 left-0 w-full h-1/3">
-              <svg
-                viewBox="0 0 800 300"
-                className="w-full h-full"
-                preserveAspectRatio="xMidYMax slice"
-              >
-                <ellipse
-                  cx="200"
-                  cy="350"
-                  rx="300"
-                  ry="200"
-                  className="fill-primary/10"
-                />
-                <ellipse
-                  cx="600"
-                  cy="400"
-                  rx="250"
-                  ry="180"
-                  className="fill-primary/8"
-                />
-                <ellipse
-                  cx="400"
-                  cy="380"
-                  rx="200"
-                  ry="150"
-                  className="fill-primary/5"
-                />
-              </svg>
-            </div>
+            {/* Decorative shapes - Left side */}
+            <div className="absolute -left-32 top-1/4 w-64 h-64 rounded-full bg-primary/10 blur-sm" />
+            <div className="absolute -left-16 top-1/2 w-48 h-48 rounded-full bg-primary/8 blur-sm" />
+            <div className="absolute left-8 bottom-1/4 w-32 h-32 rounded-full bg-primary/5" />
+            
+            {/* Decorative shapes - Right side */}
+            <div className="absolute -right-24 top-1/3 w-56 h-56 rounded-full bg-primary/8 blur-sm" />
+            <div className="absolute -right-8 bottom-1/3 w-40 h-40 rounded-full bg-primary/10 blur-sm" />
+            <div className="absolute right-16 top-2/3 w-24 h-24 rounded-full bg-primary/6" />
           </div>
 
           {/* Content */}
