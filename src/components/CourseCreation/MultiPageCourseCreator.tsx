@@ -157,13 +157,15 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                     target.style.height = target.scrollHeight + 'px';
                   }}
                 />
-                {/* Active underline */}
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary/20 group-focus-within:bg-primary transition-colors duration-200" />
+                {/* Active underline - only visible when focused */}
+                <div className="absolute bottom-0 left-0 w-full h-px bg-transparent group-focus-within:bg-primary transition-colors duration-200" />
               </div>
               
               {/* Character count */}
-              <div className="mt-2 text-sm text-muted-foreground">
-                {title.length}/90
+              <div className="mt-2">
+                <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-muted/50 rounded border border-border">
+                  {title.length}/90
+                </span>
               </div>
 
               {/* Decorative Underline */}
