@@ -17,6 +17,7 @@ import AdminModule from "./pages/AdminModule";
 import Customers from "./pages/Customers";
 import Users from "./pages/Users";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -29,17 +30,17 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/create-course" element={<CreateCourse />} />
-          <Route path="/edit-course/:courseId" element={<EditCourse />} />
-          <Route path="/course-preview/:courseId" element={<CoursePreview />} />
-          <Route path="/blueprints" element={<Blueprints />} />
-          <Route path="/create-blueprint" element={<CreateBlueprint />} />
-          <Route path="/blueprint-editor/:blueprintId" element={<BlueprintEditor />} />
-          <Route path="/token-management" element={<TokenManagement />} />
-          <Route path="/admin-module" element={<AdminModule />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/create-course" element={<ProtectedRoute><CreateCourse /></ProtectedRoute>} />
+          <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
+          <Route path="/course-preview/:courseId" element={<ProtectedRoute><CoursePreview /></ProtectedRoute>} />
+          <Route path="/blueprints" element={<ProtectedRoute><Blueprints /></ProtectedRoute>} />
+          <Route path="/create-blueprint" element={<ProtectedRoute><CreateBlueprint /></ProtectedRoute>} />
+          <Route path="/blueprint-editor/:blueprintId" element={<ProtectedRoute><BlueprintEditor /></ProtectedRoute>} />
+          <Route path="/token-management" element={<ProtectedRoute><TokenManagement /></ProtectedRoute>} />
+          <Route path="/admin-module" element={<ProtectedRoute><AdminModule /></ProtectedRoute>} />
+          <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
