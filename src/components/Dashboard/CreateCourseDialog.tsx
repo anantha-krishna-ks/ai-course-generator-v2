@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sparkles } from "lucide-react";
+import { MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CreateCourseDialogProps {
@@ -184,7 +184,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               disabled={!courseTitle.trim()}
               className="h-12 px-8 text-base font-semibold rounded-full gap-2"
             >
-              <Sparkles className="w-5 h-5" />
+              <MousePointerClick className="w-5 h-5" />
               Start creating
             </Button>
           </div>
