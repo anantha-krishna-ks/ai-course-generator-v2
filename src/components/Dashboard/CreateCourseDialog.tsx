@@ -47,12 +47,12 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[700px] p-10">
+      <DialogContent className="w-[95vw] max-w-[800px] p-6 sm:p-8 md:p-10">
         <DialogHeader className="space-y-2 pb-2">
-          <DialogTitle className="text-2xl font-bold text-foreground text-left">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-foreground text-left">
             Create your course from scratch
           </DialogTitle>
-          <p className="text-muted-foreground/80 text-base text-left leading-relaxed">
+          <p className="text-muted-foreground/80 text-sm sm:text-base text-left leading-relaxed">
             Enter a title and pick a layout that best suits your course requirements. You can switch layouts later if you change your mind
           </p>
         </DialogHeader>
@@ -65,7 +65,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               value={courseTitle}
               onChange={(e) => setCourseTitle(e.target.value)}
               placeholder="Enter course title..."
-              className="h-14 text-[1rem] bg-background border-2 border-border focus:border-primary placeholder:text-[1rem] placeholder:text-foreground/70 placeholder:font-medium"
+              className="h-14 text-lg sm:text-xl bg-background border-2 border-border focus:border-primary placeholder:text-lg sm:placeholder:text-xl placeholder:text-foreground/70 placeholder:font-medium"
             />
           </div>
 
