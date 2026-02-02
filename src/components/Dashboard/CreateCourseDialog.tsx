@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CreationLoader } from "@/components/CourseCreation/CreationLoader";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -43,16 +42,23 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     }
   };
 
-  const handleLoaderComplete = () => {
-    navigate("/create-course-multipage", { 
-      state: { 
-        title: courseTitle.trim(), 
-        layout: selectedLayout 
-      } 
-    });
-    setIsLoading(false);
-    onOpenChange(false);
-  };
+  // Handle navigation after loading
+  useEffect(() => {
+    if (isLoading) {
+      const timer = setTimeout(() => {
+        navigate("/create-course-multipage", { 
+          state: { 
+            title: courseTitle.trim(), 
+            layout: selectedLayout 
+          } 
+        });
+        setIsLoading(false);
+        onOpenChange(false);
+      }, 1200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, navigate, courseTitle, selectedLayout, onOpenChange]);
 
   const handleClose = (isOpen: boolean) => {
     if (!isOpen && !isLoading) {
@@ -65,24 +71,32 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     }
   };
 
-  // Show loader overlay
-  if (isLoading) {
-    return <CreationLoader courseTitle={courseTitle} onComplete={handleLoaderComplete} />;
-  }
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] max-w-[800px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 md:p-10">
-        <DialogHeader className="space-y-2 pb-2">
-          <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-foreground text-left">
-            Create your course from scratch
-          </DialogTitle>
-          <p className="text-muted-foreground/80 text-xs sm:text-sm md:text-base text-left leading-relaxed">
-            Enter a title and pick a layout that best suits your course requirements. You can switch layouts later if you change your mind
-          </p>
-        </DialogHeader>
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="relative mb-6">
+              <div className="w-10 h-10 rounded-full border-2 border-primary/20" />
+              <div className="absolute inset-0 w-10 h-10 rounded-full border-2 border-transparent border-t-primary animate-spin" />
+            </div>
+            <p className="text-sm text-muted-foreground text-center">
+              Setting up <span className="font-medium text-foreground">"{courseTitle}"</span>
+            </p>
+          </div>
+        ) : (
+          <>
+            <DialogHeader className="space-y-2 pb-2">
+              <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-foreground text-left">
+                Create your course from scratch
+              </DialogTitle>
+              <p className="text-muted-foreground/80 text-xs sm:text-sm md:text-base text-left leading-relaxed">
+                Enter a title and pick a layout that best suits your course requirements. You can switch layouts later if you change your mind
+              </p>
+            </DialogHeader>
 
-        <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
+            <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
 
           {/* Course Title Input */}
           <div>
@@ -212,7 +226,9 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               Start creating
             </Button>
           </div>
-        </div>
+          </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
