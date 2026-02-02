@@ -143,20 +143,14 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               <input
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value.slice(0, 255))}
+                onChange={(e) => setTitle(e.target.value)}
                 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40"
                 placeholder="Untitled course"
-                maxLength={255}
               />
 
-              {/* Underline with character count */}
-              <div className="mt-4 mb-8 w-full max-w-md">
-                <div className="h-[2px] bg-primary rounded-full w-full" />
-                <div className="flex justify-end mt-1.5">
-                  <span className="text-xs text-foreground/50 font-medium">
-                    {title.length}/255
-                  </span>
-                </div>
+              {/* Underline */}
+              <div className="mt-4 mb-8">
+                <div className="h-1 bg-primary/30 rounded-full w-full max-w-md" />
               </div>
 
               {/* Description */}
