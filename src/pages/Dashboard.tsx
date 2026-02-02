@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/select";
 import logo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
+import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
 
 const mockCourses = [
   { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
@@ -67,6 +68,7 @@ const Dashboard = () => {
   const [recordsPerPage, setRecordsPerPage] = useState<number | 'all'>(10);
   const [activeTab, setActiveTab] = useState("all");
   const [isTokenDialogOpen, setIsTokenDialogOpen] = useState(false);
+  const [isCreateCourseDialogOpen, setIsCreateCourseDialogOpen] = useState(false);
   const [tokenData, setTokenData] = useState<TokenInfo>({
     renewedOn: "Loading...",
     totalTokens: 0,
@@ -168,6 +170,12 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Create Course Dialog */}
+      <CreateCourseDialog 
+        open={isCreateCourseDialogOpen} 
+        onOpenChange={setIsCreateCourseDialogOpen} 
+      />
+
       {/* Token Usage Dialog */}
       <Dialog open={isTokenDialogOpen} onOpenChange={setIsTokenDialogOpen}>
         <DialogContent className="sm:max-w-[600px] bg-card">
@@ -362,7 +370,7 @@ const Dashboard = () => {
             <div className="flex flex-wrap gap-3">
               <Button 
                 className="gap-2 bg-primary hover:bg-primary/90"
-                onClick={() => navigate("/create-course")}
+                onClick={() => setIsCreateCourseDialogOpen(true)}
               >
                 <Plus className="w-4 h-4" />
                 Create Course
