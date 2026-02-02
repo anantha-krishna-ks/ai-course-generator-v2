@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CreationLoader } from "@/components/CourseCreation/CreationLoader";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -22,28 +23,52 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const navigate = useNavigate();
   const [courseTitle, setCourseTitle] = useState("");
   const [selectedLayout, setSelectedLayout] = useState<LayoutType>("multi-page");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleStartCreating = () => {
     if (!courseTitle.trim()) return;
     
-    // Navigate to create course with the selected options
-    navigate("/create-course", { 
+    // Show loader for multi-page layout
+    if (selectedLayout === "multi-page") {
+      setIsLoading(true);
+    } else {
+      // Navigate directly for single-page
+      navigate("/create-course", { 
+        state: { 
+          title: courseTitle.trim(), 
+          layout: selectedLayout 
+        } 
+      });
+      onOpenChange(false);
+    }
+  };
+
+  const handleLoaderComplete = () => {
+    navigate("/create-course-multipage", { 
       state: { 
         title: courseTitle.trim(), 
         layout: selectedLayout 
       } 
     });
+    setIsLoading(false);
     onOpenChange(false);
   };
 
   const handleClose = (isOpen: boolean) => {
-    if (!isOpen) {
+    if (!isOpen && !isLoading) {
       // Reset form when closing
       setCourseTitle("");
       setSelectedLayout("multi-page");
     }
-    onOpenChange(isOpen);
+    if (!isLoading) {
+      onOpenChange(isOpen);
+    }
   };
+
+  // Show loader overlay
+  if (isLoading) {
+    return <CreationLoader courseTitle={courseTitle} onComplete={handleLoaderComplete} />;
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
