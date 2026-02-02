@@ -129,19 +129,24 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       : "border-border hover:border-primary/50"
                   )}
                 >
-                  {/* Radio indicator */}
-                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                  {/* Premium Radio indicator */}
+                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                     <div
                       className={cn(
-                        "w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center",
+                        "w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
                         selectedLayout === "multi-page"
-                          ? "border-primary"
-                          : "border-muted-foreground/40"
+                          ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
+                          : "border-muted-foreground/30 bg-background hover:border-muted-foreground/50"
                       )}
                     >
-                      {selectedLayout === "multi-page" && (
-                        <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-primary" />
-                      )}
+                      <div 
+                        className={cn(
+                          "rounded-full bg-primary-foreground transition-all duration-300",
+                          selectedLayout === "multi-page" 
+                            ? "w-2 h-2 sm:w-2.5 sm:h-2.5 opacity-100 scale-100" 
+                            : "w-0 h-0 opacity-0 scale-0"
+                        )}
+                      />
                     </div>
                   </div>
 
@@ -185,19 +190,24 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       : "border-border hover:border-primary/50"
                   )}
                 >
-                  {/* Radio indicator */}
-                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                  {/* Premium Radio indicator */}
+                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                     <div
                       className={cn(
-                        "w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center",
+                        "w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
                         selectedLayout === "single-page"
-                          ? "border-primary"
-                          : "border-muted-foreground/40"
+                          ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
+                          : "border-muted-foreground/30 bg-background hover:border-muted-foreground/50"
                       )}
                     >
-                      {selectedLayout === "single-page" && (
-                        <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-primary" />
-                      )}
+                      <div 
+                        className={cn(
+                          "rounded-full bg-primary-foreground transition-all duration-300",
+                          selectedLayout === "single-page" 
+                            ? "w-2 h-2 sm:w-2.5 sm:h-2.5 opacity-100 scale-100" 
+                            : "w-0 h-0 opacity-0 scale-0"
+                        )}
+                      />
                     </div>
                   </div>
 
