@@ -140,15 +140,33 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
           <div className="relative z-10 p-6 sm:p-10 lg:p-16 flex flex-col min-h-[300px] lg:min-h-full">
             {/* Course Title */}
             <div className="flex-1">
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40"
-                placeholder="Untitled course"
-              />
+              <div className="relative group">
+                <textarea
+                  value={title}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 90) {
+                      setTitle(e.target.value);
+                    }
+                  }}
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40 resize-none overflow-hidden leading-tight"
+                  placeholder="Untitled course"
+                  rows={1}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = target.scrollHeight + 'px';
+                  }}
+                />
+                {/* Active underline */}
+                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary/20 group-focus-within:bg-primary transition-colors duration-200" />
+              </div>
+              
+              {/* Character count */}
+              <div className="mt-2 text-sm text-muted-foreground">
+                {title.length}/90
+              </div>
 
-              {/* Underline */}
+              {/* Decorative Underline */}
               <div className="mt-4 mb-8">
                 <div className="h-1 bg-primary/30 rounded-full w-full max-w-md" />
               </div>
