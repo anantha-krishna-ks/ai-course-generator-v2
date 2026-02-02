@@ -102,38 +102,14 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
       <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
         {/* Left Panel - Course Overview */}
         <div className="lg:w-1/2 relative overflow-hidden">
-          {/* Blue gradient background with decorative shapes */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5">
-            {/* Decorative shapes */}
-            <div className="absolute bottom-0 left-0 w-full h-1/3">
-              <svg
-                viewBox="0 0 800 300"
-                className="w-full h-full"
-                preserveAspectRatio="xMidYMax slice"
-              >
-                <ellipse
-                  cx="200"
-                  cy="350"
-                  rx="300"
-                  ry="200"
-                  className="fill-primary/10"
-                />
-                <ellipse
-                  cx="600"
-                  cy="400"
-                  rx="250"
-                  ry="180"
-                  className="fill-primary/8"
-                />
-                <ellipse
-                  cx="400"
-                  cy="380"
-                  rx="200"
-                  ry="150"
-                  className="fill-primary/5"
-                />
-              </svg>
-            </div>
+          {/* Soft gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/8 via-primary/5 to-primary/10" />
+          
+          {/* Decorative soft circles */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-primary/8 blur-3xl" />
+            <div className="absolute -bottom-10 right-10 w-60 h-60 rounded-full bg-primary/6 blur-2xl" />
+            <div className="absolute bottom-20 left-1/3 w-40 h-40 rounded-full bg-primary/5 blur-xl" />
           </div>
 
           {/* Content */}
@@ -150,7 +126,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
               {/* Underline */}
               <div className="mt-4 mb-8">
-                <div className="h-1 bg-primary/30 rounded-full w-full max-w-md" />
+                <div className="h-0.5 bg-primary/25 rounded-full w-full max-w-md" />
               </div>
 
               {/* Description */}
