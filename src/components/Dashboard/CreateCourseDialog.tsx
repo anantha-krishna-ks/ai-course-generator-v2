@@ -66,7 +66,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               value={courseTitle}
               onChange={(e) => setCourseTitle(e.target.value)}
               placeholder="Enter course title..."
-              className="h-14 text-[1rem] bg-background border-2 border-border focus:border-primary placeholder:text-foreground/50"
+              className="h-14 text-[1rem] bg-background border-2 border-border focus:border-primary placeholder:text-[1rem] placeholder:text-foreground/70"
             />
           </div>
 
