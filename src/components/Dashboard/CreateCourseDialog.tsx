@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MousePointerClick, Loader2 } from "lucide-react";
+import { MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CreationLoader } from "@/components/CourseCreation/CreationLoader";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -24,58 +25,49 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [selectedLayout, setSelectedLayout] = useState<LayoutType>("multi-page");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleStartCreating = async () => {
+  const handleStartCreating = () => {
     if (!courseTitle.trim()) return;
     
-    setIsLoading(true);
-    
-    // Brief delay to show the loading state before navigation
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Navigate to create course with the selected options
-    navigate("/create-course", { 
+    // Show loader for multi-page layout
+    if (selectedLayout === "multi-page") {
+      setIsLoading(true);
+    } else {
+      // Navigate directly for single-page
+      navigate("/create-course", { 
+        state: { 
+          title: courseTitle.trim(), 
+          layout: selectedLayout 
+        } 
+      });
+      onOpenChange(false);
+    }
+  };
+
+  const handleLoaderComplete = () => {
+    navigate("/create-course-multipage", { 
       state: { 
         title: courseTitle.trim(), 
         layout: selectedLayout 
       } 
     });
-    onOpenChange(false);
     setIsLoading(false);
+    onOpenChange(false);
   };
 
   const handleClose = (isOpen: boolean) => {
-    if (isLoading) return; // Prevent closing during loading
-    if (!isOpen) {
+    if (!isOpen && !isLoading) {
       // Reset form when closing
       setCourseTitle("");
       setSelectedLayout("multi-page");
     }
-    onOpenChange(isOpen);
+    if (!isLoading) {
+      onOpenChange(isOpen);
+    }
   };
 
-  // Loading state view
+  // Show loader overlay
   if (isLoading) {
-    return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="w-[95vw] max-w-[800px] p-8 sm:p-12 md:p-16">
-          <div className="flex flex-col items-center justify-center py-8 sm:py-12 space-y-6">
-            {/* Premium Spinner */}
-            <div className="relative">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-muted" />
-              <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-transparent border-t-primary animate-spin" />
-            </div>
-            
-            {/* Course Title */}
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground">Creating your course</p>
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground max-w-md truncate px-4">
-                {courseTitle}
-              </h3>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
+    return <CreationLoader courseTitle={courseTitle} onComplete={handleLoaderComplete} />;
   }
 
   return (
