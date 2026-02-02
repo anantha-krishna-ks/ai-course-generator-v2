@@ -116,21 +116,21 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   cy="350"
                   rx="300"
                   ry="200"
-                  className="fill-primary/10"
+                  fill="hsl(var(--primary) / 0.15)"
                 />
                 <ellipse
                   cx="600"
                   cy="400"
                   rx="250"
                   ry="180"
-                  className="fill-primary/8"
+                  fill="hsl(var(--primary) / 0.1)"
                 />
                 <ellipse
                   cx="400"
                   cy="380"
                   rx="200"
                   ry="150"
-                  className="fill-primary/5"
+                  fill="hsl(var(--primary) / 0.08)"
                 />
               </svg>
             </div>
