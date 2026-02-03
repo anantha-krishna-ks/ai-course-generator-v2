@@ -190,19 +190,27 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
               {/* Description */}
               <div className="mt-6">
-                <button
-                  onClick={() => {
-                    const el = document.getElementById("course-description");
-                    if (el) el.focus();
-                  }}
-                  className={cn(
-                    "text-left text-lg text-foreground/60 hover:text-foreground/80 transition-colors flex items-start gap-2",
-                    description && "hidden"
-                  )}
-                >
-                  <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                  <span>Tell your learners what the course will be about...</span>
-                </button>
+                <div className={cn("group", description && "hidden")}>
+                  <button
+                    onClick={() => {
+                      const el = document.getElementById("course-description");
+                      if (el) el.focus();
+                    }}
+                    className="w-full text-left text-lg text-foreground/60 hover:text-foreground/80 transition-colors flex items-start gap-2 px-4 py-3 border border-transparent group-hover:border-foreground/20 rounded-lg group-hover:bg-background/30"
+                  >
+                    <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <span>Tell your learners what the course will be about...</span>
+                  </button>
+                  
+                  {/* Hover indicator with lines and circle */}
+                  <div className="flex items-center justify-center mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex-1 h-px bg-foreground/20" />
+                    <div className="mx-3 w-7 h-7 rounded-full border border-foreground/30 flex items-center justify-center bg-background/50">
+                      <Plus className="w-3.5 h-3.5 text-foreground/50" />
+                    </div>
+                    <div className="flex-1 h-px bg-foreground/20" />
+                  </div>
+                </div>
                 <textarea
                   id="course-description"
                   value={description}
