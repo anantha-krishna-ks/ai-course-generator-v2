@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface OverviewVersion {
   id: number;
@@ -161,7 +162,7 @@ export const EditOverviewDialog = ({
                       <div className="space-y-2">
                         <div className="text-xs font-medium">Content:</div>
                         <div className="text-xs text-muted-foreground bg-muted/30 p-2 sm:p-3 rounded border max-h-32 overflow-y-auto">
-                          <div dangerouslySetInnerHTML={{ __html: version.content }} />
+                          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(version.content) }} />
                         </div>
                       </div>
 
