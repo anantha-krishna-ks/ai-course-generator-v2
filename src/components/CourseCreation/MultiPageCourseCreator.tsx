@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 interface MultiPageCourseCreatorProps {
@@ -113,11 +114,11 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
         {/* Left Panel - Course Overview */}
-        <div className="lg:w-1/2 relative overflow-hidden">
+        <div className="lg:w-1/2 relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 pointer-events-none">
             {/* Decorative shapes */}
             <div className="absolute bottom-0 left-0 w-full h-1/3">
               <svg
@@ -151,9 +152,9 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
           </div>
 
           {/* Content */}
-          <div className="relative z-10 p-6 sm:p-10 lg:p-16 flex flex-col min-h-[300px] lg:min-h-full">
-            {/* Course Title */}
-            <div className="flex-1">
+          <ScrollArea className="relative z-10 flex-1 min-h-[300px]">
+            <div className="p-6 sm:p-10 lg:p-16">
+              {/* Course Title */}
               <div className="relative group">
                 <textarea
                   value={title}
@@ -215,95 +216,97 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 />
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </div>
 
         {/* Right Panel - Course Outline */}
-        <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border">
-          <div className="p-6 sm:p-10">
-            {/* Instructions */}
-            <p className="text-muted-foreground mb-6">
-              Add sections, pages, and questions to build your course outline
-            </p>
+        <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col">
+          <ScrollArea className="flex-1">
+            <div className="p-6 sm:p-10">
+              {/* Instructions */}
+              <p className="text-muted-foreground mb-6">
+                Add sections, pages, and questions to build your course outline
+              </p>
 
-            {/* Add Item Button */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="gap-2 border-border hover:border-primary/50"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add item
-                  <ChevronDown className="w-3 h-3 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48 bg-background border border-border">
-                <DropdownMenuItem
-                  onClick={() => handleAddItem("section")}
-                  className="cursor-pointer"
-                >
-                  <div className="w-3 h-3 rounded bg-primary/20 mr-2" />
-                  Section
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleAddItem("page")}
-                  className="cursor-pointer"
-                >
-                  <div className="w-3 h-3 rounded bg-muted-foreground/20 mr-2" />
-                  Page
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleAddItem("question")}
-                  className="cursor-pointer"
-                >
-                  <div className="w-3 h-3 rounded bg-primary/10 mr-2" />
-                  Question
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Course Items */}
-            {items.length > 0 && (
-              <div className="mt-6 space-y-3">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className={cn(
-                      "p-4 rounded-lg border border-border bg-card hover:border-primary/30 transition-colors cursor-pointer",
-                      item.type === "section" && "border-l-4 border-l-primary"
-                    )}
+              {/* Add Item Button */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-border hover:border-primary/50"
                   >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={cn(
-                          "w-2 h-2 rounded-full",
-                          item.type === "section" && "bg-primary",
-                          item.type === "page" && "bg-muted-foreground",
-                          item.type === "question" && "bg-primary/50"
-                        )}
-                      />
-                      <span className="text-sm font-medium text-foreground">
-                        {item.title}
-                      </span>
-                      <span className="text-xs text-muted-foreground capitalize ml-auto">
-                        {item.type}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                    <Plus className="w-4 h-4" />
+                    Add item
+                    <ChevronDown className="w-3 h-3 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48 bg-background border border-border">
+                  <DropdownMenuItem
+                    onClick={() => handleAddItem("section")}
+                    className="cursor-pointer"
+                  >
+                    <div className="w-3 h-3 rounded bg-primary/20 mr-2" />
+                    Section
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleAddItem("page")}
+                    className="cursor-pointer"
+                  >
+                    <div className="w-3 h-3 rounded bg-muted-foreground/20 mr-2" />
+                    Page
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleAddItem("question")}
+                    className="cursor-pointer"
+                  >
+                    <div className="w-3 h-3 rounded bg-primary/10 mr-2" />
+                    Question
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            {/* Empty State */}
-            {items.length === 0 && (
-              <div className="mt-16 border-t border-dashed border-border pt-8">
-                <p className="text-sm text-muted-foreground text-center">
-                  Your course outline will appear here
-                </p>
-              </div>
-            )}
-          </div>
+              {/* Course Items */}
+              {items.length > 0 && (
+                <div className="mt-6 space-y-3">
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "p-4 rounded-lg border border-border bg-card hover:border-primary/30 transition-colors cursor-pointer",
+                        item.type === "section" && "border-l-4 border-l-primary"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={cn(
+                            "w-2 h-2 rounded-full",
+                            item.type === "section" && "bg-primary",
+                            item.type === "page" && "bg-muted-foreground",
+                            item.type === "question" && "bg-primary/50"
+                          )}
+                        />
+                        <span className="text-sm font-medium text-foreground">
+                          {item.title}
+                        </span>
+                        <span className="text-xs text-muted-foreground capitalize ml-auto">
+                          {item.type}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Empty State */}
+              {items.length === 0 && (
+                <div className="mt-16 border-t border-dashed border-border pt-8">
+                  <p className="text-sm text-muted-foreground text-center">
+                    Your course outline will appear here
+                  </p>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
         </div>
       </div>
     </div>
