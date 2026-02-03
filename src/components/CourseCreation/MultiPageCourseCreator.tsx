@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, Bold, Italic, Highlighter, Code, Type, AlignLeft, ListOrdered, ListPlus, Undo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -31,6 +31,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   const navigate = useNavigate();
   const [title, setTitle] = useState(courseTitle);
   const [description, setDescription] = useState("");
+  const [isDescriptionActive, setIsDescriptionActive] = useState(false);
   const [items, setItems] = useState<CourseItem[]>([]);
 
   const handleBack = () => {
@@ -190,38 +191,93 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
               {/* Description */}
               <div className="mt-6">
-                <div className={cn("group", description && "hidden")}>
-                  <button
-                    onClick={() => {
-                      const el = document.getElementById("course-description");
-                      if (el) el.focus();
-                    }}
-                    className="w-full text-left text-lg text-foreground/60 hover:text-foreground/80 transition-colors flex items-start gap-2 px-4 py-3 border border-transparent group-hover:border-foreground/20 rounded-lg group-hover:bg-background/30"
-                  >
-                    <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span>Tell your learners what the course will be about...</span>
-                  </button>
-                  
-                  {/* Hover indicator with lines and circle */}
-                  <div className="flex items-center justify-center mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <div className="flex-1 h-px bg-foreground/20" />
-                    <div className="mx-3 w-7 h-7 rounded-full border border-foreground/30 flex items-center justify-center bg-background/50">
-                      <Plus className="w-3.5 h-3.5 text-foreground/50" />
+                {!isDescriptionActive ? (
+                  <div className="group">
+                    <button
+                      onClick={() => setIsDescriptionActive(true)}
+                      className="w-full text-left text-lg text-foreground/60 hover:text-foreground/80 transition-colors flex items-start gap-2 px-4 py-3 border border-transparent group-hover:border-foreground/20 rounded-lg group-hover:bg-background/30"
+                    >
+                      <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      <span>Tell your learners what the course will be about...</span>
+                    </button>
+                    
+                    {/* Hover indicator with lines and circle */}
+                    <div className="flex items-center justify-center mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="flex-1 h-px bg-foreground/20" />
+                      <div className="mx-3 w-7 h-7 rounded-full border border-foreground/30 flex items-center justify-center bg-background/50">
+                        <Plus className="w-3.5 h-3.5 text-foreground/50" />
+                      </div>
+                      <div className="flex-1 h-px bg-foreground/20" />
                     </div>
-                    <div className="flex-1 h-px bg-foreground/20" />
                   </div>
-                </div>
-                <textarea
-                  id="course-description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className={cn(
-                    "w-full bg-transparent border-none outline-none resize-none text-lg text-foreground leading-relaxed",
-                    !description && "sr-only"
-                  )}
-                  placeholder="Tell your learners what the course will be about..."
-                  rows={4}
-                />
+                ) : (
+                  <div className="space-y-2 animate-fade-in">
+                    {/* Rich Text Toolbar */}
+                    <div className="flex items-center gap-1 p-2 border border-foreground/20 rounded-lg bg-background/50 backdrop-blur-sm">
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <Bold className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <Italic className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <Highlighter className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <Code className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <Type className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <AlignLeft className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <ListOrdered className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
+                        <ListPlus className="w-4 h-4 text-foreground/70" />
+                      </button>
+                      
+                      {/* Normal dropdown */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="flex items-center gap-1 px-2 py-1 hover:bg-foreground/10 rounded transition-colors text-sm text-foreground/70">
+                            Normal
+                            <ChevronDown className="w-3 h-3" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="bg-background border">
+                          <DropdownMenuItem>Normal</DropdownMenuItem>
+                          <DropdownMenuItem>Heading 1</DropdownMenuItem>
+                          <DropdownMenuItem>Heading 2</DropdownMenuItem>
+                          <DropdownMenuItem>Heading 3</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      
+                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors ml-auto">
+                        <Undo className="w-4 h-4 text-foreground/70" />
+                      </button>
+                    </div>
+                    
+                    {/* Text Input Area */}
+                    <div className="border border-foreground/20 rounded-lg bg-background/30">
+                      <textarea
+                        id="course-description"
+                        autoFocus
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        onBlur={() => {
+                          if (!description.trim()) {
+                            setIsDescriptionActive(false);
+                          }
+                        }}
+                        className="w-full bg-transparent border-none outline-none resize-none text-lg text-foreground leading-relaxed p-4 min-h-[120px]"
+                        placeholder="Tell your learners what the course will be about..."
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </ScrollArea>
