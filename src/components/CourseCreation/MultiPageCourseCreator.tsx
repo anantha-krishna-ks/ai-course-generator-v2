@@ -178,7 +178,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               {/* Character count */}
               <div className="mt-2">
                 <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-background/80 rounded border border-border">
-                  {title.length}/275
+                  {title.length}/ 275
                 </span>
               </div>
 
