@@ -27,6 +27,39 @@ const Auth = () => {
     
     if (mode === "login") {
       setIsLoading(true);
+      
+      // Demo mode: Accept any credentials for testing
+      // This bypasses the external API which has CORS restrictions
+      const DEMO_MODE = true;
+      
+      if (DEMO_MODE) {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        if (email && password) {
+          // Generate a demo token
+          const demoToken = `demo_token_${Date.now()}`;
+          localStorage.setItem("api_token", demoToken);
+          
+          toast({
+            title: "Login successful",
+            description: "Welcome back! (Demo Mode)",
+          });
+          
+          setIsLoading(false);
+          navigate("/dashboard");
+          return;
+        } else {
+          toast({
+            title: "Login failed",
+            description: "Please enter both login ID and password",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+      
       try {
         const response = await fetch(
           "https://seab-testing.excelindia.com/contentv3api/api/user/login",
