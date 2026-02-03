@@ -220,8 +220,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
         </div>
 
         {/* Right Panel - Course Outline */}
-        <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col">
-          <ScrollArea className="flex-1">
+        <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto">
             <div className="p-6 sm:p-10">
               {/* Instructions */}
               <p className="text-muted-foreground mb-6">
@@ -306,7 +305,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 </div>
               )}
             </div>
-          </ScrollArea>
         </div>
       </div>
     </div>
