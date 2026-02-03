@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface Version {
   id: number;
@@ -220,7 +221,7 @@ export function IntroductionDialog({
                         <p className="text-xs sm:text-sm font-semibold mb-2 text-primary">Content:</p>
                         <div 
                           className="prose prose-sm sm:prose-base dark:prose-invert max-w-none"
-                          dangerouslySetInnerHTML={{ __html: version.content }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(version.content) }}
                         />
                       </div>
 

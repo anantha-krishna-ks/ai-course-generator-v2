@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Header from "@/components/Header";
 import { ExportCourseDialog } from "@/components/EditCourse/ExportCourseDialog";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface Answer {
   Id?: string;
@@ -425,7 +426,7 @@ const CoursePreview = () => {
                   {courseData?.courseIntroduction ? (
                     <div
                       className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                      dangerouslySetInnerHTML={{ __html: courseData.courseIntroduction }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(courseData.courseIntroduction) }}
                     />
                   ) : (
                     <div className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base">
@@ -512,7 +513,7 @@ const CoursePreview = () => {
                         {selectedChapter.Description ? (
                           <div
                             className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                            dangerouslySetInnerHTML={{ __html: selectedChapter.Description }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedChapter.Description) }}
                           />
                         ) : (
                           <p className="text-xs sm:text-sm text-muted-foreground italic">
@@ -780,7 +781,7 @@ const CoursePreview = () => {
                     {courseData?.courseIntroduction ? (
                       <div
                         className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                        dangerouslySetInnerHTML={{ __html: courseData.courseIntroduction }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(courseData.courseIntroduction) }}
                       />
                     ) : (
                       <div className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base">
@@ -849,7 +850,7 @@ const CoursePreview = () => {
                           {selectedChapter.Description ? (
                             <div
                               className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                              dangerouslySetInnerHTML={{ __html: selectedChapter.Description }}
+                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedChapter.Description) }}
                             />
                           ) : (
                             <p className="text-xs sm:text-sm text-muted-foreground italic">
@@ -1119,7 +1120,7 @@ const CoursePreview = () => {
                     {courseData?.courseIntroduction ? (
                       <div
                         className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                        dangerouslySetInnerHTML={{ __html: courseData.courseIntroduction }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(courseData.courseIntroduction) }}
                       />
                     ) : (
                       <div className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base">
@@ -1162,7 +1163,7 @@ const CoursePreview = () => {
                           {selectedChapter.Description ? (
                             <div
                               className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                              dangerouslySetInnerHTML={{ __html: selectedChapter.Description }}
+                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedChapter.Description) }}
                             />
                           ) : (
                             <p className="text-xs sm:text-sm text-muted-foreground italic">
@@ -1414,14 +1415,14 @@ const CoursePreview = () => {
                         <div
                           className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
                           dangerouslySetInnerHTML={{ 
-                            __html: (() => {
+                            __html: sanitizeHtml((() => {
                               const tempDiv = document.createElement('div');
                               tempDiv.innerHTML = courseData.courseIntroduction;
                               const paragraphs = Array.from(tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol'));
                               const halfPoint = Math.ceil(paragraphs.length / 2);
                               const firstHalf = paragraphs.slice(0, halfPoint);
                               return firstHalf.map(el => el.outerHTML).join('');
-                            })()
+                            })())
                           }}
                         />
                       ) : (
@@ -1437,14 +1438,14 @@ const CoursePreview = () => {
                         <div
                           className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
                           dangerouslySetInnerHTML={{ 
-                            __html: (() => {
+                            __html: sanitizeHtml((() => {
                               const tempDiv = document.createElement('div');
                               tempDiv.innerHTML = courseData.courseIntroduction;
                               const paragraphs = Array.from(tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol'));
                               const halfPoint = Math.ceil(paragraphs.length / 2);
                               const secondHalf = paragraphs.slice(halfPoint);
                               return secondHalf.map(el => el.outerHTML).join('');
-                            })()
+                            })())
                           }}
                         />
                       ) : (
@@ -1508,7 +1509,7 @@ const CoursePreview = () => {
                           {selectedChapter.Description ? (
                             <div
                               className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                              dangerouslySetInnerHTML={{ __html: selectedChapter.Description }}
+                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedChapter.Description) }}
                             />
                           ) : (
                             <p className="text-xs sm:text-sm text-muted-foreground italic">
@@ -1776,7 +1777,7 @@ const CoursePreview = () => {
                         "prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base",
                         deviceView === 'desktop' && "columns-2 gap-8"
                       )}>
-                        <div dangerouslySetInnerHTML={{ __html: courseData.courseIntroduction }} />
+                        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(courseData.courseIntroduction) }} />
                       </div>
                     ) : (
                       <div className={cn(
@@ -1822,7 +1823,7 @@ const CoursePreview = () => {
                           {selectedChapter.Description ? (
                             <div
                               className="prose prose-sm dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
-                              dangerouslySetInnerHTML={{ __html: selectedChapter.Description }}
+                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedChapter.Description) }}
                             />
                           ) : (
                             <p className="text-xs sm:text-sm text-muted-foreground italic">
