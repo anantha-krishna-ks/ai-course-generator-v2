@@ -60,15 +60,15 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               <ArrowLeft className="w-5 h-5 text-muted-foreground" />
             </button>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-md px-2 py-1">
+                  <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-md px-2 py-1 w-fit">
                     Multi-page layout
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="bg-background border border-border">
+                <DropdownMenuContent align="start" className="bg-background border border-border w-[150px]">
                   <DropdownMenuItem className="cursor-pointer">
                     Multi-page layout
                   </DropdownMenuItem>
