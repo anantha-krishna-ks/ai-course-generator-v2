@@ -144,7 +144,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <textarea
                   value={title}
                   onChange={(e) => {
-                    if (e.target.value.length <= 90) {
+                    if (e.target.value.length <= 275) {
                       setTitle(e.target.value);
                     }
                   }}
@@ -164,7 +164,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               {/* Character count */}
               <div className="mt-2">
                 <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-muted/50 rounded border border-border">
-                  {title.length}/90
+                  {title.length}/275
                 </span>
               </div>
 
