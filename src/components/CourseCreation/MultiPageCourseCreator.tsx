@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, Bold, Italic, Highlighter, Code, Type, AlignLeft, ListOrdered, ListPlus, Undo } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { DescriptionEditor } from "./DescriptionEditor";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -211,72 +212,17 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2 animate-fade-in">
-                    {/* Rich Text Toolbar */}
-                    <div className="flex items-center gap-1 p-2 border border-foreground/20 rounded-lg bg-background/50 backdrop-blur-sm">
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <Bold className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <Italic className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <Highlighter className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <Code className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <Type className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <AlignLeft className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <ListOrdered className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors">
-                        <ListPlus className="w-4 h-4 text-foreground/70" />
-                      </button>
-                      
-                      {/* Normal dropdown */}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button className="flex items-center gap-1 px-2 py-1 hover:bg-foreground/10 rounded transition-colors text-sm text-foreground/70">
-                            Normal
-                            <ChevronDown className="w-3 h-3" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="bg-background border">
-                          <DropdownMenuItem>Normal</DropdownMenuItem>
-                          <DropdownMenuItem>Heading 1</DropdownMenuItem>
-                          <DropdownMenuItem>Heading 2</DropdownMenuItem>
-                          <DropdownMenuItem>Heading 3</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      
-                      <button className="p-1.5 hover:bg-foreground/10 rounded transition-colors ml-auto">
-                        <Undo className="w-4 h-4 text-foreground/70" />
-                      </button>
-                    </div>
-                    
-                    {/* Text Input Area */}
-                    <div className="border border-foreground/20 rounded-lg bg-background/30">
-                      <textarea
-                        id="course-description"
-                        autoFocus
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        onBlur={() => {
-                          if (!description.trim()) {
-                            setIsDescriptionActive(false);
-                          }
-                        }}
-                        className="w-full bg-transparent border-none outline-none resize-none text-lg text-foreground leading-relaxed p-4 min-h-[120px]"
-                        placeholder="Tell your learners what the course will be about..."
-                      />
-                    </div>
-                  </div>
+                  <DescriptionEditor
+                    content={description}
+                    onChange={setDescription}
+                    onBlur={() => {
+                      // Check if content is empty (just empty paragraph tags)
+                      const isEmpty = !description || description === '<p></p>' || description.replace(/<[^>]*>/g, '').trim() === '';
+                      if (isEmpty) {
+                        setIsDescriptionActive(false);
+                      }
+                    }}
+                  />
                 )}
               </div>
             </div>
