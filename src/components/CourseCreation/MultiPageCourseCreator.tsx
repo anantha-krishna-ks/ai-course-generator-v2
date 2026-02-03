@@ -184,7 +184,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
               {/* Decorative Underline */}
               <div className="mt-4 mb-8">
-                <div className="h-1 bg-primary/30 rounded-full w-full max-w-md" />
+                <div className="h-1 bg-primary/30 rounded-full w-full" />
               </div>
 
               {/* Description */}
