@@ -8,6 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface MultiPageCourseCreatorProps {
@@ -72,9 +77,18 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <span className="text-sm font-medium text-foreground mt-0.5 truncate max-w-[200px] sm:max-w-none">
-                {title}
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-sm font-medium text-foreground mt-0.5 truncate max-w-[180px] sm:max-w-[250px] lg:max-w-[350px] cursor-default">
+                    {title.length > 40 ? `${title.slice(0, 40)}...` : title}
+                  </span>
+                </TooltipTrigger>
+                {title.length > 40 && (
+                  <TooltipContent side="bottom" className="max-w-[300px] text-sm">
+                    {title}
+                  </TooltipContent>
+                )}
+              </Tooltip>
             </div>
           </div>
 
