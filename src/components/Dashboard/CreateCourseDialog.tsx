@@ -105,14 +105,14 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               </p>
             </DialogHeader>
 
-            <div className="space-y-4 sm:space-y-6 py-2 sm:py-4">
+            <div className="space-y-4 sm:space-y-6 pb-2 sm:pb-4">
               {/* Course Title Input */}
               <div>
               <Input
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="Enter course title..."
-                  className="h-11 sm:h-12 text-sm sm:text-base bg-background border-2 border-border focus:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors placeholder:text-sm sm:placeholder:text-base placeholder:text-foreground/70 placeholder:font-medium"
+                  className="h-11 sm:h-12 text-[1.1rem] bg-background border-2 border-border focus:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors placeholder:text-[1.1rem] placeholder:text-foreground/70 placeholder:font-medium"
                 />
               </div>
 
