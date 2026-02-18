@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, LayoutGrid, Copy, Trash2 } from "lucide-react";
+import { GripVertical, Copy, Trash2 } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   Tooltip,
   TooltipContent,
@@ -29,6 +31,20 @@ export function ContentBlock({
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus);
   const blockRef = useRef<HTMLDivElement>(null);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   // Click outside to collapse
   useEffect(() => {
@@ -74,15 +90,25 @@ export function ContentBlock({
   );
 
   return (
-    <div ref={blockRef} className="group/block relative animate-fade-in">
-      {/* Left sidebar icons - positioned outside the block */}
+    <div
+      ref={(node) => {
+        setNodeRef(node);
+        (blockRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      }}
+      style={style}
+      className={cn(
+        "group/block relative animate-fade-in transition-shadow duration-200",
+        isDragging && "z-50 opacity-90 shadow-xl rounded-lg scale-[1.02]"
+      )}
+    >
+      {/* Left sidebar icons */}
       <div className="absolute -left-12 top-2 flex flex-col items-center gap-1 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
         <SidebarButton
           icon={GripVertical}
           label="Drag to reorder"
           className="cursor-grab active:cursor-grabbing"
+          onClick={undefined}
         />
-        <SidebarButton icon={LayoutGrid} label="Layout" />
         <SidebarButton icon={Copy} label="Duplicate" onClick={onDuplicate} />
         <SidebarButton
           icon={Trash2}
@@ -91,6 +117,13 @@ export function ContentBlock({
           className="hover:text-destructive"
         />
       </div>
+      {/* Drag handle overlay */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute -left-12 top-2 w-8 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
+        aria-label="Drag to reorder"
+      />
 
       {/* Content area - full width */}
       <div className="w-full">
