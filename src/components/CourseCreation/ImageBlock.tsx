@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, Square, Circle } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -15,7 +15,7 @@ interface ImageBlockProps {
 }
 
 type FitMode = "contain" | "cover" | "fill";
-type RadiusMode = "none" | "rounded" | "pill";
+
 
 export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -23,7 +23,9 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [zoom, setZoom] = useState(100);
   const [fitMode, setFitMode] = useState<FitMode>("contain");
   const [containerHeight, setContainerHeight] = useState(300);
-  const [borderRadius, setBorderRadius] = useState<RadiusMode>("rounded");
+  const [flipH, setFlipH] = useState(false);
+  const [flipV, setFlipV] = useState(false);
+  const [rotation, setRotation] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,11 +98,17 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   }, [containerHeight]);
 
   const getImageStyle = (): React.CSSProperties => {
-    const base: React.CSSProperties = {
-      transform: `scale(${zoom / 100})`,
-      transition: isResizing ? "none" : "transform 0.15s ease",
+    const transforms = [
+      `scale(${(flipH ? -1 : 1) * zoom / 100}, ${(flipV ? -1 : 1) * zoom / 100})`,
+      `rotate(${rotation}deg)`,
+    ].join(" ");
+    return {
+      transform: transforms,
+      transition: isResizing ? "none" : "transform 0.2s ease",
+      objectFit: fitMode as React.CSSProperties["objectFit"],
+      width: "100%",
+      height: "100%",
     };
-    return { ...base, objectFit: fitMode as React.CSSProperties["objectFit"], width: "100%", height: "100%" };
   };
 
   if (imageUrl) {
@@ -170,43 +178,34 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
 
             <div className="w-px h-5 bg-border mx-1" />
 
-            {/* Border radius toggle */}
-            <div className="flex items-center gap-0.5 p-0.5 rounded-md bg-muted/50">
+            {/* Flip & Rotate */}
+            <div className="flex items-center gap-0.5">
               <button
-                onClick={() => setBorderRadius("none")}
+                onClick={() => setFlipH(!flipH)}
                 className={cn(
-                  "p-1.5 rounded transition-colors",
-                  borderRadius === "none"
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                  "p-1.5 rounded-md transition-colors",
+                  flipH ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
-                title="Sharp corners"
+                title="Flip horizontal"
               >
-                <Square className="w-3.5 h-3.5" />
+                <FlipHorizontal className="w-3.5 h-3.5" />
               </button>
               <button
-                onClick={() => setBorderRadius("rounded")}
+                onClick={() => setFlipV(!flipV)}
                 className={cn(
-                  "p-1.5 rounded transition-colors",
-                  borderRadius === "rounded"
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                  "p-1.5 rounded-md transition-colors",
+                  flipV ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
-                title="Rounded corners"
+                title="Flip vertical"
               >
-                <div className="w-3.5 h-3.5 border-2 border-current rounded-md" />
+                <FlipVertical className="w-3.5 h-3.5" />
               </button>
               <button
-                onClick={() => setBorderRadius("pill")}
-                className={cn(
-                  "p-1.5 rounded transition-colors",
-                  borderRadius === "pill"
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                title="Full round"
+                onClick={() => setRotation((rotation + 90) % 360)}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Rotate 90°"
               >
-                <Circle className="w-3.5 h-3.5" />
+                <RotateCw className="w-3.5 h-3.5" />
               </button>
             </div>
 
@@ -225,14 +224,11 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         <div
           ref={containerRef}
           className={cn(
-            "overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20 transition-[border-radius] duration-200",
-            borderRadius === "none" && "rounded-none",
-            borderRadius === "rounded" && "rounded-xl",
-            borderRadius === "pill" && "rounded-[2rem]",
+            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20",
             isEditing && "ring-2 ring-primary ring-offset-2 ring-offset-background",
             isResizing && "select-none"
           )}
-          style={{ height: `${containerHeight}px`, transition: isResizing ? "border-radius 0.2s ease" : "height 0.15s ease, border-radius 0.2s ease" }}
+          style={{ height: `${containerHeight}px`, transition: isResizing ? "none" : "height 0.15s ease" }}
           onClick={() => {
             if (!isEditing) setIsEditing(true);
           }}
