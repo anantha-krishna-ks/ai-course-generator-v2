@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2 } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -392,8 +392,9 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                                   Content was removed...{" "}
                                   <button
                                     onClick={() => undoDelete(deletedId)}
-                                    className="text-foreground font-medium underline underline-offset-2 hover:text-primary transition-colors not-italic ml-1"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
                                   >
+                                    <Undo2 className="w-3 h-3" />
                                     Undo
                                   </button>
                                 </p>
