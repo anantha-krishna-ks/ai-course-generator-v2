@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -21,7 +21,10 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [fitMode, setFitMode] = useState<FitMode>("contain");
+  const [containerHeight, setContainerHeight] = useState(300);
+  const [isResizing, setIsResizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -68,18 +71,34 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
     fill: "Stretch",
   };
 
-  const getImageStyle = () => {
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    const startY = e.clientY;
+    const startHeight = containerHeight;
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const delta = moveEvent.clientY - startY;
+      setContainerHeight(Math.max(100, Math.min(800, startHeight + delta)));
+    };
+
+    const onMouseUp = () => {
+      setIsResizing(false);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }, [containerHeight]);
+
+  const getImageStyle = (): React.CSSProperties => {
     const base: React.CSSProperties = {
       transform: `scale(${zoom / 100})`,
-      transition: "transform 0.15s ease",
+      transition: isResizing ? "none" : "transform 0.15s ease",
     };
-    if (fitMode === "contain") {
-      return { ...base, objectFit: "contain" as const, width: "100%", height: "auto", maxHeight: "500px" };
-    }
-    if (fitMode === "cover") {
-      return { ...base, objectFit: "cover" as const, width: "100%", height: "400px" };
-    }
-    return { ...base, objectFit: "fill" as const, width: "100%", height: "400px" };
+    return { ...base, objectFit: fitMode as React.CSSProperties["objectFit"], width: "100%", height: "100%" };
   };
 
   if (imageUrl) {
@@ -160,10 +179,13 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
 
         {/* Image display */}
         <div
+          ref={containerRef}
           className={cn(
             "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20",
-            isEditing && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+            isEditing && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+            isResizing && "select-none"
           )}
+          style={{ height: `${containerHeight}px`, transition: isResizing ? "none" : "height 0.15s ease" }}
           onClick={() => {
             if (!isEditing) setIsEditing(true);
           }}
@@ -172,9 +194,27 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
             src={imageUrl}
             alt="Content"
             style={getImageStyle()}
-            className="rounded-lg"
+            className="rounded-lg pointer-events-none"
           />
         </div>
+
+        {/* Resize handle */}
+        {isEditing && (
+          <div
+            onMouseDown={handleResizeStart}
+            className="flex items-center justify-center mx-auto mt-1 w-16 h-5 cursor-ns-resize group/resize"
+          >
+            <div className={cn(
+              "flex items-center justify-center w-10 h-4 rounded-full transition-colors",
+              isResizing ? "bg-primary/20" : "bg-muted hover:bg-primary/15"
+            )}>
+              <GripHorizontal className={cn(
+                "w-4 h-3 transition-colors",
+                isResizing ? "text-primary" : "text-muted-foreground group-hover/resize:text-primary"
+              )} />
+            </div>
+          </div>
+        )}
 
         <input
           ref={fileInputRef}
