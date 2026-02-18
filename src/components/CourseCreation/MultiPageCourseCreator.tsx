@@ -9,6 +9,9 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  DragOverEvent,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -60,13 +63,26 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([]);
   const [items, setItems] = useState<CourseItem[]>([]);
 
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  }, []);
+
+  const handleDragOver = useCallback((event: DragOverEvent) => {
+    setOverId(event.over?.id as string | null);
+  }, []);
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
+    setOverId(null);
     if (over && active.id !== over.id) {
       setContentBlocks((prev) => {
         const oldIndex = prev.findIndex((b) => b.id === active.id);
@@ -74,6 +90,11 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
         return arrayMove(prev, oldIndex, newIndex);
       });
     }
+  }, []);
+
+  const handleDragCancel = useCallback(() => {
+    setActiveId(null);
+    setOverId(null);
   }, []);
 
   const addTextBlock = () => {
@@ -266,27 +287,76 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
+                onDragCancel={handleDragCancel}
               >
                 <SortableContext
                   items={contentBlocks.map((b) => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="mt-6 space-y-4">
-                    {contentBlocks.map((block) => (
-                      <ContentBlock
-                        key={block.id}
-                        id={block.id}
-                        type={block.type}
-                        content={block.content}
-                        onChange={(content) => updateBlockContent(block.id, content)}
-                        onDelete={() => deleteBlock(block.id)}
-                        onDuplicate={() => duplicateBlock(block.id)}
-                        autoFocus={!block.content}
-                      />
-                    ))}
+                    {contentBlocks.map((block, index) => {
+                      const isOver = overId === block.id && activeId !== block.id;
+                      const activeIndex = contentBlocks.findIndex((b) => b.id === activeId);
+                      const currentIndex = index;
+                      const showAbove = isOver && activeIndex > currentIndex;
+                      const showBelow = isOver && activeIndex < currentIndex;
+
+                      return (
+                        <div key={block.id} className="relative">
+                          {/* Drop indicator above */}
+                          <div
+                            className={cn(
+                              "absolute -top-2.5 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
+                              showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                            )}
+                          >
+                            <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                            <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                          </div>
+
+                          <ContentBlock
+                            id={block.id}
+                            type={block.type}
+                            content={block.content}
+                            onChange={(content) => updateBlockContent(block.id, content)}
+                            onDelete={() => deleteBlock(block.id)}
+                            onDuplicate={() => duplicateBlock(block.id)}
+                            autoFocus={!block.content}
+                          />
+
+                          {/* Drop indicator below */}
+                          <div
+                            className={cn(
+                              "absolute -bottom-2.5 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
+                              showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                            )}
+                          >
+                            <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                            <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </SortableContext>
+                <DragOverlay dropAnimation={{
+                  duration: 200,
+                  easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+                }}>
+                  {activeId ? (
+                    <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none text-foreground/60 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                        dangerouslySetInnerHTML={{
+                          __html: contentBlocks.find((b) => b.id === activeId)?.content || "",
+                        }}
+                      />
+                    </div>
+                  ) : null}
+                </DragOverlay>
               </DndContext>
 
                 {/* Add content button */}
