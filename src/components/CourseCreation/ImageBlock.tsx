@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -27,8 +27,34 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [flipV, setFlipV] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  // Click-outside detection to auto-collapse editor
+  useEffect(() => {
+    if (!isEditing || isClosing) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        editorRef.current &&
+        !editorRef.current.contains(e.target as Node) &&
+        !(fileInputRef.current && fileInputRef.current.contains(e.target as Node))
+      ) {
+        closeEditor();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isEditing, isClosing]);
+
+  const closeEditor = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsEditing(false);
+      setIsClosing(false);
+    }, 200);
+  }, []);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -113,10 +139,13 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
 
   if (imageUrl) {
     return (
-      <div className="relative rounded-lg">
+      <div ref={editorRef} className="relative rounded-lg">
         {/* Editing toolbar */}
         {isEditing && (
-          <div className="flex items-center gap-2 p-2 mb-2 rounded-lg border border-border bg-background/95 backdrop-blur-sm shadow-sm animate-fade-in">
+          <div className={cn(
+            "flex items-center gap-2 p-2 mb-2 rounded-lg border border-border bg-background/95 backdrop-blur-sm shadow-sm transition-all duration-200",
+            isClosing ? "animate-fade-out opacity-0" : "animate-fade-in"
+          )}>
             {/* Zoom controls */}
             <button
               onClick={() => setZoom(Math.max(50, zoom - 10))}
@@ -212,7 +241,7 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
             {/* Spacer + Done */}
             <div className="flex-1" />
             <button
-              onClick={() => setIsEditing(false)}
+              onClick={closeEditor}
               className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Done
@@ -224,8 +253,8 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         <div
           ref={containerRef}
           className={cn(
-            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20",
-            isEditing && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20 transition-shadow duration-200",
+            isEditing && !isClosing && "ring-2 ring-primary ring-offset-2 ring-offset-background",
             isResizing && "select-none"
           )}
           style={{ height: `${containerHeight}px`, transition: isResizing ? "none" : "height 0.15s ease" }}
@@ -245,7 +274,10 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         {isEditing && (
           <div
             onMouseDown={handleResizeStart}
-            className="flex items-center justify-center mx-auto mt-2 w-24 h-7 cursor-ns-resize group/resize"
+            className={cn(
+              "flex items-center justify-center mx-auto mt-2 w-24 h-7 cursor-ns-resize group/resize transition-all duration-200",
+              isClosing ? "animate-fade-out opacity-0" : "animate-fade-in"
+            )}
           >
             <div className={cn(
               "flex items-center justify-center w-16 h-5 rounded-full border transition-all duration-200 shadow-sm",
