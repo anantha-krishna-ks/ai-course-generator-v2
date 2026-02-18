@@ -103,7 +103,7 @@ export function ContentBlock({
           >
             {hasContent ? (
               <div
-                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80"
+                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 [&_h2]:text-[1.75rem] [&_h2]:font-semibold"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             ) : (
