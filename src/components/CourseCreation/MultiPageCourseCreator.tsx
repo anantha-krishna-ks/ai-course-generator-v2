@@ -251,7 +251,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
           {/* Content */}
           <ScrollArea className="relative z-10 flex-1 min-h-[300px]">
-            <div className="p-6 sm:p-10 lg:p-16">
+            <div className="p-6 sm:p-8 lg:p-10">
               {/* Course Title */}
               <div className="relative group">
                 <textarea
