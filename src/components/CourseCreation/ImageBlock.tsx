@@ -1,7 +1,9 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,14 +14,16 @@ import {
 interface ImageBlockProps {
   imageUrl: string;
   onChange: (url: string) => void;
+  altText?: string;
+  onAltTextChange?: (alt: string) => void;
 }
 
 type FitMode = "contain" | "cover" | "fill";
+type EditorMode = "none" | "simple" | "full";
 
-
-export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
+export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [editorMode, setEditorMode] = useState<EditorMode>("none");
   const [zoom, setZoom] = useState(100);
   const [fitMode, setFitMode] = useState<FitMode>("contain");
   const [containerHeight, setContainerHeight] = useState(300);
@@ -28,13 +32,16 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [rotation, setRotation] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [localAlt, setLocalAlt] = useState(altText);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
-  // Click-outside detection to auto-collapse editor
+  useEffect(() => setLocalAlt(altText), [altText]);
+
+  // Click-outside detection
   useEffect(() => {
-    if (!isEditing || isClosing) return;
+    if (editorMode === "none" || isClosing) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (
         editorRef.current &&
@@ -46,12 +53,12 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isEditing, isClosing]);
+  }, [editorMode, isClosing]);
 
   const closeEditor = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
-      setIsEditing(false);
+      setEditorMode("none");
       setIsClosing(false);
     }, 200);
   }, []);
@@ -62,7 +69,7 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
       const url = URL.createObjectURL(file);
       onChange(url);
       setZoom(100);
-      setIsEditing(true);
+      setEditorMode("simple");
     },
     [onChange]
   );
@@ -137,11 +144,75 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
     };
   };
 
+  const handleAltSave = (value: string) => {
+    setLocalAlt(value);
+    onAltTextChange?.(value);
+  };
+
   if (imageUrl) {
+    const isActive = editorMode !== "none" && !isClosing;
+
     return (
       <div ref={editorRef} className="relative rounded-lg">
-        {/* Editing toolbar */}
-        {isEditing && (
+        {/* Simple toolbar - shown on single click */}
+        {editorMode === "simple" && (
+          <div className={cn(
+            "absolute -top-12 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 px-2 py-1.5 rounded-full border border-border bg-background/95 backdrop-blur-sm shadow-lg transition-all duration-200",
+            isClosing ? "animate-fade-out opacity-0" : "animate-fade-in"
+          )}>
+            {/* Change image */}
+            <button
+              onClick={handleClick}
+              className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="Change image"
+            >
+              <Image className="w-4 h-4" />
+            </button>
+
+            <div className="w-px h-4 bg-border" />
+
+            {/* Open full editor */}
+            <button
+              onClick={() => setEditorMode("full")}
+              className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="Edit image"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+            </button>
+
+            <div className="w-px h-4 bg-border" />
+
+            {/* Alt text popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={cn(
+                    "px-2 py-0.5 rounded-full text-xs font-medium transition-colors",
+                    localAlt
+                      ? "bg-primary/10 text-primary hover:bg-primary/20"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  )}
+                >
+                  {localAlt ? "Alt ✓" : "Alt"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3" side="top" align="center">
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Alt text</label>
+                <Input
+                  value={localAlt}
+                  onChange={(e) => setLocalAlt(e.target.value)}
+                  onBlur={(e) => handleAltSave(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleAltSave(localAlt); }}
+                  placeholder="Describe this image…"
+                  className="h-8 text-sm"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
+
+        {/* Full toolbar */}
+        {editorMode === "full" && (
           <div className={cn(
             "flex items-center gap-2 p-2 mb-2 rounded-lg border border-border bg-background/95 backdrop-blur-sm shadow-sm transition-all duration-200",
             isClosing ? "animate-fade-out opacity-0" : "animate-fade-in"
@@ -253,25 +324,28 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         <div
           ref={containerRef}
           className={cn(
-            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20 transition-shadow duration-200",
-            isEditing && !isClosing && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20 transition-shadow duration-200 relative",
+            isActive && "ring-2 ring-primary ring-offset-2 ring-offset-background",
             isResizing && "select-none"
           )}
           style={{ height: `${containerHeight}px`, transition: isResizing ? "none" : "height 0.15s ease" }}
           onClick={() => {
-            if (!isEditing) setIsEditing(true);
+            if (editorMode === "none") setEditorMode("simple");
+          }}
+          onDoubleClick={() => {
+            setEditorMode("full");
           }}
         >
           <img
             src={imageUrl}
-            alt="Content"
+            alt={localAlt || "Content"}
             style={getImageStyle()}
             className="pointer-events-none"
           />
         </div>
 
-        {/* Resize handle */}
-        {isEditing && (
+        {/* Resize handle - full mode only */}
+        {editorMode === "full" && (
           <div
             onMouseDown={handleResizeStart}
             className={cn(
