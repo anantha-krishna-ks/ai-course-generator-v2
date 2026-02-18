@@ -83,7 +83,7 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 px-6 cursor-pointer transition-all duration-200",
         isDragOver
           ? "border-primary bg-primary/5 scale-[1.01]"
-          : "border-foreground/20 hover:border-primary/50 hover:bg-muted/30"
+          : "border-foreground/20 hover:border-primary/50 bg-background/80 hover:bg-background"
       )}
     >
       <div
