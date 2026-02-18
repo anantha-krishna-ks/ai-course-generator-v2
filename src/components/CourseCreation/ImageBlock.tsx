@@ -367,6 +367,23 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }
             style={getImageStyle()}
             className="pointer-events-none"
           />
+
+          {/* Alt text badge on image when not editing */}
+          {editorMode === "none" && localAlt && (
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/90 backdrop-blur-sm border border-border text-[11px] font-medium text-muted-foreground shadow-sm pointer-events-auto">
+                    Alt ✓
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" align="start" className="max-w-[220px] p-3 space-y-1.5">
+                  <p className="text-xs font-medium text-popover-foreground leading-snug break-words">"{localAlt}"</p>
+                  <p className="text-[10px] text-muted-foreground italic">Note: only the author sees this label</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
 
         {/* Resize handle - full mode only */}
