@@ -93,7 +93,7 @@ export function ContentBlock({
       </div>
 
       {/* Content area */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 w-full">
         {isEditing ? (
           <DescriptionEditor content={content} onChange={onChange} />
         ) : (
