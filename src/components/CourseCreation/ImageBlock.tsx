@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -183,43 +184,55 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }
             <div className="w-px h-4 bg-border" />
 
             {/* Alt text popover */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  className={cn(
-                    "px-2 py-0.5 rounded-full text-xs font-medium transition-colors",
-                    localAlt
-                      ? "bg-primary/10 text-primary hover:bg-primary/20"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <Popover>
+                  <TooltipTrigger asChild>
+                    <PopoverTrigger asChild>
+                      <button
+                        className={cn(
+                          "px-2 py-0.5 rounded-full text-xs font-medium transition-colors",
+                          localAlt
+                            ? "bg-primary/10 text-primary hover:bg-primary/20"
+                            : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                        )}
+                      >
+                        {localAlt ? "Alt ✓" : "Alt"}
+                      </button>
+                    </PopoverTrigger>
+                  </TooltipTrigger>
+                  {localAlt && (
+                    <TooltipContent side="bottom" align="center" className="max-w-[220px] p-3 space-y-1.5">
+                      <p className="text-xs font-medium text-popover-foreground leading-snug break-words">"{localAlt}"</p>
+                      <p className="text-[10px] text-muted-foreground italic">Note: only the author sees this label</p>
+                    </TooltipContent>
                   )}
-                >
-                  {localAlt ? "Alt ✓" : "Alt"}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-72 p-4" side="right" align="start" sideOffset={8}>
-                <p className="text-sm text-muted-foreground leading-snug mb-4">
-                  Add screen-readable descriptions to content images to help improve accessibility.
-                </p>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-foreground block">
-                    Alternative text
-                  </label>
-                  <Input
-                    value={localAlt}
-                    onChange={(e) => setLocalAlt(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") handleAltSave(localAlt); }}
-                    placeholder="Describe this image…"
-                    className="h-10 text-sm"
-                  />
-                </div>
-                <button
-                  onClick={() => handleAltSave(localAlt)}
-                  className="mt-4 px-6 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-                >
-                  Done
-                </button>
-              </PopoverContent>
-            </Popover>
+                  <PopoverContent className="w-72 p-4" side="right" align="start" sideOffset={8}>
+                    <p className="text-sm text-muted-foreground leading-snug mb-4">
+                      Add screen-readable descriptions to content images to help improve accessibility.
+                    </p>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-foreground block">
+                        Alternative text
+                      </label>
+                      <Input
+                        value={localAlt}
+                        onChange={(e) => setLocalAlt(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleAltSave(localAlt); }}
+                        placeholder="Describe this image…"
+                        className="h-10 text-sm"
+                      />
+                    </div>
+                    <button
+                      onClick={() => handleAltSave(localAlt)}
+                      className="mt-4 px-6 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                    >
+                      Done
+                    </button>
+                  </PopoverContent>
+                </Popover>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         )}
 
