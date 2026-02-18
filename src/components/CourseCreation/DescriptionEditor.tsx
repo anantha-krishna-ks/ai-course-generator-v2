@@ -8,14 +8,12 @@ import {
   Italic, 
   Highlighter, 
   Code, 
-  Type, 
   AlignLeft, 
   AlignCenter,
   AlignRight,
   ListOrdered, 
   List,
-  Undo,
-  ChevronDown
+  Undo
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -34,11 +32,7 @@ interface DescriptionEditorProps {
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),
+      StarterKit,
       Highlight.configure({
         multicolor: false,
       }),
@@ -63,13 +57,6 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
   if (!editor) {
     return null;
   }
-
-  const getCurrentHeading = () => {
-    if (editor.isActive('heading', { level: 1 })) return 'Heading 1';
-    if (editor.isActive('heading', { level: 2 })) return 'Heading 2';
-    if (editor.isActive('heading', { level: 3 })) return 'Heading 3';
-    return 'Normal';
-  };
 
   const ToolbarButton = ({ 
     onClick, 
@@ -183,47 +170,6 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         >
           <ListOrdered className="w-4 h-4" />
         </ToolbarButton>
-        
-        <div className="w-px h-5 bg-foreground/20 mx-1" />
-        
-        {/* Heading/Normal dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button 
-              type="button"
-              className="flex items-center gap-1 px-2 py-1 hover:bg-foreground/10 rounded transition-colors text-sm text-foreground/70 min-w-[90px]"
-            >
-              {getCurrentHeading()}
-              <ChevronDown className="w-3 h-3" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-background border min-w-[120px]">
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().setParagraph().run()}
-              className={cn(!editor.isActive('heading') && "bg-primary/10")}
-            >
-              Normal
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-              className={cn(editor.isActive('heading', { level: 1 }) && "bg-primary/10")}
-            >
-              <span className="text-xl font-bold">Heading 1</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-              className={cn(editor.isActive('heading', { level: 2 }) && "bg-primary/10")}
-            >
-              <span className="text-lg font-bold">Heading 2</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-              className={cn(editor.isActive('heading', { level: 3 }) && "bg-primary/10")}
-            >
-              <span className="text-base font-bold">Heading 3</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
         
         <ToolbarButton 
           onClick={() => editor.chain().focus().undo().run()}
