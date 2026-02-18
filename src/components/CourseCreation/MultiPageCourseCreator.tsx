@@ -110,6 +110,22 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     });
   }, []);
 
+  const addImageBlock = useCallback((insertAt?: number) => {
+    const newBlock: ContentBlockData = {
+      id: `block-${Date.now()}`,
+      type: "image",
+      content: "",
+    };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
+
   const updateBlockContent = (id: string, content: string) => {
     setContentBlocks((prev) =>
       prev.map((b) => (b.id === id ? { ...b, content } : b))
@@ -310,8 +326,8 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                         <div key={block.id} className="group/item">
                           {/* Add content button before first block */}
                           {index === 0 && !activeId && (
-                            <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                              <AddContentButton onAddText={() => addTextBlock(0)} />
+                             <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                              <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} />
                             </div>
                           )}
 
@@ -352,7 +368,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                           {/* Add content button after each block */}
                           {!activeId && (
                             <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                              <AddContentButton onAddText={() => addTextBlock(index + 1)} />
+                              <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} />
                             </div>
                           )}
                         </div>
@@ -380,7 +396,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               {/* Add content button when no blocks exist */}
               {contentBlocks.length === 0 && (
                 <div className="mt-6">
-                  <AddContentButton onAddText={() => addTextBlock()} />
+                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} />
                 </div>
               )}
             </div>

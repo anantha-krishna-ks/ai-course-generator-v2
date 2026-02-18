@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { DescriptionEditor } from "./DescriptionEditor";
+import { ImageBlock } from "./ImageBlock";
 import { cn } from "@/lib/utils";
 
 interface ContentBlockProps {
@@ -127,7 +128,9 @@ export function ContentBlock({
 
       {/* Content area - full width */}
       <div className="w-full">
-        {isEditing ? (
+        {type === "image" ? (
+          <ImageBlock imageUrl={content} onChange={onChange} />
+        ) : isEditing ? (
           <DescriptionEditor content={content} onChange={onChange} />
         ) : (
           <button
