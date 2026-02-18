@@ -55,7 +55,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm dark:prose-invert max-w-none min-h-[120px] p-4 focus:outline-none text-lg text-foreground leading-relaxed [&_h2]:!text-[1.75rem] [&_h2]:!font-normal [&_h2]:!leading-tight',
+        class: 'prose prose-sm dark:prose-invert max-w-none min-h-[120px] p-4 focus:outline-none text-lg text-foreground leading-relaxed [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight',
       },
     },
   });
