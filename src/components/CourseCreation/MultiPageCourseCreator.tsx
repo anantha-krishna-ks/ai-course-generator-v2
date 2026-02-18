@@ -46,7 +46,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   const [items, setItems] = useState<CourseItem[]>([]);
 
   const addTextBlock = () => {
-    const defaultContent = `<h2>Your heading text goes here</h2><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
+    const defaultContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
     const newBlock: ContentBlockData = {
       id: `block-${Date.now()}`,
       type: "text",
