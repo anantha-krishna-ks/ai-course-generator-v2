@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus, Type, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { DescriptionEditor } from "./DescriptionEditor";
+import { ContentBlock } from "./ContentBlock";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -33,25 +33,47 @@ interface CourseItem {
   children?: CourseItem[];
 }
 
+interface ContentBlockData {
+  id: string;
+  type: "text" | "image";
+  content: string;
+}
+
 export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const [title, setTitle] = useState(courseTitle);
-  const [description, setDescription] = useState("");
-  const [isDescriptionActive, setIsDescriptionActive] = useState(false);
-  const descriptionRef = useRef<HTMLDivElement>(null);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([]);
   const [items, setItems] = useState<CourseItem[]>([]);
 
-  // Click outside to auto-save and collapse
-  useEffect(() => {
-    if (!isDescriptionActive) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (descriptionRef.current && !descriptionRef.current.contains(e.target as Node)) {
-        setIsDescriptionActive(false);
-      }
+  const addTextBlock = () => {
+    const newBlock: ContentBlockData = {
+      id: `block-${Date.now()}`,
+      type: "text",
+      content: "",
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isDescriptionActive]);
+    setContentBlocks((prev) => [...prev, newBlock]);
+  };
+
+  const updateBlockContent = (id: string, content: string) => {
+    setContentBlocks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, content } : b))
+    );
+  };
+
+  const deleteBlock = (id: string) => {
+    setContentBlocks((prev) => prev.filter((b) => b.id !== id));
+  };
+
+  const duplicateBlock = (id: string) => {
+    setContentBlocks((prev) => {
+      const idx = prev.findIndex((b) => b.id === id);
+      if (idx === -1) return prev;
+      const clone = { ...prev[idx], id: `block-${Date.now()}` };
+      const next = [...prev];
+      next.splice(idx + 1, 0, clone);
+      return next;
+    });
+  };
 
   const handleBack = () => {
     navigate("/dashboard");
@@ -208,73 +230,58 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <div className="h-1 bg-primary/30 rounded-full w-full" />
               </div>
 
-              {/* Description */}
-              <div className="mt-6" ref={descriptionRef}>
-                {!isDescriptionActive ? (
-                  <div className="group animate-fade-in">
-                    <button
-                      onClick={() => setIsDescriptionActive(true)}
-                      className="w-full text-left text-lg text-foreground/60 hover:text-foreground/80 transition-colors flex items-start gap-2 px-4 py-3 border border-transparent group-hover:border-foreground/20 rounded-lg group-hover:bg-background/30"
+              {/* Content Blocks */}
+              <div className="mt-6 space-y-4">
+                {contentBlocks.map((block) => (
+                  <ContentBlock
+                    key={block.id}
+                    id={block.id}
+                    type={block.type}
+                    content={block.content}
+                    onChange={(content) => updateBlockContent(block.id, content)}
+                    onDelete={() => deleteBlock(block.id)}
+                    onDuplicate={() => duplicateBlock(block.id)}
+                    autoFocus={!block.content}
+                  />
+                ))}
+
+                {/* Add content button */}
+                <div className="group flex items-center justify-center mt-3">
+                  <div className="flex-1 h-px bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                  <Popover>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <PopoverTrigger asChild>
+                          <button className="mx-3 w-7 h-7 rounded-full border border-foreground/30 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200">
+                            <Plus className="w-3.5 h-3.5 text-foreground/50" />
+                          </button>
+                        </PopoverTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-xs">
+                        Add content
+                      </TooltipContent>
+                    </Tooltip>
+                    <PopoverContent
+                      side="top"
+                      sideOffset={8}
+                      className="w-auto p-1.5 flex items-center gap-0.5 rounded-lg border border-border bg-background shadow-lg animate-fade-in"
                     >
-                      {description && description !== '<p></p>' && description.replace(/<[^>]*>/g, '').trim() ? (
-                        <div
-                          className="prose prose-sm dark:prose-invert max-w-none text-foreground/80"
-                          dangerouslySetInnerHTML={{ __html: description }}
-                        />
-                      ) : (
-                        <>
-                          <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                          <span>Tell your learners what the course will be about...</span>
-                        </>
-                      )}
-                    </button>
-                    
-                    {/* Hover indicator with lines and circle + popover */}
-                    <div className="flex items-center justify-center mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="flex-1 h-px bg-foreground/20" />
-                      <Popover>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <PopoverTrigger asChild>
-                              <button className="mx-3 w-7 h-7 rounded-full border border-foreground/30 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200">
-                                <Plus className="w-3.5 h-3.5 text-foreground/50" />
-                              </button>
-                            </PopoverTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" className="text-xs">
-                            Add content
-                          </TooltipContent>
-                        </Tooltip>
-                        <PopoverContent
-                          side="top"
-                          sideOffset={8}
-                          className="w-auto p-1.5 flex items-center gap-0.5 rounded-lg border border-border bg-background shadow-lg animate-fade-in"
-                        >
-                          <button
-                            onClick={() => setIsDescriptionActive(true)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
-                          >
-                            <Type className="w-4 h-4" />
-                          </button>
-                          <div className="w-px h-5 bg-border" />
-                          <button
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
-                          >
-                            <Image className="w-4 h-4" />
-                          </button>
-                        </PopoverContent>
-                      </Popover>
-                      <div className="flex-1 h-px bg-foreground/20" />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="animate-fade-in">
-                    <DescriptionEditor
-                      content={description}
-                      onChange={setDescription}
-                    />
-                  </div>
-                )}
+                      <button
+                        onClick={addTextBlock}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
+                      >
+                        <Type className="w-4 h-4" />
+                      </button>
+                      <div className="w-px h-5 bg-border" />
+                      <button
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
+                      >
+                        <Image className="w-4 h-4" />
+                      </button>
+                    </PopoverContent>
+                  </Popover>
+                  <div className="flex-1 h-px bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </div>
               </div>
             </div>
           </ScrollArea>
