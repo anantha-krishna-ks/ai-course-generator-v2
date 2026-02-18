@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -53,15 +53,22 @@ interface ContentBlockData {
   content: string;
 }
 
+interface DeletedBlock {
+  block: ContentBlockData;
+  index: number;
+}
+
 export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const [title, setTitle] = useState(courseTitle);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([]);
   const [items, setItems] = useState<CourseItem[]>([]);
+  const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
+  const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
-
+  
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -133,7 +140,61 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   };
 
   const deleteBlock = (id: string) => {
+    const idx = contentBlocks.findIndex((b) => b.id === id);
+    if (idx === -1) return;
+    const block = contentBlocks[idx];
+    
+    // Store deleted block for undo
+    setDeletedBlocks((prev) => {
+      const next = new Map(prev);
+      next.set(id, { block, index: idx });
+      return next;
+    });
+
+    // Remove from content
     setContentBlocks((prev) => prev.filter((b) => b.id !== id));
+
+    // Auto-dismiss after 5 seconds
+    const timer = setTimeout(() => {
+      dismissDeletedBlock(id);
+    }, 5000);
+    deleteTimers.current.set(id, timer);
+  };
+
+  const undoDelete = (id: string) => {
+    const deleted = deletedBlocks.get(id);
+    if (!deleted) return;
+
+    // Clear timer
+    const timer = deleteTimers.current.get(id);
+    if (timer) clearTimeout(timer);
+    deleteTimers.current.delete(id);
+
+    // Restore block at original position
+    setContentBlocks((prev) => {
+      const next = [...prev];
+      const insertAt = Math.min(deleted.index, next.length);
+      next.splice(insertAt, 0, deleted.block);
+      return next;
+    });
+
+    // Remove from deleted map
+    setDeletedBlocks((prev) => {
+      const next = new Map(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const dismissDeletedBlock = (id: string) => {
+    const timer = deleteTimers.current.get(id);
+    if (timer) clearTimeout(timer);
+    deleteTimers.current.delete(id);
+    setDeletedBlocks((prev) => {
+      const next = new Map(prev);
+      next.delete(id);
+      return next;
+    });
   };
 
   const duplicateBlock = (id: string) => {
@@ -315,65 +376,110 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   items={contentBlocks.map((b) => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="mt-6">
-                    {contentBlocks.map((block, index) => {
-                      const isOver = overId === block.id && activeId !== block.id;
-                      const activeIdx = contentBlocks.findIndex((b) => b.id === activeId);
-                      const showAbove = isOver && activeIdx > index;
-                      const showBelow = isOver && activeIdx < index;
-
-                      return (
-                        <div key={block.id} className="group/item">
-                          {/* Add content button before first block */}
-                          {index === 0 && !activeId && (
-                             <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                              <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} />
-                            </div>
-                          )}
-
-                          <div className="relative">
-                            {/* Drop indicator above */}
-                            <div
-                              className={cn(
-                                "absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
-                                showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-                              )}
-                            >
-                              <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                              <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                            </div>
-
-                            <ContentBlock
-                              id={block.id}
-                              type={block.type}
-                              content={block.content}
-                              onChange={(content) => updateBlockContent(block.id, content)}
-                              onDelete={() => deleteBlock(block.id)}
-                              onDuplicate={() => duplicateBlock(block.id)}
-                              autoFocus={!block.content}
-                            />
-
-                            {/* Drop indicator below */}
-                            <div
-                              className={cn(
-                                "absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
-                                showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-                              )}
-                            >
-                              <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                              <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                            </div>
-                          </div>
-
-                          {/* Add content button after each block */}
-                          {!activeId && (
-                            <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                              <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} />
-                            </div>
-                          )}
-                        </div>
+                  <div className="mt-6 space-y-0">
+                    {(() => {
+                      // Merge content blocks and deleted block banners by index
+                      const deletedArr = Array.from(deletedBlocks.entries()).sort(
+                        ([, a], [, b]) => a.index - b.index
                       );
-                    })}
+                      const elements: React.ReactNode[] = [];
+                      let blockIdx = 0;
+                      let deletedIdx = 0;
+                      let position = 0;
+
+                      while (blockIdx < contentBlocks.length || deletedIdx < deletedArr.length) {
+                        // Check if a deleted banner belongs at this position
+                        if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
+                          const [deletedId] = deletedArr[deletedIdx];
+                          elements.push(
+                            <div key={`deleted-${deletedId}`} className="animate-fade-in my-2">
+                              <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                                <p className="text-sm text-muted-foreground italic">
+                                  Content was removed...{" "}
+                                  <button
+                                    onClick={() => undoDelete(deletedId)}
+                                    className="text-foreground font-medium underline underline-offset-2 hover:text-primary transition-colors not-italic ml-1"
+                                  >
+                                    Undo
+                                  </button>
+                                </p>
+                                <button
+                                  onClick={() => dismissDeletedBlock(deletedId)}
+                                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                  Close
+                                </button>
+                              </div>
+                            </div>
+                          );
+                          deletedIdx++;
+                          position++;
+                          continue;
+                        }
+
+                        if (blockIdx < contentBlocks.length) {
+                          const block = contentBlocks[blockIdx];
+                          const index = blockIdx;
+                          const isOver = overId === block.id && activeId !== block.id;
+                          const activeBlockIdx = contentBlocks.findIndex((b) => b.id === activeId);
+                          const showAbove = isOver && activeBlockIdx > index;
+                          const showBelow = isOver && activeBlockIdx < index;
+
+                          elements.push(
+                            <div key={block.id} className="group/item">
+                              {index === 0 && !activeId && (
+                                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} />
+                                </div>
+                              )}
+
+                              <div className="relative">
+                                <div
+                                  className={cn(
+                                    "absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
+                                    showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                                  )}
+                                >
+                                  <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                                  <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                                </div>
+
+                                <ContentBlock
+                                  id={block.id}
+                                  type={block.type}
+                                  content={block.content}
+                                  onChange={(content) => updateBlockContent(block.id, content)}
+                                  onDelete={() => deleteBlock(block.id)}
+                                  onDuplicate={() => duplicateBlock(block.id)}
+                                  autoFocus={!block.content}
+                                />
+
+                                <div
+                                  className={cn(
+                                    "absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
+                                    showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                                  )}
+                                >
+                                  <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                                  <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                                </div>
+                              </div>
+
+                              {!activeId && (
+                                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                                  <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} />
+                                </div>
+                              )}
+                            </div>
+                          );
+                          blockIdx++;
+                          position++;
+                        }
+                      }
+
+                      return elements;
+                    })()}
                   </div>
                 </SortableContext>
                 <DragOverlay dropAnimation={{
