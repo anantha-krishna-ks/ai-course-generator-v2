@@ -307,10 +307,12 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                       const showBelow = isOver && activeIdx < index;
 
                       return (
-                        <div key={block.id}>
+                        <div key={block.id} className="group/item">
                           {/* Add content button before first block */}
                           {index === 0 && !activeId && (
-                            <AddContentButton onAddText={() => addTextBlock(0)} />
+                            <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                              <AddContentButton onAddText={() => addTextBlock(0)} />
+                            </div>
                           )}
 
                           <div className="relative">
@@ -349,7 +351,9 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
                           {/* Add content button after each block */}
                           {!activeId && (
-                            <AddContentButton onAddText={() => addTextBlock(index + 1)} />
+                            <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                              <AddContentButton onAddText={() => addTextBlock(index + 1)} />
+                            </div>
                           )}
                         </div>
                       );
