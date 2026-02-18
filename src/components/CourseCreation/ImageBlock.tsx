@@ -196,16 +196,28 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }
                   {localAlt ? "Alt ✓" : "Alt"}
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 p-3" side="top" align="center">
-                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Alt text</label>
-                <Input
-                  value={localAlt}
-                  onChange={(e) => setLocalAlt(e.target.value)}
-                  onBlur={(e) => handleAltSave(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleAltSave(localAlt); }}
-                  placeholder="Describe this image…"
-                  className="h-8 text-sm"
-                />
+              <PopoverContent className="w-72 p-4" side="right" align="start" sideOffset={8}>
+                <p className="text-sm text-muted-foreground leading-snug mb-4">
+                  Add screen-readable descriptions to content images to help improve accessibility.
+                </p>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-foreground block">
+                    Alternative text
+                  </label>
+                  <Input
+                    value={localAlt}
+                    onChange={(e) => setLocalAlt(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleAltSave(localAlt); }}
+                    placeholder="Describe this image…"
+                    className="h-10 text-sm"
+                  />
+                </div>
+                <button
+                  onClick={() => handleAltSave(localAlt)}
+                  className="mt-4 px-6 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Done
+                </button>
               </PopoverContent>
             </Popover>
           </div>
