@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,20 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   const [title, setTitle] = useState(courseTitle);
   const [description, setDescription] = useState("");
   const [isDescriptionActive, setIsDescriptionActive] = useState(false);
+  const descriptionRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<CourseItem[]>([]);
+
+  // Click outside to auto-save and collapse
+  useEffect(() => {
+    if (!isDescriptionActive) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (descriptionRef.current && !descriptionRef.current.contains(e.target as Node)) {
+        setIsDescriptionActive(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isDescriptionActive]);
 
   const handleBack = () => {
     navigate("/dashboard");
@@ -191,15 +204,24 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               </div>
 
               {/* Description */}
-              <div className="mt-6">
+              <div className="mt-6" ref={descriptionRef}>
                 {!isDescriptionActive ? (
-                  <div className="group">
+                  <div className="group animate-fade-in">
                     <button
                       onClick={() => setIsDescriptionActive(true)}
                       className="w-full text-left text-lg text-foreground/60 hover:text-foreground/80 transition-colors flex items-start gap-2 px-4 py-3 border border-transparent group-hover:border-foreground/20 rounded-lg group-hover:bg-background/30"
                     >
-                      <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                      <span>Tell your learners what the course will be about...</span>
+                      {description && description !== '<p></p>' && description.replace(/<[^>]*>/g, '').trim() ? (
+                        <div
+                          className="prose prose-sm dark:prose-invert max-w-none text-foreground/80"
+                          dangerouslySetInnerHTML={{ __html: description }}
+                        />
+                      ) : (
+                        <>
+                          <Plus className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                          <span>Tell your learners what the course will be about...</span>
+                        </>
+                      )}
                     </button>
                     
                     {/* Hover indicator with lines and circle */}
@@ -212,17 +234,12 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                     </div>
                   </div>
                 ) : (
-                  <DescriptionEditor
-                    content={description}
-                    onChange={setDescription}
-                    onBlur={() => {
-                      // Check if content is empty (just empty paragraph tags)
-                      const isEmpty = !description || description === '<p></p>' || description.replace(/<[^>]*>/g, '').trim() === '';
-                      if (isEmpty) {
-                        setIsDescriptionActive(false);
-                      }
-                    }}
-                  />
+                  <div className="animate-fade-in">
+                    <DescriptionEditor
+                      content={description}
+                      onChange={setDescription}
+                    />
+                  </div>
                 )}
               </div>
             </div>
