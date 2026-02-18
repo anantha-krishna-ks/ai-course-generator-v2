@@ -153,12 +153,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
     // Remove from content
     setContentBlocks((prev) => prev.filter((b) => b.id !== id));
-
-    // Auto-dismiss after 5 seconds
-    const timer = setTimeout(() => {
-      dismissDeletedBlock(id);
-    }, 5000);
-    deleteTimers.current.set(id, timer);
   };
 
   const undoDelete = (id: string) => {
