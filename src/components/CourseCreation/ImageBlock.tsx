@@ -1,14 +1,26 @@
 import { useRef, useState, useCallback } from "react";
-import { ImagePlus, Upload } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ImageBlockProps {
   imageUrl: string;
   onChange: (url: string) => void;
 }
 
+type FitMode = "contain" | "cover" | "fill";
+
 export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [zoom, setZoom] = useState(100);
+  const [fitMode, setFitMode] = useState<FitMode>("contain");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(
@@ -16,6 +28,8 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
       if (!file.type.startsWith("image/")) return;
       const url = URL.createObjectURL(file);
       onChange(url);
+      setZoom(100);
+      setIsEditing(true);
     },
     [onChange]
   );
@@ -48,20 +62,120 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
     if (file) handleFile(file);
   };
 
+  const fitModeLabels: Record<FitMode, string> = {
+    contain: "Fit",
+    cover: "Fill",
+    fill: "Stretch",
+  };
+
+  const getImageStyle = () => {
+    const base: React.CSSProperties = {
+      transform: `scale(${zoom / 100})`,
+      transition: "transform 0.15s ease",
+    };
+    if (fitMode === "contain") {
+      return { ...base, objectFit: "contain" as const, width: "100%", height: "auto", maxHeight: "500px" };
+    }
+    if (fitMode === "cover") {
+      return { ...base, objectFit: "cover" as const, width: "100%", height: "400px" };
+    }
+    return { ...base, objectFit: "fill" as const, width: "100%", height: "400px" };
+  };
+
   if (imageUrl) {
     return (
-      <div className="relative group/img rounded-lg overflow-hidden">
-        <img
-          src={imageUrl}
-          alt="Content"
-          className="w-full h-auto rounded-lg"
-        />
-        <button
-          onClick={handleClick}
-          className="absolute inset-0 flex items-center justify-center bg-background/60 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 text-sm font-medium text-foreground"
+      <div className="relative rounded-lg">
+        {/* Editing toolbar */}
+        {isEditing && (
+          <div className="flex items-center gap-2 p-2 mb-2 rounded-lg border border-border bg-background/95 backdrop-blur-sm shadow-sm animate-fade-in">
+            {/* Zoom controls */}
+            <button
+              onClick={() => setZoom(Math.max(50, zoom - 10))}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <Slider
+              value={[zoom]}
+              onValueChange={([v]) => setZoom(v)}
+              min={50}
+              max={200}
+              step={5}
+              className="w-24"
+            />
+            <button
+              onClick={() => setZoom(Math.min(200, zoom + 10))}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Replace image */}
+            <button
+              onClick={handleClick}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="Replace image"
+            >
+              <Image className="w-4 h-4" />
+            </button>
+
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Fit mode dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 px-2 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                  {fitMode === "contain" && <Maximize className="w-3.5 h-3.5" />}
+                  {fitMode === "cover" && <RectangleHorizontal className="w-3.5 h-3.5" />}
+                  {fitMode === "fill" && <RectangleHorizontal className="w-3.5 h-3.5" />}
+                  <span className="text-xs">{fitModeLabels[fitMode]}</span>
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-background border min-w-[100px]">
+                <DropdownMenuItem onClick={() => setFitMode("contain")} className={cn(fitMode === "contain" && "bg-primary/10")}>
+                  <Maximize className="w-3.5 h-3.5 mr-2" /> Fit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFitMode("cover")} className={cn(fitMode === "cover" && "bg-primary/10")}>
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Fill
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFitMode("fill")} className={cn(fitMode === "fill" && "bg-primary/10")}>
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Stretch
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Spacer + Done */}
+            <div className="flex-1" />
+            <button
+              onClick={() => setIsEditing(false)}
+              className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Done
+            </button>
+          </div>
+        )}
+
+        {/* Image display */}
+        <div
+          className={cn(
+            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20",
+            isEditing && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+          )}
+          onClick={() => {
+            if (!isEditing) setIsEditing(true);
+          }}
         >
-          Click to replace
-        </button>
+          <img
+            src={imageUrl}
+            alt="Content"
+            style={getImageStyle()}
+            className="rounded-lg"
+          />
+        </div>
+
         <input
           ref={fileInputRef}
           type="file"
