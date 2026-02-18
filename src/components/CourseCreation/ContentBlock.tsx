@@ -74,9 +74,9 @@ export function ContentBlock({
   );
 
   return (
-    <div ref={blockRef} className="group/block relative flex gap-2 animate-fade-in">
-      {/* Left sidebar icons */}
-      <div className="flex flex-col items-center gap-1 pt-2 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
+    <div ref={blockRef} className="group/block relative animate-fade-in">
+      {/* Left sidebar icons - positioned outside the block */}
+      <div className="absolute -left-12 top-2 flex flex-col items-center gap-1 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
         <SidebarButton
           icon={GripVertical}
           label="Drag to reorder"
@@ -92,8 +92,8 @@ export function ContentBlock({
         />
       </div>
 
-      {/* Content area */}
-      <div className="flex-1 min-w-0 w-full">
+      {/* Content area - full width */}
+      <div className="w-full">
         {isEditing ? (
           <DescriptionEditor content={content} onChange={onChange} />
         ) : (
