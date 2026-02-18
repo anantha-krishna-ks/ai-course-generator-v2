@@ -102,7 +102,7 @@ export function ContentBlock({
       )}
     >
       {/* Left sidebar icons */}
-      <div className="absolute -left-12 top-2 flex flex-col items-center gap-1 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
+      <div className="absolute -left-14 top-1 flex flex-col items-center gap-0.5 opacity-0 group-hover/block:opacity-100 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm">
         <SidebarButton
           icon={GripVertical}
           label="Drag to reorder"
@@ -121,7 +121,7 @@ export function ContentBlock({
       <div
         {...attributes}
         {...listeners}
-        className="absolute -left-12 top-2 w-8 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
+        className="absolute -left-14 top-1 w-10 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
         aria-label="Drag to reorder"
       />
 
