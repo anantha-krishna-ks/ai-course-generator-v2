@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, Square, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -15,6 +15,7 @@ interface ImageBlockProps {
 }
 
 type FitMode = "contain" | "cover" | "fill";
+type RadiusMode = "none" | "rounded" | "pill";
 
 export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -22,6 +23,7 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
   const [zoom, setZoom] = useState(100);
   const [fitMode, setFitMode] = useState<FitMode>("contain");
   const [containerHeight, setContainerHeight] = useState(300);
+  const [borderRadius, setBorderRadius] = useState<RadiusMode>("rounded");
   const [isResizing, setIsResizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -166,6 +168,48 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Border radius toggle */}
+            <div className="flex items-center gap-0.5 p-0.5 rounded-md bg-muted/50">
+              <button
+                onClick={() => setBorderRadius("none")}
+                className={cn(
+                  "p-1.5 rounded transition-colors",
+                  borderRadius === "none"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                title="Sharp corners"
+              >
+                <Square className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setBorderRadius("rounded")}
+                className={cn(
+                  "p-1.5 rounded transition-colors",
+                  borderRadius === "rounded"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                title="Rounded corners"
+              >
+                <div className="w-3.5 h-3.5 border-2 border-current rounded-md" />
+              </button>
+              <button
+                onClick={() => setBorderRadius("pill")}
+                className={cn(
+                  "p-1.5 rounded transition-colors",
+                  borderRadius === "pill"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                title="Full round"
+              >
+                <Circle className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Spacer + Done */}
             <div className="flex-1" />
             <button
@@ -181,11 +225,14 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         <div
           ref={containerRef}
           className={cn(
-            "rounded-lg overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20",
+            "overflow-hidden cursor-pointer flex items-center justify-center bg-muted/20 transition-[border-radius] duration-200",
+            borderRadius === "none" && "rounded-none",
+            borderRadius === "rounded" && "rounded-xl",
+            borderRadius === "pill" && "rounded-[2rem]",
             isEditing && "ring-2 ring-primary ring-offset-2 ring-offset-background",
             isResizing && "select-none"
           )}
-          style={{ height: `${containerHeight}px`, transition: isResizing ? "none" : "height 0.15s ease" }}
+          style={{ height: `${containerHeight}px`, transition: isResizing ? "border-radius 0.2s ease" : "height 0.15s ease, border-radius 0.2s ease" }}
           onClick={() => {
             if (!isEditing) setIsEditing(true);
           }}
@@ -194,7 +241,7 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
             src={imageUrl}
             alt="Content"
             style={getImageStyle()}
-            className="rounded-lg pointer-events-none"
+            className="pointer-events-none"
           />
         </div>
 
