@@ -202,14 +202,16 @@ export function ImageBlock({ imageUrl, onChange }: ImageBlockProps) {
         {isEditing && (
           <div
             onMouseDown={handleResizeStart}
-            className="flex items-center justify-center mx-auto mt-1 w-16 h-5 cursor-ns-resize group/resize"
+            className="flex items-center justify-center mx-auto mt-2 w-24 h-7 cursor-ns-resize group/resize"
           >
             <div className={cn(
-              "flex items-center justify-center w-10 h-4 rounded-full transition-colors",
-              isResizing ? "bg-primary/20" : "bg-muted hover:bg-primary/15"
+              "flex items-center justify-center w-16 h-5 rounded-full border transition-all duration-200 shadow-sm",
+              isResizing
+                ? "bg-primary/20 border-primary/40 shadow-primary/10"
+                : "bg-background border-border hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
             )}>
               <GripHorizontal className={cn(
-                "w-4 h-3 transition-colors",
+                "w-5 h-4 transition-colors",
                 isResizing ? "text-primary" : "text-muted-foreground group-hover/resize:text-primary"
               )} />
             </div>
