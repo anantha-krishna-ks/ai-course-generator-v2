@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, Type, Image } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -27,11 +27,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -39,6 +34,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
+import { AddContentButton } from "./AddContentButton";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -97,15 +93,22 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     setOverId(null);
   }, []);
 
-  const addTextBlock = () => {
+  const addTextBlock = useCallback((insertAt?: number) => {
     const defaultContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
     const newBlock: ContentBlockData = {
       id: `block-${Date.now()}`,
       type: "text",
       content: defaultContent,
     };
-    setContentBlocks((prev) => [...prev, newBlock]);
-  };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
 
   const updateBlockContent = (id: string, content: string) => {
     setContentBlocks((prev) =>
@@ -296,47 +299,58 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   items={contentBlocks.map((b) => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="mt-6 space-y-4">
+                  <div className="mt-6">
                     {contentBlocks.map((block, index) => {
                       const isOver = overId === block.id && activeId !== block.id;
-                      const activeIndex = contentBlocks.findIndex((b) => b.id === activeId);
-                      const currentIndex = index;
-                      const showAbove = isOver && activeIndex > currentIndex;
-                      const showBelow = isOver && activeIndex < currentIndex;
+                      const activeIdx = contentBlocks.findIndex((b) => b.id === activeId);
+                      const showAbove = isOver && activeIdx > index;
+                      const showBelow = isOver && activeIdx < index;
 
                       return (
-                        <div key={block.id} className="relative">
-                          {/* Drop indicator above */}
-                          <div
-                            className={cn(
-                              "absolute -top-2.5 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
-                              showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-                            )}
-                          >
-                            <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                            <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                        <div key={block.id}>
+                          {/* Add content button before first block */}
+                          {index === 0 && !activeId && (
+                            <AddContentButton onAddText={() => addTextBlock(0)} />
+                          )}
+
+                          <div className="relative">
+                            {/* Drop indicator above */}
+                            <div
+                              className={cn(
+                                "absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
+                                showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                              )}
+                            >
+                              <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                              <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                            </div>
+
+                            <ContentBlock
+                              id={block.id}
+                              type={block.type}
+                              content={block.content}
+                              onChange={(content) => updateBlockContent(block.id, content)}
+                              onDelete={() => deleteBlock(block.id)}
+                              onDuplicate={() => duplicateBlock(block.id)}
+                              autoFocus={!block.content}
+                            />
+
+                            {/* Drop indicator below */}
+                            <div
+                              className={cn(
+                                "absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
+                                showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                              )}
+                            >
+                              <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                              <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                            </div>
                           </div>
 
-                          <ContentBlock
-                            id={block.id}
-                            type={block.type}
-                            content={block.content}
-                            onChange={(content) => updateBlockContent(block.id, content)}
-                            onDelete={() => deleteBlock(block.id)}
-                            onDuplicate={() => duplicateBlock(block.id)}
-                            autoFocus={!block.content}
-                          />
-
-                          {/* Drop indicator below */}
-                          <div
-                            className={cn(
-                              "absolute -bottom-2.5 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
-                              showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-                            )}
-                          >
-                            <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                            <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                          </div>
+                          {/* Add content button after each block */}
+                          {!activeId && (
+                            <AddContentButton onAddText={() => addTextBlock(index + 1)} />
+                          )}
                         </div>
                       );
                     })}
@@ -359,43 +373,12 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 </DragOverlay>
               </DndContext>
 
-                {/* Add content button */}
-                <div className="group flex items-center justify-center mt-3">
-                  <div className="flex-1 h-px bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                  <Popover>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <PopoverTrigger asChild>
-                          <button className="mx-3 w-7 h-7 rounded-full border border-foreground/30 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200">
-                            <Plus className="w-3.5 h-3.5 text-foreground/50" />
-                          </button>
-                        </PopoverTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="text-xs">
-                        Add content
-                      </TooltipContent>
-                    </Tooltip>
-                    <PopoverContent
-                      side="top"
-                      sideOffset={8}
-                      className="w-auto p-1.5 flex items-center gap-0.5 rounded-lg border border-border bg-background shadow-lg animate-fade-in"
-                    >
-                      <button
-                        onClick={addTextBlock}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
-                      >
-                        <Type className="w-4 h-4" />
-                      </button>
-                      <div className="w-px h-5 bg-border" />
-                      <button
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
-                      >
-                        <Image className="w-4 h-4" />
-                      </button>
-                    </PopoverContent>
-                  </Popover>
-                  <div className="flex-1 h-px bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+              {/* Add content button when no blocks exist */}
+              {contentBlocks.length === 0 && (
+                <div className="mt-6">
+                  <AddContentButton onAddText={() => addTextBlock()} />
                 </div>
+              )}
             </div>
           </ScrollArea>
         </div>
