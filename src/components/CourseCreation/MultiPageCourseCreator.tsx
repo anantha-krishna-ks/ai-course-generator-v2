@@ -1,6 +1,21 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus, Type, Image } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -44,6 +59,22 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   const [title, setTitle] = useState(courseTitle);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([]);
   const [items, setItems] = useState<CourseItem[]>([]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setContentBlocks((prev) => {
+        const oldIndex = prev.findIndex((b) => b.id === active.id);
+        const newIndex = prev.findIndex((b) => b.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  }, []);
 
   const addTextBlock = () => {
     const defaultContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
@@ -232,19 +263,31 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               </div>
 
               {/* Content Blocks */}
-              <div className="mt-6 space-y-4">
-                {contentBlocks.map((block) => (
-                  <ContentBlock
-                    key={block.id}
-                    id={block.id}
-                    type={block.type}
-                    content={block.content}
-                    onChange={(content) => updateBlockContent(block.id, content)}
-                    onDelete={() => deleteBlock(block.id)}
-                    onDuplicate={() => duplicateBlock(block.id)}
-                    autoFocus={!block.content}
-                  />
-                ))}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={contentBlocks.map((b) => b.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="mt-6 space-y-4">
+                    {contentBlocks.map((block) => (
+                      <ContentBlock
+                        key={block.id}
+                        id={block.id}
+                        type={block.type}
+                        content={block.content}
+                        onChange={(content) => updateBlockContent(block.id, content)}
+                        onDelete={() => deleteBlock(block.id)}
+                        onDuplicate={() => duplicateBlock(block.id)}
+                        autoFocus={!block.content}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
 
                 {/* Add content button */}
                 <div className="group flex items-center justify-center mt-3">
@@ -283,7 +326,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   </Popover>
                   <div className="flex-1 h-px bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                 </div>
-              </div>
             </div>
           </ScrollArea>
         </div>
