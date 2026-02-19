@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronUp, ChevronDown, MoreHorizontal, Plus, Image as ImageIcon } from "lucide-react";
+import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +21,7 @@ interface SectionCardProps {
 }
 
 const MAX_TITLE_LENGTH = 255;
+const MAX_OBJECTIVE_LENGTH = 255;
 
 export function SectionCard({
   sectionNumber,
@@ -33,6 +34,8 @@ export function SectionCard({
   onAddLearningObjective,
 }: SectionCardProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showObjective, setShowObjective] = useState(false);
+  const [objectiveText, setObjectiveText] = useState("");
 
   return (
     <div className="space-y-0">
@@ -114,11 +117,14 @@ export function SectionCard({
                   {/* Actions row */}
                   <div className="flex items-center justify-between mt-3">
                     <button
-                      onClick={onAddLearningObjective}
+                      onClick={() => setShowObjective(!showObjective)}
                       className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add learning objective
+                      <ChevronUp className={cn(
+                        "w-3.5 h-3.5 transition-transform duration-200",
+                        !showObjective && "rotate-180"
+                      )} />
+                      {showObjective ? "Hide learning objective" : "Add learning objective"}
                     </button>
                     <Button
                       variant="outline"
@@ -128,6 +134,52 @@ export function SectionCard({
                     >
                       Open section
                     </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Learning Objective Panel */}
+            <div
+              className={cn(
+                "grid transition-all duration-300 ease-in-out",
+                showObjective ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="mx-5 mb-5 rounded-lg border border-border bg-card p-5">
+                  {/* Objective header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-semibold text-foreground">Learning objective</span>
+                      <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/60" />
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs border-border gap-1.5 h-8"
+                    >
+                      <Settings2 className="w-3.5 h-3.5" />
+                      Objective maker
+                    </Button>
+                  </div>
+
+                  {/* Objective input */}
+                  <input
+                    type="text"
+                    value={objectiveText}
+                    onChange={(e) => {
+                      if (e.target.value.length <= MAX_OBJECTIVE_LENGTH) {
+                        setObjectiveText(e.target.value);
+                      }
+                    }}
+                    className="w-full text-sm text-foreground bg-transparent border-b-[1.5px] border-primary/40 focus:border-primary outline-none pb-2 placeholder:text-muted-foreground/50 transition-colors"
+                    placeholder="Enter learning objective for this section..."
+                  />
+                  <div className="flex justify-end mt-1.5">
+                    <span className="text-xs text-muted-foreground">
+                      {objectiveText.length}/{MAX_OBJECTIVE_LENGTH}
+                    </span>
                   </div>
                 </div>
               </div>
