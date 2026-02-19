@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { X, Image as ImageIcon, Minus, Plus, Crop, Monitor, ChevronDown } from "lucide-react";
+import { X, Minus, Plus, Image, Maximize, RectangleHorizontal, ChevronDown, FlipHorizontal, FlipVertical, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -138,9 +138,9 @@ export function SectionImageDialog({
             {/* Zoom controls */}
             <button
               onClick={() => setZoom((z) => Math.max(10, z - 10))}
-              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
-              <Minus className="w-4 h-4 text-muted-foreground" />
+              <Minus className="w-3.5 h-3.5" />
             </button>
             <Slider
               value={[zoom]}
@@ -148,63 +148,93 @@ export function SectionImageDialog({
               min={10}
               max={200}
               step={5}
-              className="w-28"
+              className="w-24"
             />
             <button
               onClick={() => setZoom((z) => Math.min(200, z + 10))}
-              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
-              <Plus className="w-4 h-4 text-muted-foreground" />
+              <Plus className="w-3.5 h-3.5" />
             </button>
 
             <div className="w-px h-5 bg-border mx-1" />
 
-            {/* Flip H */}
+            {/* Replace image */}
             <button
-              onClick={() => setFlipH(!flipH)}
-              className={cn(
-                "p-1.5 rounded-md hover:bg-muted transition-colors",
-                flipH && "bg-muted"
-              )}
-              title="Flip horizontal"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              title="Replace image"
             >
-              <ImageIcon className="w-4 h-4 text-muted-foreground" />
+              <Image className="w-4 h-4" />
             </button>
+
+            <div className="w-px h-5 bg-border mx-1" />
 
             {/* Fit mode dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 p-1.5 rounded-md hover:bg-muted transition-colors">
-                  <Monitor className="w-4 h-4 text-muted-foreground" />
-                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                <button className="flex items-center gap-1 px-2 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                  {fitMode === "contain" && <Maximize className="w-3.5 h-3.5" />}
+                  {fitMode === "cover" && <RectangleHorizontal className="w-3.5 h-3.5" />}
+                  {fitMode === "fill" && <RectangleHorizontal className="w-3.5 h-3.5" />}
+                  <ChevronDown className="w-3 h-3" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="bg-background border border-border">
-                {FIT_OPTIONS.map((opt) => (
-                  <DropdownMenuItem
-                    key={opt.value}
-                    onClick={() => setFitMode(opt.value)}
-                    className={cn(
-                      "cursor-pointer",
-                      fitMode === opt.value && "font-medium"
-                    )}
-                  >
-                    {opt.label}
-                  </DropdownMenuItem>
-                ))}
+              <DropdownMenuContent align="center" className="bg-background border border-border min-w-[100px]">
+                <DropdownMenuItem onClick={() => setFitMode("contain")} className={cn("cursor-pointer", fitMode === "contain" && "bg-primary/10")}>
+                  <Maximize className="w-3.5 h-3.5 mr-2" /> Fit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFitMode("cover")} className={cn("cursor-pointer", fitMode === "cover" && "bg-primary/10")}>
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Fill
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFitMode("fill")} className={cn("cursor-pointer", fitMode === "fill" && "bg-primary/10")}>
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Stretch
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Flip & Rotate */}
+            <div className="flex items-center gap-0.5">
+              <button
+                onClick={() => setFlipH(!flipH)}
+                className={cn(
+                  "p-1.5 rounded-md transition-colors",
+                  flipH ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+                title="Flip horizontal"
+              >
+                <FlipHorizontal className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setFlipV(!flipV)}
+                className={cn(
+                  "p-1.5 rounded-md transition-colors",
+                  flipV ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+                title="Flip vertical"
+              >
+                <FlipVertical className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setRotation((r) => (r + 90) % 360)}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Rotate 90°"
+              >
+                <RotateCw className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
             <div className="flex-1" />
 
             {/* Done button */}
-            <Button
-              size="sm"
+            <button
               onClick={handleDone}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Done
-            </Button>
+            </button>
           </div>
         )}
 
@@ -261,7 +291,7 @@ export function SectionImageDialog({
               onClick={() => setRotation((r) => (r + 90) % 360)}
               className="gap-1.5 border-border"
             >
-              <Crop className="w-4 h-4" />
+              <RotateCw className="w-4 h-4" />
               Rotate 90°
             </Button>
           )}
