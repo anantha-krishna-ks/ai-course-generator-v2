@@ -37,6 +37,7 @@ export function SectionCard({
   const [showObjective, setShowObjective] = useState(false);
   const [objectiveText, setObjectiveText] = useState("");
   const [isTitleFocused, setIsTitleFocused] = useState(false);
+  const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
 
   return (
     <div className="space-y-0">
@@ -177,15 +178,23 @@ export function SectionCard({
                   <input
                     type="text"
                     value={objectiveText}
+                    onFocus={() => setIsObjectiveFocused(true)}
+                    onBlur={() => setIsObjectiveFocused(false)}
                     onChange={(e) => {
                       if (e.target.value.length <= MAX_OBJECTIVE_LENGTH) {
                         setObjectiveText(e.target.value);
                       }
                     }}
-                    className="w-full text-sm text-foreground bg-transparent border-b-[1.5px] border-primary/40 focus:border-primary outline-none pb-2 placeholder:text-muted-foreground/50 transition-colors"
+                    className={cn(
+                      "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-2 placeholder:text-muted-foreground/50 transition-all duration-200",
+                      isObjectiveFocused ? "border-primary/40" : "border-transparent"
+                    )}
                     placeholder="Enter learning objective for this section..."
                   />
-                  <div className="flex justify-end mt-1.5">
+                  <div className={cn(
+                    "flex justify-end mt-1.5 transition-opacity duration-200",
+                    isObjectiveFocused ? "opacity-100" : "opacity-0"
+                  )}>
                     <span className="text-xs text-muted-foreground">
                       {objectiveText.length}/{MAX_OBJECTIVE_LENGTH}
                     </span>
