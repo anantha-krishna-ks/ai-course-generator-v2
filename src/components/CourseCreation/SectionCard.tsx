@@ -93,8 +93,12 @@ export function SectionCard({
             <div className="px-5 pb-5">
               <div className="flex gap-4">
                 {/* Thumbnail placeholder */}
-                <div className="w-[120px] h-[90px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0">
-                  <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                <div className="w-[120px] h-[110px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 group/thumb cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-all duration-200 relative overflow-hidden">
+                  <ImageIcon className="w-6 h-6 text-muted-foreground/40 group-hover/thumb:opacity-0 transition-opacity duration-200" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200">
+                    <ImageIcon className="w-5 h-5 text-primary/60 mb-1" />
+                    <span className="text-[10px] font-medium text-primary/60">Change image</span>
+                  </div>
                 </div>
 
                 {/* Title and actions */}
