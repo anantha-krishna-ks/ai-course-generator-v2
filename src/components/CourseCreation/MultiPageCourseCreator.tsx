@@ -371,7 +371,13 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 onClick={() => {
                   if (!isDescriptionActive) {
                     setIsDescriptionActive(true);
-                    setTimeout(() => descriptionRef.current?.focus(), 0);
+                    setTimeout(() => {
+                      if (descriptionRef.current) {
+                        descriptionRef.current.style.height = "auto";
+                        descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";
+                        descriptionRef.current.focus();
+                      }
+                    }, 0);
                   }
                 }}
               >
