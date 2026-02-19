@@ -363,10 +363,10 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               {/* Description Field */}
               <div 
                 className={cn(
-                  "rounded-lg border px-5 py-4 transition-colors cursor-text",
+                  "rounded-lg border px-5 pt-4 transition-colors cursor-text",
                   isDescriptionActive 
-                    ? "border-foreground/20 bg-primary/[0.04]" 
-                    : "border-transparent"
+                    ? "border-foreground/20 bg-primary/[0.04] pb-4" 
+                    : "border-transparent pb-0"
                 )}
                 onClick={() => {
                   setIsDescriptionActive(true);
@@ -383,7 +383,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                       e.target.style.height = e.target.scrollHeight + "px";
                     }}
                     onBlur={() => {
-                      if (!description.trim()) setIsDescriptionActive(false);
+                      setIsDescriptionActive(false);
                     }}
                     placeholder="Tell your learners what the course will be about..."
                     className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px]"
