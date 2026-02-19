@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, Copy, Trash2 } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -363,7 +363,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               {/* Description Field */}
               <div 
                 className={cn(
-                  "rounded-lg border px-5 pt-4 transition-colors cursor-text",
+                  "group/desc relative rounded-lg border px-5 pt-4 transition-colors cursor-text",
                   isDescriptionActive 
                     ? "border-foreground/20 bg-primary/[0.04] pb-4" 
                     : "border-transparent pb-0"
@@ -381,6 +381,39 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   }
                 }}
               >
+                {/* Sidebar actions */}
+                <div className="absolute -left-11 top-1 flex flex-col items-center gap-0.5 opacity-0 group-hover/desc:opacity-100 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(description);
+                        }}
+                        className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="text-xs">Copy</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDescription("");
+                          setIsDescriptionActive(false);
+                        }}
+                        className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="text-xs">Clear</TooltipContent>
+                  </Tooltip>
+                </div>
+
                 {description.trim() && !isDescriptionActive ? (
                   <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
                     {description}
