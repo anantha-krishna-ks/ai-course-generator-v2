@@ -113,7 +113,7 @@ export function SectionImageDialog({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="relative bg-card rounded-xl border border-border shadow-xl w-full max-w-md mx-4">
+      <div className="relative bg-card rounded-xl border border-border shadow-xl w-full max-w-xl mx-4">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -148,7 +148,7 @@ export function SectionImageDialog({
               min={10}
               max={200}
               step={5}
-              className="w-24"
+              className="w-32"
             />
             <button
               onClick={() => setZoom((z) => Math.min(200, z + 10))}
@@ -241,7 +241,7 @@ export function SectionImageDialog({
         {/* Preview + Info */}
         <div className="flex gap-6 p-6">
           {/* Preview area */}
-          <div className="w-[140px] h-[160px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-[180px] h-[200px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 overflow-hidden">
             {previewUrl ? (
               <img
                 src={previewUrl}
