@@ -123,20 +123,20 @@ export function SectionCard({
                   Open section
                 </Button>
               </div>
-
-              {/* Add page inside card */}
-              <div className="mt-4 pt-3 border-t border-dashed border-border">
-                <button
-                  onClick={onAddPage}
-                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  Add page
-                </button>
-              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Add page button below card */}
+      <div className="pl-4 pt-3 pb-2">
+        <button
+          onClick={onAddPage}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Add page
+        </button>
       </div>
 
       {/* Dashed divider */}
