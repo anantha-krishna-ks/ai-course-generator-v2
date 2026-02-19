@@ -98,7 +98,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
           <>
             <DialogHeader className="space-y-2 pb-2">
               <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-foreground text-left">
-                Create your course from scratch
+                Build your course entirely from the ground up
               </DialogTitle>
               <p className="text-muted-foreground/80 text-xs sm:text-sm md:text-base text-left leading-relaxed">
                 Enter a title and pick a layout that best suits your course requirements. You can switch layouts later if you change your mind
