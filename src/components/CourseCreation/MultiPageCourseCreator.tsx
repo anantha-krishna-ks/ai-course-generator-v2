@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, Copy, Trash2, GripVertical } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2 } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -34,6 +34,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
+import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 
 interface MultiPageCourseCreatorProps {
@@ -49,7 +50,7 @@ interface CourseItem {
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image";
+  type: "text" | "image" | "description";
   content: string;
 }
 
@@ -61,10 +62,9 @@ interface DeletedBlock {
 export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const [title, setTitle] = useState(courseTitle);
-  const [description, setDescription] = useState("");
-  const [isDescriptionActive, setIsDescriptionActive] = useState(false);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
+    { id: "description-block", type: "description", content: "" },
+  ]);
   const [items, setItems] = useState<CourseItem[]>([]);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -143,6 +143,14 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
   };
 
   const deleteBlock = (id: string) => {
+    // Description block can't be removed, only cleared
+    if (id === "description-block") {
+      setContentBlocks((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, content: "" } : b))
+      );
+      return;
+    }
+
     const idx = contentBlocks.findIndex((b) => b.id === id);
     if (idx === -1) return;
     const block = contentBlocks[idx];
@@ -360,97 +368,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <div className="h-1 bg-primary/30 rounded-full w-full" />
               </div>
 
-              {/* Description Field */}
-              <div 
-                className={cn(
-                  "group/desc relative rounded-lg border px-5 pt-4 transition-colors cursor-text",
-                  isDescriptionActive 
-                    ? "border-foreground/20 bg-primary/[0.04] pb-4" 
-                    : "border-transparent pb-0"
-                )}
-                onClick={() => {
-                  if (!isDescriptionActive) {
-                    setIsDescriptionActive(true);
-                    setTimeout(() => {
-                      if (descriptionRef.current) {
-                        descriptionRef.current.style.height = "auto";
-                        descriptionRef.current.style.height = descriptionRef.current.scrollHeight + "px";
-                        descriptionRef.current.focus();
-                      }
-                    }, 0);
-                  }
-                }}
-              >
-                {/* Sidebar actions */}
-                <div className="absolute -left-11 top-1 flex flex-col items-center gap-0.5 opacity-0 group-hover/desc:opacity-100 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-grab active:cursor-grabbing"
-                      >
-                        <GripVertical className="w-4 h-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="left" className="text-xs">Reposition</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigator.clipboard.writeText(description);
-                        }}
-                        className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="left" className="text-xs">Duplicate</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDescription("");
-                          setIsDescriptionActive(false);
-                        }}
-                        className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="left" className="text-xs">Delete</TooltipContent>
-                  </Tooltip>
-                </div>
-
-                {description.trim() && !isDescriptionActive ? (
-                  <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
-                    {description}
-                  </p>
-                ) : isDescriptionActive ? (
-                  <textarea
-                    ref={descriptionRef}
-                    value={description}
-                    onChange={(e) => {
-                      setDescription(e.target.value);
-                      e.target.style.height = "auto";
-                      e.target.style.height = e.target.scrollHeight + "px";
-                    }}
-                    onBlur={() => {
-                      setIsDescriptionActive(false);
-                    }}
-                    placeholder="Tell your learners what the course will be about..."
-                    className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px]"
-                    rows={1}
-                  />
-                ) : (
-                  <p className="text-base text-muted-foreground/60 select-none">
-                    <span className="mr-1.5">+</span>
-                    Tell your learners what the course will be about...
-                  </p>
-                )}
-              </div>
 
               {/* Content Blocks */}
               <DndContext
@@ -535,15 +452,25 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                                   <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
                                 </div>
 
-                                <ContentBlock
-                                  id={block.id}
-                                  type={block.type}
-                                  content={block.content}
-                                  onChange={(content) => updateBlockContent(block.id, content)}
-                                  onDelete={() => deleteBlock(block.id)}
-                                  onDuplicate={() => duplicateBlock(block.id)}
-                                  autoFocus={!block.content}
-                                />
+                                {block.type === "description" ? (
+                                  <DescriptionBlock
+                                    id={block.id}
+                                    content={block.content}
+                                    onChange={(content) => updateBlockContent(block.id, content)}
+                                    onClear={() => deleteBlock(block.id)}
+                                    onDuplicate={() => duplicateBlock(block.id)}
+                                  />
+                                ) : (
+                                  <ContentBlock
+                                    id={block.id}
+                                    type={block.type as "text" | "image"}
+                                    content={block.content}
+                                    onChange={(content) => updateBlockContent(block.id, content)}
+                                    onDelete={() => deleteBlock(block.id)}
+                                    onDuplicate={() => duplicateBlock(block.id)}
+                                    autoFocus={!block.content}
+                                  />
+                                )}
 
                                 <div
                                   className={cn(
@@ -576,21 +503,25 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   duration: 200,
                   easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
                 }}>
-                  {activeId ? (
-                    <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
-                      <div
-                        className="prose prose-sm dark:prose-invert max-w-none text-foreground/60 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
-                        dangerouslySetInnerHTML={{
-                          __html: contentBlocks.find((b) => b.id === activeId)?.content || "",
-                        }}
-                      />
-                    </div>
-                  ) : null}
+                  {activeId ? (() => {
+                    const activeBlock = contentBlocks.find((b) => b.id === activeId);
+                    const displayContent = activeBlock?.type === "description"
+                      ? (activeBlock.content || "Tell your learners what the course will be about...")
+                      : (activeBlock?.content || "");
+                    return (
+                      <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
+                        <div
+                          className="prose prose-sm dark:prose-invert max-w-none text-foreground/60 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                          dangerouslySetInnerHTML={{ __html: displayContent }}
+                        />
+                      </div>
+                    );
+                  })() : null}
                 </DragOverlay>
               </DndContext>
 
               {/* Add content button when no blocks exist */}
-              {contentBlocks.length === 0 && (
+              {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
                   <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} />
                 </div>
