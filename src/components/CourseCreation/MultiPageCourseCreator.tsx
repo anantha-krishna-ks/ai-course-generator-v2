@@ -357,6 +357,19 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <div className="h-1 bg-primary/30 rounded-full w-full" />
               </div>
 
+              {/* Initial Description Placeholder */}
+              {contentBlocks.length === 0 && (
+                <div 
+                  className="group cursor-text rounded-lg border border-dashed border-foreground/15 bg-primary/[0.04] px-5 py-4 transition-colors hover:border-foreground/25 hover:bg-primary/[0.07]"
+                  onClick={() => addTextBlock()}
+                >
+                  <p className="text-base text-muted-foreground/70 select-none">
+                    <span className="mr-1.5">+</span>
+                    Tell your learners what the course will be about...
+                  </p>
+                </div>
+              )}
+
               {/* Content Blocks */}
               <DndContext
                 sensors={sensors}
