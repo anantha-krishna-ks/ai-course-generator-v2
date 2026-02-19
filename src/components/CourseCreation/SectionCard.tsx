@@ -110,7 +110,7 @@ export function SectionCard({
                     }}
                     className={cn(
                       "w-full text-lg font-medium text-foreground bg-transparent outline-none pb-1 placeholder:text-muted-foreground/50 transition-all duration-200",
-                      isTitleFocused ? "border-b border-foreground" : "border-b border-transparent"
+                      isTitleFocused ? "border-b border-border-foreground/30" : "border-b border-transparent"
                     )}
                     placeholder="Untitled section"
                   />
