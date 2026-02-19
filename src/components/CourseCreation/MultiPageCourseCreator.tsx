@@ -553,7 +553,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <DropdownMenuContent align="start" className="w-72 bg-background border border-border p-2">
                   <DropdownMenuItem
                     onClick={() => handleAddItem("section")}
-                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted/60 focus:!bg-muted/60 focus:!text-foreground transition-colors"
+                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
                   >
                     <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
                       <LayoutGrid className="w-4 h-4 text-muted-foreground" />
@@ -565,7 +565,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleAddItem("page")}
-                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted/60 focus:!bg-muted/60 focus:!text-foreground transition-colors"
+                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
                   >
                     <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
                       <FileText className="w-4 h-4 text-muted-foreground" />
@@ -577,7 +577,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleAddItem("question")}
-                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted/60 focus:!bg-muted/60 focus:!text-foreground transition-colors"
+                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
                   >
                     <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
                       <HelpCircle className="w-4 h-4 text-muted-foreground" />
