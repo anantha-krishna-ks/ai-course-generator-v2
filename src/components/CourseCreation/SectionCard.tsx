@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2 } from "lucide-react";
 import {
   DropdownMenu,
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SectionImageDialog } from "./SectionImageDialog";
 
 interface SectionCardProps {
   sectionNumber: number;
@@ -39,20 +40,7 @@ export function SectionCard({
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleThumbnailClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      const url = URL.createObjectURL(file);
-      setThumbnailUrl(url);
-    }
-    e.target.value = "";
-  };
+  const [showImageDialog, setShowImageDialog] = useState(false);
 
   return (
     <div className="space-y-0">
@@ -108,15 +96,17 @@ export function SectionCard({
             <div className="px-5 pb-5">
               <div className="flex gap-4">
                 {/* Thumbnail */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileChange}
+                <SectionImageDialog
+                  open={showImageDialog}
+                  onClose={() => setShowImageDialog(false)}
+                  currentImage={thumbnailUrl}
+                  onImageChange={(url) => {
+                    setThumbnailUrl(url);
+                    setShowImageDialog(false);
+                  }}
                 />
                 <div
-                  onClick={handleThumbnailClick}
+                  onClick={() => setShowImageDialog(true)}
                   className="w-[120px] h-[110px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 group/thumb cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-all duration-200 relative overflow-hidden"
                 >
                   {thumbnailUrl ? (
