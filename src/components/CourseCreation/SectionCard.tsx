@@ -36,6 +36,7 @@ export function SectionCard({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showObjective, setShowObjective] = useState(false);
   const [objectiveText, setObjectiveText] = useState("");
+  const [isTitleFocused, setIsTitleFocused] = useState(false);
 
   return (
     <div className="space-y-0">
@@ -100,15 +101,23 @@ export function SectionCard({
                   <input
                     type="text"
                     value={title}
+                    onFocus={() => setIsTitleFocused(true)}
+                    onBlur={() => setIsTitleFocused(false)}
                     onChange={(e) => {
                       if (e.target.value.length <= MAX_TITLE_LENGTH) {
                         onTitleChange(e.target.value);
                       }
                     }}
-                    className="w-full text-lg font-medium text-foreground bg-transparent border-b border-border focus:border-foreground outline-none pb-1 placeholder:text-muted-foreground/50"
+                    className={cn(
+                      "w-full text-lg font-medium text-foreground bg-transparent outline-none pb-1 placeholder:text-muted-foreground/50 transition-all duration-200",
+                      isTitleFocused ? "border-b border-foreground" : "border-b border-transparent"
+                    )}
                     placeholder="Untitled section"
                   />
-                  <div className="flex justify-end mt-1">
+                  <div className={cn(
+                    "flex justify-end mt-1 transition-opacity duration-200",
+                    isTitleFocused ? "opacity-100" : "opacity-0"
+                  )}>
                     <span className="text-xs text-muted-foreground">
                       {title.length}/{MAX_TITLE_LENGTH}
                     </span>
