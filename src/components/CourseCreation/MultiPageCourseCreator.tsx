@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
+import { SectionCard } from "./SectionCard";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -221,9 +222,30 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     const newItem: CourseItem = {
       id: `${type}-${Date.now()}`,
       type,
-      title: type === "section" ? "New Section" : type === "page" ? "New Page" : "New Question",
+      title: type === "section" ? "Untitled section" : type === "page" ? "New Page" : "New Question",
     };
     setItems([...items, newItem]);
+  };
+
+  const updateItemTitle = (id: string, newTitle: string) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, title: newTitle } : item))
+    );
+  };
+
+  const deleteItem = (id: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const duplicateItem = (id: string) => {
+    setItems((prev) => {
+      const idx = prev.findIndex((item) => item.id === id);
+      if (idx === -1) return prev;
+      const clone = { ...prev[idx], id: `${prev[idx].type}-${Date.now()}` };
+      const next = [...prev];
+      next.splice(idx + 1, 0, clone);
+      return next;
+    });
   };
 
   return (
@@ -533,91 +555,89 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
         {/* Right Panel - Course Outline */}
         <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto">
             <div className="p-6 sm:p-10">
-              {/* Instructions */}
-              <p className="text-muted-foreground mb-6">
-                Add sections, pages, and questions to build your course outline
-              </p>
+              {/* Header row: Course outline + Add item */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-medium text-foreground">Course outline:</h2>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="text-muted-foreground hover:text-foreground transition-colors">
+                        <HelpCircle className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs max-w-[200px]">
+                      Add sections, pages, and questions to build your course outline
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
 
-              {/* Add Item Button */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-border hover:border-primary/50"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add item
-                    <ChevronDown className="w-3 h-3 ml-1" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-72 bg-background border border-border p-2">
-                  <DropdownMenuItem
-                    onClick={() => handleAddItem("section")}
-                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
-                  >
-                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                      <LayoutGrid className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-semibold text-foreground">New section</span>
-                      <span className="text-xs text-muted-foreground">Introduce a topic or concept</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleAddItem("page")}
-                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
-                  >
-                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                      <FileText className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-semibold text-foreground">New page</span>
-                      <span className="text-xs text-muted-foreground">Single learning unit to explain topics</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleAddItem("question")}
-                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
-                  >
-                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                      <HelpCircle className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-semibold text-foreground">New question</span>
-                      <span className="text-xs text-muted-foreground">Test knowledge with a quiz question</span>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Course Items */}
-              {items.length > 0 && (
-                <div className="mt-6 space-y-3">
-                  {items.map((item) => (
-                    <div
-                      key={item.id}
-                      className={cn(
-                        "p-4 rounded-lg border border-border bg-card hover:border-primary/30 transition-colors cursor-pointer",
-                        item.type === "section" && "border-l-4 border-l-primary"
-                      )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-border hover:border-primary/50 rounded-full"
                     >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            "w-2 h-2 rounded-full",
-                            item.type === "section" && "bg-primary",
-                            item.type === "page" && "bg-muted-foreground",
-                            item.type === "question" && "bg-primary/50"
-                          )}
-                        />
-                        <span className="text-sm font-medium text-foreground">
-                          {item.title}
-                        </span>
-                        <span className="text-xs text-muted-foreground capitalize ml-auto">
-                          {item.type}
-                        </span>
+                      <Plus className="w-4 h-4" />
+                      Add item
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-72 bg-background border border-border p-2">
+                    <DropdownMenuItem
+                      onClick={() => handleAddItem("section")}
+                      className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
+                    >
+                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                        <LayoutGrid className="w-4 h-4 text-muted-foreground" />
                       </div>
-                    </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-semibold text-foreground">New section</span>
+                        <span className="text-xs text-muted-foreground">Introduce a topic or concept</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleAddItem("page")}
+                      className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
+                    >
+                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-semibold text-foreground">New page</span>
+                        <span className="text-xs text-muted-foreground">Single learning unit to explain topics</span>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleAddItem("question")}
+                      className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
+                    >
+                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                        <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-semibold text-foreground">New question</span>
+                        <span className="text-xs text-muted-foreground">Test knowledge with a quiz question</span>
+                      </div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Section Cards */}
+              {items.length > 0 && (
+                <div className="space-y-6">
+                  {items.filter((item) => item.type === "section").map((item, index) => (
+                    <SectionCard
+                      key={item.id}
+                      sectionNumber={index + 1}
+                      title={item.title}
+                      onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                      onDelete={() => deleteItem(item.id)}
+                      onDuplicate={() => duplicateItem(item.id)}
+                      onOpenSection={() => {}}
+                      onAddPage={() => handleAddItem("page")}
+                      onAddLearningObjective={() => {}}
+                    />
                   ))}
                 </div>
               )}
