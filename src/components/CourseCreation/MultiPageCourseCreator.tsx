@@ -369,11 +369,17 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                     : "border-transparent pb-0"
                 )}
                 onClick={() => {
-                  setIsDescriptionActive(true);
-                  setTimeout(() => descriptionRef.current?.focus(), 0);
+                  if (!isDescriptionActive) {
+                    setIsDescriptionActive(true);
+                    setTimeout(() => descriptionRef.current?.focus(), 0);
+                  }
                 }}
               >
-                {isDescriptionActive ? (
+                {description.trim() && !isDescriptionActive ? (
+                  <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
+                    {description}
+                  </p>
+                ) : isDescriptionActive ? (
                   <textarea
                     ref={descriptionRef}
                     value={description}
