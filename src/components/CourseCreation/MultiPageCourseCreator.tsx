@@ -435,7 +435,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
                           elements.push(
                             <div key={block.id} className="group/item">
-                              {index === 0 && !activeId && (
+                              {index === 0 && !activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
                                   <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} />
                                 </div>
@@ -483,7 +483,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                                 </div>
                               </div>
 
-                              {!activeId && (
+                              {!activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
                                   <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} />
                                 </div>
