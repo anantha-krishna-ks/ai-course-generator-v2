@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -550,27 +550,42 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                     <ChevronDown className="w-3 h-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48 bg-background border border-border">
+                <DropdownMenuContent align="start" className="w-72 bg-background border border-border p-2">
                   <DropdownMenuItem
                     onClick={() => handleAddItem("section")}
-                    className="cursor-pointer"
+                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md"
                   >
-                    <div className="w-3 h-3 rounded bg-primary/20 mr-2" />
-                    Section
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                      <LayoutGrid className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">New section</span>
+                      <span className="text-xs text-muted-foreground">Introduce a topic or concept</span>
+                    </div>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleAddItem("page")}
-                    className="cursor-pointer"
+                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md"
                   >
-                    <div className="w-3 h-3 rounded bg-muted-foreground/20 mr-2" />
-                    Page
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                      <FileText className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">New page</span>
+                      <span className="text-xs text-muted-foreground">Single learning unit to explain topics</span>
+                    </div>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => handleAddItem("question")}
-                    className="cursor-pointer"
+                    className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md"
                   >
-                    <div className="w-3 h-3 rounded bg-primary/10 mr-2" />
-                    Question
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
+                      <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">New question</span>
+                      <span className="text-xs text-muted-foreground">Test knowledge with a quiz question</span>
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
