@@ -533,10 +533,12 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
         {/* Right Panel - Course Outline */}
         <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto">
             <div className="p-6 sm:p-10">
-              {/* Instructions */}
-              <p className="text-muted-foreground mb-6">
-                Add sections, pages, and questions to build your course outline
-              </p>
+              {/* Course Outline Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base font-medium text-foreground">Course outline:</h2>
+                  <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                </div>
 
               {/* Add Item Button */}
               <DropdownMenu>
@@ -589,6 +591,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </div>
 
               {/* Course Items */}
               {items.length > 0 && (
