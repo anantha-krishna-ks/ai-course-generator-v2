@@ -360,10 +360,11 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               {/* Initial Description Placeholder */}
               {contentBlocks.length === 0 && (
                 <div 
-                  className="group cursor-text rounded-lg border border-dashed border-foreground/15 bg-primary/[0.04] px-5 py-4 transition-colors hover:border-foreground/25 hover:bg-primary/[0.07]"
+                  className="group cursor-text rounded-lg border border-transparent px-5 py-4 transition-colors focus-within:border-foreground/20 focus-within:bg-primary/[0.04]"
                   onClick={() => addTextBlock()}
+                  tabIndex={0}
                 >
-                  <p className="text-base text-muted-foreground/70 select-none">
+                  <p className="text-base text-muted-foreground/60 select-none">
                     <span className="mr-1.5">+</span>
                     Tell your learners what the course will be about...
                   </p>
