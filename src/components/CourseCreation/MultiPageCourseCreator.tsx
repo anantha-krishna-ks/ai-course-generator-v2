@@ -61,6 +61,9 @@ interface DeletedBlock {
 export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const [title, setTitle] = useState(courseTitle);
+  const [description, setDescription] = useState("");
+  const [isDescriptionActive, setIsDescriptionActive] = useState(false);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([]);
   const [items, setItems] = useState<CourseItem[]>([]);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
@@ -357,19 +360,42 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <div className="h-1 bg-primary/30 rounded-full w-full" />
               </div>
 
-              {/* Initial Description Placeholder */}
-              {contentBlocks.length === 0 && (
-                <div 
-                  className="group cursor-text rounded-lg border border-transparent px-5 py-4 transition-colors focus-within:border-foreground/20 focus-within:bg-primary/[0.04]"
-                  onClick={() => addTextBlock()}
-                  tabIndex={0}
-                >
+              {/* Description Field */}
+              <div 
+                className={cn(
+                  "rounded-lg border px-5 py-4 transition-colors cursor-text",
+                  isDescriptionActive 
+                    ? "border-foreground/20 bg-primary/[0.04]" 
+                    : "border-transparent"
+                )}
+                onClick={() => {
+                  setIsDescriptionActive(true);
+                  setTimeout(() => descriptionRef.current?.focus(), 0);
+                }}
+              >
+                {isDescriptionActive ? (
+                  <textarea
+                    ref={descriptionRef}
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      e.target.style.height = "auto";
+                      e.target.style.height = e.target.scrollHeight + "px";
+                    }}
+                    onBlur={() => {
+                      if (!description.trim()) setIsDescriptionActive(false);
+                    }}
+                    placeholder="Tell your learners what the course will be about..."
+                    className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px]"
+                    rows={1}
+                  />
+                ) : (
                   <p className="text-base text-muted-foreground/60 select-none">
                     <span className="mr-1.5">+</span>
                     Tell your learners what the course will be about...
                   </p>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Content Blocks */}
               <DndContext
