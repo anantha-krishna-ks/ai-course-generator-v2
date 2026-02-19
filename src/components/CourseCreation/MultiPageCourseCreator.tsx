@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, Copy, Trash2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, Copy, Trash2, GripVertical } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -386,6 +386,16 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
+                        className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-grab active:cursor-grabbing"
+                      >
+                        <GripVertical className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="text-xs">Reposition</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigator.clipboard.writeText(description);
@@ -395,7 +405,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                         <Copy className="w-4 h-4" />
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="left" className="text-xs">Copy</TooltipContent>
+                    <TooltipContent side="left" className="text-xs">Duplicate</TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -410,7 +420,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side="left" className="text-xs">Clear</TooltipContent>
+                    <TooltipContent side="left" className="text-xs">Delete</TooltipContent>
                   </Tooltip>
                 </div>
 
