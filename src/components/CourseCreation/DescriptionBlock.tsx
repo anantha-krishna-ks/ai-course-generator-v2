@@ -124,8 +124,8 @@ export function DescriptionBlock({
         className={cn(
           "rounded-lg border px-5 pt-4 transition-colors cursor-text",
           isActive
-            ? "border-foreground/20 bg-primary/[0.04] pb-4"
-            : "border-transparent pb-0"
+            ? "border-foreground/20 bg-primary/[0.04]"
+            : "border-transparent pb-4"
         )}
         onClick={() => {
           if (!isActive) setIsActive(true);
