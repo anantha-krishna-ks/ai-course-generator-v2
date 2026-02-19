@@ -1,6 +1,13 @@
-import { useRef, useState } from "react";
-import { X, Image as ImageIcon } from "lucide-react";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { X, Image as ImageIcon, Minus, Plus, Crop, Monitor, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 interface SectionImageDialogProps {
@@ -12,6 +19,14 @@ interface SectionImageDialogProps {
 
 const ACCEPTED_FORMATS = ".jpeg,.jpg,.png,.bmp,.gif";
 
+type FitMode = "cover" | "contain" | "fill";
+
+const FIT_OPTIONS: { label: string; value: FitMode }[] = [
+  { label: "Cover", value: "cover" },
+  { label: "Contain", value: "contain" },
+  { label: "Fill", value: "fill" },
+];
+
 export function SectionImageDialog({
   open,
   onClose,
@@ -19,7 +34,25 @@ export function SectionImageDialog({
   onImageChange,
 }: SectionImageDialogProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImage);
+  const [zoom, setZoom] = useState(100);
+  const [fitMode, setFitMode] = useState<FitMode>("cover");
+  const [flipH, setFlipH] = useState(false);
+  const [flipV, setFlipV] = useState(false);
+  const [rotation, setRotation] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Sync currentImage when dialog opens
+  useEffect(() => {
+    if (open) {
+      setPreviewUrl(currentImage);
+      setZoom(100);
+      setFitMode("cover");
+      setFlipH(false);
+      setFlipV(false);
+      setRotation(0);
+    }
+  }, [open, currentImage]);
 
   if (!open) return null;
 
@@ -28,47 +61,166 @@ export function SectionImageDialog({
     if (file && file.type.startsWith("image/")) {
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-      onImageChange(url);
+      setZoom(100);
+      setRotation(0);
+      setFlipH(false);
+      setFlipV(false);
     }
     e.target.value = "";
   };
 
+  const handleDone = () => {
+    if (previewUrl) {
+      // If transforms are applied, render to canvas and export
+      if (zoom !== 100 || rotation !== 0 || flipH || flipV) {
+        const img = new window.Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = canvasRef.current;
+          if (!canvas) return;
+          const size = Math.max(img.width, img.height);
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.save();
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate((rotation * Math.PI) / 180);
+          ctx.scale(
+            (flipH ? -1 : 1) * (zoom / 100),
+            (flipV ? -1 : 1) * (zoom / 100)
+          );
+          ctx.drawImage(img, -img.width / 2, -img.height / 2);
+          ctx.restore();
+          const dataUrl = canvas.toDataURL("image/png");
+          onImageChange(dataUrl);
+        };
+        img.src = previewUrl;
+      } else {
+        onImageChange(previewUrl);
+      }
+    }
+  };
+
+  const imageTransformStyle: React.CSSProperties = {
+    transform: `scale(${(zoom / 100) * (flipH ? -1 : 1)}, ${(zoom / 100) * (flipV ? -1 : 1)}) rotate(${rotation}deg)`,
+    transition: "transform 0.2s ease",
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <canvas ref={canvasRef} className="hidden" />
 
-      {/* Dialog */}
-      <div className="relative bg-card rounded-xl border border-border shadow-xl w-full max-w-md mx-4 p-6">
+      <div className="relative bg-card rounded-xl border border-border shadow-xl w-full max-w-md mx-4">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-md hover:bg-muted transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-md hover:bg-muted transition-colors z-10"
         >
           <X className="w-5 h-5 text-muted-foreground" />
         </button>
 
-        {/* Title */}
-        <h3 className="text-xl font-semibold text-foreground mb-1">
-          Change section image
-        </h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          Choose a relevant image or simply upload one that matches the topic of the section
-        </p>
+        {/* Title area */}
+        <div className="p-6 pb-0">
+          <h3 className="text-xl font-semibold text-foreground mb-1">
+            Change section image
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Choose a relevant image or simply upload one that matches the topic of the section
+          </p>
+        </div>
+
+        {/* Toolbar - shown when image is uploaded */}
+        {previewUrl && (
+          <div className="flex items-center gap-2 px-6 py-3 border-b border-border">
+            {/* Zoom controls */}
+            <button
+              onClick={() => setZoom((z) => Math.max(10, z - 10))}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+            >
+              <Minus className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <Slider
+              value={[zoom]}
+              onValueChange={([v]) => setZoom(v)}
+              min={10}
+              max={200}
+              step={5}
+              className="w-28"
+            />
+            <button
+              onClick={() => setZoom((z) => Math.min(200, z + 10))}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+            >
+              <Plus className="w-4 h-4 text-muted-foreground" />
+            </button>
+
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Flip H */}
+            <button
+              onClick={() => setFlipH(!flipH)}
+              className={cn(
+                "p-1.5 rounded-md hover:bg-muted transition-colors",
+                flipH && "bg-muted"
+              )}
+              title="Flip horizontal"
+            >
+              <ImageIcon className="w-4 h-4 text-muted-foreground" />
+            </button>
+
+            {/* Fit mode dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 p-1.5 rounded-md hover:bg-muted transition-colors">
+                  <Monitor className="w-4 h-4 text-muted-foreground" />
+                  <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="bg-background border border-border">
+                {FIT_OPTIONS.map((opt) => (
+                  <DropdownMenuItem
+                    key={opt.value}
+                    onClick={() => setFitMode(opt.value)}
+                    className={cn(
+                      "cursor-pointer",
+                      fitMode === opt.value && "font-medium"
+                    )}
+                  >
+                    {opt.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <div className="flex-1" />
+
+            {/* Done button */}
+            <Button
+              size="sm"
+              onClick={handleDone}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Done
+            </Button>
+          </div>
+        )}
 
         {/* Preview + Info */}
-        <div className="flex gap-6 mb-6">
+        <div className="flex gap-6 p-6">
           {/* Preview area */}
-          <div
-            className={cn(
-              "w-[140px] h-[140px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 overflow-hidden"
-            )}
-          >
+          <div className="w-[140px] h-[160px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 overflow-hidden">
             {previewUrl ? (
               <img
                 src={previewUrl}
                 alt="Section preview"
-                className="w-full h-full object-cover"
+                className={cn("w-full h-full")}
+                style={{
+                  objectFit: fitMode,
+                  ...imageTransformStyle,
+                }}
               />
             ) : (
               <span className="text-sm text-muted-foreground/50">No image yet</span>
@@ -88,8 +240,8 @@ export function SectionImageDialog({
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-3">
+        {/* Bottom actions */}
+        <div className="flex items-center gap-3 px-6 pb-6">
           <input
             ref={fileInputRef}
             type="file"
@@ -103,6 +255,16 @@ export function SectionImageDialog({
           >
             {previewUrl ? "Change image" : "Upload image"}
           </Button>
+          {previewUrl && (
+            <Button
+              variant="outline"
+              onClick={() => setRotation((r) => (r + 90) % 360)}
+              className="gap-1.5 border-border"
+            >
+              <Crop className="w-4 h-4" />
+              Rotate 90°
+            </Button>
+          )}
         </div>
       </div>
     </div>
