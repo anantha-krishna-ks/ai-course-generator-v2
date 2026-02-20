@@ -13,6 +13,7 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEn
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SectionImageDialog } from "./SectionImageDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface SectionCardProps {
   sectionNumber: number;
@@ -47,6 +48,7 @@ interface SortablePageRowProps {
 }
 
 function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete }: SortablePageRowProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -54,75 +56,117 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const pageDisplayTitle = page.title.trim() || "Untitled page";
+
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
-      <button
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-colors shrink-0 touch-none"
-      >
-        <GripVertical className="w-4 h-4 text-muted-foreground/50" />
-      </button>
-      <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
-      <div className="flex-1 min-w-0">
-        <input
-          ref={isLastPage ? newPageRef : undefined}
-          type="text"
-          value={page.title}
-          onFocus={() => setFocusedPageId(page.id)}
-          onBlur={() => setFocusedPageId(null)}
-          onChange={(e) => {
-            if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
-              setPages((prev) =>
-                prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
-              );
-            }
-          }}
-          className={cn(
-            "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-1.5 placeholder:text-muted-foreground/50 transition-all duration-200",
-            focusedPageId === page.id ? "border-primary/50" : "border-transparent"
-          )}
-          placeholder="Enter page title..."
-        />
+    <>
+      <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-colors shrink-0 touch-none"
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground/50" />
+        </button>
+        <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+        <div className="flex-1 min-w-0">
+          <input
+            ref={isLastPage ? newPageRef : undefined}
+            type="text"
+            value={page.title}
+            onFocus={() => setFocusedPageId(page.id)}
+            onBlur={() => setFocusedPageId(null)}
+            onChange={(e) => {
+              if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
+                setPages((prev) =>
+                  prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
+                );
+              }
+            }}
+            className={cn(
+              "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-1.5 placeholder:text-muted-foreground/50 transition-all duration-200",
+              focusedPageId === page.id ? "border-primary/50" : "border-transparent"
+            )}
+            placeholder="Enter page title..."
+          />
+        </div>
+        <span className={cn(
+          "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
+          focusedPageId === page.id ? "opacity-100" : "opacity-0"
+        )}>
+          {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-xs border-border h-8 shrink-0"
+        >
+          Open
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
+              <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+            <DropdownMenuItem
+              onClick={() => onDuplicate(page.id)}
+              className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+            >
+              <Copy className="w-4 h-4 text-muted-foreground" />
+              Duplicate
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setShowDeleteDialog(true)}
+              className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <span className={cn(
-        "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
-        focusedPageId === page.id ? "opacity-100" : "opacity-0"
-      )}>
-        {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
-      </span>
-      <Button
-        variant="outline"
-        size="sm"
-        className="text-xs border-border h-8 shrink-0"
-      >
-        Open
-      </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
-            <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
-          <DropdownMenuItem
-            onClick={() => onDuplicate(page.id)}
-            className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-          >
-            <Copy className="w-4 h-4 text-muted-foreground" />
-            Duplicate
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => onDelete(page.id)}
-            className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
-          >
-            <Trash2 className="w-4 h-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[480px] text-center">
+          <DialogHeader className="items-center">
+            <DialogTitle className="text-xl font-medium text-foreground">
+              Delete content "{pageDisplayTitle}"
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="my-4 rounded-lg bg-destructive/5 border border-destructive/10 px-5 py-4">
+            <p className="text-sm font-semibold text-foreground mb-2 text-left">Important information:</p>
+            <div className="flex items-center gap-2 text-left">
+              <span className="text-destructive font-bold">!</span>
+              <span className="text-sm text-muted-foreground">This action cannot be undone</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 pt-2">
+            <Button
+              variant="destructive"
+              className="w-fit px-10 bg-[hsl(0,80%,68%)] hover:bg-[hsl(0,80%,60%)] text-white"
+              onClick={() => {
+                onDelete(page.id);
+                setShowDeleteDialog(false);
+              }}
+            >
+              Delete content
+            </Button>
+            <button
+              onClick={() => setShowDeleteDialog(false)}
+              className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
