@@ -61,11 +61,11 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
 
   return (
     <>
-      <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+      <div ref={setNodeRef} style={style} className="group/row flex items-center gap-2">
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-colors shrink-0 touch-none"
+          className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/row:opacity-100"
         >
           <GripVertical className="w-4 h-4 text-muted-foreground/50" />
         </button>
@@ -451,18 +451,22 @@ export function SectionCard({
               >
                 <SortableContext items={pages.map(p => p.id)} strategy={verticalListSortingStrategy}>
                   {pages.map((page, idx) => (
-                    <SortablePageRow
-                      key={page.id}
-                      page={page}
-                      idx={idx}
-                      isLastPage={idx === pages.length - 1}
-                      newPageRef={newPageRef}
-                      focusedPageId={focusedPageId}
-                      setFocusedPageId={setFocusedPageId}
-                      setPages={setPages}
-                      onDuplicate={handleDuplicatePage}
-                      onDelete={handleDeletePage}
-                    />
+                    <div key={page.id}>
+                      {idx > 0 && (
+                        <div className="mx-1 my-1.5 border-t border-border/40" />
+                      )}
+                      <SortablePageRow
+                        page={page}
+                        idx={idx}
+                        isLastPage={idx === pages.length - 1}
+                        newPageRef={newPageRef}
+                        focusedPageId={focusedPageId}
+                        setFocusedPageId={setFocusedPageId}
+                        setPages={setPages}
+                        onDuplicate={handleDuplicatePage}
+                        onDelete={handleDeletePage}
+                      />
+                    </div>
                   ))}
                 </SortableContext>
               </DndContext>
