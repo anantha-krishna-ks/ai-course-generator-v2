@@ -52,7 +52,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
           <div
             className={cn(
               "border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300",
-              sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[300px]"
+              sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[380px]"
             )}
           >
             {/* Tabs */}
