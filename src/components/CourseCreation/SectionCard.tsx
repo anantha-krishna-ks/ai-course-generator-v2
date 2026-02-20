@@ -85,7 +85,7 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
               }
             }}
             className={cn(
-              "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-1.5 placeholder:text-muted-foreground/50 transition-all duration-200",
+              "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none placeholder:text-muted-foreground/50 transition-all duration-200",
               focusedPageId === page.id ? "border-primary/50" : "border-transparent"
             )}
             placeholder="Enter page title..."
