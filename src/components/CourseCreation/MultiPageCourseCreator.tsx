@@ -263,10 +263,23 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               <ArrowLeft className="w-5 h-5 text-muted-foreground" />
             </button>
 
-            <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-3 min-w-0">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-base font-semibold text-foreground truncate max-w-[180px] sm:max-w-[250px] lg:max-w-[350px] cursor-default">
+                    {title.length > 40 ? `${title.slice(0, 40)}...` : title}
+                  </span>
+                </TooltipTrigger>
+                {title.length > 40 && (
+                  <TooltipContent side="bottom" className="max-w-[300px] text-sm">
+                    {title}
+                  </TooltipContent>
+                )}
+              </Tooltip>
+              <span className="text-muted-foreground/30 select-none">|</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors border border-border rounded-md px-2 py-1 w-fit">
+                  <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md px-2.5 py-1 hover:bg-muted w-fit">
                     Multi-page layout
                     <ChevronDown className="w-3 h-3" />
                   </button>
@@ -280,18 +293,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="text-sm font-medium text-foreground mt-0.5 truncate max-w-[180px] sm:max-w-[250px] lg:max-w-[350px] cursor-default">
-                    {title.length > 40 ? `${title.slice(0, 40)}...` : title}
-                  </span>
-                </TooltipTrigger>
-                {title.length > 40 && (
-                  <TooltipContent side="bottom" className="max-w-[300px] text-sm">
-                    {title}
-                  </TooltipContent>
-                )}
-              </Tooltip>
             </div>
           </div>
 
