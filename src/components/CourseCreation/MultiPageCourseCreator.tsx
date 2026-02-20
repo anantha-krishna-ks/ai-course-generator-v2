@@ -66,10 +66,12 @@ interface DeletedBlock {
 
 function SortableOutlineItem({ id, children }: { id: string; children: ReactNode }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+  const style: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    transition: transition ?? 'transform 250ms cubic-bezier(0.25, 1, 0.5, 1)',
     opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : 'auto',
+    position: 'relative' as const,
   };
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
