@@ -235,8 +235,12 @@ export function SectionCard({
 
   return (
     <div className="space-y-0">
-      {/* Section Card */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="flex items-center gap-2 group/section">
+        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-100 self-start mt-4">
+          <GripVertical className="w-4 h-4 text-muted-foreground/50" />
+        </button>
+        {/* Section Card */}
+        <div className="rounded-lg border border-border bg-card overflow-hidden flex-1 min-w-0">
         {/* Section Header */}
         <div className="flex items-center justify-between px-5 pt-4 pb-2">
           <span className="text-xs font-medium text-muted-foreground">
@@ -483,6 +487,7 @@ export function SectionCard({
             {/* Dashed divider */}
             <div className="border-b border-dashed border-border" />
           </div>
+        </div>
         </div>
       </div>
     </div>
