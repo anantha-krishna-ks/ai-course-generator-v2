@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, GripVertical } from "lucide-react";
+import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,6 +51,7 @@ interface SortablePageRowProps {
 
 function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -101,6 +103,7 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
           variant="outline"
           size="sm"
           className="text-xs border-border h-8 shrink-0"
+          onClick={() => setShowEditor(true)}
         >
           Open
         </Button>
@@ -167,6 +170,17 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
           </div>
         </DialogContent>
       </Dialog>
+
+      <PageEditorDialog
+        open={showEditor}
+        onClose={() => setShowEditor(false)}
+        pageTitle={page.title}
+        onPageTitleChange={(newTitle) =>
+          setPages((prev) =>
+            prev.map((p) => p.id === page.id ? { ...p, title: newTitle } : p)
+          )
+        }
+      />
     </>
   );
 }

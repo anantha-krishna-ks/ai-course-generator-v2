@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { FileText, MoreHorizontal, Copy, Trash2, GripVertical } from "lucide-react";
+import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,7 @@ const MAX_PAGE_TITLE_LENGTH = 350;
 export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, autoFocus }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
           )}>
             {title.length}/{MAX_PAGE_TITLE_LENGTH}
           </span>
-          <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0">
+          <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0" onClick={() => setShowEditor(true)}>
             Open
           </Button>
           <DropdownMenu>
@@ -133,6 +135,13 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
           </div>
         </DialogContent>
       </Dialog>
+
+      <PageEditorDialog
+        open={showEditor}
+        onClose={() => setShowEditor(false)}
+        pageTitle={title}
+        onPageTitleChange={onTitleChange}
+      />
     </>
   );
 }
