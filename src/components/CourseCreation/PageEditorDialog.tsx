@@ -197,22 +197,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
                   <ImageIcon className="w-4 h-4" />
                   Image
                 </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 hover:text-foreground">
-                  <Video className="w-4 h-4" />
-                  Video
-                </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 hover:text-foreground">
-                  <DocIcon className="w-4 h-4" />
-                  Doc
-                </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 hover:text-foreground">
-                  <Layers className="w-4 h-4" />
-                  Flip cards
-                </Button>
-                <Button variant="outline" className="gap-2 border-border text-muted-foreground text-sm h-9 ml-auto">
-                  <MoreHorizontal className="w-4 h-4" />
-                  More
-                </Button>
               </div>
 
               {/* Empty content area */}
