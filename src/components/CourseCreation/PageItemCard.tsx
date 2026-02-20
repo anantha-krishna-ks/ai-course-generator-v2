@@ -36,11 +36,12 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
 
   return (
     <>
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-3 group/page">
-          <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/page:opacity-100">
-            <GripVertical className="w-4 h-4 text-muted-foreground/50" />
-          </button>
+      <div className="flex items-center gap-2 group/page">
+        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/page:opacity-100">
+          <GripVertical className="w-4 h-4 text-muted-foreground/50" />
+        </button>
+        <div className="rounded-lg border border-border bg-card overflow-hidden flex-1 min-w-0">
+          <div className="flex items-center gap-2 px-4 py-3">
           <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
           <div className="flex-1 min-w-0">
             <input
@@ -94,6 +95,7 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
       </div>
 
