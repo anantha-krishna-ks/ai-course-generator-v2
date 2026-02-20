@@ -192,6 +192,7 @@ export function SectionCard({
   const [pages, setPages] = useState<PageEntry[]>([]);
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
+  const objectiveRef = useRef<HTMLInputElement>(null);
 
   const handleAddPage = () => {
     const newPage: PageEntry = { id: crypto.randomUUID(), title: "" };
@@ -363,7 +364,13 @@ export function SectionCard({
                   {/* Actions row */}
                   <div className="flex items-center justify-between mt-3">
                     <button
-                      onClick={() => setShowObjective(!showObjective)}
+                      onClick={() => {
+                        const next = !showObjective;
+                        setShowObjective(next);
+                        if (next) {
+                          setTimeout(() => objectiveRef.current?.focus(), 350);
+                        }
+                      }}
                       className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <ChevronUp className={cn(
@@ -412,6 +419,7 @@ export function SectionCard({
 
                   {/* Objective input */}
                   <input
+                    ref={objectiveRef}
                     type="text"
                     value={objectiveText}
                     onFocus={() => setIsObjectiveFocused(true)}
