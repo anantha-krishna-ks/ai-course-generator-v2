@@ -279,10 +279,10 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               <span className="text-muted-foreground/30 select-none">|</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md px-2.5 py-1.5 hover:bg-muted w-fit">
-                    <Layers className="w-3.5 h-3.5" />
+                  <button className="flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors rounded-md px-3 py-1.5 border border-border bg-muted/50 hover:bg-muted w-fit shadow-sm">
+                    <Layers className="w-3.5 h-3.5 text-muted-foreground" />
                     Multi-page layout
-                    <ChevronDown className="w-3 h-3" />
+                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="z-50 bg-background border border-border w-[220px] p-1.5">
