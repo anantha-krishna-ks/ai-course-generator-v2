@@ -1,40 +1,41 @@
 
 
-## Two-Tier Image Toolbar
+## Plan: Show Page UI in Course Outline When "New Page" Is Clicked
 
-Redesign the image interaction model to have two levels of toolbars, inspired by the reference screenshot.
+### What Changes
 
-### Behavior
+When "New page" is clicked from the "Add item" dropdown, a page entry will appear directly in the course outline (not inside a section) with the same clean UI shown in the reference:
+- File icon on the left
+- "Enter page title..." input, auto-focused with visible underline
+- Character counter (0/350)
+- "Open" button on the right
 
-1. **Single click** on image: Shows a minimal floating toolbar above the image with:
-   - **Change image** icon (replace image)
-   - **Resize/Edit** icon (crop-like icon to enter full editor)
-   - An **"Alt text"** badge/button in the top-right corner of the image
+### Technical Details
 
-2. **Double click** on image OR clicking the Resize/Edit icon: Opens the full toolbar (current one with zoom, fit mode, flip, rotate, resize handle, Done button)
+**1. Render all item types in the outline (not just sections)**
 
-3. **Click outside**: Collapses whichever toolbar is open (with existing fade animation)
+Currently, `MultiPageCourseCreator.tsx` line 656 filters items to only show sections. We need to render pages and questions too, in their insertion order.
 
-### Technical Changes
+Update the outline rendering loop to iterate over all `items` and render:
+- `type === "section"` -- existing `SectionCard`
+- `type === "page"` -- a new standalone `PageItemCard` component
+- `type === "question"` -- (leave as-is for now, or skip)
 
-**File: `src/components/CourseCreation/ImageBlock.tsx`**
+**2. Create a `PageItemCard` component**
 
-- Replace the single `isEditing` boolean with a state like `editorMode: "none" | "simple" | "full"`
-- Add `altText` state (string) and pass it via a new `onAltTextChange` prop (or manage internally)
-- **Single click** sets mode to `"simple"`
-- **Double click** sets mode to `"full"`
-- Clicking the resize/edit icon in the simple toolbar transitions to `"full"`
+A lightweight card rendered in the outline for standalone page items. It will feature:
+- A rounded card container with border (matching the section card style)
+- Inside: file icon, editable title input (350 char limit), character counter (visible on focus), and an "Open" button
+- The input auto-focuses when the page is first added
+- Duplicate and delete actions via a three-dot menu (reusing the same delete dialog pattern)
+- Drag handle on hover (for future reordering of outline items)
 
-- **Simple toolbar** (mode === "simple"):
-  - Compact floating bar above image with 3 icons separated by dividers: Change Image, Resize/Edit icon, plus an "Alt text" button positioned at top-right of the image container
-  - Styled similarly to the reference: pill-shaped, subtle shadow, light background
+**3. Auto-focus new page input**
 
-- **Full toolbar** (mode === "full"):
-  - Current toolbar with zoom, fit mode, flip/rotate, Done button, and resize handle below
+When a new page item is added, set its title to empty (`""` instead of `"New Page"`) and auto-focus the input field so the user can immediately start typing.
 
-- Update `closeEditor` to animate back to `"none"`
-- Update click-outside detection to work with both modes
-- Add an inline alt text input (small popover or inline field) triggered by the Alt text button
+### Files to Modify
 
-- Update the `ImageBlockProps` interface to include optional `altText` and `onAltTextChange` props
+- `src/components/CourseCreation/MultiPageCourseCreator.tsx` -- Render page items in outline, update `handleAddItem` to use empty title for pages
+- `src/components/CourseCreation/PageItemCard.tsx` -- New component for standalone page entries in the outline
 
