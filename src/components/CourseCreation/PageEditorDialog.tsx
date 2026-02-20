@@ -181,19 +181,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
 
 
               {/* Content type toolbar */}
-              <div className="flex items-center gap-1 flex-wrap">
+              <div className="rounded-full border border-border bg-muted/30 px-2 py-1.5 flex items-center gap-1 w-fit">
                 <Button
                   variant="outline"
-                  className="gap-2 border-primary/30 text-primary hover:bg-primary/5 text-sm h-9"
+                  className="gap-2 border-primary/30 text-primary hover:bg-primary/5 text-sm h-8 rounded-full"
                 >
                   <Sparkles className="w-4 h-4" />
                   Create with AI
                 </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 hover:text-foreground">
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-8 rounded-full hover:text-foreground">
                   <Type className="w-4 h-4" />
                   Text
                 </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 hover:text-foreground">
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-8 rounded-full hover:text-foreground">
                   <ImageIcon className="w-4 h-4" />
                   Image
                 </Button>
