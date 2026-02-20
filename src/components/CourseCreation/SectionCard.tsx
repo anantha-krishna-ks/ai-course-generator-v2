@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronUp, ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, ArrowUp, ArrowDown } from "lucide-react";
+import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, GripVertical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { SectionImageDialog } from "./SectionImageDialog";
 
 interface SectionCardProps {
@@ -29,6 +32,98 @@ const MAX_PAGE_TITLE_LENGTH = 350;
 interface PageEntry {
   id: string;
   title: string;
+}
+
+interface SortablePageRowProps {
+  page: PageEntry;
+  idx: number;
+  isLastPage: boolean;
+  newPageRef: React.RefObject<HTMLInputElement>;
+  focusedPageId: string | null;
+  setFocusedPageId: (id: string | null) => void;
+  setPages: React.Dispatch<React.SetStateAction<PageEntry[]>>;
+  onDuplicate: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete }: SortablePageRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+      <button
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-colors shrink-0 touch-none"
+      >
+        <GripVertical className="w-4 h-4 text-muted-foreground/50" />
+      </button>
+      <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+      <div className="flex-1 min-w-0">
+        <input
+          ref={isLastPage ? newPageRef : undefined}
+          type="text"
+          value={page.title}
+          onFocus={() => setFocusedPageId(page.id)}
+          onBlur={() => setFocusedPageId(null)}
+          onChange={(e) => {
+            if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
+              setPages((prev) =>
+                prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
+              );
+            }
+          }}
+          className={cn(
+            "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-1.5 placeholder:text-muted-foreground/50 transition-all duration-200",
+            focusedPageId === page.id ? "border-primary/50" : "border-transparent"
+          )}
+          placeholder="Enter page title..."
+        />
+      </div>
+      <span className={cn(
+        "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
+        focusedPageId === page.id ? "opacity-100" : "opacity-0"
+      )}>
+        {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
+      </span>
+      <Button
+        variant="outline"
+        size="sm"
+        className="text-xs border-border h-8 shrink-0"
+      >
+        Open
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
+            <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+          <DropdownMenuItem
+            onClick={() => onDuplicate(page.id)}
+            className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+          >
+            <Copy className="w-4 h-4 text-muted-foreground" />
+            Duplicate
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => onDelete(page.id)}
+            className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
 }
 
 export function SectionCard({
@@ -73,15 +168,15 @@ export function SectionCard({
     });
   };
 
-  const handleMovePage = (id: string, direction: "up" | "down") => {
+  const pageSensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handlePageDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
     setPages((prev) => {
-      const idx = prev.findIndex((p) => p.id === id);
-      if (idx === -1) return prev;
-      const swapIdx = direction === "up" ? idx - 1 : idx + 1;
-      if (swapIdx < 0 || swapIdx >= prev.length) return prev;
-      const next = [...prev];
-      [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
-      return next;
+      const oldIdx = prev.findIndex((p) => p.id === active.id);
+      const newIdx = prev.findIndex((p) => p.id === over.id);
+      return arrayMove(prev, oldIdx, newIdx);
     });
   };
 
@@ -296,86 +391,28 @@ export function SectionCard({
                 </div>
               )}
 
-              {pages.map((page, idx) => (
-                <div key={page.id} className="flex items-center gap-3">
-                  <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <input
-                      ref={idx === pages.length - 1 ? newPageRef : undefined}
-                      type="text"
-                      value={page.title}
-                      onFocus={() => setFocusedPageId(page.id)}
-                      onBlur={() => setFocusedPageId(null)}
-                      onChange={(e) => {
-                        if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
-                          setPages((prev) =>
-                            prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
-                          );
-                        }
-                      }}
-                      className={cn(
-                        "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-1.5 placeholder:text-muted-foreground/50 transition-all duration-200",
-                        focusedPageId === page.id ? "border-primary/50" : "border-transparent"
-                      )}
-                      placeholder="Enter page title..."
+              <DndContext
+                sensors={pageSensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handlePageDragEnd}
+              >
+                <SortableContext items={pages.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                  {pages.map((page, idx) => (
+                    <SortablePageRow
+                      key={page.id}
+                      page={page}
+                      idx={idx}
+                      isLastPage={idx === pages.length - 1}
+                      newPageRef={newPageRef}
+                      focusedPageId={focusedPageId}
+                      setFocusedPageId={setFocusedPageId}
+                      setPages={setPages}
+                      onDuplicate={handleDuplicatePage}
+                      onDelete={handleDeletePage}
                     />
-                  </div>
-                  <span className={cn(
-                    "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
-                    focusedPageId === page.id ? "opacity-100" : "opacity-0"
-                  )}>
-                    {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs border-border h-8 shrink-0"
-                  >
-                    Open
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
-                        <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
-                      <DropdownMenuItem
-                        onClick={() => handleMovePage(page.id, "up")}
-                        disabled={idx === 0}
-                        className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                      >
-                        <ArrowUp className="w-4 h-4 text-muted-foreground" />
-                        Move up
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleMovePage(page.id, "down")}
-                        disabled={idx === pages.length - 1}
-                        className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                      >
-                        <ArrowDown className="w-4 h-4 text-muted-foreground" />
-                        Move down
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDuplicatePage(page.id)}
-                        className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                      >
-                        <Copy className="w-4 h-4 text-muted-foreground" />
-                        Duplicate
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDeletePage(page.id)}
-                        className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              ))}
+                  ))}
+                </SortableContext>
+              </DndContext>
 
               <button
                 onClick={handleAddPage}
