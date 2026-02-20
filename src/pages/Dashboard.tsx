@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp } from "lucide-react";
 import { tokenApi, TokenInfo } from "@/services/tokenApi";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -368,13 +368,62 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">Start a new course or explore existing blueprints</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button 
-                className="gap-2 bg-primary hover:bg-primary/90"
-                onClick={() => setIsCreateCourseDialogOpen(true)}
-              >
-                <Plus className="w-4 h-4" />
-                Create Course
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="gap-2 bg-primary hover:bg-primary/90">
+                    <Plus className="w-4 h-4" />
+                    Create Course
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="z-50 w-[300px] bg-background border border-border p-2 shadow-lg">
+                  <DropdownMenuItem
+                    onClick={() => setIsCreateCourseDialogOpen(true)}
+                    className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
+                  >
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
+                      <PenLine className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">Manual Generation</span>
+                      <span className="text-[11px] text-muted-foreground leading-snug">Create your course step by step</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
+                  >
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">Generate using AI</span>
+                      <span className="text-[11px] text-muted-foreground leading-snug">Turn your ideas into a course with AI</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/blueprints")}
+                    className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
+                  >
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
+                      <LayoutTemplate className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">Blueprint</span>
+                      <span className="text-[11px] text-muted-foreground leading-snug">Start from an existing blueprint</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
+                  >
+                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
+                      <FileUp className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-semibold text-foreground">Import from Template</span>
+                      <span className="text-[11px] text-muted-foreground leading-snug">Import and customize a template</span>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button 
                 variant="outline" 
                 className="gap-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 hover:text-primary"
