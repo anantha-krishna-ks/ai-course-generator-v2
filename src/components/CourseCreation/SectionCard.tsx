@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2 } from "lucide-react";
+import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -58,18 +59,28 @@ export function SectionCard({
                   <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 bg-background border border-border">
+              <DropdownMenuContent align="end" className="w-52 bg-background border border-border p-1.5">
                 <DropdownMenuItem
-                  onClick={onDuplicate}
-                  className="cursor-pointer hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                  onClick={() => setShowImageDialog(true)}
+                  className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                 >
-                  Duplicate
+                  <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                  Change section image
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={onDelete}
-                  className="cursor-pointer text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+                  onClick={onDuplicate}
+                  className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                 >
-                  Delete
+                  <Copy className="w-4 h-4 text-muted-foreground" />
+                  Duplicate section
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={onDelete}
+                  className="cursor-pointer gap-3 px-3 py-2.5 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete section
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
