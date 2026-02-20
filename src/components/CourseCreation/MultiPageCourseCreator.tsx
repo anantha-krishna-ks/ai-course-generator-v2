@@ -38,6 +38,7 @@ import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { SectionCard } from "./SectionCard";
+import { PageItemCard } from "./PageItemCard";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -231,7 +232,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     const newItem: CourseItem = {
       id: `${type}-${Date.now()}`,
       type,
-      title: type === "section" ? "Untitled section" : type === "page" ? "New Page" : "New Question",
+      title: type === "section" ? "Untitled section" : type === "page" ? "" : "New Question",
     };
     setItems([...items, newItem]);
   };
@@ -650,22 +651,43 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 </DropdownMenu>
               </div>
 
-              {/* Section Cards */}
+              {/* Outline Items */}
               {items.length > 0 && (
                 <div className="space-y-6">
-                  {items.filter((item) => item.type === "section").map((item, index) => (
-                    <SectionCard
-                      key={item.id}
-                      sectionNumber={index + 1}
-                      title={item.title}
-                      onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
-                      onDelete={() => deleteItem(item.id)}
-                      onDuplicate={() => duplicateItem(item.id)}
-                      onOpenSection={() => {}}
-                      onAddPage={() => handleAddItem("page")}
-                      onAddLearningObjective={() => {}}
-                    />
-                  ))}
+                  {(() => {
+                    let sectionIndex = 0;
+                    return items.map((item) => {
+                      if (item.type === "section") {
+                        sectionIndex++;
+                        return (
+                          <SectionCard
+                            key={item.id}
+                            sectionNumber={sectionIndex}
+                            title={item.title}
+                            onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                            onDelete={() => deleteItem(item.id)}
+                            onDuplicate={() => duplicateItem(item.id)}
+                            onOpenSection={() => {}}
+                            onAddPage={() => handleAddItem("page")}
+                            onAddLearningObjective={() => {}}
+                          />
+                        );
+                      }
+                      if (item.type === "page") {
+                        return (
+                          <PageItemCard
+                            key={item.id}
+                            title={item.title}
+                            onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                            onDelete={() => deleteItem(item.id)}
+                            onDuplicate={() => duplicateItem(item.id)}
+                            autoFocus={item.title === ""}
+                          />
+                        );
+                      }
+                      return null;
+                    });
+                  })()}
                 </div>
               )}
 
