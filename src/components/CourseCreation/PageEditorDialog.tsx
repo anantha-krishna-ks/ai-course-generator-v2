@@ -51,10 +51,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
           {/* Left Sidebar */}
           <div
             className={cn(
-              "border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300",
+              "border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative",
               sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[380px]"
             )}
           >
+            {/* Collapse button on divider */}
+            {!sidebarCollapsed && (
+              <button
+                onClick={() => setSidebarCollapsed(true)}
+                className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <PanelLeftClose className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            )}
+
             {/* Tabs */}
             <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
               <button
@@ -80,12 +90,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
               >
                 <Layers className="w-3.5 h-3.5" />
                 Content blocks
-              </button>
-              <button
-                onClick={() => setSidebarCollapsed(true)}
-                className="p-1.5 rounded-md hover:bg-muted transition-colors ml-auto"
-              >
-                <PanelLeftClose className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
 
