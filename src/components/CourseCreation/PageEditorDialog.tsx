@@ -56,7 +56,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
             )}
           >
             {/* Tabs */}
-            <div className="flex items-center gap-0 px-4 pt-3 border-b border-border">
+            <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
               <button
                 onClick={() => setActiveTab("outline")}
                 className={cn(
