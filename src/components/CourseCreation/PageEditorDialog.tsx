@@ -59,9 +59,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
             {!sidebarCollapsed && (
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
+                className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full border border-border/60 bg-background/95 backdrop-blur-sm shadow-md flex items-center justify-center hover:bg-accent hover:scale-110 transition-all duration-200 group"
               >
-                <PanelLeftClose className="w-3.5 h-3.5 text-muted-foreground" />
+                <PanelLeftClose className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
               </button>
             )}
 
