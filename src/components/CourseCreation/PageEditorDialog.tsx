@@ -179,17 +179,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
 
-              {/* Action buttons row */}
-              <div className="flex items-center justify-between mb-8">
-                <Button variant="outline" className="gap-2 border-border text-sm h-9">
-                  <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                  Start discussion
-                </Button>
-                <Button variant="outline" className="gap-2 border-border text-sm h-9">
-                  <Mic className="w-4 h-4 text-muted-foreground" />
-                  Add narration
-                </Button>
-              </div>
 
               {/* Content type toolbar */}
               <div className="flex items-center gap-1 flex-wrap">
