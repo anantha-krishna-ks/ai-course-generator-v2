@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText } from "lucide-react";
+import { ChevronUp, ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, ArrowUp, ArrowDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +56,33 @@ export function SectionCard({
     const newPage: PageEntry = { id: crypto.randomUUID(), title: "" };
     setPages((prev) => [...prev, newPage]);
     setTimeout(() => newPageRef.current?.focus(), 50);
+  };
+
+  const handleDeletePage = (id: string) => {
+    setPages((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleDuplicatePage = (id: string) => {
+    setPages((prev) => {
+      const idx = prev.findIndex((p) => p.id === id);
+      if (idx === -1) return prev;
+      const copy = { ...prev[idx], id: crypto.randomUUID() };
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+  };
+
+  const handleMovePage = (id: string, direction: "up" | "down") => {
+    setPages((prev) => {
+      const idx = prev.findIndex((p) => p.id === id);
+      if (idx === -1) return prev;
+      const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= prev.length) return prev;
+      const next = [...prev];
+      [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+      return next;
+    });
   };
 
   return (
@@ -306,6 +333,47 @@ export function SectionCard({
                   >
                     Open
                   </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
+                        <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+                      <DropdownMenuItem
+                        onClick={() => handleMovePage(page.id, "up")}
+                        disabled={idx === 0}
+                        className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                      >
+                        <ArrowUp className="w-4 h-4 text-muted-foreground" />
+                        Move up
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleMovePage(page.id, "down")}
+                        disabled={idx === pages.length - 1}
+                        className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                      >
+                        <ArrowDown className="w-4 h-4 text-muted-foreground" />
+                        Move down
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => handleDuplicatePage(page.id)}
+                        className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                      >
+                        <Copy className="w-4 h-4 text-muted-foreground" />
+                        Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => handleDeletePage(page.id)}
+                        className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ))}
 
