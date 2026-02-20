@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,12 @@ interface SectionCardProps {
 
 const MAX_TITLE_LENGTH = 255;
 const MAX_OBJECTIVE_LENGTH = 255;
+const MAX_PAGE_TITLE_LENGTH = 350;
+
+interface PageEntry {
+  id: string;
+  title: string;
+}
 
 export function SectionCard({
   sectionNumber,
@@ -42,6 +48,15 @@ export function SectionCard({
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
+  const [pages, setPages] = useState<PageEntry[]>([]);
+  const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
+  const newPageRef = useRef<HTMLInputElement>(null);
+
+  const handleAddPage = () => {
+    const newPage: PageEntry = { id: crypto.randomUUID(), title: "" };
+    setPages((prev) => [...prev, newPage]);
+    setTimeout(() => newPageRef.current?.focus(), 50);
+  };
 
   return (
     <div className="space-y-0">
@@ -245,10 +260,57 @@ export function SectionCard({
               </div>
             </div>
 
-            {/* Add page button inside card */}
-            <div className="pl-4 pt-3 pb-4">
+            {/* Pages section */}
+            <div className="px-5 pt-3 pb-4 space-y-3">
+              {pages.length > 0 && (
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-medium text-muted-foreground">Pages:</span>
+                  <span className="text-xs font-medium text-muted-foreground bg-muted rounded-full px-2 py-0.5">{pages.length}</span>
+                </div>
+              )}
+
+              {pages.map((page, idx) => (
+                <div key={page.id} className="flex items-center gap-3">
+                  <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <input
+                      ref={idx === pages.length - 1 ? newPageRef : undefined}
+                      type="text"
+                      value={page.title}
+                      onFocus={() => setFocusedPageId(page.id)}
+                      onBlur={() => setFocusedPageId(null)}
+                      onChange={(e) => {
+                        if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
+                          setPages((prev) =>
+                            prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
+                          );
+                        }
+                      }}
+                      className={cn(
+                        "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-1.5 placeholder:text-muted-foreground/50 transition-all duration-200",
+                        focusedPageId === page.id ? "border-primary/50" : "border-transparent"
+                      )}
+                      placeholder="Enter page title..."
+                    />
+                  </div>
+                  <span className={cn(
+                    "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
+                    focusedPageId === page.id ? "opacity-100" : "opacity-0"
+                  )}>
+                    {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs border-border h-8 shrink-0"
+                  >
+                    Open
+                  </Button>
+                </div>
+              ))}
+
               <button
-                onClick={onAddPage}
+                onClick={handleAddPage}
                 className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
