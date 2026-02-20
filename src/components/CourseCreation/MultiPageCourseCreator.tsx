@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check } from "lucide-react";
 import {
@@ -62,6 +63,7 @@ interface DeletedBlock {
 
 export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
     { id: "description-block", type: "description", content: "" },
@@ -207,9 +209,16 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     setContentBlocks((prev) => {
       const idx = prev.findIndex((b) => b.id === id);
       if (idx === -1) return prev;
-      const clone = { ...prev[idx], id: `block-${Date.now()}` };
+      const original = prev[idx];
+      const clone = { ...original, id: `block-${Date.now()}` };
       const next = [...prev];
       next.splice(idx + 1, 0, clone);
+      
+      toast({
+        title: "Block duplicated",
+        description: `Content block has been duplicated successfully.`,
+      });
+      
       return next;
     });
   };
@@ -241,9 +250,16 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     setItems((prev) => {
       const idx = prev.findIndex((item) => item.id === id);
       if (idx === -1) return prev;
-      const clone = { ...prev[idx], id: `${prev[idx].type}-${Date.now()}` };
+      const original = prev[idx];
+      const clone = { ...original, id: `${original.type}-${Date.now()}` };
       const next = [...prev];
       next.splice(idx + 1, 0, clone);
+      
+      toast({
+        title: `${original.type.charAt(0).toUpperCase() + original.type.slice(1)} duplicated`,
+        description: `"${original.title || `Untitled ${original.type}`}" has been duplicated successfully.`,
+      });
+      
       return next;
     });
   };

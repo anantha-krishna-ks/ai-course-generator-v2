@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
@@ -14,11 +15,16 @@ interface CloneCourseDialogProps {
 }
 
 export const CloneCourseDialog = ({ open, onClose, onClone, currentTitle, isCloning = false }: CloneCourseDialogProps) => {
+  const { toast } = useToast();
   const [cloneTitle, setCloneTitle] = useState(`${currentTitle} (Copy)`);
 
   const handleClone = () => {
     if (cloneTitle.trim()) {
       onClone(cloneTitle.trim());
+      toast({
+        title: "Course cloned",
+        description: `"${currentTitle}" has been duplicated successfully.`,
+      });
       onClose(false);
     }
   };
