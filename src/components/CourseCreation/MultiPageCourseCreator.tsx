@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -279,17 +279,27 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
               <span className="text-muted-foreground/30 select-none">|</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md px-2.5 py-1 hover:bg-muted w-fit">
+                  <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-md px-2.5 py-1.5 hover:bg-muted w-fit">
+                    <Layers className="w-3.5 h-3.5" />
                     Multi-page layout
                     <ChevronDown className="w-3 h-3" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="bg-background border border-border w-[150px]">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Multi-page layout
+                <DropdownMenuContent align="start" className="z-50 bg-background border border-border w-[220px] p-1.5">
+                  <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md">
+                    <Layers className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-medium">Multi-page</span>
+                      <span className="text-[11px] text-muted-foreground">Sections with multiple pages</span>
+                    </div>
+                    <Check className="w-3.5 h-3.5 text-primary ml-auto" />
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    Single-page layout
+                  <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md">
+                    <FileStack className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-sm font-medium">Single-page</span>
+                      <span className="text-[11px] text-muted-foreground">All content on one page</span>
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
