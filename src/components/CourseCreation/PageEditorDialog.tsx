@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, PanelLeftClose, ChevronUp, MoreHorizontal as Dots } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -61,7 +61,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
                 onClick={() => setSidebarCollapsed(true)}
                 className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
               >
-                <PanelLeftClose className="w-3.5 h-3.5 text-muted-foreground" />
+                <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             )}
 
@@ -153,7 +153,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
               onClick={() => setSidebarCollapsed(false)}
               className="shrink-0 px-2 py-4 border-r border-border hover:bg-muted/50 transition-colors flex items-start pt-6"
             >
-              <PanelLeftClose className="w-4 h-4 text-muted-foreground rotate-180" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </button>
           )}
 
