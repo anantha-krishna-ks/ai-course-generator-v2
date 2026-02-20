@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check } from "lucide-react";
@@ -19,7 +19,9 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   arrayMove,
+  useSortable,
 } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -62,6 +64,20 @@ interface DeletedBlock {
   index: number;
 }
 
+function SortableOutlineItem({ id, children }: { id: string; children: ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {children}
+    </div>
+  );
+}
+
 export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -80,6 +96,21 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
+
+  const outlineSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
+  const handleOutlineDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setItems((prev) => {
+        const oldIndex = prev.findIndex((i) => i.id === active.id);
+        const newIndex = prev.findIndex((i) => i.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  }, []);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -418,7 +449,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                 <div className="h-1 bg-primary/30 rounded-full w-full" />
               </div>
 
-
               {/* Content Blocks */}
               <DndContext
                 sensors={sensors}
@@ -653,42 +683,53 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
               {/* Outline Items */}
               {items.length > 0 && (
-                <div className="space-y-6">
-                  {(() => {
-                    let sectionIndex = 0;
-                    return items.map((item) => {
-                      if (item.type === "section") {
-                        sectionIndex++;
-                        return (
-                          <SectionCard
-                            key={item.id}
-                            sectionNumber={sectionIndex}
-                            title={item.title}
-                            onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
-                            onDelete={() => deleteItem(item.id)}
-                            onDuplicate={() => duplicateItem(item.id)}
-                            onOpenSection={() => {}}
-                            onAddPage={() => handleAddItem("page")}
-                            onAddLearningObjective={() => {}}
-                          />
-                        );
-                      }
-                      if (item.type === "page") {
-                        return (
-                          <PageItemCard
-                            key={item.id}
-                            title={item.title}
-                            onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
-                            onDelete={() => deleteItem(item.id)}
-                            onDuplicate={() => duplicateItem(item.id)}
-                            autoFocus={item.title === ""}
-                          />
-                        );
-                      }
-                      return null;
-                    });
-                  })()}
-                </div>
+                <DndContext
+                  sensors={outlineSensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleOutlineDragEnd}
+                >
+                  <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-6">
+                      {(() => {
+                        let sectionIndex = 0;
+                        return items.map((item) => {
+                          if (item.type === "section") {
+                            sectionIndex++;
+                            const currentSectionNumber = sectionIndex;
+                            return (
+                              <SortableOutlineItem key={item.id} id={item.id}>
+                                <SectionCard
+                                  sectionNumber={currentSectionNumber}
+                                  title={item.title}
+                                  onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                                  onDelete={() => deleteItem(item.id)}
+                                  onDuplicate={() => duplicateItem(item.id)}
+                                  onOpenSection={() => {}}
+                                  onAddPage={() => handleAddItem("page")}
+                                  onAddLearningObjective={() => {}}
+                                />
+                              </SortableOutlineItem>
+                            );
+                          }
+                          if (item.type === "page") {
+                            return (
+                              <SortableOutlineItem key={item.id} id={item.id}>
+                                <PageItemCard
+                                  title={item.title}
+                                  onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                                  onDelete={() => deleteItem(item.id)}
+                                  onDuplicate={() => duplicateItem(item.id)}
+                                  autoFocus={item.title === ""}
+                                />
+                              </SortableOutlineItem>
+                            );
+                          }
+                          return null;
+                        });
+                      })()}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               )}
 
               {/* Empty State */}
