@@ -492,7 +492,16 @@ const Blueprints = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>Open</DropdownMenuItem>
-                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        toast({
+                          title: "Blueprint duplicated",
+                          description: `"${blueprint.Title}" has been duplicated successfully.`,
+                        });
+                      }}
+                    >
+                      Duplicate
+                    </DropdownMenuItem>
                     <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

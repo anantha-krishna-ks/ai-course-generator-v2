@@ -14,6 +14,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } 
 import { CSS } from "@dnd-kit/utilities";
 import { SectionImageDialog } from "./SectionImageDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface SectionCardProps {
   sectionNumber: number;
@@ -180,6 +181,7 @@ export function SectionCard({
   onAddPage,
   onAddLearningObjective,
 }: SectionCardProps) {
+  const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showObjective, setShowObjective] = useState(false);
   const [objectiveText, setObjectiveText] = useState("");
@@ -205,9 +207,16 @@ export function SectionCard({
     setPages((prev) => {
       const idx = prev.findIndex((p) => p.id === id);
       if (idx === -1) return prev;
-      const copy = { ...prev[idx], id: crypto.randomUUID() };
+      const original = prev[idx];
+      const copy = { ...original, id: crypto.randomUUID() };
       const next = [...prev];
       next.splice(idx + 1, 0, copy);
+      
+      toast({
+        title: "Page duplicated",
+        description: `"${original.title || "Untitled page"}" has been duplicated successfully.`,
+      });
+      
       return next;
     });
   };
