@@ -667,18 +667,6 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
                         <span className="text-xs text-muted-foreground">Single learning unit to explain topics</span>
                       </div>
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleAddItem("question")}
-                      className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
-                    >
-                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                        <HelpCircle className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-semibold text-foreground">New question</span>
-                        <span className="text-xs text-muted-foreground">Test knowledge with a quiz question</span>
-                      </div>
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
