@@ -274,11 +274,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        {/* ── Guidelines & Exclusions ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-            <SectionLabel icon={BookOpen} label="Guidelines" />
-            <p className="text-xs text-muted-foreground mt-1 mb-3">Instructions for AI content generation</p>
+        {/* ── Guidelines ── */}
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <SectionLabel icon={BookOpen} label="Guidelines" />
+          <p className="text-xs text-muted-foreground mt-1 mb-3">Instructions for AI content generation</p>
+          <div className="space-y-3">
             <Textarea
               value={options.guidelines}
               onChange={(e) => {
@@ -290,10 +290,24 @@ export function AIConfigView({
               className="min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
+            <div
+              onClick={() => {
+                const mockFile = `Guidelines_${Date.now().toString(36)}.pdf`;
+                update({ guidelines: options.guidelines ? `${options.guidelines}\n[Uploaded: ${mockFile}]` : `[Uploaded: ${mockFile}]` });
+              }}
+              className="w-full border-2 border-dashed border-border/80 rounded-lg py-4 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Upload className="w-4 h-4" />
+              <span className="text-sm font-medium">Upload Guidelines Document</span>
+            </div>
           </div>
-          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-            <SectionLabel icon={ShieldX} label="Exclusions" />
-            <p className="text-xs text-muted-foreground mt-1 mb-3">Topics AI should avoid generating</p>
+        </div>
+
+        {/* ── Exclusions ── */}
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <SectionLabel icon={ShieldX} label="Exclusions" />
+          <p className="text-xs text-muted-foreground mt-1 mb-3">Topics AI should avoid generating</p>
+          <div className="space-y-3">
             <Textarea
               value={options.exclusions}
               onChange={(e) => {
@@ -305,6 +319,16 @@ export function AIConfigView({
               className="min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
+            <div
+              onClick={() => {
+                const mockFile = `Exclusions_${Date.now().toString(36)}.pdf`;
+                update({ exclusions: options.exclusions ? `${options.exclusions}\n[Uploaded: ${mockFile}]` : `[Uploaded: ${mockFile}]` });
+              }}
+              className="w-full border-2 border-dashed border-border/80 rounded-lg py-4 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Upload className="w-4 h-4" />
+              <span className="text-sm font-medium">Upload Exclusions Document</span>
+            </div>
           </div>
         </div>
       </div>
