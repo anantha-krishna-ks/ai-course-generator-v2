@@ -46,6 +46,7 @@ interface AIHeaderButtonProps {
 
 export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonProps) {
   const [open, setOpen] = useState(false);
+  const [savedOnce, setSavedOnce] = useState(false);
 
   if (!aiOptions || !aiOptions.enabled) return null;
 
@@ -57,7 +58,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
     aiOptions.supportingDocuments.length > 0
   );
 
-  const isLocked = isConfigured;
+  const isLocked = savedOnce && isConfigured;
 
   return (
     <>
@@ -334,7 +335,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
             <div className="px-5 py-4 border-t border-border/60 bg-background">
               <Button
                 className="w-full rounded-full gap-2 h-11 text-sm font-semibold"
-                onClick={() => setOpen(false)}
+                onClick={() => { setSavedOnce(true); setOpen(false); }}
               >
                 <Check className="w-4 h-4" />
                 Save & Apply Configuration
