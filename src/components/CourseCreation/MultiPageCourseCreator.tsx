@@ -2,6 +2,8 @@ import { useState, useCallback, useRef, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check } from "lucide-react";
+import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
+import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
   closestCenter,
@@ -44,6 +46,7 @@ import { PageItemCard } from "./PageItemCard";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
+  aiOptions?: AIOptions | null;
 }
 
 interface CourseItem {
@@ -80,7 +83,7 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
   );
 }
 
-export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorProps) {
+export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
@@ -88,6 +91,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
     { id: "description-block", type: "description", content: "" },
   ]);
   const [items, setItems] = useState<CourseItem[]>([]);
+  const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -358,6 +362,7 @@ export function MultiPageCourseCreator({ courseTitle }: MultiPageCourseCreatorPr
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Button
               variant="outline"
               size="icon"

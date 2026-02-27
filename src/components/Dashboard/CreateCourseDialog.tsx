@@ -81,7 +81,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     navigate("/create-course-multipage", { 
       state: { 
         title: courseTitle.trim(), 
-        layout: selectedLayout 
+        layout: selectedLayout,
+        aiOptions: aiOptions.enabled ? aiOptions : null,
       } 
     });
     setIsLoading(false);

@@ -1,9 +1,11 @@
 import { useLocation, Navigate } from "react-router-dom";
 import { MultiPageCourseCreator } from "@/components/CourseCreation/MultiPageCourseCreator";
+import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 
 interface LocationState {
   title: string;
   layout: string;
+  aiOptions?: AIOptions | null;
 }
 
 const CreateCourseMultipage = () => {
@@ -15,7 +17,7 @@ const CreateCourseMultipage = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <MultiPageCourseCreator courseTitle={state.title} />;
+  return <MultiPageCourseCreator courseTitle={state.title} aiOptions={state.aiOptions ?? null} />;
 };
 
 export default CreateCourseMultipage;
