@@ -174,7 +174,7 @@ export function AIConfigView({
         {/* ── Bloom's Taxonomy ── */}
         <div>
           <SectionLabel icon={Brain} label="Bloom's Taxonomy" />
-          <div className="flex flex-wrap gap-1.5 mt-2.5">
+          <div className="flex flex-wrap gap-2 mt-3">
             {BLOOMS_LEVELS.map((level) => {
               const selected = options.bloomsTaxonomy.includes(level);
               return (
@@ -183,13 +183,13 @@ export function AIConfigView({
                   type="button"
                   onClick={() => toggleBloom(level)}
                   className={cn(
-                    "px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 flex items-center gap-1.5",
+                    "px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 flex items-center gap-1.5",
                     selected
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
                       : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
                   )}
                 >
-                  {selected && <Check className="w-3 h-3" />}
+                  {selected && <Check className="w-3.5 h-3.5" />}
                   {level}
                 </button>
               );
@@ -202,7 +202,7 @@ export function AIConfigView({
         {/* ── Intended Learners ── */}
         <div>
           <SectionLabel icon={Users} label="Intended Learners" />
-          <div className="flex gap-2 mt-2.5">
+          <div className="flex gap-2 mt-3">
             {LEARNER_LEVELS.map((level) => {
               const selected = options.intendedLearners === level;
               return (
@@ -211,7 +211,7 @@ export function AIConfigView({
                   type="button"
                   onClick={() => update({ intendedLearners: level })}
                   className={cn(
-                    "flex-1 py-2 rounded-lg text-sm font-medium border transition-all duration-200 text-center",
+                    "flex-1 py-2.5 rounded-lg text-sm font-medium border transition-all duration-200 text-center",
                     selected
                       ? "bg-primary/10 text-primary border-primary"
                       : "bg-background text-muted-foreground border-border hover:border-primary/40"
@@ -270,9 +270,13 @@ export function AIConfigView({
             <SectionLabel icon={BookOpen} label="Guidelines" />
             <Textarea
               value={options.guidelines}
-              onChange={(e) => update({ guidelines: e.target.value })}
+              onChange={(e) => {
+                update({ guidelines: e.target.value });
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
               placeholder="Instructions for AI content generation..."
-              className="mt-2.5 min-h-[80px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg"
+              className="mt-3 min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
           </div>
@@ -280,9 +284,13 @@ export function AIConfigView({
             <SectionLabel icon={ShieldX} label="Exclusions" />
             <Textarea
               value={options.exclusions}
-              onChange={(e) => update({ exclusions: e.target.value })}
+              onChange={(e) => {
+                update({ exclusions: e.target.value });
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
               placeholder="Topics AI should avoid..."
-              className="mt-2.5 min-h-[80px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg"
+              className="mt-3 min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
           </div>
