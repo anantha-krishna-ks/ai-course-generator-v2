@@ -251,14 +251,27 @@ export function AIConfigView({
                 ))}
               </div>
             )}
-            <button
-              type="button"
+            <div
+              onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5', 'text-primary'); }}
+              onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5', 'text-primary'); }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+                const files = Array.from(e.dataTransfer.files);
+                if (files.length > 0) {
+                  const newDocs = files.map(f => f.name);
+                  update({ supportingDocuments: [...options.supportingDocuments, ...newDocs] });
+                }
+              }}
               onClick={handleFileSelect}
-              className="w-full border-2 border-dashed border-border/80 rounded-lg py-3 text-sm text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+              className="w-full border-2 border-dashed border-border/80 rounded-xl py-8 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer"
             >
-              <Upload className="w-4 h-4" />
-              Upload documents
-            </button>
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Upload className="w-5 h-5 text-primary" />
+              </div>
+              <span className="text-sm font-medium">Drop files here or click to upload</span>
+              <span className="text-xs text-muted-foreground/70">PDF, DOCX, TXT — up to 20MB each</span>
+            </div>
           </div>
         </div>
 
