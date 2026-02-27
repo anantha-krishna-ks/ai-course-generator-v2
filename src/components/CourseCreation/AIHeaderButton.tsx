@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
-  BrainCircuit,
   Upload,
   Brain,
   Users,
@@ -27,7 +26,6 @@ import {
   Lock,
   Info,
   Sparkles,
-  Settings2,
 } from "lucide-react";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 
@@ -49,7 +47,6 @@ interface AIHeaderButtonProps {
 export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonProps) {
   const [open, setOpen] = useState(false);
 
-  // Not enabled — don't render anything
   if (!aiOptions || !aiOptions.enabled) return null;
 
   const isConfigured = !!(
@@ -60,95 +57,107 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
     aiOptions.supportingDocuments.length > 0
   );
 
-  // After first configure, lock it
   const isLocked = isConfigured;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <>
       <Tooltip>
         <TooltipTrigger asChild>
-          <PopoverTrigger asChild>
-            <button
-              className={cn(
-                "relative p-2 rounded-full transition-colors",
-                "hover:bg-primary/10",
-                open ? "bg-primary/10" : "bg-transparent"
-              )}
-            >
-              <BrainCircuit className="w-[18px] h-[18px] text-primary" />
-              {/* Active dot */}
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-background" />
-            </button>
-          </PopoverTrigger>
+          <button
+            onClick={() => setOpen(true)}
+            className="relative group"
+          >
+            {/* Outer glow ring */}
+            <div className={cn(
+              "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300",
+              "bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5",
+              "ring-2 ring-primary/30 group-hover:ring-primary/50",
+              "group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.25)]",
+              open && "ring-primary/60 shadow-[0_0_16px_hsl(var(--primary)/0.3)]"
+            )}>
+              <Sparkles className="w-4 h-4 text-primary" />
+            </div>
+            {/* Status dot */}
+            <span className={cn(
+              "absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full ring-2 ring-background",
+              isLocked ? "bg-primary" : "bg-destructive/70 animate-pulse"
+            )} />
+          </button>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="text-xs">
-          AI Support
+          AI Support {isLocked ? "(Locked)" : "(Setup required)"}
         </TooltipContent>
       </Tooltip>
 
-      <PopoverContent
-        align="end"
-        className="w-[340px] sm:w-[400px] p-0 rounded-xl shadow-lg border-border"
-      >
-        {/* Header */}
-        <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/60">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <BrainCircuit className="w-4 h-4 text-primary" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-foreground">AI Support</p>
-            <p className="text-[11px] text-muted-foreground">
-              {isLocked ? "Configuration locked" : "Configure your AI preferences"}
-            </p>
-          </div>
-          {isLocked && (
-            <div className="flex items-center gap-1 text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-full">
-              <Lock className="w-3 h-3" />
-              Locked
-            </div>
-          )}
-        </div>
-
-        {/* Notice banner — friendly, non-anxious */}
-        {!isLocked && (
-          <div className="mx-4 mt-3 flex gap-2.5 items-start p-2.5 rounded-lg bg-primary/5 border border-primary/15">
-            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-            <p className="text-[11px] text-foreground/80 leading-relaxed">
-              <span className="font-medium">One-time setup</span> — Take your time to configure these settings. 
-              Once saved, they'll be applied throughout your course generation and can't be changed for this course.
-            </p>
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="p-4 space-y-4 max-h-[50vh] overflow-y-auto">
-          {/* Supporting Documents */}
-          <ConfigSection icon={Upload} label="Supporting Documents" isLocked={isLocked}>
-            {aiOptions.supportingDocuments.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {aiOptions.supportingDocuments.map((doc, i) => (
-                  <Badge key={i} variant="secondary" className="gap-1 text-[11px] font-normal h-6 pr-1.5">
-                    <FileText className="w-3 h-3" />
-                    {doc}
-                    {!isLocked && onOptionsChange && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onOptionsChange({
-                            ...aiOptions,
-                            supportingDocuments: aiOptions.supportingDocuments.filter((_, idx) => idx !== i),
-                          })
-                        }
-                        className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
-                      >
-                        <X className="w-2.5 h-2.5" />
-                      </button>
-                    )}
-                  </Badge>
-                ))}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent className="w-full sm:max-w-[420px] p-0 flex flex-col gap-0">
+          {/* Header */}
+          <SheetHeader className="px-5 pt-5 pb-4 border-b border-border/60 space-y-0">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/20">
+                <Sparkles className="w-5 h-5 text-primary" />
               </div>
-            ) : (
-              !isLocked && onOptionsChange ? (
+              <div className="flex-1">
+                <SheetTitle className="text-base font-bold">AI Support</SheetTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {isLocked ? "Your configuration is active" : "Set up your AI preferences"}
+                </p>
+              </div>
+              {isLocked && (
+                <div className="flex items-center gap-1 text-[11px] text-primary bg-primary/10 px-2.5 py-1 rounded-full font-medium">
+                  <Lock className="w-3 h-3" />
+                  Active
+                </div>
+              )}
+            </div>
+          </SheetHeader>
+
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+            {/* Notice */}
+            {!isLocked && (
+              <div className="flex gap-3 items-start p-3 rounded-xl bg-primary/5 border border-primary/15">
+                <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-foreground">One-time setup</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Configure your AI preferences below. Once saved, these settings will guide all AI-generated content for this course.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Supporting Documents */}
+            <ConfigSection
+              icon={Upload}
+              label="Supporting Documents"
+              description="Reference materials for AI context"
+            >
+              {aiOptions.supportingDocuments.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {aiOptions.supportingDocuments.map((doc, i) => (
+                    <Badge key={i} variant="secondary" className="gap-1.5 text-xs font-normal h-7 pr-1.5">
+                      <FileText className="w-3 h-3" />
+                      {doc}
+                      {!isLocked && onOptionsChange && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onOptionsChange({
+                              ...aiOptions,
+                              supportingDocuments: aiOptions.supportingDocuments.filter((_, idx) => idx !== i),
+                            })
+                          }
+                          className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {!isLocked && onOptionsChange ? (
                 <button
                   type="button"
                   onClick={() =>
@@ -160,156 +169,176 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
                       ],
                     })
                   }
-                  className="w-full border border-dashed border-border rounded-lg py-3 text-xs text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors flex items-center justify-center gap-1.5"
+                  className="w-full border-2 border-dashed border-border rounded-xl py-4 text-sm text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
                 >
-                  <Upload className="w-3.5 h-3.5" />
+                  <Upload className="w-4 h-4" />
                   Upload documents
                 </button>
-              ) : (
+              ) : aiOptions.supportingDocuments.length === 0 ? (
                 <p className="text-xs text-muted-foreground italic">No documents uploaded</p>
-              )
-            )}
-          </ConfigSection>
+              ) : null}
+            </ConfigSection>
 
-          {/* Bloom's Taxonomy */}
-          <ConfigSection icon={Brain} label="Bloom's Taxonomy" isLocked={isLocked}>
-            <div className="flex flex-wrap gap-1.5">
-              {BLOOMS_LEVELS.map((level) => {
-                const selected = aiOptions.bloomsTaxonomy.includes(level);
-                return (
-                  <button
-                    key={level}
-                    type="button"
-                    disabled={isLocked}
-                    onClick={() => {
-                      if (!onOptionsChange || isLocked) return;
-                      const current = aiOptions.bloomsTaxonomy;
-                      onOptionsChange({
-                        ...aiOptions,
-                        bloomsTaxonomy: current.includes(level)
-                          ? current.filter((l) => l !== level)
-                          : [...current, level],
-                      });
-                    }}
-                    className={cn(
-                      "px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all flex items-center gap-1",
-                      selected
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-background text-muted-foreground border-border",
-                      !isLocked && !selected && "hover:border-primary/40",
-                      isLocked && "cursor-default opacity-80"
-                    )}
-                  >
-                    {selected && <Check className="w-3 h-3" />}
-                    {level}
-                  </button>
-                );
-              })}
-            </div>
-          </ConfigSection>
-
-          {/* Intended Learners */}
-          <ConfigSection icon={Users} label="Intended Learners" isLocked={isLocked}>
-            <div className="flex gap-1.5">
-              {LEARNER_LEVELS.map((level) => {
-                const selected = aiOptions.intendedLearners === level;
-                return (
-                  <button
-                    key={level}
-                    type="button"
-                    disabled={isLocked}
-                    onClick={() => {
-                      if (!onOptionsChange || isLocked) return;
-                      onOptionsChange({ ...aiOptions, intendedLearners: level });
-                    }}
-                    className={cn(
-                      "flex-1 py-1.5 rounded-md text-[11px] font-medium border transition-all",
-                      selected
-                        ? "bg-primary/10 text-primary border-primary"
-                        : "bg-background text-muted-foreground border-border",
-                      !isLocked && !selected && "hover:border-primary/40",
-                      isLocked && "cursor-default opacity-80"
-                    )}
-                  >
-                    {level}
-                  </button>
-                );
-              })}
-            </div>
-          </ConfigSection>
-
-          {/* Guidelines */}
-          <ConfigSection icon={BookOpen} label="Course Guidelines" isLocked={isLocked}>
-            {isLocked ? (
-              <p className="text-xs text-foreground/70 leading-relaxed">
-                {aiOptions.guidelines || <span className="italic text-muted-foreground">Not specified</span>}
-              </p>
-            ) : (
-              <Textarea
-                value={aiOptions.guidelines}
-                onChange={(e) => onOptionsChange?.({ ...aiOptions, guidelines: e.target.value })}
-                placeholder="Specific guidelines for AI generation..."
-                className="min-h-[60px] text-xs resize-none border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0"
-                rows={2}
-              />
-            )}
-          </ConfigSection>
-
-          {/* Exclusions */}
-          <ConfigSection icon={ShieldX} label="Exclusions" isLocked={isLocked}>
-            {isLocked ? (
-              <p className="text-xs text-foreground/70 leading-relaxed">
-                {aiOptions.exclusions || <span className="italic text-muted-foreground">Not specified</span>}
-              </p>
-            ) : (
-              <Textarea
-                value={aiOptions.exclusions}
-                onChange={(e) => onOptionsChange?.({ ...aiOptions, exclusions: e.target.value })}
-                placeholder="Topics or content to exclude..."
-                className="min-h-[60px] text-xs resize-none border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0"
-                rows={2}
-              />
-            )}
-          </ConfigSection>
-        </div>
-
-        {/* Footer — only show save when not locked */}
-        {!isLocked && onOptionsChange && (
-          <div className="px-4 py-3 border-t border-border/60 flex items-center justify-between">
-            <p className="text-[10px] text-muted-foreground">
-              This configuration is final once saved
-            </p>
-            <Button
-              size="sm"
-              className="rounded-full gap-1.5 h-8 px-4 text-xs"
-              onClick={() => setOpen(false)}
+            {/* Bloom's Taxonomy */}
+            <ConfigSection
+              icon={Brain}
+              label="Bloom's Taxonomy"
+              description="Cognitive levels for content generation"
             >
-              <Check className="w-3.5 h-3.5" />
-              Save & Lock
-            </Button>
+              <div className="flex flex-wrap gap-2">
+                {BLOOMS_LEVELS.map((level) => {
+                  const selected = aiOptions.bloomsTaxonomy.includes(level);
+                  return (
+                    <button
+                      key={level}
+                      type="button"
+                      disabled={isLocked}
+                      onClick={() => {
+                        if (!onOptionsChange || isLocked) return;
+                        const current = aiOptions.bloomsTaxonomy;
+                        onOptionsChange({
+                          ...aiOptions,
+                          bloomsTaxonomy: current.includes(level)
+                            ? current.filter((l) => l !== level)
+                            : [...current, level],
+                        });
+                      }}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all flex items-center gap-1.5",
+                        selected
+                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                          : "bg-background text-muted-foreground border-border",
+                        !isLocked && !selected && "hover:border-primary/40 hover:text-foreground",
+                        isLocked && "cursor-default"
+                      )}
+                    >
+                      {selected && <Check className="w-3 h-3" />}
+                      {level}
+                    </button>
+                  );
+                })}
+              </div>
+            </ConfigSection>
+
+            {/* Intended Learners */}
+            <ConfigSection
+              icon={Users}
+              label="Intended Learners"
+              description="Target audience experience level"
+            >
+              <div className="grid grid-cols-3 gap-2">
+                {LEARNER_LEVELS.map((level) => {
+                  const selected = aiOptions.intendedLearners === level;
+                  return (
+                    <button
+                      key={level}
+                      type="button"
+                      disabled={isLocked}
+                      onClick={() => {
+                        if (!onOptionsChange || isLocked) return;
+                        onOptionsChange({ ...aiOptions, intendedLearners: level });
+                      }}
+                      className={cn(
+                        "py-2.5 rounded-lg text-sm font-medium border-2 transition-all",
+                        selected
+                          ? "bg-primary/10 text-primary border-primary shadow-sm"
+                          : "bg-background text-muted-foreground border-border",
+                        !isLocked && !selected && "hover:border-primary/40",
+                        isLocked && "cursor-default"
+                      )}
+                    >
+                      {level}
+                    </button>
+                  );
+                })}
+              </div>
+            </ConfigSection>
+
+            {/* Guidelines */}
+            <ConfigSection
+              icon={BookOpen}
+              label="Course Guidelines"
+              description="Instructions for AI content generation"
+            >
+              {isLocked ? (
+                <p className="text-sm text-foreground/80 leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
+                  {aiOptions.guidelines || <span className="italic text-muted-foreground">Not specified</span>}
+                </p>
+              ) : (
+                <Textarea
+                  value={aiOptions.guidelines}
+                  onChange={(e) => onOptionsChange?.({ ...aiOptions, guidelines: e.target.value })}
+                  placeholder="Describe specific guidelines for AI generation..."
+                  className="min-h-[80px] text-sm resize-none border-2 border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0"
+                  rows={3}
+                />
+              )}
+            </ConfigSection>
+
+            {/* Exclusions */}
+            <ConfigSection
+              icon={ShieldX}
+              label="Exclusions"
+              description="Topics the AI should avoid"
+            >
+              {isLocked ? (
+                <p className="text-sm text-foreground/80 leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
+                  {aiOptions.exclusions || <span className="italic text-muted-foreground">Not specified</span>}
+                </p>
+              ) : (
+                <Textarea
+                  value={aiOptions.exclusions}
+                  onChange={(e) => onOptionsChange?.({ ...aiOptions, exclusions: e.target.value })}
+                  placeholder="Topics or content to exclude..."
+                  className="min-h-[80px] text-sm resize-none border-2 border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0"
+                  rows={3}
+                />
+              )}
+            </ConfigSection>
           </div>
-        )}
-      </PopoverContent>
-    </Popover>
+
+          {/* Footer */}
+          {!isLocked && onOptionsChange && (
+            <div className="px-5 py-4 border-t border-border/60 bg-background">
+              <Button
+                className="w-full rounded-full gap-2 h-11 text-sm font-semibold"
+                onClick={() => setOpen(false)}
+              >
+                <Check className="w-4 h-4" />
+                Save & Apply Configuration
+              </Button>
+              <p className="text-[11px] text-muted-foreground text-center mt-2">
+                Configuration will be locked after saving
+              </p>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
 
 function ConfigSection({
   icon: Icon,
   label,
-  isLocked,
+  description,
   children,
 }: {
   icon: React.ElementType;
   label: string;
-  isLocked: boolean;
+  description: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <Icon className="w-3.5 h-3.5 text-primary/70" />
-        <span className="text-xs font-semibold text-foreground">{label}</span>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4 text-primary" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-foreground">{label}</p>
+          <p className="text-[11px] text-muted-foreground">{description}</p>
+        </div>
       </div>
       {children}
     </div>
