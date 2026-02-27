@@ -197,7 +197,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="border-t border-border/40" />
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+          <div className="w-1 h-1 rounded-full bg-border" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+        </div>
 
         {/* ── Intended Learners ── */}
         <div>
@@ -224,7 +228,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="border-t border-border/40" />
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+          <div className="w-1 h-1 rounded-full bg-border" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+        </div>
 
         {/* ── Supporting Documents ── */}
         <div>
@@ -262,7 +270,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="border-t border-border/40" />
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+          <div className="w-1 h-1 rounded-full bg-border" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+        </div>
 
         {/* ── Guidelines & Exclusions side by side ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
