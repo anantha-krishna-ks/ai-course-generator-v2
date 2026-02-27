@@ -114,7 +114,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
           </SheetHeader>
 
           {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-7">
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
             {/* Notice */}
             {!isLocked && (
               <div className="flex gap-3 items-start p-3.5 rounded-xl bg-primary/5 border border-primary/15">
@@ -196,7 +196,6 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
               ) : null}
             </ConfigSection>
 
-            <div className="border-t border-border/40" />
 
             {/* Bloom's Taxonomy */}
             <ConfigSection
@@ -239,7 +238,6 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
               </div>
             </ConfigSection>
 
-            <div className="border-t border-border/40" />
 
             {/* Intended Learners */}
             <ConfigSection
@@ -275,7 +273,6 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
               </div>
             </ConfigSection>
 
-            <div className="border-t border-border/40" />
 
             {/* Guidelines */}
             <ConfigSection
@@ -302,7 +299,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
               )}
             </ConfigSection>
 
-            <div className="border-t border-border/40" />
+            
 
             {/* Exclusions */}
             <ConfigSection
@@ -363,7 +360,7 @@ function ConfigSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-3">
+    <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-3">
       <div className="flex items-center gap-2.5">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-primary" />
