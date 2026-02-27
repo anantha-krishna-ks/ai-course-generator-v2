@@ -197,7 +197,7 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="h-px w-full bg-border" />
+        <div className="border-t border-border/40" />
 
         {/* ── Intended Learners ── */}
         <div>
@@ -224,7 +224,7 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="h-px w-full bg-border" />
+        <div className="border-t border-border/40" />
 
         {/* ── Supporting Documents ── */}
         <div>
@@ -262,7 +262,7 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="h-px w-full bg-border" />
+        <div className="border-t border-border/40" />
 
         {/* ── Guidelines & Exclusions side by side ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
