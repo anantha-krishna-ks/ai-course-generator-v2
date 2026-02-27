@@ -158,9 +158,9 @@ export function AIConfigView({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-0">
       {/* Header with back */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 pb-5">
         <button
           type="button"
           onClick={onBack}
@@ -168,7 +168,7 @@ export function AIConfigView({
         >
           <ArrowLeft className="w-4 h-4 text-foreground" />
         </button>
-        <div>
+        <div className="flex-1">
           <h3 className="text-base sm:text-lg font-bold text-foreground">
             AI Configuration
           </h3>
@@ -178,112 +178,122 @@ export function AIConfigView({
         </div>
       </div>
 
-      {/* Supporting Documents */}
-      <Section icon={Upload} label="Supporting Documents" description="Upload reference materials for AI to use">
-        {options.supportingDocuments.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {options.supportingDocuments.map((doc, i) => (
-              <Badge
-                key={i}
-                variant="secondary"
-                className="gap-1.5 pr-1.5 text-xs font-normal h-7"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                {doc}
-                <button
-                  type="button"
-                  onClick={() => removeDocument(i)}
-                  className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors"
+      {/* Cards layout */}
+      <div className="space-y-4">
+        {/* Supporting Documents */}
+        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+          <SectionHeader icon={Upload} label="Supporting Documents" description="Upload reference materials for AI to use" />
+          {options.supportingDocuments.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {options.supportingDocuments.map((doc, i) => (
+                <Badge
+                  key={i}
+                  variant="secondary"
+                  className="gap-1.5 pr-1.5 text-xs font-normal h-7"
                 >
-                  <X className="w-3 h-3" />
-                </button>
-              </Badge>
-            ))}
+                  <FileText className="w-3.5 h-3.5" />
+                  {doc}
+                  <button
+                    type="button"
+                    onClick={() => removeDocument(i)}
+                    className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleFileSelect}
+            className="w-full border-2 border-dashed border-border/80 rounded-lg py-3.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+          >
+            <Upload className="w-4 h-4" />
+            Upload documents
+          </button>
+        </div>
+
+        {/* Bloom's Taxonomy + Intended Learners side by side on larger, stacked on small */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+            <SectionHeader icon={Brain} label="Bloom's Taxonomy" description="Cognitive levels for content" />
+            <div className="flex flex-wrap gap-1.5">
+              {BLOOMS_LEVELS.map((level) => {
+                const selected = options.bloomsTaxonomy.includes(level);
+                return (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => toggleBloom(level)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 flex items-center gap-1.5",
+                      selected
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
+                    )}
+                  >
+                    {selected && <Check className="w-3 h-3" />}
+                    {level}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
-        <button
-          type="button"
-          onClick={handleFileSelect}
-          className="w-full border-2 border-dashed border-border rounded-lg py-4 text-sm text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors flex items-center justify-center gap-2"
-        >
-          <Upload className="w-4 h-4" />
-          Upload documents
-        </button>
-      </Section>
 
-      {/* Bloom's Taxonomy */}
-      <Section icon={Brain} label="Bloom's Taxonomy" description="Select cognitive levels for your course content">
-        <div className="flex flex-wrap gap-2">
-          {BLOOMS_LEVELS.map((level) => {
-            const selected = options.bloomsTaxonomy.includes(level);
-            return (
-              <button
-                key={level}
-                type="button"
-                onClick={() => toggleBloom(level)}
-                className={cn(
-                  "px-3.5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 flex items-center gap-1.5",
-                  selected
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
-                )}
-              >
-                {selected && <Check className="w-3.5 h-3.5" />}
-                {level}
-              </button>
-            );
-          })}
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+            <SectionHeader icon={Users} label="Intended Learners" description="Target audience level" />
+            <div className="flex flex-col gap-1.5">
+              {LEARNER_LEVELS.map((level) => {
+                const selected = options.intendedLearners === level;
+                return (
+                  <button
+                    key={level}
+                    type="button"
+                    onClick={() => update({ intendedLearners: level })}
+                    className={cn(
+                      "py-2 rounded-lg text-sm font-medium border transition-all duration-200 text-center",
+                      selected
+                        ? "bg-primary/10 text-primary border-primary"
+                        : "bg-background text-muted-foreground border-border hover:border-primary/40"
+                    )}
+                  >
+                    {level}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
-      </Section>
 
-      {/* Intended Learners */}
-      <Section icon={Users} label="Intended Learners" description="Choose the target audience experience level">
-        <div className="grid grid-cols-3 gap-2">
-          {LEARNER_LEVELS.map((level) => {
-            const selected = options.intendedLearners === level;
-            return (
-              <button
-                key={level}
-                type="button"
-                onClick={() => update({ intendedLearners: level })}
-                className={cn(
-                  "py-2.5 rounded-lg text-sm font-medium border-2 transition-all duration-200",
-                  selected
-                    ? "bg-primary/10 text-primary border-primary"
-                    : "bg-background text-muted-foreground border-border hover:border-primary/40"
-                )}
-              >
-                {level}
-              </button>
-            );
-          })}
+        {/* Guidelines & Exclusions */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+            <SectionHeader icon={BookOpen} label="Guidelines" description="Instructions for AI generation" />
+            <Textarea
+              value={options.guidelines}
+              onChange={(e) => update({ guidelines: e.target.value })}
+              placeholder="Specific guidelines for AI content..."
+              className="min-h-[80px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg"
+              rows={3}
+            />
+          </div>
+
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+            <SectionHeader icon={ShieldX} label="Exclusions" description="Topics AI should avoid" />
+            <Textarea
+              value={options.exclusions}
+              onChange={(e) => update({ exclusions: e.target.value })}
+              placeholder="Topics to exclude from generation..."
+              className="min-h-[80px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg"
+              rows={3}
+            />
+          </div>
         </div>
-      </Section>
-
-      {/* Course Guidelines */}
-      <Section icon={BookOpen} label="Course Guidelines" description="Provide specific instructions for AI generation">
-        <Textarea
-          value={options.guidelines}
-          onChange={(e) => update({ guidelines: e.target.value })}
-          placeholder="Describe any specific guidelines for AI content generation..."
-          className="min-h-[80px] text-sm resize-none border-2 border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0"
-          rows={3}
-        />
-      </Section>
-
-      {/* Exclusions */}
-      <Section icon={ShieldX} label="Exclusions" description="Topics or content the AI should avoid">
-        <Textarea
-          value={options.exclusions}
-          onChange={(e) => update({ exclusions: e.target.value })}
-          placeholder="Topics or content to exclude from AI generation..."
-          className="min-h-[80px] text-sm resize-none border-2 border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0"
-          rows={3}
-        />
-      </Section>
+      </div>
 
       {/* Done button */}
-      <div className="flex justify-end pt-1">
+      <div className="flex justify-end pt-5">
         <Button
           type="button"
           onClick={onBack}
@@ -297,29 +307,24 @@ export function AIConfigView({
   );
 }
 
-function Section({
+function SectionHeader({
   icon: Icon,
   label,
   description,
-  children,
 }: {
   icon: React.ElementType;
   label: string;
   description: string;
-  children: React.ReactNode;
 }) {
   return (
-    <div className="space-y-2.5">
-      <div className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <Icon className="w-4 h-4 text-primary" />
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-foreground">{label}</p>
-          <p className="text-xs text-muted-foreground">{description}</p>
-        </div>
+    <div className="flex items-center gap-2.5">
+      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+        <Icon className="w-3.5 h-3.5 text-primary" />
       </div>
-      {children}
+      <div>
+        <p className="text-sm font-semibold text-foreground">{label}</p>
+        <p className="text-[11px] text-muted-foreground leading-tight">{description}</p>
+      </div>
     </div>
   );
 }
