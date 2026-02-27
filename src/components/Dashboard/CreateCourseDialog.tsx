@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AIOptionsPanel, type AIOptions } from "./AIOptionsPanel";
+import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -57,6 +57,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [selectedLayout, setSelectedLayout] = useState<LayoutType>("multi-page");
   const [isLoading, setIsLoading] = useState(false);
   const [aiOptions, setAIOptions] = useState<AIOptions>(defaultAIOptions);
+  const [showAIConfig, setShowAIConfig] = useState(false);
 
   const handleStartCreating = () => {
     if (!courseTitle.trim()) return;
@@ -88,6 +89,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
       setCourseTitle("");
       setSelectedLayout("multi-page");
       setAIOptions(defaultAIOptions);
+      setShowAIConfig(false);
   };
 
   const handleClose = (isOpen: boolean) => {
@@ -95,6 +97,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
       // Reset form when closing
       setCourseTitle("");
       setSelectedLayout("multi-page");
+      setShowAIConfig(false);
     }
     if (!isLoading) {
       onOpenChange(isOpen);
@@ -106,6 +109,12 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
       <DialogContent className="w-[95vw] max-w-[800px] max-h-[90vh] overflow-y-auto p-4 sm:p-6 md:p-10" hideCloseButton={isLoading}>
         {isLoading ? (
           <InlineLoader courseTitle={courseTitle} onComplete={handleLoaderComplete} />
+        ) : showAIConfig ? (
+          <AIConfigView
+            options={aiOptions}
+            onChange={setAIOptions}
+            onBack={() => setShowAIConfig(false)}
+          />
         ) : (
           <>
             <DialogHeader className="space-y-2 pb-2">
@@ -141,7 +150,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       : "border-border hover:border-primary/50"
                   )}
                 >
-                  {/* Premium Radio indicator */}
                   <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                     <div
                       className={cn(
@@ -161,8 +169,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       />
                     </div>
                   </div>
-
-                  {/* Layout Preview Illustration */}
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
                     <div className="w-28 sm:w-32 h-16 sm:h-20 bg-muted rounded border border-border p-1.5 sm:p-2 flex gap-1.5 sm:gap-2">
                       <div className="flex-1 space-y-0.5 sm:space-y-1">
@@ -182,7 +188,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       </div>
                     </div>
                   </div>
-
                   <div className="text-center">
                     <h3 className="font-semibold text-sm sm:text-base text-foreground mb-0.5 sm:mb-1">Multi-page layout</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">
@@ -202,7 +207,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       : "border-border hover:border-primary/50"
                   )}
                 >
-                  {/* Premium Radio indicator */}
                   <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
                     <div
                       className={cn(
@@ -222,8 +226,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       />
                     </div>
                   </div>
-
-                  {/* Layout Preview Illustration */}
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
                     <div className="w-28 sm:w-32 h-16 sm:h-20 bg-muted rounded border border-border p-1.5 sm:p-2">
                       <div className="text-[7px] sm:text-[8px] text-muted-foreground font-medium">logo</div>
@@ -235,7 +237,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       </div>
                     </div>
                   </div>
-
                   <div className="text-center">
                     <h3 className="font-semibold text-sm sm:text-base text-foreground mb-0.5 sm:mb-1">Single-page layout</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">
@@ -245,8 +246,12 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 </button>
               </div>
 
-              {/* AI Support Options */}
-              <AIOptionsPanel options={aiOptions} onChange={setAIOptions} />
+              {/* AI Support Toggle */}
+              <AIToggleRow
+                options={aiOptions}
+                onChange={setAIOptions}
+                onConfigure={() => setShowAIConfig(true)}
+              />
 
               {/* Start Creating Button */}
               <div className="pt-1 sm:pt-2 flex justify-center">
