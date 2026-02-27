@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MousePointerClick } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AIOptionsPanel, type AIOptions } from "./AIOptionsPanel";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -17,6 +18,15 @@ interface CreateCourseDialogProps {
 }
 
 type LayoutType = "multi-page" | "single-page";
+
+const defaultAIOptions: AIOptions = {
+  enabled: false,
+  supportingDocuments: [],
+  bloomsTaxonomy: [],
+  intendedLearners: "",
+  guidelines: "",
+  exclusions: "",
+};
 
 function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComplete: () => void }) {
   useEffect(() => {
@@ -46,6 +56,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [courseTitle, setCourseTitle] = useState("");
   const [selectedLayout, setSelectedLayout] = useState<LayoutType>("multi-page");
   const [isLoading, setIsLoading] = useState(false);
+  const [aiOptions, setAIOptions] = useState<AIOptions>(defaultAIOptions);
 
   const handleStartCreating = () => {
     if (!courseTitle.trim()) return;
@@ -74,8 +85,9 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     });
     setIsLoading(false);
     onOpenChange(false);
-    setCourseTitle("");
-    setSelectedLayout("multi-page");
+      setCourseTitle("");
+      setSelectedLayout("multi-page");
+      setAIOptions(defaultAIOptions);
   };
 
   const handleClose = (isOpen: boolean) => {
@@ -232,6 +244,9 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                   </div>
                 </button>
               </div>
+
+              {/* AI Support Options */}
+              <AIOptionsPanel options={aiOptions} onChange={setAIOptions} />
 
               {/* Start Creating Button */}
               <div className="pt-1 sm:pt-2 flex justify-center">
