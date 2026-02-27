@@ -172,7 +172,7 @@ export function AIConfigView({
       {/* All sections in cards */}
       <div className="space-y-4">
         {/* ── Bloom's Taxonomy ── */}
-        <div className="rounded-xl border border-border/60 bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Brain} label="Bloom's Taxonomy" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Select cognitive levels for generated content</p>
           <div className="flex flex-wrap gap-2">
@@ -199,7 +199,7 @@ export function AIConfigView({
         </div>
 
         {/* ── Intended Learners ── */}
-        <div className="rounded-xl border border-border/60 bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Users} label="Intended Learners" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Choose the target audience skill level</p>
           <div className="flex gap-2">
@@ -225,7 +225,7 @@ export function AIConfigView({
         </div>
 
         {/* ── Supporting Documents ── */}
-        <div className="rounded-xl border border-border/60 bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Upload} label="Supporting Documents" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Upload reference materials to guide AI generation</p>
           <div className="space-y-2.5">
@@ -276,7 +276,7 @@ export function AIConfigView({
 
         {/* ── Guidelines & Exclusions ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-border/60 bg-card p-5">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
             <SectionLabel icon={BookOpen} label="Guidelines" />
             <p className="text-xs text-muted-foreground mt-1 mb-3">Instructions for AI content generation</p>
             <Textarea
@@ -291,7 +291,7 @@ export function AIConfigView({
               rows={3}
             />
           </div>
-          <div className="rounded-xl border border-border/60 bg-card p-5">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
             <SectionLabel icon={ShieldX} label="Exclusions" />
             <p className="text-xs text-muted-foreground mt-1 mb-3">Topics AI should avoid generating</p>
             <Textarea
