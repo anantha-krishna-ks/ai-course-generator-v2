@@ -169,12 +169,13 @@ export function AIConfigView({
         </div>
       </div>
 
-      {/* All sections in a single flow */}
-      <div className="space-y-7">
+      {/* All sections in cards */}
+      <div className="space-y-4">
         {/* ── Bloom's Taxonomy ── */}
-        <div>
+        <div className="rounded-xl border border-border/60 bg-card p-5">
           <SectionLabel icon={Brain} label="Bloom's Taxonomy" />
-          <div className="flex flex-wrap gap-2 mt-3">
+          <p className="text-xs text-muted-foreground mt-1 mb-3">Select cognitive levels for generated content</p>
+          <div className="flex flex-wrap gap-2">
             {BLOOMS_LEVELS.map((level) => {
               const selected = options.bloomsTaxonomy.includes(level);
               return (
@@ -197,12 +198,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="border-t border-border/40" />
-
         {/* ── Intended Learners ── */}
-        <div>
+        <div className="rounded-xl border border-border/60 bg-card p-5">
           <SectionLabel icon={Users} label="Intended Learners" />
-          <div className="flex gap-2 mt-3">
+          <p className="text-xs text-muted-foreground mt-1 mb-3">Choose the target audience skill level</p>
+          <div className="flex gap-2">
             {LEARNER_LEVELS.map((level) => {
               const selected = options.intendedLearners === level;
               return (
@@ -224,12 +224,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="border-t border-border/40" />
-
         {/* ── Supporting Documents ── */}
-        <div>
+        <div className="rounded-xl border border-border/60 bg-card p-5">
           <SectionLabel icon={Upload} label="Supporting Documents" />
-          <div className="mt-2.5 space-y-2.5">
+          <p className="text-xs text-muted-foreground mt-1 mb-3">Upload reference materials to guide AI generation</p>
+          <div className="space-y-2.5">
             {options.supportingDocuments.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {options.supportingDocuments.map((doc, i) => (
@@ -275,12 +274,11 @@ export function AIConfigView({
           </div>
         </div>
 
-        <div className="border-t border-border/40" />
-
-        {/* ── Guidelines & Exclusions side by side ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
+        {/* ── Guidelines & Exclusions ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-border/60 bg-card p-5">
             <SectionLabel icon={BookOpen} label="Guidelines" />
+            <p className="text-xs text-muted-foreground mt-1 mb-3">Instructions for AI content generation</p>
             <Textarea
               value={options.guidelines}
               onChange={(e) => {
@@ -288,13 +286,14 @@ export function AIConfigView({
                 e.target.style.height = "auto";
                 e.target.style.height = e.target.scrollHeight + "px";
               }}
-              placeholder="Instructions for AI content generation..."
-              className="mt-3 min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
+              placeholder="e.g. Use formal tone, include real-world examples..."
+              className="min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
           </div>
-          <div>
+          <div className="rounded-xl border border-border/60 bg-card p-5">
             <SectionLabel icon={ShieldX} label="Exclusions" />
+            <p className="text-xs text-muted-foreground mt-1 mb-3">Topics AI should avoid generating</p>
             <Textarea
               value={options.exclusions}
               onChange={(e) => {
@@ -302,8 +301,8 @@ export function AIConfigView({
                 e.target.style.height = "auto";
                 e.target.style.height = e.target.scrollHeight + "px";
               }}
-              placeholder="Topics AI should avoid..."
-              className="mt-3 min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
+              placeholder="e.g. No political content, avoid competitor mentions..."
+              className="min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
           </div>
