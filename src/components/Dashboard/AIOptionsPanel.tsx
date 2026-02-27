@@ -170,7 +170,7 @@ export function AIConfigView({
       </div>
 
       {/* All sections in a single flow */}
-      <div className="space-y-6">
+      <div className="space-y-7">
         {/* ── Bloom's Taxonomy ── */}
         <div>
           <SectionLabel icon={Brain} label="Bloom's Taxonomy" />
@@ -183,7 +183,7 @@ export function AIConfigView({
                   type="button"
                   onClick={() => toggleBloom(level)}
                   className={cn(
-                    "px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 flex items-center gap-1.5",
+                    "px-5 py-2.5 rounded-full text-[0.938rem] font-medium border transition-all duration-200 flex items-center gap-1.5",
                     selected
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
                       : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
@@ -211,7 +211,7 @@ export function AIConfigView({
                   type="button"
                   onClick={() => update({ intendedLearners: level })}
                   className={cn(
-                    "flex-1 py-2.5 rounded-lg text-sm font-medium border transition-all duration-200 text-center",
+                    "flex-1 py-3 rounded-lg text-[0.938rem] font-medium border transition-all duration-200 text-center",
                     selected
                       ? "bg-primary/10 text-primary border-primary"
                       : "bg-background text-muted-foreground border-border hover:border-primary/40"
@@ -320,9 +320,9 @@ function SectionLabel({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <Icon className="w-3.5 h-3.5 text-primary" />
-      <span className="text-sm font-semibold text-foreground">{label}</span>
+    <div className="flex items-center gap-2.5">
+      <Icon className="w-4 h-4 text-primary" />
+      <span className="text-base font-semibold text-foreground">{label}</span>
     </div>
   );
 }
