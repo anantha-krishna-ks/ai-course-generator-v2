@@ -1,8 +1,31 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { ContentBlock } from "./ContentBlock";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+interface PageContentBlock {
+  id: string;
+  type: "text" | "image";
+  content: string;
+}
 
 interface PageEditorDialogProps {
   open: boolean;
@@ -15,6 +38,50 @@ interface PageEditorDialogProps {
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
+  const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const addBlock = useCallback((type: "text" | "image") => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    setBlocks((prev) => [...prev, { id, type, content: "" }]);
+    setLastAddedBlockId(id);
+  }, []);
+
+  const updateBlock = useCallback((id: string, content: string) => {
+    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content } : b)));
+  }, []);
+
+  const deleteBlock = useCallback((id: string) => {
+    setBlocks((prev) => prev.filter((b) => b.id !== id));
+  }, []);
+
+  const duplicateBlock = useCallback((id: string) => {
+    setBlocks((prev) => {
+      const idx = prev.findIndex((b) => b.id === id);
+      if (idx === -1) return prev;
+      const newId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const copy = { ...prev[idx], id: newId };
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+  }, []);
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setBlocks((prev) => {
+        const oldIndex = prev.findIndex((b) => b.id === active.id);
+        const newIndex = prev.findIndex((b) => b.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -179,7 +246,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <button
                     className="relative gap-2 text-sm h-9 rounded-full px-5 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
                   >
-                    {/* Gradient border */}
                     <span
                       className="absolute inset-0 rounded-full p-[1.5px]"
                       style={{
@@ -192,18 +258,41 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     <span className="relative">Create with AI</span>
                   </button>
                 )}
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4" onClick={() => addBlock("text")}>
                   <Type className="w-4 h-4" />
                   Text
                 </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4" onClick={() => addBlock("image")}>
                   <ImageIcon className="w-4 h-4" />
                   Image
                 </Button>
               </div>
 
-              {/* Empty content area */}
-              <div className="min-h-[300px]" />
+              {/* Content blocks */}
+              {blocks.length > 0 ? (
+                <TooltipProvider delayDuration={300}>
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+                      <div className="mt-6 space-y-4 pl-12">
+                        {blocks.map((block) => (
+                          <ContentBlock
+                            key={block.id}
+                            id={block.id}
+                            type={block.type}
+                            content={block.content}
+                            onChange={(content) => updateBlock(block.id, content)}
+                            onDelete={() => deleteBlock(block.id)}
+                            onDuplicate={() => duplicateBlock(block.id)}
+                            autoFocus={block.id === lastAddedBlockId}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </TooltipProvider>
+              ) : (
+                <div className="min-h-[300px]" />
+              )}
             </div>
           </div>
         </div>
