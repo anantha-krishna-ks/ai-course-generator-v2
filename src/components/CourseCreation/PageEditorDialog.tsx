@@ -28,6 +28,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
             <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9">
               <Play className="w-4 h-4" />
             </Button>
+            <span className="w-px h-5 bg-border" />
             <button
               onClick={onClose}
               className="p-2.5 rounded-md hover:bg-muted transition-colors"
