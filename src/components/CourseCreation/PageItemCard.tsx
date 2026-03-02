@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 interface PageItemCardProps {
   title: string;
   inclusions?: string;
+  aiEnabled?: boolean;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
   onDelete?: () => void;
@@ -24,7 +25,7 @@ interface PageItemCardProps {
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, autoFocus }: PageItemCardProps) {
+export function PageItemCard({ title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, autoFocus, aiEnabled = false }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -203,6 +204,7 @@ export function PageItemCard({ title, inclusions = "", onTitleChange, onInclusio
         onClose={() => setShowEditor(false)}
         pageTitle={title}
         onPageTitleChange={onTitleChange}
+        aiEnabled={aiEnabled}
       />
     </>
   );
