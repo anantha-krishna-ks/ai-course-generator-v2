@@ -20,7 +20,7 @@ interface CreateCourseDialogProps {
 type LayoutType = "multi-page" | "single-page";
 
 const defaultAIOptions: AIOptions = {
-  enabled: false,
+  enabled: true,
   supportingDocuments: [],
   bloomsTaxonomy: [],
   intendedLearners: "",
