@@ -49,7 +49,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const addBlock = useCallback((type: "text" | "image") => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = type === "text"
-      ? "<h2>Your heading text goes here</h2><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>"
+      ? "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>"
       : "";
     setBlocks((prev) => [...prev, { id, type, content: defaultContent }]);
     setLastAddedBlockId(id);
