@@ -378,6 +378,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   onDelete={() => deleteBlock(block.id)}
                                   onDuplicate={() => duplicateBlock(block.id)}
                                   autoFocus={block.id === lastAddedBlockId}
+                                  aiEnabled={aiEnabled}
                                 />
                               );
                               blockIdx++;
