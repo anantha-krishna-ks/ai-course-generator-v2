@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ChevronUp, ListChecks } from "lucide-react";
+import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -26,9 +26,8 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
-  const [showInclusions, setShowInclusions] = useState(false);
+  const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [inclusionsText, setInclusionsText] = useState("");
-  const [isInclusionsFocused, setIsInclusionsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const inclusionsRef = useRef<HTMLTextAreaElement>(null);
 
@@ -39,6 +38,7 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
   }, [autoFocus]);
 
   const displayTitle = title.trim() || "Untitled page";
+  const hasInclusions = inclusionsText.trim().length > 0;
 
   return (
     <>
@@ -48,117 +48,122 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
         </button>
         <div className="rounded-lg border border-border bg-card overflow-hidden flex-1 min-w-0">
           <div className="flex items-center gap-2 px-4 py-3">
-          <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
-          <div className="flex-1 min-w-0">
-            <input
-              ref={inputRef}
-              type="text"
-              value={title}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              onChange={(e) => {
-                if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
-                  onTitleChange(e.target.value);
-                }
-              }}
-              className={cn(
-                "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none placeholder:text-muted-foreground/50 transition-all duration-200",
-                isFocused ? "border-primary/50" : "border-transparent"
-              )}
-              placeholder="Enter page title..."
-            />
-          </div>
-          <span className={cn(
-            "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
-            isFocused ? "opacity-100" : "opacity-0"
-          )}>
-            {title.length}/{MAX_PAGE_TITLE_LENGTH}
-          </span>
-          <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0" onClick={() => setShowEditor(true)}>
-            Open
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
-                <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
-              <DropdownMenuItem
-                onClick={onDuplicate}
-                className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-              >
-                <Copy className="w-4 h-4 text-muted-foreground" />
-                Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setShowDeleteDialog(true)}
-                className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          </div>
-
-          {/* Inclusions toggle */}
-          <div className="px-4 pb-3">
-            <button
-              onClick={() => {
-                const next = !showInclusions;
-                setShowInclusions(next);
-                if (next) {
-                  setTimeout(() => inclusionsRef.current?.focus(), 350);
-                }
-              }}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ChevronUp className={cn(
-                "w-3.5 h-3.5 transition-transform duration-200",
-                !showInclusions && "rotate-180"
-              )} />
-              {showInclusions ? "Hide inclusions" : "Add inclusions"}
-            </button>
-          </div>
-
-          {/* Inclusions Panel */}
-          <div
-            className={cn(
-              "grid transition-all duration-300 ease-in-out",
-              showInclusions ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-            )}
-          >
-            <div className="overflow-hidden">
-              <div className="mx-4 mb-4 rounded-lg border border-border bg-card p-5">
-                <div className="flex items-center gap-1.5 mb-4">
-                  <ListChecks className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm font-semibold text-foreground">Inclusions</span>
-                </div>
-                <textarea
-                  ref={inclusionsRef}
-                  value={inclusionsText}
-                  onFocus={() => setIsInclusionsFocused(true)}
-                  onBlur={() => setIsInclusionsFocused(false)}
-                  onChange={(e) => setInclusionsText(e.target.value)}
-                  className={cn(
-                    "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-2 placeholder:text-muted-foreground/50 transition-all duration-200 resize-none min-h-[60px]",
-                    isInclusionsFocused ? "border-primary/40" : "border-transparent"
-                  )}
-                  placeholder="Define what topics, content, or scope should be included in this page..."
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = 'auto';
-                    target.style.height = target.scrollHeight + 'px';
-                  }}
-                />
-              </div>
+            <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+            <div className="flex-1 min-w-0">
+              <input
+                ref={inputRef}
+                type="text"
+                value={title}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                onChange={(e) => {
+                  if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
+                    onTitleChange(e.target.value);
+                  }
+                }}
+                className={cn(
+                  "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none placeholder:text-muted-foreground/50 transition-all duration-200",
+                  isFocused ? "border-primary/50" : "border-transparent"
+                )}
+                placeholder="Enter page title..."
+              />
             </div>
+            <span className={cn(
+              "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
+              isFocused ? "opacity-100" : "opacity-0"
+            )}>
+              {title.length}/{MAX_PAGE_TITLE_LENGTH}
+            </span>
+            {/* Inclusions indicator */}
+            {hasInclusions && (
+              <button
+                onClick={() => setShowInclusionsDialog(true)}
+                className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium hover:bg-primary/15 transition-colors shrink-0"
+              >
+                <ListChecks className="w-3 h-3" />
+                Inclusions
+              </button>
+            )}
+            <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0" onClick={() => setShowEditor(true)}>
+              Open
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
+                  <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+                <DropdownMenuItem
+                  onClick={() => setShowInclusionsDialog(true)}
+                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                >
+                  <ListChecks className="w-4 h-4 text-muted-foreground" />
+                  {hasInclusions ? "Edit inclusions" : "Add inclusions"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={onDuplicate}
+                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                >
+                  <Copy className="w-4 h-4 text-muted-foreground" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
 
+      {/* Inclusions Dialog */}
+      <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <ListChecks className="w-5 h-5 text-muted-foreground" />
+              Inclusions
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Define the scope for "{displayTitle}"
+            </p>
+          </DialogHeader>
+
+          <div className="mt-4">
+            <textarea
+              ref={inclusionsRef}
+              value={inclusionsText}
+              onChange={(e) => setInclusionsText(e.target.value)}
+              autoFocus
+              className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
+              placeholder="Define what topics, content, or scope should be included in this page..."
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = 'auto';
+                target.style.height = Math.max(140, target.scrollHeight) + 'px';
+              }}
+            />
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button
+              onClick={() => setShowInclusionsDialog(false)}
+              className="rounded-full px-6"
+            >
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent className="sm:max-w-[480px] text-center">
           <DialogHeader className="items-center">

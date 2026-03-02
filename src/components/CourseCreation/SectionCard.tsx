@@ -199,9 +199,8 @@ export function SectionCard({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showObjective, setShowObjective] = useState(false);
   const [objectiveText, setObjectiveText] = useState("");
-  const [showInclusions, setShowInclusions] = useState(false);
+  const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [inclusionsText, setInclusionsText] = useState("");
-  const [isInclusionsFocused, setIsInclusionsFocused] = useState(false);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
@@ -210,7 +209,6 @@ export function SectionCard({
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
   const objectiveRef = useRef<HTMLInputElement>(null);
-  const inclusionsRef = useRef<HTMLTextAreaElement>(null);
 
   const handleAddPage = () => {
     const newPage: PageEntry = { id: crypto.randomUUID(), title: "" };
@@ -273,6 +271,13 @@ export function SectionCard({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52 bg-background border border-border p-1.5">
+                <DropdownMenuItem
+                  onClick={() => setShowInclusionsDialog(true)}
+                  className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                >
+                  <ListChecks className="w-4 h-4 text-muted-foreground" />
+                  {inclusionsText.trim() ? "Edit inclusions" : "Add inclusions"}
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setShowImageDialog(true)}
                   className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
@@ -380,50 +385,42 @@ export function SectionCard({
                   </div>
 
                   {/* Actions row */}
-                  <div className="flex items-center justify-between mt-3 gap-2">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button
-                        onClick={() => {
-                          const next = !showObjective;
-                          setShowObjective(next);
-                          if (next) {
-                            setTimeout(() => objectiveRef.current?.focus(), 350);
-                          }
-                        }}
-                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <ChevronUp className={cn(
-                          "w-3.5 h-3.5 transition-transform duration-200",
-                          !showObjective && "rotate-180"
-                        )} />
-                        {showObjective ? "Hide learning objective" : "Add learning objective"}
-                      </button>
-                      <span className="text-muted-foreground/30 select-none">|</span>
-                      <button
-                        onClick={() => {
-                          const next = !showInclusions;
-                          setShowInclusions(next);
-                          if (next) {
-                            setTimeout(() => inclusionsRef.current?.focus(), 350);
-                          }
-                        }}
-                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <ChevronUp className={cn(
-                          "w-3.5 h-3.5 transition-transform duration-200",
-                          !showInclusions && "rotate-180"
-                        )} />
-                        {showInclusions ? "Hide inclusions" : "Add inclusions"}
-                      </button>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={onOpenSection}
-                      className="text-sm border-border"
+                  <div className="flex items-center justify-between mt-3">
+                    <button
+                      onClick={() => {
+                        const next = !showObjective;
+                        setShowObjective(next);
+                        if (next) {
+                          setTimeout(() => objectiveRef.current?.focus(), 350);
+                        }
+                      }}
+                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      Open section
-                    </Button>
+                      <ChevronUp className={cn(
+                        "w-3.5 h-3.5 transition-transform duration-200",
+                        !showObjective && "rotate-180"
+                      )} />
+                      {showObjective ? "Hide learning objective" : "Add learning objective"}
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {inclusionsText.trim() && (
+                        <button
+                          onClick={() => setShowInclusionsDialog(true)}
+                          className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium hover:bg-primary/15 transition-colors"
+                        >
+                          <ListChecks className="w-3 h-3" />
+                          Inclusions
+                        </button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onOpenSection}
+                        className="text-sm border-border"
+                      >
+                        Open section
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -484,39 +481,40 @@ export function SectionCard({
               </div>
             </div>
 
-            {/* Inclusions Panel */}
-            <div
-              className={cn(
-                "grid transition-all duration-300 ease-in-out",
-                showInclusions ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-              )}
-            >
-              <div className="overflow-hidden">
-                <div className="mx-5 mb-5 rounded-lg border border-border bg-card p-5">
-                  <div className="flex items-center gap-1.5 mb-4">
-                    <ListChecks className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold text-foreground">Inclusions</span>
-                  </div>
+            {/* Inclusions Dialog */}
+            <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
+              <DialogContent className="sm:max-w-[560px]">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+                    <ListChecks className="w-5 h-5 text-muted-foreground" />
+                    Inclusions
+                  </DialogTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Define the scope for "{title || "Untitled section"}"
+                  </p>
+                </DialogHeader>
+                <div className="mt-4">
                   <textarea
-                    ref={inclusionsRef}
                     value={inclusionsText}
-                    onFocus={() => setIsInclusionsFocused(true)}
-                    onBlur={() => setIsInclusionsFocused(false)}
                     onChange={(e) => setInclusionsText(e.target.value)}
-                    className={cn(
-                      "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-2 placeholder:text-muted-foreground/50 transition-all duration-200 resize-none min-h-[60px]",
-                      isInclusionsFocused ? "border-primary/40" : "border-transparent"
-                    )}
+                    autoFocus
+                    className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
                     placeholder="Define what topics, content, or scope should be included in this section..."
                     onInput={(e) => {
                       const target = e.target as HTMLTextAreaElement;
                       target.style.height = 'auto';
-                      target.style.height = target.scrollHeight + 'px';
+                      target.style.height = Math.max(140, target.scrollHeight) + 'px';
                     }}
                   />
                 </div>
-              </div>
-            </div>
+                <div className="flex justify-end pt-2">
+                  <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
+                    Done
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <div className="px-5 pt-3 pb-4 space-y-3">
               {pages.length > 0 && (
                 <div className="flex items-center gap-2 mb-1">
