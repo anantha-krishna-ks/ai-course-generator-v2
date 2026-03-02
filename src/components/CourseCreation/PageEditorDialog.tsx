@@ -182,13 +182,31 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
 
               {/* Content type toolbar */}
               <div className="rounded-full border border-border bg-muted/30 px-2 py-1.5 flex items-center gap-1 w-fit">
-                <Button
-                  variant="outline"
-                  className="gap-2 border-primary/30 text-primary hover:bg-primary/5 text-sm h-8 rounded-full"
+                <button
+                  className="relative gap-2 text-sm h-8 rounded-full px-4 flex items-center font-medium text-foreground bg-background transition-transform duration-200 hover:scale-105 group"
+                  style={{
+                    background: 'white',
+                  }}
                 >
-                  <Sparkles className="w-4 h-4" />
+                  {/* Gradient border layer */}
+                  <span
+                    className="absolute inset-0 rounded-full -z-10 p-[1.5px]"
+                    style={{
+                      background: 'linear-gradient(135deg, #7eb4ff, #6ee7b7, #fbbf24, #f87171, #a78bfa)',
+                    }}
+                  >
+                    <span className="block w-full h-full rounded-full bg-background" />
+                  </span>
+                  {/* Outer glow on hover */}
+                  <span
+                    className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-20 blur-[6px]"
+                    style={{
+                      background: 'linear-gradient(135deg, #7eb4ff, #6ee7b7, #fbbf24, #f87171, #a78bfa)',
+                    }}
+                  />
+                  <Sparkles className="w-4 h-4 text-foreground" />
                   Create with AI
-                </Button>
+                </button>
                 <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-8 rounded-full hover:text-foreground">
                   <Type className="w-4 h-4" />
                   Text
