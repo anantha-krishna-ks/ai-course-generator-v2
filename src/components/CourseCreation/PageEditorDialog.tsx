@@ -24,24 +24,15 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
             <FileText className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">Page editor</span>
           </div>
-          <div className="flex items-center gap-1">
-            <button className="p-2 rounded-md hover:bg-muted transition-colors">
-              <Sparkles className="w-4 h-4 text-primary" />
-            </button>
-            <button className="p-2 rounded-md hover:bg-muted transition-colors">
-              <MessageSquare className="w-4 h-4 text-muted-foreground" />
-            </button>
-            <button className="p-2 rounded-md hover:bg-muted transition-colors">
-              <Mic className="w-4 h-4 text-muted-foreground" />
-            </button>
-            <Button variant="outline" size="icon" className="rounded-full border-border h-8 w-8 ml-1">
-              <Play className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9">
+              <Play className="w-4 h-4" />
             </Button>
             <button
               onClick={onClose}
-              className="p-2 rounded-md hover:bg-muted transition-colors ml-1"
+              className="p-2.5 rounded-md hover:bg-muted transition-colors"
             >
-              <X className="w-4 h-4 text-muted-foreground" />
+              <X className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
         </div>
