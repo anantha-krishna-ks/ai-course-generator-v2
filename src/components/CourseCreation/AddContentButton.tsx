@@ -37,7 +37,7 @@ export function AddContentButton({
   const isFullToolbar = variant === "full";
 
   return (
-    <div className="group/add flex items-center justify-center py-1">
+    <div className="group/add flex items-center justify-center -my-1">
       <div className="flex-1 h-px bg-foreground/15 opacity-0 group-hover/add:opacity-100 transition-opacity duration-200" />
       <Popover>
         <Tooltip>
