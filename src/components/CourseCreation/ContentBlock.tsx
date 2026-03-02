@@ -173,7 +173,7 @@ export function ContentBlock({
         {/* Content area - full width */}
         <div className="w-full">
           {type === "image" ? (
-            <ImageBlock imageUrl={content} onChange={onChange} />
+            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : isEditing ? (
             <DescriptionEditor content={content} onChange={onChange} />
           ) : (
