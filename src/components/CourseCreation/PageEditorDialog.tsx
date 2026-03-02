@@ -279,10 +279,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
 
               {/* Content type toolbar */}
-              <div className="rounded-full border border-border bg-muted/30 px-3 py-2 flex items-center w-full justify-evenly">
+              <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-4 py-2.5 flex items-center w-full justify-evenly shadow-sm">
                 {aiEnabled && (
                   <button
-                    className="relative gap-1.5 text-xs h-7 rounded-full px-3.5 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
+                    className="relative gap-2 text-[13px] h-9 rounded-full px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
                   >
                     <span
                       className="absolute inset-0 rounded-full p-[1.5px]"
@@ -292,32 +292,32 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     >
                       <span className="block w-full h-full rounded-full bg-background" />
                     </span>
-                    <Sparkles className="w-3.5 h-3.5 relative" />
+                    <Sparkles className="w-4 h-4 relative" />
                     <span className="relative">Create with AI</span>
                   </button>
                 )}
-                <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs h-7 rounded-full hover:text-foreground px-3" onClick={() => addBlock("text")}>
-                  <Type className="w-3.5 h-3.5" />
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-[13px] h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-4 transition-all duration-200" onClick={() => addBlock("text")}>
+                  <Type className="w-4 h-4" />
                   Text
                 </Button>
-                <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs h-7 rounded-full hover:text-foreground px-3" onClick={() => addBlock("image")}>
-                  <ImageIcon className="w-3.5 h-3.5" />
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-[13px] h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-4 transition-all duration-200" onClick={() => addBlock("image")}>
+                  <ImageIcon className="w-4 h-4" />
                   Image
                 </Button>
-                <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs h-7 rounded-full hover:text-foreground px-3">
-                  <Video className="w-3.5 h-3.5" />
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-[13px] h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-4 transition-all duration-200">
+                  <Video className="w-4 h-4" />
                   Video
                 </Button>
-                <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs h-7 rounded-full hover:text-foreground px-3">
-                  <Mic className="w-3.5 h-3.5" />
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-[13px] h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-4 transition-all duration-200">
+                  <Mic className="w-4 h-4" />
                   Audio
                 </Button>
-                <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs h-7 rounded-full hover:text-foreground px-3">
-                  <DocIcon className="w-3.5 h-3.5" />
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-[13px] h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-4 transition-all duration-200">
+                  <DocIcon className="w-4 h-4" />
                   Doc
                 </Button>
-                <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs h-7 rounded-full hover:text-foreground px-3">
-                  <MessageSquare className="w-3.5 h-3.5" />
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-[13px] h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-4 transition-all duration-200">
+                  <MessageSquare className="w-4 h-4" />
                   Quiz
                 </Button>
               </div>
