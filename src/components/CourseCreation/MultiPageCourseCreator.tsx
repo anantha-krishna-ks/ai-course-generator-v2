@@ -704,6 +704,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   sectionNumber={currentSectionNumber}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
+                                  aiEnabled={!!aiOptions?.enabled}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
@@ -721,6 +722,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                 <PageItemCard
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
+                                  aiEnabled={!!aiOptions?.enabled}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}

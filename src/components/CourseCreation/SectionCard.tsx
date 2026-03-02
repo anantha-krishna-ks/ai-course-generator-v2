@@ -21,6 +21,7 @@ interface SectionCardProps {
   sectionNumber: number;
   title: string;
   inclusions?: string;
+  aiEnabled?: boolean;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
   onDelete?: () => void;
@@ -51,9 +52,10 @@ interface SortablePageRowProps {
   onDuplicate: (id: string) => void;
   onDelete: (id: string) => void;
   onInclusionsChange: (id: string, inclusions: string) => void;
+  aiEnabled?: boolean;
 }
 
-function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange }: SortablePageRowProps) {
+function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, aiEnabled }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
@@ -232,6 +234,7 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
         open={showEditor}
         onClose={() => setShowEditor(false)}
         pageTitle={page.title}
+        aiEnabled={aiEnabled}
         onPageTitleChange={(newTitle) =>
           setPages((prev) =>
             prev.map((p) => p.id === page.id ? { ...p, title: newTitle } : p)
@@ -246,6 +249,7 @@ export function SectionCard({
   sectionNumber,
   title,
   inclusions = "",
+  aiEnabled = false,
   onTitleChange,
   onInclusionsChange,
   onDelete,
@@ -607,6 +611,7 @@ export function SectionCard({
                             prev.map((p) => p.id === id ? { ...p, inclusions: val } : p)
                           );
                         }}
+                        aiEnabled={aiEnabled}
                       />
                     </div>
                   ))}
