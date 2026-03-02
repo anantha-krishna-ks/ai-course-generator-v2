@@ -173,9 +173,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
 
 
               {/* Content type toolbar */}
-              <div className="rounded-full border border-border bg-muted/30 px-2 py-1.5 flex items-center gap-1 w-fit">
+              <div className="rounded-full border border-border bg-muted/30 px-3 py-2 flex items-center gap-1.5 w-fit">
                 <button
-                  className="relative gap-2 text-sm h-8 rounded-full px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
+                  className="relative gap-2 text-sm h-9 rounded-full px-5 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
                 >
                   {/* Gradient border */}
                   <span
@@ -189,11 +189,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
                   <Sparkles className="w-4 h-4 relative" />
                   <span className="relative">Create with AI</span>
                 </button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-8 rounded-full hover:text-foreground">
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
                   <Type className="w-4 h-4" />
                   Text
                 </Button>
-                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-8 rounded-full hover:text-foreground">
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
                   <ImageIcon className="w-4 h-4" />
                   Image
                 </Button>
