@@ -647,7 +647,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
-                      className="gap-2 border-border hover:border-primary/50 rounded-full"
+                      className="gap-2 border-border rounded-full"
                     >
                       <Plus className="w-4 h-4" />
                       Add item
