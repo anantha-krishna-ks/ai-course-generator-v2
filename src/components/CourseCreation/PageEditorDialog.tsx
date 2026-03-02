@@ -276,7 +276,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-                      <div className="mt-6 space-y-4 pl-12">
+                      <div className="mt-6 space-y-4">
                         {blocks.map((block) => (
                           <ContentBlock
                             key={block.id}
