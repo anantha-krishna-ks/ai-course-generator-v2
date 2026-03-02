@@ -279,7 +279,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
 
               {/* Content type toolbar */}
-              <div className="rounded-full border border-border bg-muted/30 px-2 py-1.5 flex items-center gap-1 w-fit">
+              <div className="rounded-full border border-border bg-muted/30 px-3 py-2 flex items-center gap-1 w-full justify-center">
                 {aiEnabled && (
                   <button
                     className="relative gap-1.5 text-xs h-7 rounded-full px-3.5 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
