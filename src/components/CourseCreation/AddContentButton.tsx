@@ -43,7 +43,7 @@ export function AddContentButton({
         <Tooltip>
           <TooltipTrigger asChild>
             <PopoverTrigger asChild>
-              <button className="mx-3 w-7 h-7 rounded-full border border-foreground/20 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200">
+              <button className="mx-3 w-7 h-7 rounded-full border border-foreground/20 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200 opacity-0 group-hover/add:opacity-100">
                 <Plus className="w-3.5 h-3.5 text-foreground/40" />
               </button>
             </PopoverTrigger>
