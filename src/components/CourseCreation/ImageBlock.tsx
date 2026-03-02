@@ -450,7 +450,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }
           Click to upload or drag &amp; drop
         </p>
         <p className="text-xs text-muted-foreground mt-1">
-          PNG, JPG, GIF up to 10MB
+          JPG, JPEG, PNG up to 25 MB
         </p>
       </div>
       <input
