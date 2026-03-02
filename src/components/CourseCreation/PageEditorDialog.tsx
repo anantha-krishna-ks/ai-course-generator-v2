@@ -304,6 +304,22 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <ImageIcon className="w-4 h-4" />
                   Image
                 </Button>
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
+                  <Video className="w-4 h-4" />
+                  Video
+                </Button>
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
+                  <Mic className="w-4 h-4" />
+                  Audio
+                </Button>
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
+                  <DocIcon className="w-4 h-4" />
+                  Doc
+                </Button>
+                <Button variant="ghost" className="gap-2 text-muted-foreground text-sm h-9 rounded-full hover:text-foreground px-4">
+                  <MessageSquare className="w-4 h-4" />
+                  Quiz
+                </Button>
               </div>
 
               {/* Content blocks with inline undo banners */}
