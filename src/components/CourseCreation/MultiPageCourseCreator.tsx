@@ -53,6 +53,7 @@ interface CourseItem {
   id: string;
   type: "section" | "page" | "question";
   title: string;
+  inclusions?: string;
   children?: CourseItem[];
 }
 
@@ -277,6 +278,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const updateItemTitle = (id: string, newTitle: string) => {
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, title: newTitle } : item))
+    );
+  };
+
+  const updateItemInclusions = (id: string, inclusions: string) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, inclusions } : item))
     );
   };
 
@@ -696,7 +703,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                 <SectionCard
                                   sectionNumber={currentSectionNumber}
                                   title={item.title}
+                                  inclusions={item.inclusions || ""}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                                  onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   onOpenSection={() => {}}
@@ -711,7 +720,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <PageItemCard
                                   title={item.title}
+                                  inclusions={item.inclusions || ""}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                                  onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   autoFocus={item.title === ""}
