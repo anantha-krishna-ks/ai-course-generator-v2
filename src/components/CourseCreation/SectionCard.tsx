@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, GripVertical } from "lucide-react";
+import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, GripVertical, ListChecks } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -199,6 +199,9 @@ export function SectionCard({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showObjective, setShowObjective] = useState(false);
   const [objectiveText, setObjectiveText] = useState("");
+  const [showInclusions, setShowInclusions] = useState(false);
+  const [inclusionsText, setInclusionsText] = useState("");
+  const [isInclusionsFocused, setIsInclusionsFocused] = useState(false);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
@@ -207,6 +210,7 @@ export function SectionCard({
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
   const objectiveRef = useRef<HTMLInputElement>(null);
+  const inclusionsRef = useRef<HTMLTextAreaElement>(null);
 
   const handleAddPage = () => {
     const newPage: PageEntry = { id: crypto.randomUUID(), title: "" };
@@ -376,23 +380,42 @@ export function SectionCard({
                   </div>
 
                   {/* Actions row */}
-                  <div className="flex items-center justify-between mt-3">
-                    <button
-                      onClick={() => {
-                        const next = !showObjective;
-                        setShowObjective(next);
-                        if (next) {
-                          setTimeout(() => objectiveRef.current?.focus(), 350);
-                        }
-                      }}
-                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <ChevronUp className={cn(
-                        "w-3.5 h-3.5 transition-transform duration-200",
-                        !showObjective && "rotate-180"
-                      )} />
-                      {showObjective ? "Hide learning objective" : "Add learning objective"}
-                    </button>
+                  <div className="flex items-center justify-between mt-3 gap-2">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <button
+                        onClick={() => {
+                          const next = !showObjective;
+                          setShowObjective(next);
+                          if (next) {
+                            setTimeout(() => objectiveRef.current?.focus(), 350);
+                          }
+                        }}
+                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <ChevronUp className={cn(
+                          "w-3.5 h-3.5 transition-transform duration-200",
+                          !showObjective && "rotate-180"
+                        )} />
+                        {showObjective ? "Hide learning objective" : "Add learning objective"}
+                      </button>
+                      <span className="text-muted-foreground/30 select-none">|</span>
+                      <button
+                        onClick={() => {
+                          const next = !showInclusions;
+                          setShowInclusions(next);
+                          if (next) {
+                            setTimeout(() => inclusionsRef.current?.focus(), 350);
+                          }
+                        }}
+                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <ChevronUp className={cn(
+                          "w-3.5 h-3.5 transition-transform duration-200",
+                          !showInclusions && "rotate-180"
+                        )} />
+                        {showInclusions ? "Hide inclusions" : "Add inclusions"}
+                      </button>
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
@@ -461,7 +484,39 @@ export function SectionCard({
               </div>
             </div>
 
-            {/* Pages section */}
+            {/* Inclusions Panel */}
+            <div
+              className={cn(
+                "grid transition-all duration-300 ease-in-out",
+                showInclusions ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="mx-5 mb-5 rounded-lg border border-border bg-card p-5">
+                  <div className="flex items-center gap-1.5 mb-4">
+                    <ListChecks className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold text-foreground">Inclusions</span>
+                  </div>
+                  <textarea
+                    ref={inclusionsRef}
+                    value={inclusionsText}
+                    onFocus={() => setIsInclusionsFocused(true)}
+                    onBlur={() => setIsInclusionsFocused(false)}
+                    onChange={(e) => setInclusionsText(e.target.value)}
+                    className={cn(
+                      "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-2 placeholder:text-muted-foreground/50 transition-all duration-200 resize-none min-h-[60px]",
+                      isInclusionsFocused ? "border-primary/40" : "border-transparent"
+                    )}
+                    placeholder="Define what topics, content, or scope should be included in this section..."
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = 'auto';
+                      target.style.height = target.scrollHeight + 'px';
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
             <div className="px-5 pt-3 pb-4 space-y-3">
               {pages.length > 0 && (
                 <div className="flex items-center gap-2 mb-1">
