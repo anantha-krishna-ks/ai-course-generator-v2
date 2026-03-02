@@ -306,59 +306,108 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 </Button>
               </div>
 
-              {/* Content blocks */}
-              {blocks.length > 0 ? (
+              {/* Content blocks with inline undo banners */}
+              {(blocks.length > 0 || deletedBlocks.size > 0) ? (
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
                       <div className="mt-6 space-y-4">
-                        {blocks.map((block) => (
-                          <ContentBlock
-                            key={block.id}
-                            id={block.id}
-                            type={block.type}
-                            content={block.content}
-                            onChange={(content) => updateBlock(block.id, content)}
-                            onDelete={() => deleteBlock(block.id)}
-                            onDuplicate={() => duplicateBlock(block.id)}
-                            autoFocus={block.id === lastAddedBlockId}
-                          />
-                        ))}
+                        {(() => {
+                          const elements: React.ReactNode[] = [];
+                          const deletedArr = Array.from(deletedBlocks.entries()).sort((a, b) => a[1].index - b[1].index);
+                          let blockIdx = 0;
+                          let deletedIdx = 0;
+                          let position = 0;
+
+                          while (blockIdx < blocks.length || deletedIdx < deletedArr.length) {
+                            if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
+                              const [deletedId] = deletedArr[deletedIdx];
+                              elements.push(
+                                <div key={`deleted-${deletedId}`} className="animate-fade-in">
+                                  <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                                    <p className="text-sm text-muted-foreground italic">
+                                      Content was removed...{" "}
+                                      <button
+                                        onClick={() => undoDeleteBlock(deletedId)}
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
+                                      >
+                                        <Undo2 className="w-3 h-3" />
+                                        Undo
+                                      </button>
+                                    </p>
+                                    <button
+                                      onClick={() => dismissDeletedBlock(deletedId)}
+                                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                      Close
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                              deletedIdx++;
+                              position++;
+                              continue;
+                            }
+
+                            if (blockIdx < blocks.length) {
+                              const block = blocks[blockIdx];
+                              elements.push(
+                                <ContentBlock
+                                  key={block.id}
+                                  id={block.id}
+                                  type={block.type}
+                                  content={block.content}
+                                  onChange={(content) => updateBlock(block.id, content)}
+                                  onDelete={() => deleteBlock(block.id)}
+                                  onDuplicate={() => duplicateBlock(block.id)}
+                                  autoFocus={block.id === lastAddedBlockId}
+                                />
+                              );
+                              blockIdx++;
+                              position++;
+                            } else {
+                              break;
+                            }
+                          }
+
+                          // Remaining deleted banners at the end
+                          while (deletedIdx < deletedArr.length) {
+                            const [deletedId] = deletedArr[deletedIdx];
+                            elements.push(
+                              <div key={`deleted-${deletedId}`} className="animate-fade-in">
+                                <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                                  <p className="text-sm text-muted-foreground italic">
+                                    Content was removed...{" "}
+                                    <button
+                                      onClick={() => undoDeleteBlock(deletedId)}
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
+                                    >
+                                      <Undo2 className="w-3 h-3" />
+                                      Undo
+                                    </button>
+                                  </p>
+                                  <button
+                                    onClick={() => dismissDeletedBlock(deletedId)}
+                                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                    Close
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                            deletedIdx++;
+                          }
+
+                          return elements;
+                        })()}
                       </div>
                     </SortableContext>
                   </DndContext>
                 </TooltipProvider>
               ) : (
                 <div className="min-h-[300px]" />
-              )}
-
-              {/* Undo banners for deleted blocks */}
-              {deletedBlocks.size > 0 && (
-                <div className="mt-4 space-y-2">
-                  {Array.from(deletedBlocks.entries()).map(([deletedId]) => (
-                    <div key={`deleted-${deletedId}`} className="animate-fade-in">
-                      <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
-                        <p className="text-sm text-muted-foreground italic">
-                          Content was removed...{" "}
-                          <button
-                            onClick={() => undoDeleteBlock(deletedId)}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
-                          >
-                            <Undo2 className="w-3 h-3" />
-                            Undo
-                          </button>
-                        </p>
-                        <button
-                          onClick={() => dismissDeletedBlock(deletedId)}
-                          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               )}
             </div>
           </div>
