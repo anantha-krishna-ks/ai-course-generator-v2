@@ -1,10 +1,12 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,12 +19,13 @@ interface ImageBlockProps {
   onChange: (url: string) => void;
   altText?: string;
   onAltTextChange?: (alt: string) => void;
+  aiEnabled?: boolean;
 }
 
 type FitMode = "contain" | "cover" | "fill";
 type EditorMode = "none" | "simple" | "full";
 
-export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }: ImageBlockProps) {
+export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>("none");
   const [zoom, setZoom] = useState(100);
@@ -32,6 +35,8 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }
   const [flipV, setFlipV] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
+  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [imagePrompt, setImagePrompt] = useState("");
   const [isClosing, setIsClosing] = useState(false);
   const [localAlt, setLocalAlt] = useState(altText);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -420,46 +425,132 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange }
     );
   }
 
+  const handleGenerateSubmit = () => {
+    if (!imagePrompt.trim()) return;
+    // TODO: Wire up AI image generation API
+    console.log("Generate image with prompt:", imagePrompt);
+    setImagePrompt("");
+    setShowGenerateDialog(false);
+  };
+
   return (
-    <div
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onClick={handleClick}
-      className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 px-6 cursor-pointer transition-all duration-200",
-        isDragOver
-          ? "border-primary bg-primary/5 scale-[1.01]"
-          : "border-foreground/20 hover:border-primary/50 bg-background/80 hover:bg-background"
-      )}
-    >
+    <>
       <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onClick={handleClick}
         className={cn(
-          "w-12 h-12 rounded-full flex items-center justify-center transition-colors",
-          isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+          "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 px-6 cursor-pointer transition-all duration-200",
+          isDragOver
+            ? "border-primary bg-primary/5 scale-[1.01]"
+            : "border-foreground/20 hover:border-primary/50 bg-background/80 hover:bg-background"
         )}
       >
-        {isDragOver ? (
-          <Upload className="w-5 h-5" />
-        ) : (
-          <ImagePlus className="w-5 h-5" />
+        <div
+          className={cn(
+            "w-12 h-12 rounded-full flex items-center justify-center transition-colors",
+            isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+          )}
+        >
+          {isDragOver ? (
+            <Upload className="w-5 h-5" />
+          ) : (
+            <ImagePlus className="w-5 h-5" />
+          )}
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-medium text-foreground/70">
+            Click to upload or drag &amp; drop
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            JPG, JPEG, PNG up to 25 MB
+          </p>
+        </div>
+        {aiEnabled && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowGenerateDialog(true);
+            }}
+            className="gap-1.5 text-xs h-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/5 mt-1 transition-all duration-200"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Generate with AI
+          </Button>
         )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleInputChange}
+        />
       </div>
-      <div className="text-center">
-        <p className="text-sm font-medium text-foreground/70">
-          Click to upload or drag &amp; drop
-        </p>
-        <p className="text-xs text-muted-foreground mt-1">
-          JPG, JPEG, PNG up to 25 MB
-        </p>
-      </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleInputChange}
-      />
-    </div>
+
+      {/* Generate Image Dialog */}
+      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
+        <DialogContent className="sm:max-w-[520px] gap-0 p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-4">
+            <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
+              Generate image
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1.5">
+              Describe the image you'd like to generate for this block.
+            </p>
+          </DialogHeader>
+
+          <div className="px-6 pb-2">
+            <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
+              <textarea
+                value={imagePrompt}
+                onChange={(e) => setImagePrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleGenerateSubmit();
+                  }
+                }}
+                placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons..."
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+                rows={4}
+                autoFocus
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+              Press Enter to generate · Shift+Enter for new line
+            </p>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setShowGenerateDialog(false);
+                setImagePrompt("");
+              }}
+              className="rounded-full px-4"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleGenerateSubmit}
+              disabled={!imagePrompt.trim()}
+              className="rounded-full px-4 gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              Generate
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
