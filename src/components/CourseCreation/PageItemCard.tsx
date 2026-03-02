@@ -14,7 +14,9 @@ import { cn } from "@/lib/utils";
 
 interface PageItemCardProps {
   title: string;
+  inclusions?: string;
   onTitleChange: (title: string) => void;
+  onInclusionsChange?: (inclusions: string) => void;
   onDelete?: () => void;
   onDuplicate?: () => void;
   autoFocus?: boolean;
@@ -22,14 +24,12 @@ interface PageItemCardProps {
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, autoFocus }: PageItemCardProps) {
+export function PageItemCard({ title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, autoFocus }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
-  const [inclusionsText, setInclusionsText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const inclusionsRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (autoFocus) {
@@ -38,7 +38,7 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
   }, [autoFocus]);
 
   const displayTitle = title.trim() || "Untitled page";
-  const hasInclusions = inclusionsText.trim().length > 0;
+  const hasInclusions = inclusions.trim().length > 0;
 
   return (
     <>
@@ -138,9 +138,8 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
 
           <div className="mt-4">
             <textarea
-              ref={inclusionsRef}
-              value={inclusionsText}
-              onChange={(e) => setInclusionsText(e.target.value)}
+              value={inclusions}
+              onChange={(e) => onInclusionsChange?.(e.target.value)}
               autoFocus
               className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
               placeholder="Define what topics, content, or scope should be included in this page..."

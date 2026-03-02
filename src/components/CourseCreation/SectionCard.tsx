@@ -20,7 +20,9 @@ import { useToast } from "@/hooks/use-toast";
 interface SectionCardProps {
   sectionNumber: number;
   title: string;
+  inclusions?: string;
   onTitleChange: (title: string) => void;
+  onInclusionsChange?: (inclusions: string) => void;
   onDelete?: () => void;
   onDuplicate?: () => void;
   onOpenSection?: () => void;
@@ -35,6 +37,7 @@ const MAX_PAGE_TITLE_LENGTH = 350;
 interface PageEntry {
   id: string;
   title: string;
+  inclusions: string;
 }
 
 interface SortablePageRowProps {
@@ -47,11 +50,13 @@ interface SortablePageRowProps {
   setPages: React.Dispatch<React.SetStateAction<PageEntry[]>>;
   onDuplicate: (id: string) => void;
   onDelete: (id: string) => void;
+  onInclusionsChange: (id: string, inclusions: string) => void;
 }
 
-function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete }: SortablePageRowProps) {
+function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
+  const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -60,6 +65,7 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
   };
 
   const pageDisplayTitle = page.title.trim() || "Untitled page";
+  const hasPageInclusions = page.inclusions.trim().length > 0;
 
   return (
     <>
@@ -99,6 +105,15 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
         )}>
           {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
         </span>
+        {hasPageInclusions && (
+          <button
+            onClick={() => setShowInclusionsDialog(true)}
+            className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium hover:bg-primary/15 transition-colors shrink-0"
+          >
+            <ListChecks className="w-3 h-3" />
+            Inclusions
+          </button>
+        )}
         <Button
           variant="outline"
           size="sm"
@@ -114,6 +129,14 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+            <DropdownMenuItem
+              onClick={() => setShowInclusionsDialog(true)}
+              className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+            >
+              <ListChecks className="w-4 h-4 text-muted-foreground" />
+              {hasPageInclusions ? "Edit inclusions" : "Add inclusions"}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => onDuplicate(page.id)}
               className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
@@ -171,6 +194,40 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
         </DialogContent>
       </Dialog>
 
+      {/* Inclusions Dialog */}
+      <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <ListChecks className="w-5 h-5 text-muted-foreground" />
+              Inclusions
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Define the scope for "{pageDisplayTitle}"
+            </p>
+          </DialogHeader>
+          <div className="mt-4">
+            <textarea
+              value={page.inclusions}
+              onChange={(e) => onInclusionsChange(page.id, e.target.value)}
+              autoFocus
+              className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
+              placeholder="Define what topics, content, or scope should be included in this page..."
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = 'auto';
+                target.style.height = Math.max(140, target.scrollHeight) + 'px';
+              }}
+            />
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <PageEditorDialog
         open={showEditor}
         onClose={() => setShowEditor(false)}
@@ -188,7 +245,9 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
 export function SectionCard({
   sectionNumber,
   title,
+  inclusions = "",
   onTitleChange,
+  onInclusionsChange,
   onDelete,
   onDuplicate,
   onOpenSection,
@@ -200,7 +259,6 @@ export function SectionCard({
   const [showObjective, setShowObjective] = useState(false);
   const [objectiveText, setObjectiveText] = useState("");
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
-  const [inclusionsText, setInclusionsText] = useState("");
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
@@ -211,7 +269,7 @@ export function SectionCard({
   const objectiveRef = useRef<HTMLInputElement>(null);
 
   const handleAddPage = () => {
-    const newPage: PageEntry = { id: crypto.randomUUID(), title: "" };
+    const newPage: PageEntry = { id: crypto.randomUUID(), title: "", inclusions: "" };
     setPages((prev) => [...prev, newPage]);
     setTimeout(() => newPageRef.current?.focus(), 50);
   };
@@ -276,7 +334,7 @@ export function SectionCard({
                   className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                 >
                   <ListChecks className="w-4 h-4 text-muted-foreground" />
-                  {inclusionsText.trim() ? "Edit inclusions" : "Add inclusions"}
+                  {inclusions.trim() ? "Edit inclusions" : "Add inclusions"}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => setShowImageDialog(true)}
@@ -403,7 +461,7 @@ export function SectionCard({
                       {showObjective ? "Hide learning objective" : "Add learning objective"}
                     </button>
                     <div className="flex items-center gap-2">
-                      {inclusionsText.trim() && (
+                      {inclusions.trim() && (
                         <button
                           onClick={() => setShowInclusionsDialog(true)}
                           className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium hover:bg-primary/15 transition-colors"
@@ -495,8 +553,8 @@ export function SectionCard({
                 </DialogHeader>
                 <div className="mt-4">
                   <textarea
-                    value={inclusionsText}
-                    onChange={(e) => setInclusionsText(e.target.value)}
+                    value={inclusions}
+                    onChange={(e) => onInclusionsChange?.(e.target.value)}
                     autoFocus
                     className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
                     placeholder="Define what topics, content, or scope should be included in this section..."
@@ -544,6 +602,11 @@ export function SectionCard({
                         setPages={setPages}
                         onDuplicate={handleDuplicatePage}
                         onDelete={handleDeletePage}
+                        onInclusionsChange={(id, val) => {
+                          setPages((prev) =>
+                            prev.map((p) => p.id === id ? { ...p, inclusions: val } : p)
+                          );
+                        }}
                       />
                     </div>
                   ))}
