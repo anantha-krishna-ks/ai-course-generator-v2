@@ -19,6 +19,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { ContentBlock } from "./ContentBlock";
+import { AddContentButton } from "./AddContentButton";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface PageContentBlock {
@@ -47,12 +48,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const addBlock = useCallback((type: "text" | "image") => {
+  const addBlock = useCallback((type: "text" | "image", atIndex?: number) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = type === "text"
       ? "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>"
       : "";
-    setBlocks((prev) => [...prev, { id, type, content: defaultContent }]);
+    setBlocks((prev) => {
+      if (atIndex !== undefined) {
+        const next = [...prev];
+        next.splice(atIndex, 0, { id, type, content: defaultContent });
+        return next;
+      }
+      return [...prev, { id, type, content: defaultContent }];
+    });
     setLastAddedBlockId(id);
   }, []);
 
@@ -368,6 +376,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
                             if (blockIdx < blocks.length) {
                               const block = blocks[blockIdx];
+                              const currentBlockIdx = blockIdx;
                               elements.push(
                                 <ContentBlock
                                   key={block.id}
@@ -381,6 +390,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   aiEnabled={aiEnabled}
                                 />
                               );
+                              // Add content button between blocks
+                              if (blockIdx < blocks.length - 1) {
+                                elements.push(
+                                  <AddContentButton
+                                    key={`add-${block.id}`}
+                                    onAddText={() => addBlock("text", currentBlockIdx + 1)}
+                                    onAddImage={() => addBlock("image", currentBlockIdx + 1)}
+                                  />
+                                );
+                              }
                               blockIdx++;
                               position++;
                             } else {
