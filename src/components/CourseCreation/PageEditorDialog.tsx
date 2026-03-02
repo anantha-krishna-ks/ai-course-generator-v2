@@ -183,13 +183,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange }
               {/* Content type toolbar */}
               <div className="rounded-full border border-border bg-muted/30 px-2 py-1.5 flex items-center gap-1 w-fit">
                 <button
-                  className="relative gap-2 text-sm h-8 rounded-full px-4 flex items-center font-medium text-foreground/90 transition-transform duration-200 hover:scale-[1.03]"
+                  className="relative gap-2 text-sm h-8 rounded-full px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
                 >
                   {/* Gradient border */}
                   <span
                     className="absolute inset-0 rounded-full p-[1.5px]"
                     style={{
-                      background: 'linear-gradient(135deg, hsl(217, 91%, 70%), hsl(217, 91%, 55%))',
+                      background: 'linear-gradient(135deg, hsl(217, 91%, 70%), hsl(280, 65%, 65%), hsl(217, 91%, 55%))',
                     }}
                   >
                     <span className="block w-full h-full rounded-full bg-background" />
