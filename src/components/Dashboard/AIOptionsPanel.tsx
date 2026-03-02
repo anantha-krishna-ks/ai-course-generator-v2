@@ -333,8 +333,17 @@ export function AIConfigView({
         </div>
       </div>
 
-      {/* Done */}
-      <div className="flex justify-end pt-6">
+      {/* Actions */}
+      <div className="flex justify-between items-center pt-6">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          className="rounded-full px-6 gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Go Back
+        </Button>
         <Button
           type="button"
           onClick={onBack}
