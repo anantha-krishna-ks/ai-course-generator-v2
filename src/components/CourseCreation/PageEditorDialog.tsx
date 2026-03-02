@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
+  const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -60,7 +61,41 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   }, []);
 
   const deleteBlock = useCallback((id: string) => {
-    setBlocks((prev) => prev.filter((b) => b.id !== id));
+    setBlocks((prev) => {
+      const idx = prev.findIndex((b) => b.id === id);
+      if (idx === -1) return prev;
+      const block = prev[idx];
+      setDeletedBlocks((dm) => {
+        const next = new Map(dm);
+        next.set(id, { block, index: idx });
+        return next;
+      });
+      return prev.filter((b) => b.id !== id);
+    });
+  }, []);
+
+  const undoDeleteBlock = useCallback((id: string) => {
+    setDeletedBlocks((dm) => {
+      const entry = dm.get(id);
+      if (!entry) return dm;
+      setBlocks((prev) => {
+        const next = [...prev];
+        const insertAt = Math.min(entry.index, next.length);
+        next.splice(insertAt, 0, entry.block);
+        return next;
+      });
+      const nextMap = new Map(dm);
+      nextMap.delete(id);
+      return nextMap;
+    });
+  }, []);
+
+  const dismissDeletedBlock = useCallback((id: string) => {
+    setDeletedBlocks((dm) => {
+      const next = new Map(dm);
+      next.delete(id);
+      return next;
+    });
   }, []);
 
   const duplicateBlock = useCallback((id: string) => {
@@ -295,6 +330,35 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 </TooltipProvider>
               ) : (
                 <div className="min-h-[300px]" />
+              )}
+
+              {/* Undo banners for deleted blocks */}
+              {deletedBlocks.size > 0 && (
+                <div className="mt-4 space-y-2">
+                  {Array.from(deletedBlocks.entries()).map(([deletedId]) => (
+                    <div key={`deleted-${deletedId}`} className="animate-fade-in">
+                      <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                        <p className="text-sm text-muted-foreground italic">
+                          Content was removed...{" "}
+                          <button
+                            onClick={() => undoDeleteBlock(deletedId)}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
+                          >
+                            <Undo2 className="w-3 h-3" />
+                            Undo
+                          </button>
+                        </p>
+                        <button
+                          onClick={() => dismissDeletedBlock(deletedId)}
+                          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
