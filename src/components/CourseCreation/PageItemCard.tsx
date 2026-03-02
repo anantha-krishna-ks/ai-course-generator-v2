@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, MoreHorizontal, Copy, Trash2, GripVertical } from "lucide-react";
+import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ChevronUp, ListChecks } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -26,7 +26,11 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
+  const [showInclusions, setShowInclusions] = useState(false);
+  const [inclusionsText, setInclusionsText] = useState("");
+  const [isInclusionsFocused, setIsInclusionsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const inclusionsRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (autoFocus) {
@@ -97,6 +101,60 @@ export function PageItemCard({ title, onTitleChange, onDelete, onDuplicate, auto
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
+
+          {/* Inclusions toggle */}
+          <div className="px-4 pb-3">
+            <button
+              onClick={() => {
+                const next = !showInclusions;
+                setShowInclusions(next);
+                if (next) {
+                  setTimeout(() => inclusionsRef.current?.focus(), 350);
+                }
+              }}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ChevronUp className={cn(
+                "w-3.5 h-3.5 transition-transform duration-200",
+                !showInclusions && "rotate-180"
+              )} />
+              {showInclusions ? "Hide inclusions" : "Add inclusions"}
+            </button>
+          </div>
+
+          {/* Inclusions Panel */}
+          <div
+            className={cn(
+              "grid transition-all duration-300 ease-in-out",
+              showInclusions ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            )}
+          >
+            <div className="overflow-hidden">
+              <div className="mx-4 mb-4 rounded-lg border border-border bg-card p-5">
+                <div className="flex items-center gap-1.5 mb-4">
+                  <ListChecks className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-semibold text-foreground">Inclusions</span>
+                </div>
+                <textarea
+                  ref={inclusionsRef}
+                  value={inclusionsText}
+                  onFocus={() => setIsInclusionsFocused(true)}
+                  onBlur={() => setIsInclusionsFocused(false)}
+                  onChange={(e) => setInclusionsText(e.target.value)}
+                  className={cn(
+                    "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none pb-2 placeholder:text-muted-foreground/50 transition-all duration-200 resize-none min-h-[60px]",
+                    isInclusionsFocused ? "border-primary/40" : "border-transparent"
+                  )}
+                  placeholder="Define what topics, content, or scope should be included in this page..."
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = target.scrollHeight + 'px';
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
