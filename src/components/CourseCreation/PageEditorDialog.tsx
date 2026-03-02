@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2 } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, Paperclip, BookOpen } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
+import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
   closestCenter,
@@ -34,14 +36,22 @@ interface PageEditorDialogProps {
   pageTitle: string;
   onPageTitleChange: (title: string) => void;
   aiEnabled?: boolean;
+  aiOptions?: AIOptions | null;
+  onAiOptionsChange?: (options: AIOptions) => void;
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
+  const [showAiBlock, setShowAiBlock] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiBlockType, setAiBlockType] = useState<"text" | "image" | null>(null);
+  const [showAiSheet, setShowAiSheet] = useState(false);
+  const [aiSheetSection, setAiSheetSection] = useState<string | null>(null);
+  const aiPromptRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -290,7 +300,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center w-full justify-evenly gap-0.5 shadow-sm">
                 {aiEnabled && (
                   <button
-                    className="relative gap-1.5 sm:gap-2 text-xs sm:text-[13px] h-8 sm:h-9 rounded-full px-3 sm:px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
+                    onClick={() => {
+                      setShowAiBlock(!showAiBlock);
+                      if (!showAiBlock) {
+                        setTimeout(() => aiPromptRef.current?.focus(), 150);
+                      }
+                    }}
+                    className={cn(
+                      "relative gap-1.5 sm:gap-2 text-xs sm:text-[13px] h-8 sm:h-9 rounded-full px-3 sm:px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200",
+                      showAiBlock && "bg-primary/5"
+                    )}
                   >
                     <span
                       className="absolute inset-0 rounded-full p-[1.5px]"
@@ -330,6 +349,110 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <span className="hidden sm:inline">Quiz</span>
                 </Button>
               </div>
+
+              {/* AI Creation Block */}
+              {showAiBlock && aiEnabled && (
+                <div className="mt-4 rounded-xl border border-border bg-card shadow-sm animate-fade-in">
+                  {/* AI Block Header */}
+                  <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60">
+                    <div className="flex items-center gap-2.5">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium text-foreground">Create a content block with AI</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs rounded-full gap-1.5 border-border"
+                        onClick={() => {
+                          setShowAiSheet(true);
+                          setAiSheetSection('guidelines');
+                        }}
+                      >
+                        <BookOpen className="w-3.5 h-3.5" />
+                        Add course guidelines
+                      </Button>
+                      <button
+                        onClick={() => setShowAiBlock(false)}
+                        className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                      >
+                        <X className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Prompt Input */}
+                  <div className="px-5 py-3.5">
+                    <div className="flex items-center gap-2 rounded-full border border-border/80 bg-background px-4 py-1.5 focus-within:border-foreground/30 transition-colors">
+                      <input
+                        ref={aiPromptRef}
+                        type="text"
+                        value={aiPrompt}
+                        onChange={(e) => setAiPrompt(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && aiPrompt.trim()) {
+                            console.log("AI generate:", aiPrompt, aiBlockType);
+                            setAiPrompt("");
+                          }
+                        }}
+                        placeholder="Example: Create a comparison table for collaboration vs individual work"
+                        className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none"
+                      />
+                      <button className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground">
+                        <Paperclip className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (aiPrompt.trim()) {
+                            console.log("AI generate:", aiPrompt, aiBlockType);
+                            setAiPrompt("");
+                          }
+                        }}
+                        disabled={!aiPrompt.trim()}
+                        className={cn(
+                          "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+                          aiPrompt.trim()
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Content type selector */}
+                  <div className="px-5 pb-4">
+                    <span className="text-xs text-muted-foreground block mb-2">Select content block</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setAiBlockType(aiBlockType === "text" ? null : "text")}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all",
+                          aiBlockType === "text"
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                        )}
+                      >
+                        <Type className="w-4 h-4" />
+                        Text
+                      </button>
+                      <button
+                        onClick={() => setAiBlockType(aiBlockType === "image" ? null : "image")}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all",
+                          aiBlockType === "image"
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                        )}
+                      >
+                        <ImageIcon className="w-4 h-4" />
+                        Image
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Content blocks with inline undo banners */}
               {(blocks.length > 0 || deletedBlocks.size > 0) ? (
@@ -452,6 +575,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
           </div>
         </div>
       </DialogContent>
+
+      {/* AI Support Sheet for guidelines */}
+      {aiEnabled && (
+        <AIHeaderButton
+          aiOptions={aiOptions}
+          onOptionsChange={onAiOptionsChange}
+          externalOpen={showAiSheet}
+          onExternalOpenChange={(v) => {
+            setShowAiSheet(v);
+            if (!v) setAiSheetSection(null);
+          }}
+          scrollToSection={aiSheetSection}
+        />
+      )}
     </Dialog>
   );
 }
