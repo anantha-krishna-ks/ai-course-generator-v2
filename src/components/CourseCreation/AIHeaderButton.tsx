@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,11 +42,30 @@ const LEARNER_LEVELS = ["Beginners", "Intermediate", "Expert"] as const;
 interface AIHeaderButtonProps {
   aiOptions: AIOptions | null;
   onOptionsChange?: (options: AIOptions) => void;
+  externalOpen?: boolean;
+  onExternalOpenChange?: (open: boolean) => void;
+  scrollToSection?: string | null;
 }
 
-export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonProps) {
-  const [open, setOpen] = useState(false);
+export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExternalOpenChange, scrollToSection }: AIHeaderButtonProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [savedOnce, setSavedOnce] = useState(false);
+
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = (v: boolean) => {
+    if (onExternalOpenChange) onExternalOpenChange(v);
+    else setInternalOpen(v);
+  };
+
+  // Scroll to section when opened with scrollToSection
+  const guidelinesRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (open && scrollToSection === 'guidelines' && guidelinesRef.current) {
+      setTimeout(() => {
+        guidelinesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+  }, [open, scrollToSection]);
 
   if (!aiOptions || !aiOptions.enabled) return null;
 
@@ -275,6 +294,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
 
 
             {/* Guidelines */}
+            <div ref={guidelinesRef}>
             <ConfigSection
               icon={BookOpen}
               label="Course Guidelines"
@@ -298,6 +318,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange }: AIHeaderButtonPro
                 />
               )}
             </ConfigSection>
+            </div>
 
             
 
