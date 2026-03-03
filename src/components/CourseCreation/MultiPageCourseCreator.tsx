@@ -109,6 +109,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     },
     {
       target: "text-toolbar",
+      additionalTargets: ["text-toolbar-popover"],
       icon: <Image className="w-5 h-5 text-muted-foreground" />,
       title: "Add Content",
       description: "Hover between blocks to reveal the (+) button. Click it to add Text or Image blocks to build your course content.",
