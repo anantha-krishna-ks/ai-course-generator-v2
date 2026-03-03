@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, Paperclip, BookOpen } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageSquare, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -398,9 +398,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         placeholder="Example: Create a comparison table for collaboration vs individual work"
                         className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none"
                       />
-                      <button className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground">
-                        <Paperclip className="w-4 h-4" />
-                      </button>
                       <button
                         onClick={() => {
                           if (aiPrompt.trim()) {
