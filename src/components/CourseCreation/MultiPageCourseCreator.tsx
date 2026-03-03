@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check } from "lucide-react";
+import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
+import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
 import {
@@ -88,6 +89,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const navigate = useNavigate();
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
+  const [showTour, setShowTour] = useState(true);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
     { id: "description-block", type: "description", content: "" },
   ]);
@@ -95,6 +97,47 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  const tourSteps: TourStep[] = [
+    {
+      target: "layout-selector",
+      icon: <Layers className="w-5 h-5 text-muted-foreground" />,
+      title: "Layout Selection",
+      description: "Preview different layouts to see how your course adapts. Switch between multi-page and single-page views.",
+      placement: "bottom",
+    },
+    {
+      target: "course-heading",
+      icon: <Type className="w-5 h-5 text-muted-foreground" />,
+      title: "Course Heading & Text Toolbar",
+      description: "Make your text stand out with formatting tools. Type and style your words with font, size, and color options.",
+      tip: "Keep it simple — clear titles make the best first impression.",
+      placement: "right",
+    },
+    {
+      target: "content-blocks",
+      icon: <Image className="w-5 h-5 text-muted-foreground" />,
+      title: "Add Image & Content",
+      description: "Enhance your course by adding custom text or images. Upload or select images, then resize and position them. Use the text blocks to style your content.",
+      tip: "Keep it simple — clear titles make the best first impression.",
+      placement: "right",
+    },
+    {
+      target: "add-item",
+      icon: <Plus className="w-5 h-5 text-muted-foreground" />,
+      title: "Add Sections & Pages",
+      description: "Organize your course like a book. Sections are the main chapters, and Pages hold the lessons and details inside each section.",
+      tip: "Use clear names and logical order to keep learning smooth.",
+      placement: "bottom",
+    },
+    {
+      target: "header-actions",
+      icon: <Sparkles className="w-5 h-5 text-muted-foreground" />,
+      title: "AI Support, Preview & Publish",
+      description: "Get smart suggestions and assistance to enhance your course. Preview how it looks, then publish when ready.",
+      placement: "bottom",
+    },
+  ];
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
@@ -340,7 +383,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               <span className="text-muted-foreground/30 select-none">|</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors rounded-md px-3 py-1.5 border border-border bg-muted/50 hover:bg-muted w-fit shadow-sm">
+                  <button data-tour="layout-selector" className="flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors rounded-md px-3 py-1.5 border border-border bg-muted/50 hover:bg-muted w-fit shadow-sm">
                     <Layers className="w-3.5 h-3.5 text-muted-foreground" />
                     Multi-page layout
                     <ChevronDown className="w-3 h-3 text-muted-foreground" />
@@ -368,7 +411,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Button
               variant="outline"
@@ -383,6 +426,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             >
               <Share2 className="w-4 h-4" />
               <span className="hidden sm:inline">Publish</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={() => setShowTour(true)}
+            >
+              <HelpCircle className="w-4 h-4 text-muted-foreground" />
             </Button>
           </div>
         </div>
@@ -430,7 +481,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           <ScrollArea className="relative z-10 flex-1 min-h-[300px]">
             <div className="p-6 sm:p-8 lg:p-10">
               {/* Course Title */}
-              <div className="relative group">
+              <div className="relative group" data-tour="course-heading">
                 <textarea
                   value={title}
                   onChange={(e) => {
@@ -476,7 +527,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   items={contentBlocks.map((b) => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="mt-6 space-y-0">
+                  <div className="mt-6 space-y-0" data-tour="content-blocks">
                     {(() => {
                       // Merge content blocks and deleted block banners by index
                       const deletedArr = Array.from(deletedBlocks.entries()).sort(
@@ -648,6 +699,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     <Button
                       variant="outline"
                       className="gap-2 border-border rounded-full"
+                      data-tour="add-item"
                     >
                       <Plus className="w-4 h-4" />
                       Add item
@@ -751,6 +803,13 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             </div>
         </div>
       </div>
+
+      {/* Guided Tour */}
+      <GuidedTour
+        steps={tourSteps}
+        isOpen={showTour}
+        onClose={() => setShowTour(false)}
+      />
     </div>
   );
 }
