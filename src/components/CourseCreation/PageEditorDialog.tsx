@@ -402,10 +402,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Prompt Input or Loading State */}
                   <div className="px-5 py-3.5">
                     {aiGenerating ? (
-                      <div className="flex flex-col items-center justify-center py-10 gap-3 animate-fade-in rounded-xl bg-gradient-to-br from-[hsl(217,91%,60%)]/5 via-[hsl(270,70%,60%)]/5 to-[hsl(217,91%,60%)]/5">
-                        <div className="relative">
-                          <Sparkles className="w-7 h-7 bg-gradient-to-r from-[hsl(217,91%,60%)] to-[hsl(270,70%,60%)] bg-clip-text text-transparent animate-pulse" style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text' }} />
-                          <Sparkles className="w-4 h-4 text-[hsl(270,70%,60%)]/50 absolute -top-1 -left-2 animate-pulse [animation-delay:0.3s]" />
+                      <div className="flex flex-col items-center justify-center py-12 gap-4 animate-fade-in rounded-xl bg-gradient-to-br from-[hsl(217,91%,60%)]/5 via-[hsl(270,70%,60%)]/5 to-[hsl(217,91%,60%)]/5">
+                        <div className="relative w-12 h-12 flex items-center justify-center">
+                          <Sparkles className="w-8 h-8 animate-sparkle-spin" fill="url(#sparkle-grad)" color="url(#sparkle-grad)" />
+                          <Sparkles className="w-4 h-4 absolute -top-1 -left-1 animate-sparkle-float" fill="hsl(270,70%,60%)" color="hsl(270,70%,60%)" />
+                          <Sparkles className="w-3.5 h-3.5 absolute -bottom-0.5 -right-1 animate-sparkle-orbit" fill="hsl(217,91%,60%)" color="hsl(217,91%,60%)" />
+                          <svg width="0" height="0" className="absolute">
+                            <defs>
+                              <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="hsl(217,91%,60%)" />
+                                <stop offset="100%" stopColor="hsl(270,70%,60%)" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
                         </div>
                         <p className="text-sm font-semibold bg-gradient-to-r from-[hsl(217,91%,60%)] to-[hsl(270,70%,60%)] bg-clip-text text-transparent animate-pulse">Finding the best way to present it...</p>
                         <p className="text-xs text-[hsl(270,70%,60%)]/60">This may take a few minutes</p>
