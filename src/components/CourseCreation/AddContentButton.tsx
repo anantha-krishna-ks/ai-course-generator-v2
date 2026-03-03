@@ -1,4 +1,5 @@
 import { Plus, Type, Image, Sparkles, Video, Mic, FileText, MessageSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Popover,
   PopoverContent,
@@ -21,6 +22,7 @@ interface AddContentButtonProps {
   onAICreate?: () => void;
   aiEnabled?: boolean;
   variant?: "simple" | "full";
+  forceOpen?: boolean;
 }
 
 export function AddContentButton({
@@ -33,18 +35,19 @@ export function AddContentButton({
   onAICreate,
   aiEnabled = false,
   variant = "simple",
+  forceOpen = false,
 }: AddContentButtonProps) {
   const isFullToolbar = variant === "full";
 
   return (
-    <Popover>
+    <Popover open={forceOpen || undefined}>
       <PopoverTrigger asChild>
         <div className="group/add flex items-center justify-center -my-1 cursor-pointer" data-tour="text-toolbar">
-          <div className="flex-1 h-px bg-foreground/15 opacity-0 group-hover/add:opacity-100 transition-opacity duration-200" />
-          <div className="mx-3 w-7 h-7 rounded-full border border-foreground/20 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200 opacity-0 group-hover/add:opacity-100">
+          <div className={cn("flex-1 h-px bg-foreground/15 transition-opacity duration-200", forceOpen ? "opacity-100" : "opacity-0 group-hover/add:opacity-100")} />
+          <div className={cn("mx-3 w-7 h-7 rounded-full border border-foreground/20 flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200", forceOpen ? "opacity-100" : "opacity-0 group-hover/add:opacity-100")}>
             <Plus className="w-3.5 h-3.5 text-foreground/40" />
           </div>
-          <div className="flex-1 h-px bg-foreground/15 opacity-0 group-hover/add:opacity-100 transition-opacity duration-200" />
+          <div className={cn("flex-1 h-px bg-foreground/15 transition-opacity duration-200", forceOpen ? "opacity-100" : "opacity-0 group-hover/add:opacity-100")} />
         </div>
       </PopoverTrigger>
       <PopoverContent

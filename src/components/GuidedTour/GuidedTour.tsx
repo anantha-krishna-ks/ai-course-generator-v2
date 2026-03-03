@@ -17,9 +17,10 @@ interface GuidedTourProps {
   isOpen: boolean;
   onClose: () => void;
   onComplete?: () => void;
+  onStepChange?: (stepIndex: number) => void;
 }
 
-export function GuidedTour({ steps, isOpen, onClose, onComplete }: GuidedTourProps) {
+export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }: GuidedTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<DOMRect | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -77,6 +78,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete }: GuidedTourPro
   useEffect(() => {
     if (!isOpen) return;
     setCurrentStep(0);
+    onStepChange?.(0);
   }, [isOpen]);
 
   useEffect(() => {
@@ -120,18 +122,26 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete }: GuidedTourPro
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep((s) => s + 1);
+      const next = currentStep + 1;
+      setCurrentStep(next);
+      onStepChange?.(next);
     } else {
+      onStepChange?.(-1);
       onComplete?.();
       onClose();
     }
   };
 
   const handlePrev = () => {
-    if (currentStep > 0) setCurrentStep((s) => s - 1);
+    if (currentStep > 0) {
+      const prev = currentStep - 1;
+      setCurrentStep(prev);
+      onStepChange?.(prev);
+    }
   };
 
   const handleSkip = () => {
+    onStepChange?.(-1);
     onClose();
   };
 
