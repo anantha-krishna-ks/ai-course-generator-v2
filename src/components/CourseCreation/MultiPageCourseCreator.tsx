@@ -90,6 +90,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
   const [showTour, setShowTour] = useState(true);
+  const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
     { id: "description-block", type: "description", content: "" },
   ]);
@@ -668,7 +669,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {/* Add content button when no blocks exist */}
               {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
-                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} />
+                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} forceOpen={tourStep === 1} />
                 </div>
               )}
             </div>
@@ -808,7 +809,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       <GuidedTour
         steps={tourSteps}
         isOpen={showTour}
-        onClose={() => setShowTour(false)}
+        onClose={() => { setShowTour(false); setTourStep(-1); }}
+        onStepChange={setTourStep}
       />
     </div>
   );
