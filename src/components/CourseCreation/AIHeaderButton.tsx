@@ -327,6 +327,13 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                   rows={3}
                 />
               )}
+              <DocUploadZone
+                documents={aiOptions.guidelinesDocuments ?? []}
+                isLocked={isLocked}
+                onDocumentsChange={(docs) =>
+                  onOptionsChange?.({ ...aiOptions, guidelinesDocuments: docs })
+                }
+              />
             </ConfigSection>
             </div>
 
@@ -355,6 +362,13 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                   rows={3}
                 />
               )}
+              <DocUploadZone
+                documents={aiOptions.exclusionsDocuments ?? []}
+                isLocked={isLocked}
+                onDocumentsChange={(docs) =>
+                  onOptionsChange?.({ ...aiOptions, exclusionsDocuments: docs })
+                }
+              />
             </ConfigSection>
           </div>
 
@@ -376,6 +390,61 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
         </SheetContent>
       </Sheet>
     </>
+  );
+}
+
+function DocUploadZone({
+  documents,
+  isLocked,
+  onDocumentsChange,
+}: {
+  documents: string[];
+  isLocked: boolean;
+  onDocumentsChange?: (docs: string[]) => void;
+}) {
+  if (isLocked && documents.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      {documents.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {documents.map((doc, i) => (
+            <Badge key={i} variant="secondary" className="gap-1.5 text-xs font-normal h-6 pr-1.5">
+              <FileText className="w-3 h-3" />
+              {doc}
+              {!isLocked && onDocumentsChange && (
+                <button
+                  type="button"
+                  onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
+                  className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </Badge>
+          ))}
+        </div>
+      )}
+      {!isLocked && onDocumentsChange && (
+        <div
+          onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5'); }}
+          onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5'); }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0) {
+              onDocumentsChange([...documents, ...files.map(f => f.name)]);
+            }
+          }}
+          onClick={() => onDocumentsChange([...documents, `Reference_${Date.now().toString(36)}.pdf`])}
+          className="w-full border border-dashed border-border/80 rounded-lg py-3 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
+        >
+          <Upload className="w-3.5 h-3.5" />
+          <span className="font-medium">Attach reference document</span>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -23,7 +23,9 @@ export interface AIOptions {
   bloomsTaxonomy: string[];
   intendedLearners: string;
   guidelines: string;
+  guidelinesDocuments: string[];
   exclusions: string;
+  exclusionsDocuments: string[];
 }
 
 const BLOOMS_LEVELS = [

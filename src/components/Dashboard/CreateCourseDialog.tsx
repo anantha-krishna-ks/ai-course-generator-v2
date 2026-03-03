@@ -25,7 +25,9 @@ const defaultAIOptions: AIOptions = {
   bloomsTaxonomy: [],
   intendedLearners: "",
   guidelines: "",
+  guidelinesDocuments: [],
   exclusions: "",
+  exclusionsDocuments: [],
 };
 
 function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComplete: () => void }) {
