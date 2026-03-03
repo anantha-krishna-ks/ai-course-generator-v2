@@ -438,7 +438,7 @@ function DocUploadZone({
             }
           }}
           onClick={() => onDocumentsChange([...documents, `Reference_${Date.now().toString(36)}.pdf`])}
-          className="w-full border border-dashed border-border/80 rounded-lg py-3 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
+          className="w-full border border-dashed border-primary/50 rounded-lg py-3 text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
         >
           <Upload className="w-3.5 h-3.5" />
           <span className="font-medium">Attach reference document</span>
