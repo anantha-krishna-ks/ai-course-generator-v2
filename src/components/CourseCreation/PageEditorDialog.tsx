@@ -161,7 +161,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_3px_0_hsl(var(--foreground)/0.04),0_4px_12px_-2px_hsl(var(--foreground)/0.06)] z-10">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
           <div className="flex items-center gap-2.5">
             <FileText className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium text-foreground">Page editor</span>
