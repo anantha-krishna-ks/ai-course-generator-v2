@@ -49,9 +49,26 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [showAiBlock, setShowAiBlock] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiBlockType, setAiBlockType] = useState<"text" | "image" | null>(null);
+  const [aiGenerating, setAiGenerating] = useState(false);
   const [showAiSheet, setShowAiSheet] = useState(false);
   const [aiSheetSection, setAiSheetSection] = useState<string | null>(null);
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | null) => {
+    setAiGenerating(true);
+    const type = blockType || "text";
+    setTimeout(() => {
+      const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const content = type === "text"
+        ? `<h3>${prompt}</h3><p>Based on your prompt, here is an AI-generated overview of the topic. This section covers the key concepts and practical applications that learners need to understand. The content has been structured to facilitate progressive learning and knowledge retention.</p><p>Key takeaways include understanding the fundamental principles, recognizing common patterns, and applying best practices in real-world scenarios. Each concept builds upon the previous one to create a comprehensive learning experience.</p>`
+        : "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop";
+      setBlocks((prev) => [...prev, { id, type, content }]);
+      setLastAddedBlockId(id);
+      setAiGenerating(false);
+      setShowAiBlock(false);
+      setAiBlockType(null);
+    }, 3000);
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -382,52 +399,63 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     </div>
                   </div>
 
-                  {/* Prompt Input */}
+                  {/* Prompt Input or Loading State */}
                   <div className="px-5 py-3.5">
-                    <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-background px-4 py-2 focus-within:border-foreground/30 transition-colors">
-                      <textarea
-                        ref={aiPromptRef}
-                        value={aiPrompt}
-                        onChange={(e) => {
-                          setAiPrompt(e.target.value);
-                          e.target.style.height = 'auto';
-                          e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey && aiPrompt.trim()) {
-                            e.preventDefault();
-                            console.log("AI generate:", aiPrompt, aiBlockType);
-                            setAiPrompt("");
-                            e.currentTarget.style.height = 'auto';
-                          }
-                        }}
-                        placeholder="Example: Create a comparison table for collaboration vs individual work"
-                        className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none resize-none min-h-[28px] max-h-[150px] py-1"
-                        rows={1}
-                      />
-                      <button
-                        onClick={() => {
-                          if (aiPrompt.trim()) {
-                            console.log("AI generate:", aiPrompt, aiBlockType);
-                            setAiPrompt("");
-                            if (aiPromptRef.current) aiPromptRef.current.style.height = 'auto';
-                          }
-                        }}
-                        disabled={!aiPrompt.trim()}
-                        className={cn(
-                          "w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center transition-colors mb-0.5",
-                          aiPrompt.trim()
-                            ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                            : "bg-muted text-muted-foreground"
-                        )}
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                    {aiGenerating ? (
+                      <div className="flex flex-col items-center justify-center py-10 gap-3 animate-fade-in">
+                        <div className="relative">
+                          <Sparkles className="w-7 h-7 text-primary animate-pulse" />
+                          <Sparkles className="w-4 h-4 text-primary/50 absolute -top-1 -left-2 animate-pulse [animation-delay:0.3s]" />
+                        </div>
+                        <p className="text-sm font-medium text-primary animate-pulse">Finding the best way to present it...</p>
+                        <p className="text-xs text-muted-foreground">This may take a few minutes</p>
+                      </div>
+                    ) : (
+                      <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-background px-4 py-2 focus-within:border-foreground/30 transition-colors">
+                        <textarea
+                          ref={aiPromptRef}
+                          value={aiPrompt}
+                          onChange={(e) => {
+                            setAiPrompt(e.target.value);
+                            e.target.style.height = 'auto';
+                            e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey && aiPrompt.trim()) {
+                              e.preventDefault();
+                              handleAiGenerate(aiPrompt, aiBlockType);
+                              setAiPrompt("");
+                              e.currentTarget.style.height = 'auto';
+                            }
+                          }}
+                          placeholder="Example: Create a comparison table for collaboration vs individual work"
+                          className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none resize-none min-h-[28px] max-h-[150px] py-1"
+                          rows={1}
+                        />
+                        <button
+                          onClick={() => {
+                            if (aiPrompt.trim()) {
+                              handleAiGenerate(aiPrompt, aiBlockType);
+                              setAiPrompt("");
+                              if (aiPromptRef.current) aiPromptRef.current.style.height = 'auto';
+                            }
+                          }}
+                          disabled={!aiPrompt.trim()}
+                          className={cn(
+                            "w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center transition-colors mb-0.5",
+                            aiPrompt.trim()
+                              ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                              : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Content type selector */}
-                  <div className="px-5 pb-4">
+                  {/* Content type selector - hidden during generation */}
+                  {!aiGenerating && <div className="px-5 pb-4">
                     <span className="text-xs text-muted-foreground block mb-2">Select content block</span>
                     <div className="flex items-center gap-2">
                       <button
@@ -455,7 +483,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         Image
                       </button>
                     </div>
-                  </div>
+                  </div>}
                 </div>
               )}
 
