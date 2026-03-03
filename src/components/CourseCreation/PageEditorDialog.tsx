@@ -26,7 +26,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz";
   content: string;
 }
 
@@ -48,13 +48,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
   const [showAiBlock, setShowAiBlock] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
-  const [aiBlockType, setAiBlockType] = useState<"text" | "image" | null>(null);
+  const [aiBlockType, setAiBlockType] = useState<"text" | "image" | "quiz" | null>(null);
   const [aiGenerating, setAiGenerating] = useState(false);
   const [showAiSheet, setShowAiSheet] = useState(false);
   const [aiSheetSection, setAiSheetSection] = useState<string | null>(null);
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | null) => {
+  const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | "quiz" | null) => {
     setAiGenerating(true);
     const type = blockType || "text";
     setTimeout(() => {
@@ -378,18 +378,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       <span className="text-sm font-medium text-foreground">Create a content block with AI</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 text-xs rounded-full gap-1.5 border-border"
-                        onClick={() => {
-                          setShowAiSheet(true);
-                          setAiSheetSection('guidelines');
-                        }}
-                      >
-                        <BookOpen className="w-3.5 h-3.5" />
-                        Add course guidelines
-                      </Button>
                       <button
                         onClick={() => setShowAiBlock(false)}
                         className="p-1.5 rounded-md hover:bg-muted transition-colors"
@@ -490,6 +478,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       >
                         <ImageIcon className="w-4 h-4" />
                         Image
+                      </button>
+                      <button
+                        onClick={() => setAiBlockType(aiBlockType === "quiz" ? null : "quiz")}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all",
+                          aiBlockType === "quiz"
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                        )}
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        Quiz
                       </button>
                     </div>
                   </div>}

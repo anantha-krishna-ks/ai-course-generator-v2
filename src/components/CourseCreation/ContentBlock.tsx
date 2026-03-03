@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 interface ContentBlockProps {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz";
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
