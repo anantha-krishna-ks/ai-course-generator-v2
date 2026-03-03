@@ -26,7 +26,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image";
+  type: "text" | "image" | "video" | "audio" | "doc";
   content: string;
 }
 
@@ -75,7 +75,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const addBlock = useCallback((type: "text" | "image", atIndex?: number) => {
+  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc", atIndex?: number) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = type === "text"
       ? "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>"
@@ -350,15 +350,15 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span className="hidden sm:inline">Image</span>
                 </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("video")}>
                   <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span className="hidden sm:inline">Video</span>
                 </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("audio")}>
                   <Mic className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span className="hidden sm:inline">Audio</span>
                 </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("doc")}>
                   <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span className="hidden sm:inline">Doc</span>
                 </Button>
@@ -565,6 +565,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     aiEnabled={aiEnabled}
                                     onAddText={() => addBlock("text", currentBlockIdx + 1)}
                                     onAddImage={() => addBlock("image", currentBlockIdx + 1)}
+                                    onAddVideo={() => addBlock("video", currentBlockIdx + 1)}
+                                    onAddAudio={() => addBlock("audio", currentBlockIdx + 1)}
+                                    onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
                                   />
                                 );
                               }
