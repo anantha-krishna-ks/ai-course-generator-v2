@@ -121,16 +121,16 @@ export function MediaUploadBlock({ type, fileUrl, onChange }: MediaUploadBlockPr
       onDragLeave={() => setIsDragOver(false)}
       onClick={() => fileInputRef.current?.click()}
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 px-6 cursor-pointer transition-all duration-200",
+        "group/upload flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 px-6 cursor-pointer transition-all duration-200",
         isDragOver
           ? "border-primary bg-primary/5 scale-[1.01]"
-          : "border-foreground/20 hover:border-primary/50 bg-background/80 hover:bg-background"
+          : "border-foreground/20 hover:border-primary/50 hover:bg-primary/5 bg-background/80"
       )}
     >
       <div
         className={cn(
           "w-12 h-12 rounded-full flex items-center justify-center transition-colors",
-          isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+          isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/upload:bg-primary/10 group-hover/upload:text-primary"
         )}
       >
         {isDragOver ? (
