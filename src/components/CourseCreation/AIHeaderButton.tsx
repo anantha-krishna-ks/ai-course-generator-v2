@@ -117,7 +117,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
       </Tooltip>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="w-full sm:max-w-[420px] p-0 flex flex-col gap-0">
+        <SheetContent className="w-full sm:max-w-[420px] p-0 flex flex-col gap-0 z-[60]">
           {/* Header */}
           <SheetHeader className="px-5 pt-5 pb-4 border-b border-border/60 space-y-0">
             <div className="flex items-center gap-3">
