@@ -107,12 +107,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       placement: "bottom",
     },
     {
-      target: "course-heading",
+      target: "text-toolbar",
       icon: <Type className="w-5 h-5 text-muted-foreground" />,
-      title: "Course Heading & Text Toolbar",
-      description: "Make your text stand out with formatting tools. Type and style your words with font, size, and color options.",
+      title: "Content Toolbar",
+      description: "Hover between blocks to reveal the content toolbar. Add Text to type and style your words, or add an Image to enhance your course visually.",
       tip: "Keep it simple — clear titles make the best first impression.",
-      placement: "right",
+      placement: "bottom",
     },
     {
       target: "content-blocks",
