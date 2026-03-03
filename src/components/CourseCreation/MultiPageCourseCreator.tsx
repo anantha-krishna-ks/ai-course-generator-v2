@@ -108,20 +108,20 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       placement: "bottom",
     },
     {
-      target: "text-toolbar",
-      icon: <Type className="w-5 h-5 text-muted-foreground" />,
-      title: "Content Toolbar",
-      description: "Hover between blocks to reveal the content toolbar. Add Text to type and style your words, or add an Image to enhance your course visually.",
-      tip: "Keep it simple — clear titles make the best first impression.",
-      placement: "bottom",
-    },
-    {
       target: "content-blocks",
       icon: <Image className="w-5 h-5 text-muted-foreground" />,
       title: "Add Image & Content",
       description: "Enhance your course by adding custom text or images. Upload or select images, then resize and position them. Use the text blocks to style your content.",
       tip: "Keep it simple — clear titles make the best first impression.",
       placement: "right",
+    },
+    {
+      target: "text-toolbar",
+      icon: <Type className="w-5 h-5 text-muted-foreground" />,
+      title: "Content Toolbar",
+      description: "Hover between blocks to reveal the content toolbar. Add Text to type and style your words, or add an Image to enhance your course visually.",
+      tip: "Keep it simple — clear titles make the best first impression.",
+      placement: "bottom",
     },
     {
       target: "add-item",
@@ -669,7 +669,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {/* Add content button when no blocks exist */}
               {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
-                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} forceOpen={tourStep === 1} />
+                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} forceOpen={tourStep === 2} />
                 </div>
               )}
             </div>
