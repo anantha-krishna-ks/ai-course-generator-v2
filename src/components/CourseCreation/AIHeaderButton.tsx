@@ -50,6 +50,7 @@ interface AIHeaderButtonProps {
 export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExternalOpenChange, scrollToSection }: AIHeaderButtonProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [savedOnce, setSavedOnce] = useState(false);
+  const [highlightGuidelines, setHighlightGuidelines] = useState(false);
 
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
   const setOpen = (v: boolean) => {
@@ -61,9 +62,15 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
   const guidelinesRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (open && scrollToSection === 'guidelines' && guidelinesRef.current) {
+      setHighlightGuidelines(false);
       setTimeout(() => {
         guidelinesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 300);
+        setHighlightGuidelines(true);
+        // Remove highlight after animation
+        setTimeout(() => setHighlightGuidelines(false), 2000);
+      }, 350);
+    } else if (!open) {
+      setHighlightGuidelines(false);
     }
   }, [open, scrollToSection]);
 
@@ -294,7 +301,10 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
 
 
             {/* Guidelines */}
-            <div ref={guidelinesRef}>
+            <div ref={guidelinesRef} className={cn(
+              "rounded-xl transition-all duration-700",
+              highlightGuidelines && "ring-2 ring-primary/50 ring-offset-2 ring-offset-background shadow-[0_0_20px_hsl(var(--primary)/0.15)]"
+            )}>
             <ConfigSection
               icon={BookOpen}
               label="Course Guidelines"
