@@ -140,6 +140,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   }, []);
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden">
         {/* Header */}
@@ -579,20 +580,21 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
           </div>
         </div>
       </DialogContent>
-
-      {/* AI Support Sheet for guidelines */}
-      {aiEnabled && (
-        <AIHeaderButton
-          aiOptions={aiOptions}
-          onOptionsChange={onAiOptionsChange}
-          externalOpen={showAiSheet}
-          onExternalOpenChange={(v) => {
-            setShowAiSheet(v);
-            if (!v) setAiSheetSection(null);
-          }}
-          scrollToSection={aiSheetSection}
-        />
-      )}
     </Dialog>
+
+    {/* AI Support Sheet - rendered outside Dialog to avoid Radix focus trap conflicts */}
+    {aiEnabled && (
+      <AIHeaderButton
+        aiOptions={aiOptions}
+        onOptionsChange={onAiOptionsChange}
+        externalOpen={showAiSheet}
+        onExternalOpenChange={(v) => {
+          setShowAiSheet(v);
+          if (!v) setAiSheetSection(null);
+        }}
+        scrollToSection={aiSheetSection}
+      />
+    )}
+    </>
   );
 }
