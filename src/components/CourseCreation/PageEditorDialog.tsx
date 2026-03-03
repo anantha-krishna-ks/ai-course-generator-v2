@@ -402,13 +402,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Prompt Input or Loading State */}
                   <div className="px-5 py-3.5">
                     {aiGenerating ? (
-                      <div className="flex flex-col items-center justify-center py-10 gap-3 animate-fade-in">
+                      <div className="flex flex-col items-center justify-center py-10 gap-3 animate-fade-in rounded-xl bg-gradient-to-br from-[hsl(217,91%,60%)]/5 via-[hsl(270,70%,60%)]/5 to-[hsl(217,91%,60%)]/5">
                         <div className="relative">
-                          <Sparkles className="w-7 h-7 text-primary animate-pulse" />
-                          <Sparkles className="w-4 h-4 text-primary/50 absolute -top-1 -left-2 animate-pulse [animation-delay:0.3s]" />
+                          <Sparkles className="w-7 h-7 bg-gradient-to-r from-[hsl(217,91%,60%)] to-[hsl(270,70%,60%)] bg-clip-text text-transparent animate-pulse" style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text' }} />
+                          <Sparkles className="w-4 h-4 text-[hsl(270,70%,60%)]/50 absolute -top-1 -left-2 animate-pulse [animation-delay:0.3s]" />
                         </div>
-                        <p className="text-sm font-medium text-primary animate-pulse">Finding the best way to present it...</p>
-                        <p className="text-xs text-muted-foreground">This may take a few minutes</p>
+                        <p className="text-sm font-semibold bg-gradient-to-r from-[hsl(217,91%,60%)] to-[hsl(270,70%,60%)] bg-clip-text text-transparent animate-pulse">Finding the best way to present it...</p>
+                        <p className="text-xs text-[hsl(270,70%,60%)]/60">This may take a few minutes</p>
                       </div>
                     ) : (
                       <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-background px-4 py-2 focus-within:border-foreground/30 transition-colors">
