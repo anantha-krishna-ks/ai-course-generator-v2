@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 
 export interface TourStep {
   target: string; // data-tour attribute value
-  additionalTargets?: string[]; // extra data-tour values to include in spotlight
   icon?: React.ReactNode;
   title: string;
   description: string;
@@ -34,24 +33,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
     const el = document.querySelector(`[data-tour="${step.target}"]`);
     if (!el) return;
 
-    let rect = el.getBoundingClientRect();
-
-    // Merge additional target rects into a union bounding box
-    if (step.additionalTargets?.length) {
-      let union = { top: rect.top, left: rect.left, bottom: rect.bottom, right: rect.right };
-      for (const t of step.additionalTargets) {
-        const extra = document.querySelector(`[data-tour="${t}"]`);
-        if (extra) {
-          const r = extra.getBoundingClientRect();
-          union.top = Math.min(union.top, r.top);
-          union.left = Math.min(union.left, r.left);
-          union.bottom = Math.max(union.bottom, r.bottom);
-          union.right = Math.max(union.right, r.right);
-        }
-      }
-      rect = new DOMRect(union.left, union.top, union.right - union.left, union.bottom - union.top);
-    }
-
+    const rect = el.getBoundingClientRect();
     setSpotlightRect(rect);
 
     // Calculate tooltip position after render

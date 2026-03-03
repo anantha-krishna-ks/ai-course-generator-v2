@@ -104,7 +104,7 @@ export function AddContentButton({
             </Button>
           </div>
         ) : (
-          <div data-tour="text-toolbar-popover">
+          <>
             <button
               onClick={onAddText}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
@@ -118,7 +118,7 @@ export function AddContentButton({
             >
               <Image className="w-4 h-4" />
             </button>
-          </div>
+          </>
         )}
       </PopoverContent>
     </Popover>
