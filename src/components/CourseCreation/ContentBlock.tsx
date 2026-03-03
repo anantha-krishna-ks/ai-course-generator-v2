@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X } from "lucide-react";
+import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -16,11 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { DescriptionEditor } from "./DescriptionEditor";
 import { ImageBlock } from "./ImageBlock";
+import { MediaUploadBlock } from "./MediaUploadBlock";
 import { cn } from "@/lib/utils";
 
 interface ContentBlockProps {
   id: string;
-  type: "text" | "image";
+  type: "text" | "image" | "video" | "audio" | "doc";
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
@@ -174,6 +175,8 @@ export function ContentBlock({
         <div className="w-full">
           {type === "image" ? (
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
+          ) : type === "video" || type === "audio" || type === "doc" ? (
+            <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
           ) : isEditing ? (
             <DescriptionEditor content={content} onChange={onChange} />
           ) : (
