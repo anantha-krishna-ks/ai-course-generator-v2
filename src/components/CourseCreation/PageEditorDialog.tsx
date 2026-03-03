@@ -51,7 +51,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [aiBlockType, setAiBlockType] = useState<"text" | "image" | null>(null);
   const [showAiSheet, setShowAiSheet] = useState(false);
   const [aiSheetSection, setAiSheetSection] = useState<string | null>(null);
-  const aiPromptRef = useRef<HTMLInputElement>(null);
+  const aiPromptRef = useRef<HTMLTextAreaElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -383,31 +383,38 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
                   {/* Prompt Input */}
                   <div className="px-5 py-3.5">
-                    <div className="flex items-center gap-2 rounded-full border border-border/80 bg-background px-4 py-1.5 focus-within:border-foreground/30 transition-colors">
-                      <input
+                    <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-background px-4 py-2 focus-within:border-foreground/30 transition-colors">
+                      <textarea
                         ref={aiPromptRef}
-                        type="text"
                         value={aiPrompt}
-                        onChange={(e) => setAiPrompt(e.target.value)}
+                        onChange={(e) => {
+                          setAiPrompt(e.target.value);
+                          e.target.style.height = 'auto';
+                          e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                        }}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter" && aiPrompt.trim()) {
+                          if (e.key === "Enter" && !e.shiftKey && aiPrompt.trim()) {
+                            e.preventDefault();
                             console.log("AI generate:", aiPrompt, aiBlockType);
                             setAiPrompt("");
+                            e.currentTarget.style.height = 'auto';
                           }
                         }}
                         placeholder="Example: Create a comparison table for collaboration vs individual work"
-                        className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none"
+                        className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none resize-none min-h-[28px] max-h-[150px] py-1"
+                        rows={1}
                       />
                       <button
                         onClick={() => {
                           if (aiPrompt.trim()) {
                             console.log("AI generate:", aiPrompt, aiBlockType);
                             setAiPrompt("");
+                            if (aiPromptRef.current) aiPromptRef.current.style.height = 'auto';
                           }
                         }}
                         disabled={!aiPrompt.trim()}
                         className={cn(
-                          "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+                          "w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center transition-colors mb-0.5",
                           aiPrompt.trim()
                             ? "bg-primary text-primary-foreground hover:bg-primary/90"
                             : "bg-muted text-muted-foreground"
