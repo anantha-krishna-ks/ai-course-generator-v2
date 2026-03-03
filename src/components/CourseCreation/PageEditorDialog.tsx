@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
-import { AIGuidelinesDrawer } from "./AIGuidelinesDrawer";
+import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
   closestCenter,
@@ -140,8 +140,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   }, []);
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden relative">
+      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0">
           <div className="flex items-center gap-2.5">
@@ -578,20 +579,22 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             </div>
           </div>
         </div>
-        {/* AI Guidelines Drawer - inline inside dialog */}
-        {aiEnabled && (
-          <AIGuidelinesDrawer
-            open={showAiSheet}
-            onClose={() => {
-              setShowAiSheet(false);
-              setAiSheetSection(null);
-            }}
-            aiOptions={aiOptions}
-            onOptionsChange={onAiOptionsChange}
-            scrollToSection={aiSheetSection}
-          />
-        )}
       </DialogContent>
     </Dialog>
+
+    {/* AI Support Sheet - rendered outside Dialog to avoid Radix focus trap conflicts */}
+    {aiEnabled && (
+      <AIHeaderButton
+        aiOptions={aiOptions}
+        onOptionsChange={onAiOptionsChange}
+        externalOpen={showAiSheet}
+        onExternalOpenChange={(v) => {
+          setShowAiSheet(v);
+          if (!v) setAiSheetSection(null);
+        }}
+        scrollToSection={aiSheetSection}
+      />
+    )}
+    </>
   );
 }
