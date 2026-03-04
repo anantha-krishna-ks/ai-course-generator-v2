@@ -342,30 +342,31 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         {item.title || "Untitled page"}
                                       </span>
                                       {/* Three-dot menu on hover */}
-                                      {!isCurrentPage && (
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0">
-                                              <Dots className="w-4 h-4 text-muted-foreground" />
-                                            </button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="end" className="w-44">
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                              const newTitle = prompt("Rename page", item.title || "");
-                                              if (newTitle !== null) onRenameItem?.(item.id, newTitle);
-                                            }}>
-                                              <Pencil className="w-3.5 h-3.5" /> Rename
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
-                                              <Copy className="w-3.5 h-3.5" /> Duplicate
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
-                                              <Trash2 className="w-3.5 h-3.5" /> Delete
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                      )}
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <button
+                                            className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <Dots className="w-4 h-4 text-muted-foreground" />
+                                          </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-44">
+                                          <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                            const newTitle = prompt("Rename page", item.title || "");
+                                            if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                          }}>
+                                            <Pencil className="w-3.5 h-3.5" /> Rename
+                                          </DropdownMenuItem>
+                                          <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
+                                            <Copy className="w-3.5 h-3.5" /> Duplicate
+                                          </DropdownMenuItem>
+                                          <DropdownMenuSeparator />
+                                          <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
+                                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
