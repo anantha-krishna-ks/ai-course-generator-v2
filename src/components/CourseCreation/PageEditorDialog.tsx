@@ -363,12 +363,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     <span className="hidden sm:inline">Questions</span>
                   </Button>
                 </div>
-                <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm py-2 sm:py-2.5 px-1 shadow-sm shrink-0">
-                  <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-3 transition-all duration-200" onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}>
-                    <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                    <span className="hidden sm:inline">More</span>
-                  </Button>
-                </div>
+                <button
+                  onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
+                  className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm py-2 sm:py-2.5 px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
+                >
+                  <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                  <span className="hidden sm:inline">More</span>
+                </button>
               </div>
 
               {/* AI Creation Block */}
