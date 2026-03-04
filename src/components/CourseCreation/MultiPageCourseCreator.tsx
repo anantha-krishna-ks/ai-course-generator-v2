@@ -338,19 +338,39 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
   const duplicateItem = (id: string) => {
     setItems((prev) => {
-      const idx = prev.findIndex((item) => item.id === id);
-      if (idx === -1) return prev;
-      const original = prev[idx];
-      const clone = { ...original, id: `${original.type}-${Date.now()}` };
-      const next = [...prev];
-      next.splice(idx + 1, 0, clone);
-      
-      toast({
-        title: `${original.type.charAt(0).toUpperCase() + original.type.slice(1)} duplicated`,
-        description: `"${original.title || `Untitled ${original.type}`}" has been duplicated successfully.`,
+      // Search top-level
+      let idx = prev.findIndex((item) => item.id === id);
+      if (idx !== -1) {
+        const original = prev[idx];
+        const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const clonedChildren = original.children?.map((child) => ({
+          ...child,
+          id: `${child.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        }));
+        const clone = { ...original, id: cloneId, children: clonedChildren };
+        const next = [...prev];
+        next.splice(idx + 1, 0, clone);
+        toast({
+          title: `${original.type.charAt(0).toUpperCase() + original.type.slice(1)} duplicated`,
+          description: `"${original.title || `Untitled ${original.type}`}" has been duplicated successfully.`,
+        });
+        return next;
+      }
+      // Search inside section children
+      return prev.map((item) => {
+        if (!item.children) return item;
+        const childIdx = item.children.findIndex((c) => c.id === id);
+        if (childIdx === -1) return item;
+        const original = item.children[childIdx];
+        const clone = { ...original, id: `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}` };
+        const newChildren = [...item.children];
+        newChildren.splice(childIdx + 1, 0, clone);
+        toast({
+          title: "Page duplicated",
+          description: `"${original.title || "Untitled page"}" has been duplicated successfully.`,
+        });
+        return { ...item, children: newChildren };
       });
-      
-      return next;
     });
   };
 
