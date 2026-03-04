@@ -64,8 +64,6 @@ interface PageEditorDialogProps {
   onReorderItems?: (activeId: string, overId: string) => void;
   onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
   onNavigateToPage?: (pageId: string) => void;
-  pageBlocks?: PageContentBlock[];
-  onPageBlocksChange?: (blocks: PageContentBlock[]) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -84,20 +82,10 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, pageBlocks, onPageBlocksChange }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [internalBlocks, setInternalBlocks] = useState<PageContentBlock[]>([]);
-  const blocks = pageBlocks ?? internalBlocks;
-  const setBlocks = onPageBlocksChange
-    ? (updater: PageContentBlock[] | ((prev: PageContentBlock[]) => PageContentBlock[])) => {
-        if (typeof updater === "function") {
-          onPageBlocksChange(updater(blocks));
-        } else {
-          onPageBlocksChange(updater);
-        }
-      }
-    : setInternalBlocks;
+  const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
   const [showAiBlock, setShowAiBlock] = useState(false);

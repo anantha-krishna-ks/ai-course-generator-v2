@@ -99,7 +99,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(null);
-  const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, Array<{ id: string; type: "text" | "image" | "video" | "audio" | "doc" | "quiz"; content: string }>>>({});
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const tourSteps: TourStep[] = [
@@ -350,35 +349,17 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   };
 
   const duplicateItem = (id: string) => {
-    // Capture blocks map snapshot before state updates
-    const blocksSnapshot = { ...pageBlocksMap };
-    const blockUpdates: Record<string, Array<{ id: string; type: "text" | "image" | "video" | "audio" | "doc" | "quiz"; content: string }>> = {};
-    
     setItems((prev) => {
       // Search top-level
       let idx = prev.findIndex((item) => item.id === id);
       if (idx !== -1) {
         const original = prev[idx];
-        const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        const clonedChildren = original.children?.map((child, ci) => {
-          const childCloneId = `${child.type}-${Date.now()}-${ci}-${Math.random().toString(36).slice(2, 9)}`;
-          // Copy content blocks for child pages
-          if (blocksSnapshot[child.id]?.length) {
-            blockUpdates[childCloneId] = blocksSnapshot[child.id].map((b, bi) => ({
-              ...b,
-              id: `block-${Date.now()}-${ci}-${bi}-${Math.random().toString(36).slice(2, 9)}`,
-            }));
-          }
-          return { ...child, id: childCloneId };
-        });
+        const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const clonedChildren = original.children?.map((child) => ({
+          ...child,
+          id: `${child.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        }));
         const clone = { ...original, id: cloneId, children: clonedChildren };
-        // Copy content blocks for the page itself
-        if (blocksSnapshot[id]?.length) {
-          blockUpdates[cloneId] = blocksSnapshot[id].map((b, bi) => ({
-            ...b,
-            id: `block-${Date.now()}-${bi}-${Math.random().toString(36).slice(2, 9)}`,
-          }));
-        }
         const next = [...prev];
         next.splice(idx + 1, 0, clone);
         toast({
@@ -393,15 +374,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         const childIdx = item.children.findIndex((c) => c.id === id);
         if (childIdx === -1) return item;
         const original = item.children[childIdx];
-        const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-        const clone = { ...original, id: cloneId };
-        // Copy content blocks
-        if (blocksSnapshot[id]?.length) {
-          blockUpdates[cloneId] = blocksSnapshot[id].map((b, bi) => ({
-            ...b,
-            id: `block-${Date.now()}-${bi}-${Math.random().toString(36).slice(2, 9)}`,
-          }));
-        }
+        const clone = { ...original, id: `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}` };
         const newChildren = [...item.children];
         newChildren.splice(childIdx + 1, 0, clone);
         toast({
@@ -411,11 +384,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         return { ...item, children: newChildren };
       });
     });
-
-    // Apply block updates after items state update
-    if (Object.keys(blockUpdates).length > 0) {
-      setPageBlocksMap((prev) => ({ ...prev, ...blockUpdates }));
-    }
   };
 
   const addPageToSection = (sectionId: string) => {
@@ -906,8 +874,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   editorOpen={activeEditorPageId === item.id}
                                   onOpenEditor={() => setActiveEditorPageId(item.id)}
                                   onCloseEditor={() => setActiveEditorPageId(null)}
-                                  pageBlocks={pageBlocksMap[item.id] || []}
-                                  onPageBlocksChange={(blocks) => setPageBlocksMap((prev) => ({ ...prev, [item.id]: blocks }))}
                                   autoFocus={item.title === ""}
                                   courseItems={items}
                                 />
@@ -979,8 +945,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     }));
                   }}
                   onNavigateToPage={navigateToPage}
-                  pageBlocks={pageBlocksMap[child.id] || []}
-                  onPageBlocksChange={(blocks) => setPageBlocksMap((prev) => ({ ...prev, [child.id]: blocks }))}
                 />
               );
             }
