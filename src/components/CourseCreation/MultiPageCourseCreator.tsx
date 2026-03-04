@@ -765,6 +765,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                             return (
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <PageItemCard
+                                  id={item.id}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
@@ -773,6 +774,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   autoFocus={item.title === ""}
+                                  courseItems={items}
                                 />
                               </SortableOutlineItem>
                             );

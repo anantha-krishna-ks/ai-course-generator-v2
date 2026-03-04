@@ -12,7 +12,15 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+interface CourseOutlineItem {
+  id: string;
+  type: "section" | "page" | "question";
+  title: string;
+  children?: CourseOutlineItem[];
+}
+
 interface PageItemCardProps {
+  id?: string;
   title: string;
   inclusions?: string;
   aiEnabled?: boolean;
@@ -21,11 +29,12 @@ interface PageItemCardProps {
   onDelete?: () => void;
   onDuplicate?: () => void;
   autoFocus?: boolean;
+  courseItems?: CourseOutlineItem[];
 }
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, autoFocus, aiEnabled = false }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, autoFocus, aiEnabled = false, courseItems = [] }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -205,6 +214,8 @@ export function PageItemCard({ title, inclusions = "", onTitleChange, onInclusio
         pageTitle={title}
         onPageTitleChange={onTitleChange}
         aiEnabled={aiEnabled}
+        courseItems={courseItems}
+        currentPageId={id}
       />
     </>
   );
