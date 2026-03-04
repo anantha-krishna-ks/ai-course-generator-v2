@@ -1,7 +1,14 @@
 import { useState, useCallback, useRef } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
@@ -293,9 +300,32 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               </span>
                               {/* Three-dot menu on hover */}
                               {!isCurrentPage && (
-                                <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0">
-                                  <Dots className="w-4 h-4 text-muted-foreground" />
-                                </button>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0">
+                                      <Dots className="w-4 h-4 text-muted-foreground" />
+                                    </button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="w-44">
+                                    <DropdownMenuItem className="gap-2 text-sm">
+                                      <Pencil className="w-3.5 h-3.5" /> Rename
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="gap-2 text-sm">
+                                      <Copy className="w-3.5 h-3.5" /> Duplicate
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="gap-2 text-sm">
+                                      <ArrowUp className="w-3.5 h-3.5" /> Move up
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="gap-2 text-sm">
+                                      <ArrowDown className="w-3.5 h-3.5" /> Move down
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive">
+                                      <Trash2 className="w-3.5 h-3.5" /> Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               )}
                             </div>
                           );
@@ -307,9 +337,32 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               <div className="flex items-center justify-between">
                                 <span className="text-xs text-muted-foreground font-medium">Section {sectionIndex}</span>
                                 <div className="flex items-center gap-0">
-                                  <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                    <Dots className="w-4 h-4 text-muted-foreground" />
-                                  </button>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                        <Dots className="w-4 h-4 text-muted-foreground" />
+                                      </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-44">
+                                      <DropdownMenuItem className="gap-2 text-sm">
+                                        <Pencil className="w-3.5 h-3.5" /> Rename
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem className="gap-2 text-sm">
+                                        <Copy className="w-3.5 h-3.5" /> Duplicate
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem className="gap-2 text-sm">
+                                        <ArrowUp className="w-3.5 h-3.5" /> Move up
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem className="gap-2 text-sm">
+                                        <ArrowDown className="w-3.5 h-3.5" /> Move down
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive">
+                                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                   <span className="w-px h-4 bg-border" />
                                   <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
                                     <ChevronUp className="w-4 h-4 text-muted-foreground" />
