@@ -95,6 +95,34 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   useEffect(() => {
     onBlocksChangeRef.current?.(blocks);
   }, [blocks]);
+
+  // Find all navigable page IDs from the outline
+  const getAllPageIds = useCallback((): string[] => {
+    const ids: string[] = [];
+    for (const item of courseItems) {
+      if (item.type === "page") ids.push(item.id);
+      if (item.children) {
+        for (const child of item.children) {
+          if (child.type === "page") ids.push(child.id);
+        }
+      }
+    }
+    return ids;
+  }, [courseItems]);
+
+  // Delete a page and navigate to an adjacent one if it's the current page
+  const handleDeletePage = useCallback((id: string) => {
+    if (id === currentPageId) {
+      const pageIds = getAllPageIds();
+      const idx = pageIds.indexOf(id);
+      const nextId = pageIds[idx + 1] ?? pageIds[idx - 1];
+      if (nextId) {
+        onNavigateToPage?.(nextId);
+      }
+    }
+    onDeleteItem?.(id);
+  }, [currentPageId, getAllPageIds, onDeleteItem, onNavigateToPage]);
+
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
   const [showAiBlock, setShowAiBlock] = useState(false);
@@ -371,7 +399,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             <Copy className="w-3.5 h-3.5" /> Duplicate
                                           </DropdownMenuItem>
                                           <DropdownMenuSeparator />
-                                          <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
+                                          <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => handleDeletePage(item.id)}>
                                             <Trash2 className="w-3.5 h-3.5" /> Delete
                                           </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -413,7 +441,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                 <Copy className="w-3.5 h-3.5" /> Duplicate
                                               </DropdownMenuItem>
                                               <DropdownMenuSeparator />
-                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
+                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => handleDeletePage(item.id)}>
                                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                                               </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -489,7 +517,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                               <Copy className="w-3.5 h-3.5" /> Duplicate
                                                             </DropdownMenuItem>
                                                             <DropdownMenuSeparator />
-                                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(child.id)}>
+                                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => handleDeletePage(child.id)}>
                                                               <Trash2 className="w-3.5 h-3.5" /> Delete
                                                             </DropdownMenuItem>
                                                           </DropdownMenuContent>
