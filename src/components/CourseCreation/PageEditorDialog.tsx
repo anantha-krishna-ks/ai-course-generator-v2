@@ -22,6 +22,7 @@ import {
 } from "@dnd-kit/sortable";
 import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
+import { ContentBlocksPanel } from "./ContentBlocksPanel";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface PageContentBlock {
@@ -274,9 +275,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   </div>
                 </div>
               ) : (
-                <div className="text-sm text-muted-foreground text-center py-8">
-                  Content blocks will appear here
-                </div>
+                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type)} />
               )}
             </div>
           </div>
