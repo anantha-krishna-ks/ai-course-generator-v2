@@ -363,7 +363,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 </Button>
                 <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
                   <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Quiz</span>
+                  <span className="hidden sm:inline">Questions</span>
+                </Button>
+                <div className="w-px h-5 bg-border/60 mx-0.5" />
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}>
+                  <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                  <span className="hidden sm:inline">More</span>
                 </Button>
               </div>
 
