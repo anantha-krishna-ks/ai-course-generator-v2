@@ -312,9 +312,121 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
 
+              {/* Content blocks with inline undo banners */}
+              {(blocks.length > 0 || deletedBlocks.size > 0) ? (
+                <TooltipProvider delayDuration={300}>
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+                      <div className="space-y-4">
+                        {(() => {
+                          const elements: React.ReactNode[] = [];
+                          const deletedArr = Array.from(deletedBlocks.entries()).sort((a, b) => a[1].index - b[1].index);
+                          let blockIdx = 0;
+                          let deletedIdx = 0;
+                          let position = 0;
 
-              {/* Content type toolbar */}
-              <div className="flex items-center gap-2">
+                          while (blockIdx < blocks.length || deletedIdx < deletedArr.length) {
+                            if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
+                              const [deletedId] = deletedArr[deletedIdx];
+                              elements.push(
+                                <div key={`deleted-${deletedId}`} className="animate-fade-in">
+                                  <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                                    <p className="text-sm text-muted-foreground italic">
+                                      Content was removed...{" "}
+                                      <button
+                                        onClick={() => undoDeleteBlock(deletedId)}
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
+                                      >
+                                        <Undo2 className="w-3 h-3" />
+                                        Undo
+                                      </button>
+                                    </p>
+                                    <button
+                                      onClick={() => dismissDeletedBlock(deletedId)}
+                                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                      Close
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                              deletedIdx++;
+                            } else if (blockIdx < blocks.length) {
+                              const block = blocks[blockIdx];
+                              const currentBlockIdx = blockIdx;
+                              elements.push(
+                                <ContentBlock
+                                  key={block.id}
+                                  id={block.id}
+                                  type={block.type}
+                                  content={block.content}
+                                  onChange={(content) => updateBlock(block.id, content)}
+                                  onDelete={() => deleteBlock(block.id)}
+                                  onDuplicate={() => {}}
+                                  autoFocus={block.id === lastAddedBlockId}
+                                  aiEnabled={aiEnabled}
+                                />
+                              );
+                              if (blockIdx < blocks.length - 1) {
+                                elements.push(
+                                  <AddContentButton
+                                    key={`add-${block.id}`}
+                                    variant="full"
+                                    aiEnabled={aiEnabled}
+                                    onAddText={() => addBlock("text", currentBlockIdx + 1)}
+                                    onAddImage={() => addBlock("image", currentBlockIdx + 1)}
+                                    onAddVideo={() => addBlock("video", currentBlockIdx + 1)}
+                                    onAddAudio={() => addBlock("audio", currentBlockIdx + 1)}
+                                    onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
+                                  />
+                                );
+                              }
+                              blockIdx++;
+                              position++;
+                            } else {
+                              break;
+                            }
+                          }
+
+                          while (deletedIdx < deletedArr.length) {
+                            const [deletedId] = deletedArr[deletedIdx];
+                            elements.push(
+                              <div key={`deleted-${deletedId}`} className="animate-fade-in">
+                                <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                                  <p className="text-sm text-muted-foreground italic">
+                                    Content was removed...{" "}
+                                    <button
+                                      onClick={() => undoDeleteBlock(deletedId)}
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
+                                    >
+                                      <Undo2 className="w-3 h-3" />
+                                      Undo
+                                    </button>
+                                  </p>
+                                  <button
+                                    onClick={() => dismissDeletedBlock(deletedId)}
+                                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                    Close
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                            deletedIdx++;
+                          }
+
+                          return elements;
+                        })()}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </TooltipProvider>
+              ) : null}
+
+              {/* Content type toolbar - below blocks */}
+              <div className={cn("flex items-center gap-2", blocks.length > 0 && "mt-6")}>
                 <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
                   {aiEnabled && (
                     <button
@@ -375,7 +487,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {/* AI Creation Block */}
               {showAiBlock && aiEnabled && (
                 <div className="mt-4 rounded-xl border border-border bg-card shadow-sm animate-fade-in">
-                  {/* AI Block Header */}
                   <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60">
                     <div className="flex items-center gap-2.5">
                       <Sparkles className="w-4 h-4 text-primary" />
@@ -390,8 +501,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       </button>
                     </div>
                   </div>
-
-                  {/* Prompt Input or Loading State */}
                   <div className="px-5 py-3.5">
                     {aiGenerating ? (
                       <div className="flex flex-col items-center justify-center py-12 gap-4 animate-fade-in rounded-xl bg-gradient-to-br from-[hsl(217,91%,60%)]/5 via-[hsl(270,70%,60%)]/5 to-[hsl(217,91%,60%)]/5">
@@ -454,8 +563,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       </div>
                     )}
                   </div>
-
-                  {/* Content type selector - hidden during generation */}
                   {!aiGenerating && <div className="px-5 pb-4">
                     <span className="text-xs text-muted-foreground block mb-2">Select content block</span>
                     <div className="flex items-center gap-2">
@@ -498,127 +605,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     </div>
                   </div>}
                 </div>
-              )}
-
-              {/* Content blocks with inline undo banners */}
-              {(blocks.length > 0 || deletedBlocks.size > 0) ? (
-                <TooltipProvider delayDuration={300}>
-                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                    <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-                      <div className="mt-6 space-y-4">
-                        {(() => {
-                          const elements: React.ReactNode[] = [];
-                          const deletedArr = Array.from(deletedBlocks.entries()).sort((a, b) => a[1].index - b[1].index);
-                          let blockIdx = 0;
-                          let deletedIdx = 0;
-                          let position = 0;
-
-                          while (blockIdx < blocks.length || deletedIdx < deletedArr.length) {
-                            if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
-                              const [deletedId] = deletedArr[deletedIdx];
-                              elements.push(
-                                <div key={`deleted-${deletedId}`} className="animate-fade-in">
-                                  <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
-                                    <p className="text-sm text-muted-foreground italic">
-                                      Content was removed...{" "}
-                                      <button
-                                        onClick={() => undoDeleteBlock(deletedId)}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
-                                      >
-                                        <Undo2 className="w-3 h-3" />
-                                        Undo
-                                      </button>
-                                    </p>
-                                    <button
-                                      onClick={() => dismissDeletedBlock(deletedId)}
-                                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                    >
-                                      <X className="w-3.5 h-3.5" />
-                                      Close
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                              deletedIdx++;
-                              position++;
-                              continue;
-                            }
-
-                            if (blockIdx < blocks.length) {
-                              const block = blocks[blockIdx];
-                              const currentBlockIdx = blockIdx;
-                              elements.push(
-                                <ContentBlock
-                                  key={block.id}
-                                  id={block.id}
-                                  type={block.type}
-                                  content={block.content}
-                                  onChange={(content) => updateBlock(block.id, content)}
-                                  onDelete={() => deleteBlock(block.id)}
-                                  onDuplicate={() => duplicateBlock(block.id)}
-                                  autoFocus={block.id === lastAddedBlockId}
-                                  aiEnabled={aiEnabled}
-                                />
-                              );
-                              // Add content button between blocks
-                              if (blockIdx < blocks.length - 1) {
-                                elements.push(
-                                  <AddContentButton
-                                    key={`add-${block.id}`}
-                                    variant="full"
-                                    aiEnabled={aiEnabled}
-                                    onAddText={() => addBlock("text", currentBlockIdx + 1)}
-                                    onAddImage={() => addBlock("image", currentBlockIdx + 1)}
-                                    onAddVideo={() => addBlock("video", currentBlockIdx + 1)}
-                                    onAddAudio={() => addBlock("audio", currentBlockIdx + 1)}
-                                    onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
-                                  />
-                                );
-                              }
-                              blockIdx++;
-                              position++;
-                            } else {
-                              break;
-                            }
-                          }
-
-                          // Remaining deleted banners at the end
-                          while (deletedIdx < deletedArr.length) {
-                            const [deletedId] = deletedArr[deletedIdx];
-                            elements.push(
-                              <div key={`deleted-${deletedId}`} className="animate-fade-in">
-                                <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
-                                  <p className="text-sm text-muted-foreground italic">
-                                    Content was removed...{" "}
-                                    <button
-                                      onClick={() => undoDeleteBlock(deletedId)}
-                                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2"
-                                    >
-                                      <Undo2 className="w-3 h-3" />
-                                      Undo
-                                    </button>
-                                  </p>
-                                  <button
-                                    onClick={() => dismissDeletedBlock(deletedId)}
-                                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                  >
-                                    <X className="w-3.5 h-3.5" />
-                                    Close
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                            deletedIdx++;
-                          }
-
-                          return elements;
-                        })()}
-                      </div>
-                    </SortableContext>
-                  </DndContext>
-                </TooltipProvider>
-              ) : (
-                <div className="min-h-[300px]" />
               )}
             </div>
           </div>
