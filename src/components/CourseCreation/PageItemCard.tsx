@@ -33,13 +33,14 @@ interface PageItemCardProps {
   onDuplicateItem?: (id: string) => void;
   onAddPageToSection?: (sectionId: string) => void;
   onReorderItems?: (activeId: string, overId: string) => void;
+  onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
   autoFocus?: boolean;
   courseItems?: CourseOutlineItem[];
 }
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, autoFocus, aiEnabled = false, courseItems = [] }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, autoFocus, aiEnabled = false, courseItems = [] }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
@@ -226,6 +227,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
         onDeleteItem={onDeleteItem}
         onAddPageToSection={onAddPageToSection}
         onReorderItems={onReorderItems}
+        onReorderChildItems={onReorderChildItems}
       />
     </>
   );

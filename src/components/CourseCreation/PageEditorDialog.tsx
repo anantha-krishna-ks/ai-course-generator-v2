@@ -62,6 +62,7 @@ interface PageEditorDialogProps {
   onDeleteItem?: (id: string) => void;
   onAddPageToSection?: (sectionId: string) => void;
   onReorderItems?: (activeId: string, overId: string) => void;
+  onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -80,7 +81,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
@@ -113,6 +114,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const outlineSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
 
   const getVariantContent = (type: string, variant?: string): string => {
@@ -295,7 +300,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Dynamic outline items */}
                   {courseItems.length > 0 ? (
                     <DndContext
-                      sensors={sensors}
+                      sensors={outlineSensors}
                       collisionDetection={closestCenter}
                       onDragEnd={(event: DragEndEvent) => {
                         const { active, over } = event;
@@ -414,30 +419,54 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       </span>
                                       {/* Section children (pages) */}
                                       {item.children && item.children.length > 0 && (
-                                        <div className="space-y-1 pt-1">
-                                          {item.children.map((child) => {
-                                            const isCurrentChild = child.id === currentPageId;
-                                            return (
-                                              <div
-                                                key={child.id}
-                                                className={cn(
-                                                  "flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors cursor-pointer",
-                                                  isCurrentChild
-                                                    ? "bg-primary/5 border-l-[3px] border-green-500"
-                                                    : "hover:bg-muted/50"
-                                                )}
-                                              >
-                                                <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
-                                                <span className={cn(
-                                                  "text-sm truncate",
-                                                  isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
-                                                )}>
-                                                  {child.title || "Untitled page"}
-                                                </span>
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
+                                        <DndContext
+                                          sensors={outlineSensors}
+                                          collisionDetection={closestCenter}
+                                          onDragEnd={(event: DragEndEvent) => {
+                                            const { active, over } = event;
+                                            if (over && active.id !== over.id) {
+                                              onReorderChildItems?.(item.id, String(active.id), String(over.id));
+                                            }
+                                          }}
+                                        >
+                                          <SortableContext items={item.children.map(c => c.id)} strategy={verticalListSortingStrategy}>
+                                            <div className="space-y-1 pt-1">
+                                              {item.children.map((child) => {
+                                                const isCurrentChild = child.id === currentPageId;
+                                                return (
+                                                  <SortableOutlineWrapper key={child.id} id={child.id}>
+                                                    {(childListeners: Record<string, unknown>) => (
+                                                      <div
+                                                        className={cn(
+                                                          "group/child-page flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors cursor-pointer",
+                                                          isCurrentChild
+                                                            ? "bg-primary/5 border-l-[3px] border-green-500"
+                                                            : "hover:bg-muted/50"
+                                                        )}
+                                                      >
+                                                        {!isCurrentChild && (
+                                                          <span
+                                                            className="opacity-0 group-hover/child-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
+                                                            {...childListeners}
+                                                          >
+                                                            <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                                          </span>
+                                                        )}
+                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                                                        <span className={cn(
+                                                          "text-sm truncate",
+                                                          isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
+                                                        )}>
+                                                          {child.title || "Untitled page"}
+                                                        </span>
+                                                      </div>
+                                                    )}
+                                                  </SortableOutlineWrapper>
+                                                );
+                                              })}
+                                            </div>
+                                          </SortableContext>
+                                        </DndContext>
                                       )}
                                       {/* Add page button */}
                                       <button
