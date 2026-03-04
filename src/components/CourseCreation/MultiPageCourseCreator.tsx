@@ -345,6 +345,20 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     });
   };
 
+  const addPageToSection = (sectionId: string) => {
+    const newPage: CourseItem = {
+      id: `page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      type: "page",
+      title: "",
+    };
+    setItems((prev) => prev.map((item) => {
+      if (item.id === sectionId && item.type === "section") {
+        return { ...item, children: [...(item.children || []), newPage] };
+      }
+      return item;
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -776,7 +790,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onRenameItem={(id, newTitle) => updateItemTitle(id, newTitle)}
                                   onDeleteItem={(id) => deleteItem(id)}
                                   onDuplicateItem={(id) => duplicateItem(id)}
-                                  onAddPageToSection={(sectionId) => handleAddItem("page")}
+                                  onAddPageToSection={(sectionId) => addPageToSection(sectionId)}
                                   onReorderItems={(activeId, overId) => {
                                     setItems((prev) => {
                                       const oldIndex = prev.findIndex((i) => i.id === activeId);
