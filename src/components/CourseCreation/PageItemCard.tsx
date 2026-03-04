@@ -19,6 +19,12 @@ interface CourseOutlineItem {
   children?: CourseOutlineItem[];
 }
 
+interface PageContentBlock {
+  id: string;
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz";
+  content: string;
+}
+
 interface PageItemCardProps {
   id?: string;
   title: string;
@@ -40,11 +46,13 @@ interface PageItemCardProps {
   onCloseEditor?: () => void;
   autoFocus?: boolean;
   courseItems?: CourseOutlineItem[];
+  initialBlocks?: PageContentBlock[];
+  onBlocksChange?: (blocks: PageContentBlock[]) => void;
 }
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [] }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
@@ -232,6 +240,8 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
         onReorderItems={onReorderItems}
         onReorderChildItems={onReorderChildItems}
         onNavigateToPage={onNavigateToPage}
+        initialBlocks={initialBlocks}
+        onBlocksChange={onBlocksChange}
       />
     </>
   );
