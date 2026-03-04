@@ -333,7 +333,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   };
 
   const deleteItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    setItems((prev) => {
+      // Try top-level first
+      if (prev.some((item) => item.id === id)) {
+        return prev.filter((item) => item.id !== id);
+      }
+      // Try inside section children
+      return prev.map((item) => {
+        if (!item.children) return item;
+        const filtered = item.children.filter((c) => c.id !== id);
+        if (filtered.length !== item.children.length) return { ...item, children: filtered };
+        return item;
+      });
+    });
   };
 
   const duplicateItem = (id: string) => {

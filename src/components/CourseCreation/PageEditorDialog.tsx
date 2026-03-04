@@ -440,7 +440,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                       <div
                                                         onClick={() => !isCurrentChild && onNavigateToPage?.(child.id)}
                                                         className={cn(
-                                                          "group/child-page flex items-center gap-2.5 py-2 rounded-md transition-colors cursor-pointer",
+                                                          "group/child-page flex items-center gap-2.5 py-2 rounded-md transition-colors cursor-pointer pr-1",
                                                           isCurrentChild
                                                             ? "bg-muted/60 border-l-[3px] border-green-500 pl-2"
                                                             : "hover:bg-muted/50 pl-3"
@@ -454,11 +454,37 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                         </span>
                                                         <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
                                                         <span className={cn(
-                                                          "text-sm truncate",
+                                                          "text-sm truncate flex-1",
                                                           isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
                                                         )}>
                                                           {child.title || "Untitled page"}
                                                         </span>
+                                                        {/* Three-dot menu on hover */}
+                                                        <DropdownMenu>
+                                                          <DropdownMenuTrigger asChild>
+                                                            <button
+                                                              className="opacity-0 group-hover/child-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
+                                                              onClick={(e) => e.stopPropagation()}
+                                                            >
+                                                              <Dots className="w-3.5 h-3.5 text-muted-foreground" />
+                                                            </button>
+                                                          </DropdownMenuTrigger>
+                                                          <DropdownMenuContent align="end" className="w-44">
+                                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                                              const newTitle = prompt("Rename page", child.title || "");
+                                                              if (newTitle !== null) onRenameItem?.(child.id, newTitle);
+                                                            }}>
+                                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(child.id)}>
+                                                              <Copy className="w-3.5 h-3.5" /> Duplicate
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(child.id)}>
+                                                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                                                            </DropdownMenuItem>
+                                                          </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                       </div>
                                                     )}
                                                   </SortableOutlineWrapper>
