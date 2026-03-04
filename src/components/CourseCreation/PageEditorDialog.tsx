@@ -64,6 +64,7 @@ interface PageEditorDialogProps {
   onReorderItems?: (activeId: string, overId: string) => void;
   onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
   onNavigateToPage?: (pageId: string) => void;
+  onAddItem?: (type: "section" | "page") => void;
   initialBlocks?: PageContentBlock[];
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
 }
@@ -84,7 +85,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, initialBlocks, onBlocksChange }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
@@ -329,10 +330,30 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Navigate to */}
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Navigate to:</span>
-                    <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4">
-                      <Plus className="w-3.5 h-3.5" />
-                      Add
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4">
+                          <Plus className="w-3.5 h-3.5" />
+                          Add
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-52 p-1.5">
+                        <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("section")}>
+                          <LayoutGrid className="w-4 h-4 text-muted-foreground" />
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-sm font-medium">New section</span>
+                            <span className="text-[11px] text-muted-foreground">Group related pages</span>
+                          </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("page")}>
+                          <FileText className="w-4 h-4 text-muted-foreground" />
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-sm font-medium">New page</span>
+                            <span className="text-[11px] text-muted-foreground">Single learning unit</span>
+                          </div>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   {/* Dynamic outline items */}

@@ -48,11 +48,12 @@ interface PageItemCardProps {
   courseItems?: CourseOutlineItem[];
   initialBlocks?: PageContentBlock[];
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
+  onAddItem?: (type: "section" | "page") => void;
 }
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
@@ -242,6 +243,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
         onNavigateToPage={onNavigateToPage}
         initialBlocks={initialBlocks}
         onBlocksChange={onBlocksChange}
+        onAddItem={onAddItem}
       />
     </>
   );

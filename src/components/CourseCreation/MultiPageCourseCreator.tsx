@@ -920,6 +920,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   courseItems={items}
                                   initialBlocks={pageBlocksMap[item.id] || []}
                                   onBlocksChange={(blocks) => updatePageBlocks(item.id, blocks)}
+                                  onAddItem={(type) => handleAddItem(type)}
                                 />
                               </SortableOutlineItem>
                             );
@@ -991,6 +992,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   onNavigateToPage={navigateToPage}
                   initialBlocks={pageBlocksMap[child.id] || []}
                   onBlocksChange={(blocks) => updatePageBlocks(child.id, blocks)}
+                  onAddItem={(type) => handleAddItem(type)}
                 />
               );
             }
