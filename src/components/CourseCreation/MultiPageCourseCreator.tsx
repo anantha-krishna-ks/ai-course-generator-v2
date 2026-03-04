@@ -773,6 +773,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
+                                  onRenameItem={(id, newTitle) => updateItemTitle(id, newTitle)}
+                                  onDeleteItem={(id) => deleteItem(id)}
+                                  onDuplicateItem={(id) => duplicateItem(id)}
+                                  onAddPageToSection={(sectionId) => handleAddItem("page")}
                                   autoFocus={item.title === ""}
                                   courseItems={items}
                                 />

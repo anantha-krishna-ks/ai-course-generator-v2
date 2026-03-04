@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,9 +55,13 @@ interface PageEditorDialogProps {
   onAiOptionsChange?: (options: AIOptions) => void;
   courseItems?: CourseOutlineItem[];
   currentPageId?: string;
+  onRenameItem?: (id: string, newTitle: string) => void;
+  onDuplicateItem?: (id: string) => void;
+  onDeleteItem?: (id: string) => void;
+  onAddPageToSection?: (sectionId: string) => void;
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
@@ -307,21 +311,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     </button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="w-44">
-                                    <DropdownMenuItem className="gap-2 text-sm">
+                                    <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                      const newTitle = prompt("Rename page", item.title || "");
+                                      if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                    }}>
                                       <Pencil className="w-3.5 h-3.5" /> Rename
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem className="gap-2 text-sm">
+                                    <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
                                       <Copy className="w-3.5 h-3.5" /> Duplicate
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="gap-2 text-sm">
-                                      <ArrowUp className="w-3.5 h-3.5" /> Move up
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="gap-2 text-sm">
-                                      <ArrowDown className="w-3.5 h-3.5" /> Move down
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive">
+                                    <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
                                       <Trash2 className="w-3.5 h-3.5" /> Delete
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
@@ -344,21 +344,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       </button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-44">
-                                      <DropdownMenuItem className="gap-2 text-sm">
+                                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                        const newTitle = prompt("Rename section", item.title || "");
+                                        if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                      }}>
                                         <Pencil className="w-3.5 h-3.5" /> Rename
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem className="gap-2 text-sm">
+                                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
                                         <Copy className="w-3.5 h-3.5" /> Duplicate
                                       </DropdownMenuItem>
                                       <DropdownMenuSeparator />
-                                      <DropdownMenuItem className="gap-2 text-sm">
-                                        <ArrowUp className="w-3.5 h-3.5" /> Move up
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem className="gap-2 text-sm">
-                                        <ArrowDown className="w-3.5 h-3.5" /> Move down
-                                      </DropdownMenuItem>
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive">
+                                      <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
                                         <Trash2 className="w-3.5 h-3.5" /> Delete
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -400,7 +396,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 </div>
                               )}
                               {/* Add page button */}
-                              <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1">
+                              <button
+                                onClick={() => onAddPageToSection?.(item.id)}
+                                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1"
+                              >
                                 <Plus className="w-3.5 h-3.5" />
                                 Add page
                               </button>
