@@ -99,6 +99,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(null);
+  const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, Array<{ id: string; type: "text" | "image" | "video" | "audio" | "doc" | "quiz"; content: string }>>>({});
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const tourSteps: TourStep[] = [
@@ -355,11 +356,27 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       if (idx !== -1) {
         const original = prev[idx];
         const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-        const clonedChildren = original.children?.map((child) => ({
-          ...child,
-          id: `${child.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        }));
+        const clonedChildren = original.children?.map((child) => {
+          const childCloneId = `${child.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+          // Copy content blocks for child pages
+          if (pageBlocksMap[child.id]) {
+            const clonedBlocks = pageBlocksMap[child.id].map((b) => ({
+              ...b,
+              id: `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            }));
+            setPageBlocksMap((prev) => ({ ...prev, [childCloneId]: clonedBlocks }));
+          }
+          return { ...child, id: childCloneId };
+        });
         const clone = { ...original, id: cloneId, children: clonedChildren };
+        // Copy content blocks for the page itself
+        if (pageBlocksMap[id]) {
+          const clonedBlocks = pageBlocksMap[id].map((b) => ({
+            ...b,
+            id: `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          }));
+          setPageBlocksMap((prev) => ({ ...prev, [cloneId]: clonedBlocks }));
+        }
         const next = [...prev];
         next.splice(idx + 1, 0, clone);
         toast({
@@ -374,7 +391,16 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         const childIdx = item.children.findIndex((c) => c.id === id);
         if (childIdx === -1) return item;
         const original = item.children[childIdx];
-        const clone = { ...original, id: `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}` };
+        const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const clone = { ...original, id: cloneId };
+        // Copy content blocks
+        if (pageBlocksMap[id]) {
+          const clonedBlocks = pageBlocksMap[id].map((b) => ({
+            ...b,
+            id: `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          }));
+          setPageBlocksMap((prev) => ({ ...prev, [cloneId]: clonedBlocks }));
+        }
         const newChildren = [...item.children];
         newChildren.splice(childIdx + 1, 0, clone);
         toast({
@@ -874,6 +900,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   editorOpen={activeEditorPageId === item.id}
                                   onOpenEditor={() => setActiveEditorPageId(item.id)}
                                   onCloseEditor={() => setActiveEditorPageId(null)}
+                                  pageBlocks={pageBlocksMap[item.id] || []}
+                                  onPageBlocksChange={(blocks) => setPageBlocksMap((prev) => ({ ...prev, [item.id]: blocks }))}
                                   autoFocus={item.title === ""}
                                   courseItems={items}
                                 />
@@ -945,6 +973,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     }));
                   }}
                   onNavigateToPage={navigateToPage}
+                  pageBlocks={pageBlocksMap[child.id] || []}
+                  onPageBlocksChange={(blocks) => setPageBlocksMap((prev) => ({ ...prev, [child.id]: blocks }))}
                 />
               );
             }
