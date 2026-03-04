@@ -430,7 +430,7 @@ function SpanTimeCard({
   const increment = () => onChange(Math.min(max, value + step));
 
   return (
-    <div className="rounded-lg border border-border/80 bg-background px-4 py-3">
+    <div className="rounded-lg border border-border/80 bg-background px-4 py-4">
       <div className="flex items-center justify-between">
         {/* Label */}
         <div className="flex items-center gap-2">
@@ -443,15 +443,15 @@ function SpanTimeCard({
           </div>
         </div>
 
-        {/* Stepper control - vertically centered to label */}
+        {/* Stepper control */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={decrement}
             disabled={value <= min}
-            className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            <Minus className="w-4 h-4 text-foreground" />
+            <Minus className="w-4 h-4 text-primary" />
           </button>
           <div className="flex items-baseline gap-1 min-w-[72px] justify-center">
             <span className="text-3xl font-bold text-foreground tabular-nums leading-none">{value}</span>
@@ -461,15 +461,15 @@ function SpanTimeCard({
             type="button"
             onClick={increment}
             disabled={value >= max}
-            className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            <Plus className="w-4 h-4 text-foreground" />
+            <Plus className="w-4 h-4 text-primary" />
           </button>
         </div>
       </div>
 
       {/* Preset chips */}
-      <div className="flex flex-wrap gap-1.5 mt-2.5">
+      <div className="flex flex-wrap gap-1.5 mt-4">
         {presets.map((preset) => (
           <button
             key={preset}
