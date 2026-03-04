@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Type, ImageIcon, Video, Mic, FileText, Sparkles } from "lucide-react";
+import { Type, ImageIcon, Video, Mic, FileText, Sparkles, MousePointer } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BlockTemplate {
@@ -21,33 +21,36 @@ interface ContentBlocksPanelProps {
 
 function TemplateCard({ label, preview, onClick }: { label: string; preview: React.ReactNode; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="w-full text-left group/tpl">
-      <div className="rounded-lg border border-border/80 bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200 min-h-[80px] flex flex-col justify-center">
+    <div className="flex flex-col items-center gap-2">
+      <button
+        onClick={onClick}
+        className="w-full rounded-xl border border-border/60 bg-card hover:border-primary/30 hover:shadow-md transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card"
+      >
         {preview}
-      </div>
-      <p className="text-xs text-muted-foreground text-center mt-2 group-hover/tpl:text-foreground transition-colors">
+      </button>
+      <span className="text-[11px] font-medium text-muted-foreground tracking-wide">
         {label}
-      </p>
-    </button>
+      </span>
+    </div>
   );
 }
 
 const categories: BlockCategory[] = [
   {
     id: "text",
-    label: "Text",
+    label: "TEXT",
     icon: Type,
     templates: [
       {
         id: "heading-text",
         label: "Heading and text",
         preview: (
-          <div className="space-y-2">
-            <div className="h-3.5 w-24 bg-foreground/80 rounded-sm" />
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-foreground/80">Heading</p>
             <div className="space-y-1.5">
-              <div className="h-2 w-full bg-muted-foreground/20 rounded-sm" />
-              <div className="h-2 w-[90%] bg-muted-foreground/20 rounded-sm" />
-              <div className="h-2 w-[75%] bg-muted-foreground/20 rounded-sm" />
+              <p className="text-[11px] leading-relaxed text-muted-foreground/70">
+                Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise.
+              </p>
             </div>
           </div>
         ),
@@ -56,11 +59,10 @@ const categories: BlockCategory[] = [
         id: "text-only",
         label: "Text",
         preview: (
-          <div className="space-y-1.5">
-            <div className="h-2 w-full bg-muted-foreground/20 rounded-sm" />
-            <div className="h-2 w-[95%] bg-muted-foreground/20 rounded-sm" />
-            <div className="h-2 w-[80%] bg-muted-foreground/20 rounded-sm" />
-            <div className="h-2 w-[70%] bg-muted-foreground/20 rounded-sm" />
+          <div className="space-y-1.5 py-2">
+            <p className="text-[11px] leading-relaxed text-muted-foreground/70">
+              Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise as a source of input for e-learning.
+            </p>
           </div>
         ),
       },
@@ -68,18 +70,18 @@ const categories: BlockCategory[] = [
         id: "two-columns",
         label: "Two columns",
         preview: (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <div className="h-3 w-16 bg-foreground/80 rounded-sm" />
-              <div className="h-2 w-full bg-muted-foreground/20 rounded-sm" />
-              <div className="h-2 w-[85%] bg-muted-foreground/20 rounded-sm" />
-              <div className="h-2 w-[70%] bg-muted-foreground/20 rounded-sm" />
+              <p className="text-[11px] font-semibold text-foreground/80">Heading</p>
+              <p className="text-[10px] leading-relaxed text-muted-foreground/60">
+                Employee-generated Learning enables employees to learn from each other.
+              </p>
             </div>
             <div className="space-y-1.5">
-              <div className="h-3 w-16 bg-foreground/80 rounded-sm" />
-              <div className="h-2 w-full bg-muted-foreground/20 rounded-sm" />
-              <div className="h-2 w-[80%] bg-muted-foreground/20 rounded-sm" />
-              <div className="h-2 w-[65%] bg-muted-foreground/20 rounded-sm" />
+              <p className="text-[11px] font-semibold text-foreground/80">Heading</p>
+              <p className="text-[10px] leading-relaxed text-muted-foreground/60">
+                Employee-generated Learning enables employees to learn from each other.
+              </p>
             </div>
           </div>
         ),
@@ -88,15 +90,15 @@ const categories: BlockCategory[] = [
   },
   {
     id: "image",
-    label: "Image",
+    label: "IMAGE",
     icon: ImageIcon,
     templates: [
       {
         id: "image-full",
         label: "Full width image",
         preview: (
-          <div className="w-full h-16 bg-muted/80 rounded-md border border-dashed border-border flex items-center justify-center">
-            <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+          <div className="w-full h-20 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center">
+            <ImageIcon className="w-7 h-7 text-muted-foreground/25" />
           </div>
         ),
       },
@@ -104,11 +106,11 @@ const categories: BlockCategory[] = [
         id: "image-text",
         label: "Image with caption",
         preview: (
-          <div className="space-y-2">
-            <div className="w-full h-14 bg-muted/80 rounded-md border border-dashed border-border flex items-center justify-center">
-              <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
+          <div className="space-y-2.5">
+            <div className="w-full h-16 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center">
+              <ImageIcon className="w-6 h-6 text-muted-foreground/25" />
             </div>
-            <div className="h-2 w-[60%] bg-muted-foreground/20 rounded-sm mx-auto" />
+            <p className="text-[10px] text-muted-foreground/50 text-center">Image caption goes here</p>
           </div>
         ),
       },
@@ -116,16 +118,15 @@ const categories: BlockCategory[] = [
   },
   {
     id: "video",
-    label: "Video",
+    label: "VIDEO",
     icon: Video,
     templates: [
       {
         id: "video-upload",
         label: "Video upload",
         preview: (
-          <div className="w-full h-16 bg-muted/80 rounded-md border border-dashed border-border flex items-center justify-center gap-2">
-            <Video className="w-5 h-5 text-muted-foreground/40" />
-            <span className="text-xs text-muted-foreground/40">Upload video</span>
+          <div className="w-full h-20 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center gap-2">
+            <Video className="w-6 h-6 text-muted-foreground/25" />
           </div>
         ),
       },
@@ -133,16 +134,15 @@ const categories: BlockCategory[] = [
   },
   {
     id: "audio",
-    label: "Audio",
+    label: "AUDIO",
     icon: Mic,
     templates: [
       {
         id: "audio-upload",
         label: "Audio upload",
         preview: (
-          <div className="w-full h-14 bg-muted/80 rounded-md border border-dashed border-border flex items-center justify-center gap-2">
-            <Mic className="w-5 h-5 text-muted-foreground/40" />
-            <span className="text-xs text-muted-foreground/40">Upload audio</span>
+          <div className="w-full h-16 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center gap-2">
+            <Mic className="w-6 h-6 text-muted-foreground/25" />
           </div>
         ),
       },
@@ -150,16 +150,15 @@ const categories: BlockCategory[] = [
   },
   {
     id: "doc",
-    label: "Document",
+    label: "DOC",
     icon: FileText,
     templates: [
       {
         id: "doc-upload",
         label: "Document upload",
         preview: (
-          <div className="w-full h-14 bg-muted/80 rounded-md border border-dashed border-border flex items-center justify-center gap-2">
-            <FileText className="w-5 h-5 text-muted-foreground/40" />
-            <span className="text-xs text-muted-foreground/40">Upload document</span>
+          <div className="w-full h-16 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center gap-2">
+            <FileText className="w-6 h-6 text-muted-foreground/25" />
           </div>
         ),
       },
@@ -167,28 +166,22 @@ const categories: BlockCategory[] = [
   },
   {
     id: "quiz",
-    label: "Quiz",
-    icon: Sparkles,
+    label: "QUIZ",
+    icon: MousePointer,
     templates: [
       {
         id: "quiz-block",
         label: "Quiz question",
         preview: (
-          <div className="space-y-2">
-            <div className="h-2.5 w-[70%] bg-foreground/60 rounded-sm" />
-            <div className="space-y-1.5 pl-2">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full border-2 border-muted-foreground/30" />
-                <div className="h-2 w-[60%] bg-muted-foreground/20 rounded-sm" />
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full border-2 border-muted-foreground/30" />
-                <div className="h-2 w-[50%] bg-muted-foreground/20 rounded-sm" />
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full border-2 border-muted-foreground/30" />
-                <div className="h-2 w-[55%] bg-muted-foreground/20 rounded-sm" />
-              </div>
+          <div className="space-y-2.5">
+            <p className="text-[11px] font-medium text-foreground/70">What is the correct answer?</p>
+            <div className="space-y-2 pl-1">
+              {["Option A", "Option B", "Option C"].map((opt) => (
+                <div key={opt} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full border-[1.5px] border-muted-foreground/25 shrink-0" />
+                  <span className="text-[10px] text-muted-foreground/60">{opt}</span>
+                </div>
+              ))}
             </div>
           </div>
         ),
@@ -203,19 +196,15 @@ export function ContentBlocksPanel({ onAddBlock }: ContentBlocksPanelProps) {
 
   const handleTemplateClick = (templateId: string) => {
     const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
-      text: "text",
-      image: "image",
-      video: "video",
-      audio: "audio",
-      doc: "doc",
+      text: "text", image: "image", video: "video", audio: "audio", doc: "doc",
     };
     onAddBlock(typeMap[activeCategory] || "text", templateId);
   };
 
   return (
     <div className="flex h-full -m-4">
-      {/* Category side nav */}
-      <div className="flex flex-col items-center gap-1 py-3 px-2 border-r border-border/60 bg-muted/10 shrink-0">
+      {/* Icon side nav */}
+      <div className="flex flex-col items-center gap-2 py-4 px-1.5 border-r border-border/40 shrink-0">
         {categories.map((cat) => {
           const Icon = cat.icon;
           const isActive = activeCategory === cat.id;
@@ -224,32 +213,40 @@ export function ContentBlocksPanel({ onAddBlock }: ContentBlocksPanelProps) {
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-lg px-2.5 py-2 transition-all duration-150 w-[56px]",
+                "w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200",
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-muted shadow-sm text-foreground"
+                  : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/50"
               )}
+              title={cat.label}
             >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium leading-none">{cat.label}</span>
+              <Icon className={cn("w-5 h-5", isActive && "w-[22px] h-[22px]")} />
             </button>
           );
         })}
       </div>
 
-      {/* Templates area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          {activeCat.label}
-        </h3>
-        {activeCat.templates.map((tpl) => (
-          <TemplateCard
-            key={tpl.id}
-            label={tpl.label}
-            preview={tpl.preview}
-            onClick={() => handleTemplateClick(tpl.id)}
-          />
-        ))}
+      {/* Templates content */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Category header with line */}
+        <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+          <span className="text-xs font-semibold text-primary tracking-[0.15em] whitespace-nowrap">
+            {activeCat.label}
+          </span>
+          <div className="flex-1 h-px bg-border/60" />
+        </div>
+
+        {/* Template cards */}
+        <div className="px-4 pb-4 space-y-5">
+          {activeCat.templates.map((tpl) => (
+            <TemplateCard
+              key={tpl.id}
+              label={tpl.label}
+              preview={tpl.preview}
+              onClick={() => handleTemplateClick(tpl.id)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
