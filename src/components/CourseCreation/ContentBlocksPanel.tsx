@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Type, ImageIcon, Video, Mic, FileText, CircleHelp } from "lucide-react";
+import { Type, ImageIcon, Video, Mic, FileText, MessageCircleQuestion } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BlockTemplate {
@@ -167,7 +167,7 @@ const categories: BlockCategory[] = [
   {
     id: "quiz",
     label: "QUIZ",
-    icon: CircleHelp,
+    icon: MessageCircleQuestion,
     templates: [
       {
         id: "quiz-block",
