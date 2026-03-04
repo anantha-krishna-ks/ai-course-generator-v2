@@ -227,7 +227,7 @@ export function ContentBlocksPanel({ onAddBlock }: ContentBlocksPanelProps) {
       </div>
 
       {/* Templates content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border/60 [&::-webkit-scrollbar-track]:bg-transparent">
         {/* Category header with line */}
         <div className="flex items-center gap-3 px-4 pt-4 pb-3">
           <span className="text-xs font-semibold text-primary tracking-[0.15em] whitespace-nowrap">
