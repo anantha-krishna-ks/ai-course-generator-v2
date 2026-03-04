@@ -322,9 +322,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     <div
                                       onClick={() => !isCurrentPage && onNavigateToPage?.(item.id)}
                                       className={cn(
-                                        "group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative",
-                                        isCurrentPage && "border-l-[3px] border-green-500 pl-3",
-                                        !isCurrentPage && "pl-1 hover:bg-muted/40 rounded-md px-2"
+                                        "group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative rounded-md",
+                                        isCurrentPage && "border-l-[3px] border-green-500 pl-3 bg-muted/60",
+                                        !isCurrentPage && "pl-1 hover:bg-muted/40 px-2"
                                       )}
                                     >
                                       {/* Drag handle */}
@@ -442,7 +442,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                         className={cn(
                                                           "group/child-page flex items-center gap-2.5 py-2 rounded-md transition-colors cursor-pointer",
                                                           isCurrentChild
-                                                            ? "bg-primary/5 border-l-[3px] border-green-500 pl-2"
+                                                            ? "bg-muted/60 border-l-[3px] border-green-500 pl-2"
                                                             : "hover:bg-muted/50 pl-3"
                                                         )}
                                                       >
