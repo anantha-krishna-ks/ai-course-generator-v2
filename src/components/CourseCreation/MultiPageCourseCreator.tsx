@@ -777,6 +777,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onDeleteItem={(id) => deleteItem(id)}
                                   onDuplicateItem={(id) => duplicateItem(id)}
                                   onAddPageToSection={(sectionId) => handleAddItem("page")}
+                                  onReorderItems={(activeId, overId) => {
+                                    setItems((prev) => {
+                                      const oldIndex = prev.findIndex((i) => i.id === activeId);
+                                      const newIndex = prev.findIndex((i) => i.id === overId);
+                                      if (oldIndex === -1 || newIndex === -1) return prev;
+                                      return arrayMove(prev, oldIndex, newIndex);
+                                    });
+                                  }}
                                   autoFocus={item.title === ""}
                                   courseItems={items}
                                 />

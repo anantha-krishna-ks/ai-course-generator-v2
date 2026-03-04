@@ -26,7 +26,9 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   arrayMove,
+  useSortable,
 } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel } from "./ContentBlocksPanel";
@@ -59,9 +61,26 @@ interface PageEditorDialogProps {
   onDuplicateItem?: (id: string) => void;
   onDeleteItem?: (id: string) => void;
   onAddPageToSection?: (sectionId: string) => void;
+  onReorderItems?: (activeId: string, overId: string) => void;
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection }: PageEditorDialogProps) {
+function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    transition: transition ?? 'transform 250ms cubic-bezier(0.25, 1, 0.5, 1)',
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : 'auto',
+    position: 'relative' as const,
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes}>
+      {children(listeners ?? {})}
+    </div>
+  );
+}
+
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
@@ -275,141 +294,170 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
                   {/* Dynamic outline items */}
                   {courseItems.length > 0 ? (
-                    (() => {
-                      let sectionIndex = 0;
-                      return courseItems.map((item) => {
-                        if (item.type === "page") {
-                          const isCurrentPage = item.id === currentPageId;
-                          return (
-                            <div
-                              key={item.id}
-                              className={cn(
-                                "group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative",
-                                isCurrentPage && "border-l-[3px] border-green-500 pl-3",
-                                !isCurrentPage && "pl-1 hover:bg-muted/40 rounded-md px-2"
-                              )}
-                            >
-                              {/* Drag handle - visible on hover for non-current pages */}
-                              {!isCurrentPage && (
-                                <span className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0">
-                                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-                                </span>
-                              )}
-                              <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
-                              <span className={cn(
-                                "text-sm truncate flex-1",
-                                isCurrentPage ? "text-foreground font-medium" : "text-foreground/80"
-                              )}>
-                                {item.title || "Untitled page"}
-                              </span>
-                              {/* Three-dot menu on hover */}
-                              {!isCurrentPage && (
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0">
-                                      <Dots className="w-4 h-4 text-muted-foreground" />
-                                    </button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="w-44">
-                                    <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                      const newTitle = prompt("Rename page", item.title || "");
-                                      if (newTitle !== null) onRenameItem?.(item.id, newTitle);
-                                    }}>
-                                      <Pencil className="w-3.5 h-3.5" /> Rename
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
-                                      <Copy className="w-3.5 h-3.5" /> Duplicate
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
-                                      <Trash2 className="w-3.5 h-3.5" /> Delete
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              )}
-                            </div>
-                          );
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={(event: DragEndEvent) => {
+                        const { active, over } = event;
+                        if (over && active.id !== over.id) {
+                          onReorderItems?.(String(active.id), String(over.id));
                         }
-                        if (item.type === "section") {
-                          sectionIndex++;
-                          return (
-                            <div key={item.id} className="rounded-xl border border-border bg-card p-4 space-y-3">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-muted-foreground font-medium">Section {sectionIndex}</span>
-                                <div className="flex items-center gap-0">
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                        <Dots className="w-4 h-4 text-muted-foreground" />
-                                      </button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-44">
-                                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                        const newTitle = prompt("Rename section", item.title || "");
-                                        if (newTitle !== null) onRenameItem?.(item.id, newTitle);
-                                      }}>
-                                        <Pencil className="w-3.5 h-3.5" /> Rename
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
-                                        <Copy className="w-3.5 h-3.5" /> Duplicate
-                                      </DropdownMenuItem>
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
-                                        <Trash2 className="w-3.5 h-3.5" /> Delete
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                  <span className="w-px h-4 bg-border" />
-                                  <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                    <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                                  </button>
-                                </div>
-                              </div>
-                              <span className="text-[15px] font-semibold text-foreground block">
-                                {item.title || "Untitled section"}
-                              </span>
-                              {/* Section children (pages) */}
-                              {item.children && item.children.length > 0 && (
-                                <div className="space-y-1 pt-1">
-                                  {item.children.map((child) => {
-                                    const isCurrentChild = child.id === currentPageId;
-                                    return (
-                                      <div
-                                        key={child.id}
-                                        className={cn(
-                                          "flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors cursor-pointer",
-                                          isCurrentChild
-                                            ? "bg-primary/5 border-l-[3px] border-green-500"
-                                            : "hover:bg-muted/50"
-                                        )}
-                                      >
-                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
-                                        <span className={cn(
-                                          "text-sm truncate",
-                                          isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
-                                        )}>
-                                          {child.title || "Untitled page"}
+                      }}
+                    >
+                      <SortableContext items={courseItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                        {(() => {
+                          let sectionIndex = 0;
+                          return courseItems.map((item) => {
+                            if (item.type === "page") {
+                              const isCurrentPage = item.id === currentPageId;
+                              return (
+                                <SortableOutlineWrapper key={item.id} id={item.id}>
+                                  {(listeners: Record<string, unknown>) => (
+                                    <div
+                                      className={cn(
+                                        "group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative",
+                                        isCurrentPage && "border-l-[3px] border-green-500 pl-3",
+                                        !isCurrentPage && "pl-1 hover:bg-muted/40 rounded-md px-2"
+                                      )}
+                                    >
+                                      {/* Drag handle */}
+                                      {!isCurrentPage && (
+                                        <span
+                                          className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
+                                          {...listeners}
+                                        >
+                                          <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
                                         </span>
+                                      )}
+                                      <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                                      <span className={cn(
+                                        "text-sm truncate flex-1",
+                                        isCurrentPage ? "text-foreground font-medium" : "text-foreground/80"
+                                      )}>
+                                        {item.title || "Untitled page"}
+                                      </span>
+                                      {/* Three-dot menu on hover */}
+                                      {!isCurrentPage && (
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0">
+                                              <Dots className="w-4 h-4 text-muted-foreground" />
+                                            </button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end" className="w-44">
+                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                              const newTitle = prompt("Rename page", item.title || "");
+                                              if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                            }}>
+                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
+                                              <Copy className="w-3.5 h-3.5" /> Duplicate
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
+                                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      )}
+                                    </div>
+                                  )}
+                                </SortableOutlineWrapper>
+                              );
+                            }
+                            if (item.type === "section") {
+                              sectionIndex++;
+                              return (
+                                <SortableOutlineWrapper key={item.id} id={item.id}>
+                                  {(listeners: Record<string, unknown>) => (
+                                    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+                                      <div className="flex items-center justify-between">
+                                        <span
+                                          className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1"
+                                          {...listeners}
+                                        >
+                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                          Section {sectionIndex}
+                                        </span>
+                                        <div className="flex items-center gap-0">
+                                          <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                              <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                                <Dots className="w-4 h-4 text-muted-foreground" />
+                                              </button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-44">
+                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                                const newTitle = prompt("Rename section", item.title || "");
+                                                if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                              }}>
+                                                <Pencil className="w-3.5 h-3.5" /> Rename
+                                              </DropdownMenuItem>
+                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
+                                                <Copy className="w-3.5 h-3.5" /> Duplicate
+                                              </DropdownMenuItem>
+                                              <DropdownMenuSeparator />
+                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => onDeleteItem?.(item.id)}>
+                                                <Trash2 className="w-3.5 h-3.5" /> Delete
+                                              </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                          </DropdownMenu>
+                                          <span className="w-px h-4 bg-border" />
+                                          <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                            <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                                          </button>
+                                        </div>
                                       </div>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                              {/* Add page button */}
-                              <button
-                                onClick={() => onAddPageToSection?.(item.id)}
-                                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1"
-                              >
-                                <Plus className="w-3.5 h-3.5" />
-                                Add page
-                              </button>
-                              <div className="border-t border-dashed border-border" />
-                            </div>
-                          );
-                        }
-                        return null;
-                      });
-                    })()
+                                      <span className="text-[15px] font-semibold text-foreground block">
+                                        {item.title || "Untitled section"}
+                                      </span>
+                                      {/* Section children (pages) */}
+                                      {item.children && item.children.length > 0 && (
+                                        <div className="space-y-1 pt-1">
+                                          {item.children.map((child) => {
+                                            const isCurrentChild = child.id === currentPageId;
+                                            return (
+                                              <div
+                                                key={child.id}
+                                                className={cn(
+                                                  "flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors cursor-pointer",
+                                                  isCurrentChild
+                                                    ? "bg-primary/5 border-l-[3px] border-green-500"
+                                                    : "hover:bg-muted/50"
+                                                )}
+                                              >
+                                                <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                                                <span className={cn(
+                                                  "text-sm truncate",
+                                                  isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
+                                                )}>
+                                                  {child.title || "Untitled page"}
+                                                </span>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                      {/* Add page button */}
+                                      <button
+                                        onClick={() => onAddPageToSection?.(item.id)}
+                                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1"
+                                      >
+                                        <Plus className="w-3.5 h-3.5" />
+                                        Add page
+                                      </button>
+                                      <div className="border-t border-dashed border-border" />
+                                    </div>
+                                  )}
+                                </SortableOutlineWrapper>
+                              );
+                            }
+                            return null;
+                          });
+                        })()}
+                      </SortableContext>
+                    </DndContext>
                   ) : (
                     <p className="text-sm text-muted-foreground text-center py-4">
                       No items in the outline yet
