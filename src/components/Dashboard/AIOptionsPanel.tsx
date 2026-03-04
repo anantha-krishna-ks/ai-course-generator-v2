@@ -430,43 +430,46 @@ function SpanTimeCard({
   const increment = () => onChange(Math.min(max, value + step));
 
   return (
-    <div className="rounded-lg border border-border/80 bg-background p-4 space-y-3">
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
-          <Icon className="w-3.5 h-3.5 text-primary" />
+    <div className="rounded-lg border border-border/80 bg-background px-4 py-3">
+      <div className="flex items-center justify-between">
+        {/* Label */}
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+            <Icon className="w-3.5 h-3.5 text-primary" />
+          </div>
+          <div>
+            <span className="text-sm font-medium text-foreground block leading-tight">{title}</span>
+            <span className="text-[11px] text-muted-foreground">{subtitle}</span>
+          </div>
         </div>
-        <div>
-          <span className="text-sm font-medium text-foreground block leading-tight">{title}</span>
-          <span className="text-[11px] text-muted-foreground">{subtitle}</span>
-        </div>
-      </div>
 
-      {/* Stepper control */}
-      <div className="flex items-center justify-center gap-3 py-2">
-        <button
-          type="button"
-          onClick={decrement}
-          disabled={value <= min}
-          className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <Minus className="w-4 h-4 text-foreground" />
-        </button>
-        <div className="flex items-baseline gap-1 min-w-[72px] justify-center">
-          <span className="text-3xl font-bold text-foreground tabular-nums leading-none">{value}</span>
-          <span className="text-sm text-muted-foreground font-medium">{unit}</span>
+        {/* Stepper control */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={decrement}
+            disabled={value <= min}
+            className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Minus className="w-4 h-4 text-foreground" />
+          </button>
+          <div className="flex items-baseline gap-1 min-w-[72px] justify-center">
+            <span className="text-3xl font-bold text-foreground tabular-nums leading-none">{value}</span>
+            <span className="text-sm text-muted-foreground font-medium">{unit}</span>
+          </div>
+          <button
+            type="button"
+            onClick={increment}
+            disabled={value >= max}
+            className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Plus className="w-4 h-4 text-foreground" />
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={increment}
-          disabled={value >= max}
-          className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <Plus className="w-4 h-4 text-foreground" />
-        </button>
       </div>
 
       {/* Preset chips */}
-      <div className="flex flex-wrap gap-1.5 justify-center">
+      <div className="flex flex-wrap gap-1.5 mt-2.5">
         {presets.map((preset) => (
           <button
             key={preset}
