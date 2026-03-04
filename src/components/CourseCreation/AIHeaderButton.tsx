@@ -26,6 +26,9 @@ import {
   Lock,
   Info,
   Sparkles,
+  Timer,
+  Minus,
+  Plus,
 } from "lucide-react";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 
@@ -153,6 +156,67 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                 </div>
               </div>
             )}
+
+            {/* Span Time */}
+            <ConfigSection
+              icon={Timer}
+              label="Page Duration"
+              description="Time per page in minutes"
+            >
+              {isLocked ? (
+                <p className="text-sm text-foreground/80 bg-muted/50 rounded-lg px-3 py-2.5">
+                  {aiOptions.pageSpanTime} min
+                </p>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.max(1, (aiOptions.pageSpanTime ?? 5) - 1);
+                        onOptionsChange?.({ ...aiOptions, pageSpanTime: v });
+                      }}
+                      className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
+                      disabled={aiOptions.pageSpanTime <= 1}
+                    >
+                      <Minus className="w-4 h-4 text-primary" />
+                    </button>
+                    <div className="flex items-baseline gap-1 min-w-[60px] justify-center">
+                      <span className="text-2xl font-bold text-foreground tabular-nums leading-none">{aiOptions.pageSpanTime ?? 5}</span>
+                      <span className="text-sm text-muted-foreground font-medium">min</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.min(15, (aiOptions.pageSpanTime ?? 5) + 1);
+                        onOptionsChange?.({ ...aiOptions, pageSpanTime: v });
+                      }}
+                      className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
+                      disabled={aiOptions.pageSpanTime >= 15}
+                    >
+                      <Plus className="w-4 h-4 text-primary" />
+                    </button>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {[3, 5, 10, 15].map((preset) => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => onOptionsChange?.({ ...aiOptions, pageSpanTime: preset })}
+                        className={cn(
+                          "px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-150",
+                          aiOptions.pageSpanTime === preset
+                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                            : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                        )}
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </ConfigSection>
 
             {/* Supporting Documents */}
             <ConfigSection
