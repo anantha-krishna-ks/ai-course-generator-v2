@@ -15,7 +15,10 @@ import {
   Check,
   ArrowLeft,
   Settings2,
+  Clock,
+  Timer,
 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 export interface AIOptions {
   enabled: boolean;
@@ -26,7 +29,11 @@ export interface AIOptions {
   guidelinesDocuments: string[];
   exclusions: string;
   exclusionsDocuments: string[];
+  pageSpanTime: number;
+  courseSpanTime: number;
 }
+
+export type AIMode = "manual-with-ai" | "ai";
 
 const BLOOMS_LEVELS = [
   "Remember",
@@ -118,10 +125,12 @@ export function AIConfigView({
   options,
   onChange,
   onBack,
+  mode = "ai",
 }: {
   options: AIOptions;
   onChange: (options: AIOptions) => void;
   onBack: () => void;
+  mode?: AIMode;
 }) {
   const update = (patch: Partial<AIOptions>) =>
     onChange({ ...options, ...patch });
@@ -173,6 +182,61 @@ export function AIConfigView({
 
       {/* All sections in cards */}
       <div className="space-y-4">
+        {/* ── Span Time Settings ── */}
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <SectionLabel icon={Timer} label="Span Time Settings" />
+          <p className="text-xs text-muted-foreground mt-1 mb-4">Configure duration limits for content generation</p>
+          <div className="space-y-5">
+            {/* Page Level Span Time - always visible */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">Page Level Span Time</span>
+                </div>
+                <span className="text-sm font-semibold text-primary tabular-nums">{options.pageSpanTime} min</span>
+              </div>
+              <Slider
+                value={[options.pageSpanTime]}
+                onValueChange={([v]) => update({ pageSpanTime: v })}
+                min={1}
+                max={15}
+                step={1}
+                className="w-full"
+              />
+              <div className="flex justify-between text-[11px] text-muted-foreground/60">
+                <span>1 min</span>
+                <span>15 min</span>
+              </div>
+            </div>
+
+            {/* Course Level Span Time - only in AI mode */}
+            {mode === "ai" && (
+              <div className="space-y-3 pt-2 border-t border-border/60">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">Course Level Span Time</span>
+                  </div>
+                  <span className="text-sm font-semibold text-primary tabular-nums">{options.courseSpanTime} min</span>
+                </div>
+                <Slider
+                  value={[options.courseSpanTime]}
+                  onValueChange={([v]) => update({ courseSpanTime: v })}
+                  min={5}
+                  max={120}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[11px] text-muted-foreground/60">
+                  <span>5 min</span>
+                  <span>120 min</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* ── Bloom's Taxonomy ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Brain} label="Bloom's Taxonomy" />

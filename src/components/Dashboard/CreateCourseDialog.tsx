@@ -28,6 +28,8 @@ const defaultAIOptions: AIOptions = {
   guidelinesDocuments: [],
   exclusions: "",
   exclusionsDocuments: [],
+  pageSpanTime: 5,
+  courseSpanTime: 60,
 };
 
 function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComplete: () => void }) {
