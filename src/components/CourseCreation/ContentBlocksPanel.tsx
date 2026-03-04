@@ -1,4 +1,5 @@
-import { Type, ImageIcon, Video, Mic, FileText, Sparkles, Columns2, ListOrdered, Heading1, AlignLeft } from "lucide-react";
+import { useState } from "react";
+import { Type, ImageIcon, Video, Mic, FileText, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BlockTemplate {
@@ -20,10 +21,7 @@ interface ContentBlocksPanelProps {
 
 function TemplateCard({ label, preview, onClick }: { label: string; preview: React.ReactNode; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="w-full text-left group/tpl"
-    >
+    <button onClick={onClick} className="w-full text-left group/tpl">
       <div className="rounded-lg border border-border/80 bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all duration-200 min-h-[80px] flex flex-col justify-center">
         {preview}
       </div>
@@ -31,42 +29,6 @@ function TemplateCard({ label, preview, onClick }: { label: string; preview: Rea
         {label}
       </p>
     </button>
-  );
-}
-
-function CategorySection({ category, onAddBlock }: { category: BlockCategory; onAddBlock: ContentBlocksPanelProps["onAddBlock"] }) {
-  const Icon = category.icon;
-
-  const handleTemplateClick = (templateId: string) => {
-    const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
-      text: "text",
-      image: "image",
-      video: "video",
-      audio: "audio",
-      doc: "doc",
-    };
-    onAddBlock(typeMap[category.id] || "text", templateId);
-  };
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2.5">
-        <div className="w-10 h-10 rounded-xl bg-muted/60 border border-border/60 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-muted-foreground" />
-        </div>
-        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{category.label}</span>
-      </div>
-      <div className="grid grid-cols-1 gap-3 pl-1">
-        {category.templates.map((tpl) => (
-          <TemplateCard
-            key={tpl.id}
-            label={tpl.label}
-            preview={tpl.preview}
-            onClick={() => handleTemplateClick(tpl.id)}
-          />
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -236,11 +198,59 @@ const categories: BlockCategory[] = [
 ];
 
 export function ContentBlocksPanel({ onAddBlock }: ContentBlocksPanelProps) {
+  const [activeCategory, setActiveCategory] = useState("text");
+  const activeCat = categories.find((c) => c.id === activeCategory)!;
+
+  const handleTemplateClick = (templateId: string) => {
+    const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
+      text: "text",
+      image: "image",
+      video: "video",
+      audio: "audio",
+      doc: "doc",
+    };
+    onAddBlock(typeMap[activeCategory] || "text", templateId);
+  };
+
   return (
-    <div className="space-y-8">
-      {categories.map((cat) => (
-        <CategorySection key={cat.id} category={cat} onAddBlock={onAddBlock} />
-      ))}
+    <div className="flex h-full -m-4">
+      {/* Category side nav */}
+      <div className="flex flex-col items-center gap-1 py-3 px-2 border-r border-border/60 bg-muted/10 shrink-0">
+        {categories.map((cat) => {
+          const Icon = cat.icon;
+          const isActive = activeCategory === cat.id;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={cn(
+                "flex flex-col items-center gap-1 rounded-lg px-2.5 py-2 transition-all duration-150 w-[56px]",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium leading-none">{cat.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Templates area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          {activeCat.label}
+        </h3>
+        {activeCat.templates.map((tpl) => (
+          <TemplateCard
+            key={tpl.id}
+            label={tpl.label}
+            preview={tpl.preview}
+            onClick={() => handleTemplateClick(tpl.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
