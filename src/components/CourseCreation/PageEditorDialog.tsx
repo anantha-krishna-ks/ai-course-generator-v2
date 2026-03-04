@@ -31,6 +31,13 @@ interface PageContentBlock {
   content: string;
 }
 
+interface CourseOutlineItem {
+  id: string;
+  type: "section" | "page" | "question";
+  title: string;
+  children?: CourseOutlineItem[];
+}
+
 interface PageEditorDialogProps {
   open: boolean;
   onClose: () => void;
@@ -39,9 +46,11 @@ interface PageEditorDialogProps {
   aiEnabled?: boolean;
   aiOptions?: AIOptions | null;
   onAiOptionsChange?: (options: AIOptions) => void;
+  courseItems?: CourseOutlineItem[];
+  currentPageId?: string;
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
@@ -243,7 +252,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             {/* Sidebar Content */}
             <div className="flex-1 overflow-y-auto p-4">
               {activeTab === "outline" ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {/* Navigate to */}
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Navigate to:</span>
@@ -253,38 +262,89 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     </Button>
                   </div>
 
-                  {/* Current page - highlighted */}
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-primary/5 border-l-2 border-primary">
-                    <FileText className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span className="text-sm text-foreground truncate">
-                      {pageTitle || "Untitled page"}
-                    </span>
-                  </div>
-
-                  {/* Section placeholder */}
-                  <div className="rounded-lg border border-border bg-card p-3 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Section 1</span>
-                      <div className="flex items-center gap-1">
-                        <button className="p-1 rounded-md hover:bg-muted transition-colors">
-                          <Dots className="w-3.5 h-3.5 text-muted-foreground" />
-                        </button>
-                        <button className="p-1 rounded-md hover:bg-muted transition-colors">
-                          <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
-                        </button>
-                      </div>
-                    </div>
-                    <span className="text-sm font-medium text-foreground block">Untitled section</span>
-                    <div className="flex items-center gap-2 px-2 py-1.5">
-                      <FileText className="w-3.5 h-3.5 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Untitled page</span>
-                    </div>
-                    <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      <Plus className="w-3 h-3" />
-                      Add page
-                    </button>
-                    <div className="border-t border-dashed border-border" />
-                  </div>
+                  {/* Dynamic outline items */}
+                  {courseItems.length > 0 ? (
+                    (() => {
+                      let sectionIndex = 0;
+                      return courseItems.map((item) => {
+                        if (item.type === "page") {
+                          const isCurrentPage = item.id === currentPageId;
+                          return (
+                            <div
+                              key={item.id}
+                              className={cn(
+                                "flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer",
+                                isCurrentPage
+                                  ? "bg-primary/5 border-l-2 border-primary"
+                                  : "hover:bg-muted/50"
+                              )}
+                            >
+                              <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                              <span className={cn(
+                                "text-sm truncate",
+                                isCurrentPage ? "text-foreground font-medium" : "text-muted-foreground"
+                              )}>
+                                {item.title || "Untitled page"}
+                              </span>
+                            </div>
+                          );
+                        }
+                        if (item.type === "section") {
+                          sectionIndex++;
+                          return (
+                            <div key={item.id} className="rounded-lg border border-border bg-card p-3 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs text-muted-foreground">Section {sectionIndex}</span>
+                                <div className="flex items-center gap-1">
+                                  <button className="p-1 rounded-md hover:bg-muted transition-colors">
+                                    <Dots className="w-3.5 h-3.5 text-muted-foreground" />
+                                  </button>
+                                  <button className="p-1 rounded-md hover:bg-muted transition-colors">
+                                    <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
+                                  </button>
+                                </div>
+                              </div>
+                              <span className="text-sm font-medium text-foreground block">
+                                {item.title || "Untitled section"}
+                              </span>
+                              {/* Section children (pages) */}
+                              {item.children && item.children.length > 0 && (
+                                <div className="space-y-1">
+                                  {item.children.map((child) => {
+                                    const isCurrentChild = child.id === currentPageId;
+                                    return (
+                                      <div
+                                        key={child.id}
+                                        className={cn(
+                                          "flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors cursor-pointer",
+                                          isCurrentChild
+                                            ? "bg-primary/5 border-l-2 border-primary"
+                                            : "hover:bg-muted/50"
+                                        )}
+                                      >
+                                        <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                        <span className={cn(
+                                          "text-sm truncate",
+                                          isCurrentChild ? "text-foreground font-medium" : "text-muted-foreground"
+                                        )}>
+                                          {child.title || "Untitled page"}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      });
+                    })()
+                  ) : (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No items in the outline yet
+                    </p>
+                  )}
                 </div>
               ) : (
                 <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} />
