@@ -785,6 +785,17 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                       return arrayMove(prev, oldIndex, newIndex);
                                     });
                                   }}
+                                  onReorderChildItems={(sectionId, activeId, overId) => {
+                                    setItems((prev) => prev.map((item) => {
+                                      if (item.id === sectionId && item.children) {
+                                        const oldIndex = item.children.findIndex((c) => c.id === activeId);
+                                        const newIndex = item.children.findIndex((c) => c.id === overId);
+                                        if (oldIndex === -1 || newIndex === -1) return item;
+                                        return { ...item, children: arrayMove(item.children, oldIndex, newIndex) };
+                                      }
+                                      return item;
+                                    }));
+                                  }}
                                   autoFocus={item.title === ""}
                                   courseItems={items}
                                 />
