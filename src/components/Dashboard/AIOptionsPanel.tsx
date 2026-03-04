@@ -187,9 +187,7 @@ export function AIConfigView({
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Timer} label="Span Time Settings" />
           <p className="text-xs text-muted-foreground mt-1 mb-4">Set how long each section of content should take to complete</p>
-          <div className={cn("grid gap-4", mode === "ai" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
-            {/* Page Level Span Time */}
-            <SpanTimeCard
+          <SpanTimeCard
               icon={FileText}
               title="Per Page"
               subtitle="Duration per page"
@@ -201,23 +199,7 @@ export function AIConfigView({
               presets={[3, 5, 10, 15]}
               unit="min"
             />
-
-            {/* Course Level Span Time - only in AI mode */}
-            {mode === "ai" && (
-              <SpanTimeCard
-                icon={BookOpen}
-                title="Full Course"
-                subtitle="Total course duration"
-                value={options.courseSpanTime}
-                onChange={(v) => update({ courseSpanTime: v })}
-                min={5}
-                max={120}
-                step={5}
-                presets={[30, 60, 90, 120]}
-                unit="min"
-              />
-            )}
-          </div>
+        
         </div>
 
         {/* ── Bloom's Taxonomy ── */}
