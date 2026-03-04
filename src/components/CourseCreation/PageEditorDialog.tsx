@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -87,16 +87,14 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, initialBlocks, onBlocksChange }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [blocks, setBlocksInternal] = useState<PageContentBlock[]>(initialBlocks || []);
+  const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
+  const onBlocksChangeRef = useRef(onBlocksChange);
+  onBlocksChangeRef.current = onBlocksChange;
 
   // Sync blocks to parent whenever they change
-  const setBlocks: typeof setBlocksInternal = useCallback((updater) => {
-    setBlocksInternal((prev) => {
-      const next = typeof updater === 'function' ? updater(prev) : updater;
-      onBlocksChange?.(next);
-      return next;
-    });
-  }, [onBlocksChange]);
+  useEffect(() => {
+    onBlocksChangeRef.current?.(blocks);
+  }, [blocks]);
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
   const [showAiBlock, setShowAiBlock] = useState(false);
