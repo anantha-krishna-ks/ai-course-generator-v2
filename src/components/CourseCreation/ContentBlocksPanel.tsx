@@ -216,7 +216,7 @@ export function ContentBlocksPanel({ onAddBlock }: ContentBlocksPanelProps) {
                 "w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200",
                 isActive
                   ? "bg-muted shadow-sm text-foreground"
-                  : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/50"
+                  : "text-muted-foreground/70 hover:text-muted-foreground hover:bg-muted/50"
               )}
               title={cat.label}
             >
