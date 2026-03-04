@@ -63,6 +63,7 @@ interface PageEditorDialogProps {
   onAddPageToSection?: (sectionId: string) => void;
   onReorderItems?: (activeId: string, overId: string) => void;
   onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
+  onNavigateToPage?: (pageId: string) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -81,7 +82,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
@@ -319,6 +320,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
+                                      onClick={() => !isCurrentPage && onNavigateToPage?.(item.id)}
                                       className={cn(
                                         "group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative",
                                         isCurrentPage && "border-l-[3px] border-green-500 pl-3",
@@ -428,29 +430,28 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           }}
                                         >
                                           <SortableContext items={item.children.map(c => c.id)} strategy={verticalListSortingStrategy}>
-                                            <div className="space-y-1 pt-1">
+                                            <div className="space-y-1 pt-2 ml-1">
                                               {item.children.map((child) => {
                                                 const isCurrentChild = child.id === currentPageId;
                                                 return (
                                                   <SortableOutlineWrapper key={child.id} id={child.id}>
                                                     {(childListeners: Record<string, unknown>) => (
                                                       <div
+                                                        onClick={() => !isCurrentChild && onNavigateToPage?.(child.id)}
                                                         className={cn(
-                                                          "group/child-page flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors cursor-pointer",
+                                                          "group/child-page flex items-center gap-2.5 py-2 rounded-md transition-colors cursor-pointer",
                                                           isCurrentChild
-                                                            ? "bg-primary/5 border-l-[3px] border-green-500"
-                                                            : "hover:bg-muted/50"
+                                                            ? "bg-primary/5 border-l-[3px] border-green-500 pl-2"
+                                                            : "hover:bg-muted/50 pl-3"
                                                         )}
                                                       >
-                                                        {!isCurrentChild && (
-                                                          <span
-                                                            className="opacity-0 group-hover/child-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
-                                                            {...childListeners}
-                                                          >
-                                                            <GripVertical className="w-3 h-3 text-muted-foreground/40" />
-                                                          </span>
-                                                        )}
-                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                                                        <span
+                                                          className="opacity-0 group-hover/child-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
+                                                          {...childListeners}
+                                                        >
+                                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                                        </span>
+                                                        <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
                                                         <span className={cn(
                                                           "text-sm truncate",
                                                           isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
@@ -469,12 +470,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       {/* Add page button */}
                                       <button
                                         onClick={() => onAddPageToSection?.(item.id)}
-                                        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1"
+                                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-2 ml-1 pl-3"
                                       >
                                         <Plus className="w-3.5 h-3.5" />
                                         Add page
                                       </button>
-                                      <div className="border-t border-dashed border-border" />
+                                      <div className="border-t border-dashed border-border mt-3" />
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>

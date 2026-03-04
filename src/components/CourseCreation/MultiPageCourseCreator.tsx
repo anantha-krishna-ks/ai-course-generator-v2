@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
+import { PageEditorDialog } from "./PageEditorDialog";
 import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
@@ -97,6 +98,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [items, setItems] = useState<CourseItem[]>([]);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
+  const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(null);
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const tourSteps: TourStep[] = [
@@ -313,7 +315,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
   const updateItemTitle = (id: string, newTitle: string) => {
     setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, title: newTitle } : item))
+      prev.map((item) => {
+        if (item.id === id) return { ...item, title: newTitle };
+        if (item.children) {
+          const updatedChildren = item.children.map((c) => c.id === id ? { ...c, title: newTitle } : c);
+          if (updatedChildren !== item.children) return { ...item, children: updatedChildren };
+        }
+        return item;
+      })
     );
   };
 
@@ -357,6 +366,25 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       }
       return item;
     }));
+  };
+
+  // Find a page item by id (top-level or nested in sections)
+  const findPageItem = (pageId: string): CourseItem | null => {
+    for (const item of items) {
+      if (item.id === pageId) return item;
+      if (item.children) {
+        const child = item.children.find((c) => c.id === pageId);
+        if (child) return child;
+      }
+    }
+    return null;
+  };
+
+  const navigateToPage = (pageId: string) => {
+    const page = findPageItem(pageId);
+    if (page) {
+      setActiveEditorPageId(pageId);
+    }
   };
 
   return (
@@ -810,6 +838,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                       return item;
                                     }));
                                   }}
+                                  onNavigateToPage={navigateToPage}
+                                  editorOpen={activeEditorPageId === item.id}
+                                  onOpenEditor={() => setActiveEditorPageId(item.id)}
+                                  onCloseEditor={() => setActiveEditorPageId(null)}
                                   autoFocus={item.title === ""}
                                   courseItems={items}
                                 />
@@ -835,6 +867,59 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             </div>
         </div>
       </div>
+
+      {/* Standalone PageEditorDialog for child pages navigated from sidebar */}
+      {(() => {
+        if (!activeEditorPageId) return null;
+        // Check if it's a child page (not a top-level page)
+        const topLevel = items.find((i) => i.id === activeEditorPageId);
+        if (topLevel) return null; // handled by PageItemCard's own editor
+        // Find in section children
+        for (const section of items) {
+          if (section.children) {
+            const child = section.children.find((c) => c.id === activeEditorPageId);
+            if (child) {
+              return (
+                <PageEditorDialog
+                  key={child.id}
+                  open={true}
+                  onClose={() => setActiveEditorPageId(null)}
+                  pageTitle={child.title}
+                  onPageTitleChange={(newTitle) => updateItemTitle(child.id, newTitle)}
+                  aiEnabled={!!aiOptions?.enabled}
+                  courseItems={items}
+                  currentPageId={child.id}
+                  onRenameItem={(id, newTitle) => updateItemTitle(id, newTitle)}
+                  onDeleteItem={(id) => deleteItem(id)}
+                  onDuplicateItem={(id) => duplicateItem(id)}
+                  onAddPageToSection={(sectionId) => addPageToSection(sectionId)}
+                  onReorderItems={(activeId, overId) => {
+                    setItems((prev) => {
+                      const oldIndex = prev.findIndex((i) => i.id === activeId);
+                      const newIndex = prev.findIndex((i) => i.id === overId);
+                      if (oldIndex === -1 || newIndex === -1) return prev;
+                      return arrayMove(prev, oldIndex, newIndex);
+                    });
+                  }}
+                  onReorderChildItems={(sectionId, activeId, overId) => {
+                    setItems((prev) => prev.map((item) => {
+                      if (item.id === sectionId && item.children) {
+                        const oldIdx = item.children.findIndex((c) => c.id === activeId);
+                        const newIdx = item.children.findIndex((c) => c.id === overId);
+                        if (oldIdx === -1 || newIdx === -1) return item;
+                        return { ...item, children: arrayMove(item.children, oldIdx, newIdx) };
+                      }
+                      return item;
+                    }));
+                  }}
+                  onNavigateToPage={navigateToPage}
+                />
+              );
+            }
+          }
+        }
+        return null;
+      })()}
 
       {/* Guided Tour */}
       <GuidedTour

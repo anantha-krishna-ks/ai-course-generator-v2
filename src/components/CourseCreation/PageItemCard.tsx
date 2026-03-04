@@ -34,16 +34,19 @@ interface PageItemCardProps {
   onAddPageToSection?: (sectionId: string) => void;
   onReorderItems?: (activeId: string, overId: string) => void;
   onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
+  onNavigateToPage?: (pageId: string) => void;
+  editorOpen?: boolean;
+  onOpenEditor?: () => void;
+  onCloseEditor?: () => void;
   autoFocus?: boolean;
   courseItems?: CourseOutlineItem[];
 }
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, autoFocus, aiEnabled = false, courseItems = [] }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [] }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -100,7 +103,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
                 Inclusions
               </button>
             )}
-            <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0" onClick={() => setShowEditor(true)}>
+            <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0" onClick={() => onOpenEditor?.()}>
               Open
             </Button>
             <DropdownMenu>
@@ -215,8 +218,8 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
       </Dialog>
 
       <PageEditorDialog
-        open={showEditor}
-        onClose={() => setShowEditor(false)}
+        open={!!editorOpen}
+        onClose={() => onCloseEditor?.()}
         pageTitle={title}
         onPageTitleChange={onTitleChange}
         aiEnabled={aiEnabled}
@@ -228,6 +231,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
         onAddPageToSection={onAddPageToSection}
         onReorderItems={onReorderItems}
         onReorderChildItems={onReorderChildItems}
+        onNavigateToPage={onNavigateToPage}
       />
     </>
   );
