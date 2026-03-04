@@ -64,6 +64,8 @@ interface PageEditorDialogProps {
   onReorderItems?: (activeId: string, overId: string) => void;
   onReorderChildItems?: (sectionId: string, activeId: string, overId: string) => void;
   onNavigateToPage?: (pageId: string) => void;
+  initialBlocks?: PageContentBlock[];
+  onBlocksChange?: (blocks: PageContentBlock[]) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -82,10 +84,19 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, initialBlocks, onBlocksChange }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [blocks, setBlocks] = useState<PageContentBlock[]>([]);
+  const [blocks, setBlocksInternal] = useState<PageContentBlock[]>(initialBlocks || []);
+
+  // Sync blocks to parent whenever they change
+  const setBlocks: typeof setBlocksInternal = useCallback((updater) => {
+    setBlocksInternal((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater;
+      onBlocksChange?.(next);
+      return next;
+    });
+  }, [onBlocksChange]);
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, { block: PageContentBlock; index: number }>>(new Map());
   const [showAiBlock, setShowAiBlock] = useState(false);
