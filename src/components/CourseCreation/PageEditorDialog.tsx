@@ -365,7 +365,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 </div>
                 <button
                   onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
-                  className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm py-2 sm:py-2.5 px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
+                  className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
                 >
                   <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                   <span className="hidden sm:inline">More</span>
