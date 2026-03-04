@@ -17,8 +17,9 @@ import {
   Settings2,
   Clock,
   Timer,
+  Minus,
+  Plus,
 } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 
 export interface AIOptions {
   enabled: boolean;
@@ -188,67 +189,33 @@ export function AIConfigView({
           <p className="text-xs text-muted-foreground mt-1 mb-4">Set how long each section of content should take to complete</p>
           <div className={cn("grid gap-4", mode === "ai" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
             {/* Page Level Span Time */}
-            <div className="rounded-lg border border-border/80 bg-background p-4 space-y-3">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
-                  <FileText className="w-3.5 h-3.5 text-primary" />
-                </div>
-                <div>
-                  <span className="text-sm font-medium text-foreground block leading-tight">Per Page</span>
-                  <span className="text-[11px] text-muted-foreground">Duration per page</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Slider
-                  value={[options.pageSpanTime]}
-                  onValueChange={([v]) => update({ pageSpanTime: v })}
-                  min={1}
-                  max={15}
-                  step={1}
-                  className="flex-1"
-                />
-                <div className="flex items-baseline gap-0.5 min-w-[52px] justify-end">
-                  <span className="text-lg font-bold text-foreground tabular-nums">{options.pageSpanTime}</span>
-                  <span className="text-xs text-muted-foreground">min</span>
-                </div>
-              </div>
-              <div className="flex justify-between text-[10px] text-muted-foreground/50 px-0.5">
-                <span>1 min</span>
-                <span>15 min</span>
-              </div>
-            </div>
+            <SpanTimeCard
+              icon={FileText}
+              title="Per Page"
+              subtitle="Duration per page"
+              value={options.pageSpanTime}
+              onChange={(v) => update({ pageSpanTime: v })}
+              min={1}
+              max={15}
+              step={1}
+              presets={[3, 5, 10, 15]}
+              unit="min"
+            />
 
             {/* Course Level Span Time - only in AI mode */}
             {mode === "ai" && (
-              <div className="rounded-lg border border-border/80 bg-background p-4 space-y-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
-                    <BookOpen className="w-3.5 h-3.5 text-primary" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-foreground block leading-tight">Full Course</span>
-                    <span className="text-[11px] text-muted-foreground">Total course duration</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Slider
-                    value={[options.courseSpanTime]}
-                    onValueChange={([v]) => update({ courseSpanTime: v })}
-                    min={5}
-                    max={120}
-                    step={5}
-                    className="flex-1"
-                  />
-                  <div className="flex items-baseline gap-0.5 min-w-[52px] justify-end">
-                    <span className="text-lg font-bold text-foreground tabular-nums">{options.courseSpanTime}</span>
-                    <span className="text-xs text-muted-foreground">min</span>
-                  </div>
-                </div>
-                <div className="flex justify-between text-[10px] text-muted-foreground/50 px-0.5">
-                  <span>5 min</span>
-                  <span>120 min</span>
-                </div>
-              </div>
+              <SpanTimeCard
+                icon={BookOpen}
+                title="Full Course"
+                subtitle="Total course duration"
+                value={options.courseSpanTime}
+                onChange={(v) => update({ courseSpanTime: v })}
+                min={5}
+                max={120}
+                step={5}
+                presets={[30, 60, 90, 120]}
+                unit="min"
+              />
             )}
           </div>
         </div>
@@ -450,6 +417,90 @@ function SectionLabel({
     <div className="flex items-center gap-2.5">
       <Icon className="w-4 h-4 text-primary" />
       <span className="text-base font-semibold text-foreground">{label}</span>
+    </div>
+  );
+}
+
+function SpanTimeCard({
+  icon: Icon,
+  title,
+  subtitle,
+  value,
+  onChange,
+  min,
+  max,
+  step,
+  presets,
+  unit,
+}: {
+  icon: React.ElementType;
+  title: string;
+  subtitle: string;
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max: number;
+  step: number;
+  presets: number[];
+  unit: string;
+}) {
+  const decrement = () => onChange(Math.max(min, value - step));
+  const increment = () => onChange(Math.min(max, value + step));
+
+  return (
+    <div className="rounded-lg border border-border/80 bg-background p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+          <Icon className="w-3.5 h-3.5 text-primary" />
+        </div>
+        <div>
+          <span className="text-sm font-medium text-foreground block leading-tight">{title}</span>
+          <span className="text-[11px] text-muted-foreground">{subtitle}</span>
+        </div>
+      </div>
+
+      {/* Stepper control */}
+      <div className="flex items-center justify-center gap-3 py-2">
+        <button
+          type="button"
+          onClick={decrement}
+          disabled={value <= min}
+          className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <Minus className="w-4 h-4 text-foreground" />
+        </button>
+        <div className="flex items-baseline gap-1 min-w-[72px] justify-center">
+          <span className="text-3xl font-bold text-foreground tabular-nums leading-none">{value}</span>
+          <span className="text-sm text-muted-foreground font-medium">{unit}</span>
+        </div>
+        <button
+          type="button"
+          onClick={increment}
+          disabled={value >= max}
+          className="w-9 h-9 rounded-full border border-border bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <Plus className="w-4 h-4 text-foreground" />
+        </button>
+      </div>
+
+      {/* Preset chips */}
+      <div className="flex flex-wrap gap-1.5 justify-center">
+        {presets.map((preset) => (
+          <button
+            key={preset}
+            type="button"
+            onClick={() => onChange(preset)}
+            className={cn(
+              "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-150",
+              value === preset
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+            )}
+          >
+            {preset} {unit}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
