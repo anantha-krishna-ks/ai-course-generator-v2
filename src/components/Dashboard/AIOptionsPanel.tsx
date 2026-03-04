@@ -185,26 +185,34 @@ export function AIConfigView({
         {/* ── Span Time Settings ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Timer} label="Span Time Settings" />
-          <p className="text-xs text-muted-foreground mt-1 mb-4">Configure duration limits for content generation</p>
-          <div className="space-y-5">
-            {/* Page Level Span Time - always visible */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">Page Level Span Time</span>
+          <p className="text-xs text-muted-foreground mt-1 mb-4">Set how long each section of content should take to complete</p>
+          <div className={cn("grid gap-4", mode === "ai" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1")}>
+            {/* Page Level Span Time */}
+            <div className="rounded-lg border border-border/80 bg-background p-4 space-y-3">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+                  <FileText className="w-3.5 h-3.5 text-primary" />
                 </div>
-                <span className="text-sm font-semibold text-primary tabular-nums">{options.pageSpanTime} min</span>
+                <div>
+                  <span className="text-sm font-medium text-foreground block leading-tight">Per Page</span>
+                  <span className="text-[11px] text-muted-foreground">Duration per page</span>
+                </div>
               </div>
-              <Slider
-                value={[options.pageSpanTime]}
-                onValueChange={([v]) => update({ pageSpanTime: v })}
-                min={1}
-                max={15}
-                step={1}
-                className="w-full"
-              />
-              <div className="flex justify-between text-[11px] text-muted-foreground/60">
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={[options.pageSpanTime]}
+                  onValueChange={([v]) => update({ pageSpanTime: v })}
+                  min={1}
+                  max={15}
+                  step={1}
+                  className="flex-1"
+                />
+                <div className="flex items-baseline gap-0.5 min-w-[52px] justify-end">
+                  <span className="text-lg font-bold text-foreground tabular-nums">{options.pageSpanTime}</span>
+                  <span className="text-xs text-muted-foreground">min</span>
+                </div>
+              </div>
+              <div className="flex justify-between text-[10px] text-muted-foreground/50 px-0.5">
                 <span>1 min</span>
                 <span>15 min</span>
               </div>
@@ -212,23 +220,31 @@ export function AIConfigView({
 
             {/* Course Level Span Time - only in AI mode */}
             {mode === "ai" && (
-              <div className="space-y-3 pt-2 border-t border-border/60">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">Course Level Span Time</span>
+              <div className="rounded-lg border border-border/80 bg-background p-4 space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+                    <BookOpen className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-sm font-semibold text-primary tabular-nums">{options.courseSpanTime} min</span>
+                  <div>
+                    <span className="text-sm font-medium text-foreground block leading-tight">Full Course</span>
+                    <span className="text-[11px] text-muted-foreground">Total course duration</span>
+                  </div>
                 </div>
-                <Slider
-                  value={[options.courseSpanTime]}
-                  onValueChange={([v]) => update({ courseSpanTime: v })}
-                  min={5}
-                  max={120}
-                  step={5}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-[11px] text-muted-foreground/60">
+                <div className="flex items-center gap-3">
+                  <Slider
+                    value={[options.courseSpanTime]}
+                    onValueChange={([v]) => update({ courseSpanTime: v })}
+                    min={5}
+                    max={120}
+                    step={5}
+                    className="flex-1"
+                  />
+                  <div className="flex items-baseline gap-0.5 min-w-[52px] justify-end">
+                    <span className="text-lg font-bold text-foreground tabular-nums">{options.courseSpanTime}</span>
+                    <span className="text-xs text-muted-foreground">min</span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-[10px] text-muted-foreground/50 px-0.5">
                   <span>5 min</span>
                   <span>120 min</span>
                 </div>
