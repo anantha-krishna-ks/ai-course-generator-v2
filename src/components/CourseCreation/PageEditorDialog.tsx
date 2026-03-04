@@ -76,11 +76,23 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc", atIndex?: number) => {
+  const getVariantContent = (type: string, variant?: string): string => {
+    if (type !== "text") return "";
+    switch (variant) {
+      case "heading-text":
+        return "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise. This approach leverages institutional knowledge to build comprehensive training materials.</p>";
+      case "text-only":
+        return "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise as a source of input for e-learning. This method ensures authentic and practical educational resources.</p>";
+      case "two-columns":
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem"><div><h3>Heading</h3><p>Employee-generated Learning enables employees to learn from each other through shared expertise.</p></div><div><h3>Heading</h3><p>Employee-generated Learning enables employees to learn from each other through shared expertise.</p></div></div>';
+      default:
+        return "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>";
+    }
+  };
+
+  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc", atIndex?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-    const defaultContent = type === "text"
-      ? "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>"
-      : "";
+    const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
       if (atIndex !== undefined) {
         const next = [...prev];
@@ -275,7 +287,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   </div>
                 </div>
               ) : (
-                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type)} />
+                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} />
               )}
             </div>
           </div>
