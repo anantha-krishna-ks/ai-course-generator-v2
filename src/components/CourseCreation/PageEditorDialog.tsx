@@ -314,62 +314,65 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
 
               {/* Content type toolbar */}
-              <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center w-full justify-evenly gap-0.5 shadow-sm">
-                {aiEnabled && (
-                  <button
-                    onClick={() => {
-                      setShowAiBlock(!showAiBlock);
-                      if (!showAiBlock) {
-                        setTimeout(() => aiPromptRef.current?.focus(), 150);
-                      }
-                    }}
-                    className={cn(
-                      "relative gap-1.5 sm:gap-2 text-xs sm:text-[13px] h-8 sm:h-9 rounded-full px-3 sm:px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200",
-                      showAiBlock && "bg-primary/5"
-                    )}
-                  >
-                    <span
-                      className="absolute inset-0 rounded-full p-[1.5px]"
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(217, 91%, 70%), hsl(280, 65%, 65%), hsl(217, 91%, 55%))',
+              <div className="flex items-center gap-2">
+                <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
+                  {aiEnabled && (
+                    <button
+                      onClick={() => {
+                        setShowAiBlock(!showAiBlock);
+                        if (!showAiBlock) {
+                          setTimeout(() => aiPromptRef.current?.focus(), 150);
+                        }
                       }}
+                      className={cn(
+                        "relative gap-1.5 sm:gap-2 text-xs sm:text-[13px] h-8 sm:h-9 rounded-full px-3 sm:px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200",
+                        showAiBlock && "bg-primary/5"
+                      )}
                     >
-                      <span className="block w-full h-full rounded-full bg-background" />
-                    </span>
-                    <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4 relative" />
-                    <span className="relative hidden sm:inline">Create with AI</span>
-                    <span className="relative sm:hidden">AI</span>
-                  </button>
-                )}
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("text")}>
-                  <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Text</span>
-                </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("image")}>
-                  <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Image</span>
-                </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("video")}>
-                  <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Video</span>
-                </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("audio")}>
-                  <Mic className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Audio</span>
-                </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("doc")}>
-                  <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Doc</span>
-                </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
-                  <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">Questions</span>
-                </Button>
-                <div className="w-px h-5 bg-border/60 mx-0.5" />
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}>
-                  <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                  <span className="hidden sm:inline">More</span>
-                </Button>
+                      <span
+                        className="absolute inset-0 rounded-full p-[1.5px]"
+                        style={{
+                          background: 'linear-gradient(135deg, hsl(217, 91%, 70%), hsl(280, 65%, 65%), hsl(217, 91%, 55%))',
+                        }}
+                      >
+                        <span className="block w-full h-full rounded-full bg-background" />
+                      </span>
+                      <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4 relative" />
+                      <span className="relative hidden sm:inline">Create with AI</span>
+                      <span className="relative sm:hidden">AI</span>
+                    </button>
+                  )}
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("text")}>
+                    <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">Text</span>
+                  </Button>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("image")}>
+                    <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">Image</span>
+                  </Button>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("video")}>
+                    <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">Video</span>
+                  </Button>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("audio")}>
+                    <Mic className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">Audio</span>
+                  </Button>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("doc")}>
+                    <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">Doc</span>
+                  </Button>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
+                    <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">Questions</span>
+                  </Button>
+                </div>
+                <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm py-2 sm:py-2.5 px-1 shadow-sm shrink-0">
+                  <Button variant="ghost" className="gap-1.5 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-3 transition-all duration-200" onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}>
+                    <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <span className="hidden sm:inline">More</span>
+                  </Button>
+                </div>
               </div>
 
               {/* AI Creation Block */}
