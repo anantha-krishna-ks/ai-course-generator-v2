@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Settings2, Copy, Trash2, FileText, GripVertical, ListChecks } from "lucide-react";
+import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -518,14 +518,6 @@ export function SectionCard({
                       <span className="text-sm font-semibold text-foreground">Learning objective</span>
                       <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/60" />
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-xs border-border gap-1.5 h-8"
-                    >
-                      <Settings2 className="w-3.5 h-3.5" />
-                      Objective maker
-                    </Button>
                   </div>
 
                   {/* Objective input */}
