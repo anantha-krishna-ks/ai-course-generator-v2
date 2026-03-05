@@ -535,33 +535,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                           <GripVertical className="w-3 h-3 text-muted-foreground/40" />
                                                         </span>
                                                         <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
-                                                        <input
-                                                          type="text"
-                                                          value={child.title}
-                                                          onChange={(e) => {
-                                                            if (e.target.value.length <= 350) {
-                                                              onRenameItem?.(child.id, e.target.value);
-                                                            }
-                                                          }}
-                                                          onClick={(e) => e.stopPropagation()}
-                                                          className={cn(
-                                                            "flex-1 min-w-0 text-sm bg-transparent border-b border-transparent outline-none placeholder:text-muted-foreground/50 transition-colors focus:border-primary/50",
-                                                            isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
-                                                          )}
-                                                          placeholder="Enter page title..."
-                                                        />
-                                                        <span className="text-[10px] text-muted-foreground tabular-nums shrink-0 opacity-0 focus-within:opacity-100 group-hover/child-page:opacity-60">
-                                                          {child.title.length}/350
-                                                        </span>
-                                                        <button
+                                                        <span
                                                           onClick={(e) => {
                                                             e.stopPropagation();
-                                                            onNavigateToPage?.(child.id);
+                                                            if (!isCurrentChild) onNavigateToPage?.(child.id);
                                                           }}
-                                                          className="text-[11px] font-medium text-muted-foreground hover:text-foreground border border-border rounded-md px-2 py-0.5 shrink-0 opacity-0 group-hover/child-page:opacity-100 transition-opacity"
+                                                          className={cn(
+                                                            "flex-1 min-w-0 text-sm truncate cursor-pointer hover:underline",
+                                                            isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
+                                                          )}
+                                                          title={child.title || "Untitled page"}
                                                         >
-                                                          Open
-                                                        </button>
+                                                          {child.title || "Untitled page"}
+                                                        </span>
                                                         {/* Three-dot menu on hover */}
                                                         <DropdownMenu>
                                                           <DropdownMenuTrigger asChild>
