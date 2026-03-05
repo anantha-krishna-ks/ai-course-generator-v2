@@ -49,7 +49,7 @@ import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialo
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
   content: string;
 }
 
@@ -207,6 +207,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const getVariantContent = (type: string, variant?: string): string => {
     if (type === "quiz") return "[]";
     if (type === "image") return "";
+    if (type === "image-description") {
+      return JSON.stringify({
+        layout: variant === "image-bottom" ? "image-bottom" : "image-top",
+        imageUrl: "",
+        description: "<p>Add a description here...</p>",
+      });
+    }
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text":
@@ -215,14 +222,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         return "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise as a source of input for e-learning. This method ensures authentic and practical educational resources.</p>";
       case "two-columns":
         return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem"><div><h3>Heading</h3><p>Employee-generated Learning enables employees to learn from each other through shared expertise.</p></div><div><h3>Heading</h3><p>Employee-generated Learning enables employees to learn from each other through shared expertise.</p></div></div>';
-      case "image-caption":
-        return "<p>Add a description for the image above or below.</p>";
       default:
         return "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>";
     }
   };
 
-  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz", atIndex?: number, variant?: string) => {
+  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", atIndex?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
@@ -234,16 +239,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       return [...prev, { id, type, content: defaultContent }];
     });
     setLastAddedBlockId(id);
-  }, []);
-
-  const addCompositeBlock = useCallback((blockDefs: Array<{ type: "text" | "image"; variant?: string }>) => {
-    const newBlocks = blockDefs.map((def) => ({
-      id: `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}-${Math.random().toString(36).slice(2, 4)}`,
-      type: def.type as "text" | "image" | "video" | "audio" | "doc" | "quiz",
-      content: getVariantContent(def.type, def.variant),
-    }));
-    setBlocks((prev) => [...prev, ...newBlocks]);
-    setLastAddedBlockId(newBlocks[newBlocks.length - 1].id);
   }, []);
 
   const updateBlock = useCallback((id: string, content: string) => {
@@ -656,7 +651,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   )}
                 </div>
               ) : (
-                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onAddCompositeBlock={addCompositeBlock} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} />
+                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} />
               )}
             </div>
           </div>
