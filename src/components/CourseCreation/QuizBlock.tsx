@@ -224,24 +224,31 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
                     </span>
                   )}
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-0.5 opacity-0 group-hover/q:opacity-100 transition-opacity shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="sm"
+                  {/* Actions — always visible, muted until hover */}
+                  <div className="flex items-center border border-border/50 rounded-lg overflow-hidden shrink-0">
+                    <button
                       onClick={() => handleEditQuestion(question.id)}
-                      className="h-7 w-7 p-0 hover:bg-primary/10 hover:text-primary"
+                      className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-primary/10 transition-colors"
+                      title="Edit"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
+                    </button>
+                    <span className="w-px h-4 bg-border/50" />
+                    <button
+                      onClick={() => {/* TODO: regenerate handler */}}
+                      className="p-1.5 text-muted-foreground/50 hover:text-amber-600 hover:bg-amber-500/10 transition-colors"
+                      title="Regenerate"
+                    >
+                      <RefreshCcw className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="w-px h-4 bg-border/50" />
+                    <button
                       onClick={() => setDeletingQuestionId(question.id)}
-                      className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
+                      className="p-1.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      title="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
+                    </button>
                   </div>
 
                   {/* Expand toggle */}
