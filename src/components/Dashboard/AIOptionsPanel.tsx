@@ -189,7 +189,7 @@ export function AIConfigView({
           <p className="text-xs text-muted-foreground mt-1 mb-4">Set the duration for each page of content</p>
           <SpanTimeCard
               icon={FileText}
-              title="Per Page"
+              title="Page Duration Settings"
               subtitle="Page level Span Time (In Minutes)"
               value={options.pageSpanTime}
               onChange={(v) => update({ pageSpanTime: v })}
