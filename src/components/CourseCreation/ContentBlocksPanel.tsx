@@ -91,12 +91,12 @@ const categories: BlockCategory[] = [
   },
   {
     id: "image",
-    label: "IMAGE",
+    label: "IMAGES",
     icon: ImageIcon,
     templates: [
       {
         id: "image-full",
-        label: "Full width image",
+        label: "Single image",
         preview: (
           <div className="w-full h-20 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center">
             <ImageIcon className="w-7 h-7 text-muted-foreground/25" />
@@ -104,14 +104,30 @@ const categories: BlockCategory[] = [
         ),
       },
       {
-        id: "image-text",
-        label: "Image with caption",
+        id: "image-top",
+        label: "Image on the top",
         preview: (
           <div className="space-y-2.5">
-            <div className="w-full h-16 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center">
-              <ImageIcon className="w-6 h-6 text-muted-foreground/25" />
+            <div className="w-full h-14 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center">
+              <ImageIcon className="w-5 h-5 text-muted-foreground/25" />
             </div>
-            <p className="text-[10px] text-muted-foreground/50 text-center">Image caption goes here</p>
+            <p className="text-[10px] leading-relaxed text-muted-foreground/60 text-center">
+              Employee-generated Learning enables employees learn from each other.
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: "image-bottom",
+        label: "Image on the bottom",
+        preview: (
+          <div className="space-y-2.5">
+            <p className="text-[10px] leading-relaxed text-muted-foreground/60 text-center">
+              Employee-generated Learning enables employees learn from each other.
+            </p>
+            <div className="w-full h-14 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center">
+              <ImageIcon className="w-5 h-5 text-muted-foreground/25" />
+            </div>
           </div>
         ),
       },
