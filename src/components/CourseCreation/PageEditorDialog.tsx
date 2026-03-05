@@ -45,6 +45,7 @@ import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel } from "./ContentBlocksPanel";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 
 interface PageContentBlock {
   id: string;
@@ -149,6 +150,34 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [showAiSheet, setShowAiSheet] = useState(false);
   const [aiSheetSection, setAiSheetSection] = useState<string | null>(null);
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
+  const [showQuizGenerateDialog, setShowQuizGenerateDialog] = useState(false);
+  const [isQuizGenerating, setIsQuizGenerating] = useState(false);
+
+  const handleQuizGenerate = useCallback((config: GenerateQuizConfig) => {
+    setIsQuizGenerating(true);
+    setTimeout(() => {
+      // Add a quiz block with generated questions
+      const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const questions: any[] = [];
+      let idCounter = 1;
+      for (let i = 0; i < config.scqCount; i++) {
+        questions.push({ id: idCounter++, type: "SCQ", question: `Sample single choice question ${i + 1}?`, options: ["Option A", "Option B", "Option C", "Option D"], answer: "Option A", explanation: "This is the explanation for the correct answer." });
+      }
+      for (let i = 0; i < config.mcqCount; i++) {
+        questions.push({ id: idCounter++, type: "MCQ", question: `Sample multiple choice question ${i + 1}?`, options: ["Option A", "Option B", "Option C", "Option D"], answer: "Option A, Option B", explanation: "These are the correct answers." });
+      }
+      for (let i = 0; i < config.trueFalseCount; i++) {
+        questions.push({ id: idCounter++, type: "TrueFalse", question: `Sample true/false statement ${i + 1}.`, options: ["True", "False"], answer: "True", explanation: "This statement is true because..." });
+      }
+      for (let i = 0; i < config.fibCount; i++) {
+        questions.push({ id: idCounter++, type: "FIB", question: `The _____ is a sample fill-in-the-blank question ${i + 1}.`, options: [], answer: "answer", explanation: "The correct word to fill in is 'answer'." });
+      }
+      setBlocks((prev) => [...prev, { id, type: "quiz", content: JSON.stringify(questions) }]);
+      setLastAddedBlockId(id);
+      setIsQuizGenerating(false);
+      setShowQuizGenerateDialog(false);
+    }, 1500);
+  }, []);
 
   const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | "quiz" | null) => {
     setAiGenerating(true);
@@ -932,12 +961,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         Image
                       </button>
                       <button
-                        onClick={() => setAiBlockType(aiBlockType === "quiz" ? null : "quiz")}
+                        onClick={() => setShowQuizGenerateDialog(true)}
                         className={cn(
                           "flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all",
-                          aiBlockType === "quiz"
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+                          "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                         )}
                       >
                         <MessageCircleQuestion className="w-4 h-4" />
@@ -1039,6 +1066,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {/* Generate Quiz Dialog */}
+    <GenerateQuizDialog
+      open={showQuizGenerateDialog}
+      onClose={() => setShowQuizGenerateDialog(false)}
+      onGenerate={handleQuizGenerate}
+      isGenerating={isQuizGenerating}
+    />
     </>
   );
 }
