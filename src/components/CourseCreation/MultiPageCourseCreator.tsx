@@ -138,6 +138,13 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       description: "Add Sections & Pages. Sections organize your course, but pages can stand alone or sit inside sections — giving you full flexibility.",
       placement: "bottom",
     },
+    {
+      target: "header-actions",
+      icon: <Sparkles className="w-5 h-5 text-muted-foreground" />,
+      title: "AI Support, Preview & Publish",
+      description: "AI Support: Get smart suggestions and assistance to enhance your course.\n\nPreview: See how your course will look to learners before publishing.\n\nPublish: Make your course live and share it with learners.",
+      placement: "bottom",
+    },
   ];
 
   const [activeId, setActiveId] = useState<string | null>(null);
