@@ -301,6 +301,13 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                             )}
                           </div>
                         ))}
+                        <div
+                          onClick={handleAddOption}
+                          className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
+                        >
+                          <Plus className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Add option</span>
+                        </div>
                       </RadioGroup>
                     ) : (
                       options.map((option, index) => (
@@ -334,7 +341,14 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           )}
                         </div>
                       ))
-                    )}
+                      )}
+                      <div
+                        onClick={handleAddOption}
+                        className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
+                      >
+                        <Plus className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Add option</span>
+                      </div>
                   </div>
                 </div>
               )}
