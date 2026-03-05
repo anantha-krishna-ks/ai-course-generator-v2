@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -100,6 +102,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [renameTarget, setRenameTarget] = useState<{ id: string; title: string } | null>(null);
+  const [renameValue, setRenameValue] = useState("");
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
   const onBlocksChangeRef = useRef(onBlocksChange);
   onBlocksChangeRef.current = onBlocksChange;
@@ -424,8 +428,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-44">
                                           <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                            const newTitle = prompt("Rename page", item.title || "");
-                                            if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                            setRenameValue(item.title || "");
+                                            setRenameTarget({ id: item.id, title: item.title || "" });
                                           }}>
                                             <Pencil className="w-3.5 h-3.5" /> Rename
                                           </DropdownMenuItem>
@@ -466,8 +470,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-44">
                                               <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                                const newTitle = prompt("Rename section", item.title || "");
-                                                if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                                setRenameValue(item.title || "");
+                                                setRenameTarget({ id: item.id, title: item.title || "" });
                                               }}>
                                                 <Pencil className="w-3.5 h-3.5" /> Rename
                                               </DropdownMenuItem>
@@ -559,6 +563,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                             </button>
                                                           </DropdownMenuTrigger>
                                                           <DropdownMenuContent align="end" className="w-44">
+                                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                                              setRenameValue(child.title || "");
+                                                              setRenameTarget({ id: child.id, title: child.title || "" });
+                                                            }}>
+                                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                                            </DropdownMenuItem>
                                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(child.id)}>
                                                               <Copy className="w-3.5 h-3.5" /> Duplicate
                                                             </DropdownMenuItem>
@@ -981,6 +991,54 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+
+    {/* Rename Dialog */}
+    <Dialog open={!!renameTarget} onOpenChange={(open) => { if (!open) setRenameTarget(null); }}>
+      <DialogContent className="sm:max-w-[420px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Pencil className="w-4 h-4 text-muted-foreground" />
+            Rename
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
+            Enter a new name below.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-3">
+          <Label htmlFor="rename-input" className="text-sm font-medium mb-2 block">Title</Label>
+          <Input
+            id="rename-input"
+            value={renameValue}
+            onChange={(e) => setRenameValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && renameTarget && renameValue.trim()) {
+                onRenameItem?.(renameTarget.id, renameValue.trim());
+                setRenameTarget(null);
+              }
+            }}
+            placeholder="Enter title…"
+            autoFocus
+            maxLength={350}
+            className="w-full"
+          />
+          <span className="text-xs text-muted-foreground mt-1.5 block text-right">{renameValue.length}/350</span>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setRenameTarget(null)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              if (renameTarget && renameValue.trim()) {
+                onRenameItem?.(renameTarget.id, renameValue.trim());
+                setRenameTarget(null);
+              }
+            }}
+            disabled={!renameValue.trim()}
+          >
+            Save
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </>
   );
 }
