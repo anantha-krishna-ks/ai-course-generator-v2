@@ -207,7 +207,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
 
                   {/* Question text + meta */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground leading-snug line-clamp-1">
+                    <p className="text-sm text-foreground leading-snug">
                       {question.question || <span className="italic text-muted-foreground">Empty question</span>}
                     </p>
                   </div>
