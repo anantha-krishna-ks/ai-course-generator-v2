@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { DescriptionEditor } from "./DescriptionEditor";
 import { ImageBlock } from "./ImageBlock";
 import { MediaUploadBlock } from "./MediaUploadBlock";
+import { QuizBlock } from "./QuizBlock";
 import { cn } from "@/lib/utils";
 
 interface ContentBlockProps {
@@ -173,7 +174,9 @@ export function ContentBlock({
 
         {/* Content area - full width */}
         <div className="w-full">
-          {type === "image" ? (
+          {type === "quiz" ? (
+            <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
+          ) : type === "image" ? (
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
