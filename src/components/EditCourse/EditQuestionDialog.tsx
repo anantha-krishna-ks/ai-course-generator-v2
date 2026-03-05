@@ -260,15 +260,6 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         <span className="text-xs text-muted-foreground font-normal ml-1">(select all correct)</span>
                       )}
                     </Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleAddOption}
-                      className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add option
-                    </Button>
                   </div>
                   <p className="text-xs text-muted-foreground -mt-1">
                     Click the radio/checkbox to mark the correct answer.
