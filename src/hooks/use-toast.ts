@@ -134,8 +134,44 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
+function inferVariant(title?: React.ReactNode): string | undefined {
+  if (!title || typeof title !== "string") return undefined;
+  const t = title.toLowerCase();
+  
+  // Destructive / Error patterns
+  if (
+    t.includes("error") || t.includes("failed") || t.includes("validation") ||
+    t.includes("required") || t.includes("invalid")
+  ) return "destructive";
+  
+  // Warning patterns
+  if (t.includes("warning") || t.includes("removed") || t.includes("deleted")) return "warning";
+  
+  // Success patterns
+  if (
+    t.includes("success") || t.includes("added") || t.includes("created") ||
+    t.includes("updated") || t.includes("saved") || t.includes("generated") ||
+    t.includes("uploaded") || t.includes("downloaded") || t.includes("duplicated") ||
+    t.includes("set") || t.includes("cloned") || t.includes("exported") ||
+    t.includes("password changed") || t.includes("copied")
+  ) return "success";
+  
+  // Info patterns
+  if (t.includes("info") || t.includes("level")) return "info";
+  
+  return undefined;
+}
+
 function toast({ ...props }: Toast) {
   const id = genId();
+
+  // Auto-infer variant if not explicitly set
+  if (!props.variant) {
+    const inferred = inferVariant(props.title);
+    if (inferred) {
+      (props as any).variant = inferred;
+    }
+  }
 
   const update = (props: ToasterToast) =>
     dispatch({
