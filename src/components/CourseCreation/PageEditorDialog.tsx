@@ -707,6 +707,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onAddVideo={() => addBlock("video", currentBlockIdx + 1)}
                                     onAddAudio={() => addBlock("audio", currentBlockIdx + 1)}
                                     onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
+                                    onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
                                   />
                                 );
                               }
