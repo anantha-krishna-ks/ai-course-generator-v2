@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical } from "lucide-react";
+import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical, MoreHorizontal } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -28,6 +28,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { EditQuestionDialog } from "@/components/EditCourse/EditQuestionDialog";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface Question {
   id: number;
@@ -310,32 +311,26 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
                             </span>
                           )}
 
-                          {/* Actions */}
-                          <div className="flex items-center border border-border/50 rounded-lg overflow-hidden shrink-0">
-                            <button
-                              onClick={() => handleEditQuestion(question.id)}
-                              className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-primary/10 transition-colors"
-                              title="Edit"
-                            >
-                              <Edit2 className="w-3.5 h-3.5" />
-                            </button>
-                            <span className="w-px h-4 bg-border/50" />
-                            <button
-                              onClick={() => {/* TODO: regenerate handler */}}
-                              className="p-1.5 text-muted-foreground/50 hover:text-amber-600 hover:bg-amber-500/10 transition-colors"
-                              title="Regenerate"
-                            >
-                              <RefreshCcw className="w-3.5 h-3.5" />
-                            </button>
-                            <span className="w-px h-4 bg-border/50" />
-                            <button
-                              onClick={() => setDeletingQuestionId(question.id)}
-                              className="p-1.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
+                          {/* Actions dropdown */}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="shrink-0 p-1.5 rounded-md hover:bg-muted transition-colors">
+                                <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => handleEditQuestion(question.id)}>
+                                <Edit2 className="w-3.5 h-3.5" /> Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => {/* TODO: regenerate */}}>
+                                <RefreshCcw className="w-3.5 h-3.5" /> Regenerate
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeletingQuestionId(question.id)}>
+                                <Trash2 className="w-3.5 h-3.5" /> Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
 
                           {/* Expand toggle */}
                           <button
