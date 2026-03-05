@@ -289,7 +289,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                               value={option}
                               onChange={(e) => handleOptionChange(index, e.target.value)}
                               placeholder={`Option ${index + 1}`}
-                              className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm"
+                              className="flex-1 border-0 border-b border-transparent bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 pb-1 text-sm hover:border-border focus:border-primary rounded-none placeholder:text-muted-foreground/50 transition-colors"
                             />
                             {options.length > 2 && (
                               <button
@@ -322,7 +322,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                             value={option}
                             onChange={(e) => handleOptionChange(index, e.target.value)}
                             placeholder={`Option ${index + 1}`}
-                            className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm"
+                            className="flex-1 border-0 border-b border-transparent bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 pb-1 text-sm hover:border-border focus:border-primary rounded-none placeholder:text-muted-foreground/50 transition-colors"
                           />
                           {options.length > 2 && (
                             <button
