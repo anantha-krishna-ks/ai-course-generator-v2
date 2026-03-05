@@ -142,8 +142,8 @@ const categories: BlockCategory[] = [
         id: "video-upload",
         label: "Video upload",
         preview: (
-          <div className="w-full h-20 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center gap-2">
-            <Video className="w-6 h-6 text-muted-foreground/25" />
+          <div className="w-full h-20 rounded-lg overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
           </div>
         ),
       },
