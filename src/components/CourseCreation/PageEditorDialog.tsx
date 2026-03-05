@@ -336,7 +336,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             </div>
 
             {/* Sidebar Content */}
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-4 thin-scrollbar">
               {activeTab === "outline" ? (
                 <div className="space-y-4">
                   {/* Navigate to */}
