@@ -99,7 +99,7 @@ const categories: BlockCategory[] = [
         label: "Single image",
         preview: (
           <div className="w-full h-20 rounded-lg overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&h=200&fit=crop" alt="Swiss Alps" className="w-full h-full object-cover" />
+            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
           </div>
         ),
       },
@@ -109,7 +109,7 @@ const categories: BlockCategory[] = [
         preview: (
           <div className="space-y-2.5">
             <div className="w-full h-20 rounded-lg overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&h=200&fit=crop" alt="Swiss Alps" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
             </div>
             <p className="text-[10px] leading-relaxed text-muted-foreground/60 text-center">
               Employee-generated Learning enables employees learn from each other.
@@ -126,7 +126,7 @@ const categories: BlockCategory[] = [
               Employee-generated Learning enables employees learn from each other.
             </p>
             <div className="w-full h-20 rounded-lg overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&h=200&fit=crop" alt="Swiss Alps" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
             </div>
           </div>
         ),
