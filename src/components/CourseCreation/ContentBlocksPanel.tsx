@@ -145,8 +145,8 @@ const categories: BlockCategory[] = [
           <div className="relative w-full h-20 rounded-lg overflow-hidden">
             <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-md">
-                <Video className="w-5 h-5 text-foreground/80 ml-0.5" />
+              <div className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center shadow-md">
+                <Video className="w-5 h-5 text-white ml-0.5" />
               </div>
             </div>
           </div>
