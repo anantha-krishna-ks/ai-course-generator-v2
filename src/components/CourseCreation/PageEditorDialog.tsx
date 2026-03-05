@@ -100,7 +100,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-  const [sidebarFocusedPageId, setSidebarFocusedPageId] = useState<string | null>(null);
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
   const onBlocksChangeRef = useRef(onBlocksChange);
   onBlocksChangeRef.current = onBlocksChange;
@@ -388,76 +387,57 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           return courseItems.map((item) => {
                             if (item.type === "page") {
                               const isCurrentPage = item.id === currentPageId;
-                              const MAX_SIDEBAR_TITLE = 350;
                               return (
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
+                                      onClick={() => !isCurrentPage && onNavigateToPage?.(item.id)}
                                       className={cn(
-                                        "group/nav-page rounded-lg border border-border bg-card overflow-hidden transition-all",
-                                        isCurrentPage && "border-l-[3px] border-l-green-500 bg-muted/60"
+                                        "group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative rounded-md",
+                                        isCurrentPage && "border-l-[3px] border-green-500 pl-3 bg-muted/60",
+                                        !isCurrentPage && "pl-1 hover:bg-muted/40 px-2"
                                       )}
                                     >
-                                      <div className="flex items-center gap-2 px-3 py-2.5">
-                                        <span
-                                          className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
-                                          {...listeners}
-                                        >
-                                          <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-                                        </span>
-                                        <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
-                                        <div className="flex-1 min-w-0">
-                                          <input
-                                            type="text"
-                                            value={item.title}
-                                            onFocus={() => setSidebarFocusedPageId(item.id)}
-                                            onBlur={() => setSidebarFocusedPageId(null)}
-                                            onChange={(e) => {
-                                              if (e.target.value.length <= MAX_SIDEBAR_TITLE) {
-                                                onRenameItem?.(item.id, e.target.value);
-                                              }
-                                            }}
-                                            className={cn(
-                                              "w-full text-xs text-foreground bg-transparent border-b-[1.5px] outline-none placeholder:text-muted-foreground/50 transition-all duration-200",
-                                              sidebarFocusedPageId === item.id ? "border-primary/50" : "border-transparent"
-                                            )}
-                                            placeholder="Enter page title..."
-                                          />
-                                        </div>
-                                        <span className={cn(
-                                          "text-[10px] text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
-                                          sidebarFocusedPageId === item.id ? "opacity-100" : "opacity-0"
-                                        )}>
-                                          {item.title.length}/{MAX_SIDEBAR_TITLE}
-                                        </span>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          className="text-[10px] border-border h-6 px-2 shrink-0"
-                                          onClick={() => onNavigateToPage?.(item.id)}
-                                        >
-                                          Open
-                                        </Button>
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <button
-                                              className="p-1 rounded-md hover:bg-muted transition-all shrink-0"
-                                              onClick={(e) => e.stopPropagation()}
-                                            >
-                                              <Dots className="w-3.5 h-3.5 text-muted-foreground" />
-                                            </button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="end" className="w-44">
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
-                                              <Copy className="w-3.5 h-3.5" /> Duplicate
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
-                                              <Trash2 className="w-3.5 h-3.5" /> Delete
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                      </div>
+                                      {/* Drag handle */}
+                                      <span
+                                        className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
+                                        {...listeners}
+                                      >
+                                        <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                                      </span>
+                                      <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                                      <span className={cn(
+                                        "text-sm truncate flex-1",
+                                        isCurrentPage ? "text-foreground font-medium" : "text-foreground/80"
+                                      )}>
+                                        {item.title || "Untitled page"}
+                                      </span>
+                                      {/* Three-dot menu on hover */}
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <button
+                                            className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <Dots className="w-4 h-4 text-muted-foreground" />
+                                          </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" className="w-44">
+                                          <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                            const newTitle = prompt("Rename page", item.title || "");
+                                            if (newTitle !== null) onRenameItem?.(item.id, newTitle);
+                                          }}>
+                                            <Pencil className="w-3.5 h-3.5" /> Rename
+                                          </DropdownMenuItem>
+                                          <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
+                                            <Copy className="w-3.5 h-3.5" /> Duplicate
+                                          </DropdownMenuItem>
+                                          <DropdownMenuSeparator />
+                                          <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
+                                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
@@ -534,16 +514,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           }}
                                         >
                                           <SortableContext items={item.children.map(c => c.id)} strategy={verticalListSortingStrategy}>
-                                            <div className="space-y-1.5 pt-2 ml-1">
+                                            <div className="space-y-1 pt-2 ml-1">
                                               {item.children.map((child) => {
                                                 const isCurrentChild = child.id === currentPageId;
-                                                const MAX_SIDEBAR_TITLE = 350;
                                                 return (
                                                   <SortableOutlineWrapper key={child.id} id={child.id}>
                                                     {(childListeners: Record<string, unknown>) => (
                                                       <div
+                                                        onClick={() => !isCurrentChild && onNavigateToPage?.(child.id)}
                                                         className={cn(
-                                                          "group/child-page flex items-center gap-1.5 py-2 rounded-md transition-colors pr-1",
+                                                          "group/child-page flex items-center gap-2.5 py-2 rounded-md transition-colors cursor-pointer pr-1",
                                                           isCurrentChild
                                                             ? "bg-muted/60 border-l-[3px] border-green-500 pl-2"
                                                             : "hover:bg-muted/50 pl-3"
@@ -555,39 +535,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                         >
                                                           <GripVertical className="w-3 h-3 text-muted-foreground/40" />
                                                         </span>
-                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
-                                                        <div className="flex-1 min-w-0">
-                                                          <input
-                                                            type="text"
-                                                            value={child.title}
-                                                            onFocus={() => setSidebarFocusedPageId(child.id)}
-                                                            onBlur={() => setSidebarFocusedPageId(null)}
-                                                            onChange={(e) => {
-                                                              if (e.target.value.length <= MAX_SIDEBAR_TITLE) {
-                                                                onRenameItem?.(child.id, e.target.value);
-                                                              }
-                                                            }}
-                                                            className={cn(
-                                                              "w-full text-xs text-foreground bg-transparent border-b-[1.5px] outline-none placeholder:text-muted-foreground/50 transition-all duration-200",
-                                                              sidebarFocusedPageId === child.id ? "border-primary/50" : "border-transparent"
-                                                            )}
-                                                            placeholder="Enter page title..."
-                                                          />
-                                                        </div>
+                                                        <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
                                                         <span className={cn(
-                                                          "text-[10px] text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
-                                                          sidebarFocusedPageId === child.id ? "opacity-100" : "opacity-0"
+                                                          "text-sm truncate flex-1",
+                                                          isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
                                                         )}>
-                                                          {child.title.length}/{MAX_SIDEBAR_TITLE}
+                                                          {child.title || "Untitled page"}
                                                         </span>
-                                                        <Button
-                                                          variant="outline"
-                                                          size="sm"
-                                                          className="text-[10px] border-border h-6 px-2 shrink-0"
-                                                          onClick={() => onNavigateToPage?.(child.id)}
-                                                        >
-                                                          Open
-                                                        </Button>
+                                                        {/* Three-dot menu on hover */}
                                                         <DropdownMenu>
                                                           <DropdownMenuTrigger asChild>
                                                             <button
@@ -598,6 +553,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                             </button>
                                                           </DropdownMenuTrigger>
                                                           <DropdownMenuContent align="end" className="w-44">
+                                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                                              const newTitle = prompt("Rename page", child.title || "");
+                                                              if (newTitle !== null) onRenameItem?.(child.id, newTitle);
+                                                            }}>
+                                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                                            </DropdownMenuItem>
                                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(child.id)}>
                                                               <Copy className="w-3.5 h-3.5" /> Duplicate
                                                             </DropdownMenuItem>
