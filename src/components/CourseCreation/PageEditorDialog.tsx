@@ -172,6 +172,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   );
 
   const getVariantContent = (type: string, variant?: string): string => {
+    if (type === "quiz") return "[]";
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text":
@@ -185,7 +186,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
   };
 
-  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc", atIndex?: number, variant?: string) => {
+  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz", atIndex?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
@@ -707,6 +708,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onAddVideo={() => addBlock("video", currentBlockIdx + 1)}
                                     onAddAudio={() => addBlock("audio", currentBlockIdx + 1)}
                                     onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
+                                    onAddQuiz={() => addBlock("quiz", currentBlockIdx + 1)}
                                     onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
                                   />
                                 );
@@ -799,7 +801,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     <span className="hidden sm:inline">Doc</span>
                   </Button>
-                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200">
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("quiz")}>
                     <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     <span className="hidden sm:inline">Questions</span>
                   </Button>
