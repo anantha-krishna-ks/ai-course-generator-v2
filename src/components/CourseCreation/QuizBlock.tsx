@@ -580,10 +580,14 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
               Regenerate Question
             </DialogTitle>
             <DialogDescription>
-              Provide additional context for a more accurate regeneration. This is optional.
+              Provide additional context for a more accurate regeneration.
             </DialogDescription>
           </DialogHeader>
           <div className="py-3 space-y-3">
+            <Label className="text-sm font-medium flex items-center gap-1.5">
+              Refinement context
+              <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+            </Label>
             <Textarea
               value={regeneratePrompt}
               onChange={(e) => setRegeneratePrompt(e.target.value)}
