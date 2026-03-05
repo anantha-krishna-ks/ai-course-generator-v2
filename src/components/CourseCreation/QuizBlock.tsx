@@ -19,16 +19,14 @@ import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { EditQuestionDialog } from "@/components/EditCourse/EditQuestionDialog";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 
 interface Question {
   id: number;
@@ -131,14 +129,6 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
   }, []);
 
   // Generate quiz dialog state
-  const [scqCount, setScqCount] = useState("1");
-  const [mcqCount, setMcqCount] = useState("1");
-  const [trueFalseCount, setTrueFalseCount] = useState("1");
-  const [fibCount, setFibCount] = useState("1");
-  const [difficultyLevel, setDifficultyLevel] = useState("medium");
-  const [specificInstructions, setSpecificInstructions] = useState(false);
-  const [inclusions, setInclusions] = useState("");
-  const [exclusions, setExclusions] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleAddQuestion = () => {
@@ -181,51 +171,42 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
     }
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = (config: GenerateQuizConfig) => {
     setIsGenerating(true);
-    // Mock generation - replace with actual AI call
     setTimeout(() => {
       const generated: Question[] = [];
       let idCounter = Math.max(...questions.map((q) => q.id), 0) + 1;
 
-      for (let i = 0; i < parseInt(scqCount); i++) {
+      for (let i = 0; i < config.scqCount; i++) {
         generated.push({
-          id: idCounter++,
-          type: "SCQ",
+          id: idCounter++, type: "SCQ",
           question: `Sample single choice question ${i + 1}?`,
           options: ["Option A", "Option B", "Option C", "Option D"],
-          answer: "Option A",
-          explanation: "This is the explanation for the correct answer.",
+          answer: "Option A", explanation: "This is the explanation for the correct answer.",
         });
       }
-      for (let i = 0; i < parseInt(mcqCount); i++) {
+      for (let i = 0; i < config.mcqCount; i++) {
         generated.push({
-          id: idCounter++,
-          type: "MCQ",
+          id: idCounter++, type: "MCQ",
           question: `Sample multiple choice question ${i + 1}?`,
           options: ["Option A", "Option B", "Option C", "Option D"],
-          answer: "Option A, Option B",
-          explanation: "These are the correct answers.",
+          answer: "Option A, Option B", explanation: "These are the correct answers.",
         });
       }
-      for (let i = 0; i < parseInt(trueFalseCount); i++) {
+      for (let i = 0; i < config.trueFalseCount; i++) {
         generated.push({
-          id: idCounter++,
-          type: "TrueFalse",
+          id: idCounter++, type: "TrueFalse",
           question: `Sample true/false statement ${i + 1}.`,
           options: ["True", "False"],
-          answer: "True",
-          explanation: "This statement is true because...",
+          answer: "True", explanation: "This statement is true because...",
         });
       }
-      for (let i = 0; i < parseInt(fibCount); i++) {
+      for (let i = 0; i < config.fibCount; i++) {
         generated.push({
-          id: idCounter++,
-          type: "FIB",
+          id: idCounter++, type: "FIB",
           question: `The _____ is a sample fill-in-the-blank question ${i + 1}.`,
           options: [],
-          answer: "answer",
-          explanation: "The correct word to fill in is 'answer'.",
+          answer: "answer", explanation: "The correct word to fill in is 'answer'.",
         });
       }
 
@@ -402,142 +383,12 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
       </div>
 
       {/* Generate Quiz Dialog */}
-      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)]">
-          <DialogHeader className="px-6 pt-5 pb-4 bg-gradient-to-br from-primary/5 to-primary/10 border-b">
-            <DialogTitle className="text-lg flex items-center gap-2.5 font-semibold">
-              <div className="p-1.5 rounded-lg bg-primary/10">
-                <Sparkles className="w-4.5 h-4.5 text-primary" />
-              </div>
-              Generate Quiz
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Configure question types and quantity to auto-generate a quiz.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="min-h-0 row-start-2">
-            <ScrollArea className="h-full">
-              <div className="space-y-5 p-6">
-                {/* Question Type Counts */}
-                <div className="space-y-4 bg-card border rounded-xl p-5 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 bg-primary rounded-full" />
-                    <h3 className="text-sm font-semibold text-foreground">Number of Questions</h3>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      { label: "Single Choice", value: scqCount, setter: setScqCount },
-                      { label: "Multiple Choice", value: mcqCount, setter: setMcqCount },
-                      { label: "True/False", value: trueFalseCount, setter: setTrueFalseCount },
-                      { label: "Fill in Blank", value: fibCount, setter: setFibCount },
-                    ].map(({ label, value, setter }) => (
-                      <div key={label} className="space-y-2">
-                        <Label className="text-xs font-semibold text-foreground uppercase tracking-wide">{label}</Label>
-                        <Select value={value} onValueChange={setter}>
-                          <SelectTrigger className="w-full bg-background">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[0, 1, 2, 3, 4, 5].map((num) => (
-                              <SelectItem key={num} value={num.toString()}>
-                                {num}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Difficulty Level */}
-                <div className="bg-card border rounded-xl p-5 shadow-sm space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 bg-primary rounded-full" />
-                    <h3 className="text-sm font-semibold text-foreground">Difficulty Level</h3>
-                  </div>
-                  <div className="flex gap-2">
-                    {["easy", "medium", "hard"].map((level) => (
-                      <button
-                        key={level}
-                        onClick={() => setDifficultyLevel(level)}
-                        className={cn(
-                          "px-4 py-2 rounded-full text-xs font-medium capitalize transition-all border",
-                          difficultyLevel === level
-                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                            : "bg-background text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
-                        )}
-                      >
-                        {level}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Custom Instructions */}
-                <div className="bg-card border rounded-xl p-5 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-5 bg-primary rounded-full" />
-                      <h3 className="text-sm font-semibold text-foreground">Custom Instructions</h3>
-                    </div>
-                    <Switch checked={specificInstructions} onCheckedChange={setSpecificInstructions} />
-                  </div>
-                  {specificInstructions && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in-50 slide-in-from-top-2 duration-200">
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                          Inclusions
-                        </Label>
-                        <Textarea
-                          placeholder="Topics to include..."
-                          value={inclusions}
-                          onChange={(e) => setInclusions(e.target.value)}
-                          className="min-h-[80px] resize-none text-sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-destructive" />
-                          Exclusions
-                        </Label>
-                        <Textarea
-                          placeholder="Topics to exclude..."
-                          value={exclusions}
-                          onChange={(e) => setExclusions(e.target.value)}
-                          className="min-h-[80px] resize-none text-sm"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-3 pt-2">
-                  <Button variant="outline" onClick={() => setShowGenerateDialog(false)} className="rounded-full px-5">
-                    Cancel
-                  </Button>
-                  <Button onClick={handleGenerate} disabled={isGenerating} className="rounded-full px-5 gap-1.5">
-                    {isGenerating ? (
-                      <>
-                        <div className="w-3.5 h-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Generate
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </ScrollArea>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <GenerateQuizDialog
+        open={showGenerateDialog}
+        onClose={() => setShowGenerateDialog(false)}
+        onGenerate={handleGenerate}
+        isGenerating={isGenerating}
+      />
 
       {/* Edit/Add Question Dialog */}
       <EditQuestionDialog
