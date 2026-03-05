@@ -267,7 +267,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   return (
     <>
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden data-[state=open]:!slide-in-from-bottom-[100%] data-[state=open]:!slide-in-from-left-0 data-[state=closed]:!slide-out-to-bottom-[100%] data-[state=closed]:!slide-out-to-left-0 data-[state=open]:duration-500 data-[state=closed]:duration-300 data-[state=open]:ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:ease-[cubic-bezier(0.4,0,0.2,1)]">
+      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden data-[state=open]:!slide-in-from-bottom-[100%] data-[state=open]:!slide-in-from-left-0 data-[state=open]:!zoom-in-95 data-[state=closed]:!slide-out-to-bottom-[100%] data-[state=closed]:!slide-out-to-left-0 data-[state=closed]:!zoom-out-95 data-[state=open]:duration-500 data-[state=closed]:duration-300 data-[state=open]:ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:ease-[cubic-bezier(0.4,0,0.2,1)]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
           <div className="flex items-center gap-2.5">
