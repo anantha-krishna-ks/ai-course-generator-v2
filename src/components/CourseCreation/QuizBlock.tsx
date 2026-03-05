@@ -195,36 +195,42 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-border/40">
+          <div className="p-3 space-y-2">
             {questions.map((question, index) => (
-              <div key={question.id} className="px-5 py-4 hover:bg-muted/20 transition-colors group/q">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex gap-3 flex-1 min-w-0">
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground leading-relaxed line-clamp-2">
-                        {question.question || <span className="italic text-muted-foreground">Empty question</span>}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <Badge variant="outline" className="text-[10px] h-[18px] px-1.5 font-medium text-muted-foreground">
-                          {TYPE_LABELS[question.type]}
-                        </Badge>
-                        {question.options.length > 0 && (
-                          <span className="text-[11px] text-muted-foreground/60">
-                            {question.options.length} options
-                          </span>
-                        )}
-                      </div>
-                    </div>
+              <div key={question.id} className="group/q rounded-xl border border-border/60 bg-background hover:border-border hover:shadow-sm transition-all overflow-hidden">
+                {/* Question row */}
+                <div className="flex items-center gap-3 px-4 py-3.5">
+                  {/* Number */}
+                  <span className="flex-shrink-0 w-6 h-6 rounded-md bg-muted flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                    {index + 1}
+                  </span>
+
+                  {/* Question text + meta */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground leading-snug line-clamp-1">
+                      {question.question || <span className="italic text-muted-foreground">Empty question</span>}
+                    </p>
                   </div>
+
+                  {/* Type badge */}
+                  <Badge variant="outline" className="text-[10px] h-5 px-2 font-medium text-muted-foreground shrink-0 hidden sm:flex">
+                    {TYPE_LABELS[question.type]}
+                  </Badge>
+
+                  {/* Options count */}
+                  {question.options.length > 0 && (
+                    <span className="text-[11px] text-muted-foreground/50 shrink-0 hidden sm:block">
+                      {question.options.length} opts
+                    </span>
+                  )}
+
+                  {/* Actions */}
                   <div className="flex items-center gap-0.5 opacity-0 group-hover/q:opacity-100 transition-opacity shrink-0">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditQuestion(question.id)}
-                      className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+                      className="h-7 w-7 p-0 hover:bg-primary/10 hover:text-primary"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </Button>
@@ -232,36 +238,39 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
                       variant="ghost"
                       size="sm"
                       onClick={() => setDeletingQuestionId(question.id)}
-                      className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                      className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>
+
+                  {/* Expand toggle */}
+                  <button
+                    onClick={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
+                    className="shrink-0 p-1 rounded-md hover:bg-muted transition-colors"
+                  >
+                    <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform", expandedQuestion === question.id && "rotate-180")} />
+                  </button>
                 </div>
 
                 {/* Expandable answer/explanation */}
                 <Collapsible
                   open={expandedQuestion === question.id}
                   onOpenChange={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
-                  className="mt-2 ml-10"
                 >
-                  <CollapsibleTrigger asChild>
-                    <button className="text-xs text-primary font-medium flex items-center gap-1 hover:underline">
-                      <ChevronDown className={cn("w-3 h-3 transition-transform", expandedQuestion === question.id && "rotate-180")} />
-                      {expandedQuestion === question.id ? "Hide" : "Show"} answer
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-2 space-y-2">
-                    <div className="text-xs bg-primary/5 border border-primary/10 rounded-lg p-3">
-                      <span className="font-semibold text-foreground">Answer:</span>{" "}
-                      <span className="text-muted-foreground">{question.answer}</span>
-                    </div>
-                    {question.explanation && (
-                      <div className="text-xs bg-muted/30 border border-border/60 rounded-lg p-3">
-                        <span className="font-semibold text-foreground">Explanation:</span>{" "}
-                        <span className="text-muted-foreground">{question.explanation}</span>
+                  <CollapsibleContent>
+                    <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border/40 mt-0 pt-3">
+                      <div className="text-xs bg-primary/5 border border-primary/10 rounded-lg p-3">
+                        <span className="font-semibold text-foreground">Answer:</span>{" "}
+                        <span className="text-muted-foreground">{question.answer}</span>
                       </div>
-                    )}
+                      {question.explanation && (
+                        <div className="text-xs bg-muted/30 border border-border/60 rounded-lg p-3">
+                          <span className="font-semibold text-foreground">Explanation:</span>{" "}
+                          <span className="text-muted-foreground">{question.explanation}</span>
+                        </div>
+                      )}
+                    </div>
                   </CollapsibleContent>
                 </Collapsible>
               </div>
