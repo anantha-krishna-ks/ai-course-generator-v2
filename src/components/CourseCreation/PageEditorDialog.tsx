@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -88,6 +88,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
   const onBlocksChangeRef = useRef(onBlocksChange);
   onBlocksChangeRef.current = onBlocksChange;
@@ -468,14 +469,26 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             </DropdownMenuContent>
                                           </DropdownMenu>
                                           <span className="w-px h-4 bg-border" />
-                                          <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                            <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                                          <button
+                                            className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                                            onClick={() => setCollapsedSections(prev => {
+                                              const next = new Set(prev);
+                                              if (next.has(item.id)) next.delete(item.id);
+                                              else next.add(item.id);
+                                              return next;
+                                            })}
+                                          >
+                                            {collapsedSections.has(item.id)
+                                              ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                                              : <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                                            }
                                           </button>
                                         </div>
                                       </div>
                                       <span className="text-[15px] font-semibold text-foreground block">
                                         {item.title || "Untitled section"}
                                       </span>
+                                      {!collapsedSections.has(item.id) && (<>
                                       {/* Section children (pages) */}
                                       {item.children && item.children.length > 0 && (
                                         <DndContext
@@ -561,6 +574,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         Add page
                                       </button>
                                       <div className="border-t border-dashed border-border mt-3" />
+                                      </>)}
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
