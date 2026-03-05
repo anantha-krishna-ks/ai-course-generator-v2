@@ -109,7 +109,7 @@ const categories: BlockCategory[] = [
         preview: (
           <div className="space-y-2.5">
             <div className="w-full h-14 rounded-lg overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=160&fit=crop" alt="Foggy forest" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=160&fit=crop" alt="Nature landscape" className="w-full h-full object-cover" />
             </div>
             <p className="text-[10px] leading-relaxed text-muted-foreground/60 text-center">
               Employee-generated Learning enables employees learn from each other.
@@ -126,7 +126,7 @@ const categories: BlockCategory[] = [
               Employee-generated Learning enables employees learn from each other.
             </p>
             <div className="w-full h-14 rounded-lg overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=160&fit=crop" alt="Mountain valley" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=160&fit=crop" alt="Nature landscape" className="w-full h-full object-cover" />
             </div>
           </div>
         ),
