@@ -17,7 +17,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -91,6 +91,9 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [deletingQuestionId, setDeletingQuestionId] = useState<number | null>(null);
+  const [regeneratingQuestionId, setRegeneratingQuestionId] = useState<number | null>(null);
+  const [regeneratePrompt, setRegeneratePrompt] = useState("");
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
 
   const toggleExpanded = useCallback((id: number) => {
@@ -322,7 +325,10 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
                               <DropdownMenuItem className="gap-2 text-sm" onClick={() => handleEditQuestion(question.id)}>
                                 <Edit2 className="w-3.5 h-3.5" /> Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => {/* TODO: regenerate */}}>
+                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
+                                setRegeneratePrompt("");
+                                setRegeneratingQuestionId(question.id);
+                              }}>
                                 <RefreshCcw className="w-3.5 h-3.5" /> Regenerate
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
@@ -564,6 +570,75 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Regenerate Question Dialog */}
+      <Dialog open={!!regeneratingQuestionId} onOpenChange={(open) => { if (!open) { setRegeneratingQuestionId(null); setRegeneratePrompt(""); setIsRegenerating(false); } }}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4 text-muted-foreground" />
+              Regenerate Question
+            </DialogTitle>
+            <DialogDescription>
+              Provide additional context for a more accurate regeneration. This is optional.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-3 space-y-3">
+            <Textarea
+              value={regeneratePrompt}
+              onChange={(e) => setRegeneratePrompt(e.target.value)}
+              placeholder="e.g. Focus on practical applications, make it more challenging, include specific terminology…"
+              className="min-h-[100px] resize-none"
+            />
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 shrink-0" />
+              For more accurate results, describe what you'd like the new question to focus on.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setRegeneratingQuestionId(null); setRegeneratePrompt(""); }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setIsRegenerating(true);
+                // Mock regeneration
+                setTimeout(() => {
+                  if (regeneratingQuestionId !== null) {
+                    setQuestions((prev) => prev.map((q) => {
+                      if (q.id === regeneratingQuestionId) {
+                        return {
+                          ...q,
+                          question: `Regenerated: ${regeneratePrompt || q.question}`,
+                          explanation: "This question was regenerated with AI.",
+                        };
+                      }
+                      return q;
+                    }));
+                  }
+                  setIsRegenerating(false);
+                  setRegeneratingQuestionId(null);
+                  setRegeneratePrompt("");
+                }, 1500);
+              }}
+              disabled={isRegenerating}
+              className="gap-1.5"
+            >
+              {isRegenerating ? (
+                <>
+                  <RefreshCcw className="w-3.5 h-3.5 animate-spin" />
+                  Regenerating…
+                </>
+              ) : (
+                <>
+                  <RefreshCcw className="w-3.5 h-3.5" />
+                  Regenerate
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
