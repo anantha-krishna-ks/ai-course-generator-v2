@@ -267,7 +267,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   return (
     <>
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden">
+      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden data-[state=open]:animate-none data-[state=closed]:animate-none data-[state=open]:slide-in-from-bottom data-[state=open]:animate-in data-[state=closed]:slide-out-to-bottom data-[state=closed]:animate-out data-[state=open]:duration-400 data-[state=closed]:duration-300">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
           <div className="flex items-center gap-2.5">
