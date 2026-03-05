@@ -90,7 +90,26 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [deletingQuestionId, setDeletingQuestionId] = useState<number | null>(null);
-  const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
+  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
+
+  const toggleExpanded = useCallback((id: number) => {
+    setExpandedQuestions(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const allExpanded = questions.length > 0 && expandedQuestions.size === questions.length;
+
+  const toggleExpandAll = useCallback(() => {
+    if (allExpanded) {
+      setExpandedQuestions(new Set());
+    } else {
+      setExpandedQuestions(new Set(questions.map(q => q.id)));
+    }
+  }, [allExpanded, questions]);
 
   const dndSensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -228,6 +247,14 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
               </Badge>
             )}
           </div>
+          {questions.length > 0 && (
+            <button
+              onClick={toggleExpandAll}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              {allExpanded ? "Collapse all" : "Expand all"}
+            </button>
+          )}
         </div>
 
         {/* Questions list or empty state */}
@@ -312,17 +339,17 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
 
                           {/* Expand toggle */}
                           <button
-                            onClick={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
+                            onClick={() => toggleExpanded(question.id)}
                             className="shrink-0 p-1 rounded-md hover:bg-muted transition-colors"
                           >
-                            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform", expandedQuestion === question.id && "rotate-180")} />
+                            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform", expandedQuestions.has(question.id) && "rotate-180")} />
                           </button>
                         </div>
 
                         {/* Expandable answer/explanation */}
                         <Collapsible
-                          open={expandedQuestion === question.id}
-                          onOpenChange={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
+                          open={expandedQuestions.has(question.id)}
+                          onOpenChange={() => toggleExpanded(question.id)}
                         >
                           <CollapsibleContent>
                             <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border/40 mt-0 pt-3">
