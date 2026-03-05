@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Type, ImageIcon, Video, Mic, FileText, MessageCircleQuestion } from "lucide-react";
+import { Type, ImageIcon, Video, Mic, FileText, MessageCircleQuestion, Sparkles, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BlockTemplate {
@@ -16,7 +16,8 @@ interface BlockCategory {
 }
 
 interface ContentBlocksPanelProps {
-  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc", variant?: string) => void;
+  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz", variant?: string) => void;
+  onOpenQuizGenerator?: () => void;
 }
 
 function TemplateCard({ label, preview, onClick }: { label: string; preview: React.ReactNode; onClick: () => void }) {
@@ -166,15 +167,18 @@ const categories: BlockCategory[] = [
   },
   {
     id: "quiz",
-    label: "QUIZ",
+    label: "QUESTION / QUIZ",
     icon: MessageCircleQuestion,
     templates: [
       {
-        id: "quiz-block",
-        label: "Quiz question",
+        id: "question-block",
+        label: "Question",
         preview: (
           <div className="space-y-2.5">
-            <p className="text-[11px] font-medium text-foreground/70">What is the correct answer?</p>
+            <div className="flex items-center gap-2 mb-1">
+              <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/40" />
+              <p className="text-[11px] font-medium text-foreground/70">Add a question</p>
+            </div>
             <div className="space-y-2 pl-1">
               {["Option A", "Option B", "Option C"].map((opt) => (
                 <div key={opt} className="flex items-center gap-2">
@@ -186,15 +190,47 @@ const categories: BlockCategory[] = [
           </div>
         ),
       },
+      {
+        id: "quiz-generate",
+        label: "Quiz",
+        preview: (
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-primary/50" />
+              <p className="text-[11px] font-medium text-foreground/70">Generate quiz with AI</p>
+            </div>
+            <div className="space-y-1.5 pl-1">
+              <div className="flex items-center gap-2">
+                <div className="w-full h-2 rounded-full bg-primary/10" />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3/4 h-2 rounded-full bg-primary/10" />
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-5/6 h-2 rounded-full bg-primary/10" />
+              </div>
+            </div>
+          </div>
+        ),
+      },
     ],
   },
 ];
 
-export function ContentBlocksPanel({ onAddBlock }: ContentBlocksPanelProps) {
+export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator }: ContentBlocksPanelProps) {
   const [activeCategory, setActiveCategory] = useState("text");
   const activeCat = categories.find((c) => c.id === activeCategory)!;
 
   const handleTemplateClick = (templateId: string) => {
+    // Quiz generate opens the dialog instead of adding a block
+    if (templateId === "quiz-generate") {
+      onOpenQuizGenerator?.();
+      return;
+    }
+    if (templateId === "question-block") {
+      onAddBlock("quiz", templateId);
+      return;
+    }
     const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
       text: "text", image: "image", video: "video", audio: "audio", doc: "doc",
     };
