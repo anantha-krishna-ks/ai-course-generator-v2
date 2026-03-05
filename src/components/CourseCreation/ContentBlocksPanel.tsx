@@ -17,6 +17,7 @@ interface BlockCategory {
 
 interface ContentBlocksPanelProps {
   onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz", variant?: string) => void;
+  onAddCompositeBlock?: (blocks: Array<{ type: "text" | "image"; variant?: string }>) => void;
   onOpenQuizGenerator?: () => void;
 }
 
@@ -233,7 +234,7 @@ const categories: BlockCategory[] = [
   },
 ];
 
-export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator }: ContentBlocksPanelProps) {
+export function ContentBlocksPanel({ onAddBlock, onAddCompositeBlock, onOpenQuizGenerator }: ContentBlocksPanelProps) {
   const [activeCategory, setActiveCategory] = useState("text");
   const activeCat = categories.find((c) => c.id === activeCategory)!;
 
@@ -245,6 +246,21 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator }: ContentB
     }
     if (templateId === "question-block") {
       onAddBlock("quiz", templateId);
+      return;
+    }
+    // Composite image+text templates
+    if (templateId === "image-top" && onAddCompositeBlock) {
+      onAddCompositeBlock([
+        { type: "image" },
+        { type: "text", variant: "image-caption" },
+      ]);
+      return;
+    }
+    if (templateId === "image-bottom" && onAddCompositeBlock) {
+      onAddCompositeBlock([
+        { type: "text", variant: "image-caption" },
+        { type: "image" },
+      ]);
       return;
     }
     const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
