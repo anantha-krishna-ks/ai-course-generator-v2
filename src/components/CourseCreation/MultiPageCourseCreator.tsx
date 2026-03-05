@@ -871,6 +871,23 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onOpenSection={() => {}}
                                   onAddPage={() => handleAddItem("page")}
                                   onAddLearningObjective={() => {}}
+                                  pages={(item.children || []).map(c => ({ id: c.id, title: c.title, inclusions: c.inclusions || "" }))}
+                                  onPagesChange={(newPages) => {
+                                    setItems((prev) => prev.map((i) => {
+                                      if (i.id === item.id) {
+                                        return {
+                                          ...i,
+                                          children: newPages.map(p => ({
+                                            id: p.id,
+                                            type: "page" as const,
+                                            title: p.title,
+                                            inclusions: p.inclusions,
+                                          })),
+                                        };
+                                      }
+                                      return i;
+                                    }));
+                                  }}
                                 />
                               </SortableOutlineItem>
                             );

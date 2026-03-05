@@ -17,6 +17,12 @@ import { SectionImageDialog } from "./SectionImageDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
+interface PageEntry {
+  id: string;
+  title: string;
+  inclusions: string;
+}
+
 interface SectionCardProps {
   sectionNumber: number;
   title: string;
@@ -29,17 +35,13 @@ interface SectionCardProps {
   onOpenSection?: () => void;
   onAddPage?: () => void;
   onAddLearningObjective?: () => void;
+  pages?: PageEntry[];
+  onPagesChange?: (pages: PageEntry[]) => void;
 }
 
 const MAX_TITLE_LENGTH = 255;
 const MAX_OBJECTIVE_LENGTH = 255;
 const MAX_PAGE_TITLE_LENGTH = 350;
-
-interface PageEntry {
-  id: string;
-  title: string;
-  inclusions: string;
-}
 
 interface SortablePageRowProps {
   page: PageEntry;
@@ -257,6 +259,8 @@ export function SectionCard({
   onOpenSection,
   onAddPage,
   onAddLearningObjective,
+  pages: externalPages,
+  onPagesChange,
 }: SectionCardProps) {
   const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -267,10 +271,21 @@ export function SectionCard({
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
-  const [pages, setPages] = useState<PageEntry[]>([]);
+  const [internalPages, setInternalPages] = useState<PageEntry[]>([]);
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
   const objectiveRef = useRef<HTMLInputElement>(null);
+
+  // Use external pages if provided, otherwise fallback to internal
+  const pages = externalPages ?? internalPages;
+  const setPages: React.Dispatch<React.SetStateAction<PageEntry[]>> = (action) => {
+    if (onPagesChange) {
+      const newPages = typeof action === 'function' ? action(pages) : action;
+      onPagesChange(newPages);
+    } else {
+      setInternalPages(action);
+    }
+  };
 
   const handleAddPage = () => {
     const newPage: PageEntry = { id: crypto.randomUUID(), title: "", inclusions: "" };
