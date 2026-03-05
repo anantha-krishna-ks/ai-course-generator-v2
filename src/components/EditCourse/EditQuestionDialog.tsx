@@ -260,6 +260,15 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         <span className="text-xs text-muted-foreground font-normal ml-1">(select all correct)</span>
                       )}
                     </Label>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleAddOption}
+                      className="h-7 text-xs gap-1 text-muted-foreground hover:text-foreground"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add option
+                    </Button>
                   </div>
                   <p className="text-xs text-muted-foreground -mt-1">
                     Click the radio/checkbox to mark the correct answer.
@@ -292,13 +301,6 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                             )}
                           </div>
                         ))}
-                        <div
-                          onClick={handleAddOption}
-                          className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
-                        >
-                          <Plus className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">Add option</span>
-                        </div>
                       </RadioGroup>
                     ) : (
                       options.map((option, index) => (
@@ -333,13 +335,6 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         </div>
                       ))
                       )}
-                      <div
-                        onClick={handleAddOption}
-                        className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
-                      >
-                        <Plus className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">Add option</span>
-                      </div>
                   </div>
                 </div>
               )}
