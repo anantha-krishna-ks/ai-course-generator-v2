@@ -1,5 +1,21 @@
-import { useState } from "react";
-import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy } from "lucide-react";
+import { useState, useCallback } from "react";
+import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -35,6 +51,22 @@ const TYPE_LABELS: Record<Question["type"], string> = {
   FIB: "Fill in Blank",
 };
 
+function SortableQuestionCard({ question, children }: { question: Question; children: (dragHandleProps: Record<string, unknown>) => React.ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: question.id });
+  const style: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    transition: transition ?? 'transform 200ms cubic-bezier(0.25, 1, 0.5, 1)',
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : 'auto',
+    position: 'relative' as const,
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes}>
+      {children(listeners ?? {})}
+    </div>
+  );
+}
+
 export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockProps) {
   // Parse questions from content
   const [questions, setQuestionsState] = useState<Question[]>(() => {
@@ -59,6 +91,21 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [deletingQuestionId, setDeletingQuestionId] = useState<number | null>(null);
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
+
+  const dndSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  );
+
+  const handleQuestionDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setQuestions((prev) => {
+        const oldIndex = prev.findIndex((q) => q.id === active.id);
+        const newIndex = prev.findIndex((q) => q.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  }, []);
 
   // Generate quiz dialog state
   const [scqCount, setScqCount] = useState("1");
@@ -195,94 +242,110 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
             </p>
           </div>
         ) : (
-          <div className="p-3 space-y-2">
-            {questions.map((question, index) => (
-              <div key={question.id} className="group/q rounded-xl border border-border/60 bg-background hover:border-border hover:shadow-sm transition-all overflow-hidden">
-                {/* Question row */}
-                <div className="flex items-center gap-3 px-4 py-3.5">
-                  {/* Number */}
-                  <span className="flex-shrink-0 w-6 h-6 rounded-md bg-muted flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
-                    {index + 1}
-                  </span>
+          <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleQuestionDragEnd}>
+            <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
+              <div className="p-3 space-y-2">
+                {questions.map((question, index) => (
+                  <SortableQuestionCard key={question.id} question={question}>
+                    {(dragHandleProps) => (
+                      <div className="group/q rounded-xl border border-border/60 bg-background hover:border-border hover:shadow-sm transition-all overflow-hidden">
+                        {/* Question row */}
+                        <div className="flex items-center gap-3 px-4 py-3.5">
+                          {/* Drag handle */}
+                          <span
+                            className="shrink-0 cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-muted transition-colors"
+                            {...dragHandleProps}
+                          >
+                            <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                          </span>
 
-                  {/* Question text + meta */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground leading-snug">
-                      {question.question || <span className="italic text-muted-foreground">Empty question</span>}
-                    </p>
-                  </div>
+                          {/* Number */}
+                          <span className="flex-shrink-0 w-6 h-6 rounded-md bg-muted flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                            {index + 1}
+                          </span>
 
-                  {/* Type badge */}
-                  <Badge variant="outline" className="text-[10px] h-5 px-2 font-medium text-muted-foreground shrink-0 hidden sm:flex">
-                    {TYPE_LABELS[question.type]}
-                  </Badge>
+                          {/* Question text */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-foreground leading-snug">
+                              {question.question || <span className="italic text-muted-foreground">Empty question</span>}
+                            </p>
+                          </div>
 
-                  {/* Options count */}
-                  {question.options.length > 0 && (
-                    <span className="text-[11px] text-muted-foreground/50 shrink-0 hidden sm:block">
-                      {question.options.length} opts
-                    </span>
-                  )}
+                          {/* Type badge */}
+                          <Badge variant="outline" className="text-[10px] h-5 px-2 font-medium text-muted-foreground shrink-0 hidden sm:flex">
+                            {TYPE_LABELS[question.type]}
+                          </Badge>
 
-                  {/* Actions — always visible, muted until hover */}
-                  <div className="flex items-center border border-border/50 rounded-lg overflow-hidden shrink-0">
-                    <button
-                      onClick={() => handleEditQuestion(question.id)}
-                      className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-primary/10 transition-colors"
-                      title="Edit"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-px h-4 bg-border/50" />
-                    <button
-                      onClick={() => {/* TODO: regenerate handler */}}
-                      className="p-1.5 text-muted-foreground/50 hover:text-amber-600 hover:bg-amber-500/10 transition-colors"
-                      title="Regenerate"
-                    >
-                      <RefreshCcw className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-px h-4 bg-border/50" />
-                    <button
-                      onClick={() => setDeletingQuestionId(question.id)}
-                      className="p-1.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                          {/* Options count */}
+                          {question.options.length > 0 && (
+                            <span className="text-[11px] text-muted-foreground/50 shrink-0 hidden sm:block">
+                              {question.options.length} opts
+                            </span>
+                          )}
 
-                  {/* Expand toggle */}
-                  <button
-                    onClick={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
-                    className="shrink-0 p-1 rounded-md hover:bg-muted transition-colors"
-                  >
-                    <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform", expandedQuestion === question.id && "rotate-180")} />
-                  </button>
-                </div>
+                          {/* Actions */}
+                          <div className="flex items-center border border-border/50 rounded-lg overflow-hidden shrink-0">
+                            <button
+                              onClick={() => handleEditQuestion(question.id)}
+                              className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-primary/10 transition-colors"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="w-px h-4 bg-border/50" />
+                            <button
+                              onClick={() => {/* TODO: regenerate handler */}}
+                              className="p-1.5 text-muted-foreground/50 hover:text-amber-600 hover:bg-amber-500/10 transition-colors"
+                              title="Regenerate"
+                            >
+                              <RefreshCcw className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="w-px h-4 bg-border/50" />
+                            <button
+                              onClick={() => setDeletingQuestionId(question.id)}
+                              className="p-1.5 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
 
-                {/* Expandable answer/explanation */}
-                <Collapsible
-                  open={expandedQuestion === question.id}
-                  onOpenChange={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
-                >
-                  <CollapsibleContent>
-                    <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border/40 mt-0 pt-3">
-                      <div className="text-xs bg-primary/5 border border-primary/10 rounded-lg p-3">
-                        <span className="font-semibold text-foreground">Answer:</span>{" "}
-                        <span className="text-muted-foreground">{question.answer}</span>
-                      </div>
-                      {question.explanation && (
-                        <div className="text-xs bg-muted/30 border border-border/60 rounded-lg p-3">
-                          <span className="font-semibold text-foreground">Explanation:</span>{" "}
-                          <span className="text-muted-foreground">{question.explanation}</span>
+                          {/* Expand toggle */}
+                          <button
+                            onClick={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
+                            className="shrink-0 p-1 rounded-md hover:bg-muted transition-colors"
+                          >
+                            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform", expandedQuestion === question.id && "rotate-180")} />
+                          </button>
                         </div>
-                      )}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+
+                        {/* Expandable answer/explanation */}
+                        <Collapsible
+                          open={expandedQuestion === question.id}
+                          onOpenChange={() => setExpandedQuestion(expandedQuestion === question.id ? null : question.id)}
+                        >
+                          <CollapsibleContent>
+                            <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border/40 mt-0 pt-3">
+                              <div className="text-xs bg-primary/5 border border-primary/10 rounded-lg p-3">
+                                <span className="font-semibold text-foreground">Answer:</span>{" "}
+                                <span className="text-muted-foreground">{question.answer}</span>
+                              </div>
+                              {question.explanation && (
+                                <div className="text-xs bg-muted/30 border border-border/60 rounded-lg p-3">
+                                  <span className="font-semibold text-foreground">Explanation:</span>{" "}
+                                  <span className="text-muted-foreground">{question.explanation}</span>
+                                </div>
+                              )}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </div>
+                    )}
+                  </SortableQuestionCard>
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
 
         {/* Action buttons */}
