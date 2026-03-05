@@ -124,14 +124,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       placement: "bottom",
     },
     {
-      target: "add-content-button",
-      icon: <Plus className="w-5 h-5 text-muted-foreground" />,
-      title: "Add Image",
-      description: "Enhance your course title by adding custom text or an image.\n\nText: Type and style your words (font, size, color).\n\nImage: Upload or select one, then resize and position.",
-      tip: "Keep it simple — clear titles make the best first impression.",
-      placement: "bottom",
-    },
-    {
       target: "add-item",
       icon: <Plus className="w-5 h-5 text-muted-foreground" />,
       title: "Add Item",
