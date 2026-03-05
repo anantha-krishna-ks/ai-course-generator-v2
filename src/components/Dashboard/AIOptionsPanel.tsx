@@ -186,11 +186,11 @@ export function AIConfigView({
         {/* ── Span Time Settings ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Timer} label="Content Duration" />
-          <p className="text-xs text-muted-foreground mt-1 mb-4">Set how long each section of content should take to complete</p>
+          <p className="text-xs text-muted-foreground mt-1 mb-4">Set the duration for each page of content</p>
           <SpanTimeCard
               icon={FileText}
               title="Per Page"
-              subtitle="Duration per page"
+              subtitle="Page level Span Time (In Minutes)"
               value={options.pageSpanTime}
               onChange={(v) => update({ pageSpanTime: v })}
               min={1}
