@@ -521,9 +521,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                   <SortableOutlineWrapper key={child.id} id={child.id}>
                                                     {(childListeners: Record<string, unknown>) => (
                                                       <div
-                                                        onClick={() => !isCurrentChild && onNavigateToPage?.(child.id)}
                                                         className={cn(
-                                                          "group/child-page flex items-center gap-2.5 py-2 rounded-md transition-colors cursor-pointer pr-1",
+                                                          "group/child-page flex items-center gap-1.5 py-2 rounded-md transition-colors pr-1",
                                                           isCurrentChild
                                                             ? "bg-muted/60 border-l-[3px] border-green-500 pl-2"
                                                             : "hover:bg-muted/50 pl-3"
@@ -535,13 +534,34 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                         >
                                                           <GripVertical className="w-3 h-3 text-muted-foreground/40" />
                                                         </span>
-                                                        <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
-                                                        <span className={cn(
-                                                          "text-sm truncate flex-1",
-                                                          isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
-                                                        )}>
-                                                          {child.title || "Untitled page"}
+                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                                                        <input
+                                                          type="text"
+                                                          value={child.title}
+                                                          onChange={(e) => {
+                                                            if (e.target.value.length <= 350) {
+                                                              onRenameItem?.(child.id, e.target.value);
+                                                            }
+                                                          }}
+                                                          onClick={(e) => e.stopPropagation()}
+                                                          className={cn(
+                                                            "flex-1 min-w-0 text-sm bg-transparent border-b border-transparent outline-none placeholder:text-muted-foreground/50 transition-colors focus:border-primary/50",
+                                                            isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
+                                                          )}
+                                                          placeholder="Enter page title..."
+                                                        />
+                                                        <span className="text-[10px] text-muted-foreground tabular-nums shrink-0 opacity-0 focus-within:opacity-100 group-hover/child-page:opacity-60">
+                                                          {child.title.length}/350
                                                         </span>
+                                                        <button
+                                                          onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            onNavigateToPage?.(child.id);
+                                                          }}
+                                                          className="text-[11px] font-medium text-muted-foreground hover:text-foreground border border-border rounded-md px-2 py-0.5 shrink-0 opacity-0 group-hover/child-page:opacity-100 transition-opacity"
+                                                        >
+                                                          Open
+                                                        </button>
                                                         {/* Three-dot menu on hover */}
                                                         <DropdownMenu>
                                                           <DropdownMenuTrigger asChild>
@@ -553,12 +573,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                             </button>
                                                           </DropdownMenuTrigger>
                                                           <DropdownMenuContent align="end" className="w-44">
-                                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                                              const newTitle = prompt("Rename page", child.title || "");
-                                                              if (newTitle !== null) onRenameItem?.(child.id, newTitle);
-                                                            }}>
-                                                              <Pencil className="w-3.5 h-3.5" /> Rename
-                                                            </DropdownMenuItem>
                                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(child.id)}>
                                                               <Copy className="w-3.5 h-3.5" /> Duplicate
                                                             </DropdownMenuItem>
