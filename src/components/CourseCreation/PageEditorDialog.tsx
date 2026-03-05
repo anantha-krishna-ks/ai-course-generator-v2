@@ -1,6 +1,16 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -89,6 +99,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
   const onBlocksChangeRef = useRef(onBlocksChange);
   onBlocksChangeRef.current = onBlocksChange;
@@ -421,7 +432,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             <Copy className="w-3.5 h-3.5" /> Duplicate
                                           </DropdownMenuItem>
                                           <DropdownMenuSeparator />
-                                          <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => handleDeletePage(item.id)}>
+                                          <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
                                             <Trash2 className="w-3.5 h-3.5" /> Delete
                                           </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -463,7 +474,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                 <Copy className="w-3.5 h-3.5" /> Duplicate
                                               </DropdownMenuItem>
                                               <DropdownMenuSeparator />
-                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => handleDeletePage(item.id)}>
+                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
                                                 <Trash2 className="w-3.5 h-3.5" /> Delete
                                               </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -551,7 +562,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                               <Copy className="w-3.5 h-3.5" /> Duplicate
                                                             </DropdownMenuItem>
                                                             <DropdownMenuSeparator />
-                                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => handleDeletePage(child.id)}>
+                                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(child.id)}>
                                                               <Trash2 className="w-3.5 h-3.5" /> Delete
                                                             </DropdownMenuItem>
                                                           </DropdownMenuContent>
@@ -942,6 +953,31 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         scrollToSection={aiSheetSection}
       />
     )}
+
+    <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => { if (!open) setDeleteConfirmId(null); }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete item</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this item? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={() => {
+              if (deleteConfirmId) {
+                handleDeletePage(deleteConfirmId);
+                setDeleteConfirmId(null);
+              }
+            }}
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </>
   );
 }
