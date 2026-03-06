@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2 } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -152,6 +152,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
   const [showQuizGenerateDialog, setShowQuizGenerateDialog] = useState(false);
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
+  
+  // AI review state
+  const [aiReviewBlockId, setAiReviewBlockId] = useState<string | null>(null);
+  const [aiReviewMode, setAiReviewMode] = useState<"review" | "modify">("review");
+  const [modifyPrompt, setModifyPrompt] = useState("");
+  const modifyInputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleQuizGenerate = useCallback((config: GenerateQuizConfig) => {
     setIsQuizGenerating(true);
@@ -192,8 +198,43 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       setAiGenerating(false);
       setShowAiBlock(false);
       setAiBlockType(null);
+      // Enter review mode for text blocks
+      if (type === "text") {
+        setAiReviewBlockId(id);
+        setAiReviewMode("review");
+      }
     }, 3000);
   }, []);
+
+  const handleAiReviewAdd = useCallback(() => {
+    setAiReviewBlockId(null);
+    setAiReviewMode("review");
+    setModifyPrompt("");
+  }, []);
+
+  const handleAiReviewCancel = useCallback(() => {
+    if (aiReviewBlockId) {
+      setBlocks((prev) => prev.filter((b) => b.id !== aiReviewBlockId));
+    }
+    setAiReviewBlockId(null);
+    setAiReviewMode("review");
+    setModifyPrompt("");
+  }, [aiReviewBlockId]);
+
+  const handleAiModifySubmit = useCallback(() => {
+    if (!modifyPrompt.trim() || !aiReviewBlockId) return;
+    setAiGenerating(true);
+    // Simulate AI modification
+    setTimeout(() => {
+      setBlocks((prev) => prev.map((b) => {
+        if (b.id !== aiReviewBlockId) return b;
+        return { ...b, content: `${b.content}<p><em>Modified based on: "${modifyPrompt}"</em></p><p>The content has been updated to reflect your requested changes. The key points have been restructured and additional context has been provided where needed.</p>` };
+      }));
+      setAiGenerating(false);
+      setAiReviewMode("review");
+      setModifyPrompt("");
+    }, 2000);
+  }, [modifyPrompt, aiReviewBlockId]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -744,6 +785,83 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   aiEnabled={aiEnabled}
                                 />
                               );
+                              
+                              {/* AI Review Bar */}
+                              if (block.id === aiReviewBlockId) {
+                                elements.push(
+                                  <div key={`ai-review-${block.id}`} className="flex items-center gap-2 mt-2 mb-1 animate-fade-in">
+                                    {aiReviewMode === "review" ? (
+                                      <>
+                                        <Button
+                                          size="sm"
+                                          onClick={handleAiReviewAdd}
+                                          className="gap-1.5 rounded-full px-4"
+                                        >
+                                          <Check className="w-3.5 h-3.5" />
+                                          Add
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => {
+                                            setAiReviewMode("modify");
+                                            setTimeout(() => modifyInputRef.current?.focus(), 100);
+                                          }}
+                                          className="gap-1.5 rounded-full px-4"
+                                        >
+                                          <Sparkles className="w-3.5 h-3.5" />
+                                          Modify
+                                        </Button>
+                                        <button
+                                          onClick={handleAiReviewCancel}
+                                          className="text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
+                                        >
+                                          Cancel
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <div className="flex-1 space-y-2">
+                                        <div className="flex items-center gap-2">
+                                          <button
+                                            onClick={() => setAiReviewMode("review")}
+                                            className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                                          >
+                                            <ArrowLeft className="w-4 h-4" />
+                                          </button>
+                                          <span className="text-sm font-medium text-foreground">What do you want to modify?</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <div className="flex-1 rounded-lg border border-border bg-background overflow-hidden focus-within:border-foreground/30 transition-colors">
+                                            <textarea
+                                              ref={modifyInputRef}
+                                              value={modifyPrompt}
+                                              onChange={(e) => setModifyPrompt(e.target.value)}
+                                              onKeyDown={(e) => {
+                                                if (e.key === "Enter" && !e.shiftKey) {
+                                                  e.preventDefault();
+                                                  handleAiModifySubmit();
+                                                }
+                                              }}
+                                              placeholder="e.g., Make it more concise, add examples..."
+                                              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 resize-none p-3 focus:outline-none min-h-[40px]"
+                                              rows={1}
+                                            />
+                                          </div>
+                                          <Button
+                                            size="sm"
+                                            onClick={handleAiModifySubmit}
+                                            disabled={!modifyPrompt.trim() || aiGenerating}
+                                            className="rounded-full px-4 gap-1.5"
+                                          >
+                                            <Send className="w-3.5 h-3.5" />
+                                            {aiGenerating ? "Modifying..." : "Send"}
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              }
                               if (blockIdx < blocks.length - 1) {
                                 elements.push(
                                   <AddContentButton
