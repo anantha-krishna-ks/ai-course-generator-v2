@@ -30,6 +30,7 @@ interface ContentBlockProps {
   onDuplicate: () => void;
   autoFocus?: boolean;
   aiEnabled?: boolean;
+  readOnly?: boolean;
 }
 
 export function ContentBlock({
@@ -41,8 +42,9 @@ export function ContentBlock({
   onDuplicate,
   autoFocus = false,
   aiEnabled = false,
+  readOnly = false,
 }: ContentBlockProps) {
-  const [isEditing, setIsEditing] = useState(autoFocus);
+  const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
