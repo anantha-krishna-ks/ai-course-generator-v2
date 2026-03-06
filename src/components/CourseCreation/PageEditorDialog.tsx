@@ -789,49 +789,59 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               {/* AI Review Bar */}
                               if (block.id === aiReviewBlockId) {
                                 elements.push(
-                                  <div key={`ai-review-${block.id}`} className="flex items-center gap-2 mt-2 mb-1 animate-fade-in">
+                                  <div key={`ai-review-${block.id}`} className="mt-3 mb-2 animate-fade-in rounded-xl border border-border/60 bg-muted/30 backdrop-blur-sm shadow-sm overflow-hidden">
                                     {aiReviewMode === "review" ? (
-                                      <>
-                                        <Button
-                                          size="sm"
-                                          onClick={handleAiReviewAdd}
-                                          className="gap-1.5 rounded-full px-4"
-                                        >
-                                          <Check className="w-3.5 h-3.5" />
-                                          Add
-                                        </Button>
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() => {
-                                            setAiReviewMode("modify");
-                                            setTimeout(() => modifyInputRef.current?.focus(), 100);
-                                          }}
-                                          className="gap-1.5 rounded-full px-4"
-                                        >
-                                          <Sparkles className="w-3.5 h-3.5" />
-                                          Modify
-                                        </Button>
-                                        <button
-                                          onClick={handleAiReviewCancel}
-                                          className="text-sm text-muted-foreground hover:text-foreground transition-colors px-2"
-                                        >
-                                          Cancel
-                                        </button>
-                                      </>
+                                      <div className="flex items-center gap-3 px-4 py-3">
+                                        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                                          <Sparkles className="w-3.5 h-3.5 text-primary" />
+                                          <span>AI Generated</span>
+                                        </div>
+                                        <div className="h-4 w-px bg-border/60" />
+                                        <div className="flex items-center gap-1.5 ml-auto">
+                                          <Button
+                                            size="sm"
+                                            onClick={handleAiReviewAdd}
+                                            className="h-8 gap-1.5 rounded-lg px-3.5 text-xs font-medium"
+                                          >
+                                            <Check className="w-3.5 h-3.5" />
+                                            Accept
+                                          </Button>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => {
+                                              setAiReviewMode("modify");
+                                              setTimeout(() => modifyInputRef.current?.focus(), 100);
+                                            }}
+                                            className="h-8 gap-1.5 rounded-lg px-3.5 text-xs font-medium"
+                                          >
+                                            <Sparkles className="w-3 h-3" />
+                                            Modify
+                                          </Button>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={handleAiReviewCancel}
+                                            className="h-8 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:text-destructive"
+                                          >
+                                            <X className="w-3.5 h-3.5" />
+                                            Discard
+                                          </Button>
+                                        </div>
+                                      </div>
                                     ) : (
-                                      <div className="flex-1 space-y-2">
-                                        <div className="flex items-center gap-2">
+                                      <div className="space-y-0">
+                                        <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/40">
                                           <button
                                             onClick={() => setAiReviewMode("review")}
-                                            className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                                            className="p-1 rounded-md hover:bg-background/80 transition-colors text-muted-foreground hover:text-foreground"
                                           >
-                                            <ArrowLeft className="w-4 h-4" />
+                                            <ArrowLeft className="w-3.5 h-3.5" />
                                           </button>
-                                          <span className="text-sm font-medium text-foreground">What do you want to modify?</span>
+                                          <span className="text-xs font-medium text-foreground">What do you want to modify?</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                          <div className="flex-1 rounded-lg border border-border bg-background overflow-hidden focus-within:border-foreground/30 transition-colors">
+                                        <div className="flex items-end gap-2 p-2">
+                                          <div className="flex-1 rounded-lg bg-background border border-border/40 overflow-hidden focus-within:border-foreground/20 transition-colors">
                                             <textarea
                                               ref={modifyInputRef}
                                               value={modifyPrompt}
@@ -847,18 +857,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                 }
                                               }}
                                               placeholder="e.g., Make it more concise, add examples..."
-                                              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 resize-none p-3 focus:outline-none"
+                                              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none px-3 py-2.5 focus:outline-none"
                                               rows={1}
                                             />
                                           </div>
                                           <Button
-                                            size="sm"
+                                            size="icon"
                                             onClick={handleAiModifySubmit}
                                             disabled={!modifyPrompt.trim() || aiGenerating}
-                                            className="rounded-full px-4 gap-1.5"
+                                            className="h-9 w-9 rounded-lg shrink-0"
                                           >
                                             <Send className="w-3.5 h-3.5" />
-                                            {aiGenerating ? "Modifying..." : "Send"}
                                           </Button>
                                         </div>
                                       </div>
