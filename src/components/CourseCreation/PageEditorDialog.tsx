@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -790,7 +790,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               if (block.id === aiReviewBlockId) {
                                 elements.push(
                                   <div key={`ai-review-${block.id}`} className="mt-3 mb-2 animate-fade-in rounded-xl border border-border/60 bg-muted/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                                    {aiReviewMode === "review" ? (
+                                    {aiGenerating ? (
+                                      <div className="flex items-center gap-3 px-4 py-3">
+                                        <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />
+                                        <span className="text-xs font-medium text-muted-foreground">Generating content…</span>
+                                      </div>
+                                    ) : aiReviewMode === "review" ? (
                                       <div className="flex items-center gap-3 px-4 py-3">
                                         <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                           <Sparkles className="w-3.5 h-3.5 text-primary" />
@@ -815,7 +820,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             }}
                                             className="h-8 gap-1.5 rounded-lg px-3.5 text-xs font-medium"
                                           >
-                                            <Sparkles className="w-3 h-3" />
+                                            <Pencil className="w-3 h-3" />
                                             Modify
                                           </Button>
                                           <Button
