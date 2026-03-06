@@ -185,6 +185,17 @@ export function ContentBlock({
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
+          ) : readOnly ? (
+            <div className="w-full px-4 py-3">
+              {hasContent ? (
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              ) : (
+                <span className="text-lg text-foreground/40 italic">No content</span>
+              )}
+            </div>
           ) : isEditing ? (
             <DescriptionEditor content={content} onChange={onChange} />
           ) : (
