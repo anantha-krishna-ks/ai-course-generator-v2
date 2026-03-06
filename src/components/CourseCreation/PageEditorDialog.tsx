@@ -835,7 +835,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             <textarea
                                               ref={modifyInputRef}
                                               value={modifyPrompt}
-                                              onChange={(e) => setModifyPrompt(e.target.value)}
+                                              onChange={(e) => {
+                                                setModifyPrompt(e.target.value);
+                                                e.target.style.height = 'auto';
+                                                e.target.style.height = e.target.scrollHeight + 'px';
+                                              }}
                                               onKeyDown={(e) => {
                                                 if (e.key === "Enter" && !e.shiftKey) {
                                                   e.preventDefault();
@@ -843,7 +847,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                 }
                                               }}
                                               placeholder="e.g., Make it more concise, add examples..."
-                                              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 resize-none p-3 focus:outline-none min-h-[40px]"
+                                              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 resize-none p-3 focus:outline-none"
                                               rows={1}
                                             />
                                           </div>
