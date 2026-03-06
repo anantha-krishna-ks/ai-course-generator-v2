@@ -783,6 +783,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   onDuplicate={() => {}}
                                   autoFocus={block.id === lastAddedBlockId}
                                   aiEnabled={aiEnabled}
+                                  readOnly={block.id === aiReviewBlockId}
                                 />
                               );
                               
