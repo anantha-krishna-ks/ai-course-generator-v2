@@ -68,22 +68,22 @@ export function AIToggleRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-3 py-3 rounded-lg border-2 transition-all",
+        "flex items-center gap-3 px-3 py-3 rounded-lg border transition-all",
         options.enabled
-          ? "border-primary/30 bg-primary/5"
-          : "border-border bg-background"
+          ? "border-border bg-card shadow-md"
+          : "border-border bg-background shadow-sm"
       )}
     >
       <div
         className={cn(
           "w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300 shrink-0",
-          options.enabled ? "bg-primary/15" : "bg-muted"
+          options.enabled ? "bg-muted" : "bg-muted"
         )}
       >
         <Sparkles
           className={cn(
             "w-4 h-4 transition-colors duration-300",
-            options.enabled ? "text-primary" : "text-muted-foreground"
+            options.enabled ? "text-foreground" : "text-muted-foreground"
           )}
         />
       </div>
