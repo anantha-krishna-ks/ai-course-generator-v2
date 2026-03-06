@@ -70,8 +70,8 @@ export function AIToggleRow({
       className={cn(
         "flex items-center gap-3 px-3 py-3 rounded-lg border transition-all",
         options.enabled
-          ? "border-border bg-card shadow-md"
-          : "border-border bg-background shadow-sm"
+          ? "border-border bg-card shadow-sm"
+          : "border-border bg-background"
       )}
     >
       <div
