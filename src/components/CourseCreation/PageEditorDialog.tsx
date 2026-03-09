@@ -1228,6 +1228,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   </div>}
                 </div>
               )}
+              </>
+              )}
             </div>
           </div>
         </div>
