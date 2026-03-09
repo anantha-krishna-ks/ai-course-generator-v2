@@ -963,9 +963,54 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       {/* Standalone PageEditorDialog for child pages navigated from sidebar */}
       {(() => {
         if (!activeEditorPageId) return null;
-        // Check if it's a child page (not a top-level page)
+        // Check if it's a top-level item
         const topLevel = items.find((i) => i.id === activeEditorPageId);
-        if (topLevel) return null; // handled by PageItemCard's own editor
+        // If it's a top-level page, it's handled by PageItemCard's own editor
+        if (topLevel && topLevel.type === "page") return null;
+        
+        // If it's a top-level section, render the editor for it
+        if (topLevel && topLevel.type === "section") {
+          return (
+            <PageEditorDialog
+              key={topLevel.id}
+              open={true}
+              onClose={() => setActiveEditorPageId(null)}
+              pageTitle={topLevel.title}
+              onPageTitleChange={(newTitle) => updateItemTitle(topLevel.id, newTitle)}
+              aiEnabled={!!aiOptions?.enabled}
+              courseItems={items}
+              currentPageId={topLevel.id}
+              onRenameItem={(id, newTitle) => updateItemTitle(id, newTitle)}
+              onDeleteItem={(id) => deleteItem(id)}
+              onDuplicateItem={(id) => duplicateItem(id)}
+              onAddPageToSection={(sectionId) => addPageToSection(sectionId)}
+              onReorderItems={(activeId, overId) => {
+                setItems((prev) => {
+                  const oldIndex = prev.findIndex((i) => i.id === activeId);
+                  const newIndex = prev.findIndex((i) => i.id === overId);
+                  if (oldIndex === -1 || newIndex === -1) return prev;
+                  return arrayMove(prev, oldIndex, newIndex);
+                });
+              }}
+              onReorderChildItems={(sectionId, activeId, overId) => {
+                setItems((prev) => prev.map((item) => {
+                  if (item.id === sectionId && item.children) {
+                    const oldIdx = item.children.findIndex((c) => c.id === activeId);
+                    const newIdx = item.children.findIndex((c) => c.id === overId);
+                    if (oldIdx === -1 || newIdx === -1) return item;
+                    return { ...item, children: arrayMove(item.children, oldIdx, newIdx) };
+                  }
+                  return item;
+                }));
+              }}
+              onNavigateToPage={navigateToPage}
+              initialBlocks={pageBlocksMap[topLevel.id] || []}
+              onBlocksChange={(blocks) => updatePageBlocks(topLevel.id, blocks)}
+              onAddItem={(type) => handleAddItem(type)}
+            />
+          );
+        }
+
         // Find in section children
         for (const section of items) {
           if (section.children) {
