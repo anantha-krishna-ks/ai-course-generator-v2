@@ -740,6 +740,71 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
           {/* Main Content Area */}
           <div className="flex-1 min-w-0 overflow-y-auto">
             <div className="max-w-[800px] mx-auto py-10 px-4 sm:px-6">
+              {isCurrentSection ? (
+                <>
+                  <span className="text-sm text-muted-foreground block mb-2">Section title</span>
+                  <input
+                    type="text"
+                    value={pageTitle}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 350) {
+                        onPageTitleChange(e.target.value);
+                      }
+                    }}
+                    className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                    placeholder="Untitled section"
+                  />
+                  <div className="border-t border-dashed border-border my-6" />
+
+                  {/* Section child pages list */}
+                  <div className="space-y-3">
+                    <span className="text-sm font-medium text-muted-foreground">Pages in this section</span>
+                    {currentItem?.children && currentItem.children.length > 0 ? (
+                      <div className="space-y-2">
+                        {currentItem.children.map((child, idx) => (
+                          <div
+                            key={child.id}
+                            onClick={() => onNavigateToPage?.(child.id)}
+                            className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-pointer transition-colors group"
+                          >
+                            <span className="text-xs text-muted-foreground font-medium w-6">{idx + 1}.</span>
+                            <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                            <span className="text-sm text-foreground flex-1 truncate">
+                              {child.title || "Untitled page"}
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-sm text-muted-foreground">No pages in this section yet</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-3 gap-1.5"
+                          onClick={() => onAddPageToSection?.(currentPageId!)}
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add page
+                        </Button>
+                      </div>
+                    )}
+                    {currentItem?.children && currentItem.children.length > 0 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 mt-2"
+                        onClick={() => onAddPageToSection?.(currentPageId!)}
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add page
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+              <>
               {/* Page title label */}
               <span className="text-sm text-muted-foreground block mb-2">Page title</span>
 
