@@ -367,10 +367,7 @@ const MultipageCoursePreview = () => {
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        setStarted(true);
-                        setSelectedId(item.id);
-                      }}
+                      onClick={() => startCourse(item.id)}
                       className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left text-sm text-muted-foreground border-b border-border/30 last:border-b-0 hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
                     >
                       {item.type === "question" ? (
