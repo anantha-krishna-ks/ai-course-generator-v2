@@ -601,7 +601,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           </button>
                                         </div>
                                       </div>
-                                      <span className="text-[15px] font-semibold text-foreground block text-left">
+                                      <span
+                                        className="text-[15px] font-semibold text-foreground block text-left cursor-pointer hover:text-primary transition-colors"
+                                        onClick={() => {
+                                          setCollapsedSections((prev) => {
+                                            const next = new Set(prev);
+                                            next.delete(item.id);
+                                            return next;
+                                          });
+                                          onNavigateToPage?.(item.id);
+                                        }}
+                                      >
                                         {item.title || "Untitled section"}
                                       </span>
                                       {!collapsedSections.has(item.id) && (<>
