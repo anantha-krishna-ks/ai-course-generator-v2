@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, MonitorSmartphone, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -39,6 +39,70 @@ const MultipageCoursePreview = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [started, setStarted] = useState(false);
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
+
+  const deviceSizes = {
+    mobile: { width: '375px', label: 'Mobile' },
+    tablet: { width: '768px', label: 'Tablet' },
+    'tablet-landscape': { width: '1024px', label: 'Tablet Landscape' },
+    desktop: { width: '100%', label: 'Desktop' },
+    widescreen: { width: '100%', label: 'Widescreen' },
+  };
+
+  const DeviceToggle = () => (
+    <div className="flex items-center gap-0.5 border border-border rounded-lg p-1 bg-background">
+      <button
+        onClick={() => setDeviceView('desktop')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'desktop' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Desktop"
+      >
+        <Monitor className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setDeviceView('tablet')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'tablet' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Tablet"
+      >
+        <Tablet className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setDeviceView('tablet-landscape')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'tablet-landscape' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Tablet Landscape"
+      >
+        <Tablet className="w-4 h-4 rotate-90" />
+      </button>
+      <button
+        onClick={() => setDeviceView('mobile')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'mobile' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Mobile"
+      >
+        <Smartphone className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setDeviceView('widescreen')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'widescreen' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Widescreen"
+      >
+        <Tv className="w-4 h-4" />
+      </button>
+    </div>
+  );
 
   useEffect(() => {
     const state = location.state as PreviewState | null;
@@ -190,9 +254,17 @@ const MultipageCoursePreview = () => {
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
           </div>
+          <DeviceToggle />
         </div>
 
-        <div className="flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)]">
+        <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+          <div
+            className={cn(
+              "flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)] transition-all duration-300",
+              deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg"
+            )}
+            style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+          >
           {/* Left: Course intro card */}
           <div className="flex-1 relative overflow-hidden">
             {/* Background with hero image or gradient */}
@@ -325,6 +397,7 @@ const MultipageCoursePreview = () => {
               </div>
             </ScrollArea>
           </div>
+          </div>
         </div>
       </div>
     );
@@ -341,11 +414,23 @@ const MultipageCoursePreview = () => {
           </Button>
           <span className="text-sm font-medium text-foreground">Course Preview</span>
         </div>
+        <DeviceToggle />
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+        <div
+          className={cn(
+            "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
+            deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg",
+            deviceView === 'mobile' && "flex-col"
+          )}
+          style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+        >
         {/* Left: Sidebar with course info + outline */}
-        <div className="w-[260px] flex-shrink-0 hidden md:flex flex-col border-r bg-card">
+        <div className={cn(
+          "w-[260px] flex-shrink-0 flex-col border-r bg-card",
+          deviceView === 'mobile' ? "hidden" : "flex"
+        )}>
           {/* Course title card */}
           <div className="bg-primary p-5 space-y-4">
             <h2 className="text-lg font-bold text-primary-foreground leading-snug">
@@ -502,6 +587,7 @@ const MultipageCoursePreview = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
