@@ -39,6 +39,70 @@ const MultipageCoursePreview = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [started, setStarted] = useState(false);
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
+
+  const deviceSizes = {
+    mobile: { width: '375px', label: 'Mobile' },
+    tablet: { width: '768px', label: 'Tablet' },
+    'tablet-landscape': { width: '1024px', label: 'Tablet Landscape' },
+    desktop: { width: '100%', label: 'Desktop' },
+    widescreen: { width: '100%', label: 'Widescreen' },
+  };
+
+  const DeviceToggle = () => (
+    <div className="flex items-center gap-0.5 border border-border rounded-lg p-1 bg-background">
+      <button
+        onClick={() => setDeviceView('desktop')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'desktop' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Desktop"
+      >
+        <Monitor className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setDeviceView('tablet')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'tablet' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Tablet"
+      >
+        <Tablet className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setDeviceView('tablet-landscape')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'tablet-landscape' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Tablet Landscape"
+      >
+        <Tablet className="w-4 h-4 rotate-90" />
+      </button>
+      <button
+        onClick={() => setDeviceView('mobile')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'mobile' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Mobile"
+      >
+        <Smartphone className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => setDeviceView('widescreen')}
+        className={cn(
+          "p-1.5 rounded-md transition-colors",
+          deviceView === 'widescreen' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+        )}
+        title="Widescreen"
+      >
+        <Tv className="w-4 h-4" />
+      </button>
+    </div>
+  );
 
   useEffect(() => {
     const state = location.state as PreviewState | null;
