@@ -53,8 +53,8 @@ const MultipageCoursePreview = () => {
       setTimeout(() => {
         setFoldDirection(null);
         setTransitioning(false);
-      }, 400);
-    }, 400);
+      }, 450);
+    }, 350);
   }, []);
 
   const deviceSizes = {
