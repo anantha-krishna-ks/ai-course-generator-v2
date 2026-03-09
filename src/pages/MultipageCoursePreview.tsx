@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, MonitorSmartphone, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,23 @@ const MultipageCoursePreview = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [started, setStarted] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
+  const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
+
+  const startCourse = useCallback((pageId?: string, fallbackFirstId?: string) => {
+    setFoldDirection('out');
+    setTransitioning(true);
+    setTimeout(() => {
+      setStarted(true);
+      setSelectedId(pageId || fallbackFirstId || null);
+      setFoldDirection('in');
+      setTimeout(() => {
+        setFoldDirection(null);
+        setTransitioning(false);
+      }, 400);
+    }, 400);
+  }, []);
 
   const deviceSizes = {
     mobile: { width: '375px', label: 'Mobile' },
@@ -234,7 +250,11 @@ const MultipageCoursePreview = () => {
           <DeviceToggle />
         </div>
 
-        <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+        <div className={cn(
+          "flex-1 flex justify-center overflow-hidden bg-muted/20",
+          foldDirection === 'out' && "page-fold-out",
+          foldDirection === 'in' && "page-fold-in"
+        )}>
           <div
             className={cn(
               "flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)] transition-all duration-300",
@@ -280,10 +300,8 @@ const MultipageCoursePreview = () => {
 
                 {/* Start button */}
                 <Button
-                  onClick={() => {
-                    setStarted(true);
-                    if (allPages.length > 0) setSelectedId(allPages[0].id);
-                  }}
+                  onClick={() => startCourse(undefined, allPages[0]?.id)}
+                  disabled={transitioning}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-3 h-auto text-sm font-semibold uppercase tracking-wider shadow-lg"
                 >
                   <Play className="w-4 h-4 mr-1" />
@@ -333,10 +351,7 @@ const MultipageCoursePreview = () => {
                             {item.children.map((child) => (
                               <button
                                 key={child.id}
-                                onClick={() => {
-                                  setStarted(true);
-                                  setSelectedId(child.id);
-                                }}
+                                onClick={() => startCourse(child.id)}
                                 className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
                               >
                                 {child.type === "question" ? (
@@ -356,10 +371,7 @@ const MultipageCoursePreview = () => {
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        setStarted(true);
-                        setSelectedId(item.id);
-                      }}
+                      onClick={() => startCourse(item.id)}
                       className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left text-sm text-muted-foreground border-b border-border/30 last:border-b-0 hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
                     >
                       {item.type === "question" ? (
@@ -394,7 +406,11 @@ const MultipageCoursePreview = () => {
         <DeviceToggle />
       </div>
 
-      <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+      <div className={cn(
+        "flex-1 flex justify-center overflow-hidden bg-muted/20",
+        foldDirection === 'out' && "page-fold-out",
+        foldDirection === 'in' && "page-fold-in"
+      )}>
         <div
           className={cn(
             "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
