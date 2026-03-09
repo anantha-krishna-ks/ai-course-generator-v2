@@ -39,7 +39,27 @@ const MultipageCoursePreview = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [started, setStarted] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
+  const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
+
+  const startCourse = useCallback((pageId?: string) => {
+    setFoldDirection('out');
+    setTransitioning(true);
+    setTimeout(() => {
+      setStarted(true);
+      if (pageId) {
+        setSelectedId(pageId);
+      } else if (allPages.length > 0) {
+        setSelectedId(allPages[0]?.id || null);
+      }
+      setFoldDirection('in');
+      setTimeout(() => {
+        setFoldDirection(null);
+        setTransitioning(false);
+      }, 400);
+    }, 400);
+  }, []);
 
   const deviceSizes = {
     mobile: { width: '375px', label: 'Mobile' },
