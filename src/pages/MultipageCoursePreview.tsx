@@ -427,7 +427,10 @@ const MultipageCoursePreview = () => {
           style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
         >
         {/* Left: Sidebar with course info + outline */}
-        <div className="w-[260px] flex-shrink-0 hidden md:flex flex-col border-r bg-card">
+        <div className={cn(
+          "w-[260px] flex-shrink-0 flex-col border-r bg-card",
+          deviceView === 'mobile' ? "hidden" : "flex"
+        )}>
           {/* Course title card */}
           <div className="bg-primary p-5 space-y-4">
             <h2 className="text-lg font-bold text-primary-foreground leading-snug">
