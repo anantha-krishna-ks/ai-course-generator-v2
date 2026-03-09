@@ -247,15 +247,15 @@ const MultipageCoursePreview = () => {
           {/* Right: Course outline */}
           <div className="w-full lg:w-[420px] xl:w-[480px] border-l bg-card flex-shrink-0 overflow-auto">
             <ScrollArea className="h-full">
-              <div className="mb-4">
-                <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Course Outline</h3>
-              </div>
+              <div className="p-6 space-y-1">
+                <div className="mb-4">
+                  <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Course Outline</h3>
+                </div>
                 {data.items.map((item) => {
                   if (item.type === "section") {
                     const isExpanded = expandedSections.has(item.id);
                     return (
                       <div key={item.id} className="mb-2">
-                        {/* Section card */}
                         <div
                           className="rounded-xl border border-border/60 bg-muted/30 p-4 cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors"
                           onClick={() => toggleSection(item.id)}
@@ -279,7 +279,6 @@ const MultipageCoursePreview = () => {
                             )}
                           </div>
                         </div>
-                        {/* Expandable children */}
                         {isExpanded && item.children && item.children.length > 0 && (
                           <div className="mt-1 space-y-0.5 pl-3">
                             {item.children.map((child) => (
@@ -305,7 +304,6 @@ const MultipageCoursePreview = () => {
                     );
                   }
 
-                  // Top-level page or question
                   return (
                     <button
                       key={item.id}
