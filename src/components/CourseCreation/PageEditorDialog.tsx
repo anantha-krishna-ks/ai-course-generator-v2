@@ -579,9 +579,24 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           </button>
                                         </div>
                                       </div>
-                                      <span className="text-[15px] font-semibold text-foreground block">
+                                      <button
+                                        type="button"
+                                        className="text-[15px] font-semibold text-foreground block text-left hover:text-primary transition-colors"
+                                        onClick={() => {
+                                          // Expand section if collapsed
+                                          setCollapsedSections((prev) => {
+                                            const next = new Set(prev);
+                                            next.delete(item.id);
+                                            return next;
+                                          });
+                                          // Navigate to first child page if available
+                                          if (item.children && item.children.length > 0) {
+                                            onNavigateToPage?.(item.children[0].id);
+                                          }
+                                        }}
+                                      >
                                         {item.title || "Untitled section"}
-                                      </span>
+                                      </button>
                                       {!collapsedSections.has(item.id) && (<>
                                       {/* Section children (pages) */}
                                       {item.children && item.children.length > 0 && (
