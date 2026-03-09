@@ -584,8 +584,8 @@ const MultipageCoursePreview = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="py-16 flex flex-col items-center justify-center text-center animate-fade-in">
-                    <img src={emptyPageIllustration} alt="Empty page" className="w-28 h-28 opacity-30 mb-5 animate-[page-turn_4s_ease-in-out_infinite]" style={{ perspective: '800px' }} />
+                  <div className="py-16 flex flex-col items-center justify-center text-center">
+                    <img src={emptyPageIllustration} alt="Empty page" className="w-28 h-28 opacity-30 mb-5" />
                     <p className="text-sm font-medium text-muted-foreground/50 mb-1">No content yet</p>
                     <p className="text-xs text-muted-foreground/30">This page is waiting for content to be added</p>
                   </div>
