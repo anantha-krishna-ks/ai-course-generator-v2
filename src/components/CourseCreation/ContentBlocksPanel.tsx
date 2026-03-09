@@ -327,6 +327,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
               label={tpl.label}
               preview={tpl.preview}
               onClick={() => handleTemplateClick(tpl.id)}
+              locked={tpl.id === "quiz-generate" && !aiEnabled}
             />
           ))}
         </div>
