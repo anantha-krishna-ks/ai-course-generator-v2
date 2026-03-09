@@ -248,36 +248,70 @@ const MultipageCoursePreview = () => {
           <div className="w-full lg:w-[420px] xl:w-[480px] border-l bg-card flex-shrink-0 overflow-auto">
             <ScrollArea className="h-full">
               <div className="p-6 space-y-1">
+                <div className="mb-4">
+                  <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Course Outline</h3>
+                </div>
                 {data.items.map((item) => {
                   if (item.type === "section") {
+                    const isExpanded = expandedSections.has(item.id);
                     return (
                       <div key={item.id} className="mb-2">
-                        {/* Section card */}
-                        <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
+                        <div
+                          className="rounded-xl border border-border/60 bg-muted/30 p-4 cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors"
+                          onClick={() => toggleSection(item.id)}
+                        >
                           <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0">
+                            <div className="w-14 h-14 rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0">
                               <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
                             </div>
-                            <span className="text-sm font-semibold text-foreground">{item.title || "Untitled section"}</span>
-                          </div>
-                          {/* Children count */}
-                          {item.children && item.children.length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-border/40">
-                              <span className="text-xs text-muted-foreground uppercase tracking-wide">
-                                {item.children.length} {item.children.length === 1 ? "page" : "pages"}
-                              </span>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-semibold text-foreground block truncate">{item.title || "Untitled section"}</span>
+                              {item.children && item.children.length > 0 && (
+                                <span className="text-xs text-muted-foreground mt-0.5 block">
+                                  {item.children.length} {item.children.length === 1 ? "page" : "pages"}
+                                </span>
+                              )}
                             </div>
-                          )}
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                            )}
+                          </div>
                         </div>
+                        {isExpanded && item.children && item.children.length > 0 && (
+                          <div className="mt-1 space-y-0.5 pl-3">
+                            {item.children.map((child) => (
+                              <button
+                                key={child.id}
+                                onClick={() => {
+                                  setStarted(true);
+                                  setSelectedId(child.id);
+                                }}
+                                className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+                              >
+                                {child.type === "question" ? (
+                                  <HelpCircle className="w-4 h-4 flex-shrink-0 text-muted-foreground/60" />
+                                ) : (
+                                  <FileText className="w-4 h-4 flex-shrink-0 text-muted-foreground/60" />
+                                )}
+                                <span className="truncate">{child.title || "Untitled page"}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   }
 
-                  // Top-level page or question
                   return (
-                    <div
+                    <button
                       key={item.id}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-muted-foreground border-b border-border/30 last:border-b-0"
+                      onClick={() => {
+                        setStarted(true);
+                        setSelectedId(item.id);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left text-sm text-muted-foreground border-b border-border/30 last:border-b-0 hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
                     >
                       {item.type === "question" ? (
                         <HelpCircle className="w-4 h-4 flex-shrink-0 text-muted-foreground/60" />
@@ -285,7 +319,7 @@ const MultipageCoursePreview = () => {
                         <BookOpen className="w-4 h-4 flex-shrink-0 text-muted-foreground/60" />
                       )}
                       <span className="truncate">{item.title || "Untitled page"}</span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
