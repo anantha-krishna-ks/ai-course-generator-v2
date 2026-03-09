@@ -257,7 +257,14 @@ const MultipageCoursePreview = () => {
           <DeviceToggle />
         </div>
 
-        <div className="flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)]">
+        <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+          <div
+            className={cn(
+              "flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)] transition-all duration-300",
+              deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg"
+            )}
+            style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+          >
           {/* Left: Course intro card */}
           <div className="flex-1 relative overflow-hidden">
             {/* Background with hero image or gradient */}
