@@ -300,11 +300,14 @@ const MultipageCoursePreview = () => {
                 </h1>
 
                 {/* Progress bar */}
-                <div className="space-y-2 max-w-md">
-                  <div className="w-full h-[2px] bg-border rounded-full" />
-                  <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-                    You completed 0%
-                  </span>
+                <div className="space-y-3 max-w-md">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground font-medium">Progress</span>
+                    <span className="text-xs font-semibold text-primary">0%</span>
+                  </div>
+                  <div className="w-full h-2 bg-border/60 rounded-full overflow-hidden backdrop-blur-sm">
+                    <div className="h-full w-0 bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-500 ease-out" />
+                  </div>
                 </div>
 
                 {/* Description / content preview */}
