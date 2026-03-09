@@ -132,7 +132,7 @@ export function ContentBlock({
         }}
         style={style}
         className={cn(
-          "group/block relative animate-fade-in transition-shadow duration-200",
+          "group/block relative animate-fade-in transition-shadow duration-200 min-w-0 overflow-hidden",
           isDragging && "z-50 opacity-90 shadow-xl rounded-lg scale-[1.02]"
         )}
       >
@@ -201,11 +201,11 @@ export function ContentBlock({
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text"
+              className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden"
             >
               {hasContent ? (
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words overflow-hidden [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               ) : (
