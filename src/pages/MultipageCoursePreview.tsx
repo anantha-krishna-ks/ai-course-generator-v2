@@ -399,8 +399,8 @@ const MultipageCoursePreview = () => {
           </div>
           </div>
         </div>
-        </div>
       </div>
+    );
   }
 
   // Content view with left sidebar navigation + right content
