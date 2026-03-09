@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import emptyPageIllustration from "@/assets/empty-page-illustration.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, MonitorSmartphone, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -583,12 +584,10 @@ const MultipageCoursePreview = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="py-20 flex flex-col items-center justify-center text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center mb-5 ring-1 ring-border/40">
-                      <FileText className="w-7 h-7 text-muted-foreground/40" />
-                    </div>
-                    <p className="text-sm font-medium text-muted-foreground/60 mb-1">No content yet</p>
-                    <p className="text-xs text-muted-foreground/35">This page is waiting for content to be added</p>
+                  <div className="py-16 flex flex-col items-center justify-center text-center">
+                    <img src={emptyPageIllustration} alt="Empty page" className="w-28 h-28 opacity-30 mb-5" />
+                    <p className="text-sm font-medium text-muted-foreground/50 mb-1">No content yet</p>
+                    <p className="text-xs text-muted-foreground/30">This page is waiting for content to be added</p>
                   </div>
                 )}
 
