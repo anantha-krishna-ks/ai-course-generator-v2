@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Type, ImageIcon, Video, Mic, FileText, MessageCircleQuestion, Sparkles, HelpCircle } from "lucide-react";
+import { Type, ImageIcon, Video, Mic, FileText, MessageCircleQuestion, Sparkles, HelpCircle, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BlockTemplate {
