@@ -189,7 +189,7 @@ export function ContentBlock({
             <div className="w-full px-4 py-3">
               {hasContent ? (
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               ) : (
