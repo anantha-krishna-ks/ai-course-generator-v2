@@ -205,12 +205,6 @@ const MultipageCoursePreview = () => {
 
             <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
               {/* Logo / brand */}
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
-                  {data.title.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-foreground/60 text-sm font-medium tracking-wide">Course</span>
-              </div>
 
               {/* Title */}
               <div className="mt-auto space-y-6">
