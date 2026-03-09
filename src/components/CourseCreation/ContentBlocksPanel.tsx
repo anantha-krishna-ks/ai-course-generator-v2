@@ -18,6 +18,7 @@ interface BlockCategory {
 interface ContentBlocksPanelProps {
   onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
+  aiEnabled?: boolean;
 }
 
 function TemplateCard({ label, preview, onClick }: { label: string; preview: React.ReactNode; onClick: () => void }) {
