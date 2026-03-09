@@ -585,6 +585,7 @@ const MultipageCoursePreview = () => {
           </div>
         </div>
       </div>
+      </div>
     </div>
   );
 };
