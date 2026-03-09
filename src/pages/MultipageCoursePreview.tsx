@@ -329,38 +329,12 @@ const MultipageCoursePreview = () => {
                   </div>
                 </div>
 
-                {/* Intro content blocks (description, text, images) */}
-                {data.contentBlocks.length > 0 && (
-                  <div className="space-y-5 max-w-lg">
-                    {data.contentBlocks.map((block) => {
-                      if (block.type === "description" && block.content.trim()) {
-                        return (
-                          <p key={block.id} className="text-foreground/70 text-base leading-relaxed">
-                            {block.content.substring(0, 300)}{block.content.length > 300 ? "..." : ""}
-                          </p>
-                        );
-                      }
-                      if (block.type === "text" && block.content && block.content !== "<p></p>") {
-                        return (
-                          <div
-                            key={block.id}
-                            className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 [&_h2]:!text-xl [&_h2]:!font-semibold [&_h2]:!leading-tight"
-                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }}
-                          />
-                        );
-                      }
-                      if (block.type === "image" && block.content) {
-                        return (
-                          <img
-                            key={block.id}
-                            src={block.content}
-                            alt=""
-                            className="w-full max-w-md rounded-xl shadow-sm"
-                          />
-                        );
-                      }
-                      return null;
-                    })}
+                {/* Description / content preview */}
+                {descriptionText && (
+                  <div className="space-y-4 max-w-lg">
+                    <p className="text-foreground/70 text-base leading-relaxed">
+                      {descriptionText.substring(0, 300)}{descriptionText.length > 300 ? "..." : ""}
+                    </p>
                   </div>
                 )}
 
