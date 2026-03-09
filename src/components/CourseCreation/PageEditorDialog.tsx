@@ -530,16 +530,31 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               return (
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
-                                    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+                                    <div
+                                      className="rounded-xl border border-border bg-card p-4 space-y-3 cursor-pointer hover:border-primary/30 transition-colors"
+                                      onClick={() => {
+                                        // Expand section if collapsed
+                                        setCollapsedSections((prev) => {
+                                          const next = new Set(prev);
+                                          next.delete(item.id);
+                                          return next;
+                                        });
+                                        // Navigate to first child page if available
+                                        if (item.children && item.children.length > 0) {
+                                          onNavigateToPage?.(item.children[0].id);
+                                        }
+                                      }}
+                                    >
                                       <div className="flex items-center justify-between">
                                         <span
                                           className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1"
                                           {...listeners}
+                                          onClick={(e) => e.stopPropagation()}
                                         >
                                           <GripVertical className="w-3 h-3 text-muted-foreground/40" />
                                           Section {sectionIndex}
                                         </span>
-                                        <div className="flex items-center gap-0">
+                                        <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                               <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
@@ -579,24 +594,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           </button>
                                         </div>
                                       </div>
-                                      <button
-                                        type="button"
-                                        className="text-[15px] font-semibold text-foreground block text-left hover:text-primary transition-colors"
-                                        onClick={() => {
-                                          // Expand section if collapsed
-                                          setCollapsedSections((prev) => {
-                                            const next = new Set(prev);
-                                            next.delete(item.id);
-                                            return next;
-                                          });
-                                          // Navigate to first child page if available
-                                          if (item.children && item.children.length > 0) {
-                                            onNavigateToPage?.(item.children[0].id);
-                                          }
-                                        }}
-                                      >
+                                      <span className="text-[15px] font-semibold text-foreground block text-left">
                                         {item.title || "Untitled section"}
-                                      </button>
+                                      </span>
                                       {!collapsedSections.has(item.id) && (<>
                                       {/* Section children (pages) */}
                                       {item.children && item.children.length > 0 && (
