@@ -91,7 +91,7 @@ export function DescriptionBlock({
       }}
       style={style}
       className={cn(
-        "group/desc relative animate-fade-in transition-shadow duration-200",
+        "group/desc relative animate-fade-in transition-shadow duration-200 min-w-0 overflow-hidden",
         isDragging && "z-50 opacity-90 shadow-xl rounded-lg scale-[1.02]"
       )}
     >
@@ -122,7 +122,7 @@ export function DescriptionBlock({
       {/* Content area */}
       <div
         className={cn(
-          "rounded-lg border px-5 pt-4 transition-colors cursor-text",
+          "rounded-lg border px-5 pt-4 transition-colors cursor-text overflow-hidden",
           isActive
             ? "border-foreground/20 bg-primary/[0.04]"
             : "border-transparent pb-4"
@@ -132,7 +132,7 @@ export function DescriptionBlock({
         }}
       >
         {content.trim() && !isActive ? (
-          <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
+          <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
             {content}
           </p>
         ) : isActive ? (
@@ -146,7 +146,7 @@ export function DescriptionBlock({
             }}
             onBlur={() => setIsActive(false)}
             placeholder="Tell your learners what the course will be about..."
-            className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px]"
+            className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px] break-words overflow-hidden"
             rows={1}
           />
         ) : (
