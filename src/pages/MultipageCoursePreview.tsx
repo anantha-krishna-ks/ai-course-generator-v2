@@ -274,20 +274,33 @@ const MultipageCoursePreview = () => {
 
             {/* Decorative elements */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
-              <div className="absolute bottom-20 -left-10 w-48 h-48 rounded-full bg-accent/10 blur-2xl" />
-              <div className="absolute top-1/3 right-0 w-32 h-32 rounded-full bg-primary/8 blur-2xl" />
-              {/* Subtle grid pattern */}
-              <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+              {/* Book spine edge */}
+              <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-foreground/[0.06] to-transparent" />
+              <div className="absolute right-3 top-0 bottom-0 w-[1px] bg-foreground/[0.08]" />
+              
+              {/* Page corner fold */}
+              <div className="absolute top-0 right-0 w-12 h-12">
+                <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor">
+                  <path d="M48 0 L48 48 L0 0 Z" />
+                </svg>
+              </div>
+
+              {/* Horizontal ruled lines like a notebook */}
+              <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" className="text-foreground" />
+                  <pattern id="ruled-lines" width="100%" height="32" patternUnits="userSpaceOnUse">
+                    <line x1="0" y1="31" x2="100%" y2="31" stroke="currentColor" strokeWidth="1" className="text-foreground" />
                   </pattern>
                 </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
+                <rect width="100%" height="100%" fill="url(#ruled-lines)" />
               </svg>
-              {/* Decorative line accent */}
-              <div className="absolute left-8 top-16 bottom-16 w-[1px] bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
+
+              {/* Left margin line (like a notebook) */}
+              <div className="absolute left-12 top-0 bottom-0 w-[1px] bg-destructive/10" />
+
+              {/* Subtle bookmark ribbon */}
+              <div className="absolute top-0 right-10 w-5 h-20 bg-primary/10 rounded-b-sm" />
+              <div className="absolute top-20 right-10 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[8px] border-l-primary/10 border-r-primary/10 border-t-primary/10" style={{ borderBottomColor: 'transparent' }} />
             </div>
 
             <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
