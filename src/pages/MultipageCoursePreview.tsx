@@ -58,7 +58,7 @@ const MultipageCoursePreview = () => {
   ];
 
   const DeviceToggle = () => (
-    <div className="flex items-center gap-1 rounded-full bg-muted/60 p-1 border border-border/50">
+    <div className="flex items-center gap-1.5 rounded-full bg-muted/50 p-1.5 border border-border">
       {devices.map(({ key, icon: Icon, label, rotate }) => {
         const isActive = deviceView === key;
         return (
@@ -66,14 +66,14 @@ const MultipageCoursePreview = () => {
             key={key}
             onClick={() => setDeviceView(key)}
             className={cn(
-              "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+              "relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
               isActive
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-background text-foreground shadow-sm border border-border/60"
+                : "text-muted-foreground hover:text-foreground border border-transparent"
             )}
             title={label}
           >
-            <Icon className={cn("w-3.5 h-3.5", rotate && "rotate-90")} />
+            <Icon className={cn("w-4 h-4", rotate && "rotate-90")} />
             {isActive && <span className="hidden sm:inline">{label}</span>}
           </button>
         );
