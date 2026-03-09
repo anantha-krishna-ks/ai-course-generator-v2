@@ -122,7 +122,7 @@ export function DescriptionBlock({
       {/* Content area */}
       <div
         className={cn(
-          "rounded-lg border px-5 pt-4 transition-colors cursor-text",
+          "rounded-lg border px-5 pt-4 transition-colors cursor-text overflow-hidden",
           isActive
             ? "border-foreground/20 bg-primary/[0.04]"
             : "border-transparent pb-4"
