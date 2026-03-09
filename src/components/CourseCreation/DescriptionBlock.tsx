@@ -132,7 +132,7 @@ export function DescriptionBlock({
         }}
       >
         {content.trim() && !isActive ? (
-          <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
+          <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] [word-break:break-word]">
             {content}
           </p>
         ) : isActive ? (

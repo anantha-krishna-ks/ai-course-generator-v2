@@ -196,3 +196,10 @@ All colors MUST be HSL.
     animation: page-fade-in 0.3s ease-in forwards;
   }
 }
+
+/* Prevent prose/text content from overflowing containers */
+.prose {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow: hidden;
+}
