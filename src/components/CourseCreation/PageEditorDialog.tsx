@@ -552,15 +552,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                            : "border-border hover:border-primary/30"
                                        )}
                                       onClick={() => {
-                                        // Expand section if collapsed
                                         setCollapsedSections((prev) => {
                                           const next = new Set(prev);
                                           next.delete(item.id);
                                           return next;
                                         });
-                                        // Navigate to the section itself
                                         onNavigateToPage?.(item.id);
-                                      }
+                                      }}
                                     >
                                       <div className="flex items-center justify-between">
                                         <span
