@@ -201,7 +201,7 @@ export function ContentBlock({
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text"
+              className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden"
             >
               {hasContent ? (
                 <div
