@@ -262,53 +262,54 @@ const MultipageCoursePreview = () => {
             )}
             style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
           >
-          {/* Left: Course intro card */}
-          <div className="flex-1 relative overflow-hidden">
-            {/* Background with hero image or gradient */}
-            <div className="absolute inset-0">
-              {heroImage ? (
-                <img src={heroImage} alt="" className="w-full h-full object-cover opacity-30" />
-              ) : null}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
-            </div>
-
-            <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
-              {/* Logo / brand */}
-
+          {/* Left: Course info panel */}
+          <div className="flex-1 relative overflow-hidden bg-primary">
+            <div className="relative z-10 flex flex-col justify-center h-full px-8 sm:px-12 lg:px-16 py-10">
               {/* Title */}
-              <div className="mt-auto space-y-6">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-[1.1] tracking-tight">
+              <div className="space-y-6 max-w-lg">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
                   {data.title}
                 </h1>
 
                 {/* Progress bar */}
                 <div className="space-y-2 max-w-md">
-                  <div className="w-full h-[2px] bg-border rounded-full" />
-                  <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
+                  <div className="w-full h-[2px] bg-primary-foreground/20 rounded-full" />
+                  <span className="text-xs text-primary-foreground/60 uppercase tracking-widest font-semibold">
                     You completed 0%
                   </span>
                 </div>
 
-                {/* Description / content preview */}
+                {/* Description */}
                 {descriptionText && (
-                  <div className="space-y-4 max-w-lg">
-                    <p className="text-foreground/70 text-base leading-relaxed">
-                      {descriptionText.substring(0, 300)}{descriptionText.length > 300 ? "..." : ""}
-                    </p>
-                  </div>
+                  <p className="text-primary-foreground/70 text-base leading-relaxed max-w-md">
+                    {descriptionText.substring(0, 300)}{descriptionText.length > 300 ? "..." : ""}
+                  </p>
                 )}
 
                 {/* Start button */}
                 <Button
                   onClick={() => startCourse(undefined, allPages[0]?.id)}
                   disabled={transitioning}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-3 h-auto text-sm font-semibold uppercase tracking-wider shadow-lg"
+                  className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-10 py-3 h-auto text-sm font-semibold uppercase tracking-wider shadow-lg"
                 >
-                  <Play className="w-4 h-4 mr-1" />
                   Start Course
                 </Button>
               </div>
             </div>
+          </div>
+
+          {/* Right: Hero image */}
+          <div className="flex-1 relative overflow-hidden min-h-[300px] lg:min-h-0">
+            {heroImage ? (
+              <img src={heroImage} alt={data.title} className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/30">
+                <div className="text-center space-y-3 text-muted-foreground/30">
+                  <ImageIcon className="w-16 h-16 mx-auto" />
+                  <p className="text-sm">Course Image</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: Course outline */}
