@@ -414,9 +414,18 @@ const MultipageCoursePreview = () => {
           </Button>
           <span className="text-sm font-medium text-foreground">Course Preview</span>
         </div>
+        <DeviceToggle />
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+        <div
+          className={cn(
+            "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
+            deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg",
+            deviceView === 'mobile' && "flex-col"
+          )}
+          style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+        >
         {/* Left: Sidebar with course info + outline */}
         <div className="w-[260px] flex-shrink-0 hidden md:flex flex-col border-r bg-card">
           {/* Course title card */}
