@@ -323,7 +323,7 @@ const MultipageCoursePreview = () => {
                     <span className="text-xs text-muted-foreground font-medium">Progress</span>
                     <span className="text-xs font-semibold text-primary">0%</span>
                   </div>
-                  <div className="w-full h-2 bg-border/60 rounded-full overflow-hidden backdrop-blur-sm">
+                  <div className="w-full h-2.5 bg-foreground/10 rounded-full overflow-hidden ring-1 ring-foreground/5">
                     <div className="h-full w-0 bg-gradient-to-r from-primary to-primary/70 rounded-full transition-all duration-500 ease-out" />
                   </div>
                 </div>
