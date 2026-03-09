@@ -263,13 +263,31 @@ const MultipageCoursePreview = () => {
             style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
           >
           {/* Left: Course intro card */}
-          <div className="flex-1 relative overflow-hidden">
+          <div className="w-full lg:w-[40%] relative overflow-hidden">
             {/* Background with hero image or gradient */}
             <div className="absolute inset-0">
               {heroImage ? (
                 <img src={heroImage} alt="" className="w-full h-full object-cover opacity-30" />
               ) : null}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
+            </div>
+
+            {/* Decorative elements */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
+              <div className="absolute bottom-20 -left-10 w-48 h-48 rounded-full bg-accent/10 blur-2xl" />
+              <div className="absolute top-1/3 right-0 w-32 h-32 rounded-full bg-primary/8 blur-2xl" />
+              {/* Subtle grid pattern */}
+              <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" className="text-foreground" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+              </svg>
+              {/* Decorative line accent */}
+              <div className="absolute left-8 top-16 bottom-16 w-[1px] bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
             </div>
 
             <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
@@ -312,7 +330,7 @@ const MultipageCoursePreview = () => {
           </div>
 
           {/* Right: Course outline */}
-          <div className="w-full lg:w-[420px] xl:w-[480px] border-l bg-card flex-shrink-0 overflow-auto">
+          <div className="w-full lg:w-[60%] border-l bg-card flex-shrink-0 overflow-auto">
             <ScrollArea className="h-full">
               <div className="p-6 space-y-1">
                 <div className="mb-4">
