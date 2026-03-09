@@ -49,58 +49,35 @@ const MultipageCoursePreview = () => {
     widescreen: { width: '100%', label: 'Widescreen' },
   };
 
+  const devices = [
+    { key: 'desktop' as const, icon: Monitor, label: 'Desktop' },
+    { key: 'tablet' as const, icon: Tablet, label: 'Tablet' },
+    { key: 'tablet-landscape' as const, icon: Tablet, label: 'Landscape', rotate: true },
+    { key: 'mobile' as const, icon: Smartphone, label: 'Mobile' },
+    { key: 'widescreen' as const, icon: Tv, label: 'Wide' },
+  ];
+
   const DeviceToggle = () => (
-    <div className="flex items-center gap-0.5 border border-border rounded-lg p-1 bg-background">
-      <button
-        onClick={() => setDeviceView('desktop')}
-        className={cn(
-          "p-1.5 rounded-md transition-colors",
-          deviceView === 'desktop' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-        )}
-        title="Desktop"
-      >
-        <Monitor className="w-4 h-4" />
-      </button>
-      <button
-        onClick={() => setDeviceView('tablet')}
-        className={cn(
-          "p-1.5 rounded-md transition-colors",
-          deviceView === 'tablet' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-        )}
-        title="Tablet"
-      >
-        <Tablet className="w-4 h-4" />
-      </button>
-      <button
-        onClick={() => setDeviceView('tablet-landscape')}
-        className={cn(
-          "p-1.5 rounded-md transition-colors",
-          deviceView === 'tablet-landscape' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-        )}
-        title="Tablet Landscape"
-      >
-        <Tablet className="w-4 h-4 rotate-90" />
-      </button>
-      <button
-        onClick={() => setDeviceView('mobile')}
-        className={cn(
-          "p-1.5 rounded-md transition-colors",
-          deviceView === 'mobile' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-        )}
-        title="Mobile"
-      >
-        <Smartphone className="w-4 h-4" />
-      </button>
-      <button
-        onClick={() => setDeviceView('widescreen')}
-        className={cn(
-          "p-1.5 rounded-md transition-colors",
-          deviceView === 'widescreen' ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-        )}
-        title="Widescreen"
-      >
-        <Tv className="w-4 h-4" />
-      </button>
+    <div className="flex items-center gap-1 rounded-full bg-muted/60 p-1 border border-border/50">
+      {devices.map(({ key, icon: Icon, label, rotate }) => {
+        const isActive = deviceView === key;
+        return (
+          <button
+            key={key}
+            onClick={() => setDeviceView(key)}
+            className={cn(
+              "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+              isActive
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+            title={label}
+          >
+            <Icon className={cn("w-3.5 h-3.5", rotate && "rotate-90")} />
+            {isActive && <span className="hidden sm:inline">{label}</span>}
+          </button>
+        );
+      })}
     </div>
   );
 
