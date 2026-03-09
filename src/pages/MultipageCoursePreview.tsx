@@ -294,7 +294,7 @@ const MultipageCoursePreview = () => {
               {/* Logo / brand */}
 
               {/* Title */}
-              <div className="mt-auto space-y-6">
+              <div className="mt-0 space-y-6">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground leading-[1.1] tracking-tight">
                   {data.title}
                 </h1>
