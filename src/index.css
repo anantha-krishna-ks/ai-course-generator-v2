@@ -177,38 +177,38 @@ All colors MUST be HSL.
     border-radius: 9999px;
   }
 
-  /* Page fold transition */
+  /* Page transition */
   @keyframes page-fold-out {
     0% {
       opacity: 1;
-      transform: perspective(1200px) rotateY(0deg);
-      transform-origin: left center;
+      transform: scale(1) translateX(0);
+      filter: blur(0);
     }
     100% {
       opacity: 0;
-      transform: perspective(1200px) rotateY(-90deg);
-      transform-origin: left center;
+      transform: scale(0.97) translateX(-20px);
+      filter: blur(4px);
     }
   }
 
   @keyframes page-fold-in {
     0% {
       opacity: 0;
-      transform: perspective(1200px) rotateY(90deg);
-      transform-origin: right center;
+      transform: scale(0.97) translateX(20px);
+      filter: blur(4px);
     }
     100% {
       opacity: 1;
-      transform: perspective(1200px) rotateY(0deg);
-      transform-origin: right center;
+      transform: scale(1) translateX(0);
+      filter: blur(0);
     }
   }
 
   .page-fold-out {
-    animation: page-fold-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: page-fold-out 0.35s cubic-bezier(0.4, 0, 0, 1) forwards;
   }
 
   .page-fold-in {
-    animation: page-fold-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: page-fold-in 0.45s cubic-bezier(0, 0, 0.2, 1) forwards;
   }
 }
