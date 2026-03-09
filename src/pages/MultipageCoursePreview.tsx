@@ -43,16 +43,12 @@ const MultipageCoursePreview = () => {
   const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
 
-  const startCourse = useCallback((pageId?: string) => {
+  const startCourse = useCallback((pageId?: string, fallbackFirstId?: string) => {
     setFoldDirection('out');
     setTransitioning(true);
     setTimeout(() => {
       setStarted(true);
-      if (pageId) {
-        setSelectedId(pageId);
-      } else if (allPages.length > 0) {
-        setSelectedId(allPages[0]?.id || null);
-      }
+      setSelectedId(pageId || fallbackFirstId || null);
       setFoldDirection('in');
       setTimeout(() => {
         setFoldDirection(null);
