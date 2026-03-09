@@ -192,67 +192,110 @@ const MultipageCoursePreview = () => {
           </div>
         </div>
 
-        {/* Hero section */}
         <div className="flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)]">
-          {/* Left: Info */}
-          <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 lg:px-16 xl:px-24 py-12 bg-primary/90">
-            <div className="max-w-xl space-y-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-sm font-bold">
+          {/* Left: Course intro card */}
+          <div className="flex-1 relative overflow-hidden">
+            {/* Background with hero image or gradient */}
+            <div className="absolute inset-0">
+              {heroImage ? (
+                <img src={heroImage} alt="" className="w-full h-full object-cover opacity-30" />
+              ) : null}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
+            </div>
+
+            <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
+              {/* Logo / brand */}
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
                   {data.title.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-primary-foreground/80 text-sm font-medium">Course</span>
+                <span className="text-foreground/60 text-sm font-medium tracking-wide">Course</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-[1.1] tracking-tight">
-                {data.title}
-              </h1>
+              {/* Title */}
+              <div className="mt-auto space-y-6">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground leading-[1.1] tracking-tight">
+                  {data.title}
+                </h1>
 
-              {descriptionText && (
-                <p className="text-primary-foreground/70 text-lg leading-relaxed max-w-md">
-                  {descriptionText.substring(0, 200)}{descriptionText.length > 200 ? "..." : ""}
-                </p>
-              )}
+                {/* Progress bar */}
+                <div className="space-y-2 max-w-md">
+                  <div className="w-full h-[2px] bg-border rounded-full" />
+                  <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
+                    You completed 0%
+                  </span>
+                </div>
 
-              <div className="flex items-center gap-4 text-primary-foreground/60 text-sm">
-                {totalPages > 0 && (
-                  <span className="flex items-center gap-1.5">
-                    <FileText className="w-4 h-4" />
-                    {totalPages} {totalPages === 1 ? "page" : "pages"}
-                  </span>
+                {/* Description / content preview */}
+                {descriptionText && (
+                  <div className="space-y-4 max-w-lg">
+                    <p className="text-foreground/70 text-base leading-relaxed">
+                      {descriptionText.substring(0, 300)}{descriptionText.length > 300 ? "..." : ""}
+                    </p>
+                  </div>
                 )}
-                {data.items.filter((i) => i.type === "section").length > 0 && (
-                  <span className="flex items-center gap-1.5">
-                    <BookOpen className="w-4 h-4" />
-                    {data.items.filter((i) => i.type === "section").length} sections
-                  </span>
-                )}
+
+                {/* Start button */}
+                <Button
+                  onClick={() => {
+                    setStarted(true);
+                    if (allPages.length > 0) setSelectedId(allPages[0].id);
+                  }}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-3 h-auto text-sm font-semibold uppercase tracking-wider shadow-lg"
+                >
+                  <Play className="w-4 h-4 mr-1" />
+                  Start Course
+                </Button>
               </div>
-
-              <Button
-                onClick={() => {
-                  setStarted(true);
-                  if (allPages.length > 0) setSelectedId(allPages[0].id);
-                }}
-                className="bg-foreground text-background hover:bg-foreground/90 rounded-full px-8 py-3 h-auto text-sm font-semibold uppercase tracking-wider"
-              >
-                Start Course
-              </Button>
             </div>
           </div>
 
-          {/* Right: Image */}
-          <div className="flex-1 relative overflow-hidden bg-muted/20 min-h-[300px] lg:min-h-0">
-            {heroImage ? (
-              <img src={heroImage} alt={data.title} className="absolute inset-0 w-full h-full object-cover" />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/40 to-muted/10">
-                <div className="text-center space-y-3 text-muted-foreground/40">
-                  <ImageIcon className="w-20 h-20 mx-auto" />
-                  <p className="text-sm">Course Image</p>
-                </div>
+          {/* Right: Course outline */}
+          <div className="w-full lg:w-[420px] xl:w-[480px] border-l bg-card flex-shrink-0 overflow-auto">
+            <ScrollArea className="h-full">
+              <div className="p-6 space-y-1">
+                {data.items.map((item) => {
+                  if (item.type === "section") {
+                    return (
+                      <div key={item.id} className="mb-2">
+                        {/* Section card */}
+                        <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0">
+                              <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
+                            </div>
+                            <span className="text-sm font-semibold text-foreground">{item.title || "Untitled section"}</span>
+                          </div>
+                          {/* Children count */}
+                          {item.children && item.children.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-border/40">
+                              <span className="text-xs text-muted-foreground uppercase tracking-wide">
+                                {item.children.length} {item.children.length === 1 ? "page" : "pages"}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // Top-level page or question
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm text-muted-foreground border-b border-border/30 last:border-b-0"
+                    >
+                      {item.type === "question" ? (
+                        <HelpCircle className="w-4 h-4 flex-shrink-0 text-muted-foreground/60" />
+                      ) : (
+                        <BookOpen className="w-4 h-4 flex-shrink-0 text-muted-foreground/60" />
+                      )}
+                      <span className="truncate">{item.title || "Untitled page"}</span>
+                    </div>
+                  );
+                })}
               </div>
-            )}
+            </ScrollArea>
           </div>
         </div>
       </div>
