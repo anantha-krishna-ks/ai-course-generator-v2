@@ -545,7 +545,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
-                                      className="rounded-xl border border-border bg-card p-4 space-y-3 cursor-pointer hover:border-primary/30 transition-colors"
+                                       className={cn(
+                                         "rounded-xl border bg-card p-4 space-y-3 cursor-pointer transition-colors",
+                                         item.id === currentPageId
+                                           ? "border-green-500 border-l-[3px] bg-muted/60"
+                                           : "border-border hover:border-primary/30"
+                                       )}
                                       onClick={() => {
                                         // Expand section if collapsed
                                         setCollapsedSections((prev) => {
