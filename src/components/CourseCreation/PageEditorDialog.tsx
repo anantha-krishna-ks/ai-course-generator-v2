@@ -692,7 +692,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   )}
                 </div>
               ) : (
-                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} />
+                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} />
               )}
             </div>
           </div>
