@@ -205,7 +205,7 @@ export function ContentBlock({
             >
               {hasContent ? (
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words overflow-hidden [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               ) : (
