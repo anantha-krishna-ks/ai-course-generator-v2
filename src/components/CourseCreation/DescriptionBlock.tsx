@@ -146,7 +146,7 @@ export function DescriptionBlock({
             }}
             onBlur={() => setIsActive(false)}
             placeholder="Tell your learners what the course will be about..."
-            className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px]"
+            className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px] break-words overflow-hidden"
             rows={1}
           />
         ) : (
