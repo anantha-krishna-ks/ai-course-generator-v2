@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import CreateCourse from "./pages/CreateCourse";
 import CreateCourseMultipage from "./pages/CreateCourseMultipage";
+import MultipageCoursePreview from "./pages/MultipageCoursePreview";
 import EditCourse from "./pages/EditCourse";
 import CoursePreview from "./pages/CoursePreview";
 import Blueprints from "./pages/Blueprints";
