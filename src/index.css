@@ -176,4 +176,39 @@ All colors MUST be HSL.
     background-color: hsl(var(--border));
     border-radius: 9999px;
   }
+
+  /* Page fold transition */
+  @keyframes page-fold-out {
+    0% {
+      opacity: 1;
+      transform: perspective(1200px) rotateY(0deg);
+      transform-origin: left center;
+    }
+    100% {
+      opacity: 0;
+      transform: perspective(1200px) rotateY(-90deg);
+      transform-origin: left center;
+    }
+  }
+
+  @keyframes page-fold-in {
+    0% {
+      opacity: 0;
+      transform: perspective(1200px) rotateY(90deg);
+      transform-origin: right center;
+    }
+    100% {
+      opacity: 1;
+      transform: perspective(1200px) rotateY(0deg);
+      transform-origin: right center;
+    }
+  }
+
+  .page-fold-out {
+    animation: page-fold-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .page-fold-in {
+    animation: page-fold-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }
