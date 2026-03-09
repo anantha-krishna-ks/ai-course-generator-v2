@@ -524,6 +524,16 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               variant="outline"
               size="icon"
               className="rounded-full border-border"
+              onClick={() => {
+                navigate("/multipage-preview", {
+                  state: {
+                    title,
+                    items,
+                    contentBlocks,
+                    pageBlocksMap,
+                  },
+                });
+              }}
             >
               <Play className="w-4 h-4" />
             </Button>
