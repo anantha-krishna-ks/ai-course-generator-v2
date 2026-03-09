@@ -298,9 +298,14 @@ const MultipageCoursePreview = () => {
               {/* Left margin line (like a notebook) */}
               <div className="absolute left-12 top-0 bottom-0 w-[1px] bg-destructive/10" />
 
-              {/* Subtle bookmark ribbon */}
-              <div className="absolute top-0 right-10 w-5 h-20 bg-primary/10 rounded-b-sm" />
-              <div className="absolute top-20 right-10 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[8px] border-l-primary/10 border-r-primary/10 border-t-primary/10" style={{ borderBottomColor: 'transparent' }} />
+              {/* Premium bookmark ribbon */}
+              <div className="absolute top-0 right-10 w-6 flex flex-col items-center drop-shadow-md">
+                <div className="w-full h-24 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15 rounded-b-none" />
+                <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none">
+                  <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill="hsl(var(--primary) / 0.15)" />
+                </svg>
+              </div>
+              <div className="absolute top-0 right-10 w-6 h-24 border-x border-primary/10" />
             </div>
 
             <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
