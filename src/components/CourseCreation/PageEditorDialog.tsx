@@ -546,19 +546,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   {(listeners: Record<string, unknown>) => (
                                     <div
                                        className={cn(
-                                         "rounded-xl border bg-card p-4 space-y-3 cursor-pointer transition-colors",
+                                         "rounded-xl border bg-card p-4 space-y-3 transition-colors",
                                          item.id === currentPageId
                                            ? "border-green-500 border-l-[3px] bg-muted/60"
-                                           : "border-border hover:border-primary/30"
+                                           : "border-border"
                                        )}
-                                      onClick={() => {
-                                        setCollapsedSections((prev) => {
-                                          const next = new Set(prev);
-                                          next.delete(item.id);
-                                          return next;
-                                        });
-                                        onNavigateToPage?.(item.id);
-                                      }}
                                     >
                                       <div className="flex items-center justify-between">
                                         <span
@@ -609,7 +601,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           </button>
                                         </div>
                                       </div>
-                                      <span className="text-[15px] font-semibold text-foreground block text-left">
+                                      <span
+                                        className="text-[15px] font-semibold text-foreground block text-left cursor-pointer hover:text-primary transition-colors"
+                                        onClick={() => {
+                                          setCollapsedSections((prev) => {
+                                            const next = new Set(prev);
+                                            next.delete(item.id);
+                                            return next;
+                                          });
+                                          onNavigateToPage?.(item.id);
+                                        }}
+                                      >
                                         {item.title || "Untitled section"}
                                       </span>
                                       {!collapsedSections.has(item.id) && (<>
