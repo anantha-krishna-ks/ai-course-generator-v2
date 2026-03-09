@@ -254,6 +254,7 @@ const MultipageCoursePreview = () => {
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
           </div>
+          <DeviceToggle />
         </div>
 
         <div className="flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)]">
