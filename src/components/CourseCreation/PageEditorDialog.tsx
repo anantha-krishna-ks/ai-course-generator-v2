@@ -114,6 +114,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     onBlocksChangeRef.current?.(blocks);
   }, [blocks]);
 
+  // Find the current item (page or section) from courseItems
+  const currentItem = (() => {
+    for (const item of courseItems) {
+      if (item.id === currentPageId) return item;
+      if (item.children) {
+        const child = item.children.find((c) => c.id === currentPageId);
+        if (child) return child;
+      }
+    }
+    return null;
+  })();
+
+  const isCurrentSection = currentItem?.type === "section";
+
   // Find all navigable page IDs from the outline
   const getAllPageIds = useCallback((): string[] => {
     const ids: string[] = [];
