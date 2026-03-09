@@ -330,7 +330,7 @@ const MultipageCoursePreview = () => {
     );
   }
 
-  // Content view with sidebar
+  // Content view with left sidebar navigation + right content
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
@@ -339,32 +339,124 @@ const MultipageCoursePreview = () => {
           <Button variant="ghost" size="icon" onClick={() => setStarted(false)} className="rounded-full">
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <span className="text-sm font-medium text-foreground truncate max-w-[200px]">{data.title}</span>
-        </div>
-        {/* Progress */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
-            You completed {progress}%
-          </span>
-          <div className="w-32 h-1.5 bg-muted rounded-full overflow-hidden">
-            <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
-          </div>
+          <span className="text-sm font-medium text-foreground">Course Preview</span>
         </div>
       </div>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Left: Content area */}
+        {/* Left: Sidebar with course info + outline */}
+        <div className="w-[260px] flex-shrink-0 hidden md:flex flex-col border-r bg-card">
+          {/* Course title card */}
+          <div className="bg-primary p-5 space-y-4">
+            <h2 className="text-lg font-bold text-primary-foreground leading-snug">
+              {data.title}
+            </h2>
+            <div className="space-y-1.5">
+              <div className="w-full h-1 bg-primary-foreground/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary-foreground rounded-full transition-all duration-500"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <span className="text-[11px] text-primary-foreground/70 uppercase tracking-widest font-semibold">
+                {progress}% Complete
+              </span>
+            </div>
+          </div>
+
+          {/* Outline navigation */}
+          <ScrollArea className="flex-1">
+            <div className="py-2">
+              {data.items.map((item) => {
+                if (item.type === "section") {
+                  const isExpanded = expandedSections.has(item.id);
+                  const hasActiveChild = item.children?.some((c) => c.id === selectedId);
+                  return (
+                    <div key={item.id}>
+                      <button
+                        className={cn(
+                          "w-full flex items-center justify-between px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
+                          hasActiveChild
+                            ? "border-primary bg-primary/[0.04] text-foreground font-medium"
+                            : "border-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                        )}
+                        onClick={() => toggleSection(item.id)}
+                      >
+                        <span className="truncate pr-2">{item.title || "Untitled section"}</span>
+                        {isExpanded ? (
+                          <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
+                        )}
+                      </button>
+                      {isExpanded && item.children && item.children.length > 0 && (
+                        <div>
+                          {item.children.map((child) => (
+                            <button
+                              key={child.id}
+                              onClick={() => setSelectedId(child.id)}
+                              className={cn(
+                                "w-full flex items-center gap-2 pl-8 pr-5 py-2.5 text-left text-[13px] transition-colors border-l-[3px]",
+                                child.id === selectedId
+                                  ? "border-primary bg-primary/[0.06] text-foreground font-medium"
+                                  : "border-transparent text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                              )}
+                            >
+                              {child.type === "question" ? (
+                                <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                              ) : (
+                                <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+                              )}
+                              <span className="truncate">{child.title || "Untitled page"}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedId(item.id)}
+                    className={cn(
+                      "w-full flex items-center gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
+                      item.id === selectedId
+                        ? "border-primary bg-primary/[0.06] text-foreground font-medium"
+                        : "border-transparent text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                    )}
+                  >
+                    {item.type === "question" ? (
+                      <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    ) : (
+                      <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+                    )}
+                    <span className="truncate">{item.title || "Untitled page"}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </div>
+
+        {/* Right: Content area */}
         <div className="flex-1 overflow-auto">
-          <div className="max-w-3xl mx-auto px-6 sm:px-10 py-10 space-y-8">
+          <div className="max-w-3xl mx-auto px-8 sm:px-12 py-10 space-y-8">
             {currentPage ? (
               <>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                {/* Page indicator */}
+                <div className="space-y-3">
+                  <span className="text-xs text-muted-foreground italic">
+                    Page {currentIndex + 1} of {totalPages}
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
                     {currentPage.title || "Untitled"}
                   </h2>
                   {currentPage.type === "question" && (
                     <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Quiz</span>
                   )}
+                  <div className="w-16 h-[3px] bg-primary rounded-full" />
                 </div>
 
                 {currentPageBlocks.length > 0 ? (
@@ -391,9 +483,6 @@ const MultipageCoursePreview = () => {
                     <ArrowLeft className="w-4 h-4" />
                     Previous
                   </Button>
-                  <span className="text-xs text-muted-foreground">
-                    {currentIndex + 1} / {totalPages}
-                  </span>
                   <Button
                     variant="ghost"
                     onClick={goToNext}
@@ -412,91 +501,6 @@ const MultipageCoursePreview = () => {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Right: Outline sidebar */}
-        <div className="w-[340px] border-l bg-muted/10 flex-shrink-0 hidden md:flex flex-col">
-          <ScrollArea className="flex-1">
-            <div className="p-5 space-y-1">
-              {data.items.map((item) => {
-                if (item.type === "section") {
-                  const isExpanded = expandedSections.has(item.id);
-                  const hasActiveChild = item.children?.some((c) => c.id === selectedId);
-                  return (
-                    <div key={item.id} className="mb-1">
-                      {/* Section card */}
-                      <div
-                        className={cn(
-                          "rounded-xl border bg-card p-4 cursor-pointer transition-colors",
-                          hasActiveChild ? "border-primary/30 bg-primary/[0.03]" : "border-border/60 hover:border-border"
-                        )}
-                        onClick={() => toggleSection(item.id)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-16 h-16 rounded-lg bg-muted/60 border border-border/40 flex items-center justify-center flex-shrink-0">
-                              <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
-                            </div>
-                            <span className="text-sm font-semibold text-foreground">{item.title || "Untitled section"}</span>
-                          </div>
-                          {isExpanded ? (
-                            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                          )}
-                        </div>
-                      </div>
-                      {/* Children */}
-                      {isExpanded && item.children && item.children.length > 0 && (
-                        <div className="mt-1 space-y-0.5 pl-2">
-                          {item.children.map((child) => (
-                            <button
-                              key={child.id}
-                              onClick={() => setSelectedId(child.id)}
-                              className={cn(
-                                "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-colors text-sm",
-                                child.id === selectedId
-                                  ? "bg-muted/60 text-foreground font-medium border-l-[3px] border-primary"
-                                  : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                              )}
-                            >
-                              {child.type === "question" ? (
-                                <HelpCircle className="w-4 h-4 flex-shrink-0" />
-                              ) : (
-                                <FileText className="w-4 h-4 flex-shrink-0" />
-                              )}
-                              <span className="truncate">{child.title || "Untitled page"}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-
-                // Top-level page or question
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedId(item.id)}
-                    className={cn(
-                      "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-colors text-sm",
-                      item.id === selectedId
-                        ? "bg-muted/60 text-foreground font-medium border-l-[3px] border-primary"
-                        : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                    )}
-                  >
-                    {item.type === "question" ? (
-                      <HelpCircle className="w-4 h-4 flex-shrink-0" />
-                    ) : (
-                      <FileText className="w-4 h-4 flex-shrink-0" />
-                    )}
-                    <span className="truncate">{item.title || "Untitled page"}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </ScrollArea>
         </div>
       </div>
     </div>
