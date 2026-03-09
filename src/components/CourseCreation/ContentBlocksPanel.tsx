@@ -21,18 +21,34 @@ interface ContentBlocksPanelProps {
   aiEnabled?: boolean;
 }
 
-function TemplateCard({ label, preview, onClick }: { label: string; preview: React.ReactNode; onClick: () => void }) {
+function TemplateCard({ label, preview, onClick, locked }: { label: string; preview: React.ReactNode; onClick: () => void; locked?: boolean }) {
   return (
     <div className="flex flex-col items-center gap-2">
       <button
-        onClick={onClick}
-        className="w-full rounded-xl border border-border/60 bg-card hover:border-primary/30 hover:shadow-md transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card"
+        onClick={locked ? undefined : onClick}
+        disabled={locked}
+        className={cn(
+          "w-full rounded-xl border bg-card transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card relative",
+          locked
+            ? "border-border/40 opacity-60 cursor-not-allowed"
+            : "border-border/60 hover:border-primary/30 hover:shadow-md"
+        )}
       >
+        {locked && (
+          <div className="absolute top-2.5 right-2.5">
+            <Lock className="w-3.5 h-3.5 text-muted-foreground/50" />
+          </div>
+        )}
         {preview}
       </button>
       <span className="text-[11px] font-medium text-muted-foreground tracking-wide">
         {label}
       </span>
+      {locked && (
+        <span className="text-[10px] text-muted-foreground/60 -mt-1 text-center leading-tight">
+          Enable AI Support to use this
+        </span>
+      )}
     </div>
   );
 }
