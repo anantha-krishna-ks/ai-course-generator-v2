@@ -583,9 +583,12 @@ const MultipageCoursePreview = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="py-16 text-center text-muted-foreground/50">
-                    <FileText className="w-12 h-12 mx-auto mb-3" />
-                    <p className="text-sm">No content on this page yet</p>
+                  <div className="py-20 flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center mb-5 ring-1 ring-border/40">
+                      <FileText className="w-7 h-7 text-muted-foreground/40" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground/60 mb-1">No content yet</p>
+                    <p className="text-xs text-muted-foreground/35">This page is waiting for content to be added</p>
                   </div>
                 )}
 
