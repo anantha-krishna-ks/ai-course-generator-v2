@@ -250,7 +250,11 @@ const MultipageCoursePreview = () => {
           <DeviceToggle />
         </div>
 
-        <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+        <div className={cn(
+          "flex-1 flex justify-center overflow-hidden bg-muted/20",
+          foldDirection === 'out' && "page-fold-out",
+          foldDirection === 'in' && "page-fold-in"
+        )}>
           <div
             className={cn(
               "flex-1 flex flex-col lg:flex-row min-h-[calc(100vh-57px)] transition-all duration-300",
