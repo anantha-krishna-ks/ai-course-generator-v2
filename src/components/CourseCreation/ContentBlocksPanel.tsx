@@ -257,11 +257,7 @@ const categories: BlockCategory[] = [
 
 export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
   const [activeCategory, setActiveCategory] = useState("text");
-  const rawCat = categories.find((c) => c.id === activeCategory)!;
-  const activeCat = {
-    ...rawCat,
-    templates: rawCat.templates.filter((t) => aiEnabled || t.id !== "quiz-generate"),
-  };
+  const activeCat = categories.find((c) => c.id === activeCategory)!;
 
   const handleTemplateClick = (templateId: string) => {
     // Quiz generate opens the dialog instead of adding a block
