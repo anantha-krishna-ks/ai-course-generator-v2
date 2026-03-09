@@ -296,10 +296,8 @@ const MultipageCoursePreview = () => {
 
                 {/* Start button */}
                 <Button
-                  onClick={() => {
-                    setStarted(true);
-                    if (allPages.length > 0) setSelectedId(allPages[0].id);
-                  }}
+                  onClick={() => startCourse(undefined, allPages[0]?.id)}
+                  disabled={transitioning}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-10 py-3 h-auto text-sm font-semibold uppercase tracking-wider shadow-lg"
                 >
                   <Play className="w-4 h-4 mr-1" />
