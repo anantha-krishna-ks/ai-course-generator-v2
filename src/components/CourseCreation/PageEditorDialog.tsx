@@ -553,11 +553,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           next.delete(item.id);
                                           return next;
                                         });
-                                        // Navigate to first child page if available
-                                        if (item.children && item.children.length > 0) {
-                                          onNavigateToPage?.(item.children[0].id);
-                                        }
-                                      }}
+                                        // Navigate to the section itself
+                                        onNavigateToPage?.(item.id);
+                                      }
                                     >
                                       <div className="flex items-center justify-between">
                                         <span
