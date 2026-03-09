@@ -347,10 +347,7 @@ const MultipageCoursePreview = () => {
                             {item.children.map((child) => (
                               <button
                                 key={child.id}
-                                onClick={() => {
-                                  setStarted(true);
-                                  setSelectedId(child.id);
-                                }}
+                                onClick={() => startCourse(child.id)}
                                 className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
                               >
                                 {child.type === "question" ? (
