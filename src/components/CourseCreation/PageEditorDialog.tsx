@@ -296,6 +296,37 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     setLastAddedBlockId(id);
   }, []);
 
+  // Drop handler for blocks dragged from ContentBlocksPanel
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleContentDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const data = e.dataTransfer.getData("application/content-block");
+    if (!data) return;
+    try {
+      const { templateId, categoryId } = JSON.parse(data);
+      const resolved = resolveTemplateDropData(templateId, categoryId);
+      if (!resolved) {
+        setShowQuizGenerateDialog(true);
+        return;
+      }
+      addBlock(resolved.type, undefined, resolved.variant);
+    } catch {}
+  }, [addBlock]);
+
+  const handleEditorDragOver = useCallback((e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes("application/content-block")) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      setIsDragOver(true);
+    }
+  }, []);
+
+  const handleEditorDragLeave = useCallback(() => {
+    setIsDragOver(false);
+  }, []);
+
   const updateBlock = useCallback((id: string, content: string) => {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content } : b)));
   }, []);
