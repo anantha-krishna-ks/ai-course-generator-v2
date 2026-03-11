@@ -474,6 +474,43 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     }, 1500);
   }, [activeItemId]);
 
+  // Drop handler for blocks dragged from ContentBlocksPanel
+  const [isDragOver, setIsDragOver] = useState<string | null>(null);
+
+  const handleContentDrop = useCallback((e: React.DragEvent, targetItemId: string) => {
+    e.preventDefault();
+    setIsDragOver(null);
+    const data = e.dataTransfer.getData("application/content-block");
+    if (!data) return;
+    try {
+      const { templateId, categoryId } = JSON.parse(data);
+      const resolved = resolveTemplateDropData(templateId, categoryId);
+      if (!resolved) {
+        // quiz-generate needs dialog
+        setActiveItemId(targetItemId);
+        setShowQuizGenerateDialog(true);
+        return;
+      }
+      if (targetItemId === "intro") {
+        addIntroBlock(resolved.type as ContentBlockData["type"], undefined, resolved.variant);
+      } else {
+        addBlockToItem(targetItemId, resolved.type, undefined, resolved.variant);
+      }
+    } catch {}
+  }, [addIntroBlock, addBlockToItem]);
+
+  const handleDragOver = useCallback((e: React.DragEvent, targetId: string) => {
+    if (e.dataTransfer.types.includes("application/content-block")) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      setIsDragOver(targetId);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragOver(null);
+  }, []);
+
   const handleBack = () => navigate("/dashboard");
 
   // Scroll to section/page
