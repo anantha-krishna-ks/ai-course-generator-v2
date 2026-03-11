@@ -1038,17 +1038,54 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       <div className="flex-1 h-px border-t border-dashed border-border" />
                     </div>
 
-                    {/* Section title area */}
+                    {/* Section title + image area */}
                     <div className="mb-6">
-                      <span className="text-sm text-muted-foreground block mb-2">Section title</span>
-                      <input
-                        type="text"
-                        value={item.title}
-                        onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
-                        className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
-                        placeholder="Untitled section"
-                      />
+                      <div className="flex gap-4">
+                        {/* Section image thumbnail */}
+                        <div
+                          onClick={() => setShowSectionImageDialog(item.id)}
+                          className="w-[120px] h-[110px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 group/thumb cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-all duration-200 relative overflow-hidden"
+                        >
+                          {sectionImages[item.id] ? (
+                            <>
+                              <img src={sectionImages[item.id]!} alt="Section thumbnail" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200">
+                                <ImageIcon className="w-5 h-5 text-white mb-1" />
+                                <span className="text-[10px] font-medium text-white">Change image</span>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="flex flex-col items-center gap-1.5 text-muted-foreground/50 group-hover/thumb:text-primary/60 transition-colors">
+                              <ImageIcon className="w-6 h-6" />
+                              <span className="text-[10px] font-medium">Add image</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Title input */}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm text-muted-foreground block mb-2">Section title</span>
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
+                            className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                            placeholder="Untitled section"
+                          />
+                        </div>
+                      </div>
                       <div className="border-t border-dashed border-border my-4" />
+
+                      {/* Section Image Dialog */}
+                      <SectionImageDialog
+                        open={showSectionImageDialog === item.id}
+                        onClose={() => setShowSectionImageDialog(null)}
+                        currentImage={sectionImages[item.id] || null}
+                        onImageChange={(url) => {
+                          setSectionImages((prev) => ({ ...prev, [item.id]: url }));
+                          setShowSectionImageDialog(null);
+                        }}
+                      />
                     </div>
 
                     {/* Section content blocks */}
