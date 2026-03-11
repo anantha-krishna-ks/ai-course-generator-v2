@@ -21,17 +21,28 @@ interface ContentBlocksPanelProps {
   aiEnabled?: boolean;
 }
 
-function TemplateCard({ label, preview, onClick, locked }: { label: string; preview: React.ReactNode; onClick: () => void; locked?: boolean }) {
+function TemplateCard({ label, preview, onClick, locked, templateId, categoryId }: { label: string; preview: React.ReactNode; onClick: () => void; locked?: boolean; templateId: string; categoryId: string }) {
+  const handleDragStart = (e: React.DragEvent) => {
+    if (locked) {
+      e.preventDefault();
+      return;
+    }
+    e.dataTransfer.setData("application/content-block", JSON.stringify({ templateId, categoryId }));
+    e.dataTransfer.effectAllowed = "copy";
+  };
+
   return (
     <div className="flex flex-col items-center gap-2">
       <button
         onClick={locked ? undefined : onClick}
         disabled={locked}
+        draggable={!locked}
+        onDragStart={handleDragStart}
         className={cn(
           "w-full rounded-xl border bg-card transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card relative",
           locked
             ? "border-border/40 opacity-60 cursor-not-allowed"
-            : "border-border/60 hover:border-primary/30 hover:shadow-md"
+            : "border-border/60 hover:border-primary/30 hover:shadow-md cursor-grab active:cursor-grabbing"
         )}
       >
         {locked && (
@@ -255,6 +266,21 @@ const categories: BlockCategory[] = [
   },
 ];
 
+/** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
+export function resolveTemplateDropData(
+  templateId: string,
+  categoryId: string
+): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description"; variant?: string } | null {
+  if (templateId === "quiz-generate") return null;
+  if (templateId === "question-block") return { type: "quiz", variant: templateId };
+  if (templateId === "image-top") return { type: "image-description", variant: "image-top" };
+  if (templateId === "image-bottom") return { type: "image-description", variant: "image-bottom" };
+  const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
+    text: "text", image: "image", video: "video", audio: "audio", doc: "doc",
+  };
+  return { type: typeMap[categoryId] || "text", variant: templateId };
+}
+
 export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
   const [activeCategory, setActiveCategory] = useState("text");
   const activeCat = categories.find((c) => c.id === activeCategory)!;
@@ -328,6 +354,8 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
               preview={tpl.preview}
               onClick={() => handleTemplateClick(tpl.id)}
               locked={tpl.id === "quiz-generate" && !aiEnabled}
+              templateId={tpl.id}
+              categoryId={activeCat.id}
             />
           ))}
         </div>

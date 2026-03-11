@@ -43,7 +43,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
-import { ContentBlocksPanel } from "./ContentBlocksPanel";
+import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 
@@ -294,6 +294,37 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       return [...prev, { id, type, content: defaultContent }];
     });
     setLastAddedBlockId(id);
+  }, []);
+
+  // Drop handler for blocks dragged from ContentBlocksPanel
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleContentDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const data = e.dataTransfer.getData("application/content-block");
+    if (!data) return;
+    try {
+      const { templateId, categoryId } = JSON.parse(data);
+      const resolved = resolveTemplateDropData(templateId, categoryId);
+      if (!resolved) {
+        setShowQuizGenerateDialog(true);
+        return;
+      }
+      addBlock(resolved.type, undefined, resolved.variant);
+    } catch {}
+  }, [addBlock]);
+
+  const handleEditorDragOver = useCallback((e: React.DragEvent) => {
+    if (e.dataTransfer.types.includes("application/content-block")) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      setIsDragOver(true);
+    }
+  }, []);
+
+  const handleEditorDragLeave = useCallback(() => {
+    setIsDragOver(false);
   }, []);
 
   const updateBlock = useCallback((id: string, content: string) => {
@@ -826,7 +857,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
 
-              {/* Content blocks with inline undo banners */}
+              {/* Content blocks with inline undo banners - drop zone */}
+              <div
+                onDragOver={handleEditorDragOver}
+                onDragLeave={handleEditorDragLeave}
+                onDrop={handleContentDrop}
+                className={cn("rounded-xl transition-all duration-200 min-h-[60px]", isDragOver && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
+              >
               {(blocks.length > 0 || deletedBlocks.size > 0) ? (
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -1050,6 +1087,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   </DndContext>
                 </TooltipProvider>
               ) : null}
+              </div>
 
               {/* Content type toolbar - below blocks */}
               <div className={cn("flex items-center gap-2", blocks.length > 0 && "mt-6")}>

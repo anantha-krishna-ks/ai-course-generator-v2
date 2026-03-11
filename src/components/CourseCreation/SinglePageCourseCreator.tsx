@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
-import { ContentBlocksPanel } from "./ContentBlocksPanel";
+import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
 import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
@@ -474,6 +474,43 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     }, 1500);
   }, [activeItemId]);
 
+  // Drop handler for blocks dragged from ContentBlocksPanel
+  const [isDragOver, setIsDragOver] = useState<string | null>(null);
+
+  const handleContentDrop = useCallback((e: React.DragEvent, targetItemId: string) => {
+    e.preventDefault();
+    setIsDragOver(null);
+    const data = e.dataTransfer.getData("application/content-block");
+    if (!data) return;
+    try {
+      const { templateId, categoryId } = JSON.parse(data);
+      const resolved = resolveTemplateDropData(templateId, categoryId);
+      if (!resolved) {
+        // quiz-generate needs dialog
+        setActiveItemId(targetItemId);
+        setShowQuizGenerateDialog(true);
+        return;
+      }
+      if (targetItemId === "intro") {
+        addIntroBlock(resolved.type as ContentBlockData["type"], undefined, resolved.variant);
+      } else {
+        addBlockToItem(targetItemId, resolved.type, undefined, resolved.variant);
+      }
+    } catch {}
+  }, [addIntroBlock, addBlockToItem]);
+
+  const handleDragOver = useCallback((e: React.DragEvent, targetId: string) => {
+    if (e.dataTransfer.types.includes("application/content-block")) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      setIsDragOver(targetId);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragOver(null);
+  }, []);
+
   const handleBack = () => navigate("/dashboard");
 
   // Scroll to section/page
@@ -508,6 +545,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     const deleted = itemDeletedBlocks[itemId] || new Map();
 
     return (
+      <div
+        onDragOver={(e) => handleDragOver(e, itemId)}
+        onDragLeave={handleDragLeave}
+        onDrop={(e) => handleContentDrop(e, itemId)}
+        className={cn("rounded-xl transition-all duration-200", isDragOver === itemId && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
+      >
       <TooltipProvider delayDuration={300}>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleItemBlockDragEnd(itemId, e)}>
           <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -601,6 +644,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
           </SortableContext>
         </DndContext>
       </TooltipProvider>
+      </div>
     );
   };
 
@@ -632,9 +676,6 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         </Button>
         <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addBlockToItem(itemId, "doc")}>
           <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Doc</span>
-        </Button>
-        <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addBlockToItem(itemId, "quiz")}>
-          <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Questions</span>
         </Button>
       </div>
       <button
@@ -914,6 +955,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             </div>
 
             {/* Introduction Content Blocks */}
+            <div
+              onDragOver={(e) => handleDragOver(e, "intro")}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleContentDrop(e, "intro")}
+              className={cn("rounded-xl transition-all duration-200", isDragOver === "intro" && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
+            >
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleIntroDragEnd}>
               <SortableContext items={contentBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-0" data-tour="content-blocks">
@@ -957,6 +1004,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 </div>
               </SortableContext>
             </DndContext>
+            </div>
 
             {/* Intro content toolbar */}
             <div className="flex items-center gap-2 mt-6">
