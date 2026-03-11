@@ -666,35 +666,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 {title.length > 40 && <TooltipContent side="bottom" className="max-w-[300px] text-sm">{title}</TooltipContent>}
               </Tooltip>
               <span className="text-muted-foreground/30 select-none">|</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors rounded-md px-3 py-1.5 border border-border bg-muted/50 hover:bg-muted w-fit shadow-sm">
-                    <FileStack className="w-3.5 h-3.5 text-muted-foreground" />
-                    Single-page layout
-                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="z-50 bg-background border border-border w-[220px] p-1.5">
-                  <DropdownMenuItem
-                    onClick={() => navigate("/create-course-multipage", { state: { title, layout: "multi-page", aiOptions: aiOptions?.enabled ? aiOptions : null } })}
-                    className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
-                  >
-                    <Layers className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium">Multi-page</span>
-                      <span className="text-[11px] text-muted-foreground">Sections with multiple pages</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md">
-                    <FileStack className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium">Single-page</span>
-                      <span className="text-[11px] text-muted-foreground">All content on one page</span>
-                    </div>
-                    <Check className="w-3.5 h-3.5 text-primary ml-auto" />
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} />
             </div>
           </div>
 
