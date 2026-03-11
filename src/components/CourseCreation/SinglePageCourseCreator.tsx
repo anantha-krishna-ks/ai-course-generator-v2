@@ -977,6 +977,46 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               </SortableContext>
             </DndContext>
 
+            {/* Intro content toolbar */}
+            <div className="flex items-center gap-2 mt-6">
+              <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
+                {aiEnabled && (
+                  <button
+                    onClick={() => { setActiveItemId("intro"); setShowAiBlock(!showAiBlock); }}
+                    className="relative gap-1.5 sm:gap-2 text-xs sm:text-[13px] h-8 sm:h-9 rounded-full px-3 sm:px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
+                  >
+                    <span className="absolute inset-0 rounded-full p-[1.5px]" style={{ background: 'linear-gradient(135deg, hsl(217, 91%, 70%), hsl(280, 65%, 65%), hsl(217, 91%, 55%))' }}>
+                      <span className="block w-full h-full rounded-full bg-background" />
+                    </span>
+                    <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4 relative" />
+                    <span className="relative hidden sm:inline">Create with AI</span>
+                    <span className="relative sm:hidden">AI</span>
+                  </button>
+                )}
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("text")}>
+                  <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Text</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("image")}>
+                  <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Image</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("video")}>
+                  <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Video</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("doc")}>
+                  <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Doc</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("quiz")}>
+                  <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Questions</span>
+                </Button>
+              </div>
+              <button
+                onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
+              >
+                <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">More</span>
+              </button>
+            </div>
+
             {/* Inline Sections & Pages */}
             {flatItems.map(({ item, sectionIndex, parentId }) => {
               if (item.type === "section") {
