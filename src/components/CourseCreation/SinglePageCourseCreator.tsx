@@ -57,7 +57,7 @@ interface PageContentBlock {
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description";
   content: string;
 }
 
