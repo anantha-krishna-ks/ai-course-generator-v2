@@ -57,7 +57,7 @@ interface PageContentBlock {
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description";
   content: string;
 }
 
@@ -151,21 +151,26 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   );
 
   // --- Intro content block handlers ---
-  const addIntroTextBlock = useCallback((insertAt?: number) => {
-    const defaultContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
-    const newBlock: ContentBlockData = { id: `block-${Date.now()}`, type: "text", content: defaultContent };
+  const addIntroBlock = useCallback((type: ContentBlockData["type"], insertAt?: number, variant?: string) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    let content = "";
+    if (type === "text") {
+      content = variant === "heading-text"
+        ? "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content.</p>"
+        : variant === "text-only"
+        ? "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge.</p>"
+        : `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
+    } else if (type === "image-description") {
+      content = JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
+    } else if (type === "quiz") {
+      content = "[]";
+    }
+    const newBlock: ContentBlockData = { id, type, content };
     setContentBlocks((prev) => {
       if (insertAt !== undefined) { const next = [...prev]; next.splice(insertAt, 0, newBlock); return next; }
       return [...prev, newBlock];
     });
-  }, []);
-
-  const addIntroImageBlock = useCallback((insertAt?: number) => {
-    const newBlock: ContentBlockData = { id: `block-${Date.now()}`, type: "image", content: "" };
-    setContentBlocks((prev) => {
-      if (insertAt !== undefined) { const next = [...prev]; next.splice(insertAt, 0, newBlock); return next; }
-      return [...prev, newBlock];
-    });
+    setLastAddedBlockId(id);
   }, []);
 
   const updateIntroBlockContent = (id: string, content: string) => {
@@ -889,7 +894,11 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             ) : (
               <ContentBlocksPanel
                 onAddBlock={(type, variant) => {
-                  if (activeItemId) addBlockToItem(activeItemId, type, undefined, variant);
+                  if (activeItemId === "intro") {
+                    addIntroBlock(type as ContentBlockData["type"], undefined, variant);
+                  } else if (activeItemId) {
+                    addBlockToItem(activeItemId, type, undefined, variant);
+                  }
                 }}
                 onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                 aiEnabled={aiEnabled}
@@ -935,17 +944,35 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                     <div key={block.id} className="group/item">
                       {index === 0 && block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                          <AddContentButton onAddText={() => addIntroTextBlock(0)} onAddImage={() => addIntroImageBlock(0)} />
+                          <AddContentButton
+                            variant="full"
+                            aiEnabled={aiEnabled}
+                            onAddText={() => addIntroBlock("text", 0)}
+                            onAddImage={() => addIntroBlock("image", 0)}
+                            onAddVideo={() => addIntroBlock("video", 0)}
+                            onAddDoc={() => addIntroBlock("doc", 0)}
+                            onAddQuiz={() => addIntroBlock("quiz", 0)}
+                            onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                          />
                         </div>
                       )}
                       {block.type === "description" ? (
                         <DescriptionBlock id={block.id} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
                       ) : (
-                        <ContentBlock id={block.id} type={block.type as "text" | "image"} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={!block.content} />
+                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} />
                       )}
                       {block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                          <AddContentButton onAddText={() => addIntroTextBlock(index + 1)} onAddImage={() => addIntroImageBlock(index + 1)} />
+                          <AddContentButton
+                            variant="full"
+                            aiEnabled={aiEnabled}
+                            onAddText={() => addIntroBlock("text", index + 1)}
+                            onAddImage={() => addIntroBlock("image", index + 1)}
+                            onAddVideo={() => addIntroBlock("video", index + 1)}
+                            onAddDoc={() => addIntroBlock("doc", index + 1)}
+                            onAddQuiz={() => addIntroBlock("quiz", index + 1)}
+                            onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                          />
                         </div>
                       )}
                     </div>
@@ -953,6 +980,46 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 </div>
               </SortableContext>
             </DndContext>
+
+            {/* Intro content toolbar */}
+            <div className="flex items-center gap-2 mt-6">
+              <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
+                {aiEnabled && (
+                  <button
+                    onClick={() => { setActiveItemId("intro"); setShowAiBlock(!showAiBlock); }}
+                    className="relative gap-1.5 sm:gap-2 text-xs sm:text-[13px] h-8 sm:h-9 rounded-full px-3 sm:px-4 flex items-center font-medium text-foreground/90 hover:bg-primary/5 transition-colors duration-200"
+                  >
+                    <span className="absolute inset-0 rounded-full p-[1.5px]" style={{ background: 'linear-gradient(135deg, hsl(217, 91%, 70%), hsl(280, 65%, 65%), hsl(217, 91%, 55%))' }}>
+                      <span className="block w-full h-full rounded-full bg-background" />
+                    </span>
+                    <Sparkles className="w-3.5 sm:w-4 h-3.5 sm:h-4 relative" />
+                    <span className="relative hidden sm:inline">Create with AI</span>
+                    <span className="relative sm:hidden">AI</span>
+                  </button>
+                )}
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("text")}>
+                  <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Text</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("image")}>
+                  <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Image</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("video")}>
+                  <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Video</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("doc")}>
+                  <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Doc</span>
+                </Button>
+                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("quiz")}>
+                  <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Questions</span>
+                </Button>
+              </div>
+              <button
+                onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
+              >
+                <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">More</span>
+              </button>
+            </div>
 
             {/* Inline Sections & Pages */}
             {flatItems.map(({ item, sectionIndex, parentId }) => {
