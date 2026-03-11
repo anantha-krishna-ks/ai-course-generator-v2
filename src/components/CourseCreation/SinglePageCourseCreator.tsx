@@ -939,7 +939,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             {/* Introduction Content Blocks */}
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleIntroDragEnd}>
               <SortableContext items={contentBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-0 overflow-hidden" data-tour="content-blocks">
+                <div className="space-y-0" data-tour="content-blocks">
                   {contentBlocks.map((block, index) => (
                     <div key={block.id} className="group/item">
                       {index === 0 && block.type !== "description" && (
