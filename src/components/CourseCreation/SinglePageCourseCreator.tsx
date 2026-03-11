@@ -36,6 +36,7 @@ import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
+import { SectionImageDialog } from "./SectionImageDialog";
 
 interface SinglePageCourseCreatorProps {
   courseTitle: string;
