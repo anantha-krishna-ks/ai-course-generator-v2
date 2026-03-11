@@ -45,6 +45,7 @@ import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
+import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -488,32 +489,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 )}
               </Tooltip>
               <span className="text-muted-foreground/30 select-none">|</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button data-tour="layout-selector" className="flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors rounded-md px-3 py-1.5 border border-border bg-muted/50 hover:bg-muted w-fit shadow-sm">
-                    <Layers className="w-3.5 h-3.5 text-muted-foreground" />
-                    Multi-page layout
-                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="z-50 bg-background border border-border w-[220px] p-1.5">
-                  <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md">
-                    <Layers className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium">Multi-page</span>
-                      <span className="text-[11px] text-muted-foreground">Sections with multiple pages</span>
-                    </div>
-                    <Check className="w-3.5 h-3.5 text-primary ml-auto" />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md">
-                    <FileStack className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium">Single-page</span>
-                      <span className="text-[11px] text-muted-foreground">All content on one page</span>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} />
             </div>
           </div>
 
