@@ -545,6 +545,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     const deleted = itemDeletedBlocks[itemId] || new Map();
 
     return (
+      <div
+        onDragOver={(e) => handleDragOver(e, itemId)}
+        onDragLeave={handleDragLeave}
+        onDrop={(e) => handleContentDrop(e, itemId)}
+        className={cn("rounded-xl transition-all duration-200", isDragOver === itemId && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
+      >
       <TooltipProvider delayDuration={300}>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleItemBlockDragEnd(itemId, e)}>
           <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -638,6 +644,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
           </SortableContext>
         </DndContext>
       </TooltipProvider>
+      </div>
     );
   };
 
