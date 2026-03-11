@@ -894,7 +894,11 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             ) : (
               <ContentBlocksPanel
                 onAddBlock={(type, variant) => {
-                  if (activeItemId) addBlockToItem(activeItemId, type, undefined, variant);
+                  if (activeItemId === "intro") {
+                    addIntroBlock(type as ContentBlockData["type"], undefined, variant);
+                  } else if (activeItemId) {
+                    addBlockToItem(activeItemId, type, undefined, variant);
+                  }
                 }}
                 onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                 aiEnabled={aiEnabled}
