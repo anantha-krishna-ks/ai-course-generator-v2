@@ -45,6 +45,7 @@ import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
+import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;

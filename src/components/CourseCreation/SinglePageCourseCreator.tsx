@@ -37,6 +37,7 @@ import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
+import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
 
 interface SinglePageCourseCreatorProps {
   courseTitle: string;
