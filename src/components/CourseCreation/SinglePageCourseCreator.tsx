@@ -940,17 +940,35 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                     <div key={block.id} className="group/item">
                       {index === 0 && block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                          <AddContentButton onAddText={() => addIntroTextBlock(0)} onAddImage={() => addIntroImageBlock(0)} />
+                          <AddContentButton
+                            variant="full"
+                            aiEnabled={aiEnabled}
+                            onAddText={() => addIntroBlock("text", 0)}
+                            onAddImage={() => addIntroBlock("image", 0)}
+                            onAddVideo={() => addIntroBlock("video", 0)}
+                            onAddDoc={() => addIntroBlock("doc", 0)}
+                            onAddQuiz={() => addIntroBlock("quiz", 0)}
+                            onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                          />
                         </div>
                       )}
                       {block.type === "description" ? (
                         <DescriptionBlock id={block.id} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
                       ) : (
-                        <ContentBlock id={block.id} type={block.type as "text" | "image"} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={!block.content} />
+                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} />
                       )}
                       {block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                          <AddContentButton onAddText={() => addIntroTextBlock(index + 1)} onAddImage={() => addIntroImageBlock(index + 1)} />
+                          <AddContentButton
+                            variant="full"
+                            aiEnabled={aiEnabled}
+                            onAddText={() => addIntroBlock("text", index + 1)}
+                            onAddImage={() => addIntroBlock("image", index + 1)}
+                            onAddVideo={() => addIntroBlock("video", index + 1)}
+                            onAddDoc={() => addIntroBlock("doc", index + 1)}
+                            onAddQuiz={() => addIntroBlock("quiz", index + 1)}
+                            onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                          />
                         </div>
                       )}
                     </div>
