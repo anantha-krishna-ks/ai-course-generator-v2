@@ -34,7 +34,7 @@ import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
-import { ContentBlocksPanel } from "./ContentBlocksPanel";
+import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
 import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
