@@ -21,17 +21,28 @@ interface ContentBlocksPanelProps {
   aiEnabled?: boolean;
 }
 
-function TemplateCard({ label, preview, onClick, locked }: { label: string; preview: React.ReactNode; onClick: () => void; locked?: boolean }) {
+function TemplateCard({ label, preview, onClick, locked, templateId, categoryId }: { label: string; preview: React.ReactNode; onClick: () => void; locked?: boolean; templateId: string; categoryId: string }) {
+  const handleDragStart = (e: React.DragEvent) => {
+    if (locked) {
+      e.preventDefault();
+      return;
+    }
+    e.dataTransfer.setData("application/content-block", JSON.stringify({ templateId, categoryId }));
+    e.dataTransfer.effectAllowed = "copy";
+  };
+
   return (
     <div className="flex flex-col items-center gap-2">
       <button
         onClick={locked ? undefined : onClick}
         disabled={locked}
+        draggable={!locked}
+        onDragStart={handleDragStart}
         className={cn(
           "w-full rounded-xl border bg-card transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card relative",
           locked
             ? "border-border/40 opacity-60 cursor-not-allowed"
-            : "border-border/60 hover:border-primary/30 hover:shadow-md"
+            : "border-border/60 hover:border-primary/30 hover:shadow-md cursor-grab active:cursor-grabbing"
         )}
       >
         {locked && (
