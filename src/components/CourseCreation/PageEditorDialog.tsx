@@ -880,7 +880,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         content={block.content}
                                         onChange={(content) => updateBlock(block.id, content)}
                                         onDelete={() => deleteBlock(block.id)}
-                                        onDuplicate={() => {}}
+                                        onDuplicate={() => duplicateBlock(block.id)}
                                         autoFocus={false}
                                         aiEnabled={aiEnabled}
                                         readOnly
@@ -986,7 +986,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     content={block.content}
                                     onChange={(content) => updateBlock(block.id, content)}
                                     onDelete={() => deleteBlock(block.id)}
-                                    onDuplicate={() => {}}
+                                    onDuplicate={() => duplicateBlock(block.id)}
                                     autoFocus={block.id === lastAddedBlockId}
                                     aiEnabled={aiEnabled}
                                   />
