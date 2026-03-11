@@ -43,7 +43,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
-import { ContentBlocksPanel } from "./ContentBlocksPanel";
+import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 
