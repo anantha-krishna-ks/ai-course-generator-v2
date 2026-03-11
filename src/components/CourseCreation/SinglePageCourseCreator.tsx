@@ -151,21 +151,26 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   );
 
   // --- Intro content block handlers ---
-  const addIntroTextBlock = useCallback((insertAt?: number) => {
-    const defaultContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
-    const newBlock: ContentBlockData = { id: `block-${Date.now()}`, type: "text", content: defaultContent };
+  const addIntroBlock = useCallback((type: ContentBlockData["type"], insertAt?: number, variant?: string) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    let content = "";
+    if (type === "text") {
+      content = variant === "heading-text"
+        ? "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content.</p>"
+        : variant === "text-only"
+        ? "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge.</p>"
+        : `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
+    } else if (type === "image-description") {
+      content = JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
+    } else if (type === "quiz") {
+      content = "[]";
+    }
+    const newBlock: ContentBlockData = { id, type, content };
     setContentBlocks((prev) => {
       if (insertAt !== undefined) { const next = [...prev]; next.splice(insertAt, 0, newBlock); return next; }
       return [...prev, newBlock];
     });
-  }, []);
-
-  const addIntroImageBlock = useCallback((insertAt?: number) => {
-    const newBlock: ContentBlockData = { id: `block-${Date.now()}`, type: "image", content: "" };
-    setContentBlocks((prev) => {
-      if (insertAt !== undefined) { const next = [...prev]; next.splice(insertAt, 0, newBlock); return next; }
-      return [...prev, newBlock];
-    });
+    setLastAddedBlockId(id);
   }, []);
 
   const updateIntroBlockContent = (id: string, content: string) => {
