@@ -997,6 +997,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 </div>
               </SortableContext>
             </DndContext>
+            </div>
 
             {/* Intro content toolbar */}
             <div className="flex items-center gap-2 mt-6">
