@@ -95,6 +95,9 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [items, setItems] = useState<CourseItem[]>([]);
   // Page-level content blocks map
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlock[]>>({});
+  // Section images map
+  const [sectionImages, setSectionImages] = useState<Record<string, string | null>>({});
+  const [showSectionImageDialog, setShowSectionImageDialog] = useState<string | null>(null);
   // Last added block tracking
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
 
