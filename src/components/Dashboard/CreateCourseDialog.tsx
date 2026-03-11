@@ -70,19 +70,14 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     if (selectedLayout === "multi-page") {
       setIsLoading(true);
     } else {
-      // Navigate directly for single-page
-      navigate("/create-course", { 
-        state: { 
-          title: courseTitle.trim(), 
-          layout: selectedLayout 
-        } 
-      });
-      onOpenChange(false);
+      // Show loader for single-page too
+      setIsLoading(true);
     }
   };
 
   const handleLoaderComplete = () => {
-    navigate("/create-course-multipage", { 
+    const route = selectedLayout === "multi-page" ? "/create-course-multipage" : "/create-course-singlepage";
+    navigate(route, { 
       state: { 
         title: courseTitle.trim(), 
         layout: selectedLayout,
