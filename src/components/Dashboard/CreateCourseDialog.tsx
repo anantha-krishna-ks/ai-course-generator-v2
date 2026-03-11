@@ -170,19 +170,23 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <svg width="120" height="86" viewBox="0 0 100 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                      <rect x="4" y="4" width="92" height="64" rx="4" className="fill-muted/50 stroke-border" strokeWidth="1" />
-                      <rect x="12" y="10" width="20" height="6" rx="2" className="fill-muted-foreground/20" />
-                      <text x="14" y="14.5" className="fill-muted-foreground/40" fontSize="4" fontFamily="sans-serif">logo</text>
-                      <rect x="12" y="20" width="40" height="5" rx="1.5" className="fill-primary/30" />
-                      <text x="14" y="23.5" className="fill-primary/60" fontSize="4" fontWeight="bold" fontFamily="sans-serif">Course Title</text>
-                      <rect x="12" y="30" width="76" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <rect x="12" y="35" width="60" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <rect x="12" y="40" width="70" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <line x1="12" y1="48" x2="88" y2="48" className="stroke-border" strokeWidth="0.5" strokeDasharray="2 2" />
-                      <rect x="12" y="52" width="50" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <rect x="12" y="57" width="65" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                    </svg>
+                    <div className="w-28 sm:w-32 h-16 sm:h-20 bg-muted rounded border border-border p-1.5 sm:p-2 flex gap-1.5 sm:gap-2">
+                      <div className="flex-1 space-y-0.5 sm:space-y-1">
+                        <div className="text-[7px] sm:text-[8px] text-muted-foreground font-medium">logo</div>
+                        <div className="text-[8px] sm:text-[9px] font-semibold text-foreground">Course Title</div>
+                        <div className="space-y-0.5 sm:space-y-1 mt-1 sm:mt-2">
+                          <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
+                          <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-4/5" />
+                          <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
+                        </div>
+                      </div>
+                      <div className="w-10 sm:w-12 space-y-0.5 sm:space-y-1">
+                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
+                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
+                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
+                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
+                      </div>
+                    </div>
                   </div>
                   <div className="text-center">
                     <h3 className="font-semibold text-sm sm:text-base text-foreground mb-0.5 sm:mb-1">Multi-page layout</h3>
@@ -223,18 +227,15 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <svg width="120" height="86" viewBox="0 0 100 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                      <rect x="4" y="4" width="92" height="64" rx="4" className="fill-muted/50 stroke-border" strokeWidth="1" />
-                      <rect x="12" y="10" width="20" height="6" rx="2" className="fill-muted-foreground/20" />
-                      <text x="14" y="14.5" className="fill-muted-foreground/40" fontSize="4" fontFamily="sans-serif">logo</text>
-                      <rect x="12" y="20" width="40" height="5" rx="1.5" className="fill-primary/30" />
-                      <text x="14" y="23.5" className="fill-primary/60" fontSize="4" fontWeight="bold" fontFamily="sans-serif">Course Title</text>
-                      <rect x="12" y="30" width="76" height="32" rx="2" className="fill-primary/8 stroke-primary/20" strokeWidth="0.5" />
-                      <rect x="18" y="36" width="64" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <rect x="18" y="41" width="50" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <rect x="18" y="46" width="58" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                      <rect x="18" y="51" width="40" height="2.5" rx="1" className="fill-muted-foreground/15" />
-                    </svg>
+                    <div className="w-28 sm:w-32 h-16 sm:h-20 bg-muted rounded border border-border p-1.5 sm:p-2">
+                      <div className="text-[7px] sm:text-[8px] text-muted-foreground font-medium">logo</div>
+                      <div className="text-[8px] sm:text-[9px] font-semibold text-foreground text-center mt-0.5 sm:mt-1">Course Title</div>
+                      <div className="space-y-0.5 sm:space-y-1 mt-1 sm:mt-2 px-3 sm:px-4">
+                        <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
+                        <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-4/5 mx-auto" />
+                        <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
+                      </div>
+                    </div>
                   </div>
                   <div className="text-center">
                     <h3 className="font-semibold text-sm sm:text-base text-foreground mb-0.5 sm:mb-1">Single-page layout</h3>
