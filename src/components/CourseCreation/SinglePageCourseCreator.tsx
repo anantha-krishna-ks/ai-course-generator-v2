@@ -986,9 +986,6 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("doc")}>
                   <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Doc</span>
                 </Button>
-                <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4" onClick={() => addIntroBlock("quiz")}>
-                  <MessageCircleQuestion className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Questions</span>
-                </Button>
               </div>
               <button
                 onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
