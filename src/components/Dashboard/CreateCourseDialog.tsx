@@ -76,7 +76,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   };
 
   const handleLoaderComplete = () => {
-    navigate("/create-course-multipage", { 
+    const route = selectedLayout === "multi-page" ? "/create-course-multipage" : "/create-course-singlepage";
+    navigate(route, { 
       state: { 
         title: courseTitle.trim(), 
         layout: selectedLayout,

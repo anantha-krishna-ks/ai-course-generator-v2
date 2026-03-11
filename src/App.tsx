@@ -36,6 +36,7 @@ const App = () => (
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/create-course" element={<ProtectedRoute><CreateCourse /></ProtectedRoute>} />
           <Route path="/create-course-multipage" element={<ProtectedRoute><CreateCourseMultipage /></ProtectedRoute>} />
+          <Route path="/create-course-singlepage" element={<ProtectedRoute><CreateCourseSinglepage /></ProtectedRoute>} />
           <Route path="/multipage-preview" element={<ProtectedRoute><MultipageCoursePreview /></ProtectedRoute>} />
           <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
           <Route path="/course-preview/:courseId" element={<ProtectedRoute><CoursePreview /></ProtectedRoute>} />
