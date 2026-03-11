@@ -948,6 +948,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             </div>
 
             {/* Introduction Content Blocks */}
+            <div
+              onDragOver={(e) => handleDragOver(e, "intro")}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleContentDrop(e, "intro")}
+              className={cn("rounded-xl transition-all duration-200", isDragOver === "intro" && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
+            >
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleIntroDragEnd}>
               <SortableContext items={contentBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-0" data-tour="content-blocks">
