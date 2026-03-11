@@ -1087,6 +1087,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   </DndContext>
                 </TooltipProvider>
               ) : null}
+              </div>
 
               {/* Content type toolbar - below blocks */}
               <div className={cn("flex items-center gap-2", blocks.length > 0 && "mt-6")}>
