@@ -54,7 +54,7 @@ export function AddContentButton({
       >
         {isFullToolbar ? (
           <div className="flex items-center gap-0.5 px-2 py-2">
-            <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex items-center flex-1 justify-evenly gap-0.5 shadow-sm flex-nowrap">
               {aiEnabled && (
                 <button
                   onClick={onAICreate}
