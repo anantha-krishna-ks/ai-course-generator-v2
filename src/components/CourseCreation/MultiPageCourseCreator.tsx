@@ -644,7 +644,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   items={contentBlocks.map((b) => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="mt-6 space-y-0 overflow-hidden" data-tour="content-blocks">
+                  <div className="mt-6 space-y-0" data-tour="content-blocks">
                     {(() => {
                       // Merge content blocks and deleted block banners by index
                       const deletedArr = Array.from(deletedBlocks.entries()).sort(

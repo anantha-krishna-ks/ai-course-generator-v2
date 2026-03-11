@@ -132,7 +132,7 @@ export function ContentBlock({
         }}
         style={style}
         className={cn(
-          "group/block relative animate-fade-in transition-shadow duration-200 min-w-0 overflow-hidden",
+          "group/block relative animate-fade-in transition-shadow duration-200 min-w-0",
           isDragging && "z-50 opacity-90 shadow-xl rounded-lg scale-[1.02]"
         )}
       >
