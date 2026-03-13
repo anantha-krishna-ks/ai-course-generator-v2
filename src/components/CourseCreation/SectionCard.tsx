@@ -28,6 +28,8 @@ interface SectionCardProps {
   title: string;
   inclusions?: string;
   aiEnabled?: boolean;
+  thumbnailUrl?: string | null;
+  onThumbnailChange?: (url: string | null) => void;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
   onDelete?: () => void;
