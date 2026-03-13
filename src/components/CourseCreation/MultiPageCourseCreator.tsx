@@ -683,9 +683,52 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     deleteItem(id);
   }, [selectedItemId, items, deleteItem]);
 
+  // Flatten all navigable IDs for prev/next
+  const allNavIds = (() => {
+    const ids: string[] = ["introduction"];
+    items.forEach((item) => {
+      ids.push(item.id);
+      item.children?.forEach((c) => ids.push(c.id));
+    });
+    return ids;
+  })();
+
+  const currentNavIndex = allNavIds.indexOf(selectedItemId);
+  const canGoPrev = currentNavIndex > 0;
+  const canGoNext = currentNavIndex < allNavIds.length - 1;
+  const goToPrev = () => { if (canGoPrev) setSelectedItemId(allNavIds[currentNavIndex - 1]); };
+  const goToNext = () => { if (canGoNext) setSelectedItemId(allNavIds[currentNavIndex + 1]); };
+
+  // Get breadcrumb info
+  const getBreadcrumb = () => {
+    if (selectedItemId === "introduction") return [{ label: "Introduction", icon: BookOpen }];
+    for (const item of items) {
+      if (item.id === selectedItemId) {
+        return [{ label: item.type === "section" ? (item.title || "Untitled section") : (item.title || "Untitled page"), icon: item.type === "section" ? LayoutGrid : FileText }];
+      }
+      if (item.children) {
+        const child = item.children.find((c) => c.id === selectedItemId);
+        if (child) {
+          return [
+            { label: item.title || "Untitled section", icon: LayoutGrid },
+            { label: child.title || "Untitled page", icon: FileText },
+          ];
+        }
+      }
+    }
+    return [];
+  };
+
+  // Get current page count label
+  const getPageLabel = () => {
+    const idx = currentNavIndex;
+    const total = allNavIds.length;
+    return `${idx + 1} / ${total}`;
+  };
+
   // --- RENDER ---
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-14 items-center justify-between px-4 sm:px-6">
@@ -726,548 +769,460 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         </div>
       </header>
 
-      {/* Main content: sidebar + editor */}
-      <div className="flex h-[calc(100vh-3.5rem)]">
-        {/* Left Sidebar */}
-        <div
-          className={cn(
-            "border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative",
-            sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[300px]"
-          )}
-          data-tour="sidebar-outline"
-        >
-          {/* Collapse button */}
-          {!sidebarCollapsed && (
+      {/* Navigation Bar — horizontal outline strip */}
+      <div className="border-b border-border bg-card/50 backdrop-blur-sm" data-tour="sidebar-outline">
+        <div className="flex items-center h-11 px-4 sm:px-6 gap-2 overflow-x-auto thin-scrollbar">
+          {/* Prev/Next navigation */}
+          <div className="flex items-center gap-1 shrink-0 mr-2">
             <button
-              onClick={() => setSidebarCollapsed(true)}
-              className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
+              onClick={goToPrev}
+              disabled={!canGoPrev}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
+              <ChevronLeft className="w-4 h-4 text-muted-foreground" />
             </button>
-          )}
-
-          {/* Tabs */}
-          <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
+            <span className="text-xs font-medium text-muted-foreground tabular-nums min-w-[40px] text-center">{getPageLabel()}</span>
             <button
-              onClick={() => setSidebarTab("outline")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors",
-                sidebarTab === "outline"
-                  ? "border-foreground text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              )}
+              onClick={goToNext}
+              disabled={!canGoNext}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              Course outline
-            </button>
-            <button
-              onClick={() => setSidebarTab("blocks")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors",
-                sidebarTab === "blocks"
-                  ? "border-foreground text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              Content blocks
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
 
-          {/* Sidebar content */}
-          <ScrollArea className="flex-1">
-            <div className="p-4">
-              {sidebarTab === "outline" ? (
-                <div className="space-y-2">
-                  {/* Add item button */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Navigate</span>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5 border-border rounded-full px-3" data-tour="add-item">
-                          <Plus className="w-3.5 h-3.5" />
-                          Add
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52 p-1.5">
-                        <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("section")}>
-                          <LayoutGrid className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-sm font-medium">New section</span>
-                            <span className="text-[11px] text-muted-foreground">Group related pages</span>
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("page")}>
-                          <FileText className="w-4 h-4 text-muted-foreground" />
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-sm font-medium">New page</span>
-                            <span className="text-[11px] text-muted-foreground">Single learning unit</span>
-                          </div>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+          <div className="w-px h-5 bg-border shrink-0" />
 
-                  {/* Introduction item */}
+          {/* Introduction pill */}
+          <button
+            onClick={() => setSelectedItemId("introduction")}
+            className={cn(
+              "shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+              selectedItemId === "introduction"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            )}
+          >
+            <BookOpen className="w-3 h-3" />
+            Intro
+          </button>
+
+          {/* Outline items as pills */}
+          {(() => {
+            let sectionIndex = 0;
+            return items.map((item) => {
+              if (item.type === "section") {
+                sectionIndex++;
+                const isSectionActive = selectedItemId === item.id;
+                const hasActiveChild = item.children?.some((c) => c.id === selectedItemId) ?? false;
+                const activeChild = item.children?.find((c) => c.id === selectedItemId);
+
+                return (
+                  <DropdownMenu key={item.id}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={cn(
+                          "shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                          (isSectionActive || hasActiveChild)
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <LayoutGrid className="w-3 h-3" />
+                        <span className="truncate max-w-[120px]">{item.title || `Section ${sectionIndex}`}</span>
+                        <ChevronDown className="w-3 h-3 opacity-60" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56 p-1.5">
+                      {/* Section header */}
+                      <DropdownMenuItem
+                        className={cn(
+                          "gap-2.5 px-3 py-2.5 rounded-md font-medium",
+                          isSectionActive && "bg-primary/10 text-primary"
+                        )}
+                        onClick={() => setSelectedItemId(item.id)}
+                      >
+                        <LayoutGrid className="w-4 h-4" />
+                        <span className="truncate">{item.title || "Untitled section"}</span>
+                      </DropdownMenuItem>
+                      {item.children && item.children.length > 0 && (
+                        <>
+                          <DropdownMenuSeparator />
+                          {item.children.map((child, idx) => (
+                            <DropdownMenuItem
+                              key={child.id}
+                              className={cn(
+                                "gap-2.5 px-3 py-2 rounded-md pl-6",
+                                child.id === selectedItemId && "bg-primary/10 text-primary font-medium"
+                              )}
+                              onClick={() => setSelectedItemId(child.id)}
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              <span className="truncate">{child.title || `Page ${idx + 1}`}</span>
+                            </DropdownMenuItem>
+                          ))}
+                        </>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="gap-2.5 px-3 py-2 rounded-md text-muted-foreground" onClick={() => addPageToSection(item.id)}>
+                        <Plus className="w-3.5 h-3.5" />
+                        Add page
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
+                        <Pencil className="w-3.5 h-3.5" /> Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
+                        <Copy className="w-3.5 h-3.5" /> Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              }
+
+              // Standalone page
+              const isPageActive = item.id === selectedItemId;
+              return (
+                <div key={item.id} className="shrink-0 flex items-center group/pill">
                   <button
-                    onClick={() => setSelectedItemId("introduction")}
+                    onClick={() => setSelectedItemId(item.id)}
                     className={cn(
-                      "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
-                      selectedItemId === "introduction"
-                        ? "bg-primary/10 text-primary border border-primary/20"
-                        : "text-foreground/80 hover:bg-muted"
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                      isPageActive
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >
-                    <BookOpen className="w-4 h-4 shrink-0" />
-                    Introduction
+                    <FileText className="w-3 h-3" />
+                    <span className="truncate max-w-[120px]">{item.title || "Untitled page"}</span>
                   </button>
-
-                  {/* Outline items */}
-                  {items.length > 0 && (
-                    <DndContext sensors={outlineSensors} collisionDetection={closestCenter} onDragEnd={handleOutlineDragEnd}>
-                      <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-                        <div className="space-y-1">
-                          {(() => {
-                            let sectionIndex = 0;
-                            return items.map((item) => {
-                              if (item.type === "section") {
-                                sectionIndex++;
-                                const isSectionSelected = selectedItemId === item.id;
-                                const hasSelectedChild = item.children?.some((c) => c.id === selectedItemId) ?? false;
-                                const isOpen = !collapsedSections.has(item.id);
-                                return (
-                                  <SortableOutlineWrapper key={item.id} id={item.id}>
-                                    {(listeners) => (
-                                      <div className={cn(
-                                        "rounded-lg border transition-all",
-                                        (isSectionSelected || hasSelectedChild) ? "border-primary/20 bg-primary/5" : "border-border/60 bg-card"
-                                      )}>
-                                        <div className="flex items-center gap-1 px-2 py-2">
-                                          <span className="shrink-0 cursor-grab active:cursor-grabbing opacity-0 hover:opacity-100 transition-opacity" {...listeners}>
-                                            <GripVertical className="w-3 h-3 text-muted-foreground/40" />
-                                          </span>
-                                          <button
-                                            onClick={() => {
-                                              setSelectedItemId(item.id);
-                                              setCollapsedSections((prev) => { const next = new Set(prev); next.delete(item.id); return next; });
-                                            }}
-                                            className={cn(
-                                              "flex-1 flex items-center gap-2 text-left min-w-0 py-0.5 rounded transition-colors",
-                                              isSectionSelected ? "text-primary font-medium" : "text-foreground/80 hover:text-foreground"
-                                            )}
-                                          >
-                                            <LayoutGrid className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-                                            <span className="text-sm truncate">{item.title || "Untitled section"}</span>
-                                          </button>
-                                          <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                              <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0" onClick={(e) => e.stopPropagation()}>
-                                                <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                                              </button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-44">
-                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
-                                                <Pencil className="w-3.5 h-3.5" /> Rename
-                                              </DropdownMenuItem>
-                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => addPageToSection(item.id)}>
-                                                <Plus className="w-3.5 h-3.5" /> Add page
-                                              </DropdownMenuItem>
-                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
-                                                <Copy className="w-3.5 h-3.5" /> Duplicate
-                                              </DropdownMenuItem>
-                                              <DropdownMenuSeparator />
-                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
-                                                <Trash2 className="w-3.5 h-3.5" /> Delete
-                                              </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                          </DropdownMenu>
-                                          <button onClick={() => setCollapsedSections((prev) => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} className="p-1 rounded-md hover:bg-muted transition-colors shrink-0">
-                                            {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
-                                          </button>
-                                        </div>
-                                        {/* Section children */}
-                                        {isOpen && item.children && item.children.length > 0 && (
-                                          <DndContext sensors={outlineSensors} collisionDetection={closestCenter} onDragEnd={(event) => {
-                                            const { active, over } = event;
-                                            if (over && active.id !== over.id) reorderChildItems(item.id, String(active.id), String(over.id));
-                                          }}>
-                                            <SortableContext items={item.children.map(c => c.id)} strategy={verticalListSortingStrategy}>
-                                              <div className="px-2 pb-2 space-y-0.5">
-                                                {item.children.map((child) => {
-                                                  const isChildSelected = child.id === selectedItemId;
-                                                  return (
-                                                    <SortableOutlineWrapper key={child.id} id={child.id}>
-                                                      {(childListeners) => (
-                                                        <div
-                                                          className={cn(
-                                                            "group/child flex items-center gap-1.5 py-1.5 px-2 rounded-md transition-colors cursor-pointer",
-                                                            isChildSelected ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground/70"
-                                                          )}
-                                                          onClick={() => setSelectedItemId(child.id)}
-                                                        >
-                                                          <span className="shrink-0 opacity-0 group-hover/child:opacity-100 cursor-grab active:cursor-grabbing" {...childListeners}>
-                                                            <GripVertical className="w-3 h-3 text-muted-foreground/40" />
-                                                          </span>
-                                                          <FileText className="w-3.5 h-3.5 shrink-0 text-muted-foreground/60" />
-                                                          <span className={cn("text-[13px] truncate flex-1", isChildSelected && "font-medium")}>
-                                                            {child.title || "Untitled page"}
-                                                          </span>
-                                                          <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                              <button className="opacity-0 group-hover/child:opacity-100 p-0.5 rounded hover:bg-muted shrink-0" onClick={(e) => e.stopPropagation()}>
-                                                                <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                                                              </button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end" className="w-40">
-                                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(child.title); setRenameTarget({ id: child.id, title: child.title }); }}>
-                                                                <Pencil className="w-3.5 h-3.5" /> Rename
-                                                              </DropdownMenuItem>
-                                                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(child.id)}>
-                                                                <Copy className="w-3.5 h-3.5" /> Duplicate
-                                                              </DropdownMenuItem>
-                                                              <DropdownMenuSeparator />
-                                                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(child.id)}>
-                                                                <Trash2 className="w-3.5 h-3.5" /> Delete
-                                                              </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                          </DropdownMenu>
-                                                        </div>
-                                                      )}
-                                                    </SortableOutlineWrapper>
-                                                  );
-                                                })}
-                                              </div>
-                                            </SortableContext>
-                                          </DndContext>
-                                        )}
-                                        {isOpen && (
-                                          <button
-                                            onClick={() => addPageToSection(item.id)}
-                                            className="flex items-center gap-1.5 px-4 pb-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                                          >
-                                            <Plus className="w-3 h-3" />
-                                            Add page
-                                          </button>
-                                        )}
-                                      </div>
-                                    )}
-                                  </SortableOutlineWrapper>
-                                );
-                              }
-                              if (item.type === "page") {
-                                const isPageSelected = item.id === selectedItemId;
-                                return (
-                                  <SortableOutlineWrapper key={item.id} id={item.id}>
-                                    {(listeners) => (
-                                      <div
-                                        onClick={() => setSelectedItemId(item.id)}
-                                        className={cn(
-                                          "group/nav-page flex items-center gap-2 px-3 py-2 rounded-lg transition-colors cursor-pointer",
-                                          isPageSelected
-                                            ? "bg-primary/10 text-primary border border-primary/20"
-                                            : "hover:bg-muted text-foreground/80"
-                                        )}
-                                      >
-                                        <span className="shrink-0 opacity-0 group-hover/nav-page:opacity-100 cursor-grab active:cursor-grabbing" {...listeners}>
-                                          <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-                                        </span>
-                                        <FileText className="w-4 h-4 shrink-0 text-muted-foreground/70" />
-                                        <span className={cn("text-sm truncate flex-1", isPageSelected && "font-medium")}>
-                                          {item.title || "Untitled page"}
-                                        </span>
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted shrink-0" onClick={(e) => e.stopPropagation()}>
-                                              <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                                            </button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="end" className="w-44">
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
-                                              <Pencil className="w-3.5 h-3.5" /> Rename
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
-                                              <Copy className="w-3.5 h-3.5" /> Duplicate
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
-                                              <Trash2 className="w-3.5 h-3.5" /> Delete
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                      </div>
-                                    )}
-                                  </SortableOutlineWrapper>
-                                );
-                              }
-                              return null;
-                            });
-                          })()}
-                        </div>
-                      </SortableContext>
-                    </DndContext>
-                  )}
-
-                  {items.length === 0 && (
-                    <div className="mt-6 text-center py-6 border border-dashed border-border/60 rounded-lg">
-                      <p className="text-xs text-muted-foreground">Add sections and pages to build your course</p>
-                    </div>
-                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-0.5 rounded-md opacity-0 group-hover/pill:opacity-100 hover:bg-muted transition-all ml-0.5">
+                        <MoreHorizontal className="w-3 h-3 text-muted-foreground" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-40">
+                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
+                        <Pencil className="w-3.5 h-3.5" /> Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
+                        <Copy className="w-3.5 h-3.5" /> Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              ) : (
-                <ContentBlocksPanel
-                  onAddBlock={(type, variant) => {
-                    if (selectedItemId === "introduction") {
-                      if (type === "text") addIntroTextBlock();
-                      else if (type === "image") addIntroImageBlock();
-                    } else {
-                      addPageBlock(type, undefined, variant);
-                    }
-                  }}
-                  onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
-                  aiEnabled={aiEnabled}
-                />
-              )}
-            </div>
-          </ScrollArea>
-        </div>
+              );
+            });
+          })()}
 
-        {/* Expand sidebar button when collapsed */}
-        {sidebarCollapsed && (
-          <button
-            onClick={() => setSidebarCollapsed(false)}
-            className="absolute left-0 top-[4.5rem] z-10 w-6 h-6 rounded-r-full border border-l-0 border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
-          >
-            <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-          </button>
-        )}
+          <div className="w-px h-5 bg-border shrink-0" />
 
-        {/* Main Editor Area */}
-        <div
-          className={cn(
-            "flex-1 overflow-y-auto thin-scrollbar transition-all",
-            isDragOver && "ring-2 ring-primary/30 ring-inset bg-primary/[0.02]"
-          )}
-          onDragOver={handleEditorDragOver}
-          onDragLeave={handleEditorDragLeave}
-          onDrop={handleContentDrop}
-        >
-          {selectedItemId === "introduction" ? (
-            /* ===== INTRODUCTION EDITOR ===== */
-            <div className="max-w-4xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-2 mb-6">
-                <BookOpen className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">Introduction</span>
-              </div>
-
-              {/* Course Title */}
-              <div className="relative group mb-2">
-                <textarea
-                  value={title}
-                  onChange={(e) => { if (e.target.value.length <= 275) setTitle(e.target.value); }}
-                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40 resize-none overflow-hidden leading-tight"
-                  placeholder="Untitled course"
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = 'auto';
-                    target.style.height = target.scrollHeight + 'px';
-                  }}
-                />
-                <div className="absolute bottom-0 left-0 w-full h-px bg-transparent group-focus-within:bg-primary transition-colors duration-200" />
-              </div>
-              <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-muted/50 rounded border border-border/60 mb-6">
-                {title.length}/275
-              </span>
-
-              {/* Decorative line */}
-              <div className="h-1 bg-primary/20 rounded-full w-full mb-8" />
-
-              {/* Content Blocks */}
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setIntroActiveId(e.active.id as string)}
-                onDragOver={(e) => setIntroOverId(e.over?.id as string | null)}
-                onDragEnd={handleIntroDragEnd}
-                onDragCancel={() => { setIntroActiveId(null); setIntroOverId(null); }}
-              >
-                <SortableContext items={introBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-                  <div className="space-y-0">
-                    {(() => {
-                      const deletedArr = Array.from(deletedIntroBlocks.entries()).sort(([, a], [, b]) => a.index - b.index);
-                      const elements: React.ReactNode[] = [];
-                      let blockIdx = 0;
-                      let deletedIdx = 0;
-                      let position = 0;
-
-                      while (blockIdx < introBlocks.length || deletedIdx < deletedArr.length) {
-                        if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
-                          const [deletedId] = deletedArr[deletedIdx];
-                          elements.push(
-                            <div key={`deleted-${deletedId}`} className="animate-fade-in my-2">
-                              <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
-                                <p className="text-sm text-muted-foreground italic">
-                                  Content was removed...
-                                  <button onClick={() => undoIntroDelete(deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2">
-                                    <Undo2 className="w-3 h-3" /> Undo
-                                  </button>
-                                </p>
-                                <button onClick={() => dismissIntroDeletedBlock(deletedId)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                                  <X className="w-3.5 h-3.5" /> Close
-                                </button>
-                              </div>
-                            </div>
-                          );
-                          deletedIdx++;
-                          position++;
-                          continue;
-                        }
-                        if (blockIdx < introBlocks.length) {
-                          const block = introBlocks[blockIdx];
-                          const index = blockIdx;
-                          const isOver = introOverId === block.id && introActiveId !== block.id;
-                          const activeBlockIdx = introBlocks.findIndex((b) => b.id === introActiveId);
-                          const showAbove = isOver && activeBlockIdx > index;
-                          const showBelow = isOver && activeBlockIdx < index;
-
-                          elements.push(
-                            <div key={block.id} className="group/item">
-                              {index === 0 && !introActiveId && block.type !== "description" && (
-                                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addIntroTextBlock(0)} onAddImage={() => addIntroImageBlock(0)} />
-                                </div>
-                              )}
-                              <div className="relative">
-                                <div className={cn("absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20", showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0")}>
-                                  <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                                  <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                                </div>
-                                {block.type === "description" ? (
-                                  <DescriptionBlock id={block.id} content={block.content} onChange={(c) => updateIntroBlockContent(block.id, c)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
-                                ) : (
-                                  <ContentBlock id={block.id} type={block.type as "text" | "image"} content={block.content} onChange={(c) => updateIntroBlockContent(block.id, c)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={!block.content} />
-                                )}
-                                <div className={cn("absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20", showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0")}>
-                                  <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                                  <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
-                                </div>
-                              </div>
-                              {!introActiveId && block.type !== "description" && (
-                                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addIntroTextBlock(index + 1)} onAddImage={() => addIntroImageBlock(index + 1)} />
-                                </div>
-                              )}
-                            </div>
-                          );
-                          blockIdx++;
-                          position++;
-                        }
-                      }
-                      return elements;
-                    })()}
-                  </div>
-                </SortableContext>
-                <DragOverlay dropAnimation={{ duration: 200, easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)" }}>
-                  {introActiveId ? (() => {
-                    const activeBlock = introBlocks.find((b) => b.id === introActiveId);
-                    const displayContent = activeBlock?.type === "description"
-                      ? (activeBlock.content || "Course description...")
-                      : (activeBlock?.content || "");
-                    return (
-                      <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
-                        <div className="prose prose-sm dark:prose-invert max-w-none text-foreground/60" dangerouslySetInnerHTML={{ __html: displayContent }} />
-                      </div>
-                    );
-                  })() : null}
-                </DragOverlay>
-              </DndContext>
-
-              {introBlocks.filter((b) => b.type !== "description").length === 0 && (
-                <div className="mt-6">
-                  <AddContentButton onAddText={() => addIntroTextBlock()} onAddImage={() => addIntroImageBlock()} />
-                </div>
-              )}
-            </div>
-          ) : isCurrentSection ? (
-            /* ===== SECTION EDITOR ===== */
-            <div className="max-w-4xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-2 mb-6">
+          {/* Add item */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-all" data-tour="add-item">
+                <Plus className="w-3 h-3" />
+                Add
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52 p-1.5">
+              <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("section")}>
                 <LayoutGrid className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Section</span>
-              </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium">New section</span>
+                  <span className="text-[11px] text-muted-foreground">Group related pages</span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("page")}>
+                <FileText className="w-4 h-4 text-muted-foreground" />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium">New page</span>
+                  <span className="text-[11px] text-muted-foreground">Single learning unit</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
 
-              {/* Section title */}
-              <input
-                type="text"
-                value={currentItem?.title || ""}
-                onChange={(e) => { if (e.target.value.length <= 255) updateItemTitle(selectedItemId, e.target.value); }}
-                className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40 mb-6"
-                placeholder="Untitled section"
+      {/* Breadcrumb bar */}
+      <div className="border-b border-border/60 bg-background px-6 sm:px-10">
+        <div className="max-w-4xl mx-auto flex items-center h-10 gap-2">
+          {getBreadcrumb().map((crumb, idx) => (
+            <span key={idx} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              {idx > 0 && <ChevronRight className="w-3 h-3 text-muted-foreground/40" />}
+              <crumb.icon className="w-3.5 h-3.5" />
+              <span className={cn(idx === getBreadcrumb().length - 1 ? "text-foreground font-medium" : "")}>
+                {crumb.label}
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Editor Area — full width, centered */}
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto thin-scrollbar transition-all",
+          isDragOver && "ring-2 ring-primary/30 ring-inset bg-primary/[0.02]"
+        )}
+        onDragOver={handleEditorDragOver}
+        onDragLeave={handleEditorDragLeave}
+        onDrop={handleContentDrop}
+      >
+        {selectedItemId === "introduction" ? (
+          /* ===== INTRODUCTION EDITOR ===== */
+          <div className="max-w-4xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+            {/* Course Title */}
+            <div className="relative group mb-2">
+              <textarea
+                value={title}
+                onChange={(e) => { if (e.target.value.length <= 275) setTitle(e.target.value); }}
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40 resize-none overflow-hidden leading-tight"
+                placeholder="Untitled course"
+                rows={1}
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = target.scrollHeight + 'px';
+                }}
               />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-transparent group-focus-within:bg-primary transition-colors duration-200" />
+            </div>
+            <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-muted/50 rounded border border-border/60 mb-6">
+              {title.length}/275
+            </span>
 
-              <div className="border-t border-dashed border-border my-6" />
+            {/* Decorative line */}
+            <div className="h-1 bg-primary/20 rounded-full w-full mb-8" />
 
-              {/* Child pages */}
-              <div className="space-y-3">
-                <span className="text-sm font-medium text-muted-foreground">Pages in this section</span>
-                {currentItem?.children && currentItem.children.length > 0 ? (
-                  <div className="space-y-2">
-                    {currentItem.children.map((child, idx) => (
+            {/* Content Blocks */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={(e) => setIntroActiveId(e.active.id as string)}
+              onDragOver={(e) => setIntroOverId(e.over?.id as string | null)}
+              onDragEnd={handleIntroDragEnd}
+              onDragCancel={() => { setIntroActiveId(null); setIntroOverId(null); }}
+            >
+              <SortableContext items={introBlocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-0">
+                  {(() => {
+                    const deletedArr = Array.from(deletedIntroBlocks.entries()).sort(([, a], [, b]) => a.index - b.index);
+                    const elements: React.ReactNode[] = [];
+                    let blockIdx = 0;
+                    let deletedIdx = 0;
+                    let position = 0;
+
+                    while (blockIdx < introBlocks.length || deletedIdx < deletedArr.length) {
+                      if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
+                        const [deletedId] = deletedArr[deletedIdx];
+                        elements.push(
+                          <div key={`deleted-${deletedId}`} className="animate-fade-in my-2">
+                            <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
+                              <p className="text-sm text-muted-foreground italic">
+                                Content was removed...
+                                <button onClick={() => undoIntroDelete(deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2">
+                                  <Undo2 className="w-3 h-3" /> Undo
+                                </button>
+                              </p>
+                              <button onClick={() => dismissIntroDeletedBlock(deletedId)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                                <X className="w-3.5 h-3.5" /> Close
+                              </button>
+                            </div>
+                          </div>
+                        );
+                        deletedIdx++;
+                        position++;
+                        continue;
+                      }
+                      if (blockIdx < introBlocks.length) {
+                        const block = introBlocks[blockIdx];
+                        const index = blockIdx;
+                        const isOver = introOverId === block.id && introActiveId !== block.id;
+                        const activeBlockIdx = introBlocks.findIndex((b) => b.id === introActiveId);
+                        const showAbove = isOver && activeBlockIdx > index;
+                        const showBelow = isOver && activeBlockIdx < index;
+
+                        elements.push(
+                          <div key={block.id} className="group/item">
+                            {index === 0 && !introActiveId && block.type !== "description" && (
+                              <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                                <AddContentButton onAddText={() => addIntroTextBlock(0)} onAddImage={() => addIntroImageBlock(0)} />
+                              </div>
+                            )}
+                            <div className="relative">
+                              <div className={cn("absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20", showAbove ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0")}>
+                                <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                                <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                              </div>
+                              {block.type === "description" ? (
+                                <DescriptionBlock id={block.id} content={block.content} onChange={(c) => updateIntroBlockContent(block.id, c)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
+                              ) : (
+                                <ContentBlock id={block.id} type={block.type as "text" | "image"} content={block.content} onChange={(c) => updateIntroBlockContent(block.id, c)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={!block.content} />
+                              )}
+                              <div className={cn("absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20", showBelow ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0")}>
+                                <div className="absolute -left-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                                <div className="absolute -right-1 -top-[3px] w-[9px] h-[9px] rounded-full bg-primary" />
+                              </div>
+                            </div>
+                            {!introActiveId && block.type !== "description" && (
+                              <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                                <AddContentButton onAddText={() => addIntroTextBlock(index + 1)} onAddImage={() => addIntroImageBlock(index + 1)} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                        blockIdx++;
+                        position++;
+                      }
+                    }
+                    return elements;
+                  })()}
+                </div>
+              </SortableContext>
+              <DragOverlay dropAnimation={{ duration: 200, easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)" }}>
+                {introActiveId ? (() => {
+                  const activeBlock = introBlocks.find((b) => b.id === introActiveId);
+                  const displayContent = activeBlock?.type === "description"
+                    ? (activeBlock.content || "Course description...")
+                    : (activeBlock?.content || "");
+                  return (
+                    <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
+                      <div className="prose prose-sm dark:prose-invert max-w-none text-foreground/60" dangerouslySetInnerHTML={{ __html: displayContent }} />
+                    </div>
+                  );
+                })() : null}
+              </DragOverlay>
+            </DndContext>
+
+            {introBlocks.filter((b) => b.type !== "description").length === 0 && (
+              <div className="mt-6">
+                <AddContentButton onAddText={() => addIntroTextBlock()} onAddImage={() => addIntroImageBlock()} />
+              </div>
+            )}
+          </div>
+        ) : isCurrentSection ? (
+          /* ===== SECTION EDITOR ===== */
+          <div className="max-w-4xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+            {/* Section title */}
+            <input
+              type="text"
+              value={currentItem?.title || ""}
+              onChange={(e) => { if (e.target.value.length <= 255) updateItemTitle(selectedItemId, e.target.value); }}
+              className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40 mb-6"
+              placeholder="Untitled section"
+            />
+
+            <div className="border-t border-dashed border-border my-6" />
+
+            {/* Child pages as cards */}
+            <div className="space-y-3">
+              <span className="text-sm font-medium text-muted-foreground">Pages in this section</span>
+              {currentItem?.children && currentItem.children.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {currentItem.children.map((child, idx) => {
+                    const childBlocks = pageBlocksMap[child.id] || [];
+                    const previewText = childBlocks.find(b => b.type === "text")?.content?.replace(/<[^>]*>/g, '').slice(0, 80) || "";
+                    return (
                       <div
                         key={child.id}
                         onClick={() => setSelectedItemId(child.id)}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-pointer transition-colors group"
+                        className="group p-4 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-sm cursor-pointer transition-all"
                       >
-                        <span className="text-xs text-muted-foreground font-medium w-6">{idx + 1}.</span>
-                        <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
-                        <span className="text-sm text-foreground flex-1 truncate">{child.title || "Untitled page"}</span>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">{idx + 1}</span>
+                          <FileText className="w-3.5 h-3.5 text-muted-foreground/60" />
+                        </div>
+                        <h4 className="text-sm font-medium text-foreground truncate mb-1">{child.title || "Untitled page"}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{previewText || "No content yet"}</p>
+                        <div className="flex items-center gap-1.5 mt-3 text-[10px] text-muted-foreground/50">
+                          <Layers className="w-3 h-3" />
+                          {childBlocks.length} block{childBlocks.length !== 1 ? "s" : ""}
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-sm text-muted-foreground">No pages in this section yet</p>
-                  </div>
-                )}
-                <Button variant="outline" size="sm" className="gap-1.5 mt-2" onClick={() => addPageToSection(selectedItemId)}>
-                  <Plus className="w-3.5 h-3.5" /> Add page
-                </Button>
-              </div>
-
-              {/* Section content blocks */}
-              <div className="border-t border-dashed border-border my-8" />
-              <span className="text-sm font-medium text-muted-foreground mb-4 block">Section content</span>
-
-              {renderPageEditor()}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted-foreground">No pages in this section yet</p>
+                </div>
+              )}
+              <Button variant="outline" size="sm" className="gap-1.5 mt-2" onClick={() => addPageToSection(selectedItemId)}>
+                <Plus className="w-3.5 h-3.5" /> Add page
+              </Button>
             </div>
-          ) : (
-            /* ===== PAGE EDITOR ===== */
-            <div className="max-w-4xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-2 mb-6">
-                <FileText className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Page</span>
-              </div>
 
-              {/* Page title */}
-              <input
-                type="text"
-                value={currentItem?.title || ""}
-                onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(selectedItemId, e.target.value); }}
-                className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40 mb-2"
-                placeholder="Untitled page"
-              />
+            {/* Section content blocks */}
+            <div className="border-t border-dashed border-border my-8" />
+            <span className="text-sm font-medium text-muted-foreground mb-4 block">Section content</span>
 
-              <div className="border-t border-dashed border-border my-6" />
+            {renderPageEditor()}
+          </div>
+        ) : (
+          /* ===== PAGE EDITOR ===== */
+          <div className="max-w-4xl mx-auto px-6 sm:px-10 py-8 sm:py-12">
+            {/* Page title */}
+            <input
+              type="text"
+              value={currentItem?.title || ""}
+              onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(selectedItemId, e.target.value); }}
+              className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40 mb-2"
+              placeholder="Untitled page"
+            />
 
-              {renderPageEditor()}
-            </div>
-          )}
-        </div>
+            <div className="border-t border-dashed border-border my-6" />
+
+            {renderPageEditor()}
+          </div>
+        )}
       </div>
+
+      {/* Bottom page navigator — slide deck style */}
+      {allNavIds.length > 1 && (
+        <div className="border-t border-border bg-card/80 backdrop-blur-sm">
+          <div className="flex items-center h-16 px-4 sm:px-6 gap-2 overflow-x-auto thin-scrollbar">
+            {allNavIds.map((navId) => {
+              const isActive = navId === selectedItemId;
+              let label = "Introduction";
+              let icon = BookOpen;
+              if (navId !== "introduction") {
+                const item = findPageItem(navId);
+                if (item) {
+                  label = item.title || (item.type === "section" ? "Section" : "Page");
+                  icon = item.type === "section" ? LayoutGrid : FileText;
+                }
+              }
+              return (
+                <button
+                  key={navId}
+                  onClick={() => setSelectedItemId(navId)}
+                  className={cn(
+                    "shrink-0 flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg border transition-all min-w-[72px] max-w-[100px]",
+                    isActive
+                      ? "border-primary bg-primary/5 shadow-sm"
+                      : "border-border/60 bg-background hover:bg-muted/50 hover:border-border"
+                  )}
+                >
+                  {React.createElement(icon, { className: cn("w-3.5 h-3.5 shrink-0", isActive ? "text-primary" : "text-muted-foreground/60") })}
+                  <span className={cn("text-[10px] truncate w-full text-center", isActive ? "text-primary font-medium" : "text-muted-foreground")}>
+                    {label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirm Dialog */}
       <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => { if (!open) setDeleteConfirmId(null); }}>
@@ -1433,7 +1388,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                               onAddAudio={() => addPageBlock("audio", currentBlockIdx + 1)}
                               onAddDoc={() => addPageBlock("doc", currentBlockIdx + 1)}
                               onAddQuiz={() => addPageBlock("quiz", currentBlockIdx + 1)}
-                              onMore={() => { setSidebarCollapsed(false); setSidebarTab("blocks"); }}
+                              onMore={() => {}}
                             />
                           );
                         }
@@ -1504,12 +1459,24 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" /><span className="hidden sm:inline">Doc</span>
             </Button>
           </div>
-          <button
-            onClick={() => { setSidebarCollapsed(false); setSidebarTab("blocks"); }}
-            className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
-          >
-            <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" /><span className="hidden sm:inline">More</span>
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer">
+                <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" /><span className="hidden sm:inline">More</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 p-1.5">
+              <DropdownMenuItem className="gap-2 text-sm" onClick={() => addPageBlock("audio")}>
+                <Mic className="w-4 h-4" /> Audio
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2 text-sm" onClick={() => addPageBlock("image-description")}>
+                <ImageIcon className="w-4 h-4" /> Image + Description
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2 text-sm" onClick={() => setShowQuizGenerateDialog(true)}>
+                <MessageCircleQuestion className="w-4 h-4" /> Quiz
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* AI Creation Block */}
