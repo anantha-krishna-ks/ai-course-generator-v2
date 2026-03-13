@@ -323,8 +323,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
   }, []);
 
-  const handleEditorDragLeave = useCallback(() => {
-    setIsDragOver(false);
+  const handleEditorDragLeave = useCallback((e: React.DragEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { clientX, clientY } = e;
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+      setIsDragOver(false);
+    }
   }, []);
 
   const updateBlock = useCallback((id: string, content: string) => {
@@ -771,7 +775,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
           )}
 
           {/* Main Content Area */}
-          <div className="flex-1 min-w-0 overflow-y-auto">
+            <div
+              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver && "bg-primary/5")}
+              onDragOver={handleEditorDragOver}
+              onDragLeave={handleEditorDragLeave}
+              onDrop={handleContentDrop}
+            >
             <div className="max-w-[800px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
               {isCurrentSection ? (
                 <>
@@ -857,13 +866,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
 
-              {/* Content blocks with inline undo banners - drop zone */}
-              <div
-                onDragOver={handleEditorDragOver}
-                onDragLeave={handleEditorDragLeave}
-                onDrop={handleContentDrop}
-                className={cn("rounded-xl transition-all duration-200 min-h-[60px]", isDragOver && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
-              >
+              {/* Content blocks with inline undo banners */}
+              <div className="min-h-[60px]">
               {(blocks.length > 0 || deletedBlocks.size > 0) ? (
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

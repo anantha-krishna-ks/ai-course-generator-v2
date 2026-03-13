@@ -33,13 +33,14 @@ function TemplateCard({ label, preview, onClick, locked, templateId, categoryId 
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <button
+      <div
+        role="button"
+        tabIndex={locked ? -1 : 0}
         onClick={locked ? undefined : onClick}
-        disabled={locked}
         draggable={!locked}
         onDragStart={handleDragStart}
         className={cn(
-          "w-full rounded-xl border bg-card transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card relative",
+          "w-full rounded-xl border bg-card transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card relative select-none",
           locked
             ? "border-border/40 opacity-60 cursor-not-allowed"
             : "border-border/60 hover:border-primary/30 hover:shadow-md cursor-grab active:cursor-grabbing"
@@ -51,7 +52,7 @@ function TemplateCard({ label, preview, onClick, locked, templateId, categoryId 
           </div>
         )}
         {preview}
-      </button>
+      </div>
       <span className="text-[11px] font-medium text-muted-foreground tracking-wide">
         {label}
       </span>
