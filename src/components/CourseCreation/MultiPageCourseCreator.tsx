@@ -535,7 +535,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
         {/* Left Panel - Course Overview */}
-        <div className="lg:w-1/2 relative overflow-hidden flex flex-col">
+        <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 pointer-events-none" />
@@ -775,7 +775,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         </div>
 
         {/* Right Panel - Course Outline */}
-        <div className="lg:w-1/2 bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto">
+        <div className="lg:w-[60%] bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto">
             <div className="p-6 sm:p-10">
               {/* Header row: Course outline + Add item */}
               <div className="flex items-center justify-between mb-6">
