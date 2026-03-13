@@ -492,26 +492,17 @@ export function SectionCard({
               </div>
             </div>
 
-            {/* Section thumbnail banner */}
-            {thumbnailUrl && (
-              <button
-                onClick={() => setShowImageDialog(true)}
-                className="group/banner relative w-full h-20 overflow-hidden cursor-pointer border-t border-border/40"
-                title="Change image"
-              >
-                <img
-                  src={thumbnailUrl}
-                  alt="Section thumbnail"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover/banner:scale-105"
+            {/* Inline image block */}
+            {(thumbnailUrl || showImageBlock) && (
+              <div className="px-4 pt-2 pb-1">
+                <ImageBlock
+                  imageUrl={thumbnailUrl || ""}
+                  onChange={(url) => {
+                    setThumbnailUrl(url);
+                    if (!url) setShowImageBlock(false);
+                  }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-black/0 group-hover/banner:bg-black/20 transition-colors duration-200 flex items-center justify-center">
-                  <div className="px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm text-[11px] font-medium text-foreground opacity-0 group-hover/banner:opacity-100 transition-all duration-200 flex items-center gap-1.5 shadow-sm">
-                    <ImageIcon className="w-3 h-3" />
-                    Change image
-                  </div>
-                </div>
-              </button>
+              </div>
             )}
 
             {/* Learning Objective (inline, collapsible) */}
