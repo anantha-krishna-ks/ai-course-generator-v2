@@ -271,6 +271,8 @@ export function SectionCard({
   title,
   inclusions = "",
   aiEnabled = false,
+  thumbnailUrl: externalThumbnail,
+  onThumbnailChange,
   onTitleChange,
   onInclusionsChange,
   onDelete,
