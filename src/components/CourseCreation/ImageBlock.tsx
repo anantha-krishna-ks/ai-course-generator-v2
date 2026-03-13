@@ -464,7 +464,10 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             Click to upload or drag &amp; drop
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            JPG, JPEG, PNG up to 25 MB
+            Recommended size: from 240×280px
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Allowed formats: JPEG, JPG, PNG, BMP, GIF
           </p>
         </div>
         {aiEnabled && (
@@ -484,7 +487,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/jpg,image/png,image/bmp,image/gif"
           className="hidden"
           onChange={handleInputChange}
         />
