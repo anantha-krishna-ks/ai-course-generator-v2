@@ -7,6 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { DescriptionEditor } from "./DescriptionEditor";
 import { cn } from "@/lib/utils";
 
 interface DescriptionBlockProps {
@@ -24,8 +25,7 @@ export function DescriptionBlock({
   onClear,
   onDuplicate,
 }: DescriptionBlockProps) {
-  const [isActive, setIsActive] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -42,14 +42,19 @@ export function DescriptionBlock({
     transition,
   };
 
-  // Auto-resize textarea on activation
+  // Click outside to collapse
   useEffect(() => {
-    if (isActive && textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-      textareaRef.current.focus();
-    }
-  }, [isActive]);
+    if (!isEditing) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (blockRef.current && !blockRef.current.contains(e.target as Node)) {
+        setIsEditing(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isEditing]);
+
+  const hasContent = content && content !== "<p></p>" && content.replace(/<[^>]*>/g, "").trim() !== "";
 
   const SidebarButton = ({
     icon: Icon,
@@ -120,40 +125,29 @@ export function DescriptionBlock({
       />
 
       {/* Content area */}
-      <div
-        className={cn(
-          "rounded-lg border px-5 pt-4 transition-colors cursor-text overflow-hidden",
-          isActive
-            ? "border-foreground/20 bg-primary/[0.04]"
-            : "border-transparent pb-4"
-        )}
-        onClick={() => {
-          if (!isActive) setIsActive(true);
-        }}
-      >
-        {content.trim() && !isActive ? (
-          <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] [word-break:break-word]">
-            {content}
-          </p>
-        ) : isActive ? (
-          <textarea
-            ref={textareaRef}
-            value={content}
-            onChange={(e) => {
-              onChange(e.target.value);
-              e.target.style.height = "auto";
-              e.target.style.height = e.target.scrollHeight + "px";
-            }}
-            onBlur={() => setIsActive(false)}
+      <div className="w-full">
+        {isEditing ? (
+          <DescriptionEditor
+            content={content}
+            onChange={onChange}
             placeholder="Tell your learners what the course will be about..."
-            className="w-full bg-transparent text-base text-foreground leading-relaxed resize-none outline-none placeholder:text-muted-foreground/60 min-h-[28px] break-words overflow-hidden"
-            rows={1}
           />
         ) : (
-          <p className="text-base text-muted-foreground/60 select-none">
-            <span className="mr-1.5">+</span>
-            Tell your learners what the course will be about...
-          </p>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
+          >
+            {hasContent ? (
+              <div
+                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            ) : (
+              <span className="text-lg text-foreground/40 italic">
+                Tell your learners what the course will be about...
+              </span>
+            )}
+          </button>
         )}
       </div>
     </div>
