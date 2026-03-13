@@ -535,7 +535,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
         {/* Left Panel - Course Overview */}
-        <div className="lg:w-1/2 relative overflow-hidden flex flex-col">
+        <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 pointer-events-none" />
