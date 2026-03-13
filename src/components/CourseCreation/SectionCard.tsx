@@ -296,7 +296,7 @@ export function SectionCard({
     if (onThumbnailChange) onThumbnailChange(url);
     else setInternalThumbnail(url);
   };
-  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [showImageBlock, setShowImageBlock] = useState(false);
   const [internalPages, setInternalPages] = useState<PageEntry[]>([]);
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
