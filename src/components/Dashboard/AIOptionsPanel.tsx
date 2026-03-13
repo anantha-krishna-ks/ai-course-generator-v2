@@ -133,6 +133,10 @@ export function AIConfigView({
   onBack: () => void;
   mode?: AIMode;
 }) {
+  const supportingDocsRef = useRef<HTMLInputElement>(null);
+  const guidelinesDocsRef = useRef<HTMLInputElement>(null);
+  const exclusionsDocsRef = useRef<HTMLInputElement>(null);
+
   const update = (patch: Partial<AIOptions>) =>
     onChange({ ...options, ...patch });
 
@@ -145,11 +149,12 @@ export function AIConfigView({
     });
   };
 
-  const handleFileSelect = () => {
-    const mockFile = `Document_${Date.now().toString(36)}.pdf`;
-    update({
-      supportingDocuments: [...options.supportingDocuments, mockFile],
-    });
+  const handleFilesSelected = (
+    files: FileList | File[],
+    key: "supportingDocuments" | "guidelinesDocuments" | "exclusionsDocuments"
+  ) => {
+    const newDocs = Array.from(files).map((f) => f.name);
+    update({ [key]: [...options[key], ...newDocs] });
   };
 
   const removeDocument = (index: number) => {
