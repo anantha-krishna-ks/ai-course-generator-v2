@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks } from "lucide-react";
+import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, BookOpen } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -72,11 +72,13 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
     <>
       <div className="flex items-center gap-2 group/page">
         <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/page:opacity-100">
-          <GripVertical className="w-4 h-4 text-muted-foreground/50" />
+          <GripVertical className="w-4 h-4 text-muted-foreground/40" />
         </button>
-        <div className="rounded-lg border border-border bg-card overflow-hidden flex-1 min-w-0">
-          <div className="flex items-center gap-2 px-4 py-3">
-            <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+        <div className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden flex-1 min-w-0 transition-shadow duration-200 hover:shadow-md">
+          <div className="flex items-center gap-3 px-4 py-3.5">
+            <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+              <BookOpen className="w-4 h-4 text-muted-foreground/60" />
+            </div>
             <div className="flex-1 min-w-0">
               <input
                 ref={inputRef}
@@ -90,35 +92,38 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
                   }
                 }}
                 className={cn(
-                  "w-full text-sm text-foreground bg-transparent border-b-[1.5px] outline-none placeholder:text-muted-foreground/50 transition-all duration-200",
-                  isFocused ? "border-primary/50" : "border-transparent"
+                  "w-full text-sm font-medium text-foreground bg-transparent border-b outline-none placeholder:text-muted-foreground/40 transition-all duration-200 py-0.5",
+                  isFocused ? "border-primary/40" : "border-transparent"
                 )}
                 placeholder="Enter page title..."
               />
             </div>
             <span className={cn(
-              "text-xs text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
+              "text-[10px] text-muted-foreground/60 tabular-nums shrink-0 transition-opacity duration-200",
               isFocused ? "opacity-100" : "opacity-0"
             )}>
               {title.length}/{MAX_PAGE_TITLE_LENGTH}
             </span>
-            {/* Inclusions indicator */}
             {hasInclusions && (
               <button
                 onClick={() => setShowInclusionsDialog(true)}
-                className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium hover:bg-primary/15 transition-colors shrink-0"
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/8 text-primary text-[10px] font-medium hover:bg-primary/12 transition-colors shrink-0"
               >
-                <ListChecks className="w-3 h-3" />
+                <ListChecks className="w-2.5 h-2.5" />
                 Inclusions
               </button>
             )}
-            <Button variant="outline" size="sm" className="text-xs border-border h-8 shrink-0" onClick={() => onOpenEditor?.()}>
+            <button
+              onClick={() => onOpenEditor?.()}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors shrink-0"
+            >
               Open
-            </Button>
+              <ChevronRight className="w-3 h-3" />
+            </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
-                  <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                  <MoreHorizontal className="w-4 h-4 text-muted-foreground/60" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
