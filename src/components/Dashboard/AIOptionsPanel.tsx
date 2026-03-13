@@ -429,21 +429,27 @@ export function AIConfigView({
               onDrop={(e) => {
                 e.preventDefault();
                 e.currentTarget.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
-                const files = Array.from(e.dataTransfer.files);
-                if (files.length > 0) {
-                  const newDocs = files.map(f => f.name);
-                  update({ exclusionsDocuments: [...options.exclusionsDocuments, ...newDocs] });
-                }
+                handleFilesSelected(e.dataTransfer.files, "exclusionsDocuments");
               }}
-              onClick={() => {
-                const mockFile = `Exclusions_${Date.now().toString(36)}.pdf`;
-                update({ exclusionsDocuments: [...options.exclusionsDocuments, mockFile] });
-              }}
+              onClick={() => exclusionsDocsRef.current?.click()}
               className="w-full border-2 border-dashed border-border/80 rounded-lg py-4 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Upload className="w-4 h-4" />
               <span className="text-sm font-medium">Upload Exclusions Document</span>
             </div>
+            <input
+              ref={exclusionsDocsRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files?.length) {
+                  handleFilesSelected(e.target.files, "exclusionsDocuments");
+                  e.target.value = "";
+                }
+              }}
+            />
           </div>
         </div>
       </div>
