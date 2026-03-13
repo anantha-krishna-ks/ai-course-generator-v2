@@ -394,32 +394,15 @@ export function SectionCard({
 
               {/* Quick actions */}
               <div className="flex items-center gap-1 shrink-0">
-                {/* Thumbnail preview / add image */}
-                <button
-                  onClick={() => setShowImageDialog(true)}
-                  className={cn(
-                    "group/thumb relative rounded-lg transition-all duration-200 overflow-hidden",
-                    thumbnailUrl
-                      ? "w-9 h-9 ring-1 ring-border/60 hover:ring-primary/40 hover:shadow-md"
-                      : "p-1.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted rounded-md"
-                  )}
-                  title={thumbnailUrl ? "Change image" : "Add image"}
-                >
-                  {thumbnailUrl ? (
-                    <>
-                      <img
-                        src={thumbnailUrl}
-                        alt="Section thumbnail"
-                        className="w-full h-full object-cover transition-transform duration-200 group-hover/thumb:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover/thumb:bg-black/30 transition-colors duration-200 flex items-center justify-center">
-                        <ImageIcon className="w-3 h-3 text-white opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200" />
-                      </div>
-                    </>
-                  ) : (
+                {!thumbnailUrl && (
+                  <button
+                    onClick={() => setShowImageDialog(true)}
+                    className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted transition-colors"
+                    title="Add image"
+                  >
                     <ImageIcon className="w-3.5 h-3.5" />
-                  )}
-                </button>
+                  </button>
+                )}
 
                 {hasInclusions && (
                   <button
@@ -499,6 +482,28 @@ export function SectionCard({
                 </button>
               </div>
             </div>
+
+            {/* Section thumbnail banner */}
+            {thumbnailUrl && (
+              <button
+                onClick={() => setShowImageDialog(true)}
+                className="group/banner relative w-full h-20 overflow-hidden cursor-pointer border-t border-border/40"
+                title="Change image"
+              >
+                <img
+                  src={thumbnailUrl}
+                  alt="Section thumbnail"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover/banner:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-black/0 group-hover/banner:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+                  <div className="px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm text-[11px] font-medium text-foreground opacity-0 group-hover/banner:opacity-100 transition-all duration-200 flex items-center gap-1.5 shadow-sm">
+                    <ImageIcon className="w-3 h-3" />
+                    Change image
+                  </div>
+                </div>
+              </button>
+            )}
 
             {/* Learning Objective (inline, collapsible) */}
             <div className={cn(
