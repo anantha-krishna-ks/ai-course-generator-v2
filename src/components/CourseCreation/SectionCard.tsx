@@ -527,6 +527,18 @@ export function SectionCard({
               <div className="overflow-hidden">
                 {/* Pages tree */}
                 <div className="pl-8 pr-3 pb-3">
+                  {/* Empty state */}
+                  {pages.length === 0 && (
+                    <div className="flex items-center gap-3 py-4 px-3 rounded-lg border border-dashed border-border/50 bg-accent/20 mb-2">
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4 text-muted-foreground/40" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground/70">No pages yet</p>
+                        <p className="text-[11px] text-muted-foreground/50 mt-0.5">Add pages to build this section's content</p>
+                      </div>
+                    </div>
+                  )}
                   <DndContext
                     sensors={pageSensors}
                     collisionDetection={closestCenter}
