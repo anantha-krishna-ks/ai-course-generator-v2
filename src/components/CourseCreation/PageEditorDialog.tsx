@@ -866,13 +866,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
 
-              {/* Content blocks with inline undo banners - drop zone */}
-              <div
-                onDragOver={handleEditorDragOver}
-                onDragLeave={handleEditorDragLeave}
-                onDrop={handleContentDrop}
-                className={cn("rounded-xl transition-all duration-200 min-h-[60px]", isDragOver && "ring-2 ring-primary/40 ring-dashed bg-primary/5")}
-              >
+              {/* Content blocks with inline undo banners */}
+              <div className="min-h-[60px]">
               {(blocks.length > 0 || deletedBlocks.size > 0) ? (
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
