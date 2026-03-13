@@ -130,7 +130,6 @@ export function DescriptionBlock({
           <DescriptionEditor
             content={content}
             onChange={onChange}
-            placeholder="Tell your learners what the course will be about..."
           />
         ) : (
           <button
