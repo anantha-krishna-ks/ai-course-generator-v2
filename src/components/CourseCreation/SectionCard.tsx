@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { ChevronUp, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight } from "lucide-react";
+import { useState, useRef } from "react";
+import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, Target, ChevronRight } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -46,6 +46,7 @@ const MAX_PAGE_TITLE_LENGTH = 350;
 interface SortablePageRowProps {
   page: PageEntry;
   idx: number;
+  totalPages: number;
   isLastPage: boolean;
   newPageRef: React.RefObject<HTMLInputElement>;
   focusedPageId: string | null;
@@ -57,7 +58,7 @@ interface SortablePageRowProps {
   aiEnabled?: boolean;
 }
 
-function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, aiEnabled }: SortablePageRowProps) {
+function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, aiEnabled }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
@@ -65,7 +66,7 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.4 : 1,
   };
 
   const pageDisplayTitle = page.title.trim() || "Untitled page";
@@ -76,93 +77,106 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
       <div
         ref={setNodeRef}
         style={style}
-        className="group/row flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-muted/40 transition-colors duration-150"
+        className="group/row relative flex items-center"
       >
-        <button
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing p-0.5 rounded transition-all shrink-0 touch-none opacity-0 group-hover/row:opacity-100"
-        >
-          <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-        </button>
-        <div className="w-7 h-7 rounded-md bg-muted/60 flex items-center justify-center shrink-0">
-          <FileText className="w-3.5 h-3.5 text-muted-foreground/70" />
+        {/* Tree connector line */}
+        <div className="relative w-6 flex items-center justify-center shrink-0 self-stretch">
+          {/* Vertical line */}
+          <div className={cn(
+            "absolute left-1/2 -translate-x-1/2 w-px bg-border/50",
+            idx === 0 ? "top-1/2 bottom-0" : isLastPage ? "top-0 h-1/2" : "inset-y-0"
+          )} />
+          {/* Horizontal branch */}
+          <div className="absolute left-1/2 top-1/2 -translate-y-1/2 w-3 h-px bg-border/50" />
+          {/* Dot */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-muted-foreground/20 border-2 border-background z-10 group-hover/row:bg-primary/50 transition-colors" />
         </div>
-        <div className="flex-1 min-w-0">
-          <input
-            ref={isLastPage ? newPageRef : undefined}
-            type="text"
-            value={page.title}
-            onFocus={() => setFocusedPageId(page.id)}
-            onBlur={() => setFocusedPageId(null)}
-            onChange={(e) => {
-              if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
-                setPages((prev) =>
-                  prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
-                );
-              }
-            }}
-            className={cn(
-              "w-full text-sm text-foreground bg-transparent border-b outline-none placeholder:text-muted-foreground/40 transition-all duration-200 py-0.5",
-              focusedPageId === page.id ? "border-primary/40" : "border-transparent"
-            )}
-            placeholder="Enter page title..."
-          />
-        </div>
-        <span className={cn(
-          "text-[10px] text-muted-foreground/60 tabular-nums shrink-0 transition-opacity duration-200",
-          focusedPageId === page.id ? "opacity-100" : "opacity-0"
-        )}>
-          {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
-        </span>
-        {hasPageInclusions && (
+
+        {/* Page content row */}
+        <div className="flex-1 flex items-center gap-2 py-2 pr-2 pl-2 rounded-lg hover:bg-accent/50 transition-colors duration-150 min-w-0">
           <button
-            onClick={() => setShowInclusionsDialog(true)}
-            className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/8 text-primary text-[10px] font-medium hover:bg-primary/12 transition-colors shrink-0"
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-0.5 rounded shrink-0 touch-none opacity-0 group-hover/row:opacity-60 hover:!opacity-100 transition-opacity"
           >
-            <ListChecks className="w-2.5 h-2.5" />
-            Inclusions
+            <GripVertical className="w-3 h-3 text-muted-foreground" />
           </button>
-        )}
-        <button
-          onClick={() => setShowEditor(true)}
-          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors shrink-0 opacity-0 group-hover/row:opacity-100"
-        >
-          Open
-          <ChevronRight className="w-3 h-3" />
-        </button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0 opacity-0 group-hover/row:opacity-100">
-              <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
-            <DropdownMenuItem
+          <div className="flex-1 min-w-0">
+            <input
+              ref={isLastPage ? newPageRef : undefined}
+              type="text"
+              value={page.title}
+              onFocus={() => setFocusedPageId(page.id)}
+              onBlur={() => setFocusedPageId(null)}
+              onChange={(e) => {
+                if (e.target.value.length <= MAX_PAGE_TITLE_LENGTH) {
+                  setPages((prev) =>
+                    prev.map((p) => p.id === page.id ? { ...p, title: e.target.value } : p)
+                  );
+                }
+              }}
+              className={cn(
+                "w-full text-[13px] text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35 transition-all duration-200",
+                focusedPageId === page.id ? "text-foreground" : "text-foreground/80"
+              )}
+              placeholder="Untitled page..."
+            />
+          </div>
+          <span className={cn(
+            "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity duration-200",
+            focusedPageId === page.id ? "opacity-100" : "opacity-0"
+          )}>
+            {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
+          </span>
+          {hasPageInclusions && (
+            <button
               onClick={() => setShowInclusionsDialog(true)}
-              className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+              className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
+              title="View inclusions"
             >
-              <ListChecks className="w-4 h-4 text-muted-foreground" />
-              {hasPageInclusions ? "Edit inclusions" : "Add inclusions"}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onDuplicate(page.id)}
-              className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-            >
-              <Copy className="w-4 h-4 text-muted-foreground" />
-              Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => setShowDeleteDialog(true)}
-              className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <ListChecks className="w-2.5 h-2.5 text-primary" />
+            </button>
+          )}
+          <button
+            onClick={() => setShowEditor(true)}
+            className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0 opacity-0 group-hover/row:opacity-100"
+          >
+            Open
+            <ChevronRight className="w-3 h-3" />
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0 opacity-0 group-hover/row:opacity-60 hover:!opacity-100">
+                <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+              <DropdownMenuItem
+                onClick={() => setShowInclusionsDialog(true)}
+                className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+              >
+                <ListChecks className="w-4 h-4 text-muted-foreground" />
+                {hasPageInclusions ? "Edit inclusions" : "Add inclusions"}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => onDuplicate(page.id)}
+                className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+              >
+                <Copy className="w-4 h-4 text-muted-foreground" />
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setShowDeleteDialog(true)}
+                className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Delete confirmation dialog */}
@@ -170,10 +184,9 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
         <DialogContent className="sm:max-w-[480px] text-center">
           <DialogHeader className="items-center">
             <DialogTitle className="text-xl font-medium text-foreground">
-              Delete content "{pageDisplayTitle}"
+              Delete "{pageDisplayTitle}"
             </DialogTitle>
           </DialogHeader>
-
           <div className="my-4 rounded-lg bg-destructive/5 border border-destructive/10 px-5 py-4">
             <p className="text-sm font-semibold text-foreground mb-2 text-left">Important information:</p>
             <div className="flex items-center gap-2 text-left">
@@ -181,7 +194,6 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
               <span className="text-sm text-muted-foreground">This action cannot be undone</span>
             </div>
           </div>
-
           <div className="flex flex-col items-center gap-3 pt-2">
             <Button
               variant="destructive"
@@ -191,7 +203,7 @@ function SortablePageRow({ page, idx, isLastPage, newPageRef, focusedPageId, set
                 setShowDeleteDialog(false);
               }}
             >
-              Delete content
+              Delete
             </Button>
             <button
               onClick={() => setShowDeleteDialog(false)}
@@ -281,7 +293,6 @@ export function SectionCard({
   const newPageRef = useRef<HTMLInputElement>(null);
   const objectiveRef = useRef<HTMLInputElement>(null);
 
-  // Use external pages if provided, otherwise fallback to internal
   const pages = externalPages ?? internalPages;
   const setPages: React.Dispatch<React.SetStateAction<PageEntry[]>> = (action) => {
     if (onPagesChange) {
@@ -310,12 +321,10 @@ export function SectionCard({
       const copy = { ...original, id: crypto.randomUUID() };
       const next = [...prev];
       next.splice(idx + 1, 0, copy);
-      
       toast({
         title: "Page duplicated",
         description: `"${original.title || "Untitled page"}" has been duplicated successfully.`,
       });
-      
       return next;
     });
   };
@@ -332,200 +341,159 @@ export function SectionCard({
     });
   };
 
+  const hasInclusions = inclusions.trim().length > 0;
+
   return (
-    <div className="space-y-0">
-      <div className="flex items-start gap-2 group/section">
-        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-100 mt-5">
-          <GripVertical className="w-4 h-4 text-muted-foreground/40" />
+    <div className="group/section">
+      <div className="flex items-start gap-2">
+        {/* Drag handle */}
+        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-60 hover:!opacity-100 mt-3">
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
         </button>
 
-        {/* Section Card */}
-        <div className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden flex-1 min-w-0 transition-shadow duration-200 hover:shadow-md">
-          {/* Section Header */}
-          <div className="flex items-center justify-between px-5 pt-4 pb-1">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
-                <BookOpen className="w-3.5 h-3.5 text-primary/70" />
-              </div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                Section {sectionNumber}
+        <div className="flex-1 min-w-0">
+          {/* Section card with left accent */}
+          <div className="relative rounded-xl border border-border/60 bg-card overflow-hidden transition-all duration-200 hover:border-border">
+            {/* Left accent bar */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/20 rounded-l-xl" />
+
+            {/* Header */}
+            <div className="pl-5 pr-4 pt-3.5 pb-3 flex items-center gap-3">
+              {/* Section number pill */}
+              <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70 bg-primary/8 px-2.5 py-1 rounded-full shrink-0">
+                {sectionNumber.toString().padStart(2, '0')}
               </span>
-            </div>
-            <div className="flex items-center gap-0.5">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                    <MoreHorizontal className="w-4 h-4 text-muted-foreground/60" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52 bg-background border border-border p-1.5">
-                  <DropdownMenuItem
-                    onClick={() => setShowInclusionsDialog(true)}
-                    className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                  >
-                    <ListChecks className="w-4 h-4 text-muted-foreground" />
-                    {inclusions.trim() ? "Edit inclusions" : "Add inclusions"}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setShowImageDialog(true)}
-                    className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                  >
-                    <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                    Change section image
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={onDuplicate}
-                    className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                  >
-                    <Copy className="w-4 h-4 text-muted-foreground" />
-                    Duplicate section
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={onDelete}
-                    className="cursor-pointer gap-3 px-3 py-2.5 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete section
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="p-1.5 rounded-md hover:bg-muted transition-colors"
-              >
-                <ChevronUp className={cn(
-                  "w-4 h-4 text-muted-foreground/60 transition-transform duration-300 ease-in-out",
-                  isCollapsed && "rotate-180"
+
+              {/* Title */}
+              <div className="flex-1 min-w-0 relative">
+                <input
+                  type="text"
+                  value={title}
+                  onFocus={() => setIsTitleFocused(true)}
+                  onBlur={() => setIsTitleFocused(false)}
+                  onChange={(e) => {
+                    if (e.target.value.length <= MAX_TITLE_LENGTH) {
+                      onTitleChange(e.target.value);
+                    }
+                  }}
+                  className="w-full text-sm font-semibold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35 transition-all"
+                  placeholder="Untitled section..."
+                />
+                <div className={cn(
+                  "absolute -bottom-0.5 left-0 right-0 h-px bg-primary/30 transition-all duration-200 origin-left",
+                  isTitleFocused ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
                 )} />
-              </button>
-            </div>
-          </div>
-
-          {/* Collapsible content area */}
-          <div
-            className={cn(
-              "grid transition-all duration-300 ease-in-out",
-              isCollapsed ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
-            )}
-          >
-            <div className="overflow-hidden">
-              <div className="px-5 pb-5">
-                <div className="flex gap-4">
-                  {/* Thumbnail */}
-                  <SectionImageDialog
-                    open={showImageDialog}
-                    onClose={() => setShowImageDialog(false)}
-                    currentImage={thumbnailUrl}
-                    onImageChange={(url) => {
-                      setThumbnailUrl(url);
-                      setShowImageDialog(false);
-                    }}
-                  />
-                  <div
-                    onClick={() => setShowImageDialog(true)}
-                    className="w-[100px] h-[90px] rounded-lg border border-dashed border-border/60 bg-muted/20 flex items-center justify-center shrink-0 group/thumb cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 relative overflow-hidden"
-                  >
-                    {thumbnailUrl ? (
-                      <>
-                        <img src={thumbnailUrl} alt="Section thumbnail" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200">
-                          <ImageIcon className="w-4 h-4 text-white mb-0.5" />
-                          <span className="text-[9px] font-medium text-white">Change</span>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <ImageIcon className="w-5 h-5 text-muted-foreground/30 group-hover/thumb:opacity-0 transition-opacity duration-200" />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200">
-                          <ImageIcon className="w-4 h-4 text-primary/50 mb-0.5" />
-                          <span className="text-[9px] font-medium text-primary/50">Upload</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Title and actions */}
-                  <div className="flex-1 min-w-0">
-                    <input
-                      type="text"
-                      value={title}
-                      onFocus={() => setIsTitleFocused(true)}
-                      onBlur={() => setIsTitleFocused(false)}
-                      onChange={(e) => {
-                        if (e.target.value.length <= MAX_TITLE_LENGTH) {
-                          onTitleChange(e.target.value);
-                        }
-                      }}
-                      className={cn(
-                        "w-full text-base font-semibold text-foreground bg-transparent outline-none pb-1 placeholder:text-muted-foreground/40 transition-all duration-200",
-                        isTitleFocused ? "border-b border-primary/30" : "border-b border-transparent"
-                      )}
-                      placeholder="Untitled section"
-                    />
-                    <div className={cn(
-                      "flex justify-end mt-0.5 transition-opacity duration-200",
-                      isTitleFocused ? "opacity-100" : "opacity-0"
-                    )}>
-                      <span className="text-[10px] text-muted-foreground/60">
-                        {title.length}/{MAX_TITLE_LENGTH}
-                      </span>
-                    </div>
-
-                    {/* Actions row */}
-                    <div className="flex items-center justify-between mt-2">
-                      <button
-                        onClick={() => {
-                          const next = !showObjective;
-                          setShowObjective(next);
-                          if (next) {
-                            setTimeout(() => objectiveRef.current?.focus(), 350);
-                          }
-                        }}
-                        className="flex items-center gap-1 text-xs text-muted-foreground/70 hover:text-foreground transition-colors"
-                      >
-                        <ChevronUp className={cn(
-                          "w-3 h-3 transition-transform duration-200",
-                          !showObjective && "rotate-180"
-                        )} />
-                        {showObjective ? "Hide objective" : "Add objective"}
-                      </button>
-                      <div className="flex items-center gap-2">
-                        {inclusions.trim() && (
-                          <button
-                            onClick={() => setShowInclusionsDialog(true)}
-                            className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/8 text-primary text-[10px] font-medium hover:bg-primary/12 transition-colors"
-                          >
-                            <ListChecks className="w-2.5 h-2.5" />
-                            Inclusions
-                          </button>
-                        )}
-                        <button
-                          onClick={onOpenSection}
-                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          Open
-                          <ChevronRight className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
 
-              {/* Learning Objective Panel */}
-              <div
-                className={cn(
-                  "grid transition-all duration-300 ease-in-out",
-                  showObjective ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              <span className={cn(
+                "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity",
+                isTitleFocused ? "opacity-100" : "opacity-0"
+              )}>
+                {title.length}/{MAX_TITLE_LENGTH}
+              </span>
+
+              {/* Quick actions */}
+              <div className="flex items-center gap-0.5 shrink-0">
+                {/* Thumbnail button */}
+                <button
+                  onClick={() => setShowImageDialog(true)}
+                  className={cn(
+                    "p-1.5 rounded-md transition-colors",
+                    thumbnailUrl ? "text-primary hover:bg-primary/10" : "text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted"
+                  )}
+                  title={thumbnailUrl ? "Change image" : "Add image"}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                </button>
+
+                {hasInclusions && (
+                  <button
+                    onClick={() => setShowInclusionsDialog(true)}
+                    className="p-1.5 rounded-md text-primary hover:bg-primary/10 transition-colors"
+                    title="View inclusions"
+                  >
+                    <ListChecks className="w-3.5 h-3.5" />
+                  </button>
                 )}
-              >
-                <div className="overflow-hidden">
-                  <div className="mx-5 mb-4 rounded-lg border border-border/60 bg-muted/20 p-4">
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <span className="text-xs font-semibold text-foreground/80">Learning objective</span>
-                      <HelpCircle className="w-3 h-3 text-muted-foreground/40" />
-                    </div>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                      <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground/50" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-52 bg-background border border-border p-1.5">
+                    <DropdownMenuItem
+                      onClick={() => setShowInclusionsDialog(true)}
+                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                    >
+                      <ListChecks className="w-4 h-4 text-muted-foreground" />
+                      {hasInclusions ? "Edit inclusions" : "Add inclusions"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setShowImageDialog(true)}
+                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                    >
+                      <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                      {thumbnailUrl ? "Change image" : "Add image"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setShowObjective(!showObjective);
+                        if (!showObjective) setTimeout(() => objectiveRef.current?.focus(), 350);
+                      }}
+                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                    >
+                      <Target className="w-4 h-4 text-muted-foreground" />
+                      {showObjective ? "Hide objective" : "Add objective"}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={onOpenSection}
+                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                    >
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      Open section
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={onDuplicate}
+                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                    >
+                      <Copy className="w-4 h-4 text-muted-foreground" />
+                      Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={onDelete}
+                      className="cursor-pointer gap-3 px-3 py-2.5 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete section
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <button
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                >
+                  <ChevronDown className={cn(
+                    "w-3.5 h-3.5 text-muted-foreground/50 transition-transform duration-300",
+                    isCollapsed && "-rotate-90"
+                  )} />
+                </button>
+              </div>
+            </div>
+
+            {/* Learning Objective (inline, collapsible) */}
+            <div className={cn(
+              "grid transition-all duration-300 ease-in-out",
+              showObjective ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            )}>
+              <div className="overflow-hidden">
+                <div className="pl-5 pr-4 pb-3">
+                  <div className="flex items-center gap-2 rounded-lg bg-accent/40 px-3 py-2.5">
+                    <Target className="w-3.5 h-3.5 text-primary/50 shrink-0" />
                     <input
                       ref={objectiveRef}
                       type="text"
@@ -537,82 +505,40 @@ export function SectionCard({
                           setObjectiveText(e.target.value);
                         }
                       }}
-                      className={cn(
-                        "w-full text-sm text-foreground bg-transparent border-b outline-none pb-1.5 placeholder:text-muted-foreground/40 transition-all duration-200",
-                        isObjectiveFocused ? "border-primary/30" : "border-transparent"
-                      )}
-                      placeholder="Enter learning objective for this section..."
+                      className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35"
+                      placeholder="What will learners achieve?"
                     />
-                    <div className={cn(
-                      "flex justify-end mt-1 transition-opacity duration-200",
+                    <span className={cn(
+                      "text-[9px] text-muted-foreground/50 tabular-nums transition-opacity",
                       isObjectiveFocused ? "opacity-100" : "opacity-0"
                     )}>
-                      <span className="text-[10px] text-muted-foreground/60">
-                        {objectiveText.length}/{MAX_OBJECTIVE_LENGTH}
-                      </span>
-                    </div>
+                      {objectiveText.length}/{MAX_OBJECTIVE_LENGTH}
+                    </span>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Inclusions Dialog */}
-              <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
-                <DialogContent className="sm:max-w-[560px]">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-                      <ListChecks className="w-5 h-5 text-muted-foreground" />
-                      Inclusions
-                    </DialogTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Define the scope for "{title || "Untitled section"}"
-                    </p>
-                  </DialogHeader>
-                  <div className="mt-4">
-                    <textarea
-                      value={inclusions}
-                      onChange={(e) => onInclusionsChange?.(e.target.value)}
-                      autoFocus
-                      className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
-                      placeholder="Define what topics, content, or scope should be included in this section..."
-                      onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
-                        target.style.height = 'auto';
-                        target.style.height = Math.max(140, target.scrollHeight) + 'px';
-                      }}
-                    />
-                  </div>
-                  <div className="flex justify-end pt-2">
-                    <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
-                      Done
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-
-              {/* Pages section */}
-              <div className="px-5 pt-2 pb-4">
-                {pages.length > 0 && (
-                  <div className="flex items-center gap-2 mb-2 px-1">
-                    <div className="h-px flex-1 bg-border/40" />
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/50">
-                      {pages.length} {pages.length === 1 ? 'page' : 'pages'}
-                    </span>
-                    <div className="h-px flex-1 bg-border/40" />
-                  </div>
-                )}
-
-                <DndContext
-                  sensors={pageSensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handlePageDragEnd}
-                >
-                  <SortableContext items={pages.map(p => p.id)} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-0.5">
+            {/* Collapsible pages area */}
+            <div className={cn(
+              "grid transition-all duration-300 ease-in-out",
+              isCollapsed ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
+            )}>
+              <div className="overflow-hidden">
+                {/* Pages tree */}
+                <div className="pl-8 pr-3 pb-3">
+                  <DndContext
+                    sensors={pageSensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handlePageDragEnd}
+                  >
+                    <SortableContext items={pages.map(p => p.id)} strategy={verticalListSortingStrategy}>
                       {pages.map((page, idx) => (
                         <SortablePageRow
                           key={page.id}
                           page={page}
                           idx={idx}
+                          totalPages={pages.length}
                           isLastPage={idx === pages.length - 1}
                           newPageRef={newPageRef}
                           focusedPageId={focusedPageId}
@@ -628,24 +554,79 @@ export function SectionCard({
                           aiEnabled={aiEnabled}
                         />
                       ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
+                    </SortableContext>
+                  </DndContext>
 
-                <button
-                  onClick={handleAddPage}
-                  className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-primary transition-colors mt-2 ml-1 group/add"
-                >
-                  <div className="w-5 h-5 rounded-md border border-dashed border-muted-foreground/30 group-hover/add:border-primary/40 flex items-center justify-center transition-colors">
-                    <Plus className="w-3 h-3" />
+                  {/* Add page button (tree-style) */}
+                  <div className="relative flex items-center">
+                    <div className="relative w-6 flex items-center justify-center shrink-0 self-stretch">
+                      {pages.length > 0 && (
+                        <div className="absolute left-1/2 -translate-x-1/2 top-0 h-1/2 w-px bg-border/50" />
+                      )}
+                      <div className={cn(
+                        "absolute left-1/2 top-1/2 -translate-y-1/2 w-3 h-px bg-border/50",
+                        pages.length > 0 ? "opacity-100" : "opacity-0"
+                      )} />
+                    </div>
+                    <button
+                      onClick={handleAddPage}
+                      className="flex items-center gap-1.5 py-2 pl-2 pr-3 rounded-lg text-[12px] text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-all duration-150 group/add"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add page</span>
+                    </button>
                   </div>
-                  Add page
-                </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Image dialog */}
+      <SectionImageDialog
+        open={showImageDialog}
+        onClose={() => setShowImageDialog(false)}
+        currentImage={thumbnailUrl}
+        onImageChange={(url) => {
+          setThumbnailUrl(url);
+          setShowImageDialog(false);
+        }}
+      />
+
+      {/* Inclusions Dialog */}
+      <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <ListChecks className="w-5 h-5 text-muted-foreground" />
+              Inclusions
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Define the scope for "{title || "Untitled section"}"
+            </p>
+          </DialogHeader>
+          <div className="mt-4">
+            <textarea
+              value={inclusions}
+              onChange={(e) => onInclusionsChange?.(e.target.value)}
+              autoFocus
+              className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
+              placeholder="Define what topics, content, or scope should be included in this section..."
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = 'auto';
+                target.style.height = Math.max(140, target.scrollHeight) + 'px';
+              }}
+            />
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

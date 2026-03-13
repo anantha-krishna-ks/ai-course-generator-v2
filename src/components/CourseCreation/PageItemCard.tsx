@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, BookOpen } from "lucide-react";
+import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -71,15 +71,19 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
   return (
     <>
       <div className="flex items-center gap-2 group/page">
-        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/page:opacity-100">
-          <GripVertical className="w-4 h-4 text-muted-foreground/40" />
+        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/page:opacity-60 hover:!opacity-100">
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
         </button>
-        <div className="rounded-xl border border-border/80 bg-card shadow-sm overflow-hidden flex-1 min-w-0 transition-shadow duration-200 hover:shadow-md">
-          <div className="flex items-center gap-3 px-4 py-3.5">
-            <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
-              <BookOpen className="w-4 h-4 text-muted-foreground/60" />
+
+        <div className="relative flex-1 min-w-0 rounded-xl border border-border/60 bg-card overflow-hidden transition-all duration-200 hover:border-border hover:shadow-sm">
+          {/* Left accent — lighter than section to show hierarchy difference */}
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-muted-foreground/15 rounded-l-xl" />
+
+          <div className="flex items-center gap-3 pl-5 pr-4 py-3">
+            <div className="w-7 h-7 rounded-lg bg-accent/60 flex items-center justify-center shrink-0">
+              <FileText className="w-3.5 h-3.5 text-muted-foreground/60" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 relative">
               <input
                 ref={inputRef}
                 type="text"
@@ -91,15 +95,16 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
                     onTitleChange(e.target.value);
                   }
                 }}
-                className={cn(
-                  "w-full text-sm font-medium text-foreground bg-transparent border-b outline-none placeholder:text-muted-foreground/40 transition-all duration-200 py-0.5",
-                  isFocused ? "border-primary/40" : "border-transparent"
-                )}
-                placeholder="Enter page title..."
+                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35 transition-all"
+                placeholder="Untitled page..."
               />
+              <div className={cn(
+                "absolute -bottom-0.5 left-0 right-0 h-px bg-primary/30 transition-all duration-200 origin-left",
+                isFocused ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+              )} />
             </div>
             <span className={cn(
-              "text-[10px] text-muted-foreground/60 tabular-nums shrink-0 transition-opacity duration-200",
+              "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity",
               isFocused ? "opacity-100" : "opacity-0"
             )}>
               {title.length}/{MAX_PAGE_TITLE_LENGTH}
@@ -107,15 +112,15 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
             {hasInclusions && (
               <button
                 onClick={() => setShowInclusionsDialog(true)}
-                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/8 text-primary text-[10px] font-medium hover:bg-primary/12 transition-colors shrink-0"
+                className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
+                title="View inclusions"
               >
-                <ListChecks className="w-2.5 h-2.5" />
-                Inclusions
+                <ListChecks className="w-2.5 h-2.5 text-primary" />
               </button>
             )}
             <button
               onClick={() => onOpenEditor?.()}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors shrink-0"
+              className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0"
             >
               Open
               <ChevronRight className="w-3 h-3" />
@@ -123,7 +128,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
-                  <MoreHorizontal className="w-4 h-4 text-muted-foreground/60" />
+                  <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground/50" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
@@ -168,7 +173,6 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
               Define the scope for "{displayTitle}"
             </p>
           </DialogHeader>
-
           <div className="mt-4">
             <textarea
               value={inclusions}
@@ -183,12 +187,8 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
               }}
             />
           </div>
-
           <div className="flex justify-end pt-2">
-            <Button
-              onClick={() => setShowInclusionsDialog(false)}
-              className="rounded-full px-6"
-            >
+            <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
               Done
             </Button>
           </div>
@@ -200,7 +200,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
         <DialogContent className="sm:max-w-[480px] text-center">
           <DialogHeader className="items-center">
             <DialogTitle className="text-xl font-medium text-foreground">
-              Delete content "{displayTitle}"
+              Delete "{displayTitle}"
             </DialogTitle>
           </DialogHeader>
           <div className="my-4 rounded-lg bg-destructive/5 border border-destructive/10 px-5 py-4">
@@ -219,7 +219,7 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
                 setShowDeleteDialog(false);
               }}
             >
-              Delete content
+              Delete
             </Button>
             <button
               onClick={() => setShowDeleteDialog(false)}
