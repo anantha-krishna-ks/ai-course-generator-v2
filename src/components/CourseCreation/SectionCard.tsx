@@ -290,7 +290,12 @@ export function SectionCard({
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [internalThumbnail, setInternalThumbnail] = useState<string | null>(null);
+  const thumbnailUrl = externalThumbnail !== undefined ? externalThumbnail : internalThumbnail;
+  const setThumbnailUrl = (url: string | null) => {
+    if (onThumbnailChange) onThumbnailChange(url);
+    else setInternalThumbnail(url);
+  };
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [internalPages, setInternalPages] = useState<PageEntry[]>([]);
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
