@@ -292,13 +292,9 @@ export function AIConfigView({
               onDrop={(e) => {
                 e.preventDefault();
                 e.currentTarget.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
-                const files = Array.from(e.dataTransfer.files);
-                if (files.length > 0) {
-                  const newDocs = files.map(f => f.name);
-                  update({ supportingDocuments: [...options.supportingDocuments, ...newDocs] });
-                }
+                handleFilesSelected(e.dataTransfer.files, "supportingDocuments");
               }}
-              onClick={handleFileSelect}
+              onClick={() => supportingDocsRef.current?.click()}
               className="w-full border-2 border-dashed border-border/80 rounded-xl py-8 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer"
             >
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -307,6 +303,19 @@ export function AIConfigView({
               <span className="text-sm font-medium">Drop files here or click to upload</span>
               <span className="text-xs text-muted-foreground/70">PDF, DOCX, TXT — up to 20MB each</span>
             </div>
+            <input
+              ref={supportingDocsRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files?.length) {
+                  handleFilesSelected(e.target.files, "supportingDocuments");
+                  e.target.value = "";
+                }
+              }}
+            />
           </div>
         </div>
 
