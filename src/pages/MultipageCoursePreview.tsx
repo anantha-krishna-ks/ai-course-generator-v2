@@ -11,6 +11,7 @@ interface CourseItem {
   id: string;
   type: "section" | "page" | "question";
   title: string;
+  thumbnailUrl?: string;
   children?: CourseItem[];
 }
 
