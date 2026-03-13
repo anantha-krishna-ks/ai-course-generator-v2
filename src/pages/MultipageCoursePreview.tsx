@@ -263,8 +263,8 @@ const MultipageCoursePreview = () => {
             )}
             style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
           >
-          {/* Left: Course intro card */}
-          <div className="w-full lg:w-[40%] relative overflow-hidden">
+          {/* Left: Notebook-style content area */}
+          <div className="flex-1 relative overflow-hidden">
             {/* Background with hero image or gradient */}
             <div className="absolute inset-0">
               {heroImage ? (
@@ -273,7 +273,7 @@ const MultipageCoursePreview = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
             </div>
 
-            {/* Decorative elements */}
+            {/* Decorative notebook elements */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               {/* Book spine edge */}
               <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-foreground/[0.06] to-transparent" />
@@ -310,8 +310,6 @@ const MultipageCoursePreview = () => {
             </div>
 
             <div className="relative z-10 flex flex-col justify-between h-full px-8 sm:px-12 lg:px-16 py-10">
-              {/* Logo / brand */}
-
               {/* Title */}
               <div className="mt-0 space-y-6">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground leading-[1.1] tracking-tight">
@@ -329,7 +327,7 @@ const MultipageCoursePreview = () => {
                   </div>
                 </div>
 
-                {/* Description / content preview */}
+                {/* Description */}
                 {descriptionText && (
                   <div className="space-y-4 max-w-lg">
                     <p className="text-foreground/70 text-base leading-relaxed">
@@ -351,10 +349,13 @@ const MultipageCoursePreview = () => {
             </div>
           </div>
 
-          {/* Right: Course outline */}
-          <div className="w-full lg:w-[60%] border-l bg-card flex-shrink-0 overflow-auto">
+          {/* Right: Course outline sidebar */}
+          <div className={cn(
+            "w-[320px] flex-shrink-0 border-l bg-card overflow-auto",
+            deviceView === 'mobile' && "hidden"
+          )}>
             <ScrollArea className="h-full">
-              <div className="p-6 space-y-1">
+              <div className="p-5 space-y-1">
                 <div className="mb-4">
                   <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Course Outline</h3>
                 </div>
