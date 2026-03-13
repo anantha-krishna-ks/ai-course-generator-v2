@@ -537,37 +537,43 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         {/* Left Panel - Course Overview */}
         <div className="lg:w-1/2 relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 pointer-events-none">
-            {/* Decorative shapes */}
-            <div className="absolute bottom-0 left-0 w-full h-1/3">
-              <svg
-                viewBox="0 0 800 300"
-                className="w-full h-full"
-                preserveAspectRatio="xMidYMax slice"
-              >
-                <ellipse
-                  cx="200"
-                  cy="350"
-                  rx="300"
-                  ry="200"
-                  fill="hsl(var(--primary) / 0.15)"
-                />
-                <ellipse
-                  cx="600"
-                  cy="400"
-                  rx="250"
-                  ry="180"
-                  fill="hsl(var(--primary) / 0.1)"
-                />
-                <ellipse
-                  cx="400"
-                  cy="380"
-                  rx="200"
-                  ry="150"
-                  fill="hsl(var(--primary) / 0.08)"
-                />
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 pointer-events-none" />
+
+          {/* Decorative notebook elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Book spine edge */}
+            <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-foreground/[0.06] to-transparent" />
+            <div className="absolute right-3 top-0 bottom-0 w-[1px] bg-foreground/[0.08]" />
+            
+            {/* Page corner fold */}
+            <div className="absolute top-0 right-0 w-12 h-12">
+              <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor">
+                <path d="M48 0 L48 48 L0 0 Z" />
               </svg>
             </div>
+
+            {/* Horizontal ruled lines like a notebook */}
+            <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="editor-ruled-lines" width="100%" height="32" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="31" x2="100%" y2="31" stroke="currentColor" strokeWidth="1" className="text-foreground" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#editor-ruled-lines)" />
+            </svg>
+
+            {/* Left margin line (like a notebook) */}
+            <div className="absolute left-12 top-0 bottom-0 w-[1px] bg-destructive/10" />
+
+            {/* Premium bookmark ribbon */}
+            <div className="absolute top-0 right-10 w-6 flex flex-col items-center drop-shadow-md">
+              <div className="w-full h-24 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15 rounded-b-none" />
+              <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none">
+                <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill="hsl(var(--primary) / 0.15)" />
+              </svg>
+            </div>
+            <div className="absolute top-0 right-10 w-6 h-24 border-x border-primary/10" />
           </div>
 
           {/* Content */}
@@ -774,7 +780,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {/* Header row: Course outline + Add item */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-medium text-foreground">Course outline:</h2>
+                  <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Course Outline</h2>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button className="text-muted-foreground hover:text-foreground transition-colors">
