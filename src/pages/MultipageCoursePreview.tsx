@@ -11,6 +11,7 @@ interface CourseItem {
   id: string;
   type: "section" | "page" | "question";
   title: string;
+  thumbnailUrl?: string;
   children?: CourseItem[];
 }
 
@@ -362,29 +363,58 @@ const MultipageCoursePreview = () => {
                   if (item.type === "section") {
                     const isExpanded = expandedSections.has(item.id);
                     return (
-                      <div key={item.id} className="mb-2">
+                      <div key={item.id} className="mb-3">
                         <div
-                          className="rounded-xl border border-border/60 bg-muted/30 p-4 cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-colors"
+                          className="group/outline rounded-xl border border-border/60 overflow-hidden cursor-pointer hover:border-primary/40 transition-all duration-200 hover:shadow-sm"
                           onClick={() => toggleSection(item.id)}
                         >
-                          <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0">
-                              <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
+                          {/* Section image banner */}
+                          {item.thumbnailUrl && (
+                            <div className="relative h-24 w-full overflow-hidden">
+                              <img
+                                src={item.thumbnailUrl}
+                                alt=""
+                                className="w-full h-full object-cover group-hover/outline:scale-105 transition-transform duration-500"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                              <div className="absolute bottom-3 left-4 right-4 flex items-center gap-3">
+                                <span className="text-sm font-semibold text-white drop-shadow-sm truncate">{item.title || "Untitled section"}</span>
+                                {item.children && item.children.length > 0 && (
+                                  <span className="text-[10px] text-white/70 bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full shrink-0">
+                                    {item.children.length} {item.children.length === 1 ? "page" : "pages"}
+                                  </span>
+                                )}
+                                <div className="flex-1" />
+                                {isExpanded ? (
+                                  <ChevronDown className="w-4 h-4 text-white/70 shrink-0" />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4 text-white/70 shrink-0" />
+                                )}
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-sm font-semibold text-foreground block truncate">{item.title || "Untitled section"}</span>
-                              {item.children && item.children.length > 0 && (
-                                <span className="text-xs text-muted-foreground mt-0.5 block">
-                                  {item.children.length} {item.children.length === 1 ? "page" : "pages"}
-                                </span>
+                          )}
+
+                          {/* Fallback header when no image */}
+                          {!item.thumbnailUrl && (
+                            <div className="flex items-center gap-4 p-4 bg-muted/30">
+                              <div className="w-12 h-12 rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0">
+                                <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-sm font-semibold text-foreground block truncate">{item.title || "Untitled section"}</span>
+                                {item.children && item.children.length > 0 && (
+                                  <span className="text-xs text-muted-foreground mt-0.5 block">
+                                    {item.children.length} {item.children.length === 1 ? "page" : "pages"}
+                                  </span>
+                                )}
+                              </div>
+                              {isExpanded ? (
+                                <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                               )}
                             </div>
-                            {isExpanded ? (
-                              <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                            ) : (
-                              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                            )}
-                          </div>
+                          )}
                         </div>
                         {isExpanded && item.children && item.children.length > 0 && (
                           <div className="mt-1 space-y-0.5 pl-3">

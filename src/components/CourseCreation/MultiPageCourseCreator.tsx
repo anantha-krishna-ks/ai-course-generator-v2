@@ -57,6 +57,7 @@ interface CourseItem {
   type: "section" | "page" | "question";
   title: string;
   inclusions?: string;
+  thumbnailUrl?: string;
   children?: CourseItem[];
 }
 
@@ -856,6 +857,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
+                                  thumbnailUrl={item.thumbnailUrl || null}
+                                  onThumbnailChange={(url) => {
+                                    setItems((prev) => prev.map((i) =>
+                                      i.id === item.id ? { ...i, thumbnailUrl: url || undefined } : i
+                                    ));
+                                  }}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
