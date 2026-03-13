@@ -731,214 +731,40 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         </div>
       </header>
 
-      {/* Main body with sidebar */}
+      {/* Main body with notebook left + sidebar right */}
       <div className="flex h-[calc(100vh-4rem)]">
-        {/* Left Sidebar */}
-        <div className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[320px]")}>
-          {!sidebarCollapsed && (
-            <button onClick={() => setSidebarCollapsed(true)} className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
-              <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
-          )}
+        {/* Left: Main Content Area (notebook style) */}
+        <div className="flex-1 min-w-0 relative overflow-y-auto">
+          {/* Notebook decorative elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Horizontal ruled lines like a notebook */}
+            <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="sp-editor-ruled-lines" width="100%" height="32" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="31" x2="100%" y2="31" stroke="currentColor" strokeWidth="1" className="text-foreground" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#sp-editor-ruled-lines)" />
+            </svg>
 
-          {/* Tabs */}
-          <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
-            <button onClick={() => setActiveTab("outline")} className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "outline" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
-              <LayoutGrid className="w-3.5 h-3.5" /> Course outline
-            </button>
-            <button onClick={() => setActiveTab("blocks")} className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "blocks" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
-              <Layers className="w-3.5 h-3.5" /> Content blocks
-            </button>
+            {/* Left margin line (like a notebook) */}
+            <div className="absolute left-12 top-0 bottom-0 w-[1px] bg-destructive/[0.06]" />
+
+            {/* Book spine edge on right */}
+            <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-foreground/[0.04] to-transparent" />
+            <div className="absolute right-3 top-0 bottom-0 w-[1px] bg-foreground/[0.05]" />
+
+            {/* Premium bookmark ribbon */}
+            <div className="absolute top-0 right-10 w-5 flex flex-col items-center drop-shadow-sm">
+              <div className="w-full h-20 bg-gradient-to-b from-primary/15 via-primary/10 to-primary/5" />
+              <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none">
+                <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill="hsl(var(--primary) / 0.08)" />
+              </svg>
+            </div>
           </div>
 
-          {/* Sidebar Content */}
-          <div className="flex-1 overflow-y-auto p-4 thin-scrollbar">
-            {activeTab === "outline" ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Navigate to:</span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4">
-                        <Plus className="w-3.5 h-3.5" /> Add
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-52 p-1.5">
-                      <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("section")}>
-                        <LayoutGrid className="w-4 h-4 text-muted-foreground" />
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-sm font-medium">New section</span>
-                          <span className="text-[11px] text-muted-foreground">Group related content</span>
-                        </div>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("page")}>
-                        <FileText className="w-4 h-4 text-muted-foreground" />
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-sm font-medium">New page</span>
-                          <span className="text-[11px] text-muted-foreground">Single learning unit</span>
-                        </div>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-
-                {/* Outline items */}
-                {items.length > 0 ? (
-                  <DndContext sensors={outlineSensors} collisionDetection={closestCenter} onDragEnd={handleOutlineDragEnd}>
-                    <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-                      {(() => {
-                        let sectionIndex = 0;
-                        return items.map((item) => {
-                          if (item.type === "page") {
-                            return (
-                              <SortableOutlineWrapper key={item.id} id={item.id}>
-                                {(listeners) => (
-                                  <div onClick={() => scrollToItem(item.id)} className="group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative rounded-md pl-1 hover:bg-muted/40 px-2">
-                                    <span className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing" {...listeners}>
-                                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-                                    </span>
-                                    <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
-                                    <span className="text-sm truncate flex-1 text-foreground/80">{item.title || "Untitled page"}</span>
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
-                                          <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                                        </button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent align="end" className="w-44">
-                                        <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
-                                          <Pencil className="w-3.5 h-3.5" /> Rename
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
-                                          <Copy className="w-3.5 h-3.5" /> Duplicate
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
-                                          <Trash2 className="w-3.5 h-3.5" /> Delete
-                                        </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
-                                  </div>
-                                )}
-                              </SortableOutlineWrapper>
-                            );
-                          }
-                          if (item.type === "section") {
-                            sectionIndex++;
-                            const currentSectionNumber = sectionIndex;
-                            return (
-                              <SortableOutlineWrapper key={item.id} id={item.id}>
-                                {(listeners) => (
-                                  <div className="rounded-xl border border-border bg-card p-4 space-y-3 transition-colors">
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1" {...listeners} onClick={(e) => e.stopPropagation()}>
-                                        <GripVertical className="w-3 h-3 text-muted-foreground/40" />
-                                        Section {currentSectionNumber}
-                                      </span>
-                                      <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
-                                        <DropdownMenu>
-                                          <DropdownMenuTrigger asChild>
-                                            <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                              <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                                            </button>
-                                          </DropdownMenuTrigger>
-                                          <DropdownMenuContent align="end" className="w-44">
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
-                                              <Pencil className="w-3.5 h-3.5" /> Rename
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
-                                              <Copy className="w-3.5 h-3.5" /> Duplicate
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
-                                              <Trash2 className="w-3.5 h-3.5" /> Delete
-                                            </DropdownMenuItem>
-                                          </DropdownMenuContent>
-                                        </DropdownMenu>
-                                        <span className="w-px h-4 bg-border" />
-                                        <button className="p-1.5 rounded-md hover:bg-muted transition-colors" onClick={() => setCollapsedSections(prev => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })}>
-                                          {collapsedSections.has(item.id) ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronUp className="w-4 h-4 text-muted-foreground" />}
-                                        </button>
-                                      </div>
-                                    </div>
-                                    <span className="text-[15px] font-semibold text-foreground block text-left cursor-pointer hover:text-primary transition-colors" onClick={() => scrollToItem(item.id)}>
-                                      {item.title || "Untitled section"}
-                                    </span>
-                                    {!collapsedSections.has(item.id) && (<>
-                                      {item.children && item.children.length > 0 && (
-                                        <div className="space-y-1 pl-2 border-l-2 border-border/40 ml-1">
-                                          {item.children.map((child) => (
-                                            <div key={child.id} onClick={() => scrollToItem(child.id)} className="group/child flex items-center gap-2 py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors">
-                                              <FileText className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
-                                              <span className="text-sm text-foreground/80 truncate flex-1">{child.title || "Untitled page"}</span>
-                                              <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                  <button className="opacity-0 group-hover/child:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
-                                                    <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                                                  </button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-44">
-                                                  <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(child.title || ""); setRenameTarget({ id: child.id, title: child.title || "" }); }}>
-                                                    <Pencil className="w-3.5 h-3.5" /> Rename
-                                                  </DropdownMenuItem>
-                                                  <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(child.id)}>
-                                                    <Copy className="w-3.5 h-3.5" /> Duplicate
-                                                  </DropdownMenuItem>
-                                                  <DropdownMenuSeparator />
-                                                  <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(child.id)}>
-                                                    <Trash2 className="w-3.5 h-3.5" /> Delete
-                                                  </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                              </DropdownMenu>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      )}
-                                      <button onClick={() => addPageToSection(item.id)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1 ml-1 pl-3">
-                                        <Plus className="w-3.5 h-3.5" /> Add page
-                                      </button>
-                                      <div className="border-t border-dashed border-border mt-2" />
-                                    </>)}
-                                  </div>
-                                )}
-                              </SortableOutlineWrapper>
-                            );
-                          }
-                          return null;
-                        });
-                      })()}
-                    </SortableContext>
-                  </DndContext>
-                ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">No items in the outline yet</p>
-                )}
-              </div>
-            ) : (
-              <ContentBlocksPanel
-                onAddBlock={(type, variant) => {
-                  if (activeItemId === "intro") {
-                    addIntroBlock(type as ContentBlockData["type"], undefined, variant);
-                  } else if (activeItemId) {
-                    addBlockToItem(activeItemId, type, undefined, variant);
-                  }
-                }}
-                onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
-                aiEnabled={aiEnabled}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Collapsed sidebar toggle */}
-        {sidebarCollapsed && (
-          <button onClick={() => setSidebarCollapsed(false)} className="shrink-0 px-2 py-4 border-r border-border hover:bg-muted/50 transition-colors flex items-start pt-6">
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </button>
-        )}
-
-        {/* Main Content Area */}
-        <div className="flex-1 min-w-0 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          {/* Content */}
+          <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">
               <textarea
@@ -1162,9 +988,210 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             )}
           </div>
         </div>
-      </div>
 
-      {/* Delete Confirmation */}
+        {/* Collapsed sidebar toggle (on right side) */}
+        {sidebarCollapsed && (
+          <button onClick={() => setSidebarCollapsed(false)} className="shrink-0 px-2 py-4 border-l border-border hover:bg-muted/50 transition-colors flex items-start pt-6">
+            <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+          </button>
+        )}
+
+        {/* Right Sidebar */}
+        <div className={cn("border-l border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-l-0" : "w-[320px]")}>
+          {!sidebarCollapsed && (
+            <button onClick={() => setSidebarCollapsed(true)} className="absolute -left-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+            </button>
+          )}
+
+          {/* Tabs */}
+          <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
+            <button onClick={() => setActiveTab("outline")} className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "outline" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
+              <LayoutGrid className="w-3.5 h-3.5" /> Course outline
+            </button>
+            <button onClick={() => setActiveTab("blocks")} className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "blocks" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
+              <Layers className="w-3.5 h-3.5" /> Content blocks
+            </button>
+          </div>
+
+          {/* Sidebar Content */}
+          <div className="flex-1 overflow-y-auto p-4 thin-scrollbar">
+            {activeTab === "outline" ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Navigate to:</span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4">
+                        <Plus className="w-3.5 h-3.5" /> Add
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-52 p-1.5">
+                      <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("section")}>
+                        <LayoutGrid className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-sm font-medium">New section</span>
+                          <span className="text-[11px] text-muted-foreground">Group related content</span>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("page")}>
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-sm font-medium">New page</span>
+                          <span className="text-[11px] text-muted-foreground">Single learning unit</span>
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {/* Outline items */}
+                {items.length > 0 ? (
+                  <DndContext sensors={outlineSensors} collisionDetection={closestCenter} onDragEnd={handleOutlineDragEnd}>
+                    <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                      {(() => {
+                        let sectionIndex = 0;
+                        return items.map((item) => {
+                          if (item.type === "page") {
+                            return (
+                              <SortableOutlineWrapper key={item.id} id={item.id}>
+                                {(listeners) => (
+                                  <div onClick={() => scrollToItem(item.id)} className="group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative rounded-md pl-1 hover:bg-muted/40 px-2">
+                                    <span className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing" {...listeners}>
+                                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                                    </span>
+                                    <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                                    <span className="text-sm truncate flex-1 text-foreground/80">{item.title || "Untitled page"}</span>
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
+                                          <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                                        </button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end" className="w-44">
+                                        <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
+                                          <Pencil className="w-3.5 h-3.5" /> Rename
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
+                                          <Copy className="w-3.5 h-3.5" /> Duplicate
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
+                                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                                        </DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </div>
+                                )}
+                              </SortableOutlineWrapper>
+                            );
+                          }
+                          if (item.type === "section") {
+                            sectionIndex++;
+                            const currentSectionNumber = sectionIndex;
+                            return (
+                              <SortableOutlineWrapper key={item.id} id={item.id}>
+                                {(listeners) => (
+                                  <div className="rounded-xl border border-border bg-card p-4 space-y-3 transition-colors">
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1" {...listeners} onClick={(e) => e.stopPropagation()}>
+                                        <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                        Section {currentSectionNumber}
+                                      </span>
+                                      <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                              <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                                            </button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end" className="w-44">
+                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
+                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
+                                              <Copy className="w-3.5 h-3.5" /> Duplicate
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
+                                              <Trash2 className="w-3.5 h-3.5" /> Delete
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                        <span className="w-px h-4 bg-border" />
+                                        <button className="p-1.5 rounded-md hover:bg-muted transition-colors" onClick={() => setCollapsedSections(prev => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })}>
+                                          {collapsedSections.has(item.id) ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronUp className="w-4 h-4 text-muted-foreground" />}
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <span className="text-[15px] font-semibold text-foreground block text-left cursor-pointer hover:text-primary transition-colors" onClick={() => scrollToItem(item.id)}>
+                                      {item.title || "Untitled section"}
+                                    </span>
+                                    {!collapsedSections.has(item.id) && (<>
+                                      {item.children && item.children.length > 0 && (
+                                        <div className="space-y-1 pl-2 border-l-2 border-border/40 ml-1">
+                                          {item.children.map((child) => (
+                                            <div key={child.id} onClick={() => scrollToItem(child.id)} className="group/child flex items-center gap-2 py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors">
+                                              <FileText className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
+                                              <span className="text-sm text-foreground/80 truncate flex-1">{child.title || "Untitled page"}</span>
+                                              <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                  <button className="opacity-0 group-hover/child:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
+                                                    <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
+                                                  </button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-44">
+                                                  <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(child.title || ""); setRenameTarget({ id: child.id, title: child.title || "" }); }}>
+                                                    <Pencil className="w-3.5 h-3.5" /> Rename
+                                                  </DropdownMenuItem>
+                                                  <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(child.id)}>
+                                                    <Copy className="w-3.5 h-3.5" /> Duplicate
+                                                  </DropdownMenuItem>
+                                                  <DropdownMenuSeparator />
+                                                  <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(child.id)}>
+                                                    <Trash2 className="w-3.5 h-3.5" /> Delete
+                                                  </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                              </DropdownMenu>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                      <button onClick={() => addPageToSection(item.id)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1 ml-1 pl-3">
+                                        <Plus className="w-3.5 h-3.5" /> Add page
+                                      </button>
+                                      <div className="border-t border-dashed border-border mt-2" />
+                                    </>)}
+                                  </div>
+                                )}
+                              </SortableOutlineWrapper>
+                            );
+                          }
+                          return null;
+                        });
+                      })()}
+                    </SortableContext>
+                  </DndContext>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">No items in the outline yet</p>
+                )}
+              </div>
+            ) : (
+              <ContentBlocksPanel
+                onAddBlock={(type, variant) => {
+                  if (activeItemId === "intro") {
+                    addIntroBlock(type as ContentBlockData["type"], undefined, variant);
+                  } else if (activeItemId) {
+                    addBlockToItem(activeItemId, type, undefined, variant);
+                  }
+                }}
+                onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
+                aiEnabled={aiEnabled}
+              />
+            )}
+          </div>
+        </div>
+      </div>
       <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => { if (!open) setDeleteConfirmId(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
