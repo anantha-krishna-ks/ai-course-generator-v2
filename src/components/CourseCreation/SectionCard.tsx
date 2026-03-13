@@ -393,17 +393,32 @@ export function SectionCard({
               </span>
 
               {/* Quick actions */}
-              <div className="flex items-center gap-0.5 shrink-0">
-                {/* Thumbnail button */}
+              <div className="flex items-center gap-1 shrink-0">
+                {/* Thumbnail preview / add image */}
                 <button
                   onClick={() => setShowImageDialog(true)}
                   className={cn(
-                    "p-1.5 rounded-md transition-colors",
-                    thumbnailUrl ? "text-primary hover:bg-primary/10" : "text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted"
+                    "group/thumb relative rounded-lg transition-all duration-200 overflow-hidden",
+                    thumbnailUrl
+                      ? "w-9 h-9 ring-1 ring-border/60 hover:ring-primary/40 hover:shadow-md"
+                      : "p-1.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted rounded-md"
                   )}
                   title={thumbnailUrl ? "Change image" : "Add image"}
                 >
-                  <ImageIcon className="w-3.5 h-3.5" />
+                  {thumbnailUrl ? (
+                    <>
+                      <img
+                        src={thumbnailUrl}
+                        alt="Section thumbnail"
+                        className="w-full h-full object-cover transition-transform duration-200 group-hover/thumb:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover/thumb:bg-black/30 transition-colors duration-200 flex items-center justify-center">
+                        <ImageIcon className="w-3 h-3 text-white opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200" />
+                      </div>
+                    </>
+                  ) : (
+                    <ImageIcon className="w-3.5 h-3.5" />
+                  )}
                 </button>
 
                 {hasInclusions && (
