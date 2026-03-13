@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SectionImageDialog } from "./SectionImageDialog";
+import { ImageBlock } from "./ImageBlock";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
@@ -296,7 +296,7 @@ export function SectionCard({
     if (onThumbnailChange) onThumbnailChange(url);
     else setInternalThumbnail(url);
   };
-  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [showImageBlock, setShowImageBlock] = useState(false);
   const [internalPages, setInternalPages] = useState<PageEntry[]>([]);
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
@@ -403,9 +403,9 @@ export function SectionCard({
 
               {/* Quick actions */}
               <div className="flex items-center gap-1 shrink-0">
-                {!thumbnailUrl && (
+                {!thumbnailUrl && !showImageBlock && (
                   <button
-                    onClick={() => setShowImageDialog(true)}
+                    onClick={() => setShowImageBlock(true)}
                     className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted transition-colors"
                     title="Add image"
                   >
@@ -438,7 +438,7 @@ export function SectionCard({
                       {hasInclusions ? "Edit inclusions" : "Add inclusions"}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => setShowImageDialog(true)}
+                      onClick={() => setShowImageBlock(true)}
                       className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                     >
                       <ImageIcon className="w-4 h-4 text-muted-foreground" />
@@ -492,26 +492,17 @@ export function SectionCard({
               </div>
             </div>
 
-            {/* Section thumbnail banner */}
-            {thumbnailUrl && (
-              <button
-                onClick={() => setShowImageDialog(true)}
-                className="group/banner relative w-full h-20 overflow-hidden cursor-pointer border-t border-border/40"
-                title="Change image"
-              >
-                <img
-                  src={thumbnailUrl}
-                  alt="Section thumbnail"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover/banner:scale-105"
+            {/* Inline image block */}
+            {(thumbnailUrl || showImageBlock) && (
+              <div className="px-4 pt-2 pb-1">
+                <ImageBlock
+                  imageUrl={thumbnailUrl || ""}
+                  onChange={(url) => {
+                    setThumbnailUrl(url);
+                    if (!url) setShowImageBlock(false);
+                  }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-black/0 group-hover/banner:bg-black/20 transition-colors duration-200 flex items-center justify-center">
-                  <div className="px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm text-[11px] font-medium text-foreground opacity-0 group-hover/banner:opacity-100 transition-all duration-200 flex items-center gap-1.5 shadow-sm">
-                    <ImageIcon className="w-3 h-3" />
-                    Change image
-                  </div>
-                </div>
-              </button>
+              </div>
             )}
 
             {/* Learning Objective (inline, collapsible) */}
@@ -624,16 +615,6 @@ export function SectionCard({
         </div>
       </div>
 
-      {/* Image dialog */}
-      <SectionImageDialog
-        open={showImageDialog}
-        onClose={() => setShowImageDialog(false)}
-        currentImage={thumbnailUrl}
-        onImageChange={(url) => {
-          setThumbnailUrl(url);
-          setShowImageDialog(false);
-        }}
-      />
 
       {/* Inclusions Dialog */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
