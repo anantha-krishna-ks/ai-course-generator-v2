@@ -780,7 +780,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {/* Header row: Course outline + Add item */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-medium text-foreground">Course outline:</h2>
+                  <h2 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Course Outline</h2>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button className="text-muted-foreground hover:text-foreground transition-colors">
