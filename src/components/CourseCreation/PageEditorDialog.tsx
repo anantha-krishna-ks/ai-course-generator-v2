@@ -323,8 +323,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
   }, []);
 
-  const handleEditorDragLeave = useCallback(() => {
-    setIsDragOver(false);
+  const handleEditorDragLeave = useCallback((e: React.DragEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { clientX, clientY } = e;
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+      setIsDragOver(false);
+    }
   }, []);
 
   const updateBlock = useCallback((id: string, content: string) => {
