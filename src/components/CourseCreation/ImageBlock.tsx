@@ -487,7 +487,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/jpg,image/png,image/bmp,image/gif"
           className="hidden"
           onChange={handleInputChange}
         />
