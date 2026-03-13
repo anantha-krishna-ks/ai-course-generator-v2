@@ -775,7 +775,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
           )}
 
           {/* Main Content Area */}
-          <div className="flex-1 min-w-0 overflow-y-auto">
+            <div
+              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver && "bg-primary/5")}
+              onDragOver={handleEditorDragOver}
+              onDragLeave={handleEditorDragLeave}
+              onDrop={handleContentDrop}
+            >
             <div className="max-w-[800px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
               {isCurrentSection ? (
                 <>
