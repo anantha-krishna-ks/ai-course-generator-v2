@@ -615,16 +615,6 @@ export function SectionCard({
         </div>
       </div>
 
-      {/* Image dialog */}
-      <SectionImageDialog
-        open={showImageDialog}
-        onClose={() => setShowImageDialog(false)}
-        currentImage={thumbnailUrl}
-        onImageChange={(url) => {
-          setThumbnailUrl(url);
-          setShowImageDialog(false);
-        }}
-      />
 
       {/* Inclusions Dialog */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
