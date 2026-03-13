@@ -321,10 +321,42 @@ export function AIConfigView({
               className="min-h-[90px] text-sm resize-none bg-background border border-border/80 focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg overflow-hidden"
               rows={3}
             />
+            {options.guidelinesDocuments.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {options.guidelinesDocuments.map((doc, i) => (
+                  <Badge
+                    key={i}
+                    variant="secondary"
+                    className="gap-1.5 pr-1.5 text-xs font-normal h-7"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    {doc}
+                    <button
+                      type="button"
+                      onClick={() => update({ guidelinesDocuments: options.guidelinesDocuments.filter((_, idx) => idx !== i) })}
+                      className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
             <div
+              onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5', 'text-primary'); }}
+              onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5', 'text-primary'); }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+                const files = Array.from(e.dataTransfer.files);
+                if (files.length > 0) {
+                  const newDocs = files.map(f => f.name);
+                  update({ guidelinesDocuments: [...options.guidelinesDocuments, ...newDocs] });
+                }
+              }}
               onClick={() => {
                 const mockFile = `Guidelines_${Date.now().toString(36)}.pdf`;
-                update({ guidelines: options.guidelines ? `${options.guidelines}\n[Uploaded: ${mockFile}]` : `[Uploaded: ${mockFile}]` });
+                update({ guidelinesDocuments: [...options.guidelinesDocuments, mockFile] });
               }}
               className="w-full border-2 border-dashed border-border/80 rounded-lg py-4 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
