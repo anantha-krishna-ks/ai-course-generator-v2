@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -25,6 +25,39 @@ interface ImageBlockProps {
 type FitMode = "contain" | "cover" | "fill";
 type EditorMode = "none" | "simple" | "full";
 
+// Sparkle loading component
+function SparkleLoader() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-8">
+      <div className="relative w-16 h-16">
+        {/* Orbiting sparkles */}
+        <div className="absolute inset-0 animate-spin" style={{ animationDuration: "3s" }}>
+          <Sparkles className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
+        </div>
+        <div className="absolute inset-0 animate-spin" style={{ animationDuration: "3s", animationDelay: "-1s" }}>
+          <Sparkles className="absolute bottom-0 right-0 w-3.5 h-3.5" style={{ color: "hsl(260, 80%, 60%)" }} />
+        </div>
+        <div className="absolute inset-0 animate-spin" style={{ animationDuration: "3s", animationDelay: "-2s" }}>
+          <Sparkles className="absolute top-1/2 left-0 -translate-y-1/2 w-3 h-3" style={{ color: "hsl(220, 80%, 60%)" }} />
+        </div>
+        {/* Center sparkle with gradient effect */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="animate-pulse" style={{ animationDuration: "1.5s" }}>
+            <Sparkles className="w-7 h-7" style={{
+              filter: "drop-shadow(0 0 6px hsl(var(--primary) / 0.4))",
+              color: "hsl(var(--primary))"
+            }} />
+          </div>
+        </div>
+      </div>
+      <div className="text-center space-y-1">
+        <p className="text-sm font-medium text-foreground">Generating image...</p>
+        <p className="text-xs text-muted-foreground">This may take a few seconds</p>
+      </div>
+    </div>
+  );
+}
+
 export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>("none");
@@ -37,6 +70,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const [isResizing, setIsResizing] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [localAlt, setLocalAlt] = useState(altText);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -106,6 +140,19 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
+  };
+
+  const handleDeleteImage = () => {
+    onChange("");
+    setEditorMode("none");
+    setZoom(100);
+    setFitMode("contain");
+    setFlipH(false);
+    setFlipV(false);
+    setRotation(0);
+    setContainerHeight(300);
+    setLocalAlt("");
+    onAltTextChange?.("");
   };
 
   const fitModeLabels: Record<FitMode, string> = {
@@ -238,6 +285,17 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                 </Popover>
               </Tooltip>
             </TooltipProvider>
+
+            <div className="w-px h-4 bg-border" />
+
+            {/* Delete image */}
+            <button
+              onClick={handleDeleteImage}
+              className="p-1.5 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              title="Delete image"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -339,6 +397,17 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               </button>
             </div>
 
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Delete image */}
+            <button
+              onClick={handleDeleteImage}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              title="Delete image"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+
             {/* Spacer + Done */}
             <div className="flex-1" />
             <button
@@ -429,17 +498,28 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
 
   const handleGenerateClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Set a default placeholder image immediately
-    onChange(PLACEHOLDER_IMAGE);
-    // Then open the dialog for optional refinement
     setShowGenerateDialog(true);
   };
 
   const handleGenerateSubmit = () => {
-    // TODO: Wire up AI image generation API
-    console.log("Generate image with prompt:", imagePrompt);
-    setImagePrompt("");
-    setShowGenerateDialog(false);
+    setIsGenerating(true);
+    // Simulate AI generation with loading state
+    setTimeout(() => {
+      onChange(PLACEHOLDER_IMAGE);
+      setIsGenerating(false);
+      setImagePrompt("");
+      setShowGenerateDialog(false);
+    }, 2500);
+  };
+
+  const handleGenerateSkip = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      onChange(PLACEHOLDER_IMAGE);
+      setIsGenerating(false);
+      setImagePrompt("");
+      setShowGenerateDialog(false);
+    }, 2500);
   };
 
   return (
@@ -513,64 +593,87 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
       </div>
 
       {/* Generate Image Dialog */}
-      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
+      <Dialog open={showGenerateDialog} onOpenChange={(open) => {
+        if (!isGenerating) {
+          setShowGenerateDialog(open);
+          if (!open) setImagePrompt("");
+        }
+      }}>
         <DialogContent className="sm:max-w-[520px] gap-0 p-0 overflow-hidden">
-          <DialogHeader className="px-6 pt-6 pb-4">
-            <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
-              <div className="p-1.5 rounded-lg bg-primary/10">
-                <Sparkles className="w-4 h-4 text-primary" />
-              </div>
-              Generate image
-            </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1.5">
-              Optionally describe the image you'd like to generate. Leave blank to keep the default.
-            </p>
-          </DialogHeader>
-
-          <div className="px-6 pb-2">
-            <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
-              <textarea
-                value={imagePrompt}
-                onChange={(e) => setImagePrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleGenerateSubmit();
-                  }
-                }}
-                placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons..."
-                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
-                rows={4}
-                autoFocus
-              />
+          {isGenerating ? (
+            <div className="px-6 py-10">
+              <SparkleLoader />
             </div>
-            <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
-              Press Enter to generate · Shift+Enter for new line
-            </p>
-          </div>
+          ) : (
+            <>
+              <DialogHeader className="px-6 pt-6 pb-4">
+                <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+                  <div className="p-1.5 rounded-lg bg-primary/10">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                  </div>
+                  Generate Image
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground mt-1.5">
+                  Describe the image you'd like to generate, or skip to use a default placeholder.
+                </p>
+              </DialogHeader>
 
-          <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setShowGenerateDialog(false);
-                setImagePrompt("");
-              }}
-              className="rounded-full px-4"
-            >
-              {imagePrompt.trim() ? "Skip" : "Done"}
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleGenerateSubmit}
-              disabled={!imagePrompt.trim()}
-              className="rounded-full px-4 gap-1.5"
-            >
-              <Send className="w-3.5 h-3.5" />
-              Generate
-            </Button>
-          </div>
+              <div className="px-6 pb-2">
+                <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
+                  <textarea
+                    value={imagePrompt}
+                    onChange={(e) => setImagePrompt(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (imagePrompt.trim()) {
+                          handleGenerateSubmit();
+                        }
+                      }
+                    }}
+                    placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons..."
+                    className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+                    rows={4}
+                    autoFocus
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+                  Press Enter to generate · Shift+Enter for new line · Optional
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowGenerateDialog(false);
+                    setImagePrompt("");
+                  }}
+                  className="rounded-full px-4"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleGenerateSkip}
+                  className="rounded-full px-4"
+                >
+                  Skip &amp; Use Default
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleGenerateSubmit}
+                  disabled={!imagePrompt.trim()}
+                  className="rounded-full px-4 gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  Generate
+                </Button>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>
