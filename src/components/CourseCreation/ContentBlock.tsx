@@ -228,10 +228,12 @@ export function ContentBlock({
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <Sparkles className="w-4 h-4 text-primary" />
               </div>
-              Generate content
+              {type === "image" ? "Generate image with AI" : "Generate text with AI"}
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1.5">
-              Describe what content you'd like to generate for this block.
+              {type === "image"
+                ? "Describe the image you'd like to generate for this block."
+                : "Describe what text content you'd like to generate for this block."}
             </p>
           </DialogHeader>
 
