@@ -251,7 +251,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
             {currentStep > 0 && (
               <button
                 onClick={handlePrev}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted"
+                className="flex items-center gap-1 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 Back
@@ -259,13 +259,13 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
             )}
             <button
               onClick={handleSkip}
-              className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg"
+              className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full"
             >
               Skip
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors shadow-sm"
             >
               {isLast ? "Got it!" : "Next"}
               {!isLast && <ChevronRight className="w-3.5 h-3.5" />}
