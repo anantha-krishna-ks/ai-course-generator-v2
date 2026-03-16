@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Quote } from "lucide-react";
+import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -23,7 +23,7 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
-type LayoutType = "text-only" | "two-columns" | "three-columns" | "quote";
+type LayoutType = "text-only" | "two-columns" | "three-columns";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
@@ -31,7 +31,6 @@ const layoutOptions: { id: LayoutType; label: string; icon: React.ComponentType<
   { id: "text-only", label: "Text", icon: Type, columns: 1 },
   { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
   { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
-  { id: "quote", label: "Quote", icon: Quote, columns: 1 },
 ];
 
 function detectLayout(content: string): LayoutType {
@@ -49,7 +48,7 @@ function encodeContent(layout: LayoutType, columns: string[]): string {
 
 function decodeColumns(content: string, layout: LayoutType): string[] {
   const colCount = layoutOptions.find((o) => o.id === layout)?.columns ?? 1;
-  if (layout === "text-only" || layout === "quote") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
+  if (layout === "text-only") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
   const raw = content.replace(/<!--layout:\w[\w-]*-->/, "");
   const parts = raw.split(COL_SEPARATOR);
   // Pad to expected column count
@@ -61,7 +60,6 @@ const defaultContent: Record<LayoutType, string[]> = {
   "text-only": ["<p>Start writing your content here...</p>"],
   "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
   "three-columns": ["<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>"],
-  "quote": ["<blockquote><p>Add your quote here...</p></blockquote>"],
 };
 
 export function DescriptionBlock({
@@ -162,17 +160,6 @@ export function DescriptionBlock({
       );
     }
 
-    if (layout === "quote") {
-      return (
-        <div className="border-l-4 border-primary/30 pl-4 py-1">
-          <div
-            className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 italic break-words [overflow-wrap:anywhere]"
-            dangerouslySetInnerHTML={{ __html: columns[0] }}
-          />
-        </div>
-      );
-    }
-
     if (colCount > 1) {
       return (
         <div className={cn("grid gap-6", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
@@ -196,14 +183,6 @@ export function DescriptionBlock({
   };
 
   const renderEditor = () => {
-    if (layout === "quote") {
-      return (
-        <div className="border-l-4 border-primary/30 pl-2">
-          <DescriptionEditor content={columns[0]} onChange={(val) => handleColumnChange(0, val)} />
-        </div>
-      );
-    }
-
     if (colCount > 1) {
       return (
         <div className={cn("grid gap-4", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
