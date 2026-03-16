@@ -60,7 +60,6 @@ const defaultContent: Record<LayoutType, string[]> = {
   "text-only": ["<p>Start writing your content here...</p>"],
   "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
   "three-columns": ["<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>"],
-  "quote": ["<blockquote><p>Add your quote here...</p></blockquote>"],
 };
 
 export function DescriptionBlock({
