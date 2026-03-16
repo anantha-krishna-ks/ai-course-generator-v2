@@ -259,7 +259,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
             )}
             <button
               onClick={handleSkip}
-              className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg"
+              className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full"
             >
               Skip
             </button>
