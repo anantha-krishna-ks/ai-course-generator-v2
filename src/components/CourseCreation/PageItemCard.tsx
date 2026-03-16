@@ -29,9 +29,11 @@ interface PageItemCardProps {
   id?: string;
   title: string;
   inclusions?: string;
+  exclusions?: string;
   aiEnabled?: boolean;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
+  onExclusionsChange?: (exclusions: string) => void;
   onDelete?: () => void;
   onDuplicate?: () => void;
   onRenameItem?: (id: string, newTitle: string) => void;

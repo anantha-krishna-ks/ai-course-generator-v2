@@ -375,6 +375,8 @@ export function SectionCard({
   };
 
   const hasInclusions = inclusions.trim().length > 0;
+  const hasExclusions = exclusions.trim().length > 0;
+  const hasScope = hasInclusions || hasExclusions;
 
   return (
     <div className="group/section">
