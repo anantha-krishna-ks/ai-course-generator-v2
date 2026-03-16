@@ -23,80 +23,46 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
-const layoutOptions = [
-  {
-    id: "text-only",
-    label: "Text",
-    icon: Type,
-    html: "<p>Start writing your content here...</p>",
-  },
-  {
-    id: "two-columns",
-    label: "Two columns",
-    icon: Columns2,
-    html: "<h2>Heading</h2><p>Left column content...</p><h2>Heading</h2><p>Right column content...</p>",
-  },
-  {
-    id: "three-columns",
-    label: "Three columns",
-    icon: Columns3,
-    html: "<h2>Heading</h2><p>First column...</p><h2>Heading</h2><p>Second column...</p><h2>Heading</h2><p>Third column...</p>",
-  },
-  {
-    id: "quote",
-    label: "Quote",
-    icon: Quote,
-    html: "<blockquote><p>Add your quote here...</p></blockquote>",
-  },
+type LayoutType = "text-only" | "two-columns" | "three-columns" | "quote";
+
+const COL_SEPARATOR = "<!--col-break-->";
+
+const layoutOptions: { id: LayoutType; label: string; icon: React.ComponentType<{ className?: string }>; columns: number }[] = [
+  { id: "text-only", label: "Text", icon: Type, columns: 1 },
+  { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
+  { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
+  { id: "quote", label: "Quote", icon: Quote, columns: 1 },
 ];
 
-const textTemplates = [
-  {
-    id: "heading-text",
-    label: "Heading and text",
-    html: "<h2>Heading</h2><p>Start writing your content here...</p>",
-    preview: (
-      <div className="space-y-2">
-        <div className="h-2.5 w-16 rounded bg-foreground/20" />
-        <div className="space-y-1.5">
-          <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
-          <div className="h-1.5 w-4/5 rounded bg-muted-foreground/15" />
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: "text-only",
-    label: "Text",
-    html: "<p>Start writing your content here...</p>",
-    preview: (
-      <div className="space-y-1.5">
-        <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
-        <div className="h-1.5 w-5/6 rounded bg-muted-foreground/15" />
-        <div className="h-1.5 w-3/4 rounded bg-muted-foreground/15" />
-      </div>
-    ),
-  },
-  {
-    id: "two-columns",
-    label: "Two columns",
-    html: "<h2>Heading</h2><p>Left column content...</p><h2>Heading</h2><p>Right column content...</p>",
-    preview: (
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <div className="h-2 w-12 rounded bg-foreground/20" />
-          <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
-          <div className="h-1.5 w-3/4 rounded bg-muted-foreground/15" />
-        </div>
-        <div className="space-y-1.5">
-          <div className="h-2 w-12 rounded bg-foreground/20" />
-          <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
-          <div className="h-1.5 w-3/4 rounded bg-muted-foreground/15" />
-        </div>
-      </div>
-    ),
-  },
-];
+function detectLayout(content: string): LayoutType {
+  if (content.startsWith("<!--layout:")) {
+    const match = content.match(/<!--layout:(\w[\w-]*)-->/);
+    if (match) return match[1] as LayoutType;
+  }
+  return "text-only";
+}
+
+function encodeContent(layout: LayoutType, columns: string[]): string {
+  if (layout === "text-only") return columns[0] || "";
+  return `<!--layout:${layout}-->${columns.join(COL_SEPARATOR)}`;
+}
+
+function decodeColumns(content: string, layout: LayoutType): string[] {
+  const colCount = layoutOptions.find((o) => o.id === layout)?.columns ?? 1;
+  if (layout === "text-only" || layout === "quote") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
+  const raw = content.replace(/<!--layout:\w[\w-]*-->/, "");
+  const parts = raw.split(COL_SEPARATOR);
+  // Pad to expected column count
+  while (parts.length < colCount) parts.push("<p></p>");
+  return parts.slice(0, colCount);
+}
+
+const defaultContent: Record<LayoutType, string[]> = {
+  "text-only": ["<p>Start writing your content here...</p>"],
+  "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
+  "three-columns": ["<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>"],
+  "quote": ["<blockquote><p>Add your quote here...</p></blockquote>"],
+};
 
 export function DescriptionBlock({
   id,
@@ -106,6 +72,7 @@ export function DescriptionBlock({
   onDuplicate,
 }: DescriptionBlockProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
   const blockRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -122,7 +89,6 @@ export function DescriptionBlock({
     transition,
   };
 
-  // Click outside to collapse
   useEffect(() => {
     if (!isEditing) return;
     const handleClickOutside = (e: MouseEvent) => {
@@ -134,12 +100,26 @@ export function DescriptionBlock({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isEditing]);
 
-  const hasContent = content && content !== "<p></p>" && content.replace(/<[^>]*>/g, "").trim() !== "";
+  const columns = decodeColumns(content, layout);
 
-  const handleTemplateSelect = (template: typeof textTemplates[0]) => {
-    onChange(template.html);
+  const hasContent = columns.some(
+    (col) => col && col !== "<p></p>" && col.replace(/<[^>]*>/g, "").trim() !== ""
+  );
+
+  const handleColumnChange = (colIndex: number, newContent: string) => {
+    const updated = [...columns];
+    updated[colIndex] = newContent;
+    onChange(encodeContent(layout, updated));
+  };
+
+  const handleLayoutChange = (newLayout: LayoutType) => {
+    setLayout(newLayout);
+    const newCols = defaultContent[newLayout];
+    onChange(encodeContent(newLayout, newCols));
     setIsEditing(true);
   };
+
+  const colCount = layoutOptions.find((o) => o.id === layout)?.columns ?? 1;
 
   const SidebarButton = ({
     icon: Icon,
@@ -172,6 +152,72 @@ export function DescriptionBlock({
       </TooltipContent>
     </Tooltip>
   );
+
+  const renderPreview = () => {
+    if (!hasContent) {
+      return (
+        <span className="text-lg text-foreground/40 italic">
+          Tell your learners what the course will be about...
+        </span>
+      );
+    }
+
+    if (layout === "quote") {
+      return (
+        <div className="border-l-4 border-primary/30 pl-4 py-1">
+          <div
+            className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 italic break-words [overflow-wrap:anywhere]"
+            dangerouslySetInnerHTML={{ __html: columns[0] }}
+          />
+        </div>
+      );
+    }
+
+    if (colCount > 1) {
+      return (
+        <div className={cn("grid gap-6", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
+          {columns.map((col, i) => (
+            <div
+              key={i}
+              className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+              dangerouslySetInnerHTML={{ __html: col }}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+        dangerouslySetInnerHTML={{ __html: columns[0] }}
+      />
+    );
+  };
+
+  const renderEditor = () => {
+    if (layout === "quote") {
+      return (
+        <div className="border-l-4 border-primary/30 pl-2">
+          <DescriptionEditor content={columns[0]} onChange={(val) => handleColumnChange(0, val)} />
+        </div>
+      );
+    }
+
+    if (colCount > 1) {
+      return (
+        <div className={cn("grid gap-4", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
+          {columns.map((col, i) => (
+            <div key={i} className="min-w-0">
+              <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return <DescriptionEditor content={columns[0]} onChange={(val) => handleColumnChange(0, val)} />;
+  };
 
   return (
     <div
@@ -210,17 +256,22 @@ export function DescriptionBlock({
             <div className="px-1.5 pb-1.5">
               {layoutOptions.map((opt) => {
                 const Icon = opt.icon;
+                const isActive = layout === opt.id;
                 return (
                   <button
                     key={opt.id}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onChange(opt.html);
-                      setIsEditing(true);
+                      handleLayoutChange(opt.id);
                     }}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted hover:text-foreground transition-colors"
+                    className={cn(
+                      "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                    )}
                   >
-                    <Icon className="w-4 h-4 text-muted-foreground" />
+                    <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
                     {opt.label}
                   </button>
                 );
@@ -249,25 +300,13 @@ export function DescriptionBlock({
       {/* Content area */}
       <div className="w-full">
         {isEditing ? (
-          <DescriptionEditor
-            content={content}
-            onChange={onChange}
-          />
+          renderEditor()
         ) : (
           <button
             onClick={() => setIsEditing(true)}
             className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
           >
-            {hasContent ? (
-              <div
-                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
-            ) : (
-              <span className="text-lg text-foreground/40 italic">
-                Tell your learners what the course will be about...
-              </span>
-            )}
+            {renderPreview()}
           </button>
         )}
       </div>
