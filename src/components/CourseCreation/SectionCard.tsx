@@ -222,31 +222,48 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         </DialogContent>
       </Dialog>
 
-      {/* Inclusions Dialog */}
+      {/* Scope Dialog for Page */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
         <DialogContent className="sm:max-w-[560px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
-              Inclusions
+              Scope
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1">
               Define the scope for "{pageDisplayTitle}"
             </p>
           </DialogHeader>
-          <div className="mt-4">
-            <textarea
-              value={page.inclusions}
-              onChange={(e) => onInclusionsChange(page.id, e.target.value)}
-              autoFocus
-              className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
-              placeholder="Define what topics, content, or scope should be included in this page..."
-              onInput={(e) => {
-                const target = e.target as HTMLTextAreaElement;
-                target.style.height = 'auto';
-                target.style.height = Math.max(140, target.scrollHeight) + 'px';
-              }}
-            />
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Inclusions</label>
+              <textarea
+                value={page.inclusions}
+                onChange={(e) => onInclusionsChange(page.id, e.target.value)}
+                autoFocus
+                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                placeholder="Define what topics, content, or scope should be included in this page..."
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
+              <textarea
+                value={page.exclusions}
+                onChange={(e) => onExclusionsChange(page.id, e.target.value)}
+                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                placeholder="Define what topics or content should be excluded from this page..."
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                }}
+              />
+            </div>
           </div>
           <div className="flex justify-end pt-2">
             <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
