@@ -223,6 +223,34 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     });
   }, []);
 
+  const aiGenerateText = useCallback((prompt: string, insertAt?: number) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const content = `<h3>${prompt}</h3><p>Based on your prompt, here is an AI-generated overview of the topic. This section covers the key concepts and practical applications that learners need to understand. The content has been structured to facilitate progressive learning and knowledge retention.</p><p>Key takeaways include understanding the fundamental principles, recognizing common patterns, and applying best practices in real-world scenarios.</p>`;
+    const newBlock: ContentBlockData = { id, type: "text", content };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
+
+  const aiGenerateImage = useCallback((prompt: string, insertAt?: number) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const content = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop";
+    const newBlock: ContentBlockData = { id, type: "image", content };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
+
   const updateBlockContent = (id: string, content: string) => {
     setContentBlocks((prev) =>
       prev.map((b) => (b.id === id ? { ...b, content } : b))
@@ -682,7 +710,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                             <div key={block.id} className="group/item">
                               {index === 0 && !activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} />
+                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} />
                                 </div>
                               )}
 
@@ -730,7 +758,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
                               {!activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} />
+                                  <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, index + 1)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, index + 1)} />
                                 </div>
                               )}
                             </div>
@@ -768,7 +796,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {/* Add content button when no blocks exist */}
               {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
-                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} forceOpen={tourStep === 1} />
+                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt)} forceOpen={tourStep === 1} />
                 </div>
               )}
             </div>
