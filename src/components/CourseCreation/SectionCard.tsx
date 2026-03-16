@@ -60,6 +60,7 @@ interface SortablePageRowProps {
   onDuplicate: (id: string) => void;
   onDelete: (id: string) => void;
   onInclusionsChange: (id: string, inclusions: string) => void;
+  onExclusionsChange: (id: string, exclusions: string) => void;
   aiEnabled?: boolean;
 }
 
