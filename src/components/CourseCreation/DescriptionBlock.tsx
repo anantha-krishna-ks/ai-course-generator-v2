@@ -183,14 +183,6 @@ export function DescriptionBlock({
   };
 
   const renderEditor = () => {
-    if (layout === "quote") {
-      return (
-        <div className="border-l-4 border-primary/30 pl-2">
-          <DescriptionEditor content={columns[0]} onChange={(val) => handleColumnChange(0, val)} />
-        </div>
-      );
-    }
-
     if (colCount > 1) {
       return (
         <div className={cn("grid gap-4", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
