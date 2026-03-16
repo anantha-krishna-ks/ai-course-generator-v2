@@ -220,7 +220,7 @@ export function DescriptionBlock({
         />
 
         {/* Change layout popover */}
-        <Popover>
+        <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
           <PopoverTrigger asChild>
             <button
               onClick={(e) => e.stopPropagation()}
