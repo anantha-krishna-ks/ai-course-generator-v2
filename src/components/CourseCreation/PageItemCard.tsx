@@ -55,10 +55,10 @@ interface PageItemCardProps {
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTitleChange, onInclusionsChange, onExclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [showScopeDialog, setShowScopeDialog] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -69,6 +69,8 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
 
   const displayTitle = title.trim() || "Untitled page";
   const hasInclusions = inclusions.trim().length > 0;
+  const hasExclusions = exclusions.trim().length > 0;
+  const hasScope = hasInclusions || hasExclusions;
 
   return (
     <>
