@@ -249,7 +249,10 @@ export function ContentBlock({
                     handleGenerateSubmit();
                   }
                 }}
-                placeholder="e.g., Write an introduction about the importance of cybersecurity in modern businesses..."
+                placeholder={type === "image"
+                  ? "e.g., A modern illustration of cloud computing architecture..."
+                  : "e.g., Write an introduction about the importance of cybersecurity in modern businesses..."
+                }
                 className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
                 rows={4}
               />
