@@ -523,7 +523,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               Generate image
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1.5">
-              Describe the image you'd like to generate for this block.
+              Optionally describe the image you'd like to generate. Leave blank to keep the default.
             </p>
           </DialogHeader>
 
@@ -559,7 +559,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               }}
               className="rounded-full px-4"
             >
-              Cancel
+              {imagePrompt.trim() ? "Skip" : "Done"}
             </Button>
             <Button
               size="sm"
