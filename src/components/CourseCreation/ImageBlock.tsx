@@ -545,23 +545,13 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   };
 
   const handleGenerateSubmit = () => {
+    setShowGenerateDialog(false);
     setIsGenerating(true);
     // Simulate AI generation with loading state
     setTimeout(() => {
       onChange(PLACEHOLDER_IMAGE);
       setIsGenerating(false);
       setImagePrompt("");
-      setShowGenerateDialog(false);
-    }, 2500);
-  };
-
-  const handleGenerateSkip = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      onChange(PLACEHOLDER_IMAGE);
-      setIsGenerating(false);
-      setImagePrompt("");
-      setShowGenerateDialog(false);
     }, 2500);
   };
 
