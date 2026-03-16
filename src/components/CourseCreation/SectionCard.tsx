@@ -461,7 +461,7 @@ export function SectionCard({
                       className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                     >
                       <ListChecks className="w-4 h-4 text-muted-foreground" />
-                      {hasInclusions ? "Edit inclusions" : "Add inclusions"}
+                      {hasScope ? "Edit scope" : "Add scope"}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setShowImageBlock(true)}
