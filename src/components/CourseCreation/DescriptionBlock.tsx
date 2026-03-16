@@ -70,6 +70,7 @@ export function DescriptionBlock({
   onDuplicate,
 }: DescriptionBlockProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
   const blockRef = useRef<HTMLDivElement>(null);
 
@@ -211,7 +212,7 @@ export function DescriptionBlock({
       )}
     >
       {/* Sidebar actions */}
-      <div className="absolute -left-11 top-1 flex flex-col items-center gap-0.5 opacity-0 group-hover/desc:opacity-100 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm">
+      <div className={cn("absolute -left-11 top-1 flex flex-col items-center gap-0.5 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm", isLayoutOpen ? "opacity-100" : "opacity-0 group-hover/desc:opacity-100")}>
         <SidebarButton
           icon={GripVertical}
           label="Drag to reorder"
@@ -219,7 +220,7 @@ export function DescriptionBlock({
         />
 
         {/* Change layout popover */}
-        <Popover>
+        <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
           <PopoverTrigger asChild>
             <button
               onClick={(e) => e.stopPropagation()}
