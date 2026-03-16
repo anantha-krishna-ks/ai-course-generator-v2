@@ -337,7 +337,7 @@ export function SectionCard({
   };
 
   const handleAddPage = () => {
-    const newPage: PageEntry = { id: crypto.randomUUID(), title: "", inclusions: "" };
+    const newPage: PageEntry = { id: crypto.randomUUID(), title: "", inclusions: "", exclusions: "" };
     setPages((prev) => [...prev, newPage]);
     setTimeout(() => newPageRef.current?.focus(), 50);
   };
