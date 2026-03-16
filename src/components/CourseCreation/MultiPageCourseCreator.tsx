@@ -892,6 +892,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   sectionNumber={currentSectionNumber}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
+                                  exclusions={item.exclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
                                   thumbnailUrl={item.thumbnailUrl || null}
                                   onThumbnailChange={(url) => {
@@ -901,12 +902,13 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   }}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
+                                  onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   onOpenSection={() => {}}
                                   onAddPage={() => handleAddItem("page")}
                                   onAddLearningObjective={() => {}}
-                                  pages={(item.children || []).map(c => ({ id: c.id, title: c.title, inclusions: c.inclusions || "" }))}
+                                  pages={(item.children || []).map(c => ({ id: c.id, title: c.title, inclusions: c.inclusions || "", exclusions: c.exclusions || "" }))}
                                   onPagesChange={(newPages) => {
                                     setItems((prev) => prev.map((i) => {
                                       if (i.id === item.id) {
@@ -917,6 +919,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                             type: "page" as const,
                                             title: p.title,
                                             inclusions: p.inclusions,
+                                            exclusions: p.exclusions,
                                           })),
                                         };
                                       }
