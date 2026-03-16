@@ -223,6 +223,34 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     });
   }, []);
 
+  const aiGenerateText = useCallback((prompt: string, insertAt?: number) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const content = `<h3>${prompt}</h3><p>Based on your prompt, here is an AI-generated overview of the topic. This section covers the key concepts and practical applications that learners need to understand. The content has been structured to facilitate progressive learning and knowledge retention.</p><p>Key takeaways include understanding the fundamental principles, recognizing common patterns, and applying best practices in real-world scenarios.</p>`;
+    const newBlock: ContentBlockData = { id, type: "text", content };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
+
+  const aiGenerateImage = useCallback((prompt: string, insertAt?: number) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const content = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop";
+    const newBlock: ContentBlockData = { id, type: "image", content };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
+
   const updateBlockContent = (id: string, content: string) => {
     setContentBlocks((prev) =>
       prev.map((b) => (b.id === id ? { ...b, content } : b))
