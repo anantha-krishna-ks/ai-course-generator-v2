@@ -403,7 +403,6 @@ export function SectionCard({
 
               {/* Quick actions */}
               <div className="flex items-center gap-1 shrink-0">
-
                 {hasInclusions && (
                   <button
                     onClick={() => setShowInclusionsDialog(true)}
@@ -413,6 +412,13 @@ export function SectionCard({
                     <ListChecks className="w-3.5 h-3.5" />
                   </button>
                 )}
+                <button
+                  onClick={() => onOpenSection?.()}
+                  className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0"
+                >
+                  Open
+                  <ChevronRight className="w-3 h-3" />
+                </button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
