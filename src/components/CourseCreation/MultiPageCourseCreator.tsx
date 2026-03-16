@@ -937,9 +937,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   id={item.id}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
+                                  exclusions={item.exclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
+                                  onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   onRenameItem={(id, newTitle) => updateItemTitle(id, newTitle)}
