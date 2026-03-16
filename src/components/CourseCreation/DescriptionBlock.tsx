@@ -177,7 +177,7 @@ export function DescriptionBlock({
 
     return (
       <div
-        className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+        className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] text-lg leading-relaxed [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
         dangerouslySetInnerHTML={{ __html: columns[0] }}
       />
     );
