@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3 } from "lucide-react";
+import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Heading } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -23,14 +23,14 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
-type LayoutType = "text-only" | "two-columns" | "three-columns";
+type LayoutType = "heading-text" | "text-only" | "two-columns";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
 const layoutOptions: { id: LayoutType; label: string; icon: React.ComponentType<{ className?: string }>; columns: number }[] = [
+  { id: "heading-text", label: "Heading and text", icon: Heading, columns: 1 },
   { id: "text-only", label: "Text", icon: Type, columns: 1 },
   { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
-  { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
 ];
 
 function detectLayout(content: string): LayoutType {
@@ -57,9 +57,9 @@ function decodeColumns(content: string, layout: LayoutType): string[] {
 }
 
 const defaultContent: Record<LayoutType, string[]> = {
+  "heading-text": ["<h2>Heading</h2><p>Start writing your content here...</p>"],
   "text-only": ["<p>Start writing your content here...</p>"],
   "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
-  "three-columns": ["<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>"],
 };
 
 export function DescriptionBlock({
@@ -162,7 +162,7 @@ export function DescriptionBlock({
 
     if (colCount > 1) {
       return (
-        <div className={cn("grid gap-6", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
+        <div className="grid gap-6 grid-cols-2">
           {columns.map((col, i) => (
             <div
               key={i}
@@ -185,7 +185,7 @@ export function DescriptionBlock({
   const renderEditor = () => {
     if (colCount > 1) {
       return (
-        <div className={cn("grid gap-4", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
+        <div className="grid gap-4 grid-cols-2">
           {columns.map((col, i) => (
             <div key={i} className="min-w-0">
               <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
