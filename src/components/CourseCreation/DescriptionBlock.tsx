@@ -70,6 +70,7 @@ export function DescriptionBlock({
   onDuplicate,
 }: DescriptionBlockProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
   const blockRef = useRef<HTMLDivElement>(null);
 
