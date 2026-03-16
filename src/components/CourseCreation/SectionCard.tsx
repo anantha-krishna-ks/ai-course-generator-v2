@@ -403,15 +403,6 @@ export function SectionCard({
 
               {/* Quick actions */}
               <div className="flex items-center gap-1 shrink-0">
-                {!thumbnailUrl && !showImageBlock && (
-                  <button
-                    onClick={() => setShowImageBlock(true)}
-                    className="p-1.5 rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted transition-colors"
-                    title="Add image"
-                  >
-                    <ImageIcon className="w-3.5 h-3.5" />
-                  </button>
-                )}
 
                 {hasInclusions && (
                   <button
