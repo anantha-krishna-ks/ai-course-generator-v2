@@ -23,6 +23,33 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
+const layoutOptions = [
+  {
+    id: "text-only",
+    label: "Text",
+    icon: Type,
+    html: "<p>Start writing your content here...</p>",
+  },
+  {
+    id: "two-columns",
+    label: "Two columns",
+    icon: Columns2,
+    html: "<h2>Heading</h2><p>Left column content...</p><h2>Heading</h2><p>Right column content...</p>",
+  },
+  {
+    id: "three-columns",
+    label: "Three columns",
+    icon: Columns3,
+    html: "<h2>Heading</h2><p>First column...</p><h2>Heading</h2><p>Second column...</p><h2>Heading</h2><p>Third column...</p>",
+  },
+  {
+    id: "quote",
+    label: "Quote",
+    icon: Quote,
+    html: "<blockquote><p>Add your quote here...</p></blockquote>",
+  },
+];
+
 const textTemplates = [
   {
     id: "heading-text",
