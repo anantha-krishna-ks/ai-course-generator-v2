@@ -547,7 +547,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 });
               }}
             >
-              <MonitorPlay className="w-4 h-4" />
+              <ExternalLink className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
