@@ -151,19 +151,21 @@ export function ContentBlock({
             onClick={onDelete}
             className="hover:text-destructive"
           />
-          {aiEnabled && type === "text" && (
+          {aiEnabled && (type === "text" || type === "image") && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
               <SidebarButton
                 icon={Sparkles}
-                label="Generate content"
+                label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                 onClick={() => setShowGenerateDialog(true)}
               />
-              <SidebarButton
-                icon={GitBranch}
-                label="Versions"
-                onClick={() => setShowVersionsDialog(true)}
-              />
+              {type === "text" && (
+                <SidebarButton
+                  icon={GitBranch}
+                  label="Versions"
+                  onClick={() => setShowVersionsDialog(true)}
+                />
+              )}
             </>
           )}
         </div>
@@ -226,10 +228,12 @@ export function ContentBlock({
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <Sparkles className="w-4 h-4 text-primary" />
               </div>
-              Generate content
+              {type === "image" ? "Generate image with AI" : "Generate text with AI"}
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1.5">
-              Describe what content you'd like to generate for this block.
+              {type === "image"
+                ? "Describe the image you'd like to generate for this block."
+                : "Describe what text content you'd like to generate for this block."}
             </p>
           </DialogHeader>
 
@@ -245,7 +249,10 @@ export function ContentBlock({
                     handleGenerateSubmit();
                   }
                 }}
-                placeholder="e.g., Write an introduction about the importance of cybersecurity in modern businesses..."
+                placeholder={type === "image"
+                  ? "e.g., A modern illustration of cloud computing architecture..."
+                  : "e.g., Write an introduction about the importance of cybersecurity in modern businesses..."
+                }
                 className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
                 rows={4}
               />
