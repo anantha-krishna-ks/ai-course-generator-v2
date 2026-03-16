@@ -192,6 +192,43 @@ export function DescriptionBlock({
           label="Drag to reorder"
           className="cursor-grab active:cursor-grabbing"
         />
+
+        {/* Change layout popover */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent side="left" align="start" className="w-48 p-0">
+            <div className="px-3 pt-3 pb-1.5">
+              <p className="text-xs font-medium text-muted-foreground">Change layout</p>
+            </div>
+            <div className="px-1.5 pb-1.5">
+              {layoutOptions.map((opt) => {
+                const Icon = opt.icon;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onChange(opt.html);
+                      setIsEditing(true);
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm text-foreground/80 hover:bg-muted hover:text-foreground transition-colors"
+                  >
+                    <Icon className="w-4 h-4 text-muted-foreground" />
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
+
         <SidebarButton icon={Copy} label="Duplicate" onClick={onDuplicate} />
         <SidebarButton
           icon={Trash2}
