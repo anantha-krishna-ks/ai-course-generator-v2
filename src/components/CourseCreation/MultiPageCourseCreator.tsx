@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, ExternalLink, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
@@ -547,7 +547,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 });
               }}
             >
-              <ExternalLink className="w-4 h-4" />
+              <Eye className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
