@@ -151,19 +151,21 @@ export function ContentBlock({
             onClick={onDelete}
             className="hover:text-destructive"
           />
-          {aiEnabled && type === "text" && (
+          {aiEnabled && (type === "text" || type === "image") && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
               <SidebarButton
                 icon={Sparkles}
-                label="Generate content"
+                label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                 onClick={() => setShowGenerateDialog(true)}
               />
-              <SidebarButton
-                icon={GitBranch}
-                label="Versions"
-                onClick={() => setShowVersionsDialog(true)}
-              />
+              {type === "text" && (
+                <SidebarButton
+                  icon={GitBranch}
+                  label="Versions"
+                  onClick={() => setShowVersionsDialog(true)}
+                />
+              )}
             </>
           )}
         </div>
