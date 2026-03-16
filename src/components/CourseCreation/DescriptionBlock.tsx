@@ -18,6 +18,54 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
+const textTemplates = [
+  {
+    id: "heading-text",
+    label: "Heading and text",
+    html: "<h2>Heading</h2><p>Start writing your content here...</p>",
+    preview: (
+      <div className="space-y-2">
+        <div className="h-2.5 w-16 rounded bg-foreground/20" />
+        <div className="space-y-1.5">
+          <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
+          <div className="h-1.5 w-4/5 rounded bg-muted-foreground/15" />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "text-only",
+    label: "Text",
+    html: "<p>Start writing your content here...</p>",
+    preview: (
+      <div className="space-y-1.5">
+        <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
+        <div className="h-1.5 w-5/6 rounded bg-muted-foreground/15" />
+        <div className="h-1.5 w-3/4 rounded bg-muted-foreground/15" />
+      </div>
+    ),
+  },
+  {
+    id: "two-columns",
+    label: "Two columns",
+    html: "<h2>Heading</h2><p>Left column content...</p><h2>Heading</h2><p>Right column content...</p>",
+    preview: (
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <div className="h-2 w-12 rounded bg-foreground/20" />
+          <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
+          <div className="h-1.5 w-3/4 rounded bg-muted-foreground/15" />
+        </div>
+        <div className="space-y-1.5">
+          <div className="h-2 w-12 rounded bg-foreground/20" />
+          <div className="h-1.5 w-full rounded bg-muted-foreground/15" />
+          <div className="h-1.5 w-3/4 rounded bg-muted-foreground/15" />
+        </div>
+      </div>
+    ),
+  },
+];
+
 export function DescriptionBlock({
   id,
   content,
@@ -55,6 +103,11 @@ export function DescriptionBlock({
   }, [isEditing]);
 
   const hasContent = content && content !== "<p></p>" && content.replace(/<[^>]*>/g, "").trim() !== "";
+
+  const handleTemplateSelect = (template: typeof textTemplates[0]) => {
+    onChange(template.html);
+    setIsEditing(true);
+  };
 
   const SidebarButton = ({
     icon: Icon,
@@ -131,22 +184,37 @@ export function DescriptionBlock({
             content={content}
             onChange={onChange}
           />
-        ) : (
+        ) : hasContent ? (
           <button
             onClick={() => setIsEditing(true)}
             className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
           >
-            {hasContent ? (
-              <div
-                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
-            ) : (
-              <span className="text-lg text-foreground/40 italic">
-                Tell your learners what the course will be about...
-              </span>
-            )}
+            <div
+              className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+              dangerouslySetInnerHTML={{ __html: content }}
+            />
           </button>
+        ) : (
+          /* Template picker when empty */
+          <div className="px-4 py-5">
+            <p className="text-xs font-medium text-muted-foreground mb-3">Choose a layout</p>
+            <div className="grid grid-cols-3 gap-3">
+              {textTemplates.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  onClick={() => handleTemplateSelect(tpl)}
+                  className="flex flex-col items-center gap-2 group/tpl"
+                >
+                  <div className="w-full rounded-xl border border-border/60 bg-card p-4 min-h-[72px] flex flex-col justify-center transition-all duration-200 hover:border-primary/30 hover:shadow-md">
+                    {tpl.preview}
+                  </div>
+                  <span className="text-[11px] font-medium text-muted-foreground group-hover/tpl:text-foreground transition-colors">
+                    {tpl.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
