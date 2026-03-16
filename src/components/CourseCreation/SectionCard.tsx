@@ -413,7 +413,10 @@ export function SectionCard({
                   </button>
                 )}
                 <button
-                  onClick={() => onOpenSection?.()}
+                  onClick={() => {
+                    if (isCollapsed) setIsCollapsed(false);
+                    onOpenSection?.();
+                  }}
                   className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0"
                 >
                   Open
