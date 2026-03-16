@@ -710,7 +710,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                             <div key={block.id} className="group/item">
                               {index === 0 && !activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} />
+                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} />
                                 </div>
                               )}
 
