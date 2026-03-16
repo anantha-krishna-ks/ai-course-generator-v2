@@ -77,7 +77,8 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
 
   const pageDisplayTitle = page.title.trim() || "Untitled page";
   const hasPageInclusions = page.inclusions.trim().length > 0;
-
+  const hasPageExclusions = page.exclusions.trim().length > 0;
+  const hasPageScope = hasPageInclusions || hasPageExclusions;
   return (
     <>
       <div
