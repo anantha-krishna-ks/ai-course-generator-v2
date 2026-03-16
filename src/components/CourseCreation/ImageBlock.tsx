@@ -614,7 +614,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                   Generate Image
                 </DialogTitle>
                 <p className="text-sm text-muted-foreground mt-1.5">
-                  Describe the image you'd like to generate, or skip to use a default placeholder.
+                  Optionally describe the image you'd like to generate.
                 </p>
               </DialogHeader>
 
@@ -626,19 +626,17 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
-                        if (imagePrompt.trim()) {
-                          handleGenerateSubmit();
-                        }
+                        handleGenerateSubmit();
                       }
                     }}
-                    placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons..."
+                    placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons... (optional)"
                     className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
                     rows={4}
                     autoFocus
                   />
                 </div>
                 <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
-                  Press Enter to generate · Shift+Enter for new line · Optional
+                  Press Enter to generate · Shift+Enter for new line
                 </p>
               </div>
 
@@ -655,17 +653,8 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                   Cancel
                 </Button>
                 <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleGenerateSkip}
-                  className="rounded-full px-4"
-                >
-                  Skip &amp; Use Default
-                </Button>
-                <Button
                   size="sm"
                   onClick={handleGenerateSubmit}
-                  disabled={!imagePrompt.trim()}
                   className="rounded-full px-4 gap-1.5"
                 >
                   <Send className="w-3.5 h-3.5" />
