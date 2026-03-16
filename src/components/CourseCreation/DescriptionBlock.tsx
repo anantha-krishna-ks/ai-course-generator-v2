@@ -57,9 +57,9 @@ function decodeColumns(content: string, layout: LayoutType): string[] {
 }
 
 const defaultContent: Record<LayoutType, string[]> = {
+  "heading-text": ["<h2>Heading</h2><p>Start writing your content here...</p>"],
   "text-only": ["<p>Start writing your content here...</p>"],
   "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
-  "three-columns": ["<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>", "<h2>Heading</h2><p>Start writing...</p>"],
 };
 
 export function DescriptionBlock({
