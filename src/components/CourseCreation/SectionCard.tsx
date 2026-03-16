@@ -429,11 +429,11 @@ export function SectionCard({
 
               {/* Quick actions */}
               <div className="flex items-center gap-1 shrink-0">
-                {hasInclusions && (
+                {hasScope && (
                   <button
                     onClick={() => setShowInclusionsDialog(true)}
                     className="p-1.5 rounded-md text-primary hover:bg-primary/10 transition-colors"
-                    title="View inclusions"
+                    title="View scope"
                   >
                     <ListChecks className="w-3.5 h-3.5" />
                   </button>
