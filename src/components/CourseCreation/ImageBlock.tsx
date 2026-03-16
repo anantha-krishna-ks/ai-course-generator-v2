@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,79 +26,162 @@ interface ImageBlockProps {
 type FitMode = "contain" | "cover" | "fill";
 type EditorMode = "none" | "simple" | "full";
 
-// Premium inline image generation loader
-function ImageGeneratingLoader() {
+function FloatingParticle({ delay, x, y, size, color }: { delay: number; x: number; y: number; size: number; color: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-5 py-10 animate-fade-in">
-      {/* Animated rings + sparkle */}
-      <div className="relative w-20 h-20">
-        {/* Outer ring */}
-        <div
-          className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
+    <motion.div
+      className="absolute rounded-full"
+      style={{ width: size, height: size, background: color, left: `${x}%`, top: `${y}%` }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{
+        opacity: [0, 0.7, 0.3, 0],
+        scale: [0, 1, 0.8, 0],
+        y: [0, -15, -30, -45],
+      }}
+      transition={{ duration: 3, delay, repeat: Infinity, ease: "easeOut" }}
+    />
+  );
+}
+
+function ImageGeneratingLoader() {
+  const particles = [
+    { delay: 0, x: 48, y: 75, size: 4, color: "hsl(var(--primary))" },
+    { delay: 0.5, x: 30, y: 70, size: 3, color: "hsl(260, 70%, 65%)" },
+    { delay: 1.0, x: 68, y: 72, size: 3, color: "hsl(220, 70%, 65%)" },
+    { delay: 1.5, x: 38, y: 80, size: 2.5, color: "hsl(var(--primary))" },
+    { delay: 2.0, x: 58, y: 74, size: 2.5, color: "hsl(260, 70%, 65%)" },
+    { delay: 2.5, x: 52, y: 82, size: 3.5, color: "hsl(220, 70%, 65%)" },
+    { delay: 0.3, x: 42, y: 78, size: 2, color: "hsl(var(--primary) / 0.7)" },
+    { delay: 1.8, x: 62, y: 68, size: 2, color: "hsl(260, 70%, 65% / 0.7)" },
+  ];
+
+  return (
+    <motion.div
+      className="flex flex-col items-center justify-center gap-7 py-16 relative overflow-hidden select-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Ambient background glow */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 60% 50% at center 45%, hsl(var(--primary) / 0.07) 0%, hsl(260, 70%, 60% / 0.03) 40%, transparent 70%)",
+        }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Main orb container */}
+      <div className="relative w-28 h-28">
+        {/* Soft outer glow */}
+        <motion.div
+          className="absolute -inset-4 rounded-full pointer-events-none"
           style={{
-            animationDuration: "3s",
-            borderImage: "linear-gradient(135deg, hsl(var(--primary)), hsl(260, 80%, 60%), hsl(220, 80%, 60%)) 1",
-            borderTopColor: "hsl(var(--primary))",
-            borderRightColor: "hsl(260, 80%, 60%)",
+            background: "radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 70%)",
           }}
+          animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div
+
+        {/* Outer rotating ring */}
+        <motion.div
           className="absolute inset-0 rounded-full"
           style={{
-            background: "conic-gradient(from 0deg, hsl(var(--primary) / 0.15), hsl(260, 80%, 60% / 0.1), hsl(220, 80%, 60% / 0.15), transparent)",
-            animation: "spin 3s linear infinite",
+            background: "conic-gradient(from 0deg, hsl(var(--primary) / 0.3), hsl(260, 70%, 60% / 0.25), hsl(220, 70%, 60% / 0.2), transparent 40%, transparent 60%, hsl(var(--primary) / 0.15), hsl(260, 70%, 60% / 0.3))",
           }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
         />
-        {/* Inner ring */}
-        <div
-          className="absolute inset-2 rounded-full"
+        <div className="absolute inset-[2px] rounded-full bg-background" />
+
+        {/* Middle rotating ring (counter) */}
+        <motion.div
+          className="absolute inset-[2px] rounded-full"
           style={{
-            background: "conic-gradient(from 180deg, hsl(var(--primary) / 0.1), hsl(260, 80%, 60% / 0.08), transparent)",
-            animation: "spin 2s linear infinite reverse",
+            background: "conic-gradient(from 120deg, hsl(260, 70%, 60% / 0.2), transparent 30%, transparent 50%, hsl(var(--primary) / 0.15), hsl(220, 70%, 60% / 0.2), transparent 80%)",
           }}
+          animate={{ rotate: -360 }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
         />
-        {/* Center sparkle */}
+        <div className="absolute inset-[5px] rounded-full bg-background" />
+
+        {/* Inner subtle ring */}
+        <motion.div
+          className="absolute inset-[5px] rounded-full"
+          style={{
+            background: "conic-gradient(from 240deg, hsl(var(--primary) / 0.1), transparent 25%, transparent 75%, hsl(260, 70%, 60% / 0.08))",
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+        />
+        <div className="absolute inset-[7px] rounded-full bg-background" />
+
+        {/* Center icon with breathing */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-pulse" style={{ animationDuration: "1.5s" }}>
-            <Sparkles className="w-7 h-7" style={{
-              filter: "drop-shadow(0 0 8px hsl(var(--primary) / 0.5)) drop-shadow(0 0 16px hsl(260, 80%, 60% / 0.3))",
-              color: "hsl(var(--primary))"
-            }} />
-          </div>
+          <motion.div
+            animate={{
+              scale: [1, 1.12, 1],
+              rotate: [0, 3, -3, 0],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Sparkles
+              className="w-9 h-9"
+              style={{
+                color: "hsl(var(--primary))",
+                filter: "drop-shadow(0 0 10px hsl(var(--primary) / 0.35)) drop-shadow(0 0 20px hsl(260, 70%, 60% / 0.2))",
+              }}
+            />
+          </motion.div>
         </div>
+
         {/* Floating particles */}
-        <div className="absolute -top-1 left-1/2 -translate-x-1/2 animate-bounce" style={{ animationDuration: "2s", animationDelay: "0s" }}>
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", opacity: 0.6 }} />
-        </div>
-        <div className="absolute top-1/2 -right-1 -translate-y-1/2 animate-bounce" style={{ animationDuration: "2s", animationDelay: "0.7s" }}>
-          <div className="w-1 h-1 rounded-full" style={{ background: "hsl(260, 80%, 60%)", opacity: 0.5 }} />
-        </div>
-        <div className="absolute -bottom-1 left-1/3 animate-bounce" style={{ animationDuration: "2s", animationDelay: "1.3s" }}>
-          <div className="w-1 h-1 rounded-full" style={{ background: "hsl(220, 80%, 60%)", opacity: 0.5 }} />
-        </div>
+        {particles.map((p, i) => (
+          <FloatingParticle key={i} {...p} />
+        ))}
       </div>
-      <div className="text-center space-y-1.5">
-        <p className="text-sm font-semibold text-foreground tracking-tight">Generating your image</p>
-        <p className="text-xs text-muted-foreground">AI is crafting something beautiful...</p>
-      </div>
-      {/* Progress shimmer bar */}
-      <div className="w-48 h-1 rounded-full bg-muted overflow-hidden">
-        <div
-          className="h-full rounded-full"
+
+      {/* Text section */}
+      <motion.div
+        className="text-center space-y-2 relative z-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
+      >
+        <p className="text-sm font-semibold text-foreground tracking-tight">
+          Generating your image
+        </p>
+        <motion.p
+          className="text-xs text-muted-foreground"
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+        >
+          AI is crafting something beautiful...
+        </motion.p>
+      </motion.div>
+
+      {/* Premium progress bar */}
+      <div className="relative w-56 h-1 rounded-full bg-muted/50 overflow-hidden z-10">
+        <motion.div
+          className="absolute inset-y-0 w-1/3 rounded-full"
           style={{
-            background: "linear-gradient(90deg, hsl(var(--primary)), hsl(260, 80%, 60%), hsl(var(--primary)))",
-            backgroundSize: "200% 100%",
-            animation: "shimmer 1.5s ease-in-out infinite",
+            background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.8), hsl(260, 70%, 60% / 0.6), transparent)",
           }}
+          animate={{ left: ["-33%", "100%"] }}
+          transition={{ duration: 2, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }}
+        />
+        {/* Subtle static fill that grows */}
+        <motion.div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{
+            background: "linear-gradient(90deg, hsl(var(--primary) / 0.15), hsl(260, 70%, 60% / 0.1))",
+          }}
+          initial={{ width: "0%" }}
+          animate={{ width: "85%" }}
+          transition={{ duration: 8, ease: "easeOut" }}
         />
       </div>
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
-    </div>
+    </motion.div>
   );
 }
 
@@ -558,7 +642,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   // Show inline loader when generating
   if (isGenerating) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-primary/30 bg-background/80">
+      <div className="rounded-lg border border-border/40 bg-background shadow-sm">
         <ImageGeneratingLoader />
       </div>
     );
