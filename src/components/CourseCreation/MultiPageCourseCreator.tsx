@@ -57,6 +57,7 @@ interface CourseItem {
   type: "section" | "page" | "question";
   title: string;
   inclusions?: string;
+  exclusions?: string;
   thumbnailUrl?: string;
   children?: CourseItem[];
 }
