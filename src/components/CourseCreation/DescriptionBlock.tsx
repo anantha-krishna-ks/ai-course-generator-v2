@@ -185,7 +185,7 @@ export function DescriptionBlock({
   const renderEditor = () => {
     if (colCount > 1) {
       return (
-        <div className={cn("grid gap-4", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
+        <div className="grid gap-4 grid-cols-2">
           {columns.map((col, i) => (
             <div key={i} className="min-w-0">
               <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
