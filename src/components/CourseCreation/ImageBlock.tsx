@@ -555,6 +555,15 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
     }, 2500);
   };
 
+  // Show inline loader when generating
+  if (isGenerating) {
+    return (
+      <div className="rounded-lg border-2 border-dashed border-primary/30 bg-background/80">
+        <ImageGeneratingLoader />
+      </div>
+    );
+  }
+
   return (
     <>
       <div
