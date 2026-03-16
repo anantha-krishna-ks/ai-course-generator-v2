@@ -135,11 +135,11 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           )}>
             {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
           </span>
-          {hasPageInclusions && (
+          {hasPageScope && (
             <button
               onClick={() => setShowInclusionsDialog(true)}
               className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
-              title="View inclusions"
+              title="View scope"
             >
               <ListChecks className="w-2.5 h-2.5 text-primary" />
             </button>
