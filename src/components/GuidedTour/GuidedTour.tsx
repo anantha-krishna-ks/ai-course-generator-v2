@@ -192,7 +192,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
       {/* Tooltip card */}
       <div
         ref={tooltipRef}
-        className="absolute w-[360px] max-w-[calc(100vw-24px)] bg-background border border-border rounded-lg shadow-2xl transition-all duration-300 ease-out animate-in fade-in-0 zoom-in-95"
+        className="absolute w-[360px] max-w-[calc(100vw-24px)] bg-background border border-border rounded-md shadow-[0_8px_30px_-4px_hsl(var(--foreground)/0.15),0_2px_8px_-2px_hsl(var(--foreground)/0.08)] transition-all duration-300 ease-out animate-in fade-in-0 zoom-in-95"
         style={{ top: tooltipPos.top, left: tooltipPos.left, pointerEvents: "auto" }}
       >
         {/* Progress bar */}
