@@ -23,14 +23,14 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
-type LayoutType = "text-only" | "two-columns" | "three-columns";
+type LayoutType = "heading-text" | "text-only" | "two-columns";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
 const layoutOptions: { id: LayoutType; label: string; icon: React.ComponentType<{ className?: string }>; columns: number }[] = [
+  { id: "heading-text", label: "Heading and text", icon: Heading, columns: 1 },
   { id: "text-only", label: "Text", icon: Type, columns: 1 },
   { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
-  { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
 ];
 
 function detectLayout(content: string): LayoutType {
