@@ -742,6 +742,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     onDelete={() => deleteBlock(block.id)}
                                     onDuplicate={() => duplicateBlock(block.id)}
                                     autoFocus={!block.content}
+                                    aiEnabled={!!aiOptions?.enabled}
                                   />
                                 )}
 
