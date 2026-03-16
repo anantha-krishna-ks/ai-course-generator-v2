@@ -48,7 +48,7 @@ function encodeContent(layout: LayoutType, columns: string[]): string {
 
 function decodeColumns(content: string, layout: LayoutType): string[] {
   const colCount = layoutOptions.find((o) => o.id === layout)?.columns ?? 1;
-  if (layout === "text-only" || layout === "quote") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
+  if (layout === "text-only") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
   const raw = content.replace(/<!--layout:\w[\w-]*-->/, "");
   const parts = raw.split(COL_SEPARATOR);
   // Pad to expected column count
