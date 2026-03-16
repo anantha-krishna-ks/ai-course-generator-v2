@@ -425,8 +425,17 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
     );
   }
 
+  const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop";
+
+  const handleGenerateClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Set a default placeholder image immediately
+    onChange(PLACEHOLDER_IMAGE);
+    // Then open the dialog for optional refinement
+    setShowGenerateDialog(true);
+  };
+
   const handleGenerateSubmit = () => {
-    if (!imagePrompt.trim()) return;
     // TODO: Wire up AI image generation API
     console.log("Generate image with prompt:", imagePrompt);
     setImagePrompt("");
@@ -439,51 +448,61 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onClick={handleClick}
         className={cn(
-          "group/upload flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 px-6 cursor-pointer transition-all duration-200",
+          "group/upload flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed py-12 px-6 transition-all duration-200",
           isDragOver
             ? "border-primary bg-primary/5 scale-[1.01]"
-            : "border-foreground/20 hover:border-primary/50 hover:bg-primary/5 bg-background/80"
+            : "border-foreground/20 hover:border-primary/50 bg-background/80"
         )}
       >
-        <div
-          className={cn(
-            "w-12 h-12 rounded-full flex items-center justify-center transition-colors",
-            isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/upload:bg-primary/10 group-hover/upload:text-primary"
-          )}
-        >
-          {isDragOver ? (
-            <Upload className="w-5 h-5" />
-          ) : (
-            <ImagePlus className="w-5 h-5" />
-          )}
-        </div>
-        <div className="text-center">
-          <p className="text-sm font-medium text-foreground/70">
-            Click to upload or drag &amp; drop
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Recommended size: from 240×280px
-          </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Allowed formats: JPEG, JPG, PNG, BMP, GIF
-          </p>
-        </div>
-        {aiEnabled && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGenerateDialog(true);
-            }}
-            className="gap-1.5 text-xs h-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-foreground/5 mt-1 transition-all duration-200"
+        <div className="flex items-center gap-6">
+          {/* Upload Image */}
+          <button
+            onClick={handleClick}
+            className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            Generate with AI
-          </Button>
-        )}
+            <div
+              className={cn(
+                "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+                isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary"
+              )}
+            >
+              {isDragOver ? (
+                <Upload className="w-5 h-5" />
+              ) : (
+                <ImagePlus className="w-5 h-5" />
+              )}
+            </div>
+            <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+              Upload Image
+            </span>
+          </button>
+
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-px h-6 bg-border" />
+            <span className="text-xs text-muted-foreground font-medium">or</span>
+            <div className="w-px h-6 bg-border" />
+          </div>
+
+          {/* Generate Image */}
+          <button
+            onClick={handleGenerateClick}
+            className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
+          >
+            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary transition-colors">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+              Generate Image
+            </span>
+          </button>
+        </div>
+
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground">
+            Recommended size: from 240×280px · Formats: JPEG, PNG, BMP, GIF
+          </p>
+        </div>
         <input
           ref={fileInputRef}
           type="file"
@@ -504,7 +523,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               Generate image
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1.5">
-              Describe the image you'd like to generate for this block.
+              Optionally describe the image you'd like to generate. Leave blank to keep the default.
             </p>
           </DialogHeader>
 
@@ -540,7 +559,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               }}
               className="rounded-full px-4"
             >
-              Cancel
+              {imagePrompt.trim() ? "Skip" : "Done"}
             </Button>
             <Button
               size="sm"
