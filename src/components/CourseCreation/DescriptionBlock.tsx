@@ -160,17 +160,6 @@ export function DescriptionBlock({
       );
     }
 
-    if (layout === "quote") {
-      return (
-        <div className="border-l-4 border-primary/30 pl-4 py-1">
-          <div
-            className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 italic break-words [overflow-wrap:anywhere]"
-            dangerouslySetInnerHTML={{ __html: columns[0] }}
-          />
-        </div>
-      );
-    }
-
     if (colCount > 1) {
       return (
         <div className={cn("grid gap-6", colCount === 2 ? "grid-cols-2" : "grid-cols-3")}>
