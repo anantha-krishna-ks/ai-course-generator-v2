@@ -251,7 +251,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
             {currentStep > 0 && (
               <button
                 onClick={handlePrev}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted"
+                className="flex items-center gap-1 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 Back
