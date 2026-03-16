@@ -57,6 +57,7 @@ interface CourseItem {
   type: "section" | "page" | "question";
   title: string;
   inclusions?: string;
+  exclusions?: string;
   thumbnailUrl?: string;
   children?: CourseItem[];
 }
@@ -364,6 +365,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const updateItemInclusions = (id: string, inclusions: string) => {
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, inclusions } : item))
+    );
+  };
+
+  const updateItemExclusions = (id: string, exclusions: string) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, exclusions } : item))
     );
   };
 
@@ -885,6 +892,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   sectionNumber={currentSectionNumber}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
+                                  exclusions={item.exclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
                                   thumbnailUrl={item.thumbnailUrl || null}
                                   onThumbnailChange={(url) => {
@@ -894,12 +902,13 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   }}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
+                                  onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   onOpenSection={() => {}}
                                   onAddPage={() => handleAddItem("page")}
                                   onAddLearningObjective={() => {}}
-                                  pages={(item.children || []).map(c => ({ id: c.id, title: c.title, inclusions: c.inclusions || "" }))}
+                                  pages={(item.children || []).map(c => ({ id: c.id, title: c.title, inclusions: c.inclusions || "", exclusions: c.exclusions || "" }))}
                                   onPagesChange={(newPages) => {
                                     setItems((prev) => prev.map((i) => {
                                       if (i.id === item.id) {
@@ -910,6 +919,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                             type: "page" as const,
                                             title: p.title,
                                             inclusions: p.inclusions,
+                                            exclusions: p.exclusions,
                                           })),
                                         };
                                       }
@@ -927,9 +937,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   id={item.id}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
+                                  exclusions={item.exclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
+                                  onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
                                   onRenameItem={(id, newTitle) => updateItemTitle(id, newTitle)}

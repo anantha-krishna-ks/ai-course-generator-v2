@@ -29,9 +29,11 @@ interface PageItemCardProps {
   id?: string;
   title: string;
   inclusions?: string;
+  exclusions?: string;
   aiEnabled?: boolean;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
+  onExclusionsChange?: (exclusions: string) => void;
   onDelete?: () => void;
   onDuplicate?: () => void;
   onRenameItem?: (id: string, newTitle: string) => void;
@@ -53,10 +55,10 @@ interface PageItemCardProps {
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", onTitleChange, onInclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTitleChange, onInclusionsChange, onExclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [showScopeDialog, setShowScopeDialog] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -67,6 +69,8 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
 
   const displayTitle = title.trim() || "Untitled page";
   const hasInclusions = inclusions.trim().length > 0;
+  const hasExclusions = exclusions.trim().length > 0;
+  const hasScope = hasInclusions || hasExclusions;
 
   return (
     <>
@@ -109,11 +113,11 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
             )}>
               {title.length}/{MAX_PAGE_TITLE_LENGTH}
             </span>
-            {hasInclusions && (
+            {hasScope && (
               <button
-                onClick={() => setShowInclusionsDialog(true)}
+                onClick={() => setShowScopeDialog(true)}
                 className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
-                title="View inclusions"
+                title="View scope"
               >
                 <ListChecks className="w-2.5 h-2.5 text-primary" />
               </button>
@@ -133,11 +137,11 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
                 <DropdownMenuItem
-                  onClick={() => setShowInclusionsDialog(true)}
+                  onClick={() => setShowScopeDialog(true)}
                   className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                 >
                   <ListChecks className="w-4 h-4 text-muted-foreground" />
-                  {hasInclusions ? "Edit inclusions" : "Add inclusions"}
+                  {hasScope ? "Edit scope" : "Add scope"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -161,34 +165,51 @@ export function PageItemCard({ id, title, inclusions = "", onTitleChange, onIncl
         </div>
       </div>
 
-      {/* Inclusions Dialog */}
-      <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
+      {/* Scope Dialog */}
+      <Dialog open={showScopeDialog} onOpenChange={setShowScopeDialog}>
         <DialogContent className="sm:max-w-[560px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
-              Inclusions
+              Scope
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1">
               Define the scope for "{displayTitle}"
             </p>
           </DialogHeader>
-          <div className="mt-4">
-            <textarea
-              value={inclusions}
-              onChange={(e) => onInclusionsChange?.(e.target.value)}
-              autoFocus
-              className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
-              placeholder="Define what topics, content, or scope should be included in this page..."
-              onInput={(e) => {
-                const target = e.target as HTMLTextAreaElement;
-                target.style.height = 'auto';
-                target.style.height = Math.max(140, target.scrollHeight) + 'px';
-              }}
-            />
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Inclusions</label>
+              <textarea
+                value={inclusions}
+                onChange={(e) => onInclusionsChange?.(e.target.value)}
+                autoFocus
+                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                placeholder="Define what topics, content, or scope should be included in this page..."
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
+              <textarea
+                value={exclusions}
+                onChange={(e) => onExclusionsChange?.(e.target.value)}
+                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                placeholder="Define what topics or content should be excluded from this page..."
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                }}
+              />
+            </div>
           </div>
           <div className="flex justify-end pt-2">
-            <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
+            <Button onClick={() => setShowScopeDialog(false)} className="rounded-full px-6">
               Done
             </Button>
           </div>
