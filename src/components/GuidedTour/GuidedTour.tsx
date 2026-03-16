@@ -265,7 +265,7 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors shadow-sm"
             >
               {isLast ? "Got it!" : "Next"}
               {!isLast && <ChevronRight className="w-3.5 h-3.5" />}
