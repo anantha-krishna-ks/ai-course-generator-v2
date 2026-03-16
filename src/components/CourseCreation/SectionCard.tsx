@@ -604,6 +604,11 @@ export function SectionCard({
                               prev.map((p) => p.id === id ? { ...p, inclusions: val } : p)
                             );
                           }}
+                          onExclusionsChange={(id, val) => {
+                            setPages((prev) =>
+                              prev.map((p) => p.id === id ? { ...p, exclusions: val } : p)
+                            );
+                          }}
                           aiEnabled={aiEnabled}
                         />
                       ))}
