@@ -21,17 +21,20 @@ interface PageEntry {
   id: string;
   title: string;
   inclusions: string;
+  exclusions: string;
 }
 
 interface SectionCardProps {
   sectionNumber: number;
   title: string;
   inclusions?: string;
+  exclusions?: string;
   aiEnabled?: boolean;
   thumbnailUrl?: string | null;
   onThumbnailChange?: (url: string | null) => void;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
+  onExclusionsChange?: (exclusions: string) => void;
   onDelete?: () => void;
   onDuplicate?: () => void;
   onOpenSection?: () => void;
