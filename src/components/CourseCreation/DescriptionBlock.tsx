@@ -253,37 +253,22 @@ export function DescriptionBlock({
             content={content}
             onChange={onChange}
           />
-        ) : hasContent ? (
+        ) : (
           <button
             onClick={() => setIsEditing(true)}
             className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
           >
-            <div
-              className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+            {hasContent ? (
+              <div
+                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            ) : (
+              <span className="text-lg text-foreground/40 italic">
+                Tell your learners what the course will be about...
+              </span>
+            )}
           </button>
-        ) : (
-          /* Template picker when empty */
-          <div className="px-4 py-5">
-            <p className="text-xs font-medium text-muted-foreground mb-3">Choose a layout</p>
-            <div className="grid grid-cols-3 gap-3">
-              {textTemplates.map((tpl) => (
-                <button
-                  key={tpl.id}
-                  onClick={() => handleTemplateSelect(tpl)}
-                  className="flex flex-col items-center gap-2 group/tpl"
-                >
-                  <div className="w-full rounded-xl border border-border/60 bg-card p-4 min-h-[72px] flex flex-col justify-center transition-all duration-200 hover:border-primary/30 hover:shadow-md">
-                    {tpl.preview}
-                  </div>
-                  <span className="text-[11px] font-medium text-muted-foreground group-hover/tpl:text-foreground transition-colors">
-                    {tpl.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
         )}
       </div>
     </div>
