@@ -137,11 +137,11 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
                 <DropdownMenuItem
-                  onClick={() => setShowInclusionsDialog(true)}
+                  onClick={() => setShowScopeDialog(true)}
                   className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                 >
                   <ListChecks className="w-4 h-4 text-muted-foreground" />
-                  {hasInclusions ? "Edit inclusions" : "Add inclusions"}
+                  {hasScope ? "Edit scope" : "Add scope"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
