@@ -23,7 +23,7 @@ interface DescriptionBlockProps {
   onDuplicate: () => void;
 }
 
-type LayoutType = "text-only" | "two-columns" | "three-columns" | "quote";
+type LayoutType = "text-only" | "two-columns" | "three-columns";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
@@ -31,7 +31,6 @@ const layoutOptions: { id: LayoutType; label: string; icon: React.ComponentType<
   { id: "text-only", label: "Text", icon: Type, columns: 1 },
   { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
   { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
-  { id: "quote", label: "Quote", icon: Quote, columns: 1 },
 ];
 
 function detectLayout(content: string): LayoutType {
