@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Play, Share2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
+import { ArrowLeft, ChevronDown, MonitorPlay, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
@@ -547,14 +547,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 });
               }}
             >
-              <Play className="w-4 h-4" />
+              <MonitorPlay className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
             >
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Publish</span>
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Generate</span>
             </Button>
             <Button
               variant="ghost"
