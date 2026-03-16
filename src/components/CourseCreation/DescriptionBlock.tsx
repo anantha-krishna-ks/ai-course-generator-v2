@@ -258,9 +258,16 @@ export function DescriptionBlock({
             onClick={() => setIsEditing(true)}
             className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
           >
-            <span className="text-lg text-foreground/40 italic">
-              Tell your learners what the course will be about...
-            </span>
+            {hasContent ? (
+              <div
+                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere]"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            ) : (
+              <span className="text-lg text-foreground/40 italic">
+                Tell your learners what the course will be about...
+              </span>
+            )}
           </button>
         )}
       </div>
