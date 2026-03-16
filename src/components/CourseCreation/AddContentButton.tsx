@@ -140,15 +140,6 @@ export function AddContentButton({
             >
               <Type className="w-4 h-4" />
             </button>
-            {aiEnabled && (
-              <button
-                onClick={() => setShowAiPrompt("text")}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-sm text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-colors"
-                title="Generate text with AI"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-              </button>
-            )}
             <div className="w-px h-5 bg-border" />
             <button
               onClick={onAddImage}
@@ -156,15 +147,6 @@ export function AddContentButton({
             >
               <Image className="w-4 h-4" />
             </button>
-            {aiEnabled && (
-              <button
-                onClick={() => setShowAiPrompt("image")}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-sm text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-colors"
-                title="Generate image with AI"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-              </button>
-            )}
           </div>
         )}
       </PopoverContent>
