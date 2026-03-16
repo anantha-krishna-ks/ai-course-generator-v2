@@ -1,4 +1,5 @@
-import { Plus, Type, Image, Sparkles, Video, Mic, FileText, MessageCircleQuestion, MoreHorizontal } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Plus, Type, Image, Sparkles, Video, Mic, FileText, MessageCircleQuestion, MoreHorizontal, Send, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Popover,
@@ -15,6 +16,8 @@ interface AddContentButtonProps {
   onAddDoc?: () => void;
   onAddQuiz?: () => void;
   onAICreate?: () => void;
+  onAIGenerateText?: (prompt: string) => void;
+  onAIGenerateImage?: (prompt: string) => void;
   onMore?: () => void;
   aiEnabled?: boolean;
   variant?: "simple" | "full";
@@ -29,14 +32,43 @@ export function AddContentButton({
   onAddDoc,
   onAddQuiz,
   onAICreate,
+  onAIGenerateText,
+  onAIGenerateImage,
   onMore,
   aiEnabled = false,
   variant = "simple",
   forceOpen = false,
 }: AddContentButtonProps) {
   const isFullToolbar = variant === "full";
+  const [showAiPrompt, setShowAiPrompt] = useState<"text" | "image" | null>(null);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const promptRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (showAiPrompt && promptRef.current) {
+      setTimeout(() => promptRef.current?.focus(), 100);
+    }
+  }, [showAiPrompt]);
+
+  const handleAiSubmit = () => {
+    if (!aiPrompt.trim()) return;
+    setAiGenerating(true);
+    if (showAiPrompt === "text") {
+      onAIGenerateText?.(aiPrompt);
+    } else if (showAiPrompt === "image") {
+      onAIGenerateImage?.(aiPrompt);
+    }
+    // Simulate completion after parent handles it
+    setTimeout(() => {
+      setAiGenerating(false);
+      setAiPrompt("");
+      setShowAiPrompt(null);
+    }, 3000);
+  };
 
   return (
+    <>
     <Popover open={forceOpen || undefined}>
       <PopoverTrigger asChild>
         <div className="group/add flex items-center justify-center my-2 cursor-pointer" data-tour="text-toolbar">
@@ -108,6 +140,15 @@ export function AddContentButton({
             >
               <Type className="w-4 h-4" />
             </button>
+            {aiEnabled && (
+              <button
+                onClick={() => setShowAiPrompt("text")}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-sm text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-colors"
+                title="Generate text with AI"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+              </button>
+            )}
             <div className="w-px h-5 bg-border" />
             <button
               onClick={onAddImage}
@@ -115,9 +156,94 @@ export function AddContentButton({
             >
               <Image className="w-4 h-4" />
             </button>
+            {aiEnabled && (
+              <button
+                onClick={() => setShowAiPrompt("image")}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-sm text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-colors"
+                title="Generate image with AI"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         )}
       </PopoverContent>
     </Popover>
+
+    {/* AI Generate Prompt Dialog for simple variant */}
+    {showAiPrompt && (
+      <div className="my-2 rounded-xl border border-border bg-card shadow-sm animate-fade-in">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border/60">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">
+              Generate {showAiPrompt === "text" ? "text" : "image"} with AI
+            </span>
+          </div>
+          <button
+            onClick={() => { setShowAiPrompt(null); setAiPrompt(""); setAiGenerating(false); }}
+            className="p-1.5 rounded-md hover:bg-muted transition-colors"
+          >
+            <X className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
+        <div className="px-4 py-3">
+          {aiGenerating ? (
+            <div className="flex flex-col items-center justify-center py-8 gap-3 animate-fade-in rounded-xl bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5">
+              <div className="relative w-10 h-10 flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+              </div>
+              <p className="text-sm font-medium text-primary animate-pulse">
+                {showAiPrompt === "text" ? "Generating text content..." : "Generating image..."}
+              </p>
+              <p className="text-xs text-muted-foreground">This may take a moment</p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-end gap-2 rounded-2xl border border-border/80 bg-background px-4 py-2 focus-within:border-foreground/30 transition-colors">
+                <textarea
+                  ref={promptRef}
+                  value={aiPrompt}
+                  onChange={(e) => {
+                    setAiPrompt(e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey && aiPrompt.trim()) {
+                      e.preventDefault();
+                      handleAiSubmit();
+                    }
+                  }}
+                  placeholder={
+                    showAiPrompt === "text"
+                      ? "e.g., Write an introduction about cybersecurity best practices..."
+                      : "e.g., A modern illustration of cloud computing architecture..."
+                  }
+                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none resize-none min-h-[28px] max-h-[120px] py-1"
+                  rows={1}
+                />
+                <button
+                  onClick={handleAiSubmit}
+                  disabled={!aiPrompt.trim()}
+                  className={cn(
+                    "w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center transition-colors mb-0.5",
+                    aiPrompt.trim()
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  <Send className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+                Press Enter to generate · Shift+Enter for new line
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    )}
+    </>
   );
 }
