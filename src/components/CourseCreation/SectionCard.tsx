@@ -163,7 +163,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
                 className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
               >
                 <ListChecks className="w-4 h-4 text-muted-foreground" />
-                {hasPageInclusions ? "Edit inclusions" : "Add inclusions"}
+                {hasPageScope ? "Edit scope" : "Add scope"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
