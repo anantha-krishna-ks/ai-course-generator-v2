@@ -644,31 +644,48 @@ export function SectionCard({
       </div>
 
 
-      {/* Inclusions Dialog */}
+      {/* Scope Dialog */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
         <DialogContent className="sm:max-w-[560px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
-              Inclusions
+              Scope
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-1">
               Define the scope for "{title || "Untitled section"}"
             </p>
           </DialogHeader>
-          <div className="mt-4">
-            <textarea
-              value={inclusions}
-              onChange={(e) => onInclusionsChange?.(e.target.value)}
-              autoFocus
-              className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[140px]"
-              placeholder="Define what topics, content, or scope should be included in this section..."
-              onInput={(e) => {
-                const target = e.target as HTMLTextAreaElement;
-                target.style.height = 'auto';
-                target.style.height = Math.max(140, target.scrollHeight) + 'px';
-              }}
-            />
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Inclusions</label>
+              <textarea
+                value={inclusions}
+                onChange={(e) => onInclusionsChange?.(e.target.value)}
+                autoFocus
+                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                placeholder="Define what topics, content, or scope should be included in this section..."
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
+              <textarea
+                value={exclusions}
+                onChange={(e) => onExclusionsChange?.(e.target.value)}
+                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                placeholder="Define what topics or content should be excluded from this section..."
+                onInput={(e) => {
+                  const target = e.target as HTMLTextAreaElement;
+                  target.style.height = 'auto';
+                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                }}
+              />
+            </div>
           </div>
           <div className="flex justify-end pt-2">
             <Button onClick={() => setShowInclusionsDialog(false)} className="rounded-full px-6">
