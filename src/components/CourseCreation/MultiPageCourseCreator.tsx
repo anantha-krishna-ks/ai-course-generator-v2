@@ -368,6 +368,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     );
   };
 
+  const updateItemExclusions = (id: string, exclusions: string) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, exclusions } : item))
+    );
+  };
+
   const deleteItem = (id: string) => {
     setItems((prev) => {
       // Try top-level first
