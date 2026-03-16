@@ -25,35 +25,78 @@ interface ImageBlockProps {
 type FitMode = "contain" | "cover" | "fill";
 type EditorMode = "none" | "simple" | "full";
 
-// Sparkle loading component
-function SparkleLoader() {
+// Premium inline image generation loader
+function ImageGeneratingLoader() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 py-8">
-      <div className="relative w-16 h-16">
-        {/* Orbiting sparkles */}
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: "3s" }}>
-          <Sparkles className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4" style={{ color: "hsl(var(--primary))" }} />
-        </div>
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: "3s", animationDelay: "-1s" }}>
-          <Sparkles className="absolute bottom-0 right-0 w-3.5 h-3.5" style={{ color: "hsl(260, 80%, 60%)" }} />
-        </div>
-        <div className="absolute inset-0 animate-spin" style={{ animationDuration: "3s", animationDelay: "-2s" }}>
-          <Sparkles className="absolute top-1/2 left-0 -translate-y-1/2 w-3 h-3" style={{ color: "hsl(220, 80%, 60%)" }} />
-        </div>
-        {/* Center sparkle with gradient effect */}
+    <div className="flex flex-col items-center justify-center gap-5 py-10 animate-fade-in">
+      {/* Animated rings + sparkle */}
+      <div className="relative w-20 h-20">
+        {/* Outer ring */}
+        <div
+          className="absolute inset-0 rounded-full border-2 border-transparent animate-spin"
+          style={{
+            animationDuration: "3s",
+            borderImage: "linear-gradient(135deg, hsl(var(--primary)), hsl(260, 80%, 60%), hsl(220, 80%, 60%)) 1",
+            borderTopColor: "hsl(var(--primary))",
+            borderRightColor: "hsl(260, 80%, 60%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: "conic-gradient(from 0deg, hsl(var(--primary) / 0.15), hsl(260, 80%, 60% / 0.1), hsl(220, 80%, 60% / 0.15), transparent)",
+            animation: "spin 3s linear infinite",
+          }}
+        />
+        {/* Inner ring */}
+        <div
+          className="absolute inset-2 rounded-full"
+          style={{
+            background: "conic-gradient(from 180deg, hsl(var(--primary) / 0.1), hsl(260, 80%, 60% / 0.08), transparent)",
+            animation: "spin 2s linear infinite reverse",
+          }}
+        />
+        {/* Center sparkle */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="animate-pulse" style={{ animationDuration: "1.5s" }}>
             <Sparkles className="w-7 h-7" style={{
-              filter: "drop-shadow(0 0 6px hsl(var(--primary) / 0.4))",
+              filter: "drop-shadow(0 0 8px hsl(var(--primary) / 0.5)) drop-shadow(0 0 16px hsl(260, 80%, 60% / 0.3))",
               color: "hsl(var(--primary))"
             }} />
           </div>
         </div>
+        {/* Floating particles */}
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 animate-bounce" style={{ animationDuration: "2s", animationDelay: "0s" }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--primary))", opacity: 0.6 }} />
+        </div>
+        <div className="absolute top-1/2 -right-1 -translate-y-1/2 animate-bounce" style={{ animationDuration: "2s", animationDelay: "0.7s" }}>
+          <div className="w-1 h-1 rounded-full" style={{ background: "hsl(260, 80%, 60%)", opacity: 0.5 }} />
+        </div>
+        <div className="absolute -bottom-1 left-1/3 animate-bounce" style={{ animationDuration: "2s", animationDelay: "1.3s" }}>
+          <div className="w-1 h-1 rounded-full" style={{ background: "hsl(220, 80%, 60%)", opacity: 0.5 }} />
+        </div>
       </div>
-      <div className="text-center space-y-1">
-        <p className="text-sm font-medium text-foreground">Generating image...</p>
-        <p className="text-xs text-muted-foreground">This may take a few seconds</p>
+      <div className="text-center space-y-1.5">
+        <p className="text-sm font-semibold text-foreground tracking-tight">Generating your image</p>
+        <p className="text-xs text-muted-foreground">AI is crafting something beautiful...</p>
       </div>
+      {/* Progress shimmer bar */}
+      <div className="w-48 h-1 rounded-full bg-muted overflow-hidden">
+        <div
+          className="h-full rounded-full"
+          style={{
+            background: "linear-gradient(90deg, hsl(var(--primary)), hsl(260, 80%, 60%), hsl(var(--primary)))",
+            backgroundSize: "200% 100%",
+            animation: "shimmer 1.5s ease-in-out infinite",
+          }}
+        />
+      </div>
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `}</style>
     </div>
   );
 }
