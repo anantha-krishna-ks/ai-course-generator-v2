@@ -787,7 +787,23 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
                           elements.push(
                             <div key={block.id} className="group/item">
-                              {index === 0 && !activeId && block.type !== "description" && (
+                              {/* Drop indicator BEFORE first block during sidebar drag */}
+                              {index === 0 && isSidebarDragging && (
+                                <DropIndicator
+                                  index={0}
+                                  isActive={dropTargetIndex === 0}
+                                  onActivate={setDropTargetIndex}
+                                  onDeactivate={() => setDropTargetIndex(null)}
+                                  onDrop={(idx, type, variant) => {
+                                    setDropTargetIndex(null);
+                                    setIsSidebarDragging(false);
+                                    setEditorDragOver(false);
+                                    addGenericBlock(type as any, idx, variant);
+                                  }}
+                                />
+                              )}
+
+                              {index === 0 && !activeId && !isSidebarDragging && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
                                   <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} onDropBlock={(type, variant) => addGenericBlock(type, 0, variant)} />
                                 </div>
@@ -836,10 +852,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                 </div>
                               </div>
 
-                              {!activeId && block.type !== "description" && (
-                                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, index + 1)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, index + 1)} onDropBlock={(type, variant) => addGenericBlock(type, index + 1, variant)} />
-                                </div>
+                              {/* Drop indicator AFTER each block during sidebar drag */}
+                              {isSidebarDragging ? (
+                                <DropIndicator
+                                  index={index + 1}
+                                  isActive={dropTargetIndex === index + 1}
+                                  onActivate={setDropTargetIndex}
+                                  onDeactivate={() => setDropTargetIndex(null)}
+                                  onDrop={(idx, type, variant) => {
+                                    setDropTargetIndex(null);
+                                    setIsSidebarDragging(false);
+                                    setEditorDragOver(false);
+                                    addGenericBlock(type as any, idx, variant);
+                                  }}
+                                />
+                              ) : (
+                                !activeId && block.type !== "description" && (
+                                  <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+                                    <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, index + 1)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, index + 1)} onDropBlock={(type, variant) => addGenericBlock(type, index + 1, variant)} />
+                                  </div>
+                                )
                               )}
                             </div>
                           );
