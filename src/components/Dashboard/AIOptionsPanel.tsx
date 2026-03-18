@@ -264,7 +264,7 @@ export function AIConfigView({
         {/* ── Supporting Documents ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <SectionLabel icon={Upload} label="Supporting Documents (Optional)" />
-          <p className="text-xs text-muted-foreground mt-1 mb-3">Upload reference materials to enrich your course. Without documents, the AI will generate content based on the course title alone</p>
+          <p className="text-xs text-muted-foreground mt-1 mb-3">Upload reference materials to enrich your course. If no supporting documents are uploaded, content will be generated based on the course title, taxonomy and intended learners.</p>
           <div className="space-y-2.5">
             {options.supportingDocuments.length > 0 && (
               <div className="flex flex-wrap gap-2">
