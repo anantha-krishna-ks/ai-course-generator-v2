@@ -715,6 +715,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       const rect = e.currentTarget.getBoundingClientRect();
                       if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
                         setEditorDragOver(false);
+                        setIsSidebarDragging(false);
+                        setDropTargetIndex(null);
                       }
                     }}
                     onDrop={(e) => {
