@@ -44,6 +44,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
+import { DropIndicator } from "./DropIndicator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 
