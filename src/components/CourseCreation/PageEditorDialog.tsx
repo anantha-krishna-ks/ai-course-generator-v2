@@ -940,6 +940,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             } else if (blockIdx < blocks.length) {
                               const block = blocks[blockIdx];
                               const currentBlockIdx = blockIdx;
+
+                              // Drop indicator BEFORE first block
+                              if (blockIdx === 0 && isSidebarDragging) {
+                                elements.push(
+                                  <DropIndicator
+                                    key="drop-0"
+                                    index={0}
+                                    isActive={dropTargetIndex === 0}
+                                    onActivate={setDropTargetIndex}
+                                    onDeactivate={() => setDropTargetIndex(null)}
+                                    onDrop={handlePositionalDrop}
+                                    onQuizGenerator={() => setShowQuizGenerateDialog(true)}
+                                  />
+                                );
                               if (block.id === aiReviewBlockId) {
                                 // Wrap content + review bar in a unified frame
                                 elements.push(
