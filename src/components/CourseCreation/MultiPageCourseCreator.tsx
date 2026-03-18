@@ -708,6 +708,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                         e.preventDefault();
                         e.stopPropagation();
                         setEditorDragOver(true);
+                        setIsSidebarDragging(true);
                       }
                     }}
                     onDragLeave={(e) => {
