@@ -1079,7 +1079,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   />
                                 );
                               }
-                              if (blockIdx < blocks.length - 1) {
+                              // Drop indicator / AddContentButton AFTER each block
+                              if (isSidebarDragging) {
+                                elements.push(
+                                  <DropIndicator
+                                    key={`drop-${currentBlockIdx + 1}`}
+                                    index={currentBlockIdx + 1}
+                                    isActive={dropTargetIndex === currentBlockIdx + 1}
+                                    onActivate={setDropTargetIndex}
+                                    onDeactivate={() => setDropTargetIndex(null)}
+                                    onDrop={handlePositionalDrop}
+                                    onQuizGenerator={() => setShowQuizGenerateDialog(true)}
+                                  />
+                                );
+                              } else if (blockIdx < blocks.length - 1) {
                                 elements.push(
                                   <AddContentButton
                                     key={`add-${block.id}`}
