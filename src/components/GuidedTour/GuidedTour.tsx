@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { X, ChevronRight, ChevronLeft, Lightbulb } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, Lightbulb, Rocket, Clock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface TourStep {
   target: string; // data-tour attribute value
@@ -20,7 +21,85 @@ interface GuidedTourProps {
   onStepChange?: (stepIndex: number) => void;
 }
 
+function WelcomeScreen({ onStart, onSkip, stepCount }: { onStart: () => void; onSkip: () => void; stepCount: number }) {
+  return createPortal(
+    <div className="fixed inset-0 z-[9999]">
+      {/* Dimmed background */}
+      <div className="absolute inset-0 bg-black/50" onClick={onSkip} />
+
+      {/* Centered welcome card */}
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-md bg-background border border-border rounded-xl shadow-[0_20px_60px_-12px_hsl(var(--foreground)/0.2)] overflow-hidden"
+        >
+          {/* Decorative top gradient */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+
+          <div className="px-7 pt-7 pb-6">
+            {/* Icon */}
+            <div className="flex justify-center mb-5">
+              <motion.div
+                initial={{ rotate: -10 }}
+                animate={{ rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center"
+              >
+                <Rocket className="w-7 h-7 text-primary" />
+              </motion.div>
+            </div>
+
+            {/* Text */}
+            <div className="text-center space-y-2.5">
+              <h2 className="text-xl font-semibold text-foreground">Welcome to the Course Creator</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                Let us show you around! A quick tour to help you build amazing courses in no time.
+              </p>
+            </div>
+
+            {/* Meta badge */}
+            <div className="flex justify-center mt-4">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-muted/60 border border-border">
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  {stepCount} quick steps
+                </span>
+                <div className="w-px h-3.5 bg-border" />
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5 text-primary" />
+                  Takes less than a minute
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col items-center gap-2.5 mt-7">
+              <button
+                onClick={onStart}
+                className="w-full max-w-[260px] flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors shadow-sm"
+              >
+                Start Quick Tour
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={onSkip}
+                className="px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full"
+              >
+                Skip for now
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }: GuidedTourProps) {
+  const [showWelcome, setShowWelcome] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<DOMRect | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
@@ -36,7 +115,6 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
     const rect = el.getBoundingClientRect();
     setSpotlightRect(rect);
 
-    // Calculate tooltip position after render
     requestAnimationFrame(() => {
       const tooltip = tooltipRef.current;
       if (!tooltip) return;
@@ -67,7 +145,6 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
           break;
       }
 
-      // Clamp to viewport
       left = Math.max(12, Math.min(left, window.innerWidth - tw - 12));
       top = Math.max(12, Math.min(top, window.innerHeight - th - 12));
 
@@ -78,25 +155,24 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
   useEffect(() => {
     if (!isOpen) return;
     setCurrentStep(0);
+    setShowWelcome(true);
     onStepChange?.(0);
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showWelcome) return;
     updatePosition();
 
-    // Scroll target into view
     const el = document.querySelector(`[data-tour="${step?.target}"]`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
-      // Re-measure after scroll
       const timer = setTimeout(updatePosition, 400);
       return () => clearTimeout(timer);
     }
-  }, [currentStep, isOpen, updatePosition, step?.target]);
+  }, [currentStep, isOpen, showWelcome, updatePosition, step?.target]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || showWelcome) return;
     const handler = () => updatePosition();
     window.addEventListener("resize", handler);
     window.addEventListener("scroll", handler, true);
@@ -104,21 +180,37 @@ export function GuidedTour({ steps, isOpen, onClose, onComplete, onStepChange }:
       window.removeEventListener("resize", handler);
       window.removeEventListener("scroll", handler, true);
     };
-  }, [isOpen, updatePosition]);
+  }, [isOpen, showWelcome, updatePosition]);
 
-  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") handleNext();
-      if (e.key === "ArrowLeft") handlePrev();
+      if (!showWelcome) {
+        if (e.key === "ArrowRight") handleNext();
+        if (e.key === "ArrowLeft") handlePrev();
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [isOpen, currentStep]);
+  }, [isOpen, currentStep, showWelcome]);
 
-  if (!isOpen || !step) return null;
+  if (!isOpen) return null;
+
+  if (showWelcome) {
+    return (
+      <WelcomeScreen
+        stepCount={steps.length}
+        onStart={() => setShowWelcome(false)}
+        onSkip={() => {
+          onStepChange?.(-1);
+          onClose();
+        }}
+      />
+    );
+  }
+
+  if (!step) return null;
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
