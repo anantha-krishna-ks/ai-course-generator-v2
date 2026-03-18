@@ -85,6 +85,15 @@ function BlockGridItem({
       JSON.stringify({ templateId: block.id, categoryId: block.category })
     );
     e.dataTransfer.effectAllowed = "copy";
+    // Set a drag image for visual feedback
+    if (e.dataTransfer.setDragImage && e.currentTarget instanceof HTMLElement) {
+      e.dataTransfer.setDragImage(e.currentTarget, 40, 20);
+    }
+  };
+
+  // Stop pointer events from propagating to dnd-kit's document-level sensors
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
   };
 
   return (
