@@ -354,6 +354,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     const { clientX, clientY } = e;
     if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
       setIsDragOver(false);
+      setIsSidebarDragging(false);
+      setDropTargetIndex(null);
     }
   }, []);
 
