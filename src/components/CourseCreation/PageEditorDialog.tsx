@@ -298,10 +298,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   // Drop handler for blocks dragged from ContentBlocksPanel
   const [isDragOver, setIsDragOver] = useState(false);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [isSidebarDragging, setIsSidebarDragging] = useState(false);
 
   const handleContentDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
+    setDropTargetIndex(null);
+    setIsSidebarDragging(false);
     const data = e.dataTransfer.getData("application/content-block");
     if (!data) return;
     try {
@@ -311,8 +315,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         setShowQuizGenerateDialog(true);
         return;
       }
+      // If no specific drop target, append to end
       addBlock(resolved.type, undefined, resolved.variant);
     } catch {}
+  }, [addBlock]);
+
+  const handlePositionalDrop = useCallback((index: number, type: string, variant?: string) => {
+    setDropTargetIndex(null);
+    setIsSidebarDragging(false);
+    setIsDragOver(false);
+    addBlock(type as any, index, variant);
   }, [addBlock]);
 
   const hasContentBlockType = useCallback((types: DOMStringList | readonly string[]) => {
