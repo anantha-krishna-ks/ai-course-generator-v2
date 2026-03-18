@@ -224,6 +224,30 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     });
   }, []);
 
+  const addGenericBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", insertAt?: number, variant?: string) => {
+    const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    let content = "";
+    let blockType: ContentBlockData["type"] = type as ContentBlockData["type"];
+    if (type === "text") {
+      if (variant === "heading-text") {
+        content = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
+      } else if (variant === "two-columns") {
+        content = `<!--two-columns--><h2 style="font-size: 1.75rem; font-weight: 600;">Heading</h2><p>Column one content.</p><!--col-break--><h2 style="font-size: 1.75rem; font-weight: 600;">Heading</h2><p>Column two content.</p>`;
+      } else {
+        content = `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
+      }
+    }
+    const newBlock: ContentBlockData = { id, type: blockType, content };
+    setContentBlocks((prev) => {
+      if (insertAt !== undefined) {
+        const next = [...prev];
+        next.splice(insertAt, 0, newBlock);
+        return next;
+      }
+      return [...prev, newBlock];
+    });
+  }, []);
+
   const aiGenerateText = useCallback((prompt: string, insertAt?: number) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const content = `<h3>${prompt}</h3><p>Based on your prompt, here is an AI-generated overview of the topic. This section covers the key concepts and practical applications that learners need to understand. The content has been structured to facilitate progressive learning and knowledge retention.</p><p>Key takeaways include understanding the fundamental principles, recognizing common patterns, and applying best practices in real-world scenarios.</p>`;
@@ -717,7 +741,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                             <div key={block.id} className="group/item">
                               {index === 0 && !activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} />
+                                  <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} onDropBlock={(type, variant) => addGenericBlock(type, 0, variant)} />
                                 </div>
                               )}
 
@@ -766,7 +790,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
                               {!activeId && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
-                                  <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, index + 1)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, index + 1)} />
+                                  <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, index + 1)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, index + 1)} onDropBlock={(type, variant) => addGenericBlock(type, index + 1, variant)} />
                                 </div>
                               )}
                             </div>
@@ -804,7 +828,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {/* Add content button when no blocks exist */}
               {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
-                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt)} forceOpen={tourStep === 1} />
+                  <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt)} onDropBlock={(type, variant) => addGenericBlock(type, undefined, variant)} forceOpen={tourStep === 1} />
                 </div>
               )}
             </div>

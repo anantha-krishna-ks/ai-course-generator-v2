@@ -614,6 +614,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                           onAddDoc={() => addBlockToItem(itemId, "doc", currentBlockIdx + 1)}
                           onAddQuiz={() => addBlockToItem(itemId, "quiz", currentBlockIdx + 1)}
                           onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId(itemId); }}
+                          onDropBlock={(type, variant) => addBlockToItem(itemId, type as any, currentBlockIdx + 1, variant)}
+                          onOpenQuizGenerator={() => { setActiveItemId(itemId); setShowQuizGenerateDialog(true); }}
                         />
                       );
                     }
@@ -981,6 +983,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             onAddDoc={() => addIntroBlock("doc", 0)}
                             onAddQuiz={() => addIntroBlock("quiz", 0)}
                             onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                            onDropBlock={(type, variant) => addIntroBlock(type as any, 0, variant)}
+                            onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                           />
                         </div>
                       )}
@@ -1000,6 +1004,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             onAddDoc={() => addIntroBlock("doc", index + 1)}
                             onAddQuiz={() => addIntroBlock("quiz", index + 1)}
                             onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                            onDropBlock={(type, variant) => addIntroBlock(type as any, index + 1, variant)}
+                            onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                           />
                         </div>
                       )}
