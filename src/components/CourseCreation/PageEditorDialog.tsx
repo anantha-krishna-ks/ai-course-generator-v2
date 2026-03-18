@@ -337,6 +337,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
       setIsDragOver(true);
+      setIsSidebarDragging(true);
     }
   }, [hasContentBlockType]);
 
