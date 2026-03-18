@@ -388,7 +388,7 @@ export function SectionCard({
 
         <div className="flex-1 min-w-0">
           {/* Section card with left accent */}
-          <div className="relative rounded-xl border border-border/60 bg-card overflow-hidden transition-all duration-200 hover:border-border">
+          <div className="relative rounded-xl border border-border bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_-1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-200 hover:border-border hover:shadow-sm">
             {/* Left accent bar */}
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/60 via-primary/40 to-primary/20 rounded-l-xl" />
 

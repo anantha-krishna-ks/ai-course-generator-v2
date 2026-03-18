@@ -79,7 +79,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
           <GripVertical className="w-4 h-4 text-muted-foreground" />
         </button>
 
-        <div className="relative flex-1 min-w-0 rounded-xl border border-border/60 bg-card overflow-hidden transition-all duration-200 hover:border-border hover:shadow-sm">
+        <div className="relative flex-1 min-w-0 rounded-xl border border-border bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_-1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-200 hover:border-border hover:shadow-sm">
           {/* Left accent — lighter than section to show hierarchy difference */}
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-muted-foreground/15 rounded-l-xl" />
 
