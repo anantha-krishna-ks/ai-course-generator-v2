@@ -145,6 +145,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
+  const [editorDragOver, setEditorDragOver] = useState(false);
   
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
