@@ -191,7 +191,7 @@ export function AIConfigView({
       <div className="space-y-4">
         {/* ── Span Time Settings ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={Timer} label="Content Duration" />
+          <SectionLabel icon={Timer} label="Content Duration" required />
           <p className="text-xs text-muted-foreground mt-1 mb-4">Set the duration for each page of content</p>
           <SpanTimeCard
               icon={FileText}
@@ -210,8 +210,13 @@ export function AIConfigView({
 
         {/* ── Bloom's Taxonomy ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={Brain} label="Bloom's Taxonomy" />
-          <p className="text-xs text-muted-foreground mt-1 mb-3">Select cognitive levels for generated content</p>
+          <SectionLabel icon={Brain} label="Bloom's Taxonomy" required />
+          <p className="text-xs text-muted-foreground mt-1 mb-3">
+            Select cognitive levels for generated content
+            {options.bloomsTaxonomy.length === 0 && (
+              <span className="text-destructive ml-1">— Please select at least one level</span>
+            )}
+          </p>
           <div className="flex flex-wrap gap-2">
             {BLOOMS_LEVELS.map((level) => {
               const selected = options.bloomsTaxonomy.includes(level);
@@ -237,8 +242,13 @@ export function AIConfigView({
 
         {/* ── Intended Learners ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={Users} label="Intended Learners" />
-          <p className="text-xs text-muted-foreground mt-1 mb-3">Choose the target audience skill level</p>
+          <SectionLabel icon={Users} label="Intended Learners" required />
+          <p className="text-xs text-muted-foreground mt-1 mb-3">
+            Choose the target audience skill level
+            {!options.intendedLearners && (
+              <span className="text-destructive ml-1">— Please select a level</span>
+            )}
+          </p>
           <div className="flex gap-2">
             {LEARNER_LEVELS.map((level) => {
               const selected = options.intendedLearners === level;
@@ -482,14 +492,17 @@ export function AIConfigView({
 function SectionLabel({
   icon: Icon,
   label,
+  required,
 }: {
   icon: React.ElementType;
   label: string;
+  required?: boolean;
 }) {
   return (
     <div className="flex items-center gap-2.5">
       <Icon className="w-4 h-4 text-primary" />
       <span className="text-base font-semibold text-foreground">{label}</span>
+      {required && <span className="text-destructive text-sm font-medium">*</span>}
     </div>
   );
 }

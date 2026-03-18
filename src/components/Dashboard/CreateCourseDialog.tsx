@@ -63,16 +63,17 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [aiOptions, setAIOptions] = useState<AIOptions>(defaultAIOptions);
   const [showAIConfig, setShowAIConfig] = useState(false);
 
+  const isAIConfigValid = !aiOptions.enabled || (
+    aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
+  );
+
   const handleStartCreating = () => {
     if (!courseTitle.trim()) return;
-    
-    // Show loader for multi-page layout
-    if (selectedLayout === "multi-page") {
-      setIsLoading(true);
-    } else {
-      // Show loader for single-page too
-      setIsLoading(true);
+    if (!isAIConfigValid) {
+      setShowAIConfig(true);
+      return;
     }
+    setIsLoading(true);
   };
 
   const handleLoaderComplete = () => {
