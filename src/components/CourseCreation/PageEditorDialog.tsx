@@ -44,6 +44,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
+import { DropIndicator } from "./DropIndicator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 
@@ -298,10 +299,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   // Drop handler for blocks dragged from ContentBlocksPanel
   const [isDragOver, setIsDragOver] = useState(false);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [isSidebarDragging, setIsSidebarDragging] = useState(false);
 
   const handleContentDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
+    setDropTargetIndex(null);
+    setIsSidebarDragging(false);
     const data = e.dataTransfer.getData("application/content-block");
     if (!data) return;
     try {
@@ -311,8 +316,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         setShowQuizGenerateDialog(true);
         return;
       }
+      // If no specific drop target, append to end
       addBlock(resolved.type, undefined, resolved.variant);
     } catch {}
+  }, [addBlock]);
+
+  const handlePositionalDrop = useCallback((index: number, type: string, variant?: string) => {
+    setDropTargetIndex(null);
+    setIsSidebarDragging(false);
+    setIsDragOver(false);
+    addBlock(type as any, index, variant);
   }, [addBlock]);
 
   const hasContentBlockType = useCallback((types: DOMStringList | readonly string[]) => {
@@ -325,6 +338,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
       setIsDragOver(true);
+      setIsSidebarDragging(true);
     }
   }, [hasContentBlockType]);
 
@@ -341,6 +355,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     const { clientX, clientY } = e;
     if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
       setIsDragOver(false);
+      setIsSidebarDragging(false);
+      setDropTargetIndex(null);
     }
   }, []);
 
@@ -886,7 +902,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-                      <div className="space-y-1">
+                      <div className={cn("space-y-1", isSidebarDragging && "space-y-0")}>
                         {(() => {
                           const elements: React.ReactNode[] = [];
                           const deletedArr = Array.from(deletedBlocks.entries()).sort((a, b) => a[1].index - b[1].index);
@@ -924,6 +940,22 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             } else if (blockIdx < blocks.length) {
                               const block = blocks[blockIdx];
                               const currentBlockIdx = blockIdx;
+
+                              // Drop indicator BEFORE first block
+                              if (blockIdx === 0 && isSidebarDragging) {
+                                elements.push(
+                                  <DropIndicator
+                                    key="drop-0"
+                                    index={0}
+                                    isActive={dropTargetIndex === 0}
+                                    onActivate={setDropTargetIndex}
+                                    onDeactivate={() => setDropTargetIndex(null)}
+                                    onDrop={handlePositionalDrop}
+                                    onQuizGenerator={() => setShowQuizGenerateDialog(true)}
+                                  />
+                                );
+                              }
+
                               if (block.id === aiReviewBlockId) {
                                 // Wrap content + review bar in a unified frame
                                 elements.push(
@@ -1047,7 +1079,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                   />
                                 );
                               }
-                              if (blockIdx < blocks.length - 1) {
+                              // Drop indicator / AddContentButton AFTER each block
+                              if (isSidebarDragging) {
+                                elements.push(
+                                  <DropIndicator
+                                    key={`drop-${currentBlockIdx + 1}`}
+                                    index={currentBlockIdx + 1}
+                                    isActive={dropTargetIndex === currentBlockIdx + 1}
+                                    onActivate={setDropTargetIndex}
+                                    onDeactivate={() => setDropTargetIndex(null)}
+                                    onDrop={handlePositionalDrop}
+                                    onQuizGenerator={() => setShowQuizGenerateDialog(true)}
+                                  />
+                                );
+                              } else if (blockIdx < blocks.length - 1) {
                                 elements.push(
                                   <AddContentButton
                                     key={`add-${block.id}`}
