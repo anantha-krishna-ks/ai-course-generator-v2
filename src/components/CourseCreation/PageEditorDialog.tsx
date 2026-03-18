@@ -805,7 +805,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
           {/* Main Content Area */}
             <div
-              className={cn("flex-1 min-w-0 overflow-y-auto bg-background", isDragOver && "bg-primary/5")}
+              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver ? "bg-primary/5" : "bg-[#ffffff]")}
               onDragOver={handleEditorDragOver}
               onDragEnter={handleEditorDragEnter}
               onDragLeave={handleEditorDragLeave}
