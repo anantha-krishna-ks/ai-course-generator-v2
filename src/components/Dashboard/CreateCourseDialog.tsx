@@ -118,7 +118,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         ) : (
           <>
             <DialogHeader className="space-y-2 pb-2">
-              <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-foreground text-left">
+              <DialogTitle className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground text-left">
                 Build your course entirely from the ground up
               </DialogTitle>
               <p className="text-muted-foreground/80 text-xs sm:text-sm md:text-base text-left leading-relaxed">
