@@ -470,14 +470,22 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
             {/* Tabs - Apple-style pill */}
             <div className="px-3 pt-3 pb-2">
-              <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
+              <div className="relative flex items-center bg-foreground/[0.06] border border-border/50 rounded-lg p-[3px]">
+                {/* Sliding pill indicator */}
+                <div
+                  className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+                  style={{
+                    width: "calc(50% - 3px)",
+                    left: activeTab === "outline" ? "3px" : "calc(50%)",
+                  }}
+                />
                 <button
                   onClick={() => setActiveTab("outline")}
                   className={cn(
-                    "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200",
+                    "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors duration-300",
                     activeTab === "outline"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "text-foreground"
+                      : "text-muted-foreground/70 hover:text-muted-foreground"
                   )}
                 >
                   <LayoutGrid className="w-3 h-3" />
@@ -486,10 +494,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <button
                   onClick={() => setActiveTab("blocks")}
                   className={cn(
-                    "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200",
+                    "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors duration-300",
                     activeTab === "blocks"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "text-foreground"
+                      : "text-muted-foreground/70 hover:text-muted-foreground"
                   )}
                 >
                   <Layers className="w-3 h-3" />
