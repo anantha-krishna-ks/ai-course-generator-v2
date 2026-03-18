@@ -700,6 +700,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                         e.stopPropagation();
                         e.dataTransfer.dropEffect = "copy";
                         setEditorDragOver(true);
+                        setIsSidebarDragging(true);
                       }
                     }}
                     onDragEnter={(e) => {
