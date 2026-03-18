@@ -1004,6 +1004,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             onAddDoc={() => addIntroBlock("doc", index + 1)}
                             onAddQuiz={() => addIntroBlock("quiz", index + 1)}
                             onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
+                            onDropBlock={(type, variant) => addIntroBlock(type as any, index + 1, variant)}
+                            onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                           />
                         </div>
                       )}
