@@ -126,7 +126,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               </p>
             </DialogHeader>
 
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-4 sm:space-y-6 pb-1">
               {/* Course Title Input */}
               <div>
                 <Input
