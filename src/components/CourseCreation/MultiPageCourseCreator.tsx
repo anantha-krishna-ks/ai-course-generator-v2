@@ -686,7 +686,35 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   items={contentBlocks.map((b) => b.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="mt-6 space-y-0" data-tour="content-blocks">
+                  <div
+                    className={cn("mt-6 space-y-0 transition-all duration-200", editorDragOver && "ring-2 ring-dashed ring-primary/40 rounded-lg bg-primary/5")}
+                    data-tour="content-blocks"
+                    onDragOver={(e) => {
+                      if (e.dataTransfer.types.includes("application/content-block")) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "copy";
+                        setEditorDragOver(true);
+                      }
+                    }}
+                    onDragLeave={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+                        setEditorDragOver(false);
+                      }
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setEditorDragOver(false);
+                      const data = e.dataTransfer.getData("application/content-block");
+                      if (!data) return;
+                      try {
+                        const { templateId, categoryId } = JSON.parse(data);
+                        const resolved = resolveTemplateDropData(templateId, categoryId);
+                        if (!resolved) return;
+                        addGenericBlock(resolved.type, undefined, resolved.variant);
+                      } catch {}
+                    }}
+                  >
                     {(() => {
                       // Merge content blocks and deleted block banners by index
                       const deletedArr = Array.from(deletedBlocks.entries()).sort(
