@@ -103,6 +103,7 @@ function BlockGridItem({
       onClick={locked ? undefined : onClick}
       draggable={!locked}
       onDragStart={handleDragStart}
+      onPointerDown={locked ? undefined : handlePointerDown}
       className={cn(
         "flex flex-col items-center justify-center gap-2 p-3 rounded-lg transition-all duration-200 select-none relative group",
         locked
