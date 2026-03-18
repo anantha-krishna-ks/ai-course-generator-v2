@@ -106,7 +106,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-[800px] max-h-[90vh] overflow-y-auto p-4 sm:p-5 md:p-8 pt-4 sm:pt-4 md:pt-6" hideCloseButton={isLoading}>
+      <DialogContent className="w-[95vw] max-w-[800px] max-h-[90vh] overflow-y-auto p-4 sm:p-5 md:p-8 pt-4 sm:pt-4 md:pt-6 pb-4 sm:pb-4 md:pb-6" hideCloseButton={isLoading}>
         {isLoading ? (
           <InlineLoader courseTitle={courseTitle} onComplete={handleLoaderComplete} />
         ) : showAIConfig ? (
