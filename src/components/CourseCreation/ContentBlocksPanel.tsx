@@ -1,18 +1,33 @@
 import { useState } from "react";
-import { Type, ImageIcon, Video, Mic, FileText, MessageCircleQuestion, Sparkles, HelpCircle, Lock } from "lucide-react";
+import {
+  Type,
+  ImageIcon,
+  Video,
+  Mic,
+  FileText,
+  MessageCircleQuestion,
+  Sparkles,
+  Lock,
+  Heading,
+  Columns2,
+  ImageUp,
+  ImageDown,
+  Search,
+  HelpCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
-interface BlockTemplate {
-  id: string;
-  label: string;
-  preview: React.ReactNode;
-}
-
-interface BlockCategory {
+interface BlockItem {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  templates: BlockTemplate[];
+  category: string;
+  categoryLabel: string;
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
+  variant?: string;
+  locked?: boolean;
+  isQuizGenerator?: boolean;
 }
 
 interface ContentBlocksPanelProps {
@@ -21,250 +36,22 @@ interface ContentBlocksPanelProps {
   aiEnabled?: boolean;
 }
 
-function TemplateCard({ label, preview, onClick, locked, templateId, categoryId }: { label: string; preview: React.ReactNode; onClick: () => void; locked?: boolean; templateId: string; categoryId: string }) {
-  const handleDragStart = (e: React.DragEvent) => {
-    if (locked) {
-      e.preventDefault();
-      return;
-    }
-    e.dataTransfer.setData("application/content-block", JSON.stringify({ templateId, categoryId }));
-    e.dataTransfer.effectAllowed = "copy";
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div
-        role="button"
-        tabIndex={locked ? -1 : 0}
-        onClick={locked ? undefined : onClick}
-        draggable={!locked}
-        onDragStart={handleDragStart}
-        className={cn(
-          "w-full rounded-xl border bg-card transition-all duration-250 p-5 min-h-[90px] flex flex-col justify-center group/card relative select-none",
-          locked
-            ? "border-border/40 opacity-60 cursor-not-allowed"
-            : "border-border/60 hover:border-primary/30 hover:shadow-md cursor-grab active:cursor-grabbing"
-        )}
-      >
-        {locked && (
-          <div className="absolute top-2.5 right-2.5">
-            <Lock className="w-3.5 h-3.5 text-muted-foreground/50" />
-          </div>
-        )}
-        {preview}
-      </div>
-      <span className="text-[11px] font-medium text-muted-foreground tracking-wide">
-        {label}
-      </span>
-      {locked && (
-        <span className="text-[10px] text-muted-foreground/60 -mt-1 text-center leading-tight">
-          Enable AI Support to use this
-        </span>
-      )}
-    </div>
-  );
-}
-
-const categories: BlockCategory[] = [
-  {
-    id: "text",
-    label: "TEXT",
-    icon: Type,
-    templates: [
-      {
-        id: "heading-text",
-        label: "Heading and text",
-        preview: (
-          <div className="space-y-3">
-            <p className="text-sm font-semibold text-foreground/80">Heading</p>
-            <div className="space-y-1.5">
-              <p className="text-[11px] leading-relaxed text-muted-foreground/70">
-                Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise.
-              </p>
-            </div>
-          </div>
-        ),
-      },
-      {
-        id: "text-only",
-        label: "Text",
-        preview: (
-          <div className="space-y-1.5 py-2">
-            <p className="text-[11px] leading-relaxed text-muted-foreground/70">
-              Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise as a source of input for e-learning.
-            </p>
-          </div>
-        ),
-      },
-      {
-        id: "two-columns",
-        label: "Two columns",
-        preview: (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-foreground/80">Heading</p>
-              <p className="text-[10px] leading-relaxed text-muted-foreground/60">
-                Employee-generated Learning enables employees to learn from each other.
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <p className="text-[11px] font-semibold text-foreground/80">Heading</p>
-              <p className="text-[10px] leading-relaxed text-muted-foreground/60">
-                Employee-generated Learning enables employees to learn from each other.
-              </p>
-            </div>
-          </div>
-        ),
-      },
-    ],
-  },
-  {
-    id: "image",
-    label: "IMAGES",
-    icon: ImageIcon,
-    templates: [
-      {
-        id: "image-full",
-        label: "Single image",
-        preview: (
-          <div className="w-full h-20 rounded-lg overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
-          </div>
-        ),
-      },
-      {
-        id: "image-top",
-        label: "Image on the top",
-        preview: (
-          <div className="space-y-2.5">
-            <div className="w-full h-20 rounded-lg overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
-            </div>
-            <p className="text-[10px] leading-relaxed text-muted-foreground/60 text-center">
-              Employee-generated Learning enables employees learn from each other.
-            </p>
-          </div>
-        ),
-      },
-      {
-        id: "image-bottom",
-        label: "Image on the bottom",
-        preview: (
-          <div className="space-y-2.5">
-            <p className="text-[10px] leading-relaxed text-muted-foreground/60 text-center">
-              Employee-generated Learning enables employees learn from each other.
-            </p>
-            <div className="w-full h-20 rounded-lg overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
-            </div>
-          </div>
-        ),
-      },
-    ],
-  },
-  {
-    id: "video",
-    label: "VIDEO",
-    icon: Video,
-    templates: [
-      {
-        id: "video-upload",
-        label: "Video upload",
-        preview: (
-          <div className="relative w-full h-20 rounded-lg overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=200&fit=crop" alt="Mountain peak" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center shadow-md">
-                <Video className="w-5 h-5 text-white ml-0.5" />
-              </div>
-            </div>
-          </div>
-        ),
-      },
-    ],
-  },
-  {
-    id: "audio",
-    label: "AUDIO",
-    icon: Mic,
-    templates: [
-      {
-        id: "audio-upload",
-        label: "Audio upload",
-        preview: (
-          <div className="w-full h-16 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center gap-2">
-            <Mic className="w-6 h-6 text-muted-foreground/25" />
-          </div>
-        ),
-      },
-    ],
-  },
-  {
-    id: "doc",
-    label: "DOC",
-    icon: FileText,
-    templates: [
-      {
-        id: "doc-upload",
-        label: "Document upload",
-        preview: (
-          <div className="w-full h-16 bg-muted/40 rounded-lg border border-dashed border-border/60 flex items-center justify-center gap-2">
-            <FileText className="w-6 h-6 text-muted-foreground/25" />
-          </div>
-        ),
-      },
-    ],
-  },
-  {
-    id: "quiz",
-    label: "QUESTION / QUIZ",
-    icon: MessageCircleQuestion,
-    templates: [
-      {
-        id: "question-block",
-        label: "Question",
-        preview: (
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-2 mb-1">
-              <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/40" />
-              <p className="text-[11px] font-medium text-foreground/70">Add a question</p>
-            </div>
-            <div className="space-y-2 pl-1">
-              {["Option A", "Option B", "Option C"].map((opt) => (
-                <div key={opt} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full border-[1.5px] border-muted-foreground/25 shrink-0" />
-                  <span className="text-[10px] text-muted-foreground/60">{opt}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ),
-      },
-      {
-        id: "quiz-generate",
-        label: "Quiz",
-        preview: (
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-primary/50" />
-              <p className="text-[11px] font-medium text-foreground/70">Generate quiz with AI</p>
-            </div>
-            <div className="space-y-1.5 pl-1">
-              <div className="flex items-center gap-2">
-                <div className="w-full h-2 rounded-full bg-primary/10" />
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3/4 h-2 rounded-full bg-primary/10" />
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5/6 h-2 rounded-full bg-primary/10" />
-              </div>
-            </div>
-          </div>
-        ),
-      },
-    ],
-  },
+const ALL_BLOCKS: BlockItem[] = [
+  // TEXT
+  { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text" },
+  { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only" },
+  { id: "two-columns", label: "Two Columns", icon: Columns2, category: "text", categoryLabel: "TEXT", type: "text", variant: "two-columns" },
+  // IMAGES
+  { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full" },
+  { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top" },
+  { id: "image-bottom", label: "Image on Bottom", icon: ImageDown, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-bottom" },
+  // MEDIA
+  { id: "video-upload", label: "Video", icon: Video, category: "media", categoryLabel: "MEDIA", type: "video", variant: "video-upload" },
+  { id: "audio-upload", label: "Audio", icon: Mic, category: "media", categoryLabel: "MEDIA", type: "audio", variant: "audio-upload" },
+  { id: "doc-upload", label: "Document", icon: FileText, category: "media", categoryLabel: "MEDIA", type: "doc", variant: "doc-upload" },
+  // QUESTION / QUIZ
+  { id: "question-block", label: "Question", icon: HelpCircle, category: "quiz", categoryLabel: "QUESTION / QUIZ", type: "quiz", variant: "question-block" },
+  { id: "quiz-generate", label: "Quiz (AI)", icon: Sparkles, category: "quiz", categoryLabel: "QUESTION / QUIZ", type: "quiz", isQuizGenerator: true },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
@@ -272,94 +59,144 @@ export function resolveTemplateDropData(
   templateId: string,
   categoryId: string
 ): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description"; variant?: string } | null {
-  if (templateId === "quiz-generate") return null;
-  if (templateId === "question-block") return { type: "quiz", variant: templateId };
-  if (templateId === "image-top") return { type: "image-description", variant: "image-top" };
-  if (templateId === "image-bottom") return { type: "image-description", variant: "image-bottom" };
-  const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
-    text: "text", image: "image", video: "video", audio: "audio", doc: "doc",
-  };
-  return { type: typeMap[categoryId] || "text", variant: templateId };
+  const block = ALL_BLOCKS.find((b) => b.id === templateId);
+  if (!block || block.isQuizGenerator) return null;
+  return { type: block.type, variant: block.variant };
 }
 
-export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
-  const [activeCategory, setActiveCategory] = useState("text");
-  const activeCat = categories.find((c) => c.id === activeCategory)!;
+function BlockGridItem({
+  block,
+  onClick,
+  locked,
+}: {
+  block: BlockItem;
+  onClick: () => void;
+  locked?: boolean;
+}) {
+  const Icon = block.icon;
 
-  const handleTemplateClick = (templateId: string) => {
-    // Quiz generate opens the dialog instead of adding a block
-    if (templateId === "quiz-generate") {
-      onOpenQuizGenerator?.();
+  const handleDragStart = (e: React.DragEvent) => {
+    if (locked) {
+      e.preventDefault();
       return;
     }
-    if (templateId === "question-block") {
-      onAddBlock("quiz", templateId);
-      return;
-    }
-    // Image + description composite templates
-    if (templateId === "image-top") {
-      onAddBlock("image-description", "image-top");
-      return;
-    }
-    if (templateId === "image-bottom") {
-      onAddBlock("image-description", "image-bottom");
-      return;
-    }
-    const typeMap: Record<string, "text" | "image" | "video" | "audio" | "doc"> = {
-      text: "text", image: "image", video: "video", audio: "audio", doc: "doc",
-    };
-    onAddBlock(typeMap[activeCategory] || "text", templateId);
+    e.dataTransfer.setData(
+      "application/content-block",
+      JSON.stringify({ templateId: block.id, categoryId: block.category })
+    );
+    e.dataTransfer.effectAllowed = "copy";
   };
 
   return (
-    <div className="flex h-full -m-4">
-      {/* Icon side nav */}
-      <div className="flex flex-col items-center gap-2 py-4 px-1.5 border-r border-border/40 shrink-0">
-        {categories.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = activeCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={cn(
-                "w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200",
-                isActive
-                  ? "bg-muted shadow-sm text-foreground"
-                  : "text-muted-foreground/70 hover:text-muted-foreground hover:bg-muted/50"
-              )}
-              title={cat.label}
-            >
-              <Icon className={cn("w-5 h-5", isActive && "w-[22px] h-[22px]")} />
-            </button>
-          );
-        })}
+    <div
+      role="button"
+      tabIndex={locked ? -1 : 0}
+      onClick={locked ? undefined : onClick}
+      draggable={!locked}
+      onDragStart={handleDragStart}
+      className={cn(
+        "flex flex-col items-center justify-center gap-2 p-3 rounded-lg transition-all duration-200 select-none relative group",
+        locked
+          ? "opacity-50 cursor-not-allowed"
+          : "hover:bg-muted cursor-grab active:cursor-grabbing"
+      )}
+    >
+      {locked && (
+        <div className="absolute top-1.5 right-1.5">
+          <Lock className="w-3 h-3 text-muted-foreground/50" />
+        </div>
+      )}
+      <div
+        className={cn(
+          "w-10 h-10 rounded-lg flex items-center justify-center transition-colors",
+          locked
+            ? "text-muted-foreground/40"
+            : "text-foreground/70 group-hover:text-foreground"
+        )}
+      >
+        <Icon className="w-6 h-6" />
+      </div>
+      <span
+        className={cn(
+          "text-[11px] font-medium text-center leading-tight",
+          locked ? "text-muted-foreground/50" : "text-muted-foreground group-hover:text-foreground"
+        )}
+      >
+        {block.label}
+      </span>
+    </div>
+  );
+}
+
+export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredBlocks = searchQuery.trim()
+    ? ALL_BLOCKS.filter((b) => b.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    : ALL_BLOCKS;
+
+  // Group by category preserving order
+  const grouped: { label: string; blocks: BlockItem[] }[] = [];
+  for (const block of filteredBlocks) {
+    const existing = grouped.find((g) => g.label === block.categoryLabel);
+    if (existing) {
+      existing.blocks.push(block);
+    } else {
+      grouped.push({ label: block.categoryLabel, blocks: [block] });
+    }
+  }
+
+  const handleClick = (block: BlockItem) => {
+    if (block.isQuizGenerator) {
+      onOpenQuizGenerator?.();
+      return;
+    }
+    onAddBlock(block.type, block.variant);
+  };
+
+  return (
+    <div className="flex flex-col h-full -m-4">
+      {/* Search */}
+      <div className="px-4 pt-4 pb-2">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search"
+            className="pl-9 h-9 bg-background border-border focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary/50 text-sm"
+          />
+        </div>
       </div>
 
-      {/* Templates content */}
-      <div className="flex-1 overflow-y-auto thin-scrollbar">
-        {/* Category header with line */}
-        <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-          <span className="text-xs font-semibold text-primary tracking-[0.15em] whitespace-nowrap">
-            {activeCat.label}
-          </span>
-          <div className="flex-1 h-px bg-border/60" />
-        </div>
+      {/* Blocks grid */}
+      <div className="flex-1 overflow-y-auto thin-scrollbar px-4 pb-4">
+        {grouped.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-8">No blocks found</p>
+        )}
 
-        {/* Template cards */}
-        <div className="px-4 pb-4 space-y-5">
-          {activeCat.templates.map((tpl) => (
-            <TemplateCard
-              key={tpl.id}
-              label={tpl.label}
-              preview={tpl.preview}
-              onClick={() => handleTemplateClick(tpl.id)}
-              locked={tpl.id === "quiz-generate" && !aiEnabled}
-              templateId={tpl.id}
-              categoryId={activeCat.id}
-            />
-          ))}
-        </div>
+        {grouped.map((group) => (
+          <div key={group.label}>
+            {/* Category label */}
+            <div className="pt-3 pb-2">
+              <span className="text-[11px] font-semibold text-muted-foreground/70 tracking-[0.12em]">
+                {group.label}
+              </span>
+            </div>
+
+            {/* 3-column grid */}
+            <div className="grid grid-cols-3 gap-1">
+              {group.blocks.map((block) => (
+                <BlockGridItem
+                  key={block.id}
+                  block={block}
+                  onClick={() => handleClick(block)}
+                  locked={block.isQuizGenerator && !aiEnabled}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
