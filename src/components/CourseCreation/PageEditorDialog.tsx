@@ -954,6 +954,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onQuizGenerator={() => setShowQuizGenerateDialog(true)}
                                   />
                                 );
+                              }
+
                               if (block.id === aiReviewBlockId) {
                                 // Wrap content + review bar in a unified frame
                                 elements.push(
