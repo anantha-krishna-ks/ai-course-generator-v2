@@ -468,32 +468,34 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               </button>
             )}
 
-            {/* Tabs */}
-            <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
-              <button
-                onClick={() => setActiveTab("outline")}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors",
-                  activeTab === "outline"
-                    ? "border-foreground text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                Course outline
-              </button>
-              <button
-                onClick={() => setActiveTab("blocks")}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors",
-                  activeTab === "blocks"
-                    ? "border-foreground text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Layers className="w-3.5 h-3.5" />
-                Content blocks
-              </button>
+            {/* Tabs - Apple-style pill */}
+            <div className="px-3 pt-3 pb-2">
+              <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
+                <button
+                  onClick={() => setActiveTab("outline")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200",
+                    activeTab === "outline"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <LayoutGrid className="w-3 h-3" />
+                  Outline
+                </button>
+                <button
+                  onClick={() => setActiveTab("blocks")}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200",
+                    activeTab === "blocks"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Layers className="w-3 h-3" />
+                  Blocks
+                </button>
+              </div>
             </div>
 
             {/* Sidebar Content */}
