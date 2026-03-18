@@ -902,7 +902,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
-                      <div className="space-y-1">
+                      <div className={cn("space-y-1", isSidebarDragging && "space-y-0")}>
                         {(() => {
                           const elements: React.ReactNode[] = [];
                           const deletedArr = Array.from(deletedBlocks.entries()).sort((a, b) => a[1].index - b[1].index);
