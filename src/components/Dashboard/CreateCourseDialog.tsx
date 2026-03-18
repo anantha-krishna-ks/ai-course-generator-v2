@@ -129,12 +129,15 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
             <div className="space-y-4 sm:space-y-6 pb-2 sm:pb-4">
               {/* Course Title Input */}
               <div>
-              <Input
+                <Input
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="Enter course title..."
                   className="h-11 sm:h-12 !text-[1.1rem] bg-background border-2 border-border focus:border-primary focus:border-[1.5px] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors placeholder:!text-[1.1rem] placeholder:text-foreground/70 placeholder:font-medium"
                 />
+                <p className="text-[11px] sm:text-xs text-muted-foreground/70 mt-1.5 ml-0.5 leading-relaxed">
+                  💡 This title will be used as the primary prompt for AI content generation if no supporting documents are provided
+                </p>
               </div>
 
               {/* Layout Options */}
