@@ -44,6 +44,7 @@ import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
+import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
