@@ -210,8 +210,13 @@ export function AIConfigView({
 
         {/* ── Bloom's Taxonomy ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={Brain} label="Bloom's Taxonomy" />
-          <p className="text-xs text-muted-foreground mt-1 mb-3">Select cognitive levels for generated content</p>
+          <SectionLabel icon={Brain} label="Bloom's Taxonomy" required />
+          <p className="text-xs text-muted-foreground mt-1 mb-3">
+            Select cognitive levels for generated content
+            {options.bloomsTaxonomy.length === 0 && (
+              <span className="text-destructive ml-1">— Please select at least one level</span>
+            )}
+          </p>
           <div className="flex flex-wrap gap-2">
             {BLOOMS_LEVELS.map((level) => {
               const selected = options.bloomsTaxonomy.includes(level);
