@@ -791,6 +791,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             <div
               className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver && "bg-primary/5")}
               onDragOver={handleEditorDragOver}
+              onDragEnter={handleEditorDragEnter}
               onDragLeave={handleEditorDragLeave}
               onDrop={handleContentDrop}
             >
