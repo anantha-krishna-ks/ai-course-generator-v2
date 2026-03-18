@@ -494,7 +494,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <button
                   onClick={() => setActiveTab("blocks")}
                   className={cn(
-                    "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors duration-300",
+                    "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
                     activeTab === "blocks"
                       ? "text-foreground"
                       : "text-muted-foreground/70 hover:text-muted-foreground"
