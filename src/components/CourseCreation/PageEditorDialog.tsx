@@ -1046,6 +1046,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
                                     onAddQuiz={() => addBlock("quiz", currentBlockIdx + 1)}
                                     onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
+                                    onDropBlock={(type, variant) => addBlock(type as any, currentBlockIdx + 1, variant)}
+                                    onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                                   />
                                 );
                               }

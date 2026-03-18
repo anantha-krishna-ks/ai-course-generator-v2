@@ -614,6 +614,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                           onAddDoc={() => addBlockToItem(itemId, "doc", currentBlockIdx + 1)}
                           onAddQuiz={() => addBlockToItem(itemId, "quiz", currentBlockIdx + 1)}
                           onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId(itemId); }}
+                          onDropBlock={(type, variant) => addBlockToItem(itemId, type as any, currentBlockIdx + 1, variant)}
+                          onOpenQuizGenerator={() => { setActiveItemId(itemId); setShowQuizGenerateDialog(true); }}
                         />
                       );
                     }
