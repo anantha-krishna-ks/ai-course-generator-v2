@@ -36,7 +36,7 @@ function WelcomeScreen({ onStart, onSkip, stepCount }: { onStart: () => void; on
           className="relative w-full max-w-md bg-background border border-border rounded-xl shadow-[0_20px_60px_-12px_hsl(var(--foreground)/0.2)] overflow-hidden"
         >
           {/* Decorative top gradient */}
-          <div className="h-1.5 w-full bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+          <div className="h-px w-full bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
 
           <div className="px-7 pt-7 pb-6">
             {/* Icon */}
