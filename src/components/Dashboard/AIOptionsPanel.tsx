@@ -191,7 +191,7 @@ export function AIConfigView({
       <div className="space-y-4">
         {/* ── Span Time Settings ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={Timer} label="Content Duration" />
+          <SectionLabel icon={Timer} label="Content Duration" required />
           <p className="text-xs text-muted-foreground mt-1 mb-4">Set the duration for each page of content</p>
           <SpanTimeCard
               icon={FileText}
