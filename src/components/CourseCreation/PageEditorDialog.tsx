@@ -315,13 +315,26 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     } catch {}
   }, [addBlock]);
 
+  const hasContentBlockType = useCallback((types: DOMStringList | readonly string[]) => {
+    return Array.from(types).indexOf("application/content-block") >= 0;
+  }, []);
+
   const handleEditorDragOver = useCallback((e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes("application/content-block")) {
+    if (hasContentBlockType(e.dataTransfer.types)) {
       e.preventDefault();
+      e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
       setIsDragOver(true);
     }
-  }, []);
+  }, [hasContentBlockType]);
+
+  const handleEditorDragEnter = useCallback((e: React.DragEvent) => {
+    if (hasContentBlockType(e.dataTransfer.types)) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(true);
+    }
+  }, [hasContentBlockType]);
 
   const handleEditorDragLeave = useCallback((e: React.DragEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -778,6 +791,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             <div
               className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver && "bg-primary/5")}
               onDragOver={handleEditorDragOver}
+              onDragEnter={handleEditorDragEnter}
               onDragLeave={handleEditorDragLeave}
               onDrop={handleContentDrop}
             >

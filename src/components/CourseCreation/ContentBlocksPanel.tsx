@@ -85,6 +85,15 @@ function BlockGridItem({
       JSON.stringify({ templateId: block.id, categoryId: block.category })
     );
     e.dataTransfer.effectAllowed = "copy";
+    // Set a drag image for visual feedback
+    if (e.dataTransfer.setDragImage && e.currentTarget instanceof HTMLElement) {
+      e.dataTransfer.setDragImage(e.currentTarget, 40, 20);
+    }
+  };
+
+  // Stop pointer events from propagating to dnd-kit's document-level sensors
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -94,6 +103,7 @@ function BlockGridItem({
       onClick={locked ? undefined : onClick}
       draggable={!locked}
       onDragStart={handleDragStart}
+      onPointerDown={locked ? undefined : handlePointerDown}
       className={cn(
         "flex flex-col items-center justify-center gap-2 p-3 rounded-lg transition-all duration-200 select-none relative group",
         locked

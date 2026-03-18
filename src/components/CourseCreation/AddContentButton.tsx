@@ -84,15 +84,24 @@ export function AddContentButton({
           )}
           data-tour="text-toolbar"
           onDragOver={(e) => {
-            if (e.dataTransfer.types.includes("application/content-block")) {
+            if (Array.from(e.dataTransfer.types).indexOf("application/content-block") >= 0) {
               e.preventDefault();
+              e.stopPropagation();
               e.dataTransfer.dropEffect = "copy";
+              setIsDragOver(true);
+            }
+          }}
+          onDragEnter={(e) => {
+            if (Array.from(e.dataTransfer.types).indexOf("application/content-block") >= 0) {
+              e.preventDefault();
+              e.stopPropagation();
               setIsDragOver(true);
             }
           }}
           onDragLeave={() => setIsDragOver(false)}
           onDrop={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             setIsDragOver(false);
             const data = e.dataTransfer.getData("application/content-block");
             if (!data) return;

@@ -500,8 +500,9 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   }, [addIntroBlock, addBlockToItem]);
 
   const handleDragOver = useCallback((e: React.DragEvent, targetId: string) => {
-    if (e.dataTransfer.types.includes("application/content-block")) {
+    if (Array.from(e.dataTransfer.types).indexOf("application/content-block") >= 0) {
       e.preventDefault();
+      e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
       setIsDragOver(targetId);
     }

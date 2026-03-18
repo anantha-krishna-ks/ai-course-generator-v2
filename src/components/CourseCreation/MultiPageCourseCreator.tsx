@@ -692,9 +692,17 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     className={cn("mt-6 space-y-0 transition-all duration-200", editorDragOver && "ring-2 ring-dashed ring-primary/40 rounded-lg bg-primary/5")}
                     data-tour="content-blocks"
                     onDragOver={(e) => {
-                      if (e.dataTransfer.types.includes("application/content-block")) {
+                      if (Array.from(e.dataTransfer.types).indexOf("application/content-block") >= 0) {
                         e.preventDefault();
+                        e.stopPropagation();
                         e.dataTransfer.dropEffect = "copy";
+                        setEditorDragOver(true);
+                      }
+                    }}
+                    onDragEnter={(e) => {
+                      if (Array.from(e.dataTransfer.types).indexOf("application/content-block") >= 0) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         setEditorDragOver(true);
                       }
                     }}
@@ -706,6 +714,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     }}
                     onDrop={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       setEditorDragOver(false);
                       const data = e.dataTransfer.getData("application/content-block");
                       if (!data) return;
