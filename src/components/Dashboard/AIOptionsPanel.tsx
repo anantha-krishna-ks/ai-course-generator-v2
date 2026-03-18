@@ -482,14 +482,17 @@ export function AIConfigView({
 function SectionLabel({
   icon: Icon,
   label,
+  required,
 }: {
   icon: React.ElementType;
   label: string;
+  required?: boolean;
 }) {
   return (
     <div className="flex items-center gap-2.5">
       <Icon className="w-4 h-4 text-primary" />
       <span className="text-base font-semibold text-foreground">{label}</span>
+      {required && <span className="text-destructive text-sm font-medium">*</span>}
     </div>
   );
 }
