@@ -242,8 +242,13 @@ export function AIConfigView({
 
         {/* ── Intended Learners ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={Users} label="Intended Learners" />
-          <p className="text-xs text-muted-foreground mt-1 mb-3">Choose the target audience skill level</p>
+          <SectionLabel icon={Users} label="Intended Learners" required />
+          <p className="text-xs text-muted-foreground mt-1 mb-3">
+            Choose the target audience skill level
+            {!options.intendedLearners && (
+              <span className="text-destructive ml-1">— Please select a level</span>
+            )}
+          </p>
           <div className="flex gap-2">
             {LEARNER_LEVELS.map((level) => {
               const selected = options.intendedLearners === level;
