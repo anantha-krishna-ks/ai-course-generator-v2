@@ -723,6 +723,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       e.preventDefault();
                       e.stopPropagation();
                       setEditorDragOver(false);
+                      setIsSidebarDragging(false);
+                      setDropTargetIndex(null);
                       const data = e.dataTransfer.getData("application/content-block");
                       if (!data) return;
                       try {
