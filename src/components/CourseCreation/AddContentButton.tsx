@@ -38,11 +38,14 @@ export function AddContentButton({
   onAIGenerateText,
   onAIGenerateImage,
   onMore,
+  onDropBlock,
+  onOpenQuizGenerator,
   aiEnabled = false,
   variant = "simple",
   forceOpen = false,
 }: AddContentButtonProps) {
   const isFullToolbar = variant === "full";
+  const [isDragOver, setIsDragOver] = useState(false);
   const [showAiPrompt, setShowAiPrompt] = useState<"text" | "image" | null>(null);
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiGenerating, setAiGenerating] = useState(false);
