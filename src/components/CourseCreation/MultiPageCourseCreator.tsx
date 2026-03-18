@@ -43,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
+import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
