@@ -443,10 +443,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
   }
 
   const handleClick = (block: BlockItem) => {
-    if (block.isQuizGenerator) {
-      onOpenQuizGenerator?.();
-      return;
-    }
+    if (block.type === "quiz" && hasQuizBlock) return;
     onAddBlock(block.type, block.variant);
   };
 
