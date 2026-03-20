@@ -40,6 +40,8 @@ interface SectionCardProps {
   onOpenSection?: () => void;
   onAddPage?: () => void;
   onAddLearningObjective?: () => void;
+  objective?: string;
+  onObjectiveChange?: (objective: string) => void;
   pages?: PageEntry[];
   onPagesChange?: (pages: PageEntry[]) => void;
 }
@@ -304,13 +306,16 @@ export function SectionCard({
   onOpenSection,
   onAddPage,
   onAddLearningObjective,
+  objective: externalObjective,
+  onObjectiveChange,
   pages: externalPages,
   onPagesChange,
 }: SectionCardProps) {
   const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showObjective, setShowObjective] = useState(false);
-  const [objectiveText, setObjectiveText] = useState("");
+  const [showObjective, setShowObjective] = useState(!!(externalObjective && externalObjective.trim()));
+  const objectiveText = externalObjective ?? "";
+  const setObjectiveText = (val: string) => onObjectiveChange?.(val);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
