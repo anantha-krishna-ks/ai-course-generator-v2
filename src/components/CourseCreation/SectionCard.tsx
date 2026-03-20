@@ -553,6 +553,7 @@ export function SectionCard({
                 onChange={(url) => {
                   setThumbnailUrl(url);
                 }}
+                aiEnabled={aiEnabled}
               />
             </div>
 
