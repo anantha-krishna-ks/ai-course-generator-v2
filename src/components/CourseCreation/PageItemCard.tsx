@@ -62,7 +62,6 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
   const [showScopeDialog, setShowScopeDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
   const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
-  const [showScopeDialog, setShowScopeDialog] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
