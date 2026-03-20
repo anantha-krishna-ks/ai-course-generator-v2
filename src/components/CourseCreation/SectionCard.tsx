@@ -631,7 +631,7 @@ export function SectionCard({
                     </div>
                     <button
                       onClick={handleAddPage}
-                      className="flex items-center gap-1.5 py-2 pl-2 pr-3 rounded-lg text-[12px] text-muted-foreground/50 hover:text-primary hover:bg-primary/5 transition-all duration-150 group/add"
+                      className="flex items-center gap-1.5 py-2 pl-2 pr-3 rounded-lg text-[12px] text-muted-foreground/70 hover:text-primary hover:bg-primary/5 transition-all duration-150 group/add"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>Add page</span>
