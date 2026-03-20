@@ -684,24 +684,28 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             </span>
           </button>
 
-          <div className="flex flex-col items-center gap-1">
-            <div className="w-px h-6 bg-border" />
-            <span className="text-xs text-muted-foreground font-medium">or</span>
-            <div className="w-px h-6 bg-border" />
-          </div>
+          {aiEnabled && (
+            <>
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-px h-6 bg-border" />
+                <span className="text-xs text-muted-foreground font-medium">or</span>
+                <div className="w-px h-6 bg-border" />
+              </div>
 
-          {/* Generate Image */}
-          <button
-            onClick={handleGenerateClick}
-            className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
-          >
-            <div className="w-11 h-11 rounded-full flex items-center justify-center bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary transition-colors">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
-              Generate Image
-            </span>
-          </button>
+              {/* Generate Image */}
+              <button
+                onClick={handleGenerateClick}
+                className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
+              >
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary transition-colors">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+                  Generate Image
+                </span>
+              </button>
+            </>
+          )}
         </div>
 
         <div className="text-center">
