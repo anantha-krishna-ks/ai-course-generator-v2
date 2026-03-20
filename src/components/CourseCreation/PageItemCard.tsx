@@ -169,9 +169,8 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         </div>
       </div>
 
-      {/* Scope Dialog */}
       <Dialog open={showScopeDialog} onOpenChange={setShowScopeDialog}>
-        <DialogContent className="sm:max-w-[560px]">
+        <DialogContent className="w-[95vw] max-w-[1100px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
@@ -181,34 +180,59 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               Define the scope for "{displayTitle}"
             </p>
           </DialogHeader>
-          <div className="mt-4 space-y-4">
-            <div>
-              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Inclusions</label>
+          <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
+            {/* Inclusions */}
+            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
               <textarea
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
                 autoFocus
-                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics, content, or scope should be included in this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
                 }}
               />
+              <PageScopeDocUploadZone
+                documents={pageInclusionDocs}
+                onDocumentsChange={setPageInclusionDocs}
+              />
             </div>
-            <div>
-              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
+
+            {/* Divider */}
+            <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
+              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+              <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
+                <span className="text-[9px] font-semibold text-muted-foreground/60">vs</span>
+              </div>
+              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+            </div>
+            <div className="flex md:hidden items-center gap-3 py-3 px-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            </div>
+
+            {/* Exclusions */}
+            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}
-                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics or content should be excluded from this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
                 }}
+              />
+              <PageScopeDocUploadZone
+                documents={pageExclusionDocs}
+                onDocumentsChange={setPageExclusionDocs}
               />
             </div>
           </div>
