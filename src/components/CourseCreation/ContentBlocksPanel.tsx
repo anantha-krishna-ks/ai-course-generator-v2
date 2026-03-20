@@ -437,10 +437,12 @@ function BlockGridItem({
   block,
   onClick,
   locked,
+  lockedReason,
 }: {
   block: BlockItem;
   onClick: () => void;
   locked?: boolean;
+  lockedReason?: string;
 }) {
   const handleDragStart = (e: React.DragEvent) => {
     if (locked) {
