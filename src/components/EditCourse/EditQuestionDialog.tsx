@@ -304,7 +304,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
               {/* Question Type — Add mode only */}
               {isAddMode && (
                 <div className="space-y-2.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Question Type
                   </Label>
                   <div className="grid grid-cols-2 gap-2">
