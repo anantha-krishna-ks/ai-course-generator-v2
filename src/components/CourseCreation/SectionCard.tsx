@@ -313,7 +313,7 @@ export function SectionCard({
 }: SectionCardProps) {
   const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showObjective, setShowObjective] = useState(false);
+  const [showObjective, setShowObjective] = useState(!!(externalObjective && externalObjective.trim()));
   const objectiveText = externalObjective ?? "";
   const setObjectiveText = (val: string) => onObjectiveChange?.(val);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
