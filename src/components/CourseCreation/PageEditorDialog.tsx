@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Play, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2, Target } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -81,6 +81,8 @@ interface PageEditorDialogProps {
   onAddItem?: (type: "section" | "page") => void;
   initialBlocks?: PageContentBlock[];
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
+  sectionObjectives?: string;
+  onSectionObjectivesChange?: (objectives: string) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -99,7 +101,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -836,6 +838,22 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
                     placeholder="Untitled section"
                   />
+
+                  {/* Section Objectives */}
+                  <div className="mt-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="w-4 h-4 text-primary/70" />
+                      <span className="text-sm font-medium text-muted-foreground">Objectives</span>
+                    </div>
+                    <textarea
+                      value={sectionObjectives}
+                      onChange={(e) => onSectionObjectivesChange?.(e.target.value)}
+                      rows={3}
+                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-2.5 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors"
+                      placeholder="Define the learning objectives for this section…"
+                    />
+                  </div>
+
                   <div className="border-t border-dashed border-border my-6" />
 
                   {/* Section child pages list */}
