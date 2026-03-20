@@ -91,7 +91,7 @@ export function VideoDescriptionBlock({ content, onChange }: VideoDescriptionBlo
 
       {/* Content area — side by side */}
       <div className="p-4">
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-stretch">
           {isLeft ? (
             <>
               {videoSection}
