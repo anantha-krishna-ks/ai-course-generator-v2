@@ -351,6 +351,36 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "video-left":
+      return (
+        <div className="flex gap-1.5 w-full px-1.5">
+          <div className="flex-1 h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
+            <div className="w-4 h-4 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
+            </div>
+          </div>
+          <div className="flex-1 space-y-[3px] pt-1">
+            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
+            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
+            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+          </div>
+        </div>
+      );
+    case "video-right":
+      return (
+        <div className="flex gap-1.5 w-full px-1.5">
+          <div className="flex-1 space-y-[3px] pt-1">
+            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
+            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
+            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+          </div>
+          <div className="flex-1 h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
+            <div className="w-4 h-4 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
+            </div>
+          </div>
+        </div>
+      );
     case "audio-upload":
       return (
         <div className="w-full px-1.5">
