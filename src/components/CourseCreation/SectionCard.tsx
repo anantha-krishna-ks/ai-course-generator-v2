@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, Crosshair, ChevronRight } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, Crosshair, ChevronRight, ExternalLink } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -490,7 +490,7 @@ export function SectionCard({
                       onClick={onOpenSection}
                       className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                     >
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      <ExternalLink className="w-4 h-4 text-muted-foreground" />
                       Open section
                     </DropdownMenuItem>
                     <DropdownMenuItem
