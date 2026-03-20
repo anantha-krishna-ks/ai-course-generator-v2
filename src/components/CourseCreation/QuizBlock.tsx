@@ -41,6 +41,7 @@ interface QuizBlockProps {
   aiEnabled?: boolean;
   content: string; // JSON stringified questions array
   onChange: (content: string) => void;
+  variant?: string; // "question-block" or "quiz-block"
 }
 
 const TYPE_LABELS: Record<Question["type"], string> = {
