@@ -832,7 +832,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onDragLeave={handleEditorDragLeave}
               onDrop={handleContentDrop}
             >
-            <div className="max-w-[800px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
+            <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
               {isCurrentSection ? (
                 <>
                   <span className="text-sm text-muted-foreground block mb-2">Section title</span>
