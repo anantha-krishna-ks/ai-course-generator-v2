@@ -202,7 +202,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
             "rounded-xl border-2 transition-all duration-150",
             isCorrect
               ? "border-primary/50 bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-              : "border-border/60 bg-muted/20 hover:bg-muted/30"
+               : "border-border/60 bg-white hover:bg-white"
           )}
         >
           {/* Correct badge */}
@@ -275,7 +275,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border shadow-2xl bg-white">
+      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border shadow-2xl" style={{ backgroundColor: '#F9FAFB' }}>
         {/* Header */}
         <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white">
           <div className="flex items-center justify-between">
@@ -317,7 +317,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           "flex items-center gap-2.5 px-3.5 py-3 rounded-xl border-2 text-left transition-all duration-150",
                           type === t
                             ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-border/60 bg-muted/20 hover:bg-muted/30"
+                            : "border-border/60 bg-white hover:bg-gray-50"
                         )}
                       >
                         <div className={cn(
@@ -348,7 +348,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   placeholder="Type your question here…"
-                  className="min-h-[80px] resize-none rounded-xl bg-muted/20 border-border focus:border-primary/40 focus:bg-white text-sm transition-colors"
+                  className="min-h-[80px] resize-none rounded-xl bg-white border-border focus:border-primary/40 text-sm transition-colors"
                 />
               </div>
 
@@ -366,7 +366,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           "flex items-center justify-center gap-2 px-4 py-4 rounded-xl border-2 cursor-pointer transition-all duration-150 text-sm font-medium",
                           answer === val
                             ? "border-primary bg-primary/[0.04] text-foreground shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-border/60 bg-muted/20 text-muted-foreground hover:bg-muted/30"
+                            : "border-border/60 bg-white text-muted-foreground hover:bg-gray-50"
                         )}
                       >
                         <RadioGroupItem value={val} id={`tf-${val}`} className="sr-only" />
@@ -416,7 +416,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Enter the correct answer…"
-                    className="rounded-xl bg-muted/20 border-border focus:border-primary/40 focus:bg-white transition-colors"
+                    className="rounded-xl bg-white border-border focus:border-primary/40 transition-colors"
                   />
                 </div>
               ) : (
@@ -487,7 +487,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
                   placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-muted/20 border-border focus:border-primary/40 focus:bg-white text-sm transition-colors"
+                  className="min-h-[72px] resize-none rounded-xl bg-white border-border focus:border-primary/40 text-sm transition-colors"
                 />
               </div>
             </div>
