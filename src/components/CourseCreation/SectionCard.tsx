@@ -677,6 +677,10 @@ export function SectionCard({
                   target.style.height = Math.max(120, target.scrollHeight) + 'px';
                 }}
               />
+              <ScopeDocUploadZone
+                documents={inclusionDocs}
+                onDocumentsChange={setInclusionDocs}
+              />
             </div>
             <div>
               <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
@@ -690,6 +694,10 @@ export function SectionCard({
                   target.style.height = 'auto';
                   target.style.height = Math.max(120, target.scrollHeight) + 'px';
                 }}
+              />
+              <ScopeDocUploadZone
+                documents={exclusionDocs}
+                onDocumentsChange={setExclusionDocs}
               />
             </div>
           </div>
