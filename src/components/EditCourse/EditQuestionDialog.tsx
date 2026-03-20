@@ -317,7 +317,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           "flex items-center gap-2.5 px-3.5 py-3 rounded-xl border-2 text-left transition-all duration-150",
                           type === t
                             ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-transparent bg-muted/40 hover:bg-muted/60"
+                            : "border-border/60 bg-muted/20 hover:bg-muted/30"
                         )}
                       >
                         <div className={cn(
