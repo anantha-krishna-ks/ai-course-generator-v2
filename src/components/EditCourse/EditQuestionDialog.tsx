@@ -172,21 +172,14 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   };
 
   /** Renders a single option row with expandable explanation */
-  const OptionRow = ({
-    index,
-    option,
-    selector,
-  }: {
-    index: number;
-    option: string;
-    selector: React.ReactNode;
-  }) => {
+  const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
     const isCorrect = isOptionCorrect(option) && option.trim();
     const isExpanded = expandedExplanations.has(index);
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
     return (
       <div
+        key={index}
         className={cn(
           "rounded-lg border transition-colors",
           isCorrect ? "border-primary/40 bg-primary/5" : "border-border hover:border-border/80"
@@ -331,14 +324,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     Select Correct Answer
                   </Label>
                   <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
-                    {["True", "False"].map((val, index) => (
-                      <OptionRow
-                        key={val}
-                        index={index}
-                        option={val}
-                        selector={<RadioGroupItem value={val} id={`tf-${val}`} className="shrink-0" />}
-                      />
-                    ))}
+                    {["True", "False"].map((val, index) =>
+                      renderOptionRow(index, val, <RadioGroupItem value={val} id={`tf-${val}`} className="shrink-0" />)
+                    )}
                   </RadioGroup>
                 </div>
               ) : type === "FIB" ? (
@@ -381,33 +369,23 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   <div className="space-y-2">
                     {type === "SCQ" ? (
                       <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
-                        {options.map((option, index) => (
-                          <OptionRow
-                            key={index}
-                            index={index}
-                            option={option}
-                            selector={<RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />}
-                          />
-                        ))}
+                        {options.map((option, index) =>
+                          renderOptionRow(index, option, <RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
+                        )}
                       </RadioGroup>
                     ) : (
                       <div className="space-y-2">
-                        {options.map((option, index) => (
-                          <OptionRow
-                            key={index}
-                            index={index}
-                            option={option}
-                            selector={
-                              <Checkbox
-                                id={`option-${index}`}
-                                checked={isOptionCorrect(option)}
-                                onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
-                                disabled={!option.trim()}
-                                className="shrink-0"
-                              />
-                            }
-                          />
-                        ))}
+                        {options.map((option, index) =>
+                          renderOptionRow(index, option,
+                            <Checkbox
+                              id={`option-${index}`}
+                              checked={isOptionCorrect(option)}
+                              onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
+                              disabled={!option.trim()}
+                              className="shrink-0"
+                            />
+                          )
+                        )}
                       </div>
                     )}
                     <div
