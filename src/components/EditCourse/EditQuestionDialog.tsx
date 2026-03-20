@@ -171,7 +171,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     FIB: "Fill in the Blank",
   };
 
-  /** Renders a single option row with inline expandable explanation */
+  /** Renders a single option row with expandable explanation */
   const OptionRow = ({
     index,
     option,
@@ -188,60 +188,58 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     return (
       <div
         className={cn(
-          "group rounded-lg border transition-colors",
-          isCorrect ? "bg-primary/8 border-primary shadow-sm" : "hover:bg-accent/20"
+          "rounded-lg border transition-colors",
+          isCorrect ? "border-primary/40 bg-primary/5" : "border-border hover:border-border/80"
         )}
       >
         {/* Main option row */}
-        <div className="flex items-center gap-3 p-3.5">
+        <div className="flex items-center gap-3 px-3.5 py-3">
           {selector}
           <Input
             value={option}
             onChange={(e) => handleOptionChange(index, e.target.value)}
             placeholder={`Option ${index + 1}`}
-            className="flex-1 border-0 border-b border-transparent bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 pb-1 text-sm hover:border-border focus:border-primary rounded-none placeholder:text-muted-foreground/50 transition-colors"
+            className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/40"
           />
-          <button
-            onClick={() => toggleExplanation(index)}
-            className={cn(
-              "p-1 rounded-md transition-all shrink-0",
-              isExpanded || hasExplanation
-                ? "text-primary/70 hover:text-primary hover:bg-primary/10"
-                : "opacity-0 group-hover:opacity-100 text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
-            )}
-            title="Option explanation"
-          >
-            <Lightbulb className="w-3.5 h-3.5" />
-          </button>
-          {options.length > 2 && (
+          <div className="flex items-center gap-0.5 shrink-0">
             <button
-              onClick={() => handleRemoveOption(index)}
-              className="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-destructive/10 transition-all shrink-0"
+              onClick={() => toggleExplanation(index)}
+              className={cn(
+                "p-1.5 rounded-md transition-colors flex items-center gap-0.5",
+                isExpanded
+                  ? "bg-accent text-foreground"
+                  : hasExplanation
+                    ? "text-primary/60 hover:bg-accent hover:text-foreground"
+                    : "text-muted-foreground/30 hover:text-muted-foreground hover:bg-accent"
+              )}
+              title="Toggle explanation"
             >
-              <Trash2 className="w-3.5 h-3.5 text-destructive" />
+              <Lightbulb className="w-3.5 h-3.5" />
+              <ChevronDown className={cn("w-3 h-3 transition-transform duration-200", isExpanded && "rotate-180")} />
             </button>
-          )}
+            {options.length > 2 && (
+              <button
+                onClick={() => handleRemoveOption(index)}
+                className="p-1.5 rounded-md text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Expandable explanation */}
-        <div
-          className={cn(
-            "overflow-hidden transition-all duration-200",
-            isExpanded ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-          )}
-        >
-          <div className="px-3.5 pb-3 pt-0">
-            <div className="relative">
-              <Textarea
-                value={optionExplanations[index] || ""}
-                onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
-                placeholder="Why is this option correct/incorrect…"
-                className="min-h-[48px] max-h-[80px] resize-none text-xs bg-muted/30 border-border/60 focus:border-primary/40 rounded-lg pl-3 pr-3 py-2"
-                rows={2}
-              />
-            </div>
+        {isExpanded && (
+          <div className="px-3.5 pb-3 border-t border-border/40">
+            <Textarea
+              value={optionExplanations[index] || ""}
+              onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
+              placeholder="Why is this option correct or incorrect…"
+              className="mt-2.5 min-h-[56px] max-h-[100px] resize-none text-xs bg-muted/30 border-border/50 rounded-md"
+              rows={2}
+            />
           </div>
-        </div>
+        )}
       </div>
     );
   };
@@ -374,15 +372,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           setExpandedExplanations(new Set(options.map((_, i) => i)));
                         }
                       }}
-                      className="text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors flex items-center gap-1"
+                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent"
                     >
                       <Lightbulb className="w-3 h-3" />
-                      {expandedExplanations.size > 0 ? "Hide explanations" : "Show explanations"}
+                      {expandedExplanations.size > 0 ? "Hide all" : "Explain all"}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground -mt-1">
-                    Click the radio/checkbox to mark correct. Use <Lightbulb className="w-3 h-3 inline -mt-0.5" /> to add per-option explanations.
-                  </p>
                   <div className="space-y-2">
                     {type === "SCQ" ? (
                       <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
@@ -417,10 +412,10 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     )}
                     <div
                       onClick={handleAddOption}
-                      className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
+                      className="flex items-center gap-3 rounded-lg border border-dashed border-border/60 px-3.5 py-3 cursor-pointer transition-colors hover:bg-accent/30 hover:border-foreground/20"
                     >
-                      <Plus className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Add option</span>
+                      <Plus className="w-4 h-4 text-muted-foreground/50" />
+                      <span className="text-sm text-muted-foreground/50">Add option</span>
                     </div>
                   </div>
                 </div>
