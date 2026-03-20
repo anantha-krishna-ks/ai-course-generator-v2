@@ -44,6 +44,7 @@ export function ContentBlock({
   autoFocus = false,
   aiEnabled = false,
   readOnly = false,
+  variant,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
