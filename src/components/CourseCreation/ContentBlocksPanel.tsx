@@ -445,17 +445,10 @@ function BlockGridItem({
           {block.description && (
             <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
           )}
-          {locked ? (
-            <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
-              <Lock className="w-2.5 h-2.5" />
-              Only one quiz per page
-            </p>
-          ) : (
-            <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
-              <GripVertical className="w-2.5 h-2.5" />
-              Click or drag to add
-            </p>
-          )}
+          <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
+            <GripVertical className="w-2.5 h-2.5" />
+            Click or drag to add
+          </p>
         </div>
       </TooltipContent>
     </Tooltip>
