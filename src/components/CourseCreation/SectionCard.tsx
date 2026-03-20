@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, Crosshair, ChevronRight, ExternalLink } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, Crosshair, ChevronRight, ExternalLink, Upload, X } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } 
 import { CSS } from "@dnd-kit/utilities";
 import { ImageBlock } from "./ImageBlock";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 interface PageEntry {
@@ -317,6 +318,8 @@ export function SectionCard({
   const objectiveText = externalObjective ?? "";
   const setObjectiveText = (val: string) => onObjectiveChange?.(val);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [inclusionDocs, setInclusionDocs] = useState<string[]>([]);
+  const [exclusionDocs, setExclusionDocs] = useState<string[]>([]);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
   const [internalThumbnail, setInternalThumbnail] = useState<string | null>(null);
@@ -676,6 +679,10 @@ export function SectionCard({
                   target.style.height = Math.max(120, target.scrollHeight) + 'px';
                 }}
               />
+              <ScopeDocUploadZone
+                documents={inclusionDocs}
+                onDocumentsChange={setInclusionDocs}
+              />
             </div>
             <div>
               <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
@@ -690,6 +697,10 @@ export function SectionCard({
                   target.style.height = Math.max(120, target.scrollHeight) + 'px';
                 }}
               />
+              <ScopeDocUploadZone
+                documents={exclusionDocs}
+                onDocumentsChange={setExclusionDocs}
+              />
             </div>
           </div>
           <div className="flex justify-end pt-2">
@@ -699,6 +710,53 @@ export function SectionCard({
           </div>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function ScopeDocUploadZone({
+  documents,
+  onDocumentsChange,
+}: {
+  documents: string[];
+  onDocumentsChange: (docs: string[]) => void;
+}) {
+  return (
+    <div className="space-y-2 mt-2">
+      {documents.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {documents.map((doc, i) => (
+            <Badge key={i} variant="secondary" className="gap-1.5 text-xs font-normal h-6 pr-1.5">
+              <FileText className="w-3 h-3" />
+              {doc}
+              <button
+                type="button"
+                onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      <div
+        onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5'); }}
+        onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5'); }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+          const files = Array.from(e.dataTransfer.files);
+          if (files.length > 0) {
+            onDocumentsChange([...documents, ...files.map(f => f.name)]);
+          }
+        }}
+        onClick={() => onDocumentsChange([...documents, `Reference_${Date.now().toString(36)}.pdf`])}
+        className="w-full border border-dashed border-primary/50 rounded-lg py-3 text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
+      >
+        <Upload className="w-3.5 h-3.5" />
+        <span className="font-medium">Attach reference document</span>
+      </div>
     </div>
   );
 }
