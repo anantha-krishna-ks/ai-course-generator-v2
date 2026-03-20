@@ -567,7 +567,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
           {grouped.map((group) => (
             <div key={group.label}>
               {/* Category label */}
-              <div className="pt-3 pb-2 flex items-center gap-2">
+              <div className="pt-4 pb-3 flex items-center gap-2">
                 <span className="text-[10px] font-semibold text-muted-foreground tracking-[0.14em] uppercase whitespace-nowrap">
                   {group.label}
                 </span>
