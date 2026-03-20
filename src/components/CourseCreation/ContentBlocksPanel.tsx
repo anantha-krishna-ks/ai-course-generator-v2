@@ -567,10 +567,11 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
           {grouped.map((group) => (
             <div key={group.label}>
               {/* Category label */}
-              <div className="pt-3 pb-2">
-                <span className="text-[10px] font-semibold text-muted-foreground tracking-[0.14em] uppercase">
+              <div className="pt-3 pb-2 flex items-center gap-2">
+                <span className="text-[10px] font-semibold text-muted-foreground tracking-[0.14em] uppercase whitespace-nowrap">
                   {group.label}
                 </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
               </div>
 
               {/* 3-column grid */}
