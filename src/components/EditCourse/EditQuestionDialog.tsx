@@ -487,7 +487,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
                   placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-white border-border focus:border-primary/40 text-sm transition-colors"
+                  className="min-h-[72px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
                 />
               </div>
             </div>
