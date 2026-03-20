@@ -687,11 +687,17 @@ export function SectionCard({
             </div>
 
             {/* Divider */}
-            <div className="hidden md:flex items-stretch px-4">
-              <div className="w-px bg-border" />
+            <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
+              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+              <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
+                <span className="text-[9px] font-semibold text-muted-foreground/60">vs</span>
+              </div>
+              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
             </div>
-            <div className="flex md:hidden items-center py-3 px-2">
-              <div className="flex-1 h-px bg-border" />
+            <div className="flex md:hidden items-center gap-3 py-3 px-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
             {/* Exclusions */}
