@@ -48,7 +48,7 @@ const ALL_BLOCKS: BlockItem[] = [
   // MEDIA
   { id: "video-upload", label: "Video", icon: Video, category: "media", categoryLabel: "MEDIA", type: "video", variant: "video-upload" },
   { id: "audio-upload", label: "Audio", icon: Mic, category: "media", categoryLabel: "MEDIA", type: "audio", variant: "audio-upload" },
-  { id: "doc-upload", label: "Document", icon: FileText, category: "media", categoryLabel: "MEDIA", type: "doc", variant: "doc-upload" },
+  // { id: "doc-upload", label: "Document", icon: FileText, category: "media", categoryLabel: "MEDIA", type: "doc", variant: "doc-upload" },
   // QUESTION / QUIZ
   { id: "question-block", label: "Question", icon: HelpCircle, category: "quiz", categoryLabel: "QUESTION / QUIZ", type: "quiz", variant: "question-block" },
   { id: "quiz-generate", label: "Quiz (AI)", icon: Sparkles, category: "quiz", categoryLabel: "QUESTION / QUIZ", type: "quiz", isQuizGenerator: true },
