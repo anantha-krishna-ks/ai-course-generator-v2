@@ -372,15 +372,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           setExpandedExplanations(new Set(options.map((_, i) => i)));
                         }
                       }}
-                      className="text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors flex items-center gap-1"
+                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent"
                     >
                       <Lightbulb className="w-3 h-3" />
-                      {expandedExplanations.size > 0 ? "Hide explanations" : "Show explanations"}
+                      {expandedExplanations.size > 0 ? "Hide all" : "Explain all"}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground -mt-1">
-                    Click the radio/checkbox to mark correct. Use <Lightbulb className="w-3 h-3 inline -mt-0.5" /> to add per-option explanations.
-                  </p>
                   <div className="space-y-2">
                     {type === "SCQ" ? (
                       <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
@@ -415,10 +412,10 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     )}
                     <div
                       onClick={handleAddOption}
-                      className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
+                      className="flex items-center gap-3 rounded-lg border border-dashed border-border/60 px-3.5 py-3 cursor-pointer transition-colors hover:bg-accent/30 hover:border-foreground/20"
                     >
-                      <Plus className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Add option</span>
+                      <Plus className="w-4 h-4 text-muted-foreground/50" />
+                      <span className="text-sm text-muted-foreground/50">Add option</span>
                     </div>
                   </div>
                 </div>
