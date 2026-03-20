@@ -54,9 +54,10 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full", description: "A full-width image block" },
   { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top", description: "Image above with descriptive text below" },
   { id: "image-bottom", label: "Image on Bottom", icon: ImageDown, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-bottom", description: "Text content above with an image below" },
-  // MEDIA
-  { id: "video-upload", label: "Video", icon: Video, category: "media", categoryLabel: "MEDIA", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
-  { id: "audio-upload", label: "Audio", icon: Mic, category: "media", categoryLabel: "MEDIA", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
+  // VIDEO
+  { id: "video-upload", label: "Video", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
+  // AUDIO
+  { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
   // QUESTION
   { id: "question-block", label: "Question", icon: HelpCircle, category: "question", categoryLabel: "QUESTION", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   // QUIZ
