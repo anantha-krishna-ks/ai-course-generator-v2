@@ -40,6 +40,22 @@ const typeConfig: Record<Question["type"], { label: string; icon: React.ReactNod
   FIB: { label: "Fill in the Blank", icon: <Type className="w-4 h-4" />, description: "Text answer" },
 };
 
+/** Sortable wrapper for option rows */
+const SortableOptionWrapper = ({ id, children }: { id: string; children: (listeners: any, attributes: any) => React.ReactNode }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : undefined,
+  };
+  return (
+    <div ref={setNodeRef} style={style}>
+      {children(listeners, attributes)}
+    </div>
+  );
+};
+
 export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode = false }: EditQuestionDialogProps) => {
   const { toast } = useToast();
   const [type, setType] = useState<Question["type"]>("SCQ");
