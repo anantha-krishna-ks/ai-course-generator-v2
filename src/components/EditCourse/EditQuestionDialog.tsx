@@ -299,7 +299,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
         {/* Scrollable Body */}
         <div className="min-h-0 row-start-2">
           <ScrollArea className="h-full">
-            <div className="p-6 space-y-5">
+            <div className="px-6 pt-4 pb-6 space-y-5">
 
               {/* Question Type — Add mode only */}
               {isAddMode && (
