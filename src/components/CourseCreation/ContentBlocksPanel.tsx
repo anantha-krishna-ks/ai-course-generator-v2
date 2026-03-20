@@ -75,165 +75,193 @@ export function resolveTemplateDropData(
   return { type: block.type, variant: block.variant };
 }
 
-/** Larger, more detailed preview for the hover tooltip */
+/** Hover tooltip preview — looks like a real rendered page section */
 function BlockPreview({ id }: { id: string }) {
-  const headingCls = "text-[10px] font-semibold text-foreground/80 leading-snug";
-  const bodyCls = "text-[9px] text-muted-foreground leading-relaxed";
-  const imgArea = "rounded-lg bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/5 border border-muted-foreground/10 flex items-center justify-center";
-  const videoBg = "rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden";
+  const card = "bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-[hsl(220,13%,91%)] overflow-hidden";
+  const imgPlaceholder = "bg-[hsl(220,20%,96%)] flex items-center justify-center";
 
   switch (id) {
     case "heading-text":
       return (
-        <div className="w-48 p-3 space-y-2">
-          <p className={headingCls}>Getting Started Guide</p>
-          <div>
-            <p className={bodyCls}>Learn the fundamentals of building your first project with our comprehensive step-by-step guide.</p>
-            <p className={cn(bodyCls, "mt-1 opacity-60")}>Follow along to set up your environment and get running quickly.</p>
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <h4 className="text-[13px] font-bold text-[hsl(220,15%,15%)] leading-tight mb-2">Getting Started Guide</h4>
+            <p className="text-[10px] text-[hsl(220,8%,46%)] leading-[1.7] mb-1.5">Learn the fundamentals of building your first project with our comprehensive step-by-step guide.</p>
+            <p className="text-[10px] text-[hsl(220,8%,58%)] leading-[1.7]">Follow along to set up your environment and get running quickly.</p>
           </div>
         </div>
       );
     case "text-only":
       return (
-        <div className="w-48 p-3">
-          <p className={bodyCls}>Effective learning combines theory with hands-on practice. Each module builds upon the previous one, ensuring a smooth and natural progression through all topics.</p>
-          <p className={cn(bodyCls, "mt-1.5 opacity-60")}>Take your time with each section to get the most value.</p>
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <p className="text-[10px] text-[hsl(220,8%,46%)] leading-[1.7] mb-1.5">Effective learning combines theory with hands-on practice. Each module builds upon the previous one, ensuring a smooth progression.</p>
+            <p className="text-[10px] text-[hsl(220,8%,58%)] leading-[1.7]">Take your time with each section to maximize your understanding.</p>
+          </div>
         </div>
       );
     case "two-columns":
       return (
-        <div className="w-48 p-3 flex gap-3">
-          <div className="flex-1">
-            <p className={cn(headingCls, "text-[9px] mb-1.5")}>Overview</p>
-            <p className={cn(bodyCls, "text-[8px]")}>Core concepts and key principles for building effective learning paths and curricula.</p>
-          </div>
-          <div className="w-px bg-border" />
-          <div className="flex-1">
-            <p className={cn(headingCls, "text-[9px] mb-1.5")}>Details</p>
-            <p className={cn(bodyCls, "text-[8px]")}>Advanced techniques and best practices for real-world implementation and deployment.</p>
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4 flex gap-3")}>
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Overview</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Core concepts and principles for effective learning paths.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Details</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Advanced techniques and best practices for implementation.</p>
+            </div>
           </div>
         </div>
       );
     case "image-full":
       return (
-        <div className="w-48 p-3">
-          <div className={cn("w-full h-20", imgArea)}>
-            <Mountain className="w-6 h-6 text-muted-foreground/25" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className={cn("w-full h-24 rounded-md", imgPlaceholder)}>
+              <Mountain className="w-8 h-8 text-[hsl(220,10%,78%)]" />
+            </div>
           </div>
         </div>
       );
     case "image-top":
       return (
-        <div className="w-48 p-3 space-y-2.5">
-          <div className={cn("w-full h-14", imgArea)}>
-            <Mountain className="w-5 h-5 text-muted-foreground/25" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className={cn("w-full h-16 rounded-md mb-3", imgPlaceholder)}>
+              <Mountain className="w-6 h-6 text-[hsl(220,10%,78%)]" />
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1">A detailed caption describing the image content and providing additional context for the reader.</p>
           </div>
-          <p className={cn(bodyCls, "text-[8px]")}>A detailed caption describing the image content and providing additional context for the reader.</p>
         </div>
       );
     case "image-bottom":
       return (
-        <div className="w-48 p-3 space-y-2.5">
-          <p className={cn(bodyCls, "text-[8px]")}>Introductory text providing context and background for the visual content displayed below.</p>
-          <div className={cn("w-full h-14", imgArea)}>
-            <Mountain className="w-5 h-5 text-muted-foreground/25" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1 mb-3">Introductory text providing context and background for the visual content displayed below.</p>
+            <div className={cn("w-full h-16 rounded-md", imgPlaceholder)}>
+              <Mountain className="w-6 h-6 text-[hsl(220,10%,78%)]" />
+            </div>
           </div>
         </div>
       );
     case "video-upload":
       return (
-        <div className="w-48 p-3">
-          <div className={cn("w-full h-20", videoBg)}>
-            <div className="w-8 h-8 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center border border-foreground/10 z-10">
-              <div className="w-0 h-0 border-t-[5px] border-b-[5px] border-l-[8px] border-transparent border-l-foreground/40 ml-0.5" />
-            </div>
-            <div className="absolute bottom-1.5 left-2 right-2 h-1 rounded-full bg-muted-foreground/10 overflow-hidden">
-              <div className="h-full w-1/3 rounded-full bg-primary/30" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="w-full h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/15">
+                <div className="w-0 h-0 border-t-[6px] border-b-[6px] border-l-[10px] border-transparent border-l-white ml-1" />
+              </div>
+              <div className="absolute bottom-2 left-3 right-3 flex items-center gap-2">
+                <span className="text-[8px] text-white/50 tabular-nums">0:00</span>
+                <div className="flex-1 h-[3px] rounded-full bg-white/15 overflow-hidden">
+                  <div className="h-full w-0 rounded-full bg-white/60" />
+                </div>
+                <span className="text-[8px] text-white/50 tabular-nums">3:24</span>
+              </div>
             </div>
           </div>
         </div>
       );
     case "video-left":
       return (
-        <div className="w-48 p-3 flex gap-2.5">
-          <div className={cn("flex-1 h-20", videoBg)}>
-            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
-              <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-3")}>
+            <div className="flex-1 h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative">
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center border border-white/15">
+                <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[7px] border-transparent border-l-white ml-0.5" />
+              </div>
             </div>
-          </div>
-          <div className="flex-1 pt-1">
-            <p className={cn(headingCls, "text-[9px] mb-1")}>Video title</p>
-            <p className={cn(bodyCls, "text-[8px]")}>A short description of the video content and what viewers will learn.</p>
+            <div className="flex-1 min-w-0 pt-1">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Video title</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">A short description of the video content and what viewers will learn.</p>
+            </div>
           </div>
         </div>
       );
     case "video-right":
       return (
-        <div className="w-48 p-3 flex gap-2.5">
-          <div className="flex-1 pt-1">
-            <p className={cn(headingCls, "text-[9px] mb-1")}>Video title</p>
-            <p className={cn(bodyCls, "text-[8px]")}>A short description of the video content and what viewers will learn.</p>
-          </div>
-          <div className={cn("flex-1 h-20", videoBg)}>
-            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
-              <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-3")}>
+            <div className="flex-1 min-w-0 pt-1">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Video title</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">A short description of the video content and what viewers will learn.</p>
+            </div>
+            <div className="flex-1 h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative">
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center border border-white/15">
+                <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[7px] border-transparent border-l-white ml-0.5" />
+              </div>
             </div>
           </div>
         </div>
       );
     case "audio-upload":
       return (
-        <div className="w-48 p-3">
-          <div className="w-full h-12 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center gap-2 px-3">
-            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10 shrink-0">
-              <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-foreground/40 ml-0.5" />
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="w-full rounded-lg bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,91%)] p-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[7px] border-transparent border-l-primary/60 ml-0.5" />
+              </div>
+              <div className="flex-1 flex items-end gap-[2px]">
+                {[5, 9, 4, 12, 7, 15, 5, 10, 3, 8, 13, 6, 11, 4, 9, 6, 12, 3, 8, 5, 10, 4, 7].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-[1px] bg-primary/30" style={{ height: `${h}px` }} />
+                ))}
+              </div>
+              <span className="text-[9px] font-medium text-[hsl(220,8%,50%)] shrink-0 tabular-nums">1:24</span>
             </div>
-            <div className="flex-1 flex items-center gap-[2px]">
-              {[4, 8, 3, 10, 6, 12, 5, 9, 3, 7, 11, 4, 8, 5, 10, 3, 7, 6, 9, 4].map((h, i) => (
-                <div key={i} className="flex-1 rounded-full bg-primary/25" style={{ height: `${h}px` }} />
-              ))}
-            </div>
-            <span className="text-[8px] text-muted-foreground/50 shrink-0 tabular-nums">1:24</span>
           </div>
         </div>
       );
     case "question-block":
       return (
-        <div className="w-48 p-3 space-y-2">
-          <p className={headingCls}>Select the correct answer:</p>
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
-              <div className="w-2.5 h-2.5 rounded-full border-2 border-primary/40" />
-              <span className={cn(bodyCls, "text-[8px]")}>Option A — First answer choice</span>
-            </div>
-            <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
-              <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
-              <span className={cn(bodyCls, "text-[8px]")}>Option B — Second answer</span>
-            </div>
-            <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
-              <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
-              <span className={cn(bodyCls, "text-[8px]")}>Option C — Third answer</span>
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <p className="text-[11px] font-semibold text-[hsl(220,15%,15%)] mb-3">Which is the correct answer?</p>
+            <div className="space-y-2">
+              {["Cloud storage", "Local memory", "External drive"].map((opt, i) => (
+                <label key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-[hsl(220,13%,91%)] bg-white cursor-pointer">
+                  <div className={cn("w-3.5 h-3.5 rounded-full border-2 shrink-0", i === 0 ? "border-primary bg-primary" : "border-[hsl(220,10%,78%)]")}>
+                    {i === 0 && <div className="w-full h-full rounded-full flex items-center justify-center"><div className="w-1.5 h-1.5 rounded-full bg-white" /></div>}
+                  </div>
+                  <span className="text-[10px] text-[hsl(220,8%,35%)]">{opt}</span>
+                </label>
+              ))}
             </div>
           </div>
         </div>
       );
     case "quiz-block":
       return (
-        <div className="w-48 p-3 space-y-2">
-          <div className="flex items-center gap-1.5 mb-1">
-            <MessageCircleQuestion className="w-3.5 h-3.5 text-primary/50" />
-            <span className={headingCls}>Quiz — Module 1</span>
-          </div>
-          <div className="space-y-1.5">
-            {["Q1 — Basics of the topic", "Q2 — Core concepts review", "Q3 — Practical application"].map((label, i) => (
-              <div key={i} className="flex items-center gap-2 h-4 rounded bg-primary/5 border border-primary/10 px-2">
-                <div className="w-2 h-2 rounded-sm bg-primary/20" />
-                <span className="text-[8px] text-muted-foreground">{label}</span>
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                  <MessageCircleQuestion className="w-3 h-3 text-primary/70" />
+                </div>
+                <span className="text-[11px] font-semibold text-[hsl(220,15%,15%)]">Module 1 Quiz</span>
               </div>
-            ))}
-          </div>
-          <div className="h-1 w-full rounded-full bg-muted-foreground/10 overflow-hidden mt-1">
-            <div className="h-full w-2/3 rounded-full bg-primary/25" />
+              <span className="text-[9px] text-[hsl(220,8%,55%)] bg-[hsl(220,14%,96%)] px-1.5 py-0.5 rounded-md">3 Qs</span>
+            </div>
+            <div className="space-y-1.5">
+              {["Fundamentals of the topic", "Core concepts review", "Practical application"].map((q, i) => (
+                <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)]">
+                  <span className="text-[9px] font-semibold text-primary/60 shrink-0">{i + 1}.</span>
+                  <span className="text-[9px] text-[hsl(220,8%,46%)]">{q}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <div className="flex-1 h-[5px] rounded-full bg-[hsl(220,13%,93%)] overflow-hidden">
+                <div className="h-full w-2/3 rounded-full bg-primary/40" />
+              </div>
+              <span className="text-[8px] text-[hsl(220,8%,55%)] tabular-nums">67%</span>
+            </div>
           </div>
         </div>
       );
@@ -242,166 +270,209 @@ function BlockPreview({ id }: { id: string }) {
   }
 }
 
-/** Miniature layout thumbnails for each block variant — uses actual micro-text to avoid skeleton-loader feel */
+/** Miniature thumbnails — styled as tiny page screenshots with card-in-page treatment */
 function BlockThumbnail({ id }: { id: string }) {
-  const cardBg = "bg-[hsl(211,60%,97%)]";
-  const imgBg = "bg-gradient-to-br from-[hsl(211,40%,92%)] to-[hsl(211,35%,88%)]";
-  const imgBorder = "border-[hsl(211,30%,88%)]";
-  const headingStyle = "text-[5px] font-bold text-[hsl(215,20%,25%)] leading-[1.3] tracking-tight";
-  const bodyStyle = "text-[4px] text-[hsl(215,12%,45%)] leading-[1.6] tracking-normal";
+  const wrapper = "w-full rounded-[6px] bg-[hsl(220,14%,96%)] p-[5px] overflow-hidden";
+  const miniCard = "bg-white rounded-[4px] shadow-[0_0.5px_2px_rgba(0,0,0,0.07)] border border-[hsl(220,13%,91%)]";
+  const imgArea = "bg-[hsl(220,18%,95%)] flex items-center justify-center rounded-[3px]";
 
   switch (id) {
     case "heading-text":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
-          <p className={headingStyle}>Getting Started Guide</p>
-          <div>
-            <p className={bodyStyle}>Learn the fundamentals of building your first project with our step-by-step guide.</p>
-            <p className={cn(bodyStyle, "mt-[1px] opacity-70")}>Follow along to set up everything.</p>
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2")}>
+            <div className="h-[3px] w-[55%] rounded-[1px] bg-[hsl(220,15%,20%)] mb-[4px]" />
+            <div className="space-y-[2px]">
+              <div className="h-[2px] w-full rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
+              <div className="h-[2px] w-[90%] rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
+              <div className="h-[2px] w-[60%] rounded-[0.5px] bg-[hsl(220,8%,78%)]" />
+            </div>
           </div>
         </div>
       );
     case "text-only":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5", cardBg)}>
-          <p className={bodyStyle}>Effective learning combines theory with hands-on practice. Each module builds upon the previous one, ensuring a smooth progression.</p>
-          <p className={cn(bodyStyle, "mt-[2px] opacity-70")}>Take your time with each section.</p>
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2")}>
+            <div className="space-y-[2px]">
+              <div className="h-[2px] w-full rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
+              <div className="h-[2px] w-[95%] rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
+              <div className="h-[2px] w-[80%] rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
+              <div className="h-[2px] w-[65%] rounded-[0.5px] bg-[hsl(220,8%,78%)]" />
+            </div>
+          </div>
         </div>
       );
     case "two-columns":
       return (
-        <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className="flex-1 min-w-0">
-            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Overview</p>
-            <p className={cn(bodyStyle, "text-[3.5px]")}>Core concepts and key principles for effective learning paths.</p>
-          </div>
-          <div className="w-px bg-[hsl(215,15%,85%)]" />
-          <div className="flex-1 min-w-0">
-            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Details</p>
-            <p className={cn(bodyStyle, "text-[3.5px]")}>Advanced techniques and best practices for implementation.</p>
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex gap-[4px]")}>
+            <div className="flex-1 min-w-0">
+              <div className="h-[2.5px] w-[60%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
+              <div className="space-y-[1.5px]">
+                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+                <div className="h-[1.5px] w-[85%] rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+              </div>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <div className="h-[2.5px] w-[55%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
+              <div className="space-y-[1.5px]">
+                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+                <div className="h-[1.5px] w-[75%] rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+              </div>
+            </div>
           </div>
         </div>
       );
     case "image-full":
       return (
-        <div className={cn("w-full rounded-lg p-2", cardBg)}>
-          <div className={cn("w-full h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <Mountain className="w-3.5 h-3.5 text-[hsl(215,15%,72%)]" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className={cn("w-full h-[28px]", imgArea)}>
+              <Mountain className="w-3 h-3 text-[hsl(220,10%,80%)]" />
+            </div>
           </div>
         </div>
       );
     case "image-top":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
-          <div className={cn("w-full h-6 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className={cn("w-full h-[16px] mb-[3px]", imgArea)}>
+              <Mountain className="w-2 h-2 text-[hsl(220,10%,80%)]" />
+            </div>
+            <div className="px-[3px] space-y-[1.5px]">
+              <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+              <div className="h-[1.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
+            </div>
           </div>
-          <p className={cn(bodyStyle, "text-[3.5px]")}>A detailed caption describing the image content shown above.</p>
         </div>
       );
     case "image-bottom":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
-          <p className={cn(bodyStyle, "text-[3.5px]")}>Introductory text providing context for the visual below.</p>
-          <div className={cn("w-full h-6 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className="px-[3px] space-y-[1.5px] mb-[3px]">
+              <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+              <div className="h-[1.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
+            </div>
+            <div className={cn("w-full h-[16px]", imgArea)}>
+              <Mountain className="w-2 h-2 text-[hsl(220,10%,80%)]" />
+            </div>
           </div>
         </div>
       );
     case "video-upload":
       return (
-        <div className={cn("w-full rounded-lg p-2", cardBg)}>
-          <div className={cn("w-full h-9 rounded-md border flex items-center justify-center relative", imgBg, imgBorder)}>
-            <div className="w-5 h-5 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
-              <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
-            </div>
-            <div className="absolute bottom-1 left-1.5 right-1.5 h-[2px] rounded-full bg-[hsl(215,20%,85%)] overflow-hidden">
-              <div className="h-full w-1/3 rounded-full bg-primary/40" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className="w-full h-[28px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center relative overflow-hidden">
+              <div className="w-[14px] h-[14px] rounded-full bg-white/25 flex items-center justify-center">
+                <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-white ml-[1px]" />
+              </div>
+              <div className="absolute bottom-[3px] left-[4px] right-[4px] h-[2px] rounded-full bg-white/15 overflow-hidden">
+                <div className="h-full w-0 rounded-full bg-white/50" />
+              </div>
             </div>
           </div>
         </div>
       );
     case "video-left":
       return (
-        <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className={cn("flex-1 h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <div className="w-4 h-4 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
-              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
+            <div className="flex-1 h-[24px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center">
+              <div className="w-[10px] h-[10px] rounded-full bg-white/25 flex items-center justify-center">
+                <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-white ml-[0.5px]" />
+              </div>
             </div>
-          </div>
-          <div className="flex-1 min-w-0 pt-0.5">
-            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Video title</p>
-            <p className={cn(bodyStyle, "text-[3.5px]")}>A short description of the video content shown here.</p>
+            <div className="flex-1 min-w-0 pt-[2px]">
+              <div className="h-[2.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
+              <div className="space-y-[1.5px]">
+                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+                <div className="h-[1.5px] w-[60%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
+              </div>
+            </div>
           </div>
         </div>
       );
     case "video-right":
       return (
-        <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className="flex-1 min-w-0 pt-0.5">
-            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Video title</p>
-            <p className={cn(bodyStyle, "text-[3.5px]")}>A short description of the video content shown here.</p>
-          </div>
-          <div className={cn("flex-1 h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <div className="w-4 h-4 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
-              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
+            <div className="flex-1 min-w-0 pt-[2px]">
+              <div className="h-[2.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
+              <div className="space-y-[1.5px]">
+                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
+                <div className="h-[1.5px] w-[60%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
+              </div>
+            </div>
+            <div className="flex-1 h-[24px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center">
+              <div className="w-[10px] h-[10px] rounded-full bg-white/25 flex items-center justify-center">
+                <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-white ml-[0.5px]" />
+              </div>
             </div>
           </div>
         </div>
       );
     case "audio-upload":
       return (
-        <div className={cn("w-full rounded-lg p-2", cardBg)}>
-          <div className={cn("w-full h-7 rounded-md border flex items-center gap-1 px-1.5", "bg-white/60", imgBorder)}>
-            <div className="w-3.5 h-3.5 rounded-full bg-[hsl(211,45%,92%)] shadow-[inset_0_0_0_1px_hsl(211,30%,82%)] flex items-center justify-center shrink-0">
-              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="w-full h-[20px] rounded-[3px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] flex items-center gap-[3px] px-[4px]">
+              <div className="w-[12px] h-[12px] rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-primary/50 ml-[0.5px]" />
+              </div>
+              <div className="flex-1 flex items-end gap-[1px]">
+                {[3, 6, 2, 8, 5, 10, 4, 7, 2, 5, 9, 3].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-[0.5px] bg-primary/25" style={{ height: `${h * 0.6}px` }} />
+                ))}
+              </div>
+              <span className="text-[5px] text-[hsl(220,8%,60%)] shrink-0 tabular-nums">1:24</span>
             </div>
-            <div className="flex-1 flex items-end gap-[1px]">
-              {[3, 5, 2, 6, 4, 7, 3, 5, 2, 4, 6, 3].map((h, i) => (
-                <div key={i} className="flex-1 rounded-t-[1px] bg-primary/30" style={{ height: `${h}px` }} />
-              ))}
-            </div>
-            <span className="text-[7px] font-medium text-[hsl(215,15%,55%)] shrink-0 tabular-nums">1:24</span>
           </div>
         </div>
       );
     case "question-block":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
-          <p className={cn(headingStyle, "text-[4px]")}>Select the correct answer:</p>
-          <div className="space-y-[3px]">
-            <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
-              <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-primary/50" />
-              <span className="text-[3.5px] text-[hsl(215,12%,45%)]">Option A — First answer</span>
-            </div>
-            <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
-              <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-[hsl(215,15%,80%)]" />
-              <span className="text-[3.5px] text-[hsl(215,12%,45%)]">Option B — Second answer</span>
-            </div>
-            <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
-              <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-[hsl(215,15%,80%)]" />
-              <span className="text-[3.5px] text-[hsl(215,12%,45%)]">Option C — Third answer</span>
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2")}>
+            <div className="h-[2.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[4px]" />
+            <div className="space-y-[2px]">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex items-center gap-[3px] h-[8px] rounded-[2px] border border-[hsl(220,13%,91%)] bg-white px-[4px]">
+                  <div className={cn("w-[4px] h-[4px] rounded-full border-[1px] shrink-0", i === 0 ? "border-primary bg-primary" : "border-[hsl(220,10%,80%)]")}>
+                    {i === 0 && <div className="w-full h-full rounded-full flex items-center justify-center"><div className="w-[1.5px] h-[1.5px] rounded-full bg-white" /></div>}
+                  </div>
+                  <div className="h-[1.5px] rounded-[0.5px] bg-[hsl(220,8%,75%)]" style={{ width: `${55 - i * 10}%` }} />
+                </div>
+              ))}
             </div>
           </div>
         </div>
       );
     case "quiz-block":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
-          <div className="flex items-center gap-1">
-            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/45" />
-            <span className="text-[4px] font-bold text-[hsl(215,20%,25%)]">Quiz — Module 1</span>
-          </div>
-          <div className="space-y-[2px]">
-            {["Q1 — Basics", "Q2 — Concepts", "Q3 — Practice"].map((label, i) => (
-              <div key={i} className="flex items-center gap-1 h-[10px] rounded-[3px] bg-white border border-primary/12 px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.02)]">
-                <div className="w-[5px] h-[5px] rounded-[2px] bg-primary/25" />
-                <span className="text-[3.5px] text-[hsl(215,12%,50%)]">{label}</span>
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2")}>
+            <div className="flex items-center gap-[3px] mb-[4px]">
+              <div className="w-[8px] h-[8px] rounded-[2px] bg-primary/10 flex items-center justify-center">
+                <MessageCircleQuestion className="w-[5px] h-[5px] text-primary/60" />
               </div>
-            ))}
-          </div>
-          <div className="h-[2px] w-full rounded-full bg-[hsl(215,15%,88%)] overflow-hidden mt-0.5">
-            <div className="h-full w-2/3 rounded-full bg-primary/30" />
+              <div className="h-[2.5px] w-[45%] rounded-[0.5px] bg-[hsl(220,15%,25%)]" />
+            </div>
+            <div className="space-y-[2px]">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex items-center gap-[3px] h-[7px] rounded-[2px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] px-[4px]">
+                  <span className="text-[4px] font-semibold text-primary/50">{i + 1}</span>
+                  <div className="h-[1.5px] rounded-[0.5px] bg-[hsl(220,8%,78%)]" style={{ width: `${60 - i * 8}%` }} />
+                </div>
+              ))}
+            </div>
+            <div className="mt-[3px] h-[2px] w-full rounded-full bg-[hsl(220,13%,93%)] overflow-hidden">
+              <div className="h-full w-2/3 rounded-full bg-primary/35" />
+            </div>
           </div>
         </div>
       );
