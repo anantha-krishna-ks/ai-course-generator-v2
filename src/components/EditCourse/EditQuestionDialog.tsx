@@ -355,7 +355,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
               {/* Options / Answer Section */}
               {type === "TrueFalse" ? (
                 <div className="space-y-2.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Correct Answer
                   </Label>
                   <RadioGroup value={answer} onValueChange={setAnswer} className="grid grid-cols-2 gap-2">
