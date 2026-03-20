@@ -71,6 +71,8 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
+  const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
   const style = {
     transform: CSS.Transform.toString(transform),
