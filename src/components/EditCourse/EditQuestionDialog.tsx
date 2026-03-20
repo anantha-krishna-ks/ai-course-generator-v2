@@ -340,7 +340,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
               {/* Question Text */}
               <div className="space-y-2">
-                <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Question
                 </Label>
                 <Textarea
