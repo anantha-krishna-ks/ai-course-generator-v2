@@ -25,6 +25,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import workspaceImg from "@/assets/block-preview-workspace.jpg";
+import landscapeImg from "@/assets/block-preview-landscape.jpg";
 
 interface BlockItem {
   id: string;
@@ -78,7 +80,6 @@ export function resolveTemplateDropData(
 /** Hover tooltip preview — looks like a real rendered page section */
 function BlockPreview({ id }: { id: string }) {
   const card = "bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-[hsl(220,13%,91%)] overflow-hidden";
-  const imgPlaceholder = "bg-[hsl(220,20%,96%)] flex items-center justify-center";
 
   switch (id) {
     case "heading-text":
@@ -120,9 +121,7 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <div className={cn("w-full h-24 rounded-md", imgPlaceholder)}>
-              <Mountain className="w-8 h-8 text-[hsl(220,10%,78%)]" />
-            </div>
+            <img src={landscapeImg} alt="Landscape preview" className="w-full h-24 rounded-md object-cover" />
           </div>
         </div>
       );
@@ -130,10 +129,8 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <div className={cn("w-full h-16 rounded-md mb-3", imgPlaceholder)}>
-              <Mountain className="w-6 h-6 text-[hsl(220,10%,78%)]" />
-            </div>
-            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1">A detailed caption describing the image content and providing additional context for the reader.</p>
+            <img src={workspaceImg} alt="Workspace" className="w-full h-16 rounded-md object-cover mb-3" />
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1">A modern workspace setup featuring essential tools for productivity and creative thinking.</p>
           </div>
         </div>
       );
@@ -141,10 +138,8 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1 mb-3">Introductory text providing context and background for the visual content displayed below.</p>
-            <div className={cn("w-full h-16 rounded-md", imgPlaceholder)}>
-              <Mountain className="w-6 h-6 text-[hsl(220,10%,78%)]" />
-            </div>
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1 mb-3">Nature provides a stunning backdrop for understanding ecological systems and environmental balance.</p>
+            <img src={landscapeImg} alt="Landscape" className="w-full h-16 rounded-md object-cover" />
           </div>
         </div>
       );
@@ -153,10 +148,11 @@ function BlockPreview({ id }: { id: string }) {
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
             <div className="w-full h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative overflow-hidden">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/15">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/15 z-10">
                 <div className="w-0 h-0 border-t-[6px] border-b-[6px] border-l-[10px] border-transparent border-l-white ml-1" />
               </div>
-              <div className="absolute bottom-2 left-3 right-3 flex items-center gap-2">
+              <div className="absolute bottom-2 left-3 right-3 flex items-center gap-2 z-10">
                 <span className="text-[8px] text-white/50 tabular-nums">0:00</span>
                 <div className="flex-1 h-[3px] rounded-full bg-white/15 overflow-hidden">
                   <div className="h-full w-0 rounded-full bg-white/60" />
@@ -171,14 +167,15 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3 flex gap-3")}>
-            <div className="flex-1 h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative">
-              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center border border-white/15">
+            <div className="flex-1 h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative overflow-hidden">
+              <img src={workspaceImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center border border-white/15 z-10">
                 <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[7px] border-transparent border-l-white ml-0.5" />
               </div>
             </div>
             <div className="flex-1 min-w-0 pt-1">
-              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Video title</h5>
-              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">A short description of the video content and what viewers will learn.</p>
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Introduction to Design</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Watch this walkthrough to learn the core principles of effective visual design.</p>
             </div>
           </div>
         </div>
@@ -188,11 +185,12 @@ function BlockPreview({ id }: { id: string }) {
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3 flex gap-3")}>
             <div className="flex-1 min-w-0 pt-1">
-              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Video title</h5>
-              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">A short description of the video content and what viewers will learn.</p>
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Project Walkthrough</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Follow along as we build a complete project from scratch step by step.</p>
             </div>
-            <div className="flex-1 h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative">
-              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center border border-white/15">
+            <div className="flex-1 h-24 rounded-md bg-[hsl(225,15%,12%)] flex items-center justify-center relative overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
+              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center border border-white/15 z-10">
                 <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[7px] border-transparent border-l-white ml-0.5" />
               </div>
             </div>
@@ -270,57 +268,43 @@ function BlockPreview({ id }: { id: string }) {
   }
 }
 
-/** Miniature thumbnails — styled as tiny page screenshots with card-in-page treatment */
+/** Miniature thumbnails — styled as tiny page screenshots with real images and text */
 function BlockThumbnail({ id }: { id: string }) {
   const wrapper = "w-full rounded-[6px] bg-[hsl(220,14%,96%)] p-[5px] overflow-hidden";
   const miniCard = "bg-white rounded-[4px] shadow-[0_0.5px_2px_rgba(0,0,0,0.07)] border border-[hsl(220,13%,91%)]";
-  const imgArea = "bg-[hsl(220,18%,95%)] flex items-center justify-center rounded-[3px]";
 
   switch (id) {
     case "heading-text":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2")}>
-            <div className="h-[3px] w-[55%] rounded-[1px] bg-[hsl(220,15%,20%)] mb-[4px]" />
-            <div className="space-y-[2px]">
-              <div className="h-[2px] w-full rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
-              <div className="h-[2px] w-[90%] rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
-              <div className="h-[2px] w-[60%] rounded-[0.5px] bg-[hsl(220,8%,78%)]" />
-            </div>
+          <div className={cn(miniCard, "p-2.5")}>
+            <p className="text-[5px] font-bold text-[hsl(220,15%,15%)] leading-[1.3] mb-[4px]">Getting Started Guide</p>
+            <p className="text-[3.5px] text-[hsl(220,8%,50%)] leading-[1.7]">Learn the fundamentals of building your first project with our comprehensive step-by-step guide.</p>
+            <p className="text-[3.5px] text-[hsl(220,8%,62%)] leading-[1.7] mt-[2px]">Follow along to set up everything you need.</p>
           </div>
         </div>
       );
     case "text-only":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2")}>
-            <div className="space-y-[2px]">
-              <div className="h-[2px] w-full rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
-              <div className="h-[2px] w-[95%] rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
-              <div className="h-[2px] w-[80%] rounded-[0.5px] bg-[hsl(220,8%,72%)]" />
-              <div className="h-[2px] w-[65%] rounded-[0.5px] bg-[hsl(220,8%,78%)]" />
-            </div>
+          <div className={cn(miniCard, "p-2.5")}>
+            <p className="text-[3.5px] text-[hsl(220,8%,50%)] leading-[1.7]">Effective learning combines theory with hands-on practice. Each module builds upon the previous one, ensuring smooth progression through all topics.</p>
+            <p className="text-[3.5px] text-[hsl(220,8%,62%)] leading-[1.7] mt-[2px]">Take your time with each section.</p>
           </div>
         </div>
       );
     case "two-columns":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2 flex gap-[4px]")}>
+          <div className={cn(miniCard, "p-2.5 flex gap-[5px]")}>
             <div className="flex-1 min-w-0">
-              <div className="h-[2.5px] w-[60%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
-              <div className="space-y-[1.5px]">
-                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-                <div className="h-[1.5px] w-[85%] rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-              </div>
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[3px]">Overview</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Core concepts and key principles for effective learning paths.</p>
             </div>
             <div className="w-px bg-[hsl(220,13%,90%)]" />
             <div className="flex-1 min-w-0">
-              <div className="h-[2.5px] w-[55%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
-              <div className="space-y-[1.5px]">
-                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-                <div className="h-[1.5px] w-[75%] rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-              </div>
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[3px]">Details</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Advanced techniques and best practices for implementation.</p>
             </div>
           </div>
         </div>
@@ -329,9 +313,7 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px]")}>
-            <div className={cn("w-full h-[28px]", imgArea)}>
-              <Mountain className="w-3 h-3 text-[hsl(220,10%,80%)]" />
-            </div>
+            <img src={landscapeImg} alt="" className="w-full h-[32px] rounded-[3px] object-cover" />
           </div>
         </div>
       );
@@ -339,12 +321,9 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px]")}>
-            <div className={cn("w-full h-[16px] mb-[3px]", imgArea)}>
-              <Mountain className="w-2 h-2 text-[hsl(220,10%,80%)]" />
-            </div>
-            <div className="px-[3px] space-y-[1.5px]">
-              <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-              <div className="h-[1.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
+            <img src={workspaceImg} alt="" className="w-full h-[18px] rounded-[3px] object-cover mb-[3px]" />
+            <div className="px-[3px]">
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">A modern workspace setup for productivity and creative work.</p>
             </div>
           </div>
         </div>
@@ -353,13 +332,10 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px]")}>
-            <div className="px-[3px] space-y-[1.5px] mb-[3px]">
-              <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-              <div className="h-[1.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
+            <div className="px-[3px] mb-[3px]">
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Nature provides a stunning backdrop for understanding ecological balance.</p>
             </div>
-            <div className={cn("w-full h-[16px]", imgArea)}>
-              <Mountain className="w-2 h-2 text-[hsl(220,10%,80%)]" />
-            </div>
+            <img src={landscapeImg} alt="" className="w-full h-[18px] rounded-[3px] object-cover" />
           </div>
         </div>
       );
@@ -367,11 +343,12 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px]")}>
-            <div className="w-full h-[28px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center relative overflow-hidden">
-              <div className="w-[14px] h-[14px] rounded-full bg-white/25 flex items-center justify-center">
+            <div className="w-full h-[32px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center relative overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+              <div className="w-[14px] h-[14px] rounded-full bg-white/25 flex items-center justify-center z-10">
                 <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-white ml-[1px]" />
               </div>
-              <div className="absolute bottom-[3px] left-[4px] right-[4px] h-[2px] rounded-full bg-white/15 overflow-hidden">
+              <div className="absolute bottom-[3px] left-[4px] right-[4px] h-[2px] rounded-full bg-white/15 overflow-hidden z-10">
                 <div className="h-full w-0 rounded-full bg-white/50" />
               </div>
             </div>
@@ -382,17 +359,15 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
-            <div className="flex-1 h-[24px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center">
-              <div className="w-[10px] h-[10px] rounded-full bg-white/25 flex items-center justify-center">
+            <div className="flex-1 h-[28px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center relative overflow-hidden">
+              <img src={workspaceImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+              <div className="w-[10px] h-[10px] rounded-full bg-white/25 flex items-center justify-center z-10">
                 <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-white ml-[0.5px]" />
               </div>
             </div>
             <div className="flex-1 min-w-0 pt-[2px]">
-              <div className="h-[2.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
-              <div className="space-y-[1.5px]">
-                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-                <div className="h-[1.5px] w-[60%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
-              </div>
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Introduction</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Watch this video to learn the basics.</p>
             </div>
           </div>
         </div>
@@ -402,14 +377,12 @@ function BlockThumbnail({ id }: { id: string }) {
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
             <div className="flex-1 min-w-0 pt-[2px]">
-              <div className="h-[2.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[3px]" />
-              <div className="space-y-[1.5px]">
-                <div className="h-[1.5px] w-full rounded-[0.5px] bg-[hsl(220,8%,75%)]" />
-                <div className="h-[1.5px] w-[60%] rounded-[0.5px] bg-[hsl(220,8%,80%)]" />
-              </div>
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Walkthrough</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Follow along step by step.</p>
             </div>
-            <div className="flex-1 h-[24px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center">
-              <div className="w-[10px] h-[10px] rounded-full bg-white/25 flex items-center justify-center">
+            <div className="flex-1 h-[28px] rounded-[3px] bg-[hsl(225,15%,14%)] flex items-center justify-center relative overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+              <div className="w-[10px] h-[10px] rounded-full bg-white/25 flex items-center justify-center z-10">
                 <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-white ml-[0.5px]" />
               </div>
             </div>
@@ -420,13 +393,13 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px]")}>
-            <div className="w-full h-[20px] rounded-[3px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] flex items-center gap-[3px] px-[4px]">
+            <div className="w-full h-[22px] rounded-[3px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] flex items-center gap-[3px] px-[4px]">
               <div className="w-[12px] h-[12px] rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-primary/50 ml-[0.5px]" />
               </div>
               <div className="flex-1 flex items-end gap-[1px]">
                 {[3, 6, 2, 8, 5, 10, 4, 7, 2, 5, 9, 3].map((h, i) => (
-                  <div key={i} className="flex-1 rounded-[0.5px] bg-primary/25" style={{ height: `${h * 0.6}px` }} />
+                  <div key={i} className="flex-1 rounded-[0.5px] bg-primary/25" style={{ height: `${h * 0.7}px` }} />
                 ))}
               </div>
               <span className="text-[5px] text-[hsl(220,8%,60%)] shrink-0 tabular-nums">1:24</span>
@@ -437,15 +410,15 @@ function BlockThumbnail({ id }: { id: string }) {
     case "question-block":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2")}>
-            <div className="h-[2.5px] w-[70%] rounded-[0.5px] bg-[hsl(220,15%,25%)] mb-[4px]" />
+          <div className={cn(miniCard, "p-2.5")}>
+            <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[4px]">Select the correct answer:</p>
             <div className="space-y-[2px]">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="flex items-center gap-[3px] h-[8px] rounded-[2px] border border-[hsl(220,13%,91%)] bg-white px-[4px]">
+              {["Cloud storage", "Local memory", "External drive"].map((opt, i) => (
+                <div key={i} className="flex items-center gap-[3px] h-[9px] rounded-[2px] border border-[hsl(220,13%,91%)] bg-white px-[4px]">
                   <div className={cn("w-[4px] h-[4px] rounded-full border-[1px] shrink-0", i === 0 ? "border-primary bg-primary" : "border-[hsl(220,10%,80%)]")}>
                     {i === 0 && <div className="w-full h-full rounded-full flex items-center justify-center"><div className="w-[1.5px] h-[1.5px] rounded-full bg-white" /></div>}
                   </div>
-                  <div className="h-[1.5px] rounded-[0.5px] bg-[hsl(220,8%,75%)]" style={{ width: `${55 - i * 10}%` }} />
+                  <span className="text-[3.5px] text-[hsl(220,8%,45%)]">{opt}</span>
                 </div>
               ))}
             </div>
@@ -455,18 +428,18 @@ function BlockThumbnail({ id }: { id: string }) {
     case "quiz-block":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2")}>
+          <div className={cn(miniCard, "p-2.5")}>
             <div className="flex items-center gap-[3px] mb-[4px]">
               <div className="w-[8px] h-[8px] rounded-[2px] bg-primary/10 flex items-center justify-center">
                 <MessageCircleQuestion className="w-[5px] h-[5px] text-primary/60" />
               </div>
-              <div className="h-[2.5px] w-[45%] rounded-[0.5px] bg-[hsl(220,15%,25%)]" />
+              <span className="text-[4px] font-bold text-[hsl(220,15%,18%)]">Module 1 Quiz</span>
             </div>
             <div className="space-y-[2px]">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="flex items-center gap-[3px] h-[7px] rounded-[2px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] px-[4px]">
-                  <span className="text-[4px] font-semibold text-primary/50">{i + 1}</span>
-                  <div className="h-[1.5px] rounded-[0.5px] bg-[hsl(220,8%,78%)]" style={{ width: `${60 - i * 8}%` }} />
+              {["Basics", "Core concepts", "Practice"].map((label, i) => (
+                <div key={i} className="flex items-center gap-[3px] h-[8px] rounded-[2px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] px-[4px]">
+                  <span className="text-[3.5px] font-semibold text-primary/50">{i + 1}.</span>
+                  <span className="text-[3.5px] text-[hsl(220,8%,50%)]">{label}</span>
                 </div>
               ))}
             </div>
@@ -522,7 +495,7 @@ function BlockGridItem({
           onDragStart={handleDragStart}
           onPointerDown={locked ? undefined : handlePointerDown}
           className={cn(
-            "flex flex-col items-center justify-center gap-1 p-1.5 pb-2 rounded-xl border transition-all duration-200 select-none relative group",
+            "flex flex-col items-center justify-center gap-1.5 p-2 pb-2.5 rounded-xl border transition-all duration-200 select-none relative group",
             locked
               ? "opacity-50 cursor-not-allowed border-border/40 bg-muted/30"
               : "border-border/70 bg-[#ffffff] shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_3px_12px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 cursor-grab active:cursor-grabbing active:scale-[0.97]"
@@ -549,7 +522,7 @@ function BlockGridItem({
       <TooltipContent
         side="right"
         sideOffset={8}
-        className="p-0 overflow-hidden rounded-xl border border-border shadow-lg bg-popover max-w-[220px]"
+        className="p-0 overflow-hidden rounded-xl border border-border shadow-lg bg-popover max-w-[240px]"
       >
         <div className="border-b border-border/60 bg-muted/30">
           <BlockPreview id={block.id} />
