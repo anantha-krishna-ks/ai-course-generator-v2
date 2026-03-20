@@ -290,12 +290,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
+      const newBlock: PageContentBlock = { id, type, content: defaultContent, variant };
       if (atIndex !== undefined) {
         const next = [...prev];
-        next.splice(atIndex, 0, { id, type, content: defaultContent });
+        next.splice(atIndex, 0, newBlock);
         return next;
       }
-      return [...prev, { id, type, content: defaultContent }];
+      return [...prev, newBlock];
     });
     setLastAddedBlockId(id);
   }, []);
