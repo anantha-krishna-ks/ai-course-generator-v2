@@ -254,7 +254,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
             <MessageCircleQuestion className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-1">No questions yet</p>
             <p className="text-xs text-muted-foreground/60 mb-5">
-              {aiEnabled
+              {isQuizVariant && aiEnabled
                 ? "Generate a quiz with AI or add questions manually."
                 : "Add questions manually to build your quiz."}
             </p>
