@@ -99,7 +99,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                     onTitleChange(e.target.value);
                   }
                 }}
-                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35 transition-all"
+                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50 transition-all"
                 placeholder="Untitled page..."
               />
               <div className={cn(
