@@ -474,8 +474,8 @@ function BlockGridItem({
           className={cn(
             "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all duration-200 select-none relative group bg-[#ffffff]",
             locked
-              ? "opacity-50 cursor-not-allowed border-border/30"
-              : "border-border/60 hover:border-primary/30 hover:shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.12)] hover:bg-[#ffffff] cursor-grab active:cursor-grabbing active:scale-[0.97]"
+              ? "opacity-50 cursor-not-allowed border-border/40"
+              : "border-border hover:border-primary/40 hover:shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.12)] hover:bg-[#ffffff] cursor-grab active:cursor-grabbing active:scale-[0.97]"
           )}
         >
           {locked && (
