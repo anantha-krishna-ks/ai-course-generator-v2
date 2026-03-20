@@ -31,6 +31,7 @@ interface ContentBlockProps {
   autoFocus?: boolean;
   aiEnabled?: boolean;
   readOnly?: boolean;
+  variant?: string;
 }
 
 export function ContentBlock({
