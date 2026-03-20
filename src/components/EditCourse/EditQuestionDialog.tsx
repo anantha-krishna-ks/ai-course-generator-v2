@@ -479,7 +479,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
               {/* General Explanation */}
               <div className="space-y-2">
-                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Explanation
                 </Label>
                 <Textarea
