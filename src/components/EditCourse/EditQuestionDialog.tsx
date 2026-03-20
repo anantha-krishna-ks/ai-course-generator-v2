@@ -581,15 +581,14 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                       </div>
                     </SortableContext>
                   </DndContext>
-                    <button
-                      type="button"
-                      onClick={handleAddOption}
-                      className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-primary/40 px-4 py-3 text-sm text-primary font-medium hover:border-primary hover:bg-primary/[0.04] transition-all duration-150"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add option
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddOption}
+                    className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-primary/40 px-4 py-3 text-sm text-primary font-medium hover:border-primary hover:bg-primary/[0.04] transition-all duration-150"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add option
+                  </button>
                 </div>
               )}
 
