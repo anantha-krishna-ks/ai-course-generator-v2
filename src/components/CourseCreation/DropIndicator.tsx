@@ -85,8 +85,8 @@ export function DropIndicator({
   return (
     <div
       className={cn(
-        "relative transition-all duration-200",
-        isActive ? "py-3" : "py-0.5"
+        "relative transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+        isActive ? "py-4" : "py-1"
       )}
       onDragOver={handleDragOver}
       onDragEnter={handleDragEnter}
@@ -95,15 +95,15 @@ export function DropIndicator({
     >
       <div
         className={cn(
-          "flex items-center gap-2 transition-all duration-200",
-          isActive ? "opacity-100" : "opacity-0"
+          "flex items-center gap-2 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          isActive ? "opacity-100 scale-100" : "opacity-0 scale-95"
         )}
       >
-        <div className="flex-1 h-[2px] rounded-full bg-primary" />
-        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground shadow-sm">
+        <div className="flex-1 h-[2px] rounded-full bg-primary/60" />
+        <div className="flex items-center justify-center w-5 h-5 rounded-full bg-primary/90 text-primary-foreground shadow-sm shadow-primary/20">
           <Plus className="w-3 h-3" />
         </div>
-        <div className="flex-1 h-[2px] rounded-full bg-primary" />
+        <div className="flex-1 h-[2px] rounded-full bg-primary/60" />
       </div>
     </div>
   );
