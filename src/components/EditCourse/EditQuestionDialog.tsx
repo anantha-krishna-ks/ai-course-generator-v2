@@ -369,14 +369,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   <div className="space-y-2">
                     {type === "SCQ" ? (
                       <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
-                        {options.map((option, index) => (
-                          <OptionRow
-                            key={index}
-                            index={index}
-                            option={option}
-                            selector={<RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />}
-                          />
-                        ))}
+                        {options.map((option, index) =>
+                          renderOptionRow(index, option, <RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
+                        )}
                       </RadioGroup>
                     ) : (
                       <div className="space-y-2">
