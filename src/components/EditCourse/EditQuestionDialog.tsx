@@ -76,11 +76,19 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   const handleRemoveOption = (index: number) => {
     if (options.length > 2) {
-      setOptions(options.filter((_, i) => i !== index));
+      const newOptions = options.filter((_, i) => i !== index);
+      setOptions(newOptions);
       setOptionExplanations(optionExplanations.filter((_, i) => i !== index));
-      if (answer === options[index]) {
-        setAnswer("");
-      }
+      // Remap correctIndices
+      setCorrectIndices(prev => {
+        const next = new Set<number>();
+        prev.forEach(i => {
+          if (i < index) next.add(i);
+          else if (i > index) next.add(i - 1);
+        });
+        syncAnswerFromIndices(next, newOptions);
+        return next;
+      });
       setExpandedExplanations(prev => {
         const next = new Set<number>();
         prev.forEach(i => {
@@ -92,10 +100,36 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     }
   };
 
+  // Track selected correct answer(s) by index for stable selection
+  const [correctIndices, setCorrectIndices] = useState<Set<number>>(new Set());
+
+  // Sync correctIndices when question loads
+  useEffect(() => {
+    if (question && question.type !== "FIB" && question.type !== "TrueFalse") {
+      const answerParts = question.answer.split(",").map(a => a.trim()).filter(Boolean);
+      const indices = new Set<number>();
+      const opts = question.options.length > 0 ? question.options : ["", "", "", ""];
+      answerParts.forEach(ans => {
+        const idx = opts.findIndex(o => o.trim() === ans);
+        if (idx !== -1) indices.add(idx);
+      });
+      setCorrectIndices(indices);
+    }
+  }, [question]);
+
+  const syncAnswerFromIndices = (indices: Set<number>, opts: string[]) => {
+    const selected = Array.from(indices)
+      .map(i => opts[i]?.trim())
+      .filter(Boolean);
+    setAnswer(selected.join(", "));
+  };
+
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
+    // Keep answer text in sync with option text changes
+    syncAnswerFromIndices(correctIndices, newOptions);
   };
 
   const handleOptionExplanationChange = (index: number, value: string) => {
@@ -104,24 +138,24 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     setOptionExplanations(newExplanations);
   };
 
-  const handleCorrectAnswerToggle = (optionValue: string) => {
+  const handleCorrectIndexToggle = (index: number) => {
     if (type === "MCQ") {
-      const currentAnswers = answer.split(",").map(a => a.trim()).filter(Boolean);
-      if (currentAnswers.includes(optionValue)) {
-        setAnswer(currentAnswers.filter(a => a !== optionValue).join(", "));
-      } else {
-        setAnswer([...currentAnswers, optionValue].join(", "));
-      }
+      setCorrectIndices(prev => {
+        const next = new Set(prev);
+        if (next.has(index)) next.delete(index);
+        else next.add(index);
+        syncAnswerFromIndices(next, options);
+        return next;
+      });
     } else {
-      setAnswer(optionValue);
+      const next = new Set([index]);
+      setCorrectIndices(next);
+      syncAnswerFromIndices(next, options);
     }
   };
 
-  const isOptionCorrect = (optionValue: string) => {
-    if (type === "MCQ") {
-      return answer.split(",").map(a => a.trim()).includes(optionValue);
-    }
-    return answer === optionValue;
+  const isOptionCorrect = (index: number) => {
+    return correctIndices.has(index);
   };
 
   const handleSave = () => {
@@ -187,11 +221,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       setAnswer("");
     }
     setExpandedExplanations(new Set());
+    setCorrectIndices(new Set());
   };
 
   /** Render a single option card */
   const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
-    const isCorrect = isOptionCorrect(option) && option.trim();
+    const isCorrect = isOptionCorrect(index) && option.trim();
     const isExpanded = expandedExplanations.has(index);
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
@@ -445,9 +480,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   </div>
                   <div className="space-y-2">
                     {type === "SCQ" ? (
-                      <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
+                      <RadioGroup value={String(Array.from(correctIndices)[0] ?? -1)} onValueChange={(val) => handleCorrectIndexToggle(Number(val))} className="space-y-2">
                         {options.map((option, index) =>
-                          renderOptionRow(index, option, <RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
+                          renderOptionRow(index, option, <RadioGroupItem value={String(index)} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
                         )}
                       </RadioGroup>
                     ) : (
@@ -456,8 +491,8 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           renderOptionRow(index, option,
                             <Checkbox
                               id={`option-${index}`}
-                              checked={isOptionCorrect(option)}
-                              onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
+                              checked={isOptionCorrect(index)}
+                              onCheckedChange={() => option.trim() && handleCorrectIndexToggle(index)}
                               disabled={!option.trim()}
                               className="shrink-0"
                             />
