@@ -277,7 +277,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border shadow-2xl bg-white">
         {/* Header */}
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/30 bg-white">
+        <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white">
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-base font-semibold tracking-tight">
@@ -299,12 +299,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
         {/* Scrollable Body */}
         <div className="min-h-0 row-start-2">
           <ScrollArea className="h-full">
-            <div className="p-6 space-y-5">
+            <div className="px-6 pt-4 pb-6 space-y-5">
 
               {/* Question Type — Add mode only */}
               {isAddMode && (
                 <div className="space-y-2.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Question Type
                   </Label>
                   <div className="grid grid-cols-2 gap-2">
@@ -340,7 +340,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
               {/* Question Text */}
               <div className="space-y-2">
-                <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Question
                 </Label>
                 <Textarea
@@ -348,14 +348,14 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   placeholder="Type your question here…"
-                  className="min-h-[80px] resize-none rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white text-sm transition-colors"
+                  className="min-h-[80px] resize-none rounded-xl bg-muted/20 border-border focus:border-primary/40 focus:bg-white text-sm transition-colors"
                 />
               </div>
 
               {/* Options / Answer Section */}
               {type === "TrueFalse" ? (
                 <div className="space-y-2.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Correct Answer
                   </Label>
                   <RadioGroup value={answer} onValueChange={setAnswer} className="grid grid-cols-2 gap-2">
@@ -408,7 +408,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 </div>
               ) : type === "FIB" ? (
                 <div className="space-y-2">
-                  <Label htmlFor="answer" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <Label htmlFor="answer" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Correct Answer
                   </Label>
                   <Input
@@ -416,13 +416,13 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Enter the correct answer…"
-                    className="rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white transition-colors"
+                    className="rounded-xl bg-muted/20 border-border focus:border-primary/40 focus:bg-white transition-colors"
                   />
                 </div>
               ) : (
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Answer Choices
                       {type === "MCQ" && (
                         <span className="font-normal normal-case tracking-normal ml-1.5 text-muted-foreground/50">— select all correct</span>
@@ -479,7 +479,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
               {/* General Explanation */}
               <div className="space-y-2">
-                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Explanation
                 </Label>
                 <Textarea
@@ -487,7 +487,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
                   placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white text-sm transition-colors"
+                  className="min-h-[72px] resize-none rounded-xl bg-muted/20 border-border focus:border-primary/40 focus:bg-white text-sm transition-colors"
                 />
               </div>
             </div>
@@ -495,7 +495,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
         </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-3.5 border-t border-border/30 bg-white">
+        <DialogFooter className="px-6 py-3.5 border-t border-border bg-white">
           <Button variant="outline" onClick={handleClose} className="rounded-xl">
             Cancel
           </Button>
