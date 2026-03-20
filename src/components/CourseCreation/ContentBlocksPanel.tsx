@@ -266,80 +266,104 @@ function BlockPreview({ id }: { id: string }) {
   }
 }
 
+/** Simulated text line with word-like segments */
+function TextLine({ widths, className }: { widths: number[]; className?: string }) {
+  return (
+    <div className={cn("flex items-center gap-[2px] flex-wrap", className)}>
+      {widths.map((w, i) => (
+        <div
+          key={i}
+          className="h-[2px] rounded-[0.5px] bg-[hsl(215,15%,55%)]"
+          style={{ width: `${w}px`, opacity: 0.35 + Math.random() * 0.15 }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /** Miniature layout thumbnails for each block variant */
 function BlockThumbnail({ id }: { id: string }) {
   const cardBg = "bg-[hsl(211,60%,97%)]";
-  const lineBg = "bg-[hsl(211,40%,78%)]";
-  const lineBgLight = "bg-[hsl(211,35%,85%)]";
-  const headingBg = "bg-[hsl(211,45%,65%)]";
-  const imgBg = "bg-gradient-to-br from-[hsl(211,40%,90%)] to-[hsl(211,35%,85%)]";
-  const imgBorder = "border-[hsl(211,35%,85%)]";
+  const imgBg = "bg-gradient-to-br from-[hsl(211,40%,92%)] to-[hsl(211,35%,88%)]";
+  const imgBorder = "border-[hsl(211,30%,88%)]";
 
   switch (id) {
     case "heading-text":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-2", cardBg)}>
-          <div className={cn("h-2 w-3/5 rounded-[2px]", headingBg)} />
-          <div className="space-y-[3px]">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-[90%] rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-3/4 rounded-[1px]", lineBgLight)} />
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-2", cardBg)}>
+          <div className="flex gap-[3px]">
+            <div className="h-[3px] w-[18px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-60" />
+            <div className="h-[3px] w-[14px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-55" />
+            <div className="h-[3px] w-[22px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
+          </div>
+          <div className="space-y-[4px]">
+            <TextLine widths={[12, 8, 16, 10, 14, 6]} />
+            <TextLine widths={[10, 14, 8, 12, 10]} />
+            <TextLine widths={[14, 6, 10]} />
           </div>
         </div>
       );
     case "text-only":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-[3px]", cardBg)}>
-          <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-          <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-          <div className={cn("h-[2.5px] w-[85%] rounded-[1px]", lineBg)} />
-          <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-[4px]", cardBg)}>
+          <TextLine widths={[12, 8, 16, 10, 14, 6, 10]} />
+          <TextLine widths={[10, 14, 8, 12, 10, 8]} />
+          <TextLine widths={[14, 6, 10, 16, 8]} />
+          <TextLine widths={[10, 12, 6]} />
         </div>
       );
     case "two-columns":
       return (
-        <div className={cn("flex w-full rounded-lg p-2 gap-2", cardBg)}>
-          <div className="flex-1 space-y-[3px]">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+        <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
+          <div className="flex-1 space-y-[4px]">
+            <div className="flex gap-[2px]">
+              <div className="h-[2.5px] w-[10px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
+              <div className="h-[2.5px] w-[14px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
+            </div>
+            <TextLine widths={[8, 6, 10, 5]} />
+            <TextLine widths={[6, 10, 8]} />
+            <TextLine widths={[10, 4]} />
           </div>
-          <div className="w-px bg-[hsl(215,20%,88%)]" />
-          <div className="flex-1 space-y-[3px]">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+          <div className="w-px bg-[hsl(215,15%,85%)]" />
+          <div className="flex-1 space-y-[4px]">
+            <div className="flex gap-[2px]">
+              <div className="h-[2.5px] w-[12px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
+              <div className="h-[2.5px] w-[8px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
+            </div>
+            <TextLine widths={[6, 10, 4, 8]} />
+            <TextLine widths={[10, 6, 8]} />
+            <TextLine widths={[8, 6]} />
           </div>
         </div>
       );
     case "image-full":
       return (
         <div className={cn("w-full rounded-lg p-2", cardBg)}>
-          <div className={cn("w-full h-8 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+          <div className={cn("w-full h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
             <Mountain className="w-3.5 h-3.5 text-[hsl(215,15%,72%)]" />
           </div>
         </div>
       );
     case "image-top":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1.5", cardBg)}>
-          <div className={cn("w-full h-5 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-2", cardBg)}>
+          <div className={cn("w-full h-6 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
             <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
           </div>
-          <div className="space-y-[3px]">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
+          <div className="space-y-[4px]">
+            <TextLine widths={[12, 8, 14, 6, 10]} />
+            <TextLine widths={[8, 10, 6]} />
           </div>
         </div>
       );
     case "image-bottom":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1.5", cardBg)}>
-          <div className="space-y-[3px]">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-2", cardBg)}>
+          <div className="space-y-[4px]">
+            <TextLine widths={[12, 8, 14, 6, 10]} />
+            <TextLine widths={[8, 10, 6]} />
           </div>
-          <div className={cn("w-full h-5 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+          <div className={cn("w-full h-6 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
             <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
           </div>
         </div>
@@ -347,11 +371,11 @@ function BlockThumbnail({ id }: { id: string }) {
     case "video-upload":
       return (
         <div className={cn("w-full rounded-lg p-2", cardBg)}>
-          <div className={cn("w-full h-8 rounded-md border flex items-center justify-center relative", imgBg, imgBorder)}>
-            <div className="w-5 h-5 rounded-full bg-white/80 shadow-sm flex items-center justify-center">
+          <div className={cn("w-full h-9 rounded-md border flex items-center justify-center relative", imgBg, imgBorder)}>
+            <div className="w-5 h-5 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
               <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
-            <div className="absolute bottom-1 left-1.5 right-1.5 h-[2px] rounded-full bg-[hsl(215,20%,88%)] overflow-hidden">
+            <div className="absolute bottom-1 left-1.5 right-1.5 h-[2px] rounded-full bg-[hsl(215,20%,85%)] overflow-hidden">
               <div className="h-full w-1/3 rounded-full bg-primary/40" />
             </div>
           </div>
@@ -359,29 +383,29 @@ function BlockThumbnail({ id }: { id: string }) {
       );
     case "video-left":
       return (
-        <div className={cn("flex w-full rounded-lg p-2 gap-1.5", cardBg)}>
-          <div className={cn("flex-1 h-8 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <div className="w-4 h-4 rounded-full bg-white/80 shadow-sm flex items-center justify-center">
+        <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
+          <div className={cn("flex-1 h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <div className="w-4 h-4 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
               <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
           </div>
-          <div className="flex-1 space-y-[3px] pt-1">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
-            <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
+          <div className="flex-1 space-y-[4px] pt-1">
+            <TextLine widths={[8, 6, 10, 5]} />
+            <TextLine widths={[6, 10, 8]} />
+            <TextLine widths={[10, 4, 6]} />
           </div>
         </div>
       );
     case "video-right":
       return (
-        <div className={cn("flex w-full rounded-lg p-2 gap-1.5", cardBg)}>
-          <div className="flex-1 space-y-[3px] pt-1">
-            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
-            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
-            <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
+        <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
+          <div className="flex-1 space-y-[4px] pt-1">
+            <TextLine widths={[8, 6, 10, 5]} />
+            <TextLine widths={[6, 10, 8]} />
+            <TextLine widths={[10, 4, 6]} />
           </div>
-          <div className={cn("flex-1 h-8 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
-            <div className="w-4 h-4 rounded-full bg-white/80 shadow-sm flex items-center justify-center">
+          <div className={cn("flex-1 h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <div className="w-4 h-4 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
               <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
           </div>
@@ -390,48 +414,62 @@ function BlockThumbnail({ id }: { id: string }) {
     case "audio-upload":
       return (
         <div className={cn("w-full rounded-lg p-2", cardBg)}>
-          <div className={cn("w-full h-7 rounded-md border flex items-center gap-1 px-1.5", "bg-[#f4f5f7]", imgBorder)}>
-            <div className="w-3.5 h-3.5 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0">
+          <div className={cn("w-full h-7 rounded-md border flex items-center gap-1 px-1.5", "bg-white/60", imgBorder)}>
+            <div className="w-3.5 h-3.5 rounded-full bg-[hsl(211,45%,92%)] shadow-[inset_0_0_0_1px_hsl(211,30%,82%)] flex items-center justify-center shrink-0">
               <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
-            <div className="flex-1 flex items-center gap-[1px]">
+            <div className="flex-1 flex items-end gap-[1px]">
               {[3, 5, 2, 6, 4, 7, 3, 5, 2, 4, 6, 3].map((h, i) => (
-                <div key={i} className="flex-1 rounded-full bg-primary/25" style={{ height: `${h}px` }} />
+                <div key={i} className="flex-1 rounded-t-[1px] bg-primary/30" style={{ height: `${h}px` }} />
               ))}
             </div>
+            <span className="text-[7px] font-medium text-[hsl(215,15%,55%)] shrink-0 tabular-nums">1:24</span>
           </div>
         </div>
       );
     case "question-block":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1", cardBg)}>
-          <div className={cn("h-[3px] w-4/5 rounded-[1px]", headingBg)} />
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
+          <div className="flex gap-[2px]">
+            <div className="h-[3px] w-[16px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
+            <div className="h-[3px] w-[12px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
+          </div>
           <div className="space-y-[3px]">
-            <div className="flex items-center gap-1 h-3 rounded-[4px] bg-white border border-[hsl(215,20%,90%)] px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.04)]">
-              <div className="w-1.5 h-1.5 rounded-full border-[1.5px] border-primary/40" />
-              <div className={cn("h-[2px] flex-1 rounded-[1px]", lineBgLight)} />
+            <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
+              <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-primary/50" />
+              <TextLine widths={[8, 5, 10]} />
             </div>
-            <div className="flex items-center gap-1 h-3 rounded-[4px] bg-white border border-[hsl(215,20%,90%)] px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.04)]">
-              <div className="w-1.5 h-1.5 rounded-full border-[1.5px] border-[hsl(215,15%,82%)]" />
-              <div className={cn("h-[2px] w-3/5 rounded-[1px]", lineBgLight)} />
+            <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
+              <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-[hsl(215,15%,80%)]" />
+              <TextLine widths={[6, 10]} />
+            </div>
+            <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
+              <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-[hsl(215,15%,80%)]" />
+              <TextLine widths={[10, 6, 4]} />
             </div>
           </div>
         </div>
       );
     case "quiz-block":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1", cardBg)}>
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
           <div className="flex items-center gap-1">
-            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/40" />
-            <div className={cn("h-[3px] w-2/5 rounded-[1px]", headingBg)} />
+            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/45" />
+            <div className="flex gap-[2px]">
+              <div className="h-[2.5px] w-[10px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
+              <div className="h-[2.5px] w-[14px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-40" />
+            </div>
           </div>
           <div className="space-y-[2px]">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-1 h-2.5 rounded-[3px] bg-white border border-primary/12 px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
-                <div className="w-1.5 h-1.5 rounded-sm bg-primary/20" />
-                <div className="h-[2px] flex-1 rounded-[1px] bg-primary/12" />
+              <div key={i} className="flex items-center gap-1 h-[10px] rounded-[3px] bg-white border border-primary/12 px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.02)]">
+                <div className="w-[5px] h-[5px] rounded-[2px] bg-primary/25" />
+                <TextLine widths={[6, 4, 8]} />
               </div>
             ))}
+          </div>
+          <div className="h-[2px] w-full rounded-full bg-[hsl(215,15%,88%)] overflow-hidden mt-0.5">
+            <div className="h-full w-2/3 rounded-full bg-primary/30" />
           </div>
         </div>
       );
