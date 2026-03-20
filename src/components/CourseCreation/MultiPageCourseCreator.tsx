@@ -111,6 +111,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(null);
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>({});
+  const [sectionObjectivesMap, setSectionObjectivesMap] = useState<Record<string, string>>({});
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const tourSteps: TourStep[] = [
