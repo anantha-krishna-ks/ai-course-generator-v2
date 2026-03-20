@@ -800,7 +800,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   )}
                 </div>
               ) : (
-                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} />
+                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} hasQuizBlock={blocks.some(b => b.type === "quiz")} />
               )}
             </div>
           </div>
