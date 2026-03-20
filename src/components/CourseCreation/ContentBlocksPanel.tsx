@@ -332,13 +332,10 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "quiz-block":
+    case "question-block":
       return (
         <div className="flex flex-col gap-1 w-full px-1.5">
-          <div className="flex items-center gap-1">
-            <HelpCircle className="w-2.5 h-2.5 text-primary/30" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-foreground/15" />
-          </div>
+          <div className="h-[3px] w-4/5 rounded-sm bg-foreground/15" />
           <div className="space-y-[3px]">
             <div className="flex items-center gap-1 h-3 rounded bg-muted-foreground/5 border border-muted-foreground/8 px-1">
               <div className="w-1.5 h-1.5 rounded-full border border-primary/30" />
@@ -348,6 +345,23 @@ function BlockThumbnail({ id }: { id: string }) {
               <div className="w-1.5 h-1.5 rounded-full border border-muted-foreground/15" />
               <div className="h-[2px] w-3/5 rounded-sm bg-muted-foreground/10" />
             </div>
+          </div>
+        </div>
+      );
+    case "quiz-block":
+      return (
+        <div className="flex flex-col gap-1 w-full px-1.5">
+          <div className="flex items-center gap-1">
+            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/30" />
+            <div className="h-[3px] w-2/5 rounded-sm bg-foreground/15" />
+          </div>
+          <div className="space-y-[2px]">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-1 h-2.5 rounded bg-primary/5 border border-primary/8 px-1">
+                <div className="w-1.5 h-1.5 rounded-sm bg-primary/15" />
+                <div className="h-[2px] flex-1 rounded-sm bg-primary/10" />
+              </div>
+            ))}
           </div>
         </div>
       );
