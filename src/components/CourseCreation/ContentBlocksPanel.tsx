@@ -43,7 +43,6 @@ interface ContentBlocksPanelProps {
   onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
-  hasQuizBlock?: boolean;
 }
 
 const ALL_BLOCKS: BlockItem[] = [
@@ -446,24 +445,17 @@ function BlockGridItem({
           {block.description && (
             <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
           )}
-          {locked ? (
-            <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
-              <Lock className="w-2.5 h-2.5" />
-              Only one quiz per page
-            </p>
-          ) : (
-            <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
-              <GripVertical className="w-2.5 h-2.5" />
-              Click or drag to add
-            </p>
-          )}
+          <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
+            <GripVertical className="w-2.5 h-2.5" />
+            Click or drag to add
+          </p>
         </div>
       </TooltipContent>
     </Tooltip>
   );
 }
 
-export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false, hasQuizBlock = false }: ContentBlocksPanelProps) {
+export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBlocks = searchQuery.trim()
@@ -482,7 +474,6 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
   }
 
   const handleClick = (block: BlockItem) => {
-    if (block.id === "quiz-block" && hasQuizBlock) return;
     onAddBlock(block.type, block.variant);
   };
 
@@ -524,7 +515,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
                     key={block.id}
                     block={block}
                     onClick={() => handleClick(block)}
-                    locked={block.id === "quiz-block" && hasQuizBlock}
+                    locked={false}
                   />
                 ))}
               </div>
