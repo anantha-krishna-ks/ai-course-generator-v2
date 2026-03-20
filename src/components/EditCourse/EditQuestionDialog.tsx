@@ -262,7 +262,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={optionExplanations[index] || ""}
                   onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
                   placeholder="Why is this option correct or incorrect…"
-                  className="min-h-[52px] max-h-[90px] resize-none text-xs bg-background/80 border-border/40 rounded-lg"
+                  className="min-h-[52px] max-h-[90px] resize-none text-xs bg-white border-border/50 rounded-lg"
                   rows={2}
                 />
               </div>
