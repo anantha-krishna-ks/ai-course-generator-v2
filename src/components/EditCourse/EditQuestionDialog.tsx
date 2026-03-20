@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { CircleCheck, Plus, Trash2, HelpCircle, ListChecks, MessageSquareText, Lightbulb } from "lucide-react";
+import { CircleCheck, Plus, Trash2, HelpCircle, ListChecks, MessageSquareText, Lightbulb, ChevronDown } from "lucide-react";
 
 interface Question {
   id: number;
@@ -19,6 +19,7 @@ interface Question {
   options: string[];
   answer: string;
   explanation: string;
+  optionExplanations?: string[];
 }
 
 interface EditQuestionDialogProps {
@@ -36,27 +37,51 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   const [options, setOptions] = useState<string[]>(["", "", "", ""]);
   const [answer, setAnswer] = useState("");
   const [explanation, setExplanation] = useState("");
+  const [optionExplanations, setOptionExplanations] = useState<string[]>([]);
+  const [expandedExplanations, setExpandedExplanations] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (question) {
       setType(question.type);
       setQuestionText(question.question);
-      setOptions(question.options.length > 0 ? question.options : ["", "", "", ""]);
+      const opts = question.options.length > 0 ? question.options : ["", "", "", ""];
+      setOptions(opts);
       setAnswer(question.answer);
       setExplanation(question.explanation || "");
+      setOptionExplanations(question.optionExplanations || new Array(opts.length).fill(""));
+      setExpandedExplanations(new Set());
     }
   }, [question]);
 
+  const toggleExplanation = (index: number) => {
+    setExpandedExplanations(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
+
   const handleAddOption = () => {
     setOptions([...options, ""]);
+    setOptionExplanations([...optionExplanations, ""]);
   };
 
   const handleRemoveOption = (index: number) => {
     if (options.length > 2) {
       setOptions(options.filter((_, i) => i !== index));
+      setOptionExplanations(optionExplanations.filter((_, i) => i !== index));
       if (answer === options[index]) {
         setAnswer("");
       }
+      setExpandedExplanations(prev => {
+        const next = new Set<number>();
+        prev.forEach(i => {
+          if (i < index) next.add(i);
+          else if (i > index) next.add(i - 1);
+        });
+        return next;
+      });
     }
   };
 
@@ -64,6 +89,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
+  };
+
+  const handleOptionExplanationChange = (index: number, value: string) => {
+    const newExplanations = [...optionExplanations];
+    newExplanations[index] = value;
+    setOptionExplanations(newExplanations);
   };
 
   const handleCorrectAnswerToggle = (optionValue: string) => {
@@ -116,6 +147,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       options: options.filter(opt => opt.trim()),
       answer: answer.trim(),
       explanation: explanation.trim(),
+      optionExplanations: optionExplanations.filter((_, i) => options[i]?.trim()),
     };
 
     onSave(updatedQuestion);
@@ -137,6 +169,81 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     MCQ: "Multiple Choice",
     TrueFalse: "True / False",
     FIB: "Fill in the Blank",
+  };
+
+  /** Renders a single option row with inline expandable explanation */
+  const OptionRow = ({
+    index,
+    option,
+    selector,
+  }: {
+    index: number;
+    option: string;
+    selector: React.ReactNode;
+  }) => {
+    const isCorrect = isOptionCorrect(option) && option.trim();
+    const isExpanded = expandedExplanations.has(index);
+    const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
+
+    return (
+      <div
+        className={cn(
+          "group rounded-lg border transition-colors",
+          isCorrect ? "bg-primary/8 border-primary shadow-sm" : "hover:bg-accent/20"
+        )}
+      >
+        {/* Main option row */}
+        <div className="flex items-center gap-3 p-3.5">
+          {selector}
+          <Input
+            value={option}
+            onChange={(e) => handleOptionChange(index, e.target.value)}
+            placeholder={`Option ${index + 1}`}
+            className="flex-1 border-0 border-b border-transparent bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 pb-1 text-sm hover:border-border focus:border-primary rounded-none placeholder:text-muted-foreground/50 transition-colors"
+          />
+          <button
+            onClick={() => toggleExplanation(index)}
+            className={cn(
+              "p-1 rounded-md transition-all shrink-0",
+              isExpanded || hasExplanation
+                ? "text-primary/70 hover:text-primary hover:bg-primary/10"
+                : "opacity-0 group-hover:opacity-100 text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
+            )}
+            title="Option explanation"
+          >
+            <Lightbulb className="w-3.5 h-3.5" />
+          </button>
+          {options.length > 2 && (
+            <button
+              onClick={() => handleRemoveOption(index)}
+              className="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-destructive/10 transition-all shrink-0"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-destructive" />
+            </button>
+          )}
+        </div>
+
+        {/* Expandable explanation */}
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-200",
+            isExpanded ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+          )}
+        >
+          <div className="px-3.5 pb-3 pt-0">
+            <div className="relative">
+              <Textarea
+                value={optionExplanations[index] || ""}
+                onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
+                placeholder="Why is this option correct/incorrect…"
+                className="min-h-[48px] max-h-[80px] resize-none text-xs bg-muted/30 border-border/60 focus:border-primary/40 rounded-lg pl-3 pr-3 py-2"
+                rows={2}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -168,14 +275,18 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     setType(value);
                     if (value === "TrueFalse") {
                       setOptions(["True", "False"]);
+                      setOptionExplanations(["", ""]);
                       setAnswer("");
                     } else if (value === "FIB") {
                       setOptions([]);
+                      setOptionExplanations([]);
                       setAnswer("");
                     } else {
                       setOptions(["", "", "", ""]);
+                      setOptionExplanations(["", "", "", ""]);
                       setAnswer("");
                     }
+                    setExpandedExplanations(new Set());
                   }}>
                     <SelectTrigger id="questionType" className="w-full">
                       <SelectValue />
@@ -221,19 +332,14 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     <CircleCheck className="w-4 h-4 text-muted-foreground" />
                     Select Correct Answer
                   </Label>
-                  <RadioGroup value={answer} onValueChange={setAnswer} className="grid grid-cols-2 gap-3">
-                    {["True", "False"].map((val) => (
-                      <label
+                  <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
+                    {["True", "False"].map((val, index) => (
+                      <OptionRow
                         key={val}
-                        htmlFor={`tf-${val}`}
-                        className={cn(
-                          "flex items-center gap-3 rounded-lg border p-4 cursor-pointer transition-colors hover:bg-accent/30",
-                          answer === val && "bg-primary/8 border-primary shadow-sm"
-                        )}
-                      >
-                        <RadioGroupItem value={val} id={`tf-${val}`} />
-                        <span className="text-sm font-medium">{val}</span>
-                      </label>
+                        index={index}
+                        option={val}
+                        selector={<RadioGroupItem value={val} id={`tf-${val}`} className="shrink-0" />}
+                      />
                     ))}
                   </RadioGroup>
                 </div>
@@ -260,72 +366,55 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         <span className="text-xs text-muted-foreground font-normal ml-1">(select all correct)</span>
                       )}
                     </Label>
+                    <button
+                      onClick={() => {
+                        if (expandedExplanations.size > 0) {
+                          setExpandedExplanations(new Set());
+                        } else {
+                          setExpandedExplanations(new Set(options.map((_, i) => i)));
+                        }
+                      }}
+                      className="text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors flex items-center gap-1"
+                    >
+                      <Lightbulb className="w-3 h-3" />
+                      {expandedExplanations.size > 0 ? "Hide explanations" : "Show explanations"}
+                    </button>
                   </div>
                   <p className="text-xs text-muted-foreground -mt-1">
-                    Click the radio/checkbox to mark the correct answer.
+                    Click the radio/checkbox to mark correct. Use <Lightbulb className="w-3 h-3 inline -mt-0.5" /> to add per-option explanations.
                   </p>
                   <div className="space-y-2">
                     {type === "SCQ" ? (
-                      <RadioGroup value={answer} onValueChange={setAnswer}>
+                      <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
                         {options.map((option, index) => (
-                          <div
+                          <OptionRow
                             key={index}
-                            className={cn(
-                              "group flex items-center gap-3 rounded-lg border p-3.5 transition-colors hover:bg-accent/20",
-                              answer === option && option.trim() && "bg-primary/8 border-primary shadow-sm"
-                            )}
-                          >
-                            <RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />
-                            <Input
-                              value={option}
-                              onChange={(e) => handleOptionChange(index, e.target.value)}
-                              placeholder={`Option ${index + 1}`}
-                              className="flex-1 border-0 border-b border-transparent bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 pb-1 text-sm hover:border-border focus:border-primary rounded-none placeholder:text-muted-foreground/50 transition-colors"
-                            />
-                            {options.length > 2 && (
-                              <button
-                                onClick={() => handleRemoveOption(index)}
-                                className="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-destructive/10 transition-all shrink-0"
-                              >
-                                <Trash2 className="w-3.5 h-3.5 text-destructive" />
-                              </button>
-                            )}
-                          </div>
+                            index={index}
+                            option={option}
+                            selector={<RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />}
+                          />
                         ))}
                       </RadioGroup>
                     ) : (
-                      options.map((option, index) => (
-                        <div
-                          key={index}
-                          className={cn(
-                            "group flex items-center gap-3 rounded-lg border p-3.5 transition-colors hover:bg-accent/20",
-                            isOptionCorrect(option) && option.trim() && "bg-primary/8 border-primary shadow-sm"
-                          )}
-                        >
-                          <Checkbox
-                            id={`option-${index}`}
-                            checked={isOptionCorrect(option)}
-                            onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
-                            disabled={!option.trim()}
-                            className="shrink-0"
+                      <div className="space-y-2">
+                        {options.map((option, index) => (
+                          <OptionRow
+                            key={index}
+                            index={index}
+                            option={option}
+                            selector={
+                              <Checkbox
+                                id={`option-${index}`}
+                                checked={isOptionCorrect(option)}
+                                onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
+                                disabled={!option.trim()}
+                                className="shrink-0"
+                              />
+                            }
                           />
-                          <Input
-                            value={option}
-                            onChange={(e) => handleOptionChange(index, e.target.value)}
-                            placeholder={`Option ${index + 1}`}
-                            className="flex-1 border-0 border-b border-transparent bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 pb-1 text-sm hover:border-border focus:border-primary rounded-none placeholder:text-muted-foreground/50 transition-colors"
-                          />
-                          {options.length > 2 && (
-                            <button
-                              onClick={() => handleRemoveOption(index)}
-                              className="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-destructive/10 transition-all shrink-0"
-                            >
-                              <Trash2 className="w-3.5 h-3.5 text-destructive" />
-                            </button>
-                          )}
-                        </div>
-                      ))
-                      )}
+                        ))}
+                      </div>
+                    )}
                     <div
                       onClick={handleAddOption}
                       className="flex items-center gap-3 rounded-lg border border-dashed border-border p-3.5 cursor-pointer transition-colors hover:bg-accent/20 hover:border-foreground/20"
@@ -337,12 +426,15 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 </div>
               )}
 
-              {/* Explanation */}
+              {/* General Explanation */}
               <div className="space-y-2">
                 <Label htmlFor="explanation" className="text-sm font-medium flex items-center gap-1.5">
                   <Lightbulb className="w-4 h-4 text-muted-foreground" />
-                  Explanation
+                  General Explanation
                 </Label>
+                <p className="text-xs text-muted-foreground -mt-0.5">
+                  Overall explanation shown after answering the question.
+                </p>
                 <Textarea
                   id="explanation"
                   value={explanation}
