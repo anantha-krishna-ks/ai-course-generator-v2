@@ -32,7 +32,7 @@ interface BlockItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   categoryLabel: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   variant?: string;
   locked?: boolean;
   isQuizGenerator?: boolean;
