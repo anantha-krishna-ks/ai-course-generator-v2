@@ -288,7 +288,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
               </DialogDescription>
             </div>
             {!isAddMode && (
-              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/60 px-2.5 py-1.5 rounded-lg border border-border/40">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/[0.06] px-2.5 py-1.5 rounded-lg border border-primary/15">
                 {typeConfig[type].icon}
                 {typeConfig[type].label}
               </div>
