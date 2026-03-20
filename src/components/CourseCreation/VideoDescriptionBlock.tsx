@@ -54,17 +54,14 @@ export function VideoDescriptionBlock({ content, onChange }: VideoDescriptionBlo
   );
 
   const textSection = (
-    <div className="flex-1 min-w-0">
+    <div className="flex-1 min-w-0 flex">
       <textarea
         value={data.description}
         onChange={(e) => {
           updateField("description", e.target.value);
-          e.target.style.height = 'auto';
-          e.target.style.height = e.target.scrollHeight + 'px';
         }}
         placeholder="Add a description..."
-        className="w-full rounded-lg border border-transparent hover:border-foreground/20 focus:border-foreground/20 bg-transparent px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none resize-none overflow-hidden min-h-[80px] transition-colors"
-        rows={3}
+        className="w-full h-full rounded-lg border border-transparent hover:border-foreground/20 focus:border-foreground/20 bg-transparent px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none resize-none transition-colors"
       />
     </div>
   );
@@ -94,7 +91,7 @@ export function VideoDescriptionBlock({ content, onChange }: VideoDescriptionBlo
 
       {/* Content area — side by side */}
       <div className="p-4">
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-stretch">
           {isLeft ? (
             <>
               {videoSection}
