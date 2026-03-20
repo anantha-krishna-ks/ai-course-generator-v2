@@ -217,7 +217,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   /** Render a single option card */
   const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
-    const isCorrect = isOptionCorrect(option) && option.trim();
+    const isCorrect = isOptionCorrect(index) && option.trim();
     const isExpanded = expandedExplanations.has(index);
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
