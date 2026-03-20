@@ -67,7 +67,8 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
   );
 }
 
-export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockProps) {
+export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
+  const isQuizVariant = variant === "quiz-block";
   // Parse questions from content
   const [questions, setQuestionsState] = useState<Question[]>(() => {
     try {
