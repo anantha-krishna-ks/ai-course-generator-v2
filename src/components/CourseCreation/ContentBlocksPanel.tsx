@@ -43,6 +43,7 @@ interface ContentBlocksPanelProps {
   onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
+  hasQuizBlock?: boolean;
 }
 
 const ALL_BLOCKS: BlockItem[] = [
@@ -57,9 +58,8 @@ const ALL_BLOCKS: BlockItem[] = [
   // MEDIA
   { id: "video-upload", label: "Video", icon: Video, category: "media", categoryLabel: "MEDIA", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
   { id: "audio-upload", label: "Audio", icon: Mic, category: "media", categoryLabel: "MEDIA", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
-  // QUESTION / QUIZ
-  { id: "question-block", label: "Question", icon: HelpCircle, category: "quiz", categoryLabel: "QUESTION / QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
-  { id: "quiz-generate", label: "Quiz (AI)", icon: Sparkles, category: "quiz", categoryLabel: "QUESTION / QUIZ", type: "quiz", isQuizGenerator: true, description: "Auto-generate a quiz using AI from your content" },
+  // QUIZ
+  { id: "quiz-block", label: "Quiz", icon: HelpCircle, category: "quiz", categoryLabel: "QUIZ", type: "quiz", variant: "quiz-block", description: "Add a quiz with questions — one per page" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
@@ -185,10 +185,13 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "question-block":
+    case "quiz-block":
       return (
         <div className="w-48 p-3 space-y-2">
-          <div className="h-2 w-4/5 rounded-sm bg-foreground/25" />
+          <div className="flex items-center gap-1.5 mb-1">
+            <HelpCircle className="w-3.5 h-3.5 text-primary/50" />
+            <div className="h-2 w-2/3 rounded-sm bg-foreground/25" />
+          </div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
               <div className="w-2.5 h-2.5 rounded-full border-2 border-primary/40" />
@@ -202,23 +205,6 @@ function BlockPreview({ id }: { id: string }) {
               <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
               <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/15" />
             </div>
-          </div>
-        </div>
-      );
-    case "quiz-generate":
-      return (
-        <div className="w-48 p-3 space-y-2">
-          <div className="flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-primary/60" />
-            <div className="h-2 w-2/3 rounded-sm bg-primary/20" />
-          </div>
-          <div className="space-y-1.5">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-2 h-4 rounded bg-primary/5 border border-primary/10 px-2">
-                <div className="w-2 h-2 rounded-full bg-primary/20" />
-                <div className="h-1 flex-1 rounded-sm bg-primary/10" />
-              </div>
-            ))}
           </div>
         </div>
       );
@@ -326,10 +312,13 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "question-block":
+    case "quiz-block":
       return (
         <div className="flex flex-col gap-1 w-full px-1.5">
-          <div className="h-[3px] w-4/5 rounded-sm bg-foreground/15" />
+          <div className="flex items-center gap-1">
+            <HelpCircle className="w-2.5 h-2.5 text-primary/30" />
+            <div className="h-[3px] w-3/5 rounded-sm bg-foreground/15" />
+          </div>
           <div className="space-y-[3px]">
             <div className="flex items-center gap-1 h-3 rounded bg-muted-foreground/5 border border-muted-foreground/8 px-1">
               <div className="w-1.5 h-1.5 rounded-full border border-primary/30" />
@@ -339,16 +328,6 @@ function BlockThumbnail({ id }: { id: string }) {
               <div className="w-1.5 h-1.5 rounded-full border border-muted-foreground/15" />
               <div className="h-[2px] w-3/5 rounded-sm bg-muted-foreground/10" />
             </div>
-          </div>
-        </div>
-      );
-    case "quiz-generate":
-      return (
-        <div className="flex flex-col items-center gap-1.5 w-full px-1.5">
-          <Sparkles className="w-4 h-4 text-primary/40" />
-          <div className="space-y-[3px] w-full">
-            <div className="h-[3px] w-full rounded-sm bg-primary/12" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-primary/10 mx-auto" />
           </div>
         </div>
       );
@@ -433,7 +412,12 @@ function BlockGridItem({
           {block.description && (
             <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
           )}
-          {!locked && (
+          {locked ? (
+            <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
+              <Lock className="w-2.5 h-2.5" />
+              Only one quiz per page
+            </p>
+          ) : (
             <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
               <GripVertical className="w-2.5 h-2.5" />
               Click or drag to add
@@ -445,7 +429,7 @@ function BlockGridItem({
   );
 }
 
-export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
+export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false, hasQuizBlock = false }: ContentBlocksPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBlocks = searchQuery.trim()
@@ -464,10 +448,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
   }
 
   const handleClick = (block: BlockItem) => {
-    if (block.isQuizGenerator) {
-      onOpenQuizGenerator?.();
-      return;
-    }
+    if (block.type === "quiz" && hasQuizBlock) return;
     onAddBlock(block.type, block.variant);
   };
 
@@ -509,7 +490,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
                     key={block.id}
                     block={block}
                     onClick={() => handleClick(block)}
-                    locked={block.isQuizGenerator && !aiEnabled}
+                    locked={block.type === "quiz" && hasQuizBlock}
                   />
                 ))}
               </div>
