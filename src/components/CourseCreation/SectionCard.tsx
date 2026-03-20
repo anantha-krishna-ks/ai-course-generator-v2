@@ -456,8 +456,8 @@ export function SectionCard({
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors shrink-0">
-                      <MoreHorizontal className="w-4 h-4 text-foreground/70" />
+                    <button className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted data-[state=open]:bg-primary/10 data-[state=open]:border-primary/30 flex items-center justify-center transition-colors shrink-0 group/trigger">
+                      <MoreHorizontal className="w-4 h-4 text-foreground/70 group-data-[state=open]/trigger:text-primary transition-colors" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-52 bg-background border border-border p-1.5">
