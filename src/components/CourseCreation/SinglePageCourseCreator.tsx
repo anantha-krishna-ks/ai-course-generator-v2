@@ -740,7 +740,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       {/* Main body with sidebar */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Left Sidebar */}
-        <div className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[320px]")}>
+        <div className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[360px]")}>
           {!sidebarCollapsed && (
             <button onClick={() => setSidebarCollapsed(true)} className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
               <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
