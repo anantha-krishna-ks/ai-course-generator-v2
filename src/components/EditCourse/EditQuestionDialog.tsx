@@ -275,7 +275,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-[640px] max-h-[88vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border-border/60 shadow-xl">
+      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border-border/60 shadow-xl">
         {/* Header */}
         <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/50 bg-card">
           <div className="flex items-center justify-between">
@@ -348,7 +348,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   placeholder="Type your question here…"
-                  className="min-h-[80px] resize-none rounded-xl bg-muted/30 border-border/40 focus:border-primary/40 text-sm"
+                  className="min-h-[80px] resize-none rounded-xl bg-white border-border/40 focus:border-primary/40 text-sm"
                 />
               </div>
 
@@ -398,7 +398,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                             value={optionExplanations[index] || ""}
                             onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
                             placeholder={`Why "${val}" is the ${answer === val ? "correct" : "incorrect"} answer…`}
-                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-muted/30 border-border/40 rounded-lg"
+                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-white border-border/40 rounded-lg"
                             rows={2}
                           />
                         )}
@@ -416,7 +416,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Enter the correct answer…"
-                    className="rounded-xl bg-muted/30 border-border/40 focus:border-primary/40"
+                    className="rounded-xl bg-white border-border/40 focus:border-primary/40"
                   />
                 </div>
               ) : (
@@ -487,7 +487,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
                   placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-muted/30 border-border/40 focus:border-primary/40 text-sm"
+                  className="min-h-[72px] resize-none rounded-xl bg-white border-border/40 focus:border-primary/40 text-sm"
                 />
               </div>
             </div>
