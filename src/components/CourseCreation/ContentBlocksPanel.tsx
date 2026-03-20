@@ -43,6 +43,7 @@ interface ContentBlocksPanelProps {
   onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
+  hasQuizBlock?: boolean;
 }
 
 const ALL_BLOCKS: BlockItem[] = [
