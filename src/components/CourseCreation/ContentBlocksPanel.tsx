@@ -481,7 +481,6 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
   }
 
   const handleClick = (block: BlockItem) => {
-    if (block.id === "quiz-block" && hasQuizBlock) return;
     onAddBlock(block.type, block.variant);
   };
 
