@@ -61,8 +61,8 @@ const ALL_BLOCKS: BlockItem[] = [
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
   // ASSESSMENT
-  { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "ASSESSMENT", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
-  { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "ASSESSMENT", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
+  { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
+  { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
