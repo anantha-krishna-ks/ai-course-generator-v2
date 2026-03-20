@@ -64,6 +64,128 @@ export function resolveTemplateDropData(
   return { type: block.type, variant: block.variant };
 }
 
+/** Miniature layout thumbnails for each block variant */
+function BlockThumbnail({ id }: { id: string }) {
+  const base = "w-full h-full rounded";
+
+  switch (id) {
+    case "heading-text":
+      return (
+        <div className="flex flex-col gap-1.5 w-full px-1">
+          <div className="h-2 w-3/5 rounded-sm bg-foreground/25" />
+          <div className="space-y-1">
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/15" />
+            <div className="h-1 w-4/5 rounded-sm bg-muted-foreground/15" />
+            <div className="h-1 w-3/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+        </div>
+      );
+    case "text-only":
+      return (
+        <div className="flex flex-col gap-1 w-full px-1">
+          <div className="h-1 w-full rounded-sm bg-muted-foreground/20" />
+          <div className="h-1 w-full rounded-sm bg-muted-foreground/20" />
+          <div className="h-1 w-4/5 rounded-sm bg-muted-foreground/20" />
+          <div className="h-1 w-3/5 rounded-sm bg-muted-foreground/20" />
+        </div>
+      );
+    case "two-columns":
+      return (
+        <div className="flex gap-1.5 w-full px-1">
+          <div className="flex-1 space-y-1">
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1 w-4/5 rounded-sm bg-muted-foreground/20" />
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/20" />
+          </div>
+          <div className="flex-1 space-y-1">
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1 w-3/5 rounded-sm bg-muted-foreground/20" />
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/20" />
+          </div>
+        </div>
+      );
+    case "image-full":
+      return (
+        <div className="w-full px-1">
+          <div className="w-full h-8 rounded bg-muted-foreground/10 flex items-center justify-center">
+            <ImageIcon className="w-3.5 h-3.5 text-muted-foreground/30" />
+          </div>
+        </div>
+      );
+    case "image-top":
+      return (
+        <div className="flex flex-col gap-1.5 w-full px-1">
+          <div className="w-full h-5 rounded bg-muted-foreground/10 flex items-center justify-center">
+            <ImageIcon className="w-3 h-3 text-muted-foreground/30" />
+          </div>
+          <div className="space-y-1">
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/15" />
+            <div className="h-1 w-4/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+        </div>
+      );
+    case "image-bottom":
+      return (
+        <div className="flex flex-col gap-1.5 w-full px-1">
+          <div className="space-y-1">
+            <div className="h-1 w-full rounded-sm bg-muted-foreground/15" />
+            <div className="h-1 w-4/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+          <div className="w-full h-5 rounded bg-muted-foreground/10 flex items-center justify-center">
+            <ImageIcon className="w-3 h-3 text-muted-foreground/30" />
+          </div>
+        </div>
+      );
+    case "video-upload":
+      return (
+        <div className="w-full px-1">
+          <div className="w-full h-8 rounded bg-muted-foreground/10 flex items-center justify-center">
+            <div className="w-4 h-4 rounded-full bg-muted-foreground/15 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-muted-foreground/30 ml-0.5" />
+            </div>
+          </div>
+        </div>
+      );
+    case "audio-upload":
+      return (
+        <div className="w-full px-1">
+          <div className="w-full h-7 rounded bg-muted-foreground/10 flex items-center gap-0.5 px-2">
+            <div className="w-3 h-3 rounded-full bg-muted-foreground/15 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-muted-foreground/30 ml-0.5" />
+            </div>
+            <div className="flex-1 flex items-center gap-[2px] px-1">
+              {[3, 5, 2, 6, 4, 7, 3, 5, 2, 4, 6, 3].map((h, i) => (
+                <div key={i} className="flex-1 rounded-full bg-muted-foreground/20" style={{ height: `${h}px` }} />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    case "question-block":
+      return (
+        <div className="flex flex-col gap-1.5 w-full px-1">
+          <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
+          <div className="space-y-1">
+            <div className="h-3 w-full rounded bg-muted-foreground/8 border border-muted-foreground/10" />
+            <div className="h-3 w-full rounded bg-muted-foreground/8 border border-muted-foreground/10" />
+          </div>
+        </div>
+      );
+    case "quiz-generate":
+      return (
+        <div className="flex flex-col items-center gap-1 w-full px-1">
+          <Sparkles className="w-4 h-4 text-primary/50" />
+          <div className="space-y-1 w-full">
+            <div className="h-1 w-full rounded-sm bg-primary/15" />
+            <div className="h-1 w-3/5 rounded-sm bg-primary/15 mx-auto" />
+          </div>
+        </div>
+      );
+    default:
+      return null;
+  }
+}
+
 function BlockGridItem({
   block,
   onClick,
@@ -73,8 +195,6 @@ function BlockGridItem({
   onClick: () => void;
   locked?: boolean;
 }) {
-  const Icon = block.icon;
-
   const handleDragStart = (e: React.DragEvent) => {
     if (locked) {
       e.preventDefault();
@@ -85,13 +205,11 @@ function BlockGridItem({
       JSON.stringify({ templateId: block.id, categoryId: block.category })
     );
     e.dataTransfer.effectAllowed = "copy";
-    // Set a drag image for visual feedback
     if (e.dataTransfer.setDragImage && e.currentTarget instanceof HTMLElement) {
       e.dataTransfer.setDragImage(e.currentTarget, 40, 20);
     }
   };
 
-  // Stop pointer events from propagating to dnd-kit's document-level sensors
   const handlePointerDown = (e: React.PointerEvent) => {
     e.stopPropagation();
   };
@@ -105,10 +223,10 @@ function BlockGridItem({
       onDragStart={handleDragStart}
       onPointerDown={locked ? undefined : handlePointerDown}
       className={cn(
-        "flex flex-col items-center justify-center gap-2 p-3 rounded-lg transition-all duration-200 select-none relative group",
+        "flex flex-col items-center justify-center gap-2 p-2.5 rounded-xl border transition-all duration-200 select-none relative group",
         locked
-          ? "opacity-50 cursor-not-allowed"
-          : "hover:bg-muted cursor-grab active:cursor-grabbing"
+          ? "opacity-50 cursor-not-allowed border-transparent"
+          : "border-border/50 hover:border-border hover:shadow-sm hover:bg-muted/50 cursor-grab active:cursor-grabbing"
       )}
     >
       {locked && (
@@ -116,19 +234,12 @@ function BlockGridItem({
           <Lock className="w-3 h-3 text-muted-foreground/50" />
         </div>
       )}
-      <div
-        className={cn(
-          "w-10 h-10 rounded-lg flex items-center justify-center transition-colors",
-          locked
-            ? "text-muted-foreground/40"
-            : "text-foreground/70 group-hover:text-foreground"
-        )}
-      >
-        <Icon className="w-6 h-6" />
+      <div className="w-full h-10 flex items-center justify-center">
+        <BlockThumbnail id={block.id} />
       </div>
       <span
         className={cn(
-          "text-[11px] font-medium text-center leading-tight",
+          "text-[10px] font-medium text-center leading-tight",
           locked ? "text-muted-foreground/50" : "text-muted-foreground group-hover:text-foreground"
         )}
       >
