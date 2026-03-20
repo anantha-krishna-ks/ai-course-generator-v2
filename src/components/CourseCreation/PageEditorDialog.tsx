@@ -519,7 +519,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     <span className="text-sm text-muted-foreground">Navigate to:</span>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4">
+                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4 bg-white hover:bg-white/90">
                           <Plus className="w-3.5 h-3.5" />
                           Add
                         </Button>
