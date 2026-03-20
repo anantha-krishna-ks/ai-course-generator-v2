@@ -574,7 +574,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
               </div>
 
               {/* 3-column grid */}
-              <div className="grid grid-cols-3 gap-1.5">
+              <div className="grid grid-cols-3 gap-2.5">
                 {group.blocks.map((block) => (
                   <BlockGridItem
                     key={block.id}
