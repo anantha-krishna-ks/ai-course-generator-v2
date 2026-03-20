@@ -132,7 +132,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0">
-                  <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground/50" />
+                  <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground/70" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
