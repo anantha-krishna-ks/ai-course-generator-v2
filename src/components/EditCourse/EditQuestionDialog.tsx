@@ -398,7 +398,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                             value={optionExplanations[index] || ""}
                             onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
                             placeholder={`Why "${val}" is the ${answer === val ? "correct" : "incorrect"} answer…`}
-                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-muted/30 border-border/40 rounded-lg"
+                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-white border-border/40 rounded-lg"
                             rows={2}
                           />
                         )}
