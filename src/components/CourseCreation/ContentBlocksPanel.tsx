@@ -266,73 +266,43 @@ function BlockPreview({ id }: { id: string }) {
   }
 }
 
-/** Simulated text line with word-like segments */
-function TextLine({ widths, className }: { widths: number[]; className?: string }) {
-  return (
-    <div className={cn("flex items-center gap-[2px] flex-wrap", className)}>
-      {widths.map((w, i) => (
-        <div
-          key={i}
-          className="h-[2px] rounded-[0.5px] bg-[hsl(215,15%,55%)]"
-          style={{ width: `${w}px`, opacity: 0.35 + Math.random() * 0.15 }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/** Miniature layout thumbnails for each block variant */
+/** Miniature layout thumbnails for each block variant — uses actual micro-text to avoid skeleton-loader feel */
 function BlockThumbnail({ id }: { id: string }) {
   const cardBg = "bg-[hsl(211,60%,97%)]";
   const imgBg = "bg-gradient-to-br from-[hsl(211,40%,92%)] to-[hsl(211,35%,88%)]";
   const imgBorder = "border-[hsl(211,30%,88%)]";
+  const headingStyle = "text-[5px] font-bold text-[hsl(215,20%,25%)] leading-[1.3] tracking-tight";
+  const bodyStyle = "text-[4px] text-[hsl(215,12%,45%)] leading-[1.6] tracking-normal";
 
   switch (id) {
     case "heading-text":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className="flex gap-[3px]">
-            <div className="h-[3px] w-[18px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-60" />
-            <div className="h-[3px] w-[14px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-55" />
-            <div className="h-[3px] w-[22px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
-          </div>
-          <div className="space-y-[4px]">
-            <TextLine widths={[12, 8, 16, 10, 14, 6]} />
-            <TextLine widths={[10, 14, 8, 12, 10]} />
-            <TextLine widths={[14, 6, 10]} />
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
+          <p className={headingStyle}>Getting Started Guide</p>
+          <div>
+            <p className={bodyStyle}>Learn the fundamentals of building your first project with our step-by-step guide.</p>
+            <p className={cn(bodyStyle, "mt-[1px] opacity-70")}>Follow along to set up everything.</p>
           </div>
         </div>
       );
     case "text-only":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-[4px]", cardBg)}>
-          <TextLine widths={[12, 8, 16, 10, 14, 6, 10]} />
-          <TextLine widths={[10, 14, 8, 12, 10, 8]} />
-          <TextLine widths={[14, 6, 10, 16, 8]} />
-          <TextLine widths={[10, 12, 6]} />
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5", cardBg)}>
+          <p className={bodyStyle}>Effective learning combines theory with hands-on practice. Each module builds upon the previous one, ensuring a smooth progression.</p>
+          <p className={cn(bodyStyle, "mt-[2px] opacity-70")}>Take your time with each section.</p>
         </div>
       );
     case "two-columns":
       return (
         <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className="flex-1 space-y-[4px]">
-            <div className="flex gap-[2px]">
-              <div className="h-[2.5px] w-[10px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
-              <div className="h-[2.5px] w-[14px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
-            </div>
-            <TextLine widths={[8, 6, 10, 5]} />
-            <TextLine widths={[6, 10, 8]} />
-            <TextLine widths={[10, 4]} />
+          <div className="flex-1 min-w-0">
+            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Overview</p>
+            <p className={cn(bodyStyle, "text-[3.5px]")}>Core concepts and key principles for effective learning paths.</p>
           </div>
           <div className="w-px bg-[hsl(215,15%,85%)]" />
-          <div className="flex-1 space-y-[4px]">
-            <div className="flex gap-[2px]">
-              <div className="h-[2.5px] w-[12px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
-              <div className="h-[2.5px] w-[8px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
-            </div>
-            <TextLine widths={[6, 10, 4, 8]} />
-            <TextLine widths={[10, 6, 8]} />
-            <TextLine widths={[8, 6]} />
+          <div className="flex-1 min-w-0">
+            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Details</p>
+            <p className={cn(bodyStyle, "text-[3.5px]")}>Advanced techniques and best practices for implementation.</p>
           </div>
         </div>
       );
@@ -346,23 +316,17 @@ function BlockThumbnail({ id }: { id: string }) {
       );
     case "image-top":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-2", cardBg)}>
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
           <div className={cn("w-full h-6 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
             <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
           </div>
-          <div className="space-y-[4px]">
-            <TextLine widths={[12, 8, 14, 6, 10]} />
-            <TextLine widths={[8, 10, 6]} />
-          </div>
+          <p className={cn(bodyStyle, "text-[3.5px]")}>A detailed caption describing the image content shown above.</p>
         </div>
       );
     case "image-bottom":
       return (
-        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className="space-y-[4px]">
-            <TextLine widths={[12, 8, 14, 6, 10]} />
-            <TextLine widths={[8, 10, 6]} />
-          </div>
+        <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
+          <p className={cn(bodyStyle, "text-[3.5px]")}>Introductory text providing context for the visual below.</p>
           <div className={cn("w-full h-6 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
             <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
           </div>
@@ -389,20 +353,18 @@ function BlockThumbnail({ id }: { id: string }) {
               <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
           </div>
-          <div className="flex-1 space-y-[4px] pt-1">
-            <TextLine widths={[8, 6, 10, 5]} />
-            <TextLine widths={[6, 10, 8]} />
-            <TextLine widths={[10, 4, 6]} />
+          <div className="flex-1 min-w-0 pt-0.5">
+            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Video title</p>
+            <p className={cn(bodyStyle, "text-[3.5px]")}>A short description of the video content shown here.</p>
           </div>
         </div>
       );
     case "video-right":
       return (
         <div className={cn("flex w-full rounded-lg p-2.5 gap-2", cardBg)}>
-          <div className="flex-1 space-y-[4px] pt-1">
-            <TextLine widths={[8, 6, 10, 5]} />
-            <TextLine widths={[6, 10, 8]} />
-            <TextLine widths={[10, 4, 6]} />
+          <div className="flex-1 min-w-0 pt-0.5">
+            <p className={cn(headingStyle, "text-[4px] mb-[2px]")}>Video title</p>
+            <p className={cn(bodyStyle, "text-[3.5px]")}>A short description of the video content shown here.</p>
           </div>
           <div className={cn("flex-1 h-9 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
             <div className="w-4 h-4 rounded-full bg-white/90 shadow-sm flex items-center justify-center">
@@ -430,22 +392,19 @@ function BlockThumbnail({ id }: { id: string }) {
     case "question-block":
       return (
         <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
-          <div className="flex gap-[2px]">
-            <div className="h-[3px] w-[16px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-50" />
-            <div className="h-[3px] w-[12px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
-          </div>
+          <p className={cn(headingStyle, "text-[4px]")}>Select the correct answer:</p>
           <div className="space-y-[3px]">
             <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
               <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-primary/50" />
-              <TextLine widths={[8, 5, 10]} />
+              <span className="text-[3.5px] text-[hsl(215,12%,45%)]">Option A — First answer</span>
             </div>
             <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
               <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-[hsl(215,15%,80%)]" />
-              <TextLine widths={[6, 10]} />
+              <span className="text-[3.5px] text-[hsl(215,12%,45%)]">Option B — Second answer</span>
             </div>
             <div className="flex items-center gap-1.5 h-[11px] rounded-[4px] bg-white border border-[hsl(215,20%,88%)] px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
               <div className="w-[5px] h-[5px] rounded-full border-[1.5px] border-[hsl(215,15%,80%)]" />
-              <TextLine widths={[10, 6, 4]} />
+              <span className="text-[3.5px] text-[hsl(215,12%,45%)]">Option C — Third answer</span>
             </div>
           </div>
         </div>
@@ -455,16 +414,13 @@ function BlockThumbnail({ id }: { id: string }) {
         <div className={cn("flex flex-col w-full rounded-lg p-2.5 gap-1.5", cardBg)}>
           <div className="flex items-center gap-1">
             <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/45" />
-            <div className="flex gap-[2px]">
-              <div className="h-[2.5px] w-[10px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-45" />
-              <div className="h-[2.5px] w-[14px] rounded-[1px] bg-[hsl(215,20%,35%)] opacity-40" />
-            </div>
+            <span className="text-[4px] font-bold text-[hsl(215,20%,25%)]">Quiz — Module 1</span>
           </div>
           <div className="space-y-[2px]">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-1 h-[10px] rounded-[3px] bg-white border border-primary/12 px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.02)]">
+            {["Q1 — Basics", "Q2 — Concepts", "Q3 — Practice"].map((label, i) => (
+              <div key={i} className="flex items-center gap-1 h-[10px] rounded-[3px] bg-white border border-primary/12 px-1.5 shadow-[0_0.5px_1px_rgba(0,0,0,0.02)]">
                 <div className="w-[5px] h-[5px] rounded-[2px] bg-primary/25" />
-                <TextLine widths={[6, 4, 8]} />
+                <span className="text-[3.5px] text-[hsl(215,12%,50%)]">{label}</span>
               </div>
             ))}
           </div>
