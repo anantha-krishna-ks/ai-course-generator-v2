@@ -348,7 +348,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   placeholder="Type your question here…"
-                  className="min-h-[80px] resize-none rounded-xl bg-white border-border/40 focus:border-primary/40 text-sm"
+                  className="min-h-[80px] resize-none rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white text-sm transition-colors"
                 />
               </div>
 
