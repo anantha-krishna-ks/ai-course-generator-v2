@@ -554,28 +554,33 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                       {expandedExplanations.size > 0 ? "Collapse all" : "Expand all"}
                     </button>
                   </div>
-                  <div className="space-y-2">
-                    {type === "SCQ" ? (
-                      <RadioGroup value={String(Array.from(correctIndices)[0] ?? -1)} onValueChange={(val) => handleCorrectIndexToggle(Number(val))} className="space-y-2">
-                        {options.map((option, index) =>
-                          renderOptionRow(index, option, <RadioGroupItem value={String(index)} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
-                        )}
-                      </RadioGroup>
-                    ) : (
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={optionIds} strategy={verticalListSortingStrategy}>
                       <div className="space-y-2">
-                        {options.map((option, index) =>
-                          renderOptionRow(index, option,
-                            <Checkbox
-                              id={`option-${index}`}
-                              checked={isOptionCorrect(index)}
-                              onCheckedChange={() => option.trim() && handleCorrectIndexToggle(index)}
-                              disabled={!option.trim()}
-                              className="shrink-0"
-                            />
-                          )
+                        {type === "SCQ" ? (
+                          <RadioGroup value={String(Array.from(correctIndices)[0] ?? -1)} onValueChange={(val) => handleCorrectIndexToggle(Number(val))} className="space-y-2">
+                            {options.map((option, index) =>
+                              renderOptionRow(index, option, <RadioGroupItem value={String(index)} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
+                            )}
+                          </RadioGroup>
+                        ) : (
+                          <div className="space-y-2">
+                            {options.map((option, index) =>
+                              renderOptionRow(index, option,
+                                <Checkbox
+                                  id={`option-${index}`}
+                                  checked={isOptionCorrect(index)}
+                                  onCheckedChange={() => option.trim() && handleCorrectIndexToggle(index)}
+                                  disabled={!option.trim()}
+                                  className="shrink-0"
+                                />
+                              )
+                            )}
+                          </div>
                         )}
                       </div>
-                    )}
+                    </SortableContext>
+                  </DndContext>
                     <button
                       type="button"
                       onClick={handleAddOption}
