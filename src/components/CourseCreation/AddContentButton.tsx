@@ -178,10 +178,6 @@ export function AddContentButton({
                 <Video className="w-3.5 md:w-4 h-3.5 md:h-4" />
                 <span>Video</span>
               </Button>
-              <Button variant="ghost" className="gap-1.5 md:gap-2 text-muted-foreground text-xs md:text-[13px] h-8 md:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 md:px-4 transition-all duration-200" onClick={onAddDoc}>
-                <FileText className="w-3.5 md:w-4 h-3.5 md:h-4" />
-                <span>Doc</span>
-              </Button>
             </div>
             {onMore && (
               <button
