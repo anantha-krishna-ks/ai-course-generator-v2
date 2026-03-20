@@ -187,13 +187,10 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "quiz-block":
+    case "question-block":
       return (
         <div className="w-48 p-3 space-y-2">
-          <div className="flex items-center gap-1.5 mb-1">
-            <HelpCircle className="w-3.5 h-3.5 text-primary/50" />
-            <div className="h-2 w-2/3 rounded-sm bg-foreground/25" />
-          </div>
+          <div className="h-2 w-4/5 rounded-sm bg-foreground/25" />
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
               <div className="w-2.5 h-2.5 rounded-full border-2 border-primary/40" />
@@ -207,6 +204,27 @@ function BlockPreview({ id }: { id: string }) {
               <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
               <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/15" />
             </div>
+          </div>
+        </div>
+      );
+    case "quiz-block":
+      return (
+        <div className="w-48 p-3 space-y-2">
+          <div className="flex items-center gap-1.5 mb-1">
+            <MessageCircleQuestion className="w-3.5 h-3.5 text-primary/50" />
+            <div className="h-2 w-1/2 rounded-sm bg-foreground/25" />
+          </div>
+          <div className="space-y-1.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-2 h-4 rounded bg-primary/5 border border-primary/10 px-2">
+                <div className="w-2 h-2 rounded-sm bg-primary/20" />
+                <div className="h-1.5 flex-1 rounded-sm bg-primary/10" />
+                <div className="w-6 h-1.5 rounded-sm bg-primary/15" />
+              </div>
+            ))}
+          </div>
+          <div className="h-1 w-full rounded-full bg-muted-foreground/10 overflow-hidden mt-1">
+            <div className="h-full w-2/3 rounded-full bg-primary/25" />
           </div>
         </div>
       );
