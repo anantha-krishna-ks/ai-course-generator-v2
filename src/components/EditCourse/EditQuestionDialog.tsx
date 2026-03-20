@@ -76,11 +76,19 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   const handleRemoveOption = (index: number) => {
     if (options.length > 2) {
-      setOptions(options.filter((_, i) => i !== index));
+      const newOptions = options.filter((_, i) => i !== index);
+      setOptions(newOptions);
       setOptionExplanations(optionExplanations.filter((_, i) => i !== index));
-      if (answer === options[index]) {
-        setAnswer("");
-      }
+      // Remap correctIndices
+      setCorrectIndices(prev => {
+        const next = new Set<number>();
+        prev.forEach(i => {
+          if (i < index) next.add(i);
+          else if (i > index) next.add(i - 1);
+        });
+        syncAnswerFromIndices(next, newOptions);
+        return next;
+      });
       setExpandedExplanations(prev => {
         const next = new Set<number>();
         prev.forEach(i => {
