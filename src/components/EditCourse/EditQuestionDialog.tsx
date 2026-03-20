@@ -416,7 +416,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Enter the correct answer…"
-                    className="rounded-xl bg-muted/30 border-border/40 focus:border-primary/40"
+                    className="rounded-xl bg-white border-border/40 focus:border-primary/40"
                   />
                 </div>
               ) : (
