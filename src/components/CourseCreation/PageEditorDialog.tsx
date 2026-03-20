@@ -623,11 +623,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
-                                       className={cn(
-                                         "rounded-xl border bg-card p-4 space-y-3 transition-colors",
+                                    className={cn(
+                                         "rounded-xl border p-4 space-y-3 transition-colors",
                                          item.id === currentPageId
-                                           ? "border-green-500 border-l-[3px] bg-muted/60"
-                                           : "border-border"
+                                           ? "border-green-500 border-l-[3px] bg-white"
+                                           : "border-border bg-card"
                                        )}
                                     >
                                       <div className="flex items-center justify-between">
