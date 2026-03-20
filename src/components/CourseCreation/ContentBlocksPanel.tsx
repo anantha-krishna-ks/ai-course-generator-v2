@@ -586,14 +586,18 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
 
               {/* 3-column grid */}
               <div className="grid grid-cols-3 gap-2.5">
-                {group.blocks.map((block) => (
-                  <BlockGridItem
-                    key={block.id}
-                    block={block}
-                    onClick={() => handleClick(block)}
-                    locked={false}
-                  />
-                ))}
+                {group.blocks.map((block) => {
+                  const isQuizLocked = block.id === "quiz-block" && !aiEnabled;
+                  return (
+                    <BlockGridItem
+                      key={block.id}
+                      block={block}
+                      onClick={() => handleClick(block)}
+                      locked={isQuizLocked}
+                      lockedReason={isQuizLocked ? "Enable AI Support to use Quiz generation" : undefined}
+                    />
+                  );
+                })}
               </div>
             </div>
           ))}
