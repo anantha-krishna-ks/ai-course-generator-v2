@@ -654,7 +654,7 @@ export function SectionCard({
 
       {/* Scope Dialog */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
-        <DialogContent className="sm:max-w-[560px]">
+        <DialogContent className="w-[95vw] max-w-[900px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
@@ -664,19 +664,20 @@ export function SectionCard({
               Define the scope for "{title || "Untitled section"}"
             </p>
           </DialogHeader>
-          <div className="mt-4 space-y-5">
-            <div className="rounded-xl border border-border bg-muted/20 p-4">
+          <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
+            {/* Inclusions */}
+            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
               <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
               <textarea
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
                 autoFocus
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics, content, or scope should be included in this section..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
                 }}
               />
               <ScopeDocUploadZone
@@ -684,17 +685,27 @@ export function SectionCard({
                 onDocumentsChange={setInclusionDocs}
               />
             </div>
-            <div className="rounded-xl border border-border bg-muted/20 p-4">
+
+            {/* Divider */}
+            <div className="hidden md:flex items-stretch px-4">
+              <div className="w-px bg-border" />
+            </div>
+            <div className="flex md:hidden items-center py-3 px-2">
+              <div className="flex-1 h-px bg-border" />
+            </div>
+
+            {/* Exclusions */}
+            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
               <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics or content should be excluded from this section..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
                 }}
               />
               <ScopeDocUploadZone
