@@ -359,17 +359,6 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
 
         {/* Action buttons */}
         <div className="px-5 py-3.5 border-t border-border/60 bg-muted/10 flex items-center gap-2">
-          {aiEnabled && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowGenerateDialog(true)}
-              className="gap-1.5 text-xs rounded-full border-primary/30 text-primary hover:bg-primary/5 hover:text-primary"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              Generate Quiz
-            </Button>
-          )}
           <Button
             variant="outline"
             size="sm"
