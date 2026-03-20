@@ -471,9 +471,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   </div>
                   <div className="space-y-2">
                     {type === "SCQ" ? (
-                      <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
+                      <RadioGroup value={String(Array.from(correctIndices)[0] ?? -1)} onValueChange={(val) => handleCorrectIndexToggle(Number(val))} className="space-y-2">
                         {options.map((option, index) =>
-                          renderOptionRow(index, option, <RadioGroupItem value={option} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
+                          renderOptionRow(index, option, <RadioGroupItem value={String(index)} id={`option-${index}`} disabled={!option.trim()} className="shrink-0" />)
                         )}
                       </RadioGroup>
                     ) : (
@@ -482,8 +482,8 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           renderOptionRow(index, option,
                             <Checkbox
                               id={`option-${index}`}
-                              checked={isOptionCorrect(option)}
-                              onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
+                              checked={isOptionCorrect(index)}
+                              onCheckedChange={() => option.trim() && handleCorrectIndexToggle(index)}
                               disabled={!option.trim()}
                               className="shrink-0"
                             />
