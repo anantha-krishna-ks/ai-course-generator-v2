@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight } from "lucide-react";
+import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, Upload, X } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
