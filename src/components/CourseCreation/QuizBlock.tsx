@@ -35,6 +35,7 @@ interface Question {
   options: string[];
   answer: string;
   explanation: string;
+  optionExplanations?: string[];
 }
 
 interface QuizBlockProps {
