@@ -268,12 +268,12 @@ function BlockPreview({ id }: { id: string }) {
 
 /** Miniature layout thumbnails for each block variant */
 function BlockThumbnail({ id }: { id: string }) {
-  const cardBg = "bg-[#f8f9fb]";
-  const lineBg = "bg-[hsl(215,20%,82%)]";
-  const lineBgLight = "bg-[hsl(215,15%,88%)]";
-  const headingBg = "bg-[hsl(215,25%,72%)]";
-  const imgBg = "bg-gradient-to-br from-[hsl(215,20%,90%)] to-[hsl(215,15%,85%)]";
-  const imgBorder = "border-[hsl(215,20%,86%)]";
+  const cardBg = "bg-[hsl(211,60%,97%)]";
+  const lineBg = "bg-[hsl(211,40%,78%)]";
+  const lineBgLight = "bg-[hsl(211,35%,85%)]";
+  const headingBg = "bg-[hsl(211,45%,65%)]";
+  const imgBg = "bg-gradient-to-br from-[hsl(211,40%,90%)] to-[hsl(211,35%,85%)]";
+  const imgBorder = "border-[hsl(211,35%,85%)]";
 
   switch (id) {
     case "heading-text":
