@@ -55,28 +55,17 @@ export function VideoDescriptionBlock({ content, onChange }: VideoDescriptionBlo
 
   const textSection = (
     <div className="flex-1 min-w-0">
-      {isEditingText ? (
-        <DescriptionEditor
-          content={data.description}
-          onChange={(desc) => updateField("description", desc)}
-        />
-      ) : (
-        <button
-          onClick={() => setIsEditingText(true)}
-          className="w-full text-left px-3 py-2.5 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-muted/30 transition-all duration-200 cursor-text h-full min-h-[80px]"
-        >
-          {hasDescription ? (
-            <div
-              className="prose prose-sm dark:prose-invert max-w-none text-foreground/80"
-              dangerouslySetInnerHTML={{ __html: data.description }}
-            />
-          ) : (
-            <span className="text-sm text-muted-foreground/50 italic">
-              Click to add a description...
-            </span>
-          )}
-        </button>
-      )}
+      <textarea
+        value={data.description}
+        onChange={(e) => {
+          updateField("description", e.target.value);
+          e.target.style.height = 'auto';
+          e.target.style.height = e.target.scrollHeight + 'px';
+        }}
+        placeholder="Add a description..."
+        className="w-full rounded-lg border border-transparent hover:border-foreground/20 focus:border-foreground/20 bg-transparent px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none resize-none overflow-hidden min-h-[80px] transition-colors"
+        rows={3}
+      />
     </div>
   );
 
