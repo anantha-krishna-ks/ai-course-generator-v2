@@ -81,6 +81,8 @@ interface PageEditorDialogProps {
   onAddItem?: (type: "section" | "page") => void;
   initialBlocks?: PageContentBlock[];
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
+  sectionObjectives?: string;
+  onSectionObjectivesChange?: (objectives: string) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
