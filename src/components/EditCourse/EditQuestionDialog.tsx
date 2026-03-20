@@ -92,10 +92,36 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     }
   };
 
+  // Track selected correct answer(s) by index for stable selection
+  const [correctIndices, setCorrectIndices] = useState<Set<number>>(new Set());
+
+  // Sync correctIndices when question loads
+  useEffect(() => {
+    if (question && question.type !== "FIB" && question.type !== "TrueFalse") {
+      const answerParts = question.answer.split(",").map(a => a.trim()).filter(Boolean);
+      const indices = new Set<number>();
+      const opts = question.options.length > 0 ? question.options : ["", "", "", ""];
+      answerParts.forEach(ans => {
+        const idx = opts.findIndex(o => o.trim() === ans);
+        if (idx !== -1) indices.add(idx);
+      });
+      setCorrectIndices(indices);
+    }
+  }, [question]);
+
+  const syncAnswerFromIndices = (indices: Set<number>, opts: string[]) => {
+    const selected = Array.from(indices)
+      .map(i => opts[i]?.trim())
+      .filter(Boolean);
+    setAnswer(selected.join(", "));
+  };
+
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
+    // Keep answer text in sync with option text changes
+    syncAnswerFromIndices(correctIndices, newOptions);
   };
 
   const handleOptionExplanationChange = (index: number, value: string) => {
@@ -104,24 +130,24 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     setOptionExplanations(newExplanations);
   };
 
-  const handleCorrectAnswerToggle = (optionValue: string) => {
+  const handleCorrectIndexToggle = (index: number) => {
     if (type === "MCQ") {
-      const currentAnswers = answer.split(",").map(a => a.trim()).filter(Boolean);
-      if (currentAnswers.includes(optionValue)) {
-        setAnswer(currentAnswers.filter(a => a !== optionValue).join(", "));
-      } else {
-        setAnswer([...currentAnswers, optionValue].join(", "));
-      }
+      setCorrectIndices(prev => {
+        const next = new Set(prev);
+        if (next.has(index)) next.delete(index);
+        else next.add(index);
+        syncAnswerFromIndices(next, options);
+        return next;
+      });
     } else {
-      setAnswer(optionValue);
+      const next = new Set([index]);
+      setCorrectIndices(next);
+      syncAnswerFromIndices(next, options);
     }
   };
 
-  const isOptionCorrect = (optionValue: string) => {
-    if (type === "MCQ") {
-      return answer.split(",").map(a => a.trim()).includes(optionValue);
-    }
-    return answer === optionValue;
+  const isOptionCorrect = (index: number) => {
+    return correctIndices.has(index);
   };
 
   const handleSave = () => {
