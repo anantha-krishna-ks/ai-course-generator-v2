@@ -225,7 +225,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
             <div className="p-1.5 rounded-lg bg-primary/10">
               <MessageCircleQuestion className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-sm font-semibold text-foreground">Questions & Quiz</span>
+            <span className="text-sm font-semibold text-foreground">Quiz</span>
             {questions.length > 0 && (
               <Badge variant="secondary" className="text-[11px] h-5 px-2 font-medium">
                 {questions.length} question{questions.length !== 1 ? "s" : ""}
