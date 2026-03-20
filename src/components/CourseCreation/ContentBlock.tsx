@@ -31,6 +31,7 @@ interface ContentBlockProps {
   autoFocus?: boolean;
   aiEnabled?: boolean;
   readOnly?: boolean;
+  variant?: string;
 }
 
 export function ContentBlock({
@@ -43,6 +44,7 @@ export function ContentBlock({
   autoFocus = false,
   aiEnabled = false,
   readOnly = false,
+  variant,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -182,7 +184,7 @@ export function ContentBlock({
           {type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (
-            <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
+            <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "image" ? (
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "video" || type === "audio" || type === "doc" ? (

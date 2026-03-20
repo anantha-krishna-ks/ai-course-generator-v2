@@ -52,6 +52,7 @@ interface PageContentBlock {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
   content: string;
+  variant?: string;
 }
 
 interface CourseOutlineItem {
@@ -289,12 +290,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
+      const newBlock: PageContentBlock = { id, type, content: defaultContent, variant };
       if (atIndex !== undefined) {
         const next = [...prev];
-        next.splice(atIndex, 0, { id, type, content: defaultContent });
+        next.splice(atIndex, 0, newBlock);
         return next;
       }
-      return [...prev, { id, type, content: defaultContent }];
+      return [...prev, newBlock];
     });
     setLastAddedBlockId(id);
   }, []);
@@ -999,6 +1001,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         autoFocus={false}
                                         aiEnabled={aiEnabled}
                                         readOnly
+                                        variant={block.variant}
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
@@ -1104,6 +1107,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onDuplicate={() => duplicateBlock(block.id)}
                                     autoFocus={block.id === lastAddedBlockId}
                                     aiEnabled={aiEnabled}
+                                    variant={block.variant}
                                   />
                                 );
                               }

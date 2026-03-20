@@ -41,6 +41,7 @@ interface QuizBlockProps {
   aiEnabled?: boolean;
   content: string; // JSON stringified questions array
   onChange: (content: string) => void;
+  variant?: string; // "question-block" or "quiz-block"
 }
 
 const TYPE_LABELS: Record<Question["type"], string> = {
@@ -66,7 +67,8 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
   );
 }
 
-export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockProps) {
+export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
+  const isQuizVariant = variant === "quiz-block";
   // Parse questions from content
   const [questions, setQuestionsState] = useState<Question[]>(() => {
     try {
@@ -223,9 +225,13 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60 bg-muted/20">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-lg bg-primary/10">
-              <MessageCircleQuestion className="w-4 h-4 text-primary" />
+              {isQuizVariant ? (
+                <MessageCircleQuestion className="w-4 h-4 text-primary" />
+              ) : (
+                <MessageCircleQuestion className="w-4 h-4 text-primary" />
+              )}
             </div>
-            <span className="text-sm font-semibold text-foreground">Quiz</span>
+            <span className="text-sm font-semibold text-foreground">{isQuizVariant ? "Quiz" : "Question"}</span>
             {questions.length > 0 && (
               <Badge variant="secondary" className="text-[11px] h-5 px-2 font-medium">
                 {questions.length} question{questions.length !== 1 ? "s" : ""}
@@ -248,7 +254,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
             <MessageCircleQuestion className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-1">No questions yet</p>
             <p className="text-xs text-muted-foreground/60 mb-5">
-              {aiEnabled
+              {isQuizVariant && aiEnabled
                 ? "Generate a quiz with AI or add questions manually."
                 : "Add questions manually to build your quiz."}
             </p>
@@ -359,6 +365,17 @@ export function QuizBlock({ aiEnabled = false, content, onChange }: QuizBlockPro
 
         {/* Action buttons */}
         <div className="px-5 py-3.5 border-t border-border/60 bg-muted/10 flex items-center gap-2">
+          {isQuizVariant && aiEnabled && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowGenerateDialog(true)}
+              className="gap-1.5 text-xs rounded-full border-primary/30 text-primary hover:bg-primary/5 hover:text-primary"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              Generate Quiz
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
