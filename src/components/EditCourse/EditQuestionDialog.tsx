@@ -221,6 +221,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       setAnswer("");
     }
     setExpandedExplanations(new Set());
+    setCorrectIndices(new Set());
   };
 
   /** Render a single option card */
