@@ -492,7 +492,7 @@ function BlockGridItem({
               <Lock className="w-3 h-3 text-muted-foreground/50" />
             </div>
           )}
-          <div className="w-full h-11 flex items-center justify-center">
+          <div className="w-full flex items-center justify-center overflow-hidden rounded-lg">
             <BlockThumbnail id={block.id} />
           </div>
           <span
