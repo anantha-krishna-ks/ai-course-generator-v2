@@ -375,22 +375,17 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                       </RadioGroup>
                     ) : (
                       <div className="space-y-2">
-                        {options.map((option, index) => (
-                          <OptionRow
-                            key={index}
-                            index={index}
-                            option={option}
-                            selector={
-                              <Checkbox
-                                id={`option-${index}`}
-                                checked={isOptionCorrect(option)}
-                                onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
-                                disabled={!option.trim()}
-                                className="shrink-0"
-                              />
-                            }
-                          />
-                        ))}
+                        {options.map((option, index) =>
+                          renderOptionRow(index, option,
+                            <Checkbox
+                              id={`option-${index}`}
+                              checked={isOptionCorrect(option)}
+                              onCheckedChange={() => option.trim() && handleCorrectAnswerToggle(option)}
+                              disabled={!option.trim()}
+                              className="shrink-0"
+                            />
+                          )
+                        )}
                       </div>
                     )}
                     <div
