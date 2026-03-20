@@ -19,6 +19,7 @@ import { ImageBlock } from "./ImageBlock";
 import { MediaUploadBlock } from "./MediaUploadBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
+import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
 import { cn } from "@/lib/utils";
 
 interface ContentBlockProps {
