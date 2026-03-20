@@ -568,7 +568,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
             <div key={group.label}>
               {/* Category label */}
               <div className="pt-3 pb-2">
-                <span className="text-[10px] font-semibold text-muted-foreground/60 tracking-[0.14em] uppercase">
+                <span className="text-[10px] font-semibold text-muted-foreground tracking-[0.14em] uppercase">
                   {group.label}
                 </span>
               </div>
