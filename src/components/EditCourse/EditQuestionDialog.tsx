@@ -366,7 +366,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           "flex items-center justify-center gap-2 px-4 py-4 rounded-xl border-2 cursor-pointer transition-all duration-150 text-sm font-medium",
                           answer === val
                             ? "border-primary bg-primary/[0.04] text-foreground shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-border/60 bg-muted/20 text-muted-foreground hover:bg-muted/30"
+                            : "border-border/60 bg-white text-muted-foreground hover:bg-gray-50"
                         )}
                       >
                         <RadioGroupItem value={val} id={`tf-${val}`} className="sr-only" />
