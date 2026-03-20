@@ -468,7 +468,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     <button
                       type="button"
                       onClick={handleAddOption}
-                      className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-border/40 px-4 py-3 text-sm text-muted-foreground/40 hover:text-muted-foreground/60 hover:border-border/60 hover:bg-muted/20 transition-all duration-150"
+                      className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-border/50 px-4 py-3 text-sm text-muted-foreground/50 hover:text-muted-foreground hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-150"
                     >
                       <Plus className="w-4 h-4" />
                       Add option
