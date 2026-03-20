@@ -19,11 +19,12 @@ import { ImageBlock } from "./ImageBlock";
 import { MediaUploadBlock } from "./MediaUploadBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
+import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
 import { cn } from "@/lib/utils";
 
 interface ContentBlockProps {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
@@ -181,7 +182,9 @@ export function ContentBlock({
 
         {/* Content area - full width */}
         <div className="w-full">
-          {type === "image-description" ? (
+          {type === "video-description" ? (
+            <VideoDescriptionBlock content={content} onChange={onChange} />
+          ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />

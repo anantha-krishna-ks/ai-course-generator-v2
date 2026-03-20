@@ -32,7 +32,7 @@ interface BlockItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   categoryLabel: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   variant?: string;
   locked?: boolean;
   isQuizGenerator?: boolean;
@@ -40,7 +40,7 @@ interface BlockItem {
 }
 
 interface ContentBlocksPanelProps {
-  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", variant?: string) => void;
+  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
 }
@@ -56,6 +56,8 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "image-bottom", label: "Image on Bottom", icon: ImageDown, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-bottom", description: "Text content above with an image below" },
   // VIDEO
   { id: "video-upload", label: "Video", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
+  { id: "video-left", label: "Video on Left", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-left", description: "Video on the left with text on the right" },
+  { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
   // QUESTION
@@ -68,7 +70,7 @@ const ALL_BLOCKS: BlockItem[] = [
 export function resolveTemplateDropData(
   templateId: string,
   categoryId: string
-): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description"; variant?: string } | null {
+): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description"; variant?: string } | null {
   const block = ALL_BLOCKS.find((b) => b.id === templateId);
   if (!block || block.isQuizGenerator) return null;
   return { type: block.type, variant: block.variant };
@@ -163,6 +165,38 @@ function BlockPreview({ id }: { id: string }) {
             </div>
             <div className="absolute bottom-1.5 left-2 right-2 h-1 rounded-full bg-muted-foreground/10 overflow-hidden">
               <div className="h-full w-1/3 rounded-full bg-primary/30" />
+            </div>
+          </div>
+        </div>
+      );
+    case "video-left":
+      return (
+        <div className="w-48 p-3 flex gap-2.5">
+          <div className="flex-1 h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
+            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
+              <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
+            </div>
+          </div>
+          <div className="flex-1 space-y-1.5 pt-1">
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+        </div>
+      );
+    case "video-right":
+      return (
+        <div className="w-48 p-3 flex gap-2.5">
+          <div className="flex-1 space-y-1.5 pt-1">
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+          <div className="flex-1 h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
+            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
+              <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
             </div>
           </div>
         </div>
@@ -313,6 +347,36 @@ function BlockThumbnail({ id }: { id: string }) {
             </div>
             <div className="absolute bottom-1 left-1.5 right-1.5 h-[2px] rounded-full bg-muted-foreground/10 overflow-hidden">
               <div className="h-full w-1/3 rounded-full bg-primary/25" />
+            </div>
+          </div>
+        </div>
+      );
+    case "video-left":
+      return (
+        <div className="flex gap-1.5 w-full px-1.5">
+          <div className="flex-1 h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
+            <div className="w-4 h-4 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
+            </div>
+          </div>
+          <div className="flex-1 space-y-[3px] pt-1">
+            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
+            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
+            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+          </div>
+        </div>
+      );
+    case "video-right":
+      return (
+        <div className="flex gap-1.5 w-full px-1.5">
+          <div className="flex-1 space-y-[3px] pt-1">
+            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
+            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
+            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+          </div>
+          <div className="flex-1 h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
+            <div className="w-4 h-4 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
             </div>
           </div>
         </div>

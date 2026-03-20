@@ -50,7 +50,7 @@ import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialo
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   variant?: string;
 }
@@ -273,6 +273,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         description: "<p>Add a description here...</p>",
       });
     }
+    if (type === "video-description") {
+      return JSON.stringify({
+        layout: variant === "video-right" ? "video-right" : "video-left",
+        videoUrl: "",
+        description: "",
+      });
+    }
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text":
@@ -286,7 +293,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
   };
 
-  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", atIndex?: number, variant?: string) => {
+  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", atIndex?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
