@@ -40,6 +40,8 @@ interface SectionCardProps {
   onOpenSection?: () => void;
   onAddPage?: () => void;
   onAddLearningObjective?: () => void;
+  objective?: string;
+  onObjectiveChange?: (objective: string) => void;
   pages?: PageEntry[];
   onPagesChange?: (pages: PageEntry[]) => void;
 }
