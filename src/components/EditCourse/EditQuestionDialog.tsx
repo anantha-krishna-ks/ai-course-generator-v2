@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { CircleCheck, Plus, Trash2, HelpCircle, ListChecks, MessageSquareText, Lightbulb, ChevronDown } from "lucide-react";
+import { Check, Plus, Trash2, MessageSquareText, Lightbulb, ChevronDown, Type, ToggleLeft, ListChecks, CircleDot, CheckSquare } from "lucide-react";
 
 interface Question {
   id: number;
@@ -29,6 +29,13 @@ interface EditQuestionDialogProps {
   onSave: (question: Question) => void;
   isAddMode?: boolean;
 }
+
+const typeConfig: Record<Question["type"], { label: string; icon: React.ReactNode; description: string }> = {
+  SCQ: { label: "Single Choice", icon: <CircleDot className="w-4 h-4" />, description: "One correct answer" },
+  MCQ: { label: "Multiple Choice", icon: <CheckSquare className="w-4 h-4" />, description: "Multiple correct answers" },
+  TrueFalse: { label: "True / False", icon: <ToggleLeft className="w-4 h-4" />, description: "Binary choice" },
+  FIB: { label: "Fill in the Blank", icon: <Type className="w-4 h-4" />, description: "Text answer" },
+};
 
 export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode = false }: EditQuestionDialogProps) => {
   const { toast } = useToast();
@@ -164,175 +171,244 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   if (!question) return null;
 
-  const typeLabel: Record<Question["type"], string> = {
-    SCQ: "Single Choice",
-    MCQ: "Multiple Choice",
-    TrueFalse: "True / False",
-    FIB: "Fill in the Blank",
+  const handleTypeChange = (value: Question["type"]) => {
+    setType(value);
+    if (value === "TrueFalse") {
+      setOptions(["True", "False"]);
+      setOptionExplanations(["", ""]);
+      setAnswer("");
+    } else if (value === "FIB") {
+      setOptions([]);
+      setOptionExplanations([]);
+      setAnswer("");
+    } else {
+      setOptions(["", "", "", ""]);
+      setOptionExplanations(["", "", "", ""]);
+      setAnswer("");
+    }
+    setExpandedExplanations(new Set());
   };
 
-  /** Renders a single option row with expandable explanation */
+  /** Render a single option card */
   const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
     const isCorrect = isOptionCorrect(option) && option.trim();
     const isExpanded = expandedExplanations.has(index);
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
     return (
-      <div
-        key={index}
-        className={cn(
-          "rounded-lg border transition-colors",
-          isCorrect ? "border-primary/40 bg-primary/5" : "border-border hover:border-border/80"
-        )}
-      >
-        {/* Main option row */}
-        <div className="flex items-center gap-3 px-3.5 py-3">
-          {selector}
-          <Input
-            value={option}
-            onChange={(e) => handleOptionChange(index, e.target.value)}
-            placeholder={`Option ${index + 1}`}
-            className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/40"
-          />
-          <div className="flex items-center gap-0.5 shrink-0">
-            <button
-              onClick={() => toggleExplanation(index)}
-              className={cn(
-                "p-1.5 rounded-md transition-colors flex items-center gap-0.5",
-                isExpanded
-                  ? "bg-accent text-foreground"
-                  : hasExplanation
-                    ? "text-primary/60 hover:bg-accent hover:text-foreground"
-                    : "text-muted-foreground/30 hover:text-muted-foreground hover:bg-accent"
-              )}
-              title="Toggle explanation"
-            >
-              <Lightbulb className="w-3.5 h-3.5" />
-              <ChevronDown className={cn("w-3 h-3 transition-transform duration-200", isExpanded && "rotate-180")} />
-            </button>
-            {options.length > 2 && (
-              <button
-                onClick={() => handleRemoveOption(index)}
-                className="p-1.5 rounded-md text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-colors"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        </div>
+      <div key={index} className="group relative">
+        <div
+          className={cn(
+            "rounded-xl border-2 transition-all duration-150",
+            isCorrect
+              ? "border-primary/50 bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+              : "border-transparent bg-muted/40 hover:bg-muted/60"
+          )}
+        >
+          {/* Correct badge */}
+          {isCorrect && (
+            <div className="absolute -top-2 right-3 flex items-center gap-1 bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm">
+              <Check className="w-2.5 h-2.5" />
+              Correct
+            </div>
+          )}
 
-        {/* Expandable explanation */}
-        {isExpanded && (
-          <div className="px-3.5 pb-3 border-t border-border/40">
-            <Textarea
-              value={optionExplanations[index] || ""}
-              onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
-              placeholder="Why is this option correct or incorrect…"
-              className="mt-2.5 min-h-[56px] max-h-[100px] resize-none text-xs bg-muted/30 border-border/50 rounded-md"
-              rows={2}
+          {/* Option input row */}
+          <div className="flex items-center gap-3 px-4 py-3.5">
+            <span className="text-xs font-bold text-muted-foreground/50 w-5 text-center select-none shrink-0">
+              {String.fromCharCode(65 + index)}
+            </span>
+            {selector}
+            <Input
+              value={option}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
+              placeholder={`Option ${String.fromCharCode(65 + index)}`}
+              className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/30 font-medium"
             />
+            <div className="flex items-center gap-0.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => toggleExplanation(index)}
+                className={cn(
+                  "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
+                  isExpanded
+                    ? "bg-primary/10 text-primary"
+                    : hasExplanation
+                      ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
+                      : "text-muted-foreground/25 hover:text-muted-foreground/60 hover:bg-muted"
+                )}
+                title="Add rationale for this option"
+              >
+                <Lightbulb className="w-3.5 h-3.5" />
+                <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
+              </button>
+              {options.length > 2 && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveOption(index)}
+                  className="p-1.5 rounded-lg text-muted-foreground/20 hover:text-destructive hover:bg-destructive/10 transition-all duration-150 opacity-0 group-hover:opacity-100"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Expandable rationale */}
+          {isExpanded && (
+            <div className="px-4 pb-3.5 pt-0">
+              <div className="pl-8">
+                <Textarea
+                  value={optionExplanations[index] || ""}
+                  onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
+                  placeholder="Why is this option correct or incorrect…"
+                  className="min-h-[52px] max-h-[90px] resize-none text-xs bg-background/80 border-border/40 rounded-lg"
+                  rows={2}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-xl">
+      <DialogContent className="w-[95vw] max-w-[640px] max-h-[88vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border-border/60 shadow-xl">
         {/* Header */}
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border">
-          <DialogTitle className="text-lg font-semibold">
-            {isAddMode ? "Add New Question" : "Edit Question"}
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            {isAddMode ? "Create a new question with options and the correct answer." : "Modify the question details, options, and answer."}
-          </DialogDescription>
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/50 bg-card">
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-base font-semibold tracking-tight">
+                {isAddMode ? "New Question" : "Edit Question"}
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                {isAddMode ? "Set up your question, options, and the correct answer." : "Update the question content and settings."}
+              </DialogDescription>
+            </div>
+            {!isAddMode && (
+              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/60 px-2.5 py-1.5 rounded-lg border border-border/40">
+                {typeConfig[type].icon}
+                {typeConfig[type].label}
+              </div>
+            )}
+          </div>
         </DialogHeader>
 
         {/* Scrollable Body */}
         <div className="min-h-0 row-start-2">
           <ScrollArea className="h-full">
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-5">
 
-              {/* Question Type */}
+              {/* Question Type — Add mode only */}
               {isAddMode && (
-                <div className="space-y-2">
-                  <Label htmlFor="questionType" className="text-sm font-medium flex items-center gap-1.5">
-                    <ListChecks className="w-4 h-4 text-muted-foreground" />
+                <div className="space-y-2.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                     Question Type
                   </Label>
-                  <Select value={type} onValueChange={(value: Question["type"]) => {
-                    setType(value);
-                    if (value === "TrueFalse") {
-                      setOptions(["True", "False"]);
-                      setOptionExplanations(["", ""]);
-                      setAnswer("");
-                    } else if (value === "FIB") {
-                      setOptions([]);
-                      setOptionExplanations([]);
-                      setAnswer("");
-                    } else {
-                      setOptions(["", "", "", ""]);
-                      setOptionExplanations(["", "", "", ""]);
-                      setAnswer("");
-                    }
-                    setExpandedExplanations(new Set());
-                  }}>
-                    <SelectTrigger id="questionType" className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="SCQ">Single Choice Question (SCQ)</SelectItem>
-                      <SelectItem value="MCQ">Multiple Choice Question (MCQ)</SelectItem>
-                      <SelectItem value="TrueFalse">True / False</SelectItem>
-                      <SelectItem value="FIB">Fill in the Blank (FIB)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {/* Non-add mode: show type badge */}
-              {!isAddMode && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-                    {typeLabel[type]}
-                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(Object.keys(typeConfig) as Question["type"][]).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => handleTypeChange(t)}
+                        className={cn(
+                          "flex items-center gap-2.5 px-3.5 py-3 rounded-xl border-2 text-left transition-all duration-150",
+                          type === t
+                            ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                            : "border-transparent bg-muted/40 hover:bg-muted/60"
+                        )}
+                      >
+                        <div className={cn(
+                          "p-1.5 rounded-lg transition-colors",
+                          type === t ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/50"
+                        )}>
+                          {typeConfig[t].icon}
+                        </div>
+                        <div>
+                          <p className={cn("text-sm font-medium", type === t ? "text-foreground" : "text-muted-foreground")}>
+                            {typeConfig[t].label}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground/60">{typeConfig[t].description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
               {/* Question Text */}
               <div className="space-y-2">
-                <Label htmlFor="question" className="text-sm font-medium flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                   Question
                 </Label>
                 <Textarea
                   id="question"
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
-                  placeholder="Enter your question here…"
-                  className="min-h-[90px] resize-none"
+                  placeholder="Type your question here…"
+                  className="min-h-[80px] resize-none rounded-xl bg-muted/30 border-border/40 focus:border-primary/40 text-sm"
                 />
               </div>
 
               {/* Options / Answer Section */}
               {type === "TrueFalse" ? (
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium flex items-center gap-1.5">
-                    <CircleCheck className="w-4 h-4 text-muted-foreground" />
-                    Select Correct Answer
+                <div className="space-y-2.5">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    Correct Answer
                   </Label>
-                  <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
-                    {["True", "False"].map((val, index) =>
-                      renderOptionRow(index, val, <RadioGroupItem value={val} id={`tf-${val}`} className="shrink-0" />)
-                    )}
+                  <RadioGroup value={answer} onValueChange={setAnswer} className="grid grid-cols-2 gap-2">
+                    {["True", "False"].map((val) => (
+                      <label
+                        key={val}
+                        className={cn(
+                          "flex items-center justify-center gap-2 px-4 py-4 rounded-xl border-2 cursor-pointer transition-all duration-150 text-sm font-medium",
+                          answer === val
+                            ? "border-primary bg-primary/[0.04] text-foreground shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                            : "border-transparent bg-muted/40 text-muted-foreground hover:bg-muted/60"
+                        )}
+                      >
+                        <RadioGroupItem value={val} id={`tf-${val}`} className="sr-only" />
+                        {answer === val && <Check className="w-4 h-4 text-primary" />}
+                        {val}
+                      </label>
+                    ))}
                   </RadioGroup>
+                  {/* Per-option explanations for True/False */}
+                  {["True", "False"].map((val, index) => {
+                    const isExpanded = expandedExplanations.has(index);
+                    const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
+                    return (
+                      <div key={val}>
+                        <button
+                          type="button"
+                          onClick={() => toggleExplanation(index)}
+                          className={cn(
+                            "text-xs flex items-center gap-1 transition-colors px-1 py-0.5 rounded",
+                            isExpanded || hasExplanation ? "text-primary/60" : "text-muted-foreground/30 hover:text-muted-foreground/50"
+                          )}
+                        >
+                          <Lightbulb className="w-3 h-3" />
+                          Why "{val}" is {answer === val ? "correct" : "incorrect"}
+                          <ChevronDown className={cn("w-2.5 h-2.5 transition-transform", isExpanded && "rotate-180")} />
+                        </button>
+                        {isExpanded && (
+                          <Textarea
+                            value={optionExplanations[index] || ""}
+                            onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
+                            placeholder={`Why "${val}" is the ${answer === val ? "correct" : "incorrect"} answer…`}
+                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-muted/30 border-border/40 rounded-lg"
+                            rows={2}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : type === "FIB" ? (
                 <div className="space-y-2">
-                  <Label htmlFor="answer" className="text-sm font-medium flex items-center gap-1.5">
-                    <MessageSquareText className="w-4 h-4 text-muted-foreground" />
+                  <Label htmlFor="answer" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                     Correct Answer
                   </Label>
                   <Input
@@ -340,19 +416,20 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Enter the correct answer…"
+                    className="rounded-xl bg-muted/30 border-border/40 focus:border-primary/40"
                   />
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-sm font-medium flex items-center gap-1.5">
-                      <CircleCheck className="w-4 h-4 text-muted-foreground" />
-                      Options
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                      Answer Choices
                       {type === "MCQ" && (
-                        <span className="text-xs text-muted-foreground font-normal ml-1">(select all correct)</span>
+                        <span className="font-normal normal-case tracking-normal ml-1.5 text-muted-foreground/50">— select all correct</span>
                       )}
                     </Label>
                     <button
+                      type="button"
                       onClick={() => {
                         if (expandedExplanations.size > 0) {
                           setExpandedExplanations(new Set());
@@ -360,10 +437,10 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           setExpandedExplanations(new Set(options.map((_, i) => i)));
                         }
                       }}
-                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent"
+                      className="text-[11px] text-muted-foreground/40 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-muted/60"
                     >
                       <Lightbulb className="w-3 h-3" />
-                      {expandedExplanations.size > 0 ? "Hide all" : "Explain all"}
+                      {expandedExplanations.size > 0 ? "Collapse all" : "Expand all"}
                     </button>
                   </div>
                   <div className="space-y-2">
@@ -388,32 +465,29 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         )}
                       </div>
                     )}
-                    <div
+                    <button
+                      type="button"
                       onClick={handleAddOption}
-                      className="flex items-center gap-3 rounded-lg border border-dashed border-border/60 px-3.5 py-3 cursor-pointer transition-colors hover:bg-accent/30 hover:border-foreground/20"
+                      className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-border/40 px-4 py-3 text-sm text-muted-foreground/40 hover:text-muted-foreground/60 hover:border-border/60 hover:bg-muted/20 transition-all duration-150"
                     >
-                      <Plus className="w-4 h-4 text-muted-foreground/50" />
-                      <span className="text-sm text-muted-foreground/50">Add option</span>
-                    </div>
+                      <Plus className="w-4 h-4" />
+                      Add option
+                    </button>
                   </div>
                 </div>
               )}
 
               {/* General Explanation */}
               <div className="space-y-2">
-                <Label htmlFor="explanation" className="text-sm font-medium flex items-center gap-1.5">
-                  <Lightbulb className="w-4 h-4 text-muted-foreground" />
-                  General Explanation
+                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  Explanation
                 </Label>
-                <p className="text-xs text-muted-foreground -mt-0.5">
-                  Overall explanation shown after answering the question.
-                </p>
                 <Textarea
                   id="explanation"
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
-                  placeholder="Why is this the correct answer…"
-                  className="min-h-[80px] resize-none"
+                  placeholder="Explain why this is the correct answer. Shown to learners after they respond."
+                  className="min-h-[72px] resize-none rounded-xl bg-muted/30 border-border/40 focus:border-primary/40 text-sm"
                 />
               </div>
             </div>
@@ -421,11 +495,11 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
         </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-4 border-t border-border bg-muted/20">
-          <Button variant="outline" onClick={handleClose}>
+        <DialogFooter className="px-6 py-3.5 border-t border-border/50 bg-card">
+          <Button variant="outline" onClick={handleClose} className="rounded-xl">
             Cancel
           </Button>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave} className="rounded-xl">
             {isAddMode ? "Add Question" : "Save Changes"}
           </Button>
         </DialogFooter>
