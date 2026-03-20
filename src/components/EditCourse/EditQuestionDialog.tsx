@@ -273,7 +273,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     ? "bg-primary/10 text-primary"
                     : hasExplanation
                       ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
-                      : "text-muted-foreground/25 hover:text-muted-foreground/60 hover:bg-muted"
+                      : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
                 )}
                 title="Add rationale for this option"
               >
