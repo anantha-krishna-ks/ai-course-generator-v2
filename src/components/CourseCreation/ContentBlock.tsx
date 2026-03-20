@@ -182,7 +182,9 @@ export function ContentBlock({
 
         {/* Content area - full width */}
         <div className="w-full">
-          {type === "image-description" ? (
+          {type === "video-description" ? (
+            <VideoDescriptionBlock content={content} onChange={onChange} />
+          ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
