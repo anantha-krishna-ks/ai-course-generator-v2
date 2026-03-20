@@ -457,9 +457,13 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 <Textarea
                   id="question"
                   value={questionText}
-                  onChange={(e) => setQuestionText(e.target.value)}
+                  onChange={(e) => {
+                    setQuestionText(e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
                   placeholder="Type your question here…"
-                  className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
+                  className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors overflow-hidden"
                 />
               </div>
 
