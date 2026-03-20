@@ -60,10 +60,9 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
-  // QUESTION
-  { id: "question-block", label: "Question", icon: HelpCircle, category: "question", categoryLabel: "QUESTION", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
-  // QUIZ
-  { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "quiz", categoryLabel: "QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
+  // ASSESSMENT
+  { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "ASSESSMENT", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
+  { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "ASSESSMENT", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
