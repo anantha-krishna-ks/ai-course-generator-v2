@@ -1152,6 +1152,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               initialBlocks={pageBlocksMap[topLevel.id] || []}
               onBlocksChange={(blocks) => updatePageBlocks(topLevel.id, blocks)}
               onAddItem={(type) => handleAddItem(type)}
+              sectionObjectives={sectionObjectivesMap[topLevel.id] || ""}
+              onSectionObjectivesChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [topLevel.id]: obj }))}
             />
           );
         }
