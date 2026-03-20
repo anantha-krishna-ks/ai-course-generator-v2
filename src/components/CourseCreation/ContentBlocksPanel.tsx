@@ -481,10 +481,10 @@ function BlockGridItem({
           onDragStart={handleDragStart}
           onPointerDown={locked ? undefined : handlePointerDown}
           className={cn(
-            "flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border transition-all duration-200 select-none relative group bg-[#ffffff]",
+            "flex flex-col items-center justify-center gap-1 p-1.5 pb-2 rounded-xl border transition-all duration-200 select-none relative group",
             locked
-              ? "opacity-50 cursor-not-allowed border-border/40"
-              : "border-border hover:border-primary/40 hover:shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.12)] hover:bg-[#ffffff] cursor-grab active:cursor-grabbing active:scale-[0.97]"
+              ? "opacity-50 cursor-not-allowed border-border/40 bg-muted/30"
+              : "border-border/70 bg-[#ffffff] shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_3px_12px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 cursor-grab active:cursor-grabbing active:scale-[0.97]"
           )}
         >
           {locked && (
