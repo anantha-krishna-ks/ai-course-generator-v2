@@ -153,51 +153,66 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
   }
 
   return (
-    <div
-      onDrop={handleDrop}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setIsDragOver(true);
-      }}
-      onDragLeave={() => setIsDragOver(false)}
-      onClick={() => fileInputRef.current?.click()}
-      className={cn(
-        "group/upload flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed py-8 px-6 cursor-pointer transition-all duration-200",
-        isDragOver
-          ? "border-primary bg-primary/5 scale-[1.01]"
-          : "border-foreground/20 hover:border-primary/50 hover:bg-primary/5 bg-background/80"
-      )}
-    >
+    <div className="space-y-3">
       <div
+        onDrop={handleDrop}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => setIsDragOver(false)}
+        onClick={() => fileInputRef.current?.click()}
         className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-          isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/upload:bg-primary/10 group-hover/upload:text-primary"
+          "group/upload flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed py-8 px-6 cursor-pointer transition-all duration-200",
+          isDragOver
+            ? "border-primary bg-primary/5 scale-[1.01]"
+            : "border-foreground/20 hover:border-primary/50 hover:bg-primary/5 bg-background/80"
         )}
       >
-        {isDragOver ? (
-          <Upload className="w-4 h-4" />
-        ) : (
-          <Icon className="w-4 h-4" />
-        )}
+        <div
+          className={cn(
+            "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
+            isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/upload:bg-primary/10 group-hover/upload:text-primary"
+          )}
+        >
+          {isDragOver ? (
+            <Upload className="w-4 h-4" />
+          ) : (
+            <Icon className="w-4 h-4" />
+          )}
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-medium text-foreground/70">
+            Click to upload or drag & drop
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {config.formats} up to {config.maxSize}
+          </p>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={config.accept}
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFile(file);
+          }}
+        />
       </div>
-      <div className="text-center">
-        <p className="text-sm font-medium text-foreground/70">
-          Click to upload or drag & drop
-        </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          {config.formats} up to {config.maxSize}
-        </p>
-      </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept={config.accept}
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleFile(file);
-        }}
-      />
+      {type === "audio" && (
+        <textarea
+          value={localDescription}
+          onChange={(e) => {
+            handleDescriptionChange(e.target.value);
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+          }}
+          placeholder="Add a description for this audio (optional)"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
+          rows={1}
+        />
+      )}
     </div>
   );
 }
