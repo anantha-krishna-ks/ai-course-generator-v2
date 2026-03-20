@@ -408,7 +408,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 </div>
               ) : type === "FIB" ? (
                 <div className="space-y-2">
-                  <Label htmlFor="answer" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                  <Label htmlFor="answer" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Correct Answer
                   </Label>
                   <Input
