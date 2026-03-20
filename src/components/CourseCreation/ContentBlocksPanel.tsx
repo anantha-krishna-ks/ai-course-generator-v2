@@ -169,6 +169,38 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "video-left":
+      return (
+        <div className="w-48 p-3 flex gap-2.5">
+          <div className="flex-1 h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
+            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
+              <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
+            </div>
+          </div>
+          <div className="flex-1 space-y-1.5 pt-1">
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+        </div>
+      );
+    case "video-right":
+      return (
+        <div className="w-48 p-3 flex gap-2.5">
+          <div className="flex-1 space-y-1.5 pt-1">
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
+            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          </div>
+          <div className="flex-1 h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
+            <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
+              <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
+            </div>
+          </div>
+        </div>
+      );
     case "audio-upload":
       return (
         <div className="w-48 p-3">
