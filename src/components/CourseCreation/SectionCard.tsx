@@ -549,7 +549,7 @@ export function SectionCard({
                           setObjectiveText(e.target.value);
                         }
                       }}
-                      className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35"
+                      className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50"
                       placeholder="What will learners achieve?"
                     />
                     <span className={cn(
