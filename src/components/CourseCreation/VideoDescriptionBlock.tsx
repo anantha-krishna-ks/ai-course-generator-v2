@@ -29,7 +29,6 @@ function parseContent(content: string): VideoDescriptionData {
 
 export function VideoDescriptionBlock({ content, onChange }: VideoDescriptionBlockProps) {
   const data = parseContent(content);
-  const [isEditingText, setIsEditingText] = useState(false);
 
   const updateField = useCallback(
     (field: keyof VideoDescriptionData, value: string) => {
