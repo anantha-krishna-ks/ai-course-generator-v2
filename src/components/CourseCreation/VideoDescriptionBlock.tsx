@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { Video } from "lucide-react";
 import { MediaUploadBlock } from "./MediaUploadBlock";
-import { DescriptionEditor } from "./DescriptionEditor";
 import { cn } from "@/lib/utils";
 
 interface VideoDescriptionData {
