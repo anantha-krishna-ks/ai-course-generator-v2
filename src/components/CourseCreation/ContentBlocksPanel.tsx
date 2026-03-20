@@ -437,10 +437,12 @@ function BlockGridItem({
   block,
   onClick,
   locked,
+  lockedReason,
 }: {
   block: BlockItem;
   onClick: () => void;
   locked?: boolean;
+  lockedReason?: string;
 }) {
   const handleDragStart = (e: React.DragEvent) => {
     if (locked) {
@@ -506,13 +508,22 @@ function BlockGridItem({
         </div>
         <div className="px-3 py-2">
           <p className="text-xs font-semibold text-foreground">{block.label}</p>
-          {block.description && (
-            <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
+          {locked && lockedReason ? (
+            <p className="text-[11px] text-amber-600 dark:text-amber-400 leading-snug mt-0.5 flex items-center gap-1">
+              <Lock className="w-3 h-3 shrink-0" />
+              {lockedReason}
+            </p>
+          ) : (
+            <>
+              {block.description && (
+                <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
+              )}
+              <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
+                <GripVertical className="w-2.5 h-2.5" />
+                Click or drag to add
+              </p>
+            </>
           )}
-          <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
-            <GripVertical className="w-2.5 h-2.5" />
-            Click or drag to add
-          </p>
         </div>
       </TooltipContent>
     </Tooltip>
@@ -575,14 +586,18 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
 
               {/* 3-column grid */}
               <div className="grid grid-cols-3 gap-2.5">
-                {group.blocks.map((block) => (
-                  <BlockGridItem
-                    key={block.id}
-                    block={block}
-                    onClick={() => handleClick(block)}
-                    locked={false}
-                  />
-                ))}
+                {group.blocks.map((block) => {
+                  const isQuizLocked = block.id === "quiz-block" && !aiEnabled;
+                  return (
+                    <BlockGridItem
+                      key={block.id}
+                      block={block}
+                      onClick={() => handleClick(block)}
+                      locked={isQuizLocked}
+                      lockedReason={isQuizLocked ? "Enable AI Support to use Quiz generation" : undefined}
+                    />
+                  );
+                })}
               </div>
             </div>
           ))}
