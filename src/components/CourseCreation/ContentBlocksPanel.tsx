@@ -268,128 +268,135 @@ function BlockPreview({ id }: { id: string }) {
 
 /** Miniature layout thumbnails for each block variant */
 function BlockThumbnail({ id }: { id: string }) {
+  const cardBg = "bg-[#f8f9fb]";
+  const lineBg = "bg-[hsl(215,20%,82%)]";
+  const lineBgLight = "bg-[hsl(215,15%,88%)]";
+  const headingBg = "bg-[hsl(215,25%,72%)]";
+  const imgBg = "bg-gradient-to-br from-[hsl(215,20%,90%)] to-[hsl(215,15%,85%)]";
+  const imgBorder = "border-[hsl(215,20%,86%)]";
+
   switch (id) {
     case "heading-text":
       return (
-        <div className="flex flex-col gap-1.5 w-full px-1.5">
-          <div className="h-2.5 w-3/5 rounded-[3px] bg-foreground/20" />
+        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-2", cardBg)}>
+          <div className={cn("h-2 w-3/5 rounded-[2px]", headingBg)} />
           <div className="space-y-[3px]">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-[90%] rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-3/4 rounded-[1px]", lineBgLight)} />
           </div>
         </div>
       );
     case "text-only":
       return (
-        <div className="flex flex-col gap-[3px] w-full px-1.5">
-          <div className="h-[3px] w-full rounded-sm bg-muted-foreground/15" />
-          <div className="h-[3px] w-full rounded-sm bg-muted-foreground/15" />
-          <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/12" />
-          <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-[3px]", cardBg)}>
+          <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+          <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+          <div className={cn("h-[2.5px] w-[85%] rounded-[1px]", lineBg)} />
+          <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
         </div>
       );
     case "two-columns":
       return (
-        <div className="flex gap-2 w-full px-1.5">
+        <div className={cn("flex w-full rounded-lg p-2 gap-2", cardBg)}>
           <div className="flex-1 space-y-[3px]">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/15" />
-            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/15" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
           </div>
-          <div className="w-px bg-border/60" />
+          <div className="w-px bg-[hsl(215,20%,88%)]" />
           <div className="flex-1 space-y-[3px]">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/15" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/15" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
           </div>
         </div>
       );
     case "image-full":
       return (
-        <div className="w-full px-1.5">
-          <div className="w-full h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
-            <Mountain className="w-3.5 h-3.5 text-muted-foreground/20" />
+        <div className={cn("w-full rounded-lg p-2", cardBg)}>
+          <div className={cn("w-full h-8 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <Mountain className="w-3.5 h-3.5 text-[hsl(215,15%,72%)]" />
           </div>
         </div>
       );
     case "image-top":
       return (
-        <div className="flex flex-col gap-1.5 w-full px-1.5">
-          <div className="w-full h-5 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
-            <Mountain className="w-2.5 h-2.5 text-muted-foreground/20" />
+        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1.5", cardBg)}>
+          <div className={cn("w-full h-5 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
           </div>
           <div className="space-y-[3px]">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
           </div>
         </div>
       );
     case "image-bottom":
       return (
-        <div className="flex flex-col gap-1.5 w-full px-1.5">
+        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1.5", cardBg)}>
           <div className="space-y-[3px]">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
           </div>
-          <div className="w-full h-5 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
-            <Mountain className="w-2.5 h-2.5 text-muted-foreground/20" />
+          <div className={cn("w-full h-5 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <Mountain className="w-2.5 h-2.5 text-[hsl(215,15%,72%)]" />
           </div>
         </div>
       );
     case "video-upload":
       return (
-        <div className="w-full px-1.5">
-          <div className="w-full h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center relative">
-            <div className="w-5 h-5 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
-              <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-foreground/25 ml-0.5" />
+        <div className={cn("w-full rounded-lg p-2", cardBg)}>
+          <div className={cn("w-full h-8 rounded-md border flex items-center justify-center relative", imgBg, imgBorder)}>
+            <div className="w-5 h-5 rounded-full bg-white/80 shadow-sm flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
-            <div className="absolute bottom-1 left-1.5 right-1.5 h-[2px] rounded-full bg-muted-foreground/10 overflow-hidden">
-              <div className="h-full w-1/3 rounded-full bg-primary/25" />
+            <div className="absolute bottom-1 left-1.5 right-1.5 h-[2px] rounded-full bg-[hsl(215,20%,88%)] overflow-hidden">
+              <div className="h-full w-1/3 rounded-full bg-primary/40" />
             </div>
           </div>
         </div>
       );
     case "video-left":
       return (
-        <div className="flex gap-1.5 w-full px-1.5">
-          <div className="flex-1 h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
-            <div className="w-4 h-4 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
-              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
+        <div className={cn("flex w-full rounded-lg p-2 gap-1.5", cardBg)}>
+          <div className={cn("flex-1 h-8 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <div className="w-4 h-4 rounded-full bg-white/80 shadow-sm flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
           </div>
           <div className="flex-1 space-y-[3px] pt-1">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
+            <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
           </div>
         </div>
       );
     case "video-right":
       return (
-        <div className="flex gap-1.5 w-full px-1.5">
+        <div className={cn("flex w-full rounded-lg p-2 gap-1.5", cardBg)}>
           <div className="flex-1 space-y-[3px] pt-1">
-            <div className="h-[3px] w-full rounded-sm bg-muted-foreground/12" />
-            <div className="h-[3px] w-4/5 rounded-sm bg-muted-foreground/10" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-muted-foreground/10" />
+            <div className={cn("h-[2.5px] w-full rounded-[1px]", lineBg)} />
+            <div className={cn("h-[2.5px] w-4/5 rounded-[1px]", lineBgLight)} />
+            <div className={cn("h-[2.5px] w-3/5 rounded-[1px]", lineBgLight)} />
           </div>
-          <div className="flex-1 h-9 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center justify-center">
-            <div className="w-4 h-4 rounded-full bg-foreground/8 flex items-center justify-center border border-foreground/8">
-              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
+          <div className={cn("flex-1 h-8 rounded-md border flex items-center justify-center", imgBg, imgBorder)}>
+            <div className="w-4 h-4 rounded-full bg-white/80 shadow-sm flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
           </div>
         </div>
       );
     case "audio-upload":
       return (
-        <div className="w-full px-1.5">
-          <div className="w-full h-8 rounded-md bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/8 flex items-center gap-1 px-1.5">
-            <div className="w-3 h-3 rounded-full bg-foreground/8 flex items-center justify-center shrink-0">
-              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-foreground/25 ml-0.5" />
+        <div className={cn("w-full rounded-lg p-2", cardBg)}>
+          <div className={cn("w-full h-7 rounded-md border flex items-center gap-1 px-1.5", "bg-[#f4f5f7]", imgBorder)}>
+            <div className="w-3.5 h-3.5 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-[hsl(215,25%,55%)] ml-0.5" />
             </div>
             <div className="flex-1 flex items-center gap-[1px]">
               {[3, 5, 2, 6, 4, 7, 3, 5, 2, 4, 6, 3].map((h, i) => (
-                <div key={i} className="flex-1 rounded-full bg-primary/20" style={{ height: `${h}px` }} />
+                <div key={i} className="flex-1 rounded-full bg-primary/25" style={{ height: `${h}px` }} />
               ))}
             </div>
           </div>
@@ -397,32 +404,32 @@ function BlockThumbnail({ id }: { id: string }) {
       );
     case "question-block":
       return (
-        <div className="flex flex-col gap-1 w-full px-1.5">
-          <div className="h-[3px] w-4/5 rounded-sm bg-foreground/15" />
+        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1", cardBg)}>
+          <div className={cn("h-[3px] w-4/5 rounded-[1px]", headingBg)} />
           <div className="space-y-[3px]">
-            <div className="flex items-center gap-1 h-3 rounded bg-muted-foreground/5 border border-muted-foreground/8 px-1">
-              <div className="w-1.5 h-1.5 rounded-full border border-primary/30" />
-              <div className="h-[2px] flex-1 rounded-sm bg-muted-foreground/10" />
+            <div className="flex items-center gap-1 h-3 rounded-[4px] bg-white border border-[hsl(215,20%,90%)] px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.04)]">
+              <div className="w-1.5 h-1.5 rounded-full border-[1.5px] border-primary/40" />
+              <div className={cn("h-[2px] flex-1 rounded-[1px]", lineBgLight)} />
             </div>
-            <div className="flex items-center gap-1 h-3 rounded bg-muted-foreground/5 border border-muted-foreground/8 px-1">
-              <div className="w-1.5 h-1.5 rounded-full border border-muted-foreground/15" />
-              <div className="h-[2px] w-3/5 rounded-sm bg-muted-foreground/10" />
+            <div className="flex items-center gap-1 h-3 rounded-[4px] bg-white border border-[hsl(215,20%,90%)] px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.04)]">
+              <div className="w-1.5 h-1.5 rounded-full border-[1.5px] border-[hsl(215,15%,82%)]" />
+              <div className={cn("h-[2px] w-3/5 rounded-[1px]", lineBgLight)} />
             </div>
           </div>
         </div>
       );
     case "quiz-block":
       return (
-        <div className="flex flex-col gap-1 w-full px-1.5">
+        <div className={cn("flex flex-col w-full rounded-lg p-2 gap-1", cardBg)}>
           <div className="flex items-center gap-1">
-            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/30" />
-            <div className="h-[3px] w-2/5 rounded-sm bg-foreground/15" />
+            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/40" />
+            <div className={cn("h-[3px] w-2/5 rounded-[1px]", headingBg)} />
           </div>
           <div className="space-y-[2px]">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-1 h-2.5 rounded bg-primary/5 border border-primary/8 px-1">
-                <div className="w-1.5 h-1.5 rounded-sm bg-primary/15" />
-                <div className="h-[2px] flex-1 rounded-sm bg-primary/10" />
+              <div key={i} className="flex items-center gap-1 h-2.5 rounded-[3px] bg-white border border-primary/12 px-1 shadow-[0_0.5px_1px_rgba(0,0,0,0.03)]">
+                <div className="w-1.5 h-1.5 rounded-sm bg-primary/20" />
+                <div className="h-[2px] flex-1 rounded-[1px] bg-primary/12" />
               </div>
             ))}
           </div>
