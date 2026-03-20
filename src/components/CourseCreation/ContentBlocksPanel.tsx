@@ -462,7 +462,7 @@ function BlockGridItem({
   );
 }
 
-export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false, hasQuizBlock = false }: ContentBlocksPanelProps) {
+export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled = false }: ContentBlocksPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBlocks = searchQuery.trim()
