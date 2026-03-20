@@ -128,7 +128,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
                   );
                 }
               }}
-              className="w-full text-[13px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35"
+              className="w-full text-[13px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50"
               placeholder="Untitled page..."
             />
           </div>
