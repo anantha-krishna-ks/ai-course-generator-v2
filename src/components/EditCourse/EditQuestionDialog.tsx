@@ -367,8 +367,6 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       </SortableOptionWrapper>
     );
   };
-    );
-  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
