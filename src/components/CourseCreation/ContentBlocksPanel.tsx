@@ -70,7 +70,7 @@ const ALL_BLOCKS: BlockItem[] = [
 export function resolveTemplateDropData(
   templateId: string,
   categoryId: string
-): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description"; variant?: string } | null {
+): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description"; variant?: string } | null {
   const block = ALL_BLOCKS.find((b) => b.id === templateId);
   if (!block || block.isQuizGenerator) return null;
   return { type: block.type, variant: block.variant };
