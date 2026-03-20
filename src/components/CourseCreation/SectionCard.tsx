@@ -472,13 +472,6 @@ export function SectionCard({
                       {hasScope ? "Edit scope" : "Add scope"}
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => setShowImageBlock(true)}
-                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
-                    >
-                      <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                      {thumbnailUrl ? "Change image" : "Add image"}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
                       onClick={() => {
                         setShowObjective(!showObjective);
                         if (!showObjective) setTimeout(() => objectiveRef.current?.focus(), 350);
