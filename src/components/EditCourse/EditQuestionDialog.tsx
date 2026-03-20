@@ -275,9 +275,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border-border/60 shadow-xl">
+      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border shadow-2xl bg-white">
         {/* Header */}
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/50 bg-card">
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/30 bg-white">
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-base font-semibold tracking-tight">
