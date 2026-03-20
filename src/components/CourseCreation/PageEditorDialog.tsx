@@ -1001,6 +1001,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         autoFocus={false}
                                         aiEnabled={aiEnabled}
                                         readOnly
+                                        variant={block.variant}
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
