@@ -101,8 +101,8 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-muted-foreground/20 border-2 border-background z-10 group-hover/row:bg-primary/50 transition-colors" />
         </div>
 
-        {/* Page content row */}
-        <div className="flex-1 flex items-center gap-2 py-2 pr-2 pl-2 rounded-lg hover:bg-accent/50 transition-colors duration-150 min-w-0">
+        {/* Page card */}
+        <div className="flex-1 flex items-center gap-2.5 py-2.5 pr-3 pl-2.5 rounded-xl border border-border/60 bg-card shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] hover:border-border hover:shadow-sm transition-all duration-150 min-w-0 my-0.5">
           <button
             {...attributes}
             {...listeners}
@@ -110,6 +110,9 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           >
             <GripVertical className="w-3 h-3 text-muted-foreground" />
           </button>
+          <div className="w-6 h-6 rounded-md bg-accent/60 flex items-center justify-center shrink-0">
+            <FileText className="w-3 h-3 text-muted-foreground/60" />
+          </div>
           <div className="flex-1 min-w-0">
             <input
               ref={isLastPage ? newPageRef : undefined}
@@ -124,10 +127,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
                   );
                 }
               }}
-              className={cn(
-                "w-full text-[13px] text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35 transition-all duration-200",
-                focusedPageId === page.id ? "text-foreground" : "text-foreground/80"
-              )}
+              className="w-full text-[13px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/35"
               placeholder="Untitled page..."
             />
           </div>
@@ -148,14 +148,14 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           )}
           <button
             onClick={() => setShowEditor(true)}
-            className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0 opacity-0 group-hover/row:opacity-100"
+            className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0"
           >
             Open
             <ChevronRight className="w-3 h-3" />
           </button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0 opacity-0 group-hover/row:opacity-60 hover:!opacity-100">
+              <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0">
                 <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
