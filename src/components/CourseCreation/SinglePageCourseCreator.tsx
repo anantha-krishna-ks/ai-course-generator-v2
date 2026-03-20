@@ -332,6 +332,9 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     if (type === "image-description") {
       return JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
     }
+    if (type === "video-description") {
+      return JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
+    }
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text": return "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content.</p>";

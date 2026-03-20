@@ -273,6 +273,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         description: "<p>Add a description here...</p>",
       });
     }
+    if (type === "video-description") {
+      return JSON.stringify({
+        layout: variant === "video-right" ? "video-right" : "video-left",
+        videoUrl: "",
+        description: "",
+      });
+    }
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text":

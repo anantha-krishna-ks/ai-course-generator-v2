@@ -234,7 +234,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     let content = "";
     let blockType: ContentBlockData["type"] = type as ContentBlockData["type"];
-    if (type === "text") {
+    if (type === "video-description") {
+      content = JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
+    } else if (type === "text") {
       if (variant === "heading-text") {
         content = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
       } else if (variant === "two-columns") {
