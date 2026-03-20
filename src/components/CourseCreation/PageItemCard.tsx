@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight } from "lucide-react";
+import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, Upload, X } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface CourseOutlineItem {
@@ -59,6 +60,8 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showScopeDialog, setShowScopeDialog] = useState(false);
+  const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
+  const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -165,9 +168,8 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         </div>
       </div>
 
-      {/* Scope Dialog */}
       <Dialog open={showScopeDialog} onOpenChange={setShowScopeDialog}>
-        <DialogContent className="sm:max-w-[560px]">
+        <DialogContent className="w-[95vw] max-w-[1100px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
@@ -177,34 +179,59 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               Define the scope for "{displayTitle}"
             </p>
           </DialogHeader>
-          <div className="mt-4 space-y-4">
-            <div>
-              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Inclusions</label>
+          <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
+            {/* Inclusions */}
+            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
               <textarea
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
                 autoFocus
-                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics, content, or scope should be included in this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
                 }}
               />
+              <PageScopeDocUploadZone
+                documents={pageInclusionDocs}
+                onDocumentsChange={setPageInclusionDocs}
+              />
             </div>
-            <div>
-              <label className="text-xs font-medium text-foreground/70 mb-1.5 block">Exclusions</label>
+
+            {/* Divider */}
+            <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
+              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+              <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
+                <span className="text-[9px] font-semibold text-muted-foreground/60">vs</span>
+              </div>
+              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+            </div>
+            <div className="flex md:hidden items-center gap-3 py-3 px-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+            </div>
+
+            {/* Exclusions */}
+            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}
-                className="w-full text-sm text-foreground bg-muted/30 rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[120px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics or content should be excluded from this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(120, target.scrollHeight) + 'px';
+                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
                 }}
+              />
+              <PageScopeDocUploadZone
+                documents={pageExclusionDocs}
+                onDocumentsChange={setPageExclusionDocs}
               />
             </div>
           </div>
@@ -272,5 +299,52 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         onAddItem={onAddItem}
       />
     </>
+  );
+}
+
+function PageScopeDocUploadZone({
+  documents,
+  onDocumentsChange,
+}: {
+  documents: string[];
+  onDocumentsChange: (docs: string[]) => void;
+}) {
+  return (
+    <div className="space-y-2 mt-2">
+      {documents.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {documents.map((doc, i) => (
+            <Badge key={i} variant="secondary" className="gap-1.5 text-xs font-normal h-6 pr-1.5">
+              <FileText className="w-3 h-3" />
+              {doc}
+              <button
+                type="button"
+                onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
+                className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      <div
+        onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5'); }}
+        onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5'); }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.currentTarget.classList.remove('border-primary', 'bg-primary/5');
+          const files = Array.from(e.dataTransfer.files);
+          if (files.length > 0) {
+            onDocumentsChange([...documents, ...files.map(f => f.name)]);
+          }
+        }}
+        onClick={() => onDocumentsChange([...documents, `Reference_${Date.now().toString(36)}.pdf`])}
+        className="w-full border border-dashed border-primary/50 rounded-lg py-3 text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
+      >
+        <Upload className="w-3.5 h-3.5" />
+        <span className="font-medium">Attach reference document</span>
+      </div>
+    </div>
   );
 }
