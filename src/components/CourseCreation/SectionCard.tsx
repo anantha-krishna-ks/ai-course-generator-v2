@@ -306,13 +306,16 @@ export function SectionCard({
   onOpenSection,
   onAddPage,
   onAddLearningObjective,
+  objective: externalObjective,
+  onObjectiveChange,
   pages: externalPages,
   onPagesChange,
 }: SectionCardProps) {
   const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showObjective, setShowObjective] = useState(false);
-  const [objectiveText, setObjectiveText] = useState("");
+  const objectiveText = externalObjective ?? "";
+  const setObjectiveText = (val: string) => onObjectiveChange?.(val);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
   const [isObjectiveFocused, setIsObjectiveFocused] = useState(false);
