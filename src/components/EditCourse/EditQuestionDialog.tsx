@@ -172,21 +172,14 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   };
 
   /** Renders a single option row with expandable explanation */
-  const OptionRow = ({
-    index,
-    option,
-    selector,
-  }: {
-    index: number;
-    option: string;
-    selector: React.ReactNode;
-  }) => {
+  const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
     const isCorrect = isOptionCorrect(option) && option.trim();
     const isExpanded = expandedExplanations.has(index);
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
     return (
       <div
+        key={index}
         className={cn(
           "rounded-lg border transition-colors",
           isCorrect ? "border-primary/40 bg-primary/5" : "border-border hover:border-border/80"
