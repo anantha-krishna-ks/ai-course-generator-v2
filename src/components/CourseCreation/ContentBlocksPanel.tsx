@@ -77,53 +77,47 @@ export function resolveTemplateDropData(
 
 /** Larger, more detailed preview for the hover tooltip */
 function BlockPreview({ id }: { id: string }) {
+  const headingCls = "text-[10px] font-semibold text-foreground/80 leading-snug";
+  const bodyCls = "text-[9px] text-muted-foreground leading-relaxed";
+  const imgArea = "rounded-lg bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/5 border border-muted-foreground/10 flex items-center justify-center";
+  const videoBg = "rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden";
+
   switch (id) {
     case "heading-text":
       return (
         <div className="w-48 p-3 space-y-2">
-          <div className="h-3 w-2/3 rounded bg-foreground/30" />
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          <p className={headingCls}>Getting Started Guide</p>
+          <div>
+            <p className={bodyCls}>Learn the fundamentals of building your first project with our comprehensive step-by-step guide.</p>
+            <p className={cn(bodyCls, "mt-1 opacity-60")}>Follow along to set up your environment and get running quickly.</p>
           </div>
         </div>
       );
     case "text-only":
       return (
-        <div className="w-48 p-3 space-y-1.5">
-          <div className="h-1.5 w-full rounded-sm bg-muted-foreground/25" />
-          <div className="h-1.5 w-full rounded-sm bg-muted-foreground/25" />
-          <div className="h-1.5 w-full rounded-sm bg-muted-foreground/25" />
-          <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
-          <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+        <div className="w-48 p-3">
+          <p className={bodyCls}>Effective learning combines theory with hands-on practice. Each module builds upon the previous one, ensuring a smooth and natural progression through all topics.</p>
+          <p className={cn(bodyCls, "mt-1.5 opacity-60")}>Take your time with each section to get the most value.</p>
         </div>
       );
     case "two-columns":
       return (
         <div className="w-48 p-3 flex gap-3">
-          <div className="flex-1 space-y-1.5">
-            <div className="h-2 w-3/5 rounded-sm bg-foreground/25 mb-2" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-2/3 rounded-sm bg-muted-foreground/15" />
+          <div className="flex-1">
+            <p className={cn(headingCls, "text-[9px] mb-1.5")}>Overview</p>
+            <p className={cn(bodyCls, "text-[8px]")}>Core concepts and key principles for building effective learning paths and curricula.</p>
           </div>
           <div className="w-px bg-border" />
-          <div className="flex-1 space-y-1.5">
-            <div className="h-2 w-3/5 rounded-sm bg-foreground/25 mb-2" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/15" />
+          <div className="flex-1">
+            <p className={cn(headingCls, "text-[9px] mb-1.5")}>Details</p>
+            <p className={cn(bodyCls, "text-[8px]")}>Advanced techniques and best practices for real-world implementation and deployment.</p>
           </div>
         </div>
       );
     case "image-full":
       return (
         <div className="w-48 p-3">
-          <div className="w-full h-20 rounded-lg bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/5 border border-muted-foreground/10 flex items-center justify-center">
+          <div className={cn("w-full h-20", imgArea)}>
             <Mountain className="w-6 h-6 text-muted-foreground/25" />
           </div>
         </div>
@@ -131,25 +125,17 @@ function BlockPreview({ id }: { id: string }) {
     case "image-top":
       return (
         <div className="w-48 p-3 space-y-2.5">
-          <div className="w-full h-14 rounded-lg bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/5 border border-muted-foreground/10 flex items-center justify-center">
+          <div className={cn("w-full h-14", imgArea)}>
             <Mountain className="w-5 h-5 text-muted-foreground/25" />
           </div>
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
-          </div>
+          <p className={cn(bodyCls, "text-[8px]")}>A detailed caption describing the image content and providing additional context for the reader.</p>
         </div>
       );
     case "image-bottom":
       return (
         <div className="w-48 p-3 space-y-2.5">
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
-          </div>
-          <div className="w-full h-14 rounded-lg bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/5 border border-muted-foreground/10 flex items-center justify-center">
+          <p className={cn(bodyCls, "text-[8px]")}>Introductory text providing context and background for the visual content displayed below.</p>
+          <div className={cn("w-full h-14", imgArea)}>
             <Mountain className="w-5 h-5 text-muted-foreground/25" />
           </div>
         </div>
@@ -157,8 +143,7 @@ function BlockPreview({ id }: { id: string }) {
     case "video-upload":
       return (
         <div className="w-48 p-3">
-          <div className="w-full h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_4px,hsl(var(--muted-foreground)/0.03)_4px,hsl(var(--muted-foreground)/0.03)_5px)]" />
+          <div className={cn("w-full h-20", videoBg)}>
             <div className="w-8 h-8 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center border border-foreground/10 z-10">
               <div className="w-0 h-0 border-t-[5px] border-b-[5px] border-l-[8px] border-transparent border-l-foreground/40 ml-0.5" />
             </div>
@@ -171,29 +156,25 @@ function BlockPreview({ id }: { id: string }) {
     case "video-left":
       return (
         <div className="w-48 p-3 flex gap-2.5">
-          <div className="flex-1 h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
+          <div className={cn("flex-1 h-20", videoBg)}>
             <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
               <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
             </div>
           </div>
-          <div className="flex-1 space-y-1.5 pt-1">
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          <div className="flex-1 pt-1">
+            <p className={cn(headingCls, "text-[9px] mb-1")}>Video title</p>
+            <p className={cn(bodyCls, "text-[8px]")}>A short description of the video content and what viewers will learn.</p>
           </div>
         </div>
       );
     case "video-right":
       return (
         <div className="w-48 p-3 flex gap-2.5">
-          <div className="flex-1 space-y-1.5 pt-1">
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-full rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/20" />
-            <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+          <div className="flex-1 pt-1">
+            <p className={cn(headingCls, "text-[9px] mb-1")}>Video title</p>
+            <p className={cn(bodyCls, "text-[8px]")}>A short description of the video content and what viewers will learn.</p>
           </div>
-          <div className="flex-1 h-20 rounded-lg bg-gradient-to-br from-muted-foreground/8 to-muted-foreground/4 border border-muted-foreground/10 flex items-center justify-center relative overflow-hidden">
+          <div className={cn("flex-1 h-20", videoBg)}>
             <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center border border-foreground/10">
               <div className="w-0 h-0 border-t-[4px] border-b-[4px] border-l-[6px] border-transparent border-l-foreground/40 ml-0.5" />
             </div>
@@ -209,11 +190,7 @@ function BlockPreview({ id }: { id: string }) {
             </div>
             <div className="flex-1 flex items-center gap-[2px]">
               {[4, 8, 3, 10, 6, 12, 5, 9, 3, 7, 11, 4, 8, 5, 10, 3, 7, 6, 9, 4].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-full bg-primary/25"
-                  style={{ height: `${h}px` }}
-                />
+                <div key={i} className="flex-1 rounded-full bg-primary/25" style={{ height: `${h}px` }} />
               ))}
             </div>
             <span className="text-[8px] text-muted-foreground/50 shrink-0 tabular-nums">1:24</span>
@@ -223,19 +200,19 @@ function BlockPreview({ id }: { id: string }) {
     case "question-block":
       return (
         <div className="w-48 p-3 space-y-2">
-          <div className="h-2 w-4/5 rounded-sm bg-foreground/25" />
+          <p className={headingCls}>Select the correct answer:</p>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
               <div className="w-2.5 h-2.5 rounded-full border-2 border-primary/40" />
-              <div className="h-1.5 flex-1 rounded-sm bg-muted-foreground/15" />
+              <span className={cn(bodyCls, "text-[8px]")}>Option A — First answer choice</span>
             </div>
             <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
               <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
-              <div className="h-1.5 w-3/5 rounded-sm bg-muted-foreground/15" />
+              <span className={cn(bodyCls, "text-[8px]")}>Option B — Second answer</span>
             </div>
             <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
               <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
-              <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/15" />
+              <span className={cn(bodyCls, "text-[8px]")}>Option C — Third answer</span>
             </div>
           </div>
         </div>
@@ -245,14 +222,13 @@ function BlockPreview({ id }: { id: string }) {
         <div className="w-48 p-3 space-y-2">
           <div className="flex items-center gap-1.5 mb-1">
             <MessageCircleQuestion className="w-3.5 h-3.5 text-primary/50" />
-            <div className="h-2 w-1/2 rounded-sm bg-foreground/25" />
+            <span className={headingCls}>Quiz — Module 1</span>
           </div>
           <div className="space-y-1.5">
-            {[1, 2, 3].map((i) => (
+            {["Q1 — Basics of the topic", "Q2 — Core concepts review", "Q3 — Practical application"].map((label, i) => (
               <div key={i} className="flex items-center gap-2 h-4 rounded bg-primary/5 border border-primary/10 px-2">
                 <div className="w-2 h-2 rounded-sm bg-primary/20" />
-                <div className="h-1.5 flex-1 rounded-sm bg-primary/10" />
-                <div className="w-6 h-1.5 rounded-sm bg-primary/15" />
+                <span className="text-[8px] text-muted-foreground">{label}</span>
               </div>
             ))}
           </div>
