@@ -85,7 +85,7 @@ export function DropIndicator({
   return (
     <div
       className={cn(
-        "relative transition-all duration-300 ease-out",
+        "relative transition-all duration-200",
         isActive ? "py-3" : "py-0.5"
       )}
       onDragOver={handleDragOver}
@@ -95,15 +95,15 @@ export function DropIndicator({
     >
       <div
         className={cn(
-          "flex items-center gap-2 transition-all duration-300 ease-out",
-          isActive ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          "flex items-center gap-2 transition-all duration-200",
+          isActive ? "opacity-100" : "opacity-0"
         )}
       >
-        <div className="flex-1 h-[2px] rounded-full bg-[hsl(217,91%,60%)] transition-all duration-300" />
-        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[hsl(217,91%,60%)] text-white shadow-sm transition-all duration-300">
+        <div className="flex-1 h-[2px] rounded-full bg-primary" />
+        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground shadow-sm">
           <Plus className="w-3 h-3" />
         </div>
-        <div className="flex-1 h-[2px] rounded-full bg-[hsl(217,91%,60%)] transition-all duration-300" />
+        <div className="flex-1 h-[2px] rounded-full bg-primary" />
       </div>
     </div>
   );
