@@ -222,6 +222,11 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     onClose();
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  );
+
   if (!question) return null;
 
   const handleTypeChange = (value: Question["type"]) => {
@@ -244,11 +249,6 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   };
 
   const optionIds = options.map((_, i) => `option-sortable-${i}`);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor)
-  );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
