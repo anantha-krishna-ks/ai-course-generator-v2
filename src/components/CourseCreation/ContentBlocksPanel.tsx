@@ -58,8 +58,10 @@ const ALL_BLOCKS: BlockItem[] = [
   // MEDIA
   { id: "video-upload", label: "Video", icon: Video, category: "media", categoryLabel: "MEDIA", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
   { id: "audio-upload", label: "Audio", icon: Mic, category: "media", categoryLabel: "MEDIA", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
+  // QUESTION
+  { id: "question-block", label: "Question", icon: HelpCircle, category: "question", categoryLabel: "QUESTION", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   // QUIZ
-  { id: "quiz-block", label: "Quiz", icon: HelpCircle, category: "quiz", categoryLabel: "QUIZ", type: "quiz", variant: "quiz-block", description: "Add a quiz with questions — one per page" },
+  { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "quiz", categoryLabel: "QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
@@ -185,13 +187,10 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "quiz-block":
+    case "question-block":
       return (
         <div className="w-48 p-3 space-y-2">
-          <div className="flex items-center gap-1.5 mb-1">
-            <HelpCircle className="w-3.5 h-3.5 text-primary/50" />
-            <div className="h-2 w-2/3 rounded-sm bg-foreground/25" />
-          </div>
+          <div className="h-2 w-4/5 rounded-sm bg-foreground/25" />
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 h-5 rounded-md bg-muted-foreground/5 border border-muted-foreground/10 px-2">
               <div className="w-2.5 h-2.5 rounded-full border-2 border-primary/40" />
@@ -205,6 +204,27 @@ function BlockPreview({ id }: { id: string }) {
               <div className="w-2.5 h-2.5 rounded-full border-2 border-muted-foreground/20" />
               <div className="h-1.5 w-4/5 rounded-sm bg-muted-foreground/15" />
             </div>
+          </div>
+        </div>
+      );
+    case "quiz-block":
+      return (
+        <div className="w-48 p-3 space-y-2">
+          <div className="flex items-center gap-1.5 mb-1">
+            <MessageCircleQuestion className="w-3.5 h-3.5 text-primary/50" />
+            <div className="h-2 w-1/2 rounded-sm bg-foreground/25" />
+          </div>
+          <div className="space-y-1.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-2 h-4 rounded bg-primary/5 border border-primary/10 px-2">
+                <div className="w-2 h-2 rounded-sm bg-primary/20" />
+                <div className="h-1.5 flex-1 rounded-sm bg-primary/10" />
+                <div className="w-6 h-1.5 rounded-sm bg-primary/15" />
+              </div>
+            ))}
+          </div>
+          <div className="h-1 w-full rounded-full bg-muted-foreground/10 overflow-hidden mt-1">
+            <div className="h-full w-2/3 rounded-full bg-primary/25" />
           </div>
         </div>
       );
@@ -312,13 +332,10 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "quiz-block":
+    case "question-block":
       return (
         <div className="flex flex-col gap-1 w-full px-1.5">
-          <div className="flex items-center gap-1">
-            <HelpCircle className="w-2.5 h-2.5 text-primary/30" />
-            <div className="h-[3px] w-3/5 rounded-sm bg-foreground/15" />
-          </div>
+          <div className="h-[3px] w-4/5 rounded-sm bg-foreground/15" />
           <div className="space-y-[3px]">
             <div className="flex items-center gap-1 h-3 rounded bg-muted-foreground/5 border border-muted-foreground/8 px-1">
               <div className="w-1.5 h-1.5 rounded-full border border-primary/30" />
@@ -328,6 +345,23 @@ function BlockThumbnail({ id }: { id: string }) {
               <div className="w-1.5 h-1.5 rounded-full border border-muted-foreground/15" />
               <div className="h-[2px] w-3/5 rounded-sm bg-muted-foreground/10" />
             </div>
+          </div>
+        </div>
+      );
+    case "quiz-block":
+      return (
+        <div className="flex flex-col gap-1 w-full px-1.5">
+          <div className="flex items-center gap-1">
+            <MessageCircleQuestion className="w-2.5 h-2.5 text-primary/30" />
+            <div className="h-[3px] w-2/5 rounded-sm bg-foreground/15" />
+          </div>
+          <div className="space-y-[2px]">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-1 h-2.5 rounded bg-primary/5 border border-primary/8 px-1">
+                <div className="w-1.5 h-1.5 rounded-sm bg-primary/15" />
+                <div className="h-[2px] flex-1 rounded-sm bg-primary/10" />
+              </div>
+            ))}
           </div>
         </div>
       );
@@ -448,7 +482,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
   }
 
   const handleClick = (block: BlockItem) => {
-    if (block.type === "quiz" && hasQuizBlock) return;
+    if (block.id === "quiz-block" && hasQuizBlock) return;
     onAddBlock(block.type, block.variant);
   };
 
@@ -490,7 +524,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
                     key={block.id}
                     block={block}
                     onClick={() => handleClick(block)}
-                    locked={block.type === "quiz" && hasQuizBlock}
+                    locked={block.id === "quiz-block" && hasQuizBlock}
                   />
                 ))}
               </div>
