@@ -495,7 +495,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
         </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-3.5 border-t border-border/50 bg-card">
+        <DialogFooter className="px-6 py-3.5 border-t border-border/30 bg-white">
           <Button variant="outline" onClick={handleClose} className="rounded-xl">
             Cancel
           </Button>
