@@ -524,7 +524,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
                     key={block.id}
                     block={block}
                     onClick={() => handleClick(block)}
-                    locked={block.type === "quiz" && hasQuizBlock}
+                    locked={block.id === "quiz-block" && hasQuizBlock}
                   />
                 ))}
               </div>
