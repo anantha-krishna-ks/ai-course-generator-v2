@@ -40,7 +40,7 @@ interface BlockItem {
 }
 
 interface ContentBlocksPanelProps {
-  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description", variant?: string) => void;
+  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
 }
