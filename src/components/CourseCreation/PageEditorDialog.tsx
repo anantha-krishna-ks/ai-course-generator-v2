@@ -838,6 +838,22 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
                     placeholder="Untitled section"
                   />
+
+                  {/* Section Objectives */}
+                  <div className="mt-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="w-4 h-4 text-primary/70" />
+                      <span className="text-sm font-medium text-muted-foreground">Objectives</span>
+                    </div>
+                    <textarea
+                      value={sectionObjectives}
+                      onChange={(e) => onSectionObjectivesChange?.(e.target.value)}
+                      rows={3}
+                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-2.5 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors"
+                      placeholder="Define the learning objectives for this section…"
+                    />
+                  </div>
+
                   <div className="border-t border-dashed border-border my-6" />
 
                   {/* Section child pages list */}
