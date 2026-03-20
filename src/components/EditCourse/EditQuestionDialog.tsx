@@ -422,7 +422,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
               ) : (
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Answer Choices
                       {type === "MCQ" && (
                         <span className="font-normal normal-case tracking-normal ml-1.5 text-muted-foreground/50">— select all correct</span>
