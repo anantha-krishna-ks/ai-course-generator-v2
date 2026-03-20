@@ -124,7 +124,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
             )}
             <button
               onClick={() => onOpenEditor?.()}
-              className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/50 hover:text-primary transition-colors shrink-0"
+              className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/70 hover:text-primary transition-colors shrink-0"
             >
               Open
               <ChevronRight className="w-3 h-3" />
