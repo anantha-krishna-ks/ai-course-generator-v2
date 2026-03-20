@@ -227,6 +227,51 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     setCorrectIndices(new Set());
   };
 
+  const optionIds = options.map((_, i) => `option-sortable-${i}`);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = optionIds.indexOf(String(active.id));
+    const newIndex = optionIds.indexOf(String(over.id));
+
+    const newOptions = arrayMove(options, oldIndex, newIndex);
+    const newExplanations = arrayMove(optionExplanations, oldIndex, newIndex);
+    setOptions(newOptions);
+    setOptionExplanations(newExplanations);
+
+    // Remap correctIndices
+    setCorrectIndices(prev => {
+      const next = new Set<number>();
+      prev.forEach(i => {
+        if (i === oldIndex) next.add(newIndex);
+        else if (oldIndex < newIndex && i > oldIndex && i <= newIndex) next.add(i - 1);
+        else if (oldIndex > newIndex && i >= newIndex && i < oldIndex) next.add(i + 1);
+        else next.add(i);
+      });
+      syncAnswerFromIndices(next, newOptions);
+      return next;
+    });
+
+    // Remap expanded explanations
+    setExpandedExplanations(prev => {
+      const next = new Set<number>();
+      prev.forEach(i => {
+        if (i === oldIndex) next.add(newIndex);
+        else if (oldIndex < newIndex && i > oldIndex && i <= newIndex) next.add(i - 1);
+        else if (oldIndex > newIndex && i >= newIndex && i < oldIndex) next.add(i + 1);
+        else next.add(i);
+      });
+      return next;
+    });
+  };
+
   /** Render a single option card */
   const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
     const isCorrect = isOptionCorrect(index) && option.trim();
@@ -234,80 +279,94 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
     return (
-      <div key={index} className="group relative">
-        <div
-          className={cn(
-            "rounded-xl border-2 transition-all duration-150",
-            isCorrect
-              ? "border-primary/50 bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-               : "border-border/60 bg-white hover:bg-white"
-          )}
-        >
-          {/* Correct badge */}
-          {isCorrect && (
-            <div className="absolute -top-2 right-3 flex items-center gap-1 bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm">
-              <Check className="w-2.5 h-2.5" />
-              Correct
-            </div>
-          )}
+      <SortableOptionWrapper key={index} id={optionIds[index]}>
+        {(dragListeners, dragAttributes) => (
+          <div className="group relative">
+            <div
+              className={cn(
+                "rounded-xl border-2 transition-all duration-150",
+                isCorrect
+                  ? "border-primary/50 bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                   : "border-border/60 bg-white hover:bg-white"
+              )}
+            >
+              {/* Correct badge */}
+              {isCorrect && (
+                <div className="absolute -top-2 right-3 flex items-center gap-1 bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm">
+                  <Check className="w-2.5 h-2.5" />
+                  Correct
+                </div>
+              )}
 
-          {/* Option input row */}
-          <div className="flex items-center gap-3 px-4 py-3.5">
-            <span className="text-xs font-bold text-muted-foreground/50 w-5 text-center select-none shrink-0">
-              {String.fromCharCode(65 + index)}
-            </span>
-            {selector}
-            <Input
-              value={option}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
-              placeholder={`Option ${String.fromCharCode(65 + index)}`}
-              className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/30 font-medium"
-            />
-            <div className="flex items-center gap-0.5 shrink-0">
-              <button
-                type="button"
-                onClick={() => toggleExplanation(index)}
-                className={cn(
-                  "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
-                  isExpanded
-                    ? "bg-primary/10 text-primary"
-                    : hasExplanation
-                      ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
-                      : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
-                )}
-                title="Add rationale for this option"
-              >
-                <Lightbulb className="w-3.5 h-3.5" />
-                <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
-              </button>
-              {options.length > 2 && (
+              {/* Option input row */}
+              <div className="flex items-center gap-2 px-3 py-3.5">
                 <button
                   type="button"
-                  onClick={() => handleRemoveOption(index)}
-                  className="p-1.5 rounded-lg text-muted-foreground/20 hover:text-destructive hover:bg-destructive/10 transition-all duration-150 opacity-0 group-hover:opacity-100"
+                  className="cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors shrink-0"
+                  {...dragListeners}
+                  {...dragAttributes}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <GripVertical className="w-3.5 h-3.5" />
                 </button>
+                <span className="text-xs font-bold text-muted-foreground/50 w-5 text-center select-none shrink-0">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                {selector}
+                <Input
+                  value={option}
+                  onChange={(e) => handleOptionChange(index, e.target.value)}
+                  placeholder={`Option ${String.fromCharCode(65 + index)}`}
+                  className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/30 font-medium"
+                />
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => toggleExplanation(index)}
+                    className={cn(
+                      "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
+                      isExpanded
+                        ? "bg-primary/10 text-primary"
+                        : hasExplanation
+                          ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
+                          : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
+                    )}
+                    title="Add rationale for this option"
+                  >
+                    <Lightbulb className="w-3.5 h-3.5" />
+                    <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                  </button>
+                  {options.length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveOption(index)}
+                      className="p-1.5 rounded-lg text-muted-foreground/20 hover:text-destructive hover:bg-destructive/10 transition-all duration-150 opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Expandable rationale */}
+              {isExpanded && (
+                <div className="px-4 pb-3.5 pt-0">
+                  <div className="pl-8">
+                    <Textarea
+                      value={optionExplanations[index] || ""}
+                      onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
+                      placeholder="Why is this option correct or incorrect…"
+                      className="min-h-[52px] max-h-[90px] resize-none text-xs bg-white border-border/50 rounded-lg"
+                      rows={2}
+                    />
+                  </div>
+                </div>
               )}
             </div>
           </div>
-
-          {/* Expandable rationale */}
-          {isExpanded && (
-            <div className="px-4 pb-3.5 pt-0">
-              <div className="pl-8">
-                <Textarea
-                  value={optionExplanations[index] || ""}
-                  onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
-                  placeholder="Why is this option correct or incorrect…"
-                  className="min-h-[52px] max-h-[90px] resize-none text-xs bg-white border-border/50 rounded-lg"
-                  rows={2}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+        )}
+      </SortableOptionWrapper>
+    );
+  };
     );
   };
 
