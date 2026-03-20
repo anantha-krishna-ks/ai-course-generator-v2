@@ -324,14 +324,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     Select Correct Answer
                   </Label>
                   <RadioGroup value={answer} onValueChange={setAnswer} className="space-y-2">
-                    {["True", "False"].map((val, index) => (
-                      <OptionRow
-                        key={val}
-                        index={index}
-                        option={val}
-                        selector={<RadioGroupItem value={val} id={`tf-${val}`} className="shrink-0" />}
-                      />
-                    ))}
+                    {["True", "False"].map((val, index) =>
+                      renderOptionRow(index, val, <RadioGroupItem value={val} id={`tf-${val}`} className="shrink-0" />)
+                    )}
                   </RadioGroup>
                 </div>
               ) : type === "FIB" ? (
