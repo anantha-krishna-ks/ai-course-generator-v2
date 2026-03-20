@@ -202,7 +202,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
             "rounded-xl border-2 transition-all duration-150",
             isCorrect
               ? "border-primary/50 bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-              : "border-transparent bg-muted/40 hover:bg-muted/60"
+              : "border-border/60 bg-muted/20 hover:bg-muted/30"
           )}
         >
           {/* Correct badge */}
@@ -262,7 +262,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={optionExplanations[index] || ""}
                   onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
                   placeholder="Why is this option correct or incorrect…"
-                  className="min-h-[52px] max-h-[90px] resize-none text-xs bg-background/80 border-border/40 rounded-lg"
+                  className="min-h-[52px] max-h-[90px] resize-none text-xs bg-white border-border/50 rounded-lg"
                   rows={2}
                 />
               </div>
@@ -275,9 +275,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border-border/60 shadow-xl">
+      <DialogContent className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border shadow-2xl bg-white">
         {/* Header */}
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/50 bg-card">
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/30 bg-white">
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-base font-semibold tracking-tight">
@@ -288,7 +288,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
               </DialogDescription>
             </div>
             {!isAddMode && (
-              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted/60 px-2.5 py-1.5 rounded-lg border border-border/40">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/[0.06] px-2.5 py-1.5 rounded-lg border border-primary/15">
                 {typeConfig[type].icon}
                 {typeConfig[type].label}
               </div>
@@ -317,7 +317,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           "flex items-center gap-2.5 px-3.5 py-3 rounded-xl border-2 text-left transition-all duration-150",
                           type === t
                             ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-transparent bg-muted/40 hover:bg-muted/60"
+                            : "border-border/60 bg-muted/20 hover:bg-muted/30"
                         )}
                       >
                         <div className={cn(
@@ -348,7 +348,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   placeholder="Type your question here…"
-                  className="min-h-[80px] resize-none rounded-xl bg-white border-border/40 focus:border-primary/40 text-sm"
+                  className="min-h-[80px] resize-none rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white text-sm transition-colors"
                 />
               </div>
 
@@ -366,7 +366,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                           "flex items-center justify-center gap-2 px-4 py-4 rounded-xl border-2 cursor-pointer transition-all duration-150 text-sm font-medium",
                           answer === val
                             ? "border-primary bg-primary/[0.04] text-foreground shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-transparent bg-muted/40 text-muted-foreground hover:bg-muted/60"
+                            : "border-border/60 bg-muted/20 text-muted-foreground hover:bg-muted/30"
                         )}
                       >
                         <RadioGroupItem value={val} id={`tf-${val}`} className="sr-only" />
@@ -398,7 +398,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                             value={optionExplanations[index] || ""}
                             onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
                             placeholder={`Why "${val}" is the ${answer === val ? "correct" : "incorrect"} answer…`}
-                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-white border-border/40 rounded-lg"
+                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-white border-border/50 rounded-lg"
                             rows={2}
                           />
                         )}
@@ -416,7 +416,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Enter the correct answer…"
-                    className="rounded-xl bg-white border-border/40 focus:border-primary/40"
+                    className="rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white transition-colors"
                   />
                 </div>
               ) : (
@@ -468,7 +468,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                     <button
                       type="button"
                       onClick={handleAddOption}
-                      className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-border/40 px-4 py-3 text-sm text-muted-foreground/40 hover:text-muted-foreground/60 hover:border-border/60 hover:bg-muted/20 transition-all duration-150"
+                      className="flex items-center gap-2.5 w-full rounded-xl border-2 border-dashed border-border/50 px-4 py-3 text-sm text-muted-foreground/50 hover:text-muted-foreground hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-150"
                     >
                       <Plus className="w-4 h-4" />
                       Add option
@@ -487,7 +487,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   value={explanation}
                   onChange={(e) => setExplanation(e.target.value)}
                   placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-white border-border/40 focus:border-primary/40 text-sm"
+                  className="min-h-[72px] resize-none rounded-xl bg-muted/20 border-border/60 focus:border-primary/40 focus:bg-white text-sm transition-colors"
                 />
               </div>
             </div>
@@ -495,7 +495,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
         </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-3.5 border-t border-border/50 bg-card">
+        <DialogFooter className="px-6 py-3.5 border-t border-border/30 bg-white">
           <Button variant="outline" onClick={handleClose} className="rounded-xl">
             Cancel
           </Button>
