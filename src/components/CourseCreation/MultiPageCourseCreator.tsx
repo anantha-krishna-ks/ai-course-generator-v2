@@ -103,6 +103,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
   const [showTour, setShowTour] = useState(true);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
     { id: "description-block", type: "description", content: "" },
