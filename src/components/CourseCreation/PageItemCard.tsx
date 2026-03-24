@@ -52,6 +52,7 @@ interface PageItemCardProps {
   initialBlocks?: PageContentBlock[];
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
   onAddItem?: (type: "section" | "page") => void;
+  onPreview?: () => void;
 }
 
 const MAX_PAGE_TITLE_LENGTH = 350;
