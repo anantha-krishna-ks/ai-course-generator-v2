@@ -45,6 +45,7 @@ export function AddContentButton({
   forceOpen = false,
 }: AddContentButtonProps) {
   const isFullToolbar = variant === "full";
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [showAiPrompt, setShowAiPrompt] = useState<"text" | "image" | null>(null);
   const [aiPrompt, setAiPrompt] = useState("");
