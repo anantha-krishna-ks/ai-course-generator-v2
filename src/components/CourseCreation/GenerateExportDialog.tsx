@@ -74,10 +74,18 @@ export const GenerateExportDialog = ({
     const format = exportOptions.find((o) => o.id === selectedFormat);
     onOpenChange(false);
     setSelectedFormat(null);
-    toast({
+    const { update, id } = toast({
       title: "Download Started",
       description: `Your course "${courseTitle || "Untitled"}" is being exported as ${format?.label}. The download will begin shortly.`,
     });
+
+    setTimeout(() => {
+      update({
+        id,
+        title: "Download Completed",
+        description: `Your course "${courseTitle || "Untitled"}" has been successfully exported as ${format?.label}.`,
+      });
+    }, 1500);
   };
 
   const selectedOption = exportOptions.find((o) => o.id === selectedFormat);
