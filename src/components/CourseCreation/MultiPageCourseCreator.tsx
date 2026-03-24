@@ -1227,6 +1227,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         onClose={() => { setShowTour(false); setTourStep(-1); }}
         onStepChange={setTourStep}
       />
+
+      <GenerateExportDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        courseTitle={title}
+      />
     </div>
   );
 }
