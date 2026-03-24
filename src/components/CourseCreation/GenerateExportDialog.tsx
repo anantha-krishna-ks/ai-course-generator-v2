@@ -24,45 +24,40 @@ const exportOptions = [
     label: "HTML",
     description: "Interactive web format",
     icon: Globe,
-    gradient: "from-orange-500 to-amber-400",
-    shadow: "shadow-orange-500/20",
-    ring: "ring-orange-500/30",
+    bg: "bg-orange-500",
+    selectedBg: "bg-orange-600",
   },
   {
     id: "ppt",
     label: "PowerPoint",
     description: "Slide presentation",
     icon: Presentation,
-    gradient: "from-red-500 to-rose-400",
-    shadow: "shadow-red-500/20",
-    ring: "ring-red-500/30",
+    bg: "bg-red-500",
+    selectedBg: "bg-red-600",
   },
   {
     id: "word",
     label: "Word",
     description: "Editable document",
     icon: FileText,
-    gradient: "from-blue-600 to-blue-400",
-    shadow: "shadow-blue-500/20",
-    ring: "ring-blue-500/30",
+    bg: "bg-blue-600",
+    selectedBg: "bg-blue-700",
   },
   {
     id: "scorm",
     label: "SCORM",
     description: "LMS package",
     icon: FileCheck,
-    gradient: "from-emerald-600 to-emerald-400",
-    shadow: "shadow-emerald-500/20",
-    ring: "ring-emerald-500/30",
+    bg: "bg-emerald-600",
+    selectedBg: "bg-emerald-700",
   },
   {
     id: "pdf",
     label: "PDF",
     description: "Print-ready file",
     icon: FileType,
-    gradient: "from-violet-600 to-purple-400",
-    shadow: "shadow-violet-500/20",
-    ring: "ring-violet-500/30",
+    bg: "bg-violet-600",
+    selectedBg: "bg-violet-700",
   },
 ];
 
@@ -89,10 +84,10 @@ export const GenerateExportDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[92vw] max-w-[480px] p-0 overflow-hidden gap-0">
-        {/* Header with accent */}
-        <div className="relative px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
-          <div className="flex items-center gap-2.5 mb-1.5">
+      <DialogContent className="w-[92vw] max-w-[520px] p-0 overflow-hidden gap-0">
+        {/* Header */}
+        <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
+          <div className="flex items-center gap-2.5 mb-1">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <Sparkles className="h-4 w-4 text-primary" />
             </div>
@@ -107,62 +102,59 @@ export const GenerateExportDialog = ({
           </DialogDescription>
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-border" />
 
-        {/* Export Options */}
-        <div className="p-4 sm:p-5 space-y-2">
-          {exportOptions.map((option) => {
-            const Icon = option.icon;
-            const isSelected = selectedFormat === option.id;
-            return (
-              <button
-                key={option.id}
-                onClick={() => setSelectedFormat(option.id)}
-                className={cn(
-                  "relative w-full flex items-center gap-3.5 rounded-xl border px-3.5 py-3 text-left transition-all duration-200",
-                  "hover:bg-accent/40",
-                  isSelected
-                    ? "border-primary/40 bg-primary/[0.04] ring-1 ring-primary/20"
-                    : "border-border/60"
-                )}
-              >
-                {/* Icon pill */}
-                <div
+        {/* Grid layout */}
+        <div className="p-4 sm:p-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {exportOptions.map((option) => {
+              const Icon = option.icon;
+              const isSelected = selectedFormat === option.id;
+              return (
+                <button
+                  key={option.id}
+                  onClick={() => setSelectedFormat(option.id)}
                   className={cn(
-                    "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-white transition-all duration-200",
-                    option.gradient,
-                    isSelected ? cn("shadow-md", option.shadow, "scale-105") : "shadow-sm"
+                    "group relative flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-200",
+                    "hover:bg-accent/50 hover:shadow-sm",
+                    isSelected
+                      ? "border-primary/50 bg-primary/[0.06] ring-1 ring-primary/20 shadow-sm"
+                      : "border-border/60"
                   )}
                 >
-                  <Icon className="h-[18px] w-[18px]" />
-                </div>
+                  {/* Check badge */}
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary">
+                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+                    </div>
+                  )}
 
-                {/* Text */}
-                <div className="flex-1 min-w-0">
-                  <p className={cn(
-                    "text-[13px] font-semibold leading-tight transition-colors",
-                    isSelected ? "text-primary" : "text-foreground"
-                  )}>
-                    {option.label}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 leading-tight">
-                    {option.description}
-                  </p>
-                </div>
+                  {/* Icon */}
+                  <div
+                    className={cn(
+                      "flex h-11 w-11 items-center justify-center rounded-xl text-white transition-transform duration-200",
+                      isSelected ? cn(option.selectedBg, "scale-110 shadow-md") : cn(option.bg, "shadow-sm"),
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
 
-                {/* Check */}
-                <div className={cn(
-                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-all duration-200",
-                  isSelected
-                    ? "border-primary bg-primary text-primary-foreground scale-100"
-                    : "border-muted-foreground/25 bg-transparent scale-90"
-                )}>
-                  {isSelected && <Check className="h-3 w-3" strokeWidth={3} />}
-                </div>
-              </button>
-            );
-          })}
+                  {/* Label */}
+                  <div>
+                    <p className={cn(
+                      "text-[13px] font-semibold leading-tight",
+                      isSelected ? "text-primary" : "text-foreground"
+                    )}>
+                      {option.label}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                      {option.description}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Footer */}
