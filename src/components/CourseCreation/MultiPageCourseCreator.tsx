@@ -528,6 +528,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     }
   };
 
+  const handlePreview = useCallback(() => {
+    navigate("/multipage-preview", {
+      state: { title, items, contentBlocks, pageBlocksMap },
+    });
+  }, [navigate, title, items, contentBlocks, pageBlocksMap]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
