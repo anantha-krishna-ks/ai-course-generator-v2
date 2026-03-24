@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileText, Presentation, FileType, Globe, FileCheck, Check, Package } from "lucide-react";
+import { Download, FileText, Presentation, FileType, Globe, FileCheck, Check, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
