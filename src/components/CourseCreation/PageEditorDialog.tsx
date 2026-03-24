@@ -449,9 +449,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             <span className="text-sm font-medium text-foreground">Page editor</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={onPreview}>
-              <Eye className="w-4 h-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={onPreview}>
+                  <Eye className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Preview</TooltipContent>
+            </Tooltip>
             <span className="w-px h-5 bg-border" />
             <button
               onClick={onClose}
