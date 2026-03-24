@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileText, Presentation, FileType, Globe, FileCheck, Check, Package } from "lucide-react";
+import { Download, FileText, Presentation, FileType, Globe, FileCheck, Check, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -97,7 +97,7 @@ export const GenerateExportDialog = ({
         <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
           <div className="flex items-center gap-2.5 mb-1">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <Package className="h-4 w-4 text-primary" />
+              <Wand2 className="h-4 w-4 text-primary" />
             </div>
             <DialogHeader className="space-y-0">
               <DialogTitle className="text-base sm:text-lg font-semibold leading-tight">
