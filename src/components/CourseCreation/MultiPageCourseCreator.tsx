@@ -578,8 +578,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
              >
                <Eye className="w-4 h-4" />
              </Button>
-              <Eye className="w-4 h-4" />
-            </Button>
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
