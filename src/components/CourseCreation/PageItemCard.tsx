@@ -57,7 +57,7 @@ interface PageItemCardProps {
 
 const MAX_PAGE_TITLE_LENGTH = 350;
 
-export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTitleChange, onInclusionsChange, onExclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem }: PageItemCardProps) {
+export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTitleChange, onInclusionsChange, onExclusionsChange, onDelete, onDuplicate, onRenameItem, onDeleteItem, onDuplicateItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, editorOpen, onOpenEditor, onCloseEditor, autoFocus, aiEnabled = false, courseItems = [], initialBlocks, onBlocksChange, onAddItem, onPreview }: PageItemCardProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showScopeDialog, setShowScopeDialog] = useState(false);
