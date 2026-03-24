@@ -298,6 +298,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         initialBlocks={initialBlocks}
         onBlocksChange={onBlocksChange}
         onAddItem={onAddItem}
+        onPreview={onPreview}
       />
     </>
   );
