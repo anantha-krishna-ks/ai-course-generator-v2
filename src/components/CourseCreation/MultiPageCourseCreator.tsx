@@ -1158,9 +1158,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               onAddItem={(type) => handleAddItem(type)}
               sectionObjectives={sectionObjectivesMap[topLevel.id] || ""}
               onSectionObjectivesChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [topLevel.id]: obj }))}
+              onPreview={handlePreview}
             />
           );
-        }
 
         // Find in section children
         for (const section of items) {
