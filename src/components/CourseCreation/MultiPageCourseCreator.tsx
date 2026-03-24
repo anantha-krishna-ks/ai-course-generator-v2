@@ -588,6 +588,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
+              onClick={() => setShowExportDialog(true)}
             >
               <Wand2 className="w-4 h-4" />
               <span className="hidden sm:inline">Generate</span>
