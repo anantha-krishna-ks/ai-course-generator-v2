@@ -1206,6 +1206,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   onPreview={handlePreview}
                 />
               );
+            }
           }
         }
         return null;
