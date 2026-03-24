@@ -1204,9 +1204,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   initialBlocks={pageBlocksMap[child.id] || []}
                   onBlocksChange={(blocks) => updatePageBlocks(child.id, blocks)}
                   onAddItem={(type) => handleAddItem(type)}
+                  onPreview={handlePreview}
                 />
               );
-            }
           }
         }
         return null;
