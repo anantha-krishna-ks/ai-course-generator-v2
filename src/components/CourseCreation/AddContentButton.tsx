@@ -76,7 +76,7 @@ export function AddContentButton({
 
   return (
     <>
-    <Popover open={forceOpen || undefined}>
+    <Popover open={forceOpen || undefined} onOpenChange={setIsPopoverOpen}>
       <PopoverTrigger asChild>
         <div
           className={cn(
