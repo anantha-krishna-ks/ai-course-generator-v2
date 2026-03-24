@@ -893,7 +893,26 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8">
+                      <div className="text-center py-8 flex flex-col items-center">
+                        <svg width="120" height="96" viewBox="0 0 120 96" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-4 opacity-80">
+                          {/* Stack of pages */}
+                          <rect x="28" y="12" width="52" height="64" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+                          <rect x="24" y="8" width="52" height="64" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+                          <rect x="20" y="4" width="52" height="64" rx="4" fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+                          {/* Lines on front page */}
+                          <rect x="30" y="16" width="28" height="3" rx="1.5" fill="hsl(var(--muted-foreground)/0.25)" />
+                          <rect x="30" y="24" width="32" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.15)" />
+                          <rect x="30" y="30" width="24" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.15)" />
+                          <rect x="30" y="36" width="30" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.15)" />
+                          <rect x="30" y="42" width="18" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.15)" />
+                          {/* Image placeholder on page */}
+                          <rect x="30" y="50" width="32" height="12" rx="2" fill="hsl(var(--primary)/0.08)" stroke="hsl(var(--primary)/0.2)" strokeWidth="1" />
+                          <circle cx="36" cy="56" r="2" fill="hsl(var(--primary)/0.3)" />
+                          <path d="M34 60L38 55L42 58L46 53L50 60H34Z" fill="hsl(var(--primary)/0.2)" />
+                          {/* Plus circle */}
+                          <circle cx="84" cy="52" r="14" fill="hsl(var(--primary)/0.1)" stroke="hsl(var(--primary)/0.3)" strokeWidth="1.5" />
+                          <path d="M84 45V59M77 52H91" stroke="hsl(var(--primary)/0.5)" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
                         <p className="text-sm text-muted-foreground">No pages in this section yet</p>
                         <Button
                           variant="outline"
