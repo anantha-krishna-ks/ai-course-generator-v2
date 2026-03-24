@@ -143,7 +143,8 @@ export function AddContentButton({
       <PopoverContent
         side="top"
         sideOffset={8}
-        className="w-[min(90vw,640px)] p-0 rounded-2xl border border-border/60 bg-background/95 backdrop-blur-sm shadow-lg animate-fade-in"
+        className="w-auto p-0 rounded-2xl border border-border/60 bg-background/95 backdrop-blur-sm shadow-lg animate-fade-in"
+        align="center"
       >
         {isFullToolbar ? (
           <div className="flex items-center gap-1 px-2 py-2 w-full">
