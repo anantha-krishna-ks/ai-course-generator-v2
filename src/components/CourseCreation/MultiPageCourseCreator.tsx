@@ -48,6 +48,7 @@ import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
+import { GenerateExportDialog } from "./GenerateExportDialog";
 
 interface MultiPageCourseCreatorProps {
   courseTitle: string;
@@ -102,6 +103,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
   const [showTour, setShowTour] = useState(true);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
     { id: "description-block", type: "description", content: "" },
@@ -586,6 +588,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
+              onClick={() => setShowExportDialog(true)}
             >
               <Wand2 className="w-4 h-4" />
               <span className="hidden sm:inline">Generate</span>
@@ -1223,6 +1226,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         isOpen={showTour}
         onClose={() => { setShowTour(false); setTourStep(-1); }}
         onStepChange={setTourStep}
+      />
+
+      <GenerateExportDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        courseTitle={title}
       />
     </div>
   );
