@@ -570,21 +570,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full border-border"
-              onClick={() => {
-                navigate("/multipage-preview", {
-                  state: {
-                    title,
-                    items,
-                    contentBlocks,
-                    pageBlocksMap,
-                  },
-                });
-              }}
-            >
+             <Button
+               variant="outline"
+               size="icon"
+               className="rounded-full border-border"
+               onClick={handlePreview}
+             >
+               <Eye className="w-4 h-4" />
+             </Button>
               <Eye className="w-4 h-4" />
             </Button>
             <Button
