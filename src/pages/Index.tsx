@@ -22,9 +22,9 @@ const Index = () => {
         <Button 
           onClick={() => navigate("/auth")}
           size="lg"
-          className="bg-[hsl(211,100%,30%)] text-primary-foreground hover:bg-[hsl(211,100%,24%)]"
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          Start Now
+          Get Started
         </Button>
       </div>
     </div>
