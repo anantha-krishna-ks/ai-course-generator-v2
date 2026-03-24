@@ -153,7 +153,7 @@ function inferVariant(title?: React.ReactNode): string | undefined {
     t.includes("updated") || t.includes("saved") || t.includes("generated") ||
     t.includes("uploaded") || t.includes("downloaded") || t.includes("duplicated") ||
     t.includes("set") || t.includes("cloned") || t.includes("exported") ||
-    t.includes("password changed") || t.includes("copied")
+    t.includes("password changed") || t.includes("copied") || t.includes("completed")
   ) return "success";
   
   // Info patterns
