@@ -528,6 +528,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     }
   };
 
+  const handlePreview = useCallback(() => {
+    navigate("/multipage-preview", {
+      state: { title, items, contentBlocks, pageBlocksMap },
+    });
+  }, [navigate, title, items, contentBlocks, pageBlocksMap]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -564,23 +570,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full border-border"
-              onClick={() => {
-                navigate("/multipage-preview", {
-                  state: {
-                    title,
-                    items,
-                    contentBlocks,
-                    pageBlocksMap,
-                  },
-                });
-              }}
-            >
-              <Eye className="w-4 h-4" />
-            </Button>
+             <Button
+               variant="outline"
+               size="icon"
+               className="rounded-full border-border"
+               onClick={handlePreview}
+             >
+               <Eye className="w-4 h-4" />
+             </Button>
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
@@ -1084,8 +1081,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   courseItems={items}
                                   initialBlocks={pageBlocksMap[item.id] || []}
                                   onBlocksChange={(blocks) => updatePageBlocks(item.id, blocks)}
-                                  onAddItem={(type) => handleAddItem(type)}
-                                />
+                                   onAddItem={(type) => handleAddItem(type)}
+                                   onPreview={handlePreview}
+                                 />
                               </SortableOutlineItem>
                             );
                           }
@@ -1158,8 +1156,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               onAddItem={(type) => handleAddItem(type)}
               sectionObjectives={sectionObjectivesMap[topLevel.id] || ""}
               onSectionObjectivesChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [topLevel.id]: obj }))}
+              onPreview={handlePreview}
             />
-          );
+           );
         }
 
         // Find in section children
@@ -1204,6 +1203,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   initialBlocks={pageBlocksMap[child.id] || []}
                   onBlocksChange={(blocks) => updatePageBlocks(child.id, blocks)}
                   onAddItem={(type) => handleAddItem(type)}
+                  onPreview={handlePreview}
                 />
               );
             }
