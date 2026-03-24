@@ -579,7 +579,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 });
               }}
             >
-              <Eye className="w-4 h-4" />
+              <ScanEye className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
