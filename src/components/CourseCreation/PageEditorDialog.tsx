@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2, Crosshair } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -894,65 +895,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       </div>
                     ) : (
                       <div className="text-center py-8 flex flex-col items-center">
-                        <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-4">
-                          <defs>
-                            <filter id="pageShadow" x="-4" y="-2" width="108" height="108" filterUnits="userSpaceOnUse">
-                              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000" floodOpacity="0.08" />
-                            </filter>
-                            <linearGradient id="pageGrad" x1="20" y1="6" x2="72" y2="80">
-                              <stop offset="0%" stopColor="hsl(var(--background))" />
-                              <stop offset="100%" stopColor="hsl(var(--muted))" />
-                            </linearGradient>
-                            <linearGradient id="accentGrad" x1="96" y1="40" x2="120" y2="80">
-                              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
-                              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.05" />
-                            </linearGradient>
-                          </defs>
-                          {/* Decorative dots */}
-                          <circle cx="12" cy="20" r="2" fill="hsl(var(--primary)/0.12)" />
-                          <circle cx="8" cy="34" r="1.5" fill="hsl(var(--primary)/0.08)" />
-                          <circle cx="148" cy="28" r="1.5" fill="hsl(var(--primary)/0.1)" />
-                          <circle cx="144" cy="90" r="2" fill="hsl(var(--primary)/0.08)" />
-                          {/* Back page 2 */}
-                          <rect x="32" y="16" width="56" height="72" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.5" />
-                          {/* Back page 1 */}
-                          <rect x="28" y="12" width="56" height="72" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.75" />
-                          {/* Front page with shadow */}
-                          <g filter="url(#pageShadow)">
-                            <rect x="24" y="8" width="56" height="72" rx="4" fill="url(#pageGrad)" stroke="hsl(var(--border))" strokeWidth="1.2" />
-                          </g>
-                          {/* Page fold corner */}
-                          <path d="M68 8L80 8L80 20L68 20Z" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="0.8" />
-                          <path d="M68 8L68 20L80 8Z" fill="hsl(var(--background))" stroke="hsl(var(--border))" strokeWidth="0.8" strokeLinejoin="round" />
-                          {/* Title line */}
-                          <rect x="32" y="18" width="24" height="3.5" rx="1.75" fill="hsl(var(--muted-foreground)/0.3)" />
-                          {/* Body text lines */}
-                          <rect x="32" y="28" width="36" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.15)" />
-                          <rect x="32" y="34" width="28" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.12)" />
-                          <rect x="32" y="40" width="32" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.12)" />
-                          <rect x="32" y="46" width="20" height="2" rx="1" fill="hsl(var(--muted-foreground)/0.1)" />
-                          {/* Image area on page */}
-                          <rect x="32" y="54" width="38" height="18" rx="2.5" fill="hsl(var(--primary)/0.06)" stroke="hsl(var(--primary)/0.15)" strokeWidth="0.8" />
-                          {/* Sun icon */}
-                          <circle cx="39" cy="60" r="2.5" fill="hsl(var(--primary)/0.25)" />
-                          {/* Mountains */}
-                          <path d="M32 72L40 62L48 68L54 58L70 72H32Z" fill="hsl(var(--primary)/0.12)" />
-                          <path d="M42 72L50 64L58 72H42Z" fill="hsl(var(--primary)/0.18)" />
-                          {/* Right side - empty clipboard / new page concept */}
-                          <g>
-                            <rect x="96" y="30" width="40" height="52" rx="4" fill="url(#accentGrad)" stroke="hsl(var(--primary)/0.2)" strokeWidth="1" strokeDasharray="3 2" />
-                            {/* Dashed lines suggesting content */}
-                            <rect x="104" y="42" width="20" height="1.5" rx="0.75" fill="hsl(var(--primary)/0.12)" />
-                            <rect x="104" y="48" width="16" height="1.5" rx="0.75" fill="hsl(var(--primary)/0.08)" />
-                            <rect x="104" y="54" width="22" height="1.5" rx="0.75" fill="hsl(var(--primary)/0.08)" />
-                            {/* Plus icon */}
-                            <circle cx="116" cy="68" r="6" fill="hsl(var(--primary)/0.12)" stroke="hsl(var(--primary)/0.3)" strokeWidth="1" />
-                            <path d="M116 64.5V71.5M112.5 68H119.5" stroke="hsl(var(--primary)/0.5)" strokeWidth="1.5" strokeLinecap="round" />
-                          </g>
-                          {/* Connecting arrow */}
-                          <path d="M82 52C88 52 90 52 94 52" stroke="hsl(var(--primary)/0.2)" strokeWidth="1" strokeDasharray="2 2" />
-                          <path d="M92 49L96 52L92 55" stroke="hsl(var(--primary)/0.25)" strokeWidth="1" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        <img src={emptyPagesImg} alt="No pages yet" width={140} height={140} loading="lazy" className="mb-2 opacity-90" />
                         <p className="text-sm text-muted-foreground">No pages in this section yet</p>
                         <Button
                           variant="outline"
