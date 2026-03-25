@@ -51,6 +51,7 @@ export function ContentBlock({
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [imageGenerating, setImageGenerating] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
