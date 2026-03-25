@@ -214,7 +214,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
       setIsGenerating(true);
       setEditorMode("none");
       setTimeout(() => {
-        onChange(PLACEHOLDER_IMAGE_URL);
+        onChange(PLACEHOLDER_IMAGE);
         setIsGenerating(false);
         onExternalGeneratingDone?.();
       }, 2500);
