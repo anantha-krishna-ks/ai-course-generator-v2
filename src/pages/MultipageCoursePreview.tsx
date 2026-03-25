@@ -104,6 +104,46 @@ const MultipageCoursePreview = () => {
     </div>
   );
 
+  const isDeviceFramed = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
+
+  const renderDeviceFrame = (children: React.ReactNode) => {
+    if (!isDeviceFramed) return children;
+
+    return (
+      <div className="flex items-start justify-center py-6 px-4 overflow-auto flex-1">
+        <div
+          className="relative rounded-[2.5rem] bg-gradient-to-b from-[#e8e8ed] via-[#d4d4da] to-[#c8c8ce] p-[12px] shadow-[0_8px_40px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] flex-shrink-0 w-full"
+          style={{ maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width }}
+        >
+          {/* Inner bezel */}
+          <div className="rounded-[2rem] bg-gradient-to-b from-[#f0f0f5] to-[#e0e0e6] p-[3px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)]">
+            {/* Notch / Dynamic Island (mobile only) */}
+            {deviceView === 'mobile' && (
+              <div className="absolute top-[16px] left-1/2 -translate-x-1/2 z-20">
+                <div className="w-[90px] h-[26px] bg-[#1a1a1a] rounded-full shadow-[0_0_0_2px_rgba(0,0,0,0.1)]" />
+              </div>
+            )}
+
+            {/* Screen */}
+            <div className={cn(
+              "rounded-[1.75rem] overflow-auto bg-background relative",
+              deviceView === 'mobile' && "h-[620px]",
+              deviceView === 'tablet' && "h-[750px]",
+              deviceView === 'tablet-landscape' && "h-[550px]"
+            )}>
+              {children}
+            </div>
+          </div>
+
+          {/* Home indicator (bottom bar) */}
+          <div className="flex justify-center mt-2 mb-1">
+            <div className="w-[120px] h-[4px] rounded-full bg-[#b0b0b8]" />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const handleBack = useCallback(() => {
     if (previewState?.returnState) {
       navigate("/create-course-multipage", {
@@ -427,13 +467,16 @@ const MultipageCoursePreview = () => {
           foldDirection === 'out' && "page-fold-out",
           foldDirection === 'in' && "page-fold-in"
         )}>
+          {renderDeviceFrame(
           <div
             className={cn(
-              "flex-1 flex min-h-[calc(100vh-57px)] transition-all duration-300",
+              "flex transition-all duration-300",
+              !isDeviceFramed && "min-h-[calc(100vh-57px)]",
               isMobileView ? "flex-col" : "flex-row",
-              deviceView !== 'desktop' && "border-x border-border shadow-lg"
+              !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
+              isDeviceFramed ? "w-full overflow-auto" : "flex-1"
             )}
-            style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
+            style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
           >
             {/* Left: Course intro card */}
             <div className={cn(
@@ -635,6 +678,7 @@ const MultipageCoursePreview = () => {
               </ScrollArea>
             </div>
           </div>
+          )}
         </div>
       </div>
     );
@@ -659,13 +703,15 @@ const MultipageCoursePreview = () => {
         foldDirection === 'out' && "page-fold-out",
         foldDirection === 'in' && "page-fold-in"
       )}>
+        {renderDeviceFrame(
         <div
           className={cn(
-            "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
-            deviceView !== 'desktop' && "border-x border-border shadow-lg",
-            isMobileView && "flex-col relative"
+            "flex overflow-hidden transition-all duration-300 bg-background",
+            !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
+            isMobileView && "flex-col relative",
+            isDeviceFramed ? "w-full" : "flex-1"
           )}
-          style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
+          style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
         >
           {/* Desktop sidebar */}
           {!isMobileView && (
@@ -817,6 +863,7 @@ const MultipageCoursePreview = () => {
           {/* Mobile outline bottom sheet */}
           {isMobileView && <MobileOutlineSheet />}
         </div>
+        )}
       </div>
     </div>
   );
