@@ -480,7 +480,7 @@ const MultipageCoursePreview = () => {
               !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
               isDeviceFramed ? "w-full overflow-auto" : "flex-1"
             )}
-            style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
+            style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
           >
             {/* Left: Course intro card */}
             <div className={cn(
