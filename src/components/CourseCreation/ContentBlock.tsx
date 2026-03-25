@@ -157,11 +157,27 @@ export function ContentBlock({
           {aiEnabled && (type === "text" || type === "image") && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
-              <SidebarButton
-                icon={Sparkles}
-                label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
-                onClick={() => setShowGenerateDialog(true)}
-              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setShowGenerateDialog(true)}
+                    className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                  >
+                    <Sparkles className="w-4 h-4" style={{ stroke: 'url(#ai-gradient)' }} />
+                    <svg width="0" height="0" className="absolute">
+                      <defs>
+                        <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                          <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="text-xs">
+                  {type === "text" ? "Generate text with AI" : "Generate image with AI"}
+                </TooltipContent>
+              </Tooltip>
               {type === "text" && (
                 <SidebarButton
                   icon={GitBranch}
@@ -179,7 +195,6 @@ export function ContentBlock({
           className="absolute -left-11 top-1 w-10 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
           aria-label="Drag to reorder"
         />
-
         {/* Content area - full width */}
         <div className="w-full">
           {type === "video-description" ? (
