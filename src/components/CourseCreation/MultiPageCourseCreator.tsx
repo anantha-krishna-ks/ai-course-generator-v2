@@ -547,10 +547,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   };
 
   const handlePreview = useCallback(() => {
+    const returnState: MultiPageCourseCreatorRestoreState = {
+      title,
+      items,
+      contentBlocks,
+      pageBlocksMap,
+      sectionObjectivesMap,
+      activeEditorPageId,
+      aiOptions,
+    };
+
     navigate("/multipage-preview", {
-      state: { title, items, contentBlocks, pageBlocksMap },
+      state: {
+        title,
+        items,
+        contentBlocks,
+        pageBlocksMap,
+        returnState,
+      },
     });
-  }, [navigate, title, items, contentBlocks, pageBlocksMap]);
+  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions]);
 
   return (
     <div className="min-h-screen bg-background">
