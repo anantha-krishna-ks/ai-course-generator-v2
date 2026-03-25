@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import emptyPageIllustration from "@/assets/empty-page-illustration.png";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Tv, Menu, X } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -46,7 +46,7 @@ const MultipageCoursePreview = () => {
   const [started, setStarted] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
-  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile'>('desktop');
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
 
   const isMobileView = deviceView === 'mobile';
@@ -71,7 +71,6 @@ const MultipageCoursePreview = () => {
     tablet: { width: '768px', label: 'Tablet' },
     'tablet-landscape': { width: '1024px', label: 'Tablet Landscape' },
     desktop: { width: '100%', label: 'Desktop' },
-    widescreen: { width: '100%', label: 'Widescreen' },
   };
 
   const devices = [
@@ -79,7 +78,6 @@ const MultipageCoursePreview = () => {
     { key: 'tablet' as const, icon: Tablet, label: 'Tablet' },
     { key: 'tablet-landscape' as const, icon: Tablet, label: 'Landscape', rotate: true },
     { key: 'mobile' as const, icon: Smartphone, label: 'Mobile' },
-    { key: 'widescreen' as const, icon: Tv, label: 'Wide' },
   ];
 
   const DeviceToggle = () => (
@@ -433,9 +431,9 @@ const MultipageCoursePreview = () => {
             className={cn(
               "flex-1 flex min-h-[calc(100vh-57px)] transition-all duration-300",
               isMobileView ? "flex-col" : "flex-row",
-              deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg"
+              deviceView !== 'desktop' && "border-x border-border shadow-lg"
             )}
-            style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+            style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
           >
             {/* Left: Course intro card */}
             <div className={cn(
@@ -664,10 +662,10 @@ const MultipageCoursePreview = () => {
         <div
           className={cn(
             "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
-            deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg",
+            deviceView !== 'desktop' && "border-x border-border shadow-lg",
             isMobileView && "flex-col relative"
           )}
-          style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+          style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
         >
           {/* Desktop sidebar */}
           {!isMobileView && (
