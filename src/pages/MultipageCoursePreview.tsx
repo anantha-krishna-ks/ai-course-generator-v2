@@ -863,7 +863,7 @@ const MultipageCoursePreview = () => {
           {/* Mobile outline bottom sheet */}
           {isMobileView && <MobileOutlineSheet />}
         </div>
-        </DeviceFrame>
+        )}
       </div>
     </div>
   );
