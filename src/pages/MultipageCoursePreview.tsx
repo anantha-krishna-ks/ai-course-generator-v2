@@ -678,7 +678,7 @@ const MultipageCoursePreview = () => {
               </ScrollArea>
             </div>
           </div>
-          </DeviceFrame>
+          )}
         </div>
       </div>
     );
