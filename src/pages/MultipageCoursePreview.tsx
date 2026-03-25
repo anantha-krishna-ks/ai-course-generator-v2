@@ -703,7 +703,7 @@ const MultipageCoursePreview = () => {
         foldDirection === 'out' && "page-fold-out",
         foldDirection === 'in' && "page-fold-in"
       )}>
-        <DeviceFrame>
+        {renderDeviceFrame(
         <div
           className={cn(
             "flex overflow-hidden transition-all duration-300 bg-background",
