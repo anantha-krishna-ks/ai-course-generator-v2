@@ -187,6 +187,8 @@ function ImageGeneratingLoader() {
   );
 }
 
+const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop";
+
 export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false, externalGenerating = false, onExternalGeneratingDone }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>("none");
