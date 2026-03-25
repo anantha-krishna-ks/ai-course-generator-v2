@@ -706,10 +706,11 @@ const MultipageCoursePreview = () => {
         {renderDeviceFrame(
         <div
           className={cn(
-            "flex overflow-hidden transition-all duration-300 bg-background",
+            "flex transition-all duration-300 bg-background",
+            isDeviceFramed ? "min-h-full flex-1" : "flex-1",
             !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
             isMobileView && "flex-col relative",
-            isDeviceFramed ? "w-full" : "flex-1"
+            isDeviceFramed && "w-full"
           )}
           style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
         >
