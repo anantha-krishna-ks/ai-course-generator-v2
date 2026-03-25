@@ -46,7 +46,7 @@ const MultipageCoursePreview = () => {
   const [started, setStarted] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
-  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile' | 'widescreen'>('desktop');
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile'>('desktop');
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
 
   const isMobileView = deviceView === 'mobile';
