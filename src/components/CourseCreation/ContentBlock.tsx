@@ -178,7 +178,6 @@ export function ContentBlock({
                   {type === "text" ? "Generate text with AI" : "Generate image with AI"}
                 </TooltipContent>
               </Tooltip>
-              />
               {type === "text" && (
                 <SidebarButton
                   icon={GitBranch}
@@ -195,6 +194,7 @@ export function ContentBlock({
           {...listeners}
           className="absolute -left-11 top-1 w-10 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
           aria-label="Drag to reorder"
+        />
         {/* Content area - full width */}
         <div className="w-full">
           {type === "video-description" ? (
