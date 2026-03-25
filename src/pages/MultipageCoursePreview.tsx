@@ -244,7 +244,13 @@ const MultipageCoursePreview = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
+            <Button variant="ghost" size="icon" onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate("/create-course-multipage", { replace: true });
+              }
+            }} className="rounded-full">
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
