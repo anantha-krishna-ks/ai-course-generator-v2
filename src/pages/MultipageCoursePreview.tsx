@@ -471,10 +471,10 @@ const MultipageCoursePreview = () => {
           <div
             className={cn(
               "flex transition-all duration-300",
-              !isDeviceFramed && "min-h-[calc(100vh-57px)]",
+              isDeviceFramed ? "min-h-full flex-1" : "min-h-[calc(100vh-57px)] flex-1",
               isMobileView ? "flex-col" : "flex-row",
               !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
-              isDeviceFramed ? "w-full overflow-auto" : "flex-1"
+              isDeviceFramed && "w-full"
             )}
             style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
           >
