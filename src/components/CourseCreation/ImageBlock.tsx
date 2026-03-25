@@ -347,6 +347,15 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   };
 
   if (imageUrl) {
+    // Show full loader overlay when generating a replacement image
+    if (isGenerating) {
+      return (
+        <div className="rounded-lg border border-border/40 bg-background shadow-sm">
+          <ImageGeneratingLoader />
+        </div>
+      );
+    }
+
     const isActive = editorMode !== "none" && !isClosing;
 
     return (
