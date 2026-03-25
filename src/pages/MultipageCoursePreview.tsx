@@ -467,7 +467,7 @@ const MultipageCoursePreview = () => {
           foldDirection === 'out' && "page-fold-out",
           foldDirection === 'in' && "page-fold-in"
         )}>
-          <DeviceFrame>
+          {renderDeviceFrame(
           <div
             className={cn(
               "flex transition-all duration-300",
