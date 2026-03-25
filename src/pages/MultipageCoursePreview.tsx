@@ -126,7 +126,7 @@ const MultipageCoursePreview = () => {
 
             {/* Screen */}
             <div className={cn(
-              "rounded-[1.75rem] overflow-auto bg-background relative",
+              "rounded-[1.75rem] overflow-auto bg-background relative flex flex-col",
               deviceView === 'mobile' && "h-[620px]",
               deviceView === 'tablet' && "h-[750px]",
               deviceView === 'tablet-landscape' && "h-[550px]"
@@ -471,17 +471,17 @@ const MultipageCoursePreview = () => {
           <div
             className={cn(
               "flex transition-all duration-300",
-              !isDeviceFramed && "min-h-[calc(100vh-57px)]",
+              isDeviceFramed ? "min-h-full flex-1" : "min-h-[calc(100vh-57px)] flex-1",
               isMobileView ? "flex-col" : "flex-row",
               !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
-              isDeviceFramed ? "w-full overflow-auto" : "flex-1"
+              isDeviceFramed && "w-full"
             )}
             style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
           >
             {/* Left: Course intro card */}
             <div className={cn(
-              "relative overflow-hidden",
-              isMobileView ? "w-full min-h-[70vh]" : "w-full lg:w-[40%]"
+              "relative overflow-hidden flex-1",
+              isMobileView ? "w-full" : "w-full lg:w-[40%]"
             )}>
               {/* Background with hero image or gradient */}
               <div className="absolute inset-0">
@@ -706,10 +706,11 @@ const MultipageCoursePreview = () => {
         {renderDeviceFrame(
         <div
           className={cn(
-            "flex overflow-hidden transition-all duration-300 bg-background",
+            "flex transition-all duration-300 bg-background",
+            isDeviceFramed ? "min-h-full flex-1" : "flex-1",
             !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
             isMobileView && "flex-col relative",
-            isDeviceFramed ? "w-full" : "flex-1"
+            isDeviceFramed && "w-full"
           )}
           style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
         >
