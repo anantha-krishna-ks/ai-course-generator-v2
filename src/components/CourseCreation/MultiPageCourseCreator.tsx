@@ -102,7 +102,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const navigate = useNavigate();
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
-  const [showTour, setShowTour] = useState(true);
+  const [showTour, setShowTour] = useState(() => {
+    return !sessionStorage.getItem("multipage-tour-dismissed");
+  });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
