@@ -1226,7 +1226,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       <GuidedTour
         steps={tourSteps}
         isOpen={showTour}
-        onClose={() => { setShowTour(false); setTourStep(-1); }}
+        onClose={() => { setShowTour(false); setTourStep(-1); sessionStorage.setItem("multipage-tour-dismissed", "true"); }}
         onStepChange={setTourStep}
       />
 
