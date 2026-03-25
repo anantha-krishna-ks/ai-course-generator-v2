@@ -195,8 +195,6 @@ export function ContentBlock({
           {...listeners}
           className="absolute -left-11 top-1 w-10 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
           aria-label="Drag to reorder"
-        />
-
         {/* Content area - full width */}
         <div className="w-full">
           {type === "video-description" ? (
