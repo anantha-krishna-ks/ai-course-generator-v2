@@ -480,8 +480,8 @@ const MultipageCoursePreview = () => {
           >
             {/* Left: Course intro card */}
             <div className={cn(
-              "relative overflow-hidden",
-              isMobileView ? "w-full min-h-[70vh]" : "w-full lg:w-[40%]"
+              "relative overflow-hidden flex-1",
+              isMobileView ? "w-full" : "w-full lg:w-[40%]"
             )}>
               {/* Background with hero image or gradient */}
               <div className="absolute inset-0">
