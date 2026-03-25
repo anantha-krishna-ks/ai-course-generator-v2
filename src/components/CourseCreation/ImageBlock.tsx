@@ -21,6 +21,8 @@ interface ImageBlockProps {
   altText?: string;
   onAltTextChange?: (alt: string) => void;
   aiEnabled?: boolean;
+  externalGenerating?: boolean;
+  onExternalGeneratingDone?: () => void;
 }
 
 type FitMode = "contain" | "cover" | "fill";
