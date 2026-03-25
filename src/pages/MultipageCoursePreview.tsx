@@ -662,10 +662,10 @@ const MultipageCoursePreview = () => {
         <div
           className={cn(
             "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
-            deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg",
+            deviceView !== 'desktop' && "border-x border-border shadow-lg",
             isMobileView && "flex-col relative"
           )}
-          style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+          style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
         >
           {/* Desktop sidebar */}
           {!isMobileView && (
