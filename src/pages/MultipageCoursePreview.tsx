@@ -707,13 +707,15 @@ const MultipageCoursePreview = () => {
         foldDirection === 'out' && "page-fold-out",
         foldDirection === 'in' && "page-fold-in"
       )}>
+        <DeviceFrame>
         <div
           className={cn(
-            "flex-1 flex overflow-hidden transition-all duration-300 bg-background",
-            deviceView !== 'desktop' && "border-x border-border shadow-lg",
-            isMobileView && "flex-col relative"
+            "flex overflow-hidden transition-all duration-300 bg-background",
+            !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
+            isMobileView && "flex-col relative",
+            isDeviceFramed ? "w-full" : "flex-1"
           )}
-          style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
+          style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
         >
           {/* Desktop sidebar */}
           {!isMobileView && (
