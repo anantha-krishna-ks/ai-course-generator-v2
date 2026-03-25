@@ -121,10 +121,12 @@ export function ContentBlock({
 
   const handleGenerateSubmit = () => {
     if (!prompt.trim()) return;
-    // TODO: Wire up AI generation API
     console.log("Generate content with prompt:", prompt);
     setPrompt("");
     setShowGenerateDialog(false);
+    if (type === "image") {
+      setImageGenerating(true);
+    }
   };
 
   return (
