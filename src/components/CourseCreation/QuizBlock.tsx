@@ -256,7 +256,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         ) : (
           <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleQuestionDragEnd}>
             <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
-              <div className="p-4 space-y-4">
+              <div className="p-4 space-y-4" style={{ backgroundColor: '#F8FAFC' }}>
                 {questions.map((question, index) => (
                   <SortableQuestionCard key={question.id} question={question}>
                     {(dragHandleProps) => (
