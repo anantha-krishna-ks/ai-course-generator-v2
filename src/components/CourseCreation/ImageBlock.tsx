@@ -187,7 +187,7 @@ function ImageGeneratingLoader() {
   );
 }
 
-export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false }: ImageBlockProps) {
+export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false, externalGenerating = false, onExternalGeneratingDone }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>("none");
   const [zoom, setZoom] = useState(100);
