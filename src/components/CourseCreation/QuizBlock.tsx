@@ -225,19 +225,12 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60 bg-muted/20">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-primary/10">
-              {isQuizVariant ? (
-                <MessageCircleQuestion className="w-4 h-4 text-primary" />
-              ) : (
-                <MessageCircleQuestion className="w-4 h-4 text-primary" />
-              )}
-            </div>
-            <span className="text-sm font-semibold text-foreground">{isQuizVariant ? "Quiz" : "Question"}</span>
-            {questions.length > 0 && (
-              <Badge variant="secondary" className="text-[11px] h-5 px-2 font-medium">
-                {questions.length} question{questions.length !== 1 ? "s" : ""}
-              </Badge>
-            )}
+            <div className="w-1 h-5 bg-primary rounded-full" />
+            <span className="text-sm font-semibold text-foreground">
+              {questions.length > 0
+                ? `Generated Questions (${questions.length})`
+                : (isQuizVariant ? "Quiz" : "Question")}
+            </span>
           </div>
           {questions.length > 0 && (
             <button
@@ -263,98 +256,120 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         ) : (
           <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleQuestionDragEnd}>
             <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
-              <div className="p-3 space-y-3">
+              <div className="p-4 space-y-4">
                 {questions.map((question, index) => (
                   <SortableQuestionCard key={question.id} question={question}>
                     {(dragHandleProps) => (
-                      <div className="group/q rounded-xl border border-border/60 bg-background hover:border-border hover:shadow-sm transition-all overflow-hidden">
-                        {/* Question row */}
-                        <div className="flex items-center gap-3 px-4 py-3.5">
-                          {/* Drag handle */}
+                      <div className="rounded-xl border border-border bg-background shadow-sm hover:shadow-md transition-all overflow-hidden">
+                        {/* Question header */}
+                        <div className="flex items-start gap-3 px-5 pt-5 pb-4">
                           <span
-                            className="shrink-0 cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-muted transition-colors"
+                            className="shrink-0 cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-muted transition-colors mt-1"
                             {...dragHandleProps}
                           >
                             <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
                           </span>
 
-                          {/* Number */}
-                          <span className="flex-shrink-0 w-6 h-6 rounded-md bg-muted flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                          {/* Number circle */}
+                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
                             {index + 1}
                           </span>
 
                           {/* Question text */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-foreground leading-snug">
+                          <div className="flex-1 min-w-0 pt-1">
+                            <p className="text-sm font-medium text-foreground leading-relaxed">
                               {question.question || <span className="italic text-muted-foreground">Empty question</span>}
                             </p>
                           </div>
 
-                          {/* Type badge */}
-                          <Badge variant="outline" className="text-[10px] h-5 px-2 font-medium text-muted-foreground shrink-0 hidden sm:flex">
-                            {TYPE_LABELS[question.type]}
-                          </Badge>
-
-                          {/* Options count */}
-                          {question.options.length > 0 && (
-                            <span className="text-[11px] text-muted-foreground/50 shrink-0 hidden sm:block">
-                              {question.options.length} opts
-                            </span>
-                          )}
-
-                          {/* Actions dropdown */}
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button className="shrink-0 p-1.5 rounded-md hover:bg-muted transition-colors">
-                                <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
-                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => handleEditQuestion(question.id)}>
-                                <Edit2 className="w-3.5 h-3.5" /> Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="gap-2 text-sm" onClick={() => {
-                                setRegeneratePrompt("");
-                                setRegeneratingQuestionId(question.id);
-                              }}>
-                                <RefreshCcw className="w-3.5 h-3.5" /> Regenerate
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeletingQuestionId(question.id)}>
-                                <Trash2 className="w-3.5 h-3.5" /> Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-
-                          {/* Expand toggle */}
-                          <button
-                            onClick={() => toggleExpanded(question.id)}
-                            className="shrink-0 p-1 rounded-md hover:bg-muted transition-colors"
-                          >
-                            <ChevronDown className={cn("w-3.5 h-3.5 text-muted-foreground transition-transform", expandedQuestions.has(question.id) && "rotate-180")} />
-                          </button>
+                          {/* Edit & Delete buttons */}
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              onClick={() => handleEditQuestion(question.id)}
+                              className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => setDeletingQuestionId(question.id)}
+                              className="p-2 rounded-md hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
 
-                        {/* Expandable answer/explanation */}
-                        <Collapsible
-                          open={expandedQuestions.has(question.id)}
-                          onOpenChange={() => toggleExpanded(question.id)}
-                        >
-                          <CollapsibleContent>
-                            <div className="px-4 pb-4 pt-0 space-y-2 border-t border-border/40 mt-0 pt-3">
-                              <div className="text-xs bg-primary/5 border border-primary/10 rounded-lg p-3">
-                                <span className="font-semibold text-foreground">Answer:</span>{" "}
-                                <span className="text-muted-foreground">{question.answer}</span>
-                              </div>
-                              {question.explanation && (
-                                <div className="text-xs bg-muted/30 border border-border/60 rounded-lg p-3">
-                                  <span className="font-semibold text-foreground">Explanation:</span>{" "}
-                                  <span className="text-muted-foreground">{question.explanation}</span>
+                        {/* Options */}
+                        {question.options.length > 0 && (
+                          <div className="px-5 pb-3 space-y-2">
+                            {question.options.map((option, optIndex) => {
+                              const isCorrect = option === question.answer;
+                              return (
+                                <div
+                                  key={optIndex}
+                                  className={cn(
+                                    "flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all",
+                                    isCorrect
+                                      ? "bg-primary/8 border border-primary/20"
+                                      : "bg-muted/40 border border-transparent"
+                                  )}
+                                >
+                                  <div
+                                    className={cn(
+                                      "w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
+                                      isCorrect
+                                        ? "border-primary bg-primary"
+                                        : "border-muted-foreground/30"
+                                    )}
+                                  >
+                                    {isCorrect && (
+                                      <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                                    )}
+                                  </div>
+                                  <span className={cn(
+                                    "leading-relaxed",
+                                    isCorrect ? "font-medium text-foreground" : "text-muted-foreground"
+                                  )}>
+                                    {option}
+                                  </span>
                                 </div>
-                              )}
-                            </div>
-                          </CollapsibleContent>
-                        </Collapsible>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Answer bar */}
+                        <div className="mx-5 mb-3 flex items-center gap-3 px-4 py-2.5 bg-muted/30 border border-border/60 rounded-lg">
+                          <Badge variant="outline" className="text-[11px] h-5 px-2.5 font-semibold text-primary border-primary/30 bg-primary/5">
+                            {question.type}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">Answer:</span>
+                          <span className="text-sm font-semibold text-foreground">{question.answer}</span>
+                        </div>
+
+                        {/* Explanation collapsible */}
+                        {question.explanation && (
+                          <Collapsible
+                            open={expandedQuestions.has(question.id)}
+                            onOpenChange={() => toggleExpanded(question.id)}
+                          >
+                            <CollapsibleTrigger asChild>
+                              <button className="flex items-center gap-2 px-5 pb-4 pt-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                                <ChevronDown className={cn(
+                                  "w-4 h-4 transition-transform",
+                                  expandedQuestions.has(question.id) && "rotate-180"
+                                )} />
+                                {expandedQuestions.has(question.id) ? "Hide" : "Show"} Explanation
+                              </button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <div className="mx-5 mb-4 bg-primary/5 border border-primary/15 rounded-lg p-4">
+                                <p className="text-xs font-semibold text-foreground mb-1.5">Explanation:</p>
+                                <p className="text-sm text-muted-foreground leading-relaxed">{question.explanation}</p>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        )}
                       </div>
                     )}
                   </SortableQuestionCard>
