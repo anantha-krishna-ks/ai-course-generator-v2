@@ -260,7 +260,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                 {questions.map((question, index) => (
                   <SortableQuestionCard key={question.id} question={question}>
                     {(dragHandleProps) => (
-                      <div className="rounded-xl border border-border bg-background shadow-sm hover:shadow-md transition-all overflow-hidden">
+                      <div className="rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden" style={{ backgroundColor: '#FFFFFF' }}>
                         {/* Question header */}
                         <div className="flex items-start gap-3 px-5 pt-5 pb-4">
                           <span
