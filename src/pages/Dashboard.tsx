@@ -399,29 +399,7 @@ const Dashboard = () => {
                       <span className="text-[11px] text-muted-foreground leading-snug">Turn your ideas into a course with AI</span>
                     </div>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/blueprints")}
-                    className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
-                  >
-                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
-                      <LayoutTemplate className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-semibold text-foreground">Blueprint</span>
-                      <span className="text-[11px] text-muted-foreground leading-snug">Start from an existing blueprint</span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
-                  >
-                    <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
-                      <FileUp className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-semibold text-foreground">Import from Template</span>
-                      <span className="text-[11px] text-muted-foreground leading-snug">Import and customize a template</span>
-                    </div>
-                  </DropdownMenuItem>
+                  {/* Blueprint and Import from Template options hidden for now */}
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button 
