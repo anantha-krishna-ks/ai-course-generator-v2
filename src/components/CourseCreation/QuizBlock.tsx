@@ -225,19 +225,12 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60 bg-muted/20">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-primary/10">
-              {isQuizVariant ? (
-                <MessageCircleQuestion className="w-4 h-4 text-primary" />
-              ) : (
-                <MessageCircleQuestion className="w-4 h-4 text-primary" />
-              )}
-            </div>
-            <span className="text-sm font-semibold text-foreground">{isQuizVariant ? "Quiz" : "Question"}</span>
-            {questions.length > 0 && (
-              <Badge variant="secondary" className="text-[11px] h-5 px-2 font-medium">
-                {questions.length} question{questions.length !== 1 ? "s" : ""}
-              </Badge>
-            )}
+            <div className="w-1 h-5 bg-primary rounded-full" />
+            <span className="text-sm font-semibold text-foreground">
+              {questions.length > 0
+                ? `Generated Questions (${questions.length})`
+                : (isQuizVariant ? "Quiz" : "Question")}
+            </span>
           </div>
           {questions.length > 0 && (
             <button
