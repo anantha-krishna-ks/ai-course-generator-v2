@@ -71,7 +71,6 @@ const MultipageCoursePreview = () => {
     tablet: { width: '768px', label: 'Tablet' },
     'tablet-landscape': { width: '1024px', label: 'Tablet Landscape' },
     desktop: { width: '100%', label: 'Desktop' },
-    widescreen: { width: '100%', label: 'Widescreen' },
   };
 
   const devices = [
@@ -79,7 +78,6 @@ const MultipageCoursePreview = () => {
     { key: 'tablet' as const, icon: Tablet, label: 'Tablet' },
     { key: 'tablet-landscape' as const, icon: Tablet, label: 'Landscape', rotate: true },
     { key: 'mobile' as const, icon: Smartphone, label: 'Mobile' },
-    { key: 'widescreen' as const, icon: Tv, label: 'Wide' },
   ];
 
   const DeviceToggle = () => (
