@@ -310,7 +310,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                                   className={cn(
                                     "flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all",
                                     isCorrect
-                                      ? "bg-primary/8 border border-primary/20"
+                                      ? "bg-primary/15 border-2 border-primary/40 shadow-sm"
                                       : "bg-muted/40 border border-transparent"
                                   )}
                                 >
