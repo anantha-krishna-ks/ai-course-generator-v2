@@ -207,7 +207,7 @@ export function ContentBlock({
           ) : type === "quiz" ? (
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "image" ? (
-            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
+            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
           ) : readOnly ? (
