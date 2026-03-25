@@ -126,7 +126,7 @@ const MultipageCoursePreview = () => {
 
             {/* Screen */}
             <div className={cn(
-              "rounded-[1.75rem] overflow-auto bg-background relative",
+              "rounded-[1.75rem] overflow-auto bg-background relative flex flex-col",
               deviceView === 'mobile' && "h-[620px]",
               deviceView === 'tablet' && "h-[750px]",
               deviceView === 'tablet-landscape' && "h-[550px]"
