@@ -208,6 +208,19 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
 
   useEffect(() => setLocalAlt(altText), [altText]);
 
+  // Handle external AI generation trigger (when image already exists)
+  useEffect(() => {
+    if (externalGenerating && imageUrl) {
+      setIsGenerating(true);
+      setEditorMode("none");
+      setTimeout(() => {
+        onChange(PLACEHOLDER_IMAGE_URL);
+        setIsGenerating(false);
+        onExternalGeneratingDone?.();
+      }, 2500);
+    }
+  }, [externalGenerating]);
+
   // Click-outside detection
   useEffect(() => {
     if (editorMode === "none" || isClosing) return;
