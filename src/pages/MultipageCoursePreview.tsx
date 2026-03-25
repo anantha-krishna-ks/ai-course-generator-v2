@@ -431,9 +431,9 @@ const MultipageCoursePreview = () => {
             className={cn(
               "flex-1 flex min-h-[calc(100vh-57px)] transition-all duration-300",
               isMobileView ? "flex-col" : "flex-row",
-              deviceView !== 'desktop' && deviceView !== 'widescreen' && "border-x border-border shadow-lg"
+              deviceView !== 'desktop' && "border-x border-border shadow-lg"
             )}
-            style={{ maxWidth: deviceView !== 'desktop' && deviceView !== 'widescreen' ? deviceSizes[deviceView].width : undefined }}
+            style={{ maxWidth: deviceView !== 'desktop' ? deviceSizes[deviceView].width : undefined }}
           >
             {/* Left: Course intro card */}
             <div className={cn(
