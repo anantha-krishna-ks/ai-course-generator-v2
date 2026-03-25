@@ -118,7 +118,7 @@ const MultipageCoursePreview = () => {
             "relative rounded-[2.5rem] bg-gradient-to-b from-[#e8e8ed] via-[#d4d4da] to-[#c8c8ce] p-[12px] shadow-[0_8px_40px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] flex-shrink-0",
             isPortrait ? "w-[calc(100%)]" : "w-[calc(100%)]"
           )}
-          style={{ maxWidth: deviceSizes[deviceView].width }}
+          style={{ maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width }}
         >
           {/* Inner bezel */}
           <div className="rounded-[2rem] bg-gradient-to-b from-[#f0f0f5] to-[#e0e0e6] p-[3px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)]">
