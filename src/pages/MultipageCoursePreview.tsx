@@ -106,18 +106,13 @@ const MultipageCoursePreview = () => {
 
   const isDeviceFramed = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
 
-  const DeviceFrame = ({ children }: { children: React.ReactNode }) => {
-    if (!isDeviceFramed) return <>{children}</>;
-
-    const isPortrait = deviceView === 'mobile' || deviceView === 'tablet';
+  const renderDeviceFrame = (children: React.ReactNode) => {
+    if (!isDeviceFramed) return children;
 
     return (
       <div className="flex items-start justify-center py-6 px-4 overflow-auto flex-1">
         <div
-          className={cn(
-            "relative rounded-[2.5rem] bg-gradient-to-b from-[#e8e8ed] via-[#d4d4da] to-[#c8c8ce] p-[12px] shadow-[0_8px_40px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] flex-shrink-0",
-            isPortrait ? "w-[calc(100%)]" : "w-[calc(100%)]"
-          )}
+          className="relative rounded-[2.5rem] bg-gradient-to-b from-[#e8e8ed] via-[#d4d4da] to-[#c8c8ce] p-[12px] shadow-[0_8px_40px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] flex-shrink-0 w-full"
           style={{ maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width }}
         >
           {/* Inner bezel */}
