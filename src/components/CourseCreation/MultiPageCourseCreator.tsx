@@ -102,7 +102,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const navigate = useNavigate();
   const { toast } = useToast();
   const [title, setTitle] = useState(courseTitle);
-  const [showTour, setShowTour] = useState(true);
+  const [showTour, setShowTour] = useState(() => {
+    return !sessionStorage.getItem("multipage-tour-dismissed");
+  });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
@@ -1224,7 +1226,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       <GuidedTour
         steps={tourSteps}
         isOpen={showTour}
-        onClose={() => { setShowTour(false); setTourStep(-1); }}
+        onClose={() => { setShowTour(false); setTourStep(-1); sessionStorage.setItem("multipage-tour-dismissed", "true"); }}
         onStepChange={setTourStep}
       />
 
