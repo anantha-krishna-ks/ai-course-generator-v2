@@ -50,11 +50,6 @@ import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
-interface MultiPageCourseCreatorProps {
-  courseTitle: string;
-  aiOptions?: AIOptions | null;
-}
-
 interface CourseItem {
   id: string;
   type: "section" | "page" | "question";
@@ -75,6 +70,22 @@ interface PageContentBlockData {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
+}
+
+export interface MultiPageCourseCreatorRestoreState {
+  title: string;
+  items: CourseItem[];
+  contentBlocks: ContentBlockData[];
+  pageBlocksMap: Record<string, PageContentBlockData[]>;
+  sectionObjectivesMap: Record<string, string>;
+  activeEditorPageId: string | null;
+  aiOptions: AIOptions | null;
+}
+
+interface MultiPageCourseCreatorProps {
+  courseTitle: string;
+  aiOptions?: AIOptions | null;
+  initialRestoreState?: MultiPageCourseCreatorRestoreState | null;
 }
 
 interface DeletedBlock {
@@ -98,24 +109,27 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
   );
 }
 
-export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null }: MultiPageCourseCreatorProps) {
+export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [title, setTitle] = useState(courseTitle);
+  const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
   const [showTour, setShowTour] = useState(() => {
+    if (initialRestoreState) return false;
     return !sessionStorage.getItem("multipage-tour-dismissed");
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
-  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
-    { id: "description-block", type: "description", content: "" },
-  ]);
-  const [items, setItems] = useState<CourseItem[]>([]);
-  const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
+    initialRestoreState?.contentBlocks ?? [
+      { id: "description-block", type: "description", content: "" },
+    ],
+  );
+  const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
+  const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
-  const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(null);
-  const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>({});
-  const [sectionObjectivesMap, setSectionObjectivesMap] = useState<Record<string, string>>({});
+  const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(initialRestoreState?.activeEditorPageId ?? null);
+  const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>(initialRestoreState?.pageBlocksMap ?? {});
+  const [sectionObjectivesMap, setSectionObjectivesMap] = useState<Record<string, string>>(initialRestoreState?.sectionObjectivesMap ?? {});
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const tourSteps: TourStep[] = [
@@ -533,10 +547,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   };
 
   const handlePreview = useCallback(() => {
+    const returnState: MultiPageCourseCreatorRestoreState = {
+      title,
+      items,
+      contentBlocks,
+      pageBlocksMap,
+      sectionObjectivesMap,
+      activeEditorPageId,
+      aiOptions,
+    };
+
     navigate("/multipage-preview", {
-      state: { title, items, contentBlocks, pageBlocksMap },
+      state: {
+        title,
+        items,
+        contentBlocks,
+        pageBlocksMap,
+        returnState,
+      },
     });
-  }, [navigate, title, items, contentBlocks, pageBlocksMap]);
+  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions]);
 
   return (
     <div className="min-h-screen bg-background">

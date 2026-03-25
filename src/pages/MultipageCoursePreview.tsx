@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
+import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
 
 interface CourseItem {
   id: string;
@@ -32,11 +33,13 @@ interface PreviewState {
   items: CourseItem[];
   contentBlocks: ContentBlockData[];
   pageBlocksMap: Record<string, PageContentBlock[]>;
+  returnState?: MultiPageCourseCreatorRestoreState;
 }
 
 const MultipageCoursePreview = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const previewState = location.state as PreviewState | null;
   const [data, setData] = useState<PreviewState | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
@@ -99,8 +102,41 @@ const MultipageCoursePreview = () => {
     </div>
   );
 
+  const handleBack = useCallback(() => {
+    if (previewState?.returnState) {
+      navigate("/create-course-multipage", {
+        replace: true,
+        state: {
+          title: previewState.returnState.title,
+          layout: "multi-page",
+          aiOptions: previewState.returnState.aiOptions,
+          restoreState: previewState.returnState,
+        },
+      });
+      return;
+    }
+
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    if (previewState?.title) {
+      navigate("/create-course-multipage", {
+        replace: true,
+        state: {
+          title: previewState.title,
+          layout: "multi-page",
+        },
+      });
+      return;
+    }
+
+    navigate("/dashboard", { replace: true });
+  }, [navigate, previewState]);
+
   useEffect(() => {
-    const state = location.state as PreviewState | null;
+    const state = previewState;
     if (!state) {
       navigate("/dashboard", { replace: true });
       return;
@@ -112,7 +148,7 @@ const MultipageCoursePreview = () => {
       if (item.type === "section") sections.add(item.id);
     });
     setExpandedSections(sections);
-  }, [location.state, navigate]);
+  }, [navigate, previewState]);
 
   if (!data) return null;
 
@@ -244,13 +280,7 @@ const MultipageCoursePreview = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => {
-              if (window.history.length > 1) {
-                navigate(-1);
-              } else {
-                navigate("/create-course-multipage", { replace: true });
-              }
-            }} className="rounded-full">
+            <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full">
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
