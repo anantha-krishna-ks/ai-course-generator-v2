@@ -21,6 +21,8 @@ interface ImageBlockProps {
   altText?: string;
   onAltTextChange?: (alt: string) => void;
   aiEnabled?: boolean;
+  externalGenerating?: boolean;
+  onExternalGeneratingDone?: () => void;
 }
 
 type FitMode = "contain" | "cover" | "fill";
@@ -185,7 +187,9 @@ function ImageGeneratingLoader() {
   );
 }
 
-export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false }: ImageBlockProps) {
+const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop";
+
+export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false, externalGenerating = false, onExternalGeneratingDone }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>("none");
   const [zoom, setZoom] = useState(100);
@@ -205,6 +209,19 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setLocalAlt(altText), [altText]);
+
+  // Handle external AI generation trigger (when image already exists)
+  useEffect(() => {
+    if (externalGenerating && imageUrl) {
+      setIsGenerating(true);
+      setEditorMode("none");
+      setTimeout(() => {
+        onChange(PLACEHOLDER_IMAGE);
+        setIsGenerating(false);
+        onExternalGeneratingDone?.();
+      }, 2500);
+    }
+  }, [externalGenerating]);
 
   // Click-outside detection
   useEffect(() => {
@@ -330,6 +347,15 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   };
 
   if (imageUrl) {
+    // Show full loader overlay when generating a replacement image
+    if (isGenerating) {
+      return (
+        <div className="rounded-lg border border-border/40 bg-background shadow-sm">
+          <ImageGeneratingLoader />
+        </div>
+      );
+    }
+
     const isActive = editorMode !== "none" && !isClosing;
 
     return (
@@ -621,7 +647,6 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
     );
   }
 
-  const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop";
 
   const handleGenerateClick = (e: React.MouseEvent) => {
     e.stopPropagation();

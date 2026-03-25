@@ -51,6 +51,7 @@ export function ContentBlock({
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [imageGenerating, setImageGenerating] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -120,10 +121,12 @@ export function ContentBlock({
 
   const handleGenerateSubmit = () => {
     if (!prompt.trim()) return;
-    // TODO: Wire up AI generation API
     console.log("Generate content with prompt:", prompt);
     setPrompt("");
     setShowGenerateDialog(false);
+    if (type === "image") {
+      setImageGenerating(true);
+    }
   };
 
   return (
@@ -204,7 +207,7 @@ export function ContentBlock({
           ) : type === "quiz" ? (
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "image" ? (
-            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} />
+            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
           ) : readOnly ? (
