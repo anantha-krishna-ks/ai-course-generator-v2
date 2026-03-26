@@ -50,6 +50,8 @@ const MultipageCoursePreview = () => {
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
 
   const isMobileView = deviceView === 'mobile';
+  const isTabletView = deviceView === 'tablet';
+  const isCompactView = isMobileView || isTabletView;
 
   const startCourse = useCallback((pageId?: string, fallbackFirstId?: string) => {
     setFoldDirection('out');
