@@ -120,10 +120,15 @@ const MultipageCoursePreview = () => {
         >
           {/* Inner bezel */}
           <div className="rounded-[2rem] bg-gradient-to-b from-[#f0f0f5] to-[#e0e0e6] p-[3px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)]">
-            {/* Notch / Dynamic Island (mobile only) */}
+            {/* Notch / Dynamic Island (mobile & landscape) */}
             {deviceView === 'mobile' && (
               <div className="absolute top-[16px] left-1/2 -translate-x-1/2 z-20">
                 <div className="w-[90px] h-[26px] bg-[#1a1a1a] rounded-full shadow-[0_0_0_2px_rgba(0,0,0,0.1)]" />
+              </div>
+            )}
+            {deviceView === 'tablet-landscape' && (
+              <div className="absolute left-[16px] top-1/2 -translate-y-1/2 z-20">
+                <div className="w-[26px] h-[90px] bg-[#1a1a1a] rounded-full shadow-[0_0_0_2px_rgba(0,0,0,0.1)]" />
               </div>
             )}
 
