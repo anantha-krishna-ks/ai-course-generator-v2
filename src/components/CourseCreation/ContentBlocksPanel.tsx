@@ -10,12 +10,15 @@ import {
   Lock,
   Heading,
   Columns2,
+  Columns3,
   ImageUp,
   ImageDown,
   Search,
   HelpCircle,
   GripVertical,
   Mountain,
+  PanelLeft,
+  PanelRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
