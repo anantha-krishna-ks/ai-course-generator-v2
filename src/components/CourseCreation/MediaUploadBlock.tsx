@@ -55,6 +55,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
     (file: File) => {
       const url = URL.createObjectURL(file);
       setFileName(file.name);
+      setFileType(file.type);
       onChange(url);
     },
     [onChange]
