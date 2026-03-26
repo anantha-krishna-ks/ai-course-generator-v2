@@ -55,10 +55,13 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
   { id: "two-columns", label: "Two Columns", icon: Columns2, category: "text", categoryLabel: "TEXT", type: "text", variant: "two-columns", description: "Side-by-side text columns for comparisons or dense content" },
+  { id: "three-columns", label: "Three Columns", icon: Columns3, category: "text", categoryLabel: "TEXT", type: "text", variant: "three-columns", description: "Three text columns for structured content" },
   // IMAGES
   { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full", description: "A full-width image block" },
   { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top", description: "Image above with descriptive text below" },
   { id: "image-bottom", label: "Image on Bottom", icon: ImageDown, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-bottom", description: "Text content above with an image below" },
+  { id: "image-left", label: "Image on Left", icon: PanelLeft, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-left", description: "Image on the left with text on the right" },
+  { id: "image-right", label: "Image on Right", icon: PanelRight, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-right", description: "Text on the left with image on the right" },
   // VIDEO
   { id: "video-upload", label: "Video", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
   { id: "video-left", label: "Video on Left", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-left", description: "Video on the left with text on the right" },
