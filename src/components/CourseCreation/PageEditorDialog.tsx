@@ -1154,6 +1154,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         </div>
                                       )}
                                     </div>
+                                    </>
+                                    )}
                                   </div>
                                 );
                               } else {
