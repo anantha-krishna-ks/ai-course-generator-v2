@@ -360,18 +360,35 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                                             : "bg-muted/40 border border-transparent"
                                         )}
                                       >
-                                        <div
-                                          className={cn(
-                                            "w-4.5 h-4.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
-                                            isCorrect
-                                              ? "border-primary bg-primary"
-                                              : "border-muted-foreground/30"
-                                          )}
-                                        >
-                                          {isCorrect && (
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
-                                          )}
-                                        </div>
+                                        {question.type === "MCQ" ? (
+                                          <div
+                                            className={cn(
+                                              "w-4 h-4 rounded-sm border-2 flex-shrink-0 flex items-center justify-center",
+                                              isCorrect
+                                                ? "border-primary bg-primary"
+                                                : "border-muted-foreground/30"
+                                            )}
+                                          >
+                                            {isCorrect && (
+                                              <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M2.5 6l2.5 2.5 4.5-5" />
+                                              </svg>
+                                            )}
+                                          </div>
+                                        ) : (
+                                          <div
+                                            className={cn(
+                                              "w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
+                                              isCorrect
+                                                ? "border-primary bg-primary"
+                                                : "border-muted-foreground/30"
+                                            )}
+                                          >
+                                            {isCorrect && (
+                                              <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                                            )}
+                                          </div>
+                                        )}
                                         <span className={cn(
                                           "leading-relaxed text-sm",
                                           isCorrect ? "font-medium text-foreground" : "text-muted-foreground"
