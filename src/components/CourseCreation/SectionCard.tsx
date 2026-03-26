@@ -505,7 +505,7 @@ export function SectionCard({
                       }}
                       className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                     >
-                      <Crosshair className="w-4 h-4 text-muted-foreground" />
+                      <BookOpen className="w-4 h-4 text-muted-foreground" />
                       {showObjective ? "Hide introduction" : "Add Introduction"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
