@@ -192,19 +192,21 @@ export function AddContentButton({
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-0.5 p-1.5">
+          <div className="flex items-center gap-1 p-1.5">
             <button
               onClick={onAddText}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all duration-200"
             >
-              <Type className="w-4 h-4" />
+              <Type className="w-3.5 h-3.5" />
+              <span>Text</span>
             </button>
-            <div className="w-px h-5 bg-border" />
+            <div className="w-px h-4 bg-border/60" />
             <button
               onClick={onAddImage}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all duration-200"
             >
-              <Image className="w-4 h-4" />
+              <Image className="w-3.5 h-3.5" />
+              <span>Image</span>
             </button>
           </div>
         )}
