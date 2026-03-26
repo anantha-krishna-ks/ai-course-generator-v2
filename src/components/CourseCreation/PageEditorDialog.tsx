@@ -44,6 +44,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
+import { ImageBlock } from "./ImageBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { DropIndicator } from "./DropIndicator";
@@ -86,6 +87,8 @@ interface PageEditorDialogProps {
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
   sectionObjectives?: string;
   onSectionObjectivesChange?: (objectives: string) => void;
+  sectionThumbnailUrl?: string | null;
+  onSectionThumbnailChange?: (url: string | null) => void;
   onPreview?: () => void;
 }
 
@@ -105,7 +108,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, onPreview }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -855,6 +858,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
                     placeholder="Untitled section"
                   />
+
+                  {/* Section Image */}
+                  <div className="mt-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <ImageIcon className="w-4 h-4 text-primary/70" />
+                      <span className="text-sm font-medium text-muted-foreground">Section Image</span>
+                    </div>
+                    <ImageBlock
+                      imageUrl={sectionThumbnailUrl || ""}
+                      onChange={(url) => onSectionThumbnailChange?.(url || null)}
+                      aiEnabled={aiEnabled}
+                    />
+                  </div>
 
                   {/* Section Objectives */}
                   <div className="mt-5">
