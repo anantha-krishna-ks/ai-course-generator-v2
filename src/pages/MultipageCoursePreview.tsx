@@ -140,7 +140,7 @@ const MultipageCoursePreview = () => {
             <>
               <div
                 className="absolute right-[-2px] top-[120px] w-[3px] h-[40px] rounded-r-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               {/* Volume buttons (left) */}
               <div
