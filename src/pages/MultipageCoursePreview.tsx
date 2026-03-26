@@ -184,7 +184,7 @@ const MultipageCoursePreview = () => {
               isPhone ? "rounded-[2.5rem]" : "rounded-[1.25rem]"
             )}
             style={{
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03))',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))',
             }}
           >
             {/* Screen bezel (very thin black border around screen) */}
