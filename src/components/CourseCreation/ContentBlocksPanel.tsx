@@ -125,7 +125,27 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "image-full":
+    case "three-columns":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4 flex gap-2.5")}>
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1">Column 1</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Key concepts and fundamentals.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1">Column 2</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Practical applications.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1">Column 3</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Best practices.</p>
+            </div>
+          </div>
+        </div>
+      );
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
