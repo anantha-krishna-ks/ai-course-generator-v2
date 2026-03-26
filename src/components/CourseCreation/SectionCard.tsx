@@ -565,7 +565,7 @@ export function SectionCard({
               <div className="overflow-hidden">
                 <div className="pl-5 pr-4 pb-3">
                   <div className="flex items-center gap-2 rounded-lg bg-accent/40 px-3 py-2.5">
-                    <Crosshair className="w-3.5 h-3.5 text-primary/50 shrink-0" />
+                    <BookOpen className="w-3.5 h-3.5 text-primary/50 shrink-0" />
                     <input
                       ref={objectiveRef}
                       type="text"

@@ -859,7 +859,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Section Objectives */}
                   <div className="mt-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <Crosshair className="w-4 h-4 text-primary/70" />
+                      <BookOpen className="w-4 h-4 text-primary/70" />
                       <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                     </div>
                     <textarea
