@@ -743,7 +743,7 @@ export function SectionCard({
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics or content should be excluded from this section..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
