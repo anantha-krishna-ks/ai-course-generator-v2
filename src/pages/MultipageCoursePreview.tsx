@@ -149,7 +149,7 @@ const MultipageCoursePreview = () => {
               />
               <div
                 className="absolute left-[-2px] top-[140px] w-[3px] h-[28px] rounded-l-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               {/* Silent switch */}
               <div
