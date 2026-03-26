@@ -685,6 +685,22 @@ export function SectionCard({
               Define the scope for "{title || "Untitled section"}"
             </p>
           </DialogHeader>
+          {/* Learning Objectives */}
+          <div className="mt-4 rounded-xl border border-border bg-muted/20 p-4">
+            <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Learning Objectives</label>
+            <textarea
+              value={objectiveText}
+              onChange={(e) => setObjectiveText(e.target.value)}
+              className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[80px]"
+              placeholder="Define the learning objectives for this section..."
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = 'auto';
+                target.style.height = Math.max(80, target.scrollHeight) + 'px';
+              }}
+            />
+          </div>
+
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
