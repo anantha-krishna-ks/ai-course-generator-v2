@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText } from "lucide-react";
+import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -223,21 +223,44 @@ export function ContentBlock({
             </div>
           ) : isEditing ? (
             <DescriptionEditor content={content} onChange={onChange} />
+          ) : !hasContent ? (
+            <div className="w-full rounded-xl border-2 border-dashed border-border/60 bg-muted/20 py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Type className="w-6 h-6 text-primary/70" />
+              </div>
+              <p className="text-sm text-muted-foreground">Click to add text content...</p>
+              <div className="flex items-center gap-2.5">
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="rounded-full px-5 gap-1.5 h-9"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <PenLine className="w-3.5 h-3.5" />
+                  Enter Text
+                </Button>
+                {aiEnabled && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
+                    onClick={() => setShowGenerateDialog(true)}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Ask AI
+                  </Button>
+                )}
+              </div>
+            </div>
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full max-w-full"
+              className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
             >
-              {hasContent ? (
-                <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
-                  dangerouslySetInnerHTML={{ __html: content }}
-                />
-              ) : (
-                <span className="text-lg text-foreground/40 italic">
-                  Click to edit text...
-                </span>
-              )}
+              <div
+                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
             </button>
           )}
         </div>
