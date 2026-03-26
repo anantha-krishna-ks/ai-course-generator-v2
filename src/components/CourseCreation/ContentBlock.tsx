@@ -181,13 +181,11 @@ export function ContentBlock({
                   {type === "text" ? "Generate text with AI" : "Generate image with AI"}
                 </TooltipContent>
               </Tooltip>
-              {type === "text" && (
-                <SidebarButton
-                  icon={GitBranch}
-                  label="Versions"
-                  onClick={() => setShowVersionsDialog(true)}
-                />
-              )}
+              <SidebarButton
+                icon={GitBranch}
+                label="Versions"
+                onClick={() => setShowVersionsDialog(true)}
+              />
             </>
           )}
         </div>
