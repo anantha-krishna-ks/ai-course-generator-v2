@@ -165,7 +165,7 @@ export function DescriptionBlock({
 
     if (colCount > 1) {
       return (
-        <div className="grid gap-6 grid-cols-2">
+        <div className={cn("grid gap-6", colCount === 3 ? "grid-cols-3" : "grid-cols-2")}>
           {columns.map((col, i) => (
             <div
               key={i}
