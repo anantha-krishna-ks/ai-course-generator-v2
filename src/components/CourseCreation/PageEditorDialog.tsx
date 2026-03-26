@@ -86,6 +86,8 @@ interface PageEditorDialogProps {
   onBlocksChange?: (blocks: PageContentBlock[]) => void;
   sectionObjectives?: string;
   onSectionObjectivesChange?: (objectives: string) => void;
+  sectionThumbnailUrl?: string | null;
+  onSectionThumbnailChange?: (url: string | null) => void;
   onPreview?: () => void;
 }
 
