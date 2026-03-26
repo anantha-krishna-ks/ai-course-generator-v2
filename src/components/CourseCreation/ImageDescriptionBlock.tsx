@@ -4,7 +4,7 @@ import { DescriptionEditor } from "./DescriptionEditor";
 import { cn } from "@/lib/utils";
 
 interface ImageDescriptionData {
-  layout: "image-top" | "image-bottom";
+  layout: "image-top" | "image-bottom" | "image-left" | "image-right";
   imageUrl: string;
   description: string;
 }
