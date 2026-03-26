@@ -219,8 +219,8 @@ const MultipageCoursePreview = () => {
                   <div
                     className="w-[28px] h-[100px] rounded-full flex items-center justify-center"
                     style={{
-                      background: '#000',
-                      boxShadow: '0 0 0 2px rgba(50,50,55,0.5), inset 0 0 4px rgba(0,0,0,0.8)',
+                      background: '#1a1a1e',
+                      boxShadow: '0 0 0 2px rgba(100,100,110,0.3), inset 0 0 4px rgba(0,0,0,0.5)',
                     }}
                   >
                     <div className="w-[8px] h-[8px] rounded-full mt-6" style={{
