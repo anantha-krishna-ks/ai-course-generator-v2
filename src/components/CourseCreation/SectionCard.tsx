@@ -739,7 +739,7 @@ export function SectionCard({
 
             {/* Exclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><XCircle className="w-3.5 h-3.5 text-destructive/70" />Exclusions</label>
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}
