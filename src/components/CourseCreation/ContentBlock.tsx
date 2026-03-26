@@ -434,11 +434,15 @@ export function ContentBlock({
                   <div
                     key={version.id}
                     className={cn(
-                      "border rounded-lg p-3 sm:p-4 transition-all hover:border-primary/50 bg-card shadow-sm",
+                      "border rounded-lg p-3 sm:p-4 transition-all hover:border-primary/50 bg-card shadow-sm relative",
+                      isCurrentVersion && "border-primary/40 bg-primary/[0.03] ring-1 ring-primary/15",
                       selectedVersionId === version.id && "border-primary bg-primary/5"
                     )}
                     onClick={() => setSelectedVersionId(version.id)}
                   >
+                    {isCurrentVersion && (
+                      <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full bg-primary" />
+                    )}
                     <div className="space-y-2.5">
                       {/* Version Header */}
                       <div className="flex items-start justify-between gap-2 sm:gap-4">
