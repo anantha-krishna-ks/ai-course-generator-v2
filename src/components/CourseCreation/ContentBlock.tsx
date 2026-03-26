@@ -224,7 +224,7 @@ export function ContentBlock({
           ) : isEditing ? (
             <DescriptionEditor content={content} onChange={onChange} />
           ) : !hasContent ? (
-            <div className="w-full rounded-xl border-2 border-dashed border-border/60 bg-muted/20 py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200">
+            <div className="w-full rounded-xl border-2 border-dashed border-border/60 bg-background py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                 <Type className="w-6 h-6 text-primary/70" />
               </div>
