@@ -675,7 +675,7 @@ export function SectionCard({
 
       {/* Scope Dialog */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
-        <DialogContent className="w-[95vw] max-w-[1100px]">
+        <DialogContent className="w-[95vw] max-w-[1100px] max-h-[90vh] flex flex-col overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
