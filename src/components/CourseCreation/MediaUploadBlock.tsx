@@ -46,6 +46,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
   const [isDragOver, setIsDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [localDescription, setLocalDescription] = useState(description);
+  const [fileType, setFileType] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const changeFileInputRef = useRef<HTMLInputElement>(null);
   const config = mediaConfig[type];
