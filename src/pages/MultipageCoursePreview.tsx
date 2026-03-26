@@ -190,7 +190,7 @@ const MultipageCoursePreview = () => {
             {/* Screen bezel (very thin black border around screen) */}
             <div
               className={cn(
-                "p-[3px] bg-[#1a1a1e]",
+                "p-[2px] bg-[#c0c0c6]",
                 isPhone ? "rounded-[2.4rem]" : "rounded-[1.15rem]"
               )}
             >
