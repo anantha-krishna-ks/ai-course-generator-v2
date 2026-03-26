@@ -254,13 +254,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     if (type === "video-description") {
       content = JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
     } else if (type === "text") {
-      if (variant === "heading-text") {
-        content = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
-      } else if (variant === "two-columns") {
-        content = `<!--two-columns--><h2 style="font-size: 1.75rem; font-weight: 600;">Heading</h2><p>Column one content.</p><!--col-break--><h2 style="font-size: 1.75rem; font-weight: 600;">Heading</h2><p>Column two content.</p>`;
-      } else {
-        content = `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
-      }
+      content = "";
     }
     const newBlock: ContentBlockData = { id, type: blockType, content };
     setContentBlocks((prev) => {
