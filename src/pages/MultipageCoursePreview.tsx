@@ -374,20 +374,52 @@ const MultipageCoursePreview = () => {
         );
       case "doc":
         return (
-          <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
-                <FileText className="w-6 h-6 text-red-500/70" />
+          <div className="rounded-xl border border-border/40 bg-muted/20 overflow-hidden">
+            {/* Header bar */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40 bg-background/80">
+              <div className="w-9 h-9 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-4.5 h-4.5 text-destructive/70" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground">Document</p>
-                <p className="text-xs text-muted-foreground mt-0.5">PDF file</p>
+                <p className="text-sm font-medium text-foreground truncate">Document</p>
+                <p className="text-[11px] text-muted-foreground">PDF file</p>
               </div>
-              <Button variant="outline" size="sm" className="rounded-full gap-1.5 text-xs flex-shrink-0">
-                <Download className="w-3.5 h-3.5" />
-                View
-              </Button>
+              <div className="flex items-center gap-1.5">
+                {block.content && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0"
+                    onClick={() => window.open(block.content, '_blank')}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+                {block.content && (
+                  <a href={block.content} download>
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                      <Download className="w-3.5 h-3.5" />
+                    </Button>
+                  </a>
+                )}
+              </div>
             </div>
+            {/* Inline viewer */}
+            {block.content ? (
+              <iframe
+                src={block.content}
+                className="w-full border-0"
+                style={{ height: isMobileView ? '350px' : '500px' }}
+                title="Document viewer"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <FileText className="w-7 h-7 text-destructive/40" />
+                </div>
+                <p className="text-sm text-muted-foreground">No document uploaded</p>
+              </div>
+            )}
           </div>
         );
       default:
