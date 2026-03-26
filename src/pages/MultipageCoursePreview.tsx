@@ -132,7 +132,7 @@ const MultipageCoursePreview = () => {
               "rounded-[1.75rem] overflow-auto bg-background relative flex flex-col",
               deviceView === 'mobile' && "h-[620px]",
               deviceView === 'tablet' && "h-[600px]",
-              deviceView === 'tablet-landscape' && "h-[500px]"
+              deviceView === 'tablet-landscape' && "h-[375px]"
             )}>
               {children}
             </div>
