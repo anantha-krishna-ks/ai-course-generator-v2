@@ -1,6 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch } from "lucide-react";
-import { ChapterImageDialog } from "@/components/EditCourse/ChapterImageDialog";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -22,8 +21,6 @@ interface ImageBlockProps {
   altText?: string;
   onAltTextChange?: (alt: string) => void;
   aiEnabled?: boolean;
-  externalGenerating?: boolean;
-  onExternalGeneratingDone?: () => void;
 }
 
 type FitMode = "contain" | "cover" | "fill";
@@ -188,9 +185,7 @@ function ImageGeneratingLoader() {
   );
 }
 
-const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop";
-
-export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false, externalGenerating = false, onExternalGeneratingDone }: ImageBlockProps) {
+export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, aiEnabled = false }: ImageBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>("none");
   const [zoom, setZoom] = useState(100);
@@ -203,13 +198,6 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showVersionHistory, setShowVersionHistory] = useState(false);
-
-  const mockVersionHistory = [
-    { id: 3, imageUrl: imageUrl, timestamp: new Date().toISOString(), operation: "AI Generate", inputTokens: 1200, outputTokens: 1500 },
-    { id: 2, imageUrl: imageUrl, timestamp: new Date(Date.now() - 86400000).toISOString(), operation: "Upload", inputTokens: 0, outputTokens: 0 },
-    { id: 1, imageUrl: imageUrl, timestamp: new Date(Date.now() - 3 * 86400000).toISOString(), operation: "Initial", inputTokens: 0, outputTokens: 0 },
-  ];
   const [isClosing, setIsClosing] = useState(false);
   const [localAlt, setLocalAlt] = useState(altText);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -217,19 +205,6 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setLocalAlt(altText), [altText]);
-
-  // Handle external AI generation trigger (when image already exists)
-  useEffect(() => {
-    if (externalGenerating && imageUrl) {
-      setIsGenerating(true);
-      setEditorMode("none");
-      setTimeout(() => {
-        onChange(PLACEHOLDER_IMAGE);
-        setIsGenerating(false);
-        onExternalGeneratingDone?.();
-      }, 2500);
-    }
-  }, [externalGenerating]);
 
   // Click-outside detection
   useEffect(() => {
@@ -355,15 +330,6 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   };
 
   if (imageUrl) {
-    // Show full loader overlay when generating a replacement image
-    if (isGenerating) {
-      return (
-        <div className="rounded-lg border border-border/40 bg-background shadow-sm">
-          <ImageGeneratingLoader />
-        </div>
-      );
-    }
-
     const isActive = editorMode !== "none" && !isClosing;
 
     return (
@@ -644,54 +610,8 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
           </div>
         )}
 
-        {/* Ask AI Image & Version History buttons */}
-        {aiEnabled && editorMode !== "none" && (
-          <>
-            <div className="flex items-center gap-2 mt-2 px-1">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
-                onClick={() => setShowGenerateDialog(true)}
-              >
-                <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-imgblock)' }} />
-                <svg width="0" height="0" className="absolute">
-                  <defs>
-                    <linearGradient id="ai-gradient-imgblock" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                      <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                Ask AI Image
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
-                onClick={() => setShowVersionHistory(true)}
-              >
-                <GitBranch className="w-3 h-3" />
-                Version History
-              </Button>
-            </div>
-
-            <ChapterImageDialog
-              open={showVersionHistory}
-              onClose={() => setShowVersionHistory(false)}
-              chapterTitle="Image Block"
-              versionHistory={mockVersionHistory}
-              onRestoreVersion={(versionId) => {
-                const version = mockVersionHistory.find(v => v.id === versionId);
-                if (version) onChange(version.imageUrl);
-                setShowVersionHistory(false);
-              }}
-            />
-          </>
-        )}
-
-
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           className="hidden"
@@ -701,6 +621,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
     );
   }
 
+  const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop";
 
   const handleGenerateClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -740,43 +661,58 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             : "border-foreground/20 hover:border-primary/50 bg-background/80"
         )}
       >
-        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Image className="w-6 h-6 text-primary/70" />
-        </div>
-        <p className="text-sm text-muted-foreground">Click to add an image...</p>
-        <div className="flex items-center gap-2.5">
-          <Button
-            size="sm"
-            variant="default"
-            className="rounded-full px-5 gap-1.5 h-9"
+        <div className="flex items-center gap-6">
+          {/* Upload Image */}
+          <button
             onClick={handleClick}
+            className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
           >
-            <ImagePlus className="w-3.5 h-3.5" />
-            Upload Image
-          </Button>
-          {aiEnabled && (
-            <Button
-              size="sm"
-              variant="secondary"
-              className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
-              onClick={handleGenerateClick}
+            <div
+              className={cn(
+                "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+                isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary"
+              )}
             >
-              <Sparkles className="w-3.5 h-3.5" style={{ stroke: 'url(#ai-gradient-img)' }} />
-              <svg width="0" height="0" className="absolute">
-                <defs>
-                  <linearGradient id="ai-gradient-img" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                    <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              Ask AI
-            </Button>
+              {isDragOver ? (
+                <Upload className="w-5 h-5" />
+              ) : (
+                <ImagePlus className="w-5 h-5" />
+              )}
+            </div>
+            <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+              Upload Image
+            </span>
+          </button>
+
+          {aiEnabled && (
+            <>
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-px h-6 bg-border" />
+                <span className="text-xs text-muted-foreground font-medium">or</span>
+                <div className="w-px h-6 bg-border" />
+              </div>
+
+              {/* Generate Image */}
+              <button
+                onClick={handleGenerateClick}
+                className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
+              >
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary transition-colors">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+                  Generate Image
+                </span>
+              </button>
+            </>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">
-          Recommended size: from 240×280px · Formats: JPEG, PNG, BMP, GIF
-        </p>
+
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground">
+            Recommended size: from 240×280px · Formats: JPEG, PNG, BMP, GIF
+          </p>
+        </div>
         <input
           ref={fileInputRef}
           type="file"
