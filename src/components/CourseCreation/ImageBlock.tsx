@@ -668,12 +668,24 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               size="sm"
               variant="ghost"
               className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
-              onClick={() => {}}
+              onClick={() => setShowVersionHistory(true)}
             >
               <GitBranch className="w-3 h-3" />
               Version History
             </Button>
           </div>
+
+          <ChapterImageDialog
+            open={showVersionHistory}
+            onClose={() => setShowVersionHistory(false)}
+            chapterTitle="Image Block"
+            versionHistory={mockVersionHistory}
+            onRestoreVersion={(versionId) => {
+              const version = mockVersionHistory.find(v => v.id === versionId);
+              if (version) onChange(version.imageUrl);
+              setShowVersionHistory(false);
+            }}
+          />
         )}
 
 
