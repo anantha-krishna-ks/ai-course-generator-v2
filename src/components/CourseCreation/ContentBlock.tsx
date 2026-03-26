@@ -234,7 +234,11 @@ export function ContentBlock({
                   size="sm"
                   variant="default"
                   className="rounded-full px-5 gap-1.5 h-9"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    const dummyContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
+                    onChange(dummyContent);
+                    setIsEditing(true);
+                  }}
                 >
                   <PenLine className="w-3.5 h-3.5" />
                   Enter Text
