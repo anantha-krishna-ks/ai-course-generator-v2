@@ -434,7 +434,7 @@ export function ContentBlock({
                 return (
                   <Card
                     key={version.id}
-                    className={`p-3 sm:p-4 cursor-pointer transition-all hover:border-primary/50 ${
+                    className={`p-2.5 sm:p-3 md:p-4 cursor-pointer transition-all hover:border-primary/50 ${
                       selectedVersionId === version.id ? 'border-primary bg-primary/5' : ''
                     }`}
                     onClick={() => setSelectedVersionId(version.id)}
