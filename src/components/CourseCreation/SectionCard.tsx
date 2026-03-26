@@ -704,7 +704,7 @@ export function SectionCard({
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />Inclusions</label>
               <textarea
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
