@@ -112,40 +112,161 @@ const MultipageCoursePreview = () => {
   const renderDeviceFrame = (children: React.ReactNode) => {
     if (!isDeviceFramed) return children;
 
+    const isLandscape = deviceView === 'tablet-landscape';
+    const isPhone = deviceView === 'mobile' || isLandscape;
+
     return (
       <div className="flex items-start justify-center py-6 px-4 overflow-auto flex-1">
+        {/* Outer chassis */}
         <div
-          className="relative rounded-[2.5rem] bg-gradient-to-b from-[#e8e8ed] via-[#d4d4da] to-[#c8c8ce] p-[12px] shadow-[0_8px_40px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.6)] flex-shrink-0 w-full"
-          style={{ maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width }}
+          className={cn(
+            "relative flex-shrink-0 w-full",
+            isPhone ? "rounded-[3rem] p-[10px]" : "rounded-[1.75rem] p-[10px]"
+          )}
+          style={{
+            maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width,
+            background: 'linear-gradient(145deg, #2a2a2e 0%, #1a1a1e 30%, #0f0f12 100%)',
+            boxShadow: [
+              '0 25px 60px -12px rgba(0,0,0,0.4)',
+              '0 12px 28px -8px rgba(0,0,0,0.3)',
+              'inset 0 1px 0 rgba(255,255,255,0.08)',
+              'inset 0 -1px 0 rgba(0,0,0,0.3)',
+              '0 0 0 1px rgba(255,255,255,0.05)',
+            ].join(', '),
+          }}
         >
-          {/* Inner bezel */}
-          <div className="rounded-[2rem] bg-gradient-to-b from-[#f0f0f5] to-[#e0e0e6] p-[3px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)]">
-            {/* Notch / Dynamic Island (mobile & landscape) */}
-            {deviceView === 'mobile' && (
-              <div className="absolute top-[16px] left-1/2 -translate-x-1/2 z-20">
-                <div className="w-[90px] h-[26px] bg-[#1a1a1a] rounded-full shadow-[0_0_0_2px_rgba(0,0,0,0.1)]" />
-              </div>
-            )}
-            {deviceView === 'tablet-landscape' && (
-              <div className="absolute left-[16px] top-1/2 -translate-y-1/2 z-20">
-                <div className="w-[26px] h-[90px] bg-[#1a1a1a] rounded-full shadow-[0_0_0_2px_rgba(0,0,0,0.1)]" />
-              </div>
-            )}
+          {/* Side button details - power button (right) */}
+          {isPhone && !isLandscape && (
+            <>
+              <div
+                className="absolute right-[-2px] top-[120px] w-[3px] h-[40px] rounded-r-sm"
+                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+              {/* Volume buttons (left) */}
+              <div
+                className="absolute left-[-2px] top-[100px] w-[3px] h-[28px] rounded-l-sm"
+                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+              <div
+                className="absolute left-[-2px] top-[140px] w-[3px] h-[28px] rounded-l-sm"
+                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+              {/* Silent switch */}
+              <div
+                className="absolute left-[-2px] top-[68px] w-[3px] h-[16px] rounded-l-sm"
+                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+            </>
+          )}
 
-            {/* Screen */}
-            <div className={cn(
-              "rounded-[1.75rem] overflow-auto bg-background relative flex flex-col",
-              deviceView === 'mobile' && "h-[620px]",
-              deviceView === 'tablet' && "h-[600px]",
-              deviceView === 'tablet-landscape' && "h-[375px]"
-            )}>
-              {children}
+          {/* Tablet side buttons */}
+          {deviceView === 'tablet' && (
+            <>
+              <div
+                className="absolute right-[-2px] top-[60px] w-[3px] h-[32px] rounded-r-sm"
+                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+              <div
+                className="absolute top-[-2px] right-[70px] h-[3px] w-[28px] rounded-t-sm"
+                style={{ background: 'linear-gradient(90deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+              <div
+                className="absolute top-[-2px] right-[106px] h-[3px] w-[28px] rounded-t-sm"
+                style={{ background: 'linear-gradient(90deg, #3a3a40, #2a2a30, #3a3a40)' }}
+              />
+            </>
+          )}
+
+          {/* Inner bezel - thin silver edge */}
+          <div
+            className={cn(
+              "p-[2px]",
+              isPhone ? "rounded-[2.5rem]" : "rounded-[1.25rem]"
+            )}
+            style={{
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03))',
+            }}
+          >
+            {/* Screen bezel (very thin black border around screen) */}
+            <div
+              className={cn(
+                "p-[3px] bg-[#000000]",
+                isPhone ? "rounded-[2.4rem]" : "rounded-[1.15rem]"
+              )}
+            >
+              {/* Dynamic Island (phone only) */}
+              {deviceView === 'mobile' && (
+                <div className="absolute top-[18px] left-1/2 -translate-x-1/2 z-20">
+                  <div
+                    className="w-[100px] h-[28px] rounded-full flex items-center justify-center"
+                    style={{
+                      background: '#000',
+                      boxShadow: '0 0 0 2px rgba(50,50,55,0.5), inset 0 0 4px rgba(0,0,0,0.8)',
+                    }}
+                  >
+                    {/* Camera dot */}
+                    <div className="w-[8px] h-[8px] rounded-full ml-6" style={{
+                      background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
+                      boxShadow: '0 0 2px rgba(0,100,200,0.3), inset 0 0 1px rgba(255,255,255,0.1)',
+                    }} />
+                  </div>
+                </div>
+              )}
+
+              {/* Dynamic Island - landscape */}
+              {isLandscape && (
+                <div className="absolute left-[18px] top-1/2 -translate-y-1/2 z-20">
+                  <div
+                    className="w-[28px] h-[100px] rounded-full flex items-center justify-center"
+                    style={{
+                      background: '#000',
+                      boxShadow: '0 0 0 2px rgba(50,50,55,0.5), inset 0 0 4px rgba(0,0,0,0.8)',
+                    }}
+                  >
+                    <div className="w-[8px] h-[8px] rounded-full mt-6" style={{
+                      background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
+                      boxShadow: '0 0 2px rgba(0,100,200,0.3), inset 0 0 1px rgba(255,255,255,0.1)',
+                    }} />
+                  </div>
+                </div>
+              )}
+
+              {/* Front camera for tablet (small dot) */}
+              {deviceView === 'tablet' && (
+                <div className="absolute top-[16px] left-1/2 -translate-x-1/2 z-20">
+                  <div className="w-[8px] h-[8px] rounded-full" style={{
+                    background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
+                    boxShadow: '0 0 3px rgba(0,100,200,0.2), 0 0 0 1px rgba(50,50,55,0.5)',
+                  }} />
+                </div>
+              )}
+
+              {/* Screen */}
+              <div className={cn(
+                "overflow-auto bg-background relative flex flex-col",
+                isPhone ? "rounded-[2.15rem]" : "rounded-[0.9rem]",
+                deviceView === 'mobile' && "h-[620px]",
+                deviceView === 'tablet' && "h-[600px]",
+                deviceView === 'tablet-landscape' && "h-[375px]"
+              )}>
+                {/* Status bar glow effect at top */}
+                <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none opacity-50" />
+                {children}
+              </div>
             </div>
           </div>
 
-          {/* Home indicator (bottom bar) */}
-          <div className="flex justify-center mt-2 mb-1">
-            <div className="w-[120px] h-[4px] rounded-full bg-[#b0b0b8]" />
+          {/* Home indicator */}
+          <div className="flex justify-center mt-2 mb-0.5">
+            <div
+              className={cn(
+                "h-[4px] rounded-full",
+                isPhone ? "w-[100px]" : "w-[80px]"
+              )}
+              style={{
+                background: 'linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08))',
+              }}
+            />
           </div>
         </div>
       </div>
