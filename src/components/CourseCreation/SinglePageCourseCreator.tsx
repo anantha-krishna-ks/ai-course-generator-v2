@@ -166,7 +166,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         ? "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge.</p>"
         : `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
     } else if (type === "image-description") {
-      content = JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
+      const layoutMap: Record<string, string> = { "image-bottom": "image-bottom", "image-left": "image-left", "image-right": "image-right" };
+      content = JSON.stringify({ layout: layoutMap[variant || ""] || "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
     } else if (type === "quiz") {
       content = "[]";
     }
@@ -330,7 +331,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     if (type === "quiz") return "[]";
     if (type === "image") return "";
     if (type === "image-description") {
-      return JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
+      const layoutMap: Record<string, string> = { "image-bottom": "image-bottom", "image-left": "image-left", "image-right": "image-right" };
+      return JSON.stringify({ layout: layoutMap[variant || ""] || "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
     }
     if (type === "video-description") {
       return JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
@@ -340,6 +342,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       case "heading-text": return "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content.</p>";
       case "text-only": return "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge.</p>";
       case "two-columns": return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem"><div><h3>Heading</h3><p>Content here.</p></div><div><h3>Heading</h3><p>Content here.</p></div></div>';
+      case "three-columns": return '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem"><div><h3>Column 1</h3><p>Content here.</p></div><div><h3>Column 2</h3><p>Content here.</p></div><div><h3>Column 3</h3><p>Content here.</p></div></div>';
       default: return "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>";
     }
   };

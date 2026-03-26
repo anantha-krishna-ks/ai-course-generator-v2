@@ -10,12 +10,15 @@ import {
   Lock,
   Heading,
   Columns2,
+  Columns3,
   ImageUp,
   ImageDown,
   Search,
   HelpCircle,
   GripVertical,
   Mountain,
+  PanelLeft,
+  PanelRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -52,10 +55,13 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
   { id: "two-columns", label: "Two Columns", icon: Columns2, category: "text", categoryLabel: "TEXT", type: "text", variant: "two-columns", description: "Side-by-side text columns for comparisons or dense content" },
+  { id: "three-columns", label: "Three Columns", icon: Columns3, category: "text", categoryLabel: "TEXT", type: "text", variant: "three-columns", description: "Three text columns for structured content" },
   // IMAGES
   { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full", description: "A full-width image block" },
   { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top", description: "Image above with descriptive text below" },
   { id: "image-bottom", label: "Image on Bottom", icon: ImageDown, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-bottom", description: "Text content above with an image below" },
+  { id: "image-left", label: "Image on Left", icon: PanelLeft, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-left", description: "Image on the left with text on the right" },
+  { id: "image-right", label: "Image on Right", icon: PanelRight, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-right", description: "Text on the left with image on the right" },
   // VIDEO
   { id: "video-upload", label: "Video", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
   { id: "video-left", label: "Video on Left", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-left", description: "Video on the left with text on the right" },
@@ -119,7 +125,27 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "image-full":
+    case "three-columns":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4 flex gap-2.5")}>
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1">Column 1</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Key concepts and fundamentals.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1">Column 2</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Practical applications.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1">Column 3</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Best practices.</p>
+            </div>
+          </div>
+        </div>
+      );
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
@@ -142,6 +168,30 @@ function BlockPreview({ id }: { id: string }) {
           <div className={cn(card, "p-3")}>
             <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65] px-1 mb-3">Nature provides a stunning backdrop for understanding ecological systems and environmental balance.</p>
             <img src={landscapeImg} alt="Landscape" className="w-full h-16 rounded-md object-cover" />
+          </div>
+        </div>
+      );
+    case "image-left":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-3")}>
+            <img src={workspaceImg} alt="Workspace" className="flex-1 h-24 rounded-md object-cover" />
+            <div className="flex-1 min-w-0 pt-1">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Visual Guide</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Image on the left with supporting text content on the right side.</p>
+            </div>
+          </div>
+        </div>
+      );
+    case "image-right":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-3")}>
+            <div className="flex-1 min-w-0 pt-1">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Description</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Text content on the left with a supporting image on the right side.</p>
+            </div>
+            <img src={landscapeImg} alt="Landscape" className="flex-1 h-24 rounded-md object-cover" />
           </div>
         </div>
       );
@@ -329,6 +379,27 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "three-columns":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2.5 flex gap-[4px]")}>
+            <div className="flex-1 min-w-0">
+              <p className="text-[3.5px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Col 1</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Key concepts.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[3.5px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Col 2</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Applications.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[3.5px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Col 3</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Practices.</p>
+            </div>
+          </div>
+        </div>
+      );
     case "image-full":
       return (
         <div className={wrapper}>
@@ -356,6 +427,30 @@ function BlockThumbnail({ id }: { id: string }) {
               <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Nature provides a stunning backdrop for understanding ecological balance.</p>
             </div>
             <img src={landscapeImg} alt="" className="w-full h-[18px] rounded-[3px] object-cover" />
+          </div>
+        </div>
+      );
+    case "image-left":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
+            <img src={workspaceImg} alt="" className="flex-1 h-[28px] rounded-[3px] object-cover" />
+            <div className="flex-1 min-w-0 pt-[2px]">
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Visual Guide</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Image left with text.</p>
+            </div>
+          </div>
+        </div>
+      );
+    case "image-right":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
+            <div className="flex-1 min-w-0 pt-[2px]">
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Description</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Text left with image.</p>
+            </div>
+            <img src={landscapeImg} alt="" className="flex-1 h-[28px] rounded-[3px] object-cover" />
           </div>
         </div>
       );
