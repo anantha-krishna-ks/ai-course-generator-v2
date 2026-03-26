@@ -203,6 +203,13 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+
+  const mockVersionHistory = [
+    { id: 3, imageUrl: imageUrl, timestamp: new Date().toISOString(), operation: "AI Generate", inputTokens: 1200, outputTokens: 1500 },
+    { id: 2, imageUrl: imageUrl, timestamp: new Date(Date.now() - 86400000).toISOString(), operation: "Upload", inputTokens: 0, outputTokens: 0 },
+    { id: 1, imageUrl: imageUrl, timestamp: new Date(Date.now() - 3 * 86400000).toISOString(), operation: "Initial", inputTokens: 0, outputTokens: 0 },
+  ];
   const [isClosing, setIsClosing] = useState(false);
   const [localAlt, setLocalAlt] = useState(altText);
   const fileInputRef = useRef<HTMLInputElement>(null);
