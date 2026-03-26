@@ -860,14 +860,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <div className="mt-5">
                     <div className="flex items-center gap-2 mb-2">
                       <Crosshair className="w-4 h-4 text-primary/70" />
-                      <span className="text-sm font-medium text-muted-foreground">Objectives</span>
+                      <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                     </div>
                     <textarea
                       value={sectionObjectives}
                       onChange={(e) => onSectionObjectivesChange?.(e.target.value)}
                       rows={3}
                       className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-2.5 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors"
-                      placeholder="Define the learning objectives for this section…"
+                      placeholder="Define the introduction for this section…"
                     />
                   </div>
 
