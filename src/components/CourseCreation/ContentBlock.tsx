@@ -406,10 +406,10 @@ export function ContentBlock({
         setShowVersionsDialog(open);
         if (!open) setSelectedVersionId(null);
       }}>
-        <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:max-w-4xl max-h-[90vh] overflow-hidden p-0 flex flex-col">
-          <DialogHeader className="px-4 sm:px-6 py-4 border-b flex-shrink-0">
-            <DialogTitle className="text-base sm:text-lg font-bold flex items-center gap-2">
-              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:max-w-4xl h-[85vh] sm:h-[80vh] p-0 flex flex-col overflow-hidden">
+          <DialogHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b flex-shrink-0">
+            <DialogTitle className="text-sm sm:text-base md:text-lg font-bold flex items-center gap-2">
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
               Version History
             </DialogTitle>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -417,9 +417,9 @@ export function ContentBlock({
             </p>
           </DialogHeader>
 
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-muted/30 flex-shrink-0">
+          <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <GitBranch className="w-4 h-4 text-muted-foreground" />
+              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
               <span className="text-xs sm:text-sm font-medium">All Versions</span>
             </div>
             <Badge variant="secondary" className="text-xs">
@@ -427,14 +427,14 @@ export function ContentBlock({
             </Badge>
           </div>
 
-          <ScrollArea className="flex-1 px-4 sm:px-6">
-            <div className="space-y-3 py-4">
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="space-y-3 px-3 sm:px-4 md:px-6 py-3 sm:py-4">
               {mockTextVersions.map((version, index) => {
                 const isCurrentVersion = index === 0;
                 return (
                   <Card
                     key={version.id}
-                    className={`p-3 sm:p-4 cursor-pointer transition-all hover:border-primary/50 ${
+                    className={`p-2.5 sm:p-3 md:p-4 cursor-pointer transition-all hover:border-primary/50 ${
                       selectedVersionId === version.id ? 'border-primary bg-primary/5' : ''
                     }`}
                     onClick={() => setSelectedVersionId(version.id)}
@@ -483,10 +483,10 @@ export function ContentBlock({
                       </div>
 
                       <div className="pl-0 sm:pl-2">
-                        <div className="bg-background rounded-lg p-3 sm:p-4 border-2 border-primary/20">
-                          <p className="text-xs sm:text-sm font-semibold mb-2 text-primary">Content:</p>
+                        <div className="bg-background rounded-lg p-2.5 sm:p-3 md:p-4 border-2 border-primary/20 overflow-hidden">
+                          <p className="text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2 text-primary">Content:</p>
                           <div
-                            className="prose prose-sm dark:prose-invert max-w-none line-clamp-4"
+                            className="prose prose-sm dark:prose-invert max-w-none line-clamp-4 overflow-wrap-anywhere break-words"
                             dangerouslySetInnerHTML={{ __html: sanitizeHtml(version.content) }}
                           />
                         </div>
