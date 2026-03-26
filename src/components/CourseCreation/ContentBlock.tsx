@@ -224,34 +224,49 @@ export function ContentBlock({
           ) : isEditing ? (
             <DescriptionEditor content={content} onChange={onChange} />
           ) : !hasContent ? (
-            <div className="w-full rounded-xl border-2 border-dashed border-border/60 bg-background py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Type className="w-6 h-6 text-primary/70" />
-              </div>
-              <p className="text-sm text-muted-foreground">Click to add text content...</p>
-              <div className="flex items-center gap-2.5">
-                <Button
-                  size="sm"
-                  variant="default"
-                  className="rounded-full px-5 gap-1.5 h-9"
+            <div className="w-full rounded-xl border-2 border-dashed border-foreground/20 hover:border-primary/50 bg-background/80 py-8 px-6 flex flex-col items-center justify-center gap-5 transition-all duration-200">
+              <div className="flex items-center gap-6">
+                {/* Enter Text */}
+                <button
                   onClick={() => {
                     const dummyContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
                     onChange(dummyContent);
                     setIsEditing(true);
                   }}
+                  className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
                 >
-                  <PenLine className="w-3.5 h-3.5" />
-                  Enter Text
-                </Button>
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary transition-colors">
+                    <PenLine className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+                    Enter Text
+                  </span>
+                </button>
+
                 {aiEnabled && (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
-                    onClick={() => setShowGenerateDialog(true)}
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Ask AI
+                  <>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-px h-6 bg-border" />
+                      <span className="text-xs text-muted-foreground font-medium">or</span>
+                      <div className="w-px h-6 bg-border" />
+                    </div>
+
+                    {/* Ask AI */}
+                    <button
+                      onClick={() => setShowGenerateDialog(true)}
+                      className="flex flex-col items-center gap-2.5 px-6 py-4 rounded-xl border border-border/60 bg-background hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 cursor-pointer group/btn"
+                    >
+                      <div className="w-11 h-11 rounded-full flex items-center justify-center bg-muted text-muted-foreground group-hover/btn:bg-primary/10 group-hover/btn:text-primary transition-colors">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground/70 group-hover/btn:text-foreground transition-colors">
+                        Ask AI
+                      </span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
                   </Button>
                 )}
               </div>
