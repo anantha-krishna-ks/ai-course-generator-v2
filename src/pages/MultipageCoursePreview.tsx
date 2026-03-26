@@ -125,13 +125,13 @@ const MultipageCoursePreview = () => {
           )}
           style={{
             maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width,
-            background: 'linear-gradient(145deg, #2a2a2e 0%, #1a1a1e 30%, #0f0f12 100%)',
+            background: 'linear-gradient(145deg, #f0f0f3 0%, #e4e4e9 30%, #d8d8de 100%)',
             boxShadow: [
-              '0 25px 60px -12px rgba(0,0,0,0.4)',
-              '0 12px 28px -8px rgba(0,0,0,0.3)',
-              'inset 0 1px 0 rgba(255,255,255,0.08)',
-              'inset 0 -1px 0 rgba(0,0,0,0.3)',
-              '0 0 0 1px rgba(255,255,255,0.05)',
+              '0 25px 60px -12px rgba(0,0,0,0.15)',
+              '0 12px 28px -8px rgba(0,0,0,0.1)',
+              'inset 0 1px 0 rgba(255,255,255,0.9)',
+              'inset 0 -1px 0 rgba(0,0,0,0.06)',
+              '0 0 0 1px rgba(0,0,0,0.06)',
             ].join(', '),
           }}
         >
@@ -140,21 +140,21 @@ const MultipageCoursePreview = () => {
             <>
               <div
                 className="absolute right-[-2px] top-[120px] w-[3px] h-[40px] rounded-r-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               {/* Volume buttons (left) */}
               <div
                 className="absolute left-[-2px] top-[100px] w-[3px] h-[28px] rounded-l-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               <div
                 className="absolute left-[-2px] top-[140px] w-[3px] h-[28px] rounded-l-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               {/* Silent switch */}
               <div
                 className="absolute left-[-2px] top-[68px] w-[3px] h-[16px] rounded-l-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
             </>
           )}
@@ -164,15 +164,15 @@ const MultipageCoursePreview = () => {
             <>
               <div
                 className="absolute right-[-2px] top-[60px] w-[3px] h-[32px] rounded-r-sm"
-                style={{ background: 'linear-gradient(180deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(180deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               <div
                 className="absolute top-[-2px] right-[70px] h-[3px] w-[28px] rounded-t-sm"
-                style={{ background: 'linear-gradient(90deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               <div
                 className="absolute top-[-2px] right-[106px] h-[3px] w-[28px] rounded-t-sm"
-                style={{ background: 'linear-gradient(90deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
             </>
           )}
@@ -184,13 +184,13 @@ const MultipageCoursePreview = () => {
               isPhone ? "rounded-[2.5rem]" : "rounded-[1.25rem]"
             )}
             style={{
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03))',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))',
             }}
           >
             {/* Screen bezel (very thin black border around screen) */}
             <div
               className={cn(
-                "p-[3px] bg-[#000000]",
+                "p-[3px] bg-[#1a1a1e]",
                 isPhone ? "rounded-[2.4rem]" : "rounded-[1.15rem]"
               )}
             >
@@ -200,8 +200,8 @@ const MultipageCoursePreview = () => {
                   <div
                     className="w-[100px] h-[28px] rounded-full flex items-center justify-center"
                     style={{
-                      background: '#000',
-                      boxShadow: '0 0 0 2px rgba(50,50,55,0.5), inset 0 0 4px rgba(0,0,0,0.8)',
+                      background: '#1a1a1e',
+                      boxShadow: '0 0 0 2px rgba(100,100,110,0.3), inset 0 0 4px rgba(0,0,0,0.5)',
                     }}
                   >
                     {/* Camera dot */}
@@ -219,8 +219,8 @@ const MultipageCoursePreview = () => {
                   <div
                     className="w-[28px] h-[100px] rounded-full flex items-center justify-center"
                     style={{
-                      background: '#000',
-                      boxShadow: '0 0 0 2px rgba(50,50,55,0.5), inset 0 0 4px rgba(0,0,0,0.8)',
+                      background: '#1a1a1e',
+                      boxShadow: '0 0 0 2px rgba(100,100,110,0.3), inset 0 0 4px rgba(0,0,0,0.5)',
                     }}
                   >
                     <div className="w-[8px] h-[8px] rounded-full mt-6" style={{
@@ -236,7 +236,7 @@ const MultipageCoursePreview = () => {
                 <div className="absolute top-[16px] left-1/2 -translate-x-1/2 z-20">
                   <div className="w-[8px] h-[8px] rounded-full" style={{
                     background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
-                    boxShadow: '0 0 3px rgba(0,100,200,0.2), 0 0 0 1px rgba(50,50,55,0.5)',
+                    boxShadow: '0 0 3px rgba(0,100,200,0.2), 0 0 0 1px rgba(100,100,110,0.3)',
                   }} />
                 </div>
               )}
@@ -264,7 +264,7 @@ const MultipageCoursePreview = () => {
                 isPhone ? "w-[100px]" : "w-[80px]"
               )}
               style={{
-                background: 'linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08))',
+                background: 'linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.12), rgba(0,0,0,0.06))',
               }}
             />
           </div>
