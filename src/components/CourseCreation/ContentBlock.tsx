@@ -56,6 +56,28 @@ export function ContentBlock({
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [imageGenerating, setImageGenerating] = useState(false);
+  const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
+
+  const mockTextVersions = [
+    {
+      id: 1,
+      content: content || "<p>Current version content</p>",
+      editedBy: "You",
+      editedAt: new Date(),
+    },
+    {
+      id: 2,
+      content: "<h2>Previous Draft</h2><p>An earlier version of this text block with different content and structure.</p>",
+      editedBy: "AI Assistant",
+      editedAt: new Date(Date.now() - 86400000),
+    },
+    {
+      id: 3,
+      content: "<p>Initial draft of the content block created during course setup.</p>",
+      editedBy: "You",
+      editedAt: new Date(Date.now() - 3 * 86400000),
+    },
+  ];
   const blockRef = useRef<HTMLDivElement>(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
