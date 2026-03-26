@@ -267,10 +267,6 @@ export function ContentBlock({
                 )}
               </div>
             </div>
-                  </Button>
-                )}
-              </div>
-            </div>
           ) : (
             <button
               onClick={() => setIsEditing(true)}
