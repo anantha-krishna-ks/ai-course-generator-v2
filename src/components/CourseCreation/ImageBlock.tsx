@@ -669,7 +669,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         )}
 
 
-          ref={fileInputRef}
+        <input
           type="file"
           accept="image/*"
           className="hidden"
