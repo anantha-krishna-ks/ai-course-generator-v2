@@ -448,7 +448,7 @@ export function ContentBlock({
                               Version {mockTextVersions.length - index}
                             </h4>
                             {isCurrentVersion && (
-                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 font-medium bg-primary/10 text-primary border-0">Current</Badge>
+                              <Badge variant="secondary" className="text-[11px] px-2.5 py-0.5 h-5 font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-full">Current</Badge>
                             )}
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
