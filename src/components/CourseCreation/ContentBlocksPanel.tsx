@@ -379,6 +379,27 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "three-columns":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2.5 flex gap-[4px]")}>
+            <div className="flex-1 min-w-0">
+              <p className="text-[3.5px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Col 1</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Key concepts.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[3.5px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Col 2</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Applications.</p>
+            </div>
+            <div className="w-px bg-[hsl(220,13%,90%)]" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[3.5px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Col 3</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Practices.</p>
+            </div>
+          </div>
+        </div>
+      );
     case "image-full":
       return (
         <div className={wrapper}>
