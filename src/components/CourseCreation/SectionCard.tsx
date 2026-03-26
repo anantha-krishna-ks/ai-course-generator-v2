@@ -578,7 +578,7 @@ export function SectionCard({
                         }
                       }}
                       className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50"
-                      placeholder="What will learners achieve?"
+                      placeholder="Write an introduction for this section…"
                     />
                     <span className={cn(
                       "text-[9px] text-muted-foreground/50 tabular-nums transition-opacity",
