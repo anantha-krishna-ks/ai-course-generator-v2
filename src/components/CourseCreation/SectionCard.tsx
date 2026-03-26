@@ -687,7 +687,7 @@ export function SectionCard({
           </DialogHeader>
           {/* Learning Objectives */}
           <div className="mt-4 rounded-xl border border-border bg-muted/20 p-4">
-            <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Learning Objectives</label>
+            <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-primary/70" />Learning Objectives</label>
             <textarea
               value={objectiveText}
               onChange={(e) => setObjectiveText(e.target.value)}
