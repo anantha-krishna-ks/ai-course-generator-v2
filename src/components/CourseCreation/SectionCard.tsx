@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, Crosshair, ChevronRight, ExternalLink, Upload, X } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight, ExternalLink, Upload, X, Target, CheckCircle2, XCircle } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -505,8 +505,8 @@ export function SectionCard({
                       }}
                       className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                     >
-                      <Crosshair className="w-4 h-4 text-muted-foreground" />
-                      {showObjective ? "Hide objective" : "Add objective"}
+                      <BookOpen className="w-4 h-4 text-muted-foreground" />
+                      {showObjective ? "Hide introduction" : "Add Introduction"}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -565,7 +565,7 @@ export function SectionCard({
               <div className="overflow-hidden">
                 <div className="pl-5 pr-4 pb-3">
                   <div className="flex items-center gap-2 rounded-lg bg-accent/40 px-3 py-2.5">
-                    <Crosshair className="w-3.5 h-3.5 text-primary/50 shrink-0" />
+                    <BookOpen className="w-3.5 h-3.5 text-primary/50 shrink-0" />
                     <input
                       ref={objectiveRef}
                       type="text"
@@ -578,7 +578,7 @@ export function SectionCard({
                         }
                       }}
                       className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50"
-                      placeholder="What will learners achieve?"
+                      placeholder="Write an introduction for this section…"
                     />
                     <span className={cn(
                       "text-[9px] text-muted-foreground/50 tabular-nums transition-opacity",
@@ -675,7 +675,7 @@ export function SectionCard({
 
       {/* Scope Dialog */}
       <Dialog open={showInclusionsDialog} onOpenChange={setShowInclusionsDialog}>
-        <DialogContent className="w-[95vw] max-w-[1100px]">
+        <DialogContent className="w-[95vw] max-w-[1100px] max-h-[90vh] flex flex-col overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5 text-muted-foreground" />
@@ -685,60 +685,78 @@ export function SectionCard({
               Define the scope for "{title || "Untitled section"}"
             </p>
           </DialogHeader>
-          <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
-            {/* Inclusions */}
-            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1">
+            {/* Learning Objectives */}
+            <div className="mt-4 rounded-xl border border-border bg-muted/20 p-4">
+              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-primary/70" />Learning Objectives</label>
               <textarea
-                value={inclusions}
-                onChange={(e) => onInclusionsChange?.(e.target.value)}
-                autoFocus
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
-                placeholder="Define what topics, content, or scope should be included in this section..."
+                value={objectiveText}
+                onChange={(e) => setObjectiveText(e.target.value)}
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[80px] max-h-[200px] overflow-y-auto"
+                placeholder="Define the learning objectives for this section..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
                   target.style.height = 'auto';
-                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
+                  target.style.height = Math.min(200, Math.max(80, target.scrollHeight)) + 'px';
                 }}
-              />
-              <ScopeDocUploadZone
-                documents={inclusionDocs}
-                onDocumentsChange={setInclusionDocs}
               />
             </div>
 
-            {/* Divider */}
-            <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
-              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
-              <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
-                <span className="text-[9px] font-semibold text-muted-foreground/60">vs</span>
+            <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
+              {/* Inclusions */}
+              <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
+                <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />Inclusions</label>
+                <textarea
+                  value={inclusions}
+                  onChange={(e) => onInclusionsChange?.(e.target.value)}
+                  autoFocus
+                  className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px] max-h-[300px] overflow-y-auto"
+                  placeholder="Define what topics, content, or scope should be included in this section..."
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = Math.min(300, Math.max(150, target.scrollHeight)) + 'px';
+                  }}
+                />
+                <ScopeDocUploadZone
+                  documents={inclusionDocs}
+                  onDocumentsChange={setInclusionDocs}
+                />
               </div>
-              <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
-            </div>
-            <div className="flex md:hidden items-center gap-3 py-3 px-2">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-              <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            </div>
 
-            {/* Exclusions */}
-            <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
-              <textarea
-                value={exclusions}
-                onChange={(e) => onExclusionsChange?.(e.target.value)}
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
-                placeholder="Define what topics or content should be excluded from this section..."
-                onInput={(e) => {
-                  const target = e.target as HTMLTextAreaElement;
-                  target.style.height = 'auto';
-                  target.style.height = Math.max(150, target.scrollHeight) + 'px';
-                }}
-              />
-              <ScopeDocUploadZone
-                documents={exclusionDocs}
-                onDocumentsChange={setExclusionDocs}
-              />
+              {/* Divider */}
+              <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
+                <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+                <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
+                  <span className="text-[9px] font-semibold text-muted-foreground/60">vs</span>
+                </div>
+                <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+              </div>
+              <div className="flex md:hidden items-center gap-3 py-3 px-2">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+              </div>
+
+              {/* Exclusions */}
+              <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
+                <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><XCircle className="w-3.5 h-3.5 text-destructive/70" />Exclusions</label>
+                <textarea
+                  value={exclusions}
+                  onChange={(e) => onExclusionsChange?.(e.target.value)}
+                  className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px] max-h-[300px] overflow-y-auto"
+                  placeholder="Define what topics or content should be excluded from this section..."
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = Math.min(300, Math.max(150, target.scrollHeight)) + 'px';
+                  }}
+                />
+                <ScopeDocUploadZone
+                  documents={exclusionDocs}
+                  onDocumentsChange={setExclusionDocs}
+                />
+              </div>
             </div>
           </div>
           <div className="flex justify-end pt-2">

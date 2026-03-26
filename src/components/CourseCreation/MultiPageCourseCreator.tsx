@@ -216,11 +216,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, []);
 
   const addTextBlock = useCallback((insertAt?: number) => {
-    const defaultContent = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>`;
     const newBlock: ContentBlockData = {
       id: `block-${Date.now()}`,
       type: "text",
-      content: defaultContent,
+      content: "",
     };
     setContentBlocks((prev) => {
       if (insertAt !== undefined) {
@@ -255,13 +254,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     if (type === "video-description") {
       content = JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
     } else if (type === "text") {
-      if (variant === "heading-text") {
-        content = `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
-      } else if (variant === "two-columns") {
-        content = `<!--two-columns--><h2 style="font-size: 1.75rem; font-weight: 600;">Heading</h2><p>Column one content.</p><!--col-break--><h2 style="font-size: 1.75rem; font-weight: 600;">Heading</h2><p>Column two content.</p>`;
-      } else {
-        content = `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
-      }
+      content = "";
     }
     const newBlock: ContentBlockData = { id, type: blockType, content };
     setContentBlocks((prev) => {
@@ -876,7 +869,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     onChange={(content) => updateBlockContent(block.id, content)}
                                     onDelete={() => deleteBlock(block.id)}
                                     onDuplicate={() => duplicateBlock(block.id)}
-                                    autoFocus={!block.content}
+                                    autoFocus={false}
                                     aiEnabled={!!aiOptions?.enabled}
                                   />
                                 )}
@@ -1196,6 +1189,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               onAddItem={(type) => handleAddItem(type)}
               sectionObjectives={sectionObjectivesMap[topLevel.id] || ""}
               onSectionObjectivesChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [topLevel.id]: obj }))}
+              sectionThumbnailUrl={topLevel.thumbnailUrl || null}
+              onSectionThumbnailChange={(url) => {
+                setItems((prev) => prev.map((i) =>
+                  i.id === topLevel.id ? { ...i, thumbnailUrl: url || undefined } : i
+                ));
+              }}
               onPreview={handlePreview}
             />
            );

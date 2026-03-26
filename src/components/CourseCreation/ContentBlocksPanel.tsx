@@ -62,6 +62,8 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
+  // DOCUMENT
+  { id: "doc-upload", label: "Document", icon: FileText, category: "doc", categoryLabel: "DOCUMENT", type: "doc", variant: "doc-upload", description: "Upload a PDF document" },
   // ASSESSMENT
   { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
@@ -212,6 +214,24 @@ function BlockPreview({ id }: { id: string }) {
               </div>
               <span className="text-[9px] font-medium text-[hsl(220,8%,50%)] shrink-0 tabular-nums">1:24</span>
             </div>
+          </div>
+        </div>
+      );
+    case "doc-upload":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-12 rounded-md bg-[hsl(0,72%,51%)]/10 border border-[hsl(0,72%,51%)]/20 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-[hsl(0,72%,51%)]/70" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-[hsl(220,15%,15%)] truncate">Course_Material.pdf</p>
+                <p className="text-[9px] text-[hsl(220,8%,55%)]">PDF · 2.4 MB</p>
+              </div>
+            </div>
+            <div className="h-px bg-[hsl(220,13%,91%)]" />
+            <p className="text-[9px] text-[hsl(220,8%,55%)] mt-2">Upload PDF documents up to 100 MB</p>
           </div>
         </div>
       );
@@ -403,6 +423,22 @@ function BlockThumbnail({ id }: { id: string }) {
                 ))}
               </div>
               <span className="text-[5px] text-[hsl(220,8%,60%)] shrink-0 tabular-nums">1:24</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "doc-upload":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2.5")}>
+            <div className="flex items-center gap-[4px]">
+              <div className="w-[12px] h-[14px] rounded-[2px] bg-[hsl(0,72%,51%)]/10 border border-[hsl(0,72%,51%)]/20 flex items-center justify-center">
+                <FileText className="w-[7px] h-[7px] text-[hsl(0,72%,51%)]/60" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] truncate">Course_Material.pdf</p>
+                <p className="text-[3px] text-[hsl(220,8%,55%)]">PDF · 2.4 MB</p>
+              </div>
             </div>
           </div>
         </div>
