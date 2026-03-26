@@ -200,8 +200,8 @@ const MultipageCoursePreview = () => {
                   <div
                     className="w-[100px] h-[28px] rounded-full flex items-center justify-center"
                     style={{
-                      background: '#000',
-                      boxShadow: '0 0 0 2px rgba(50,50,55,0.5), inset 0 0 4px rgba(0,0,0,0.8)',
+                      background: '#1a1a1e',
+                      boxShadow: '0 0 0 2px rgba(100,100,110,0.3), inset 0 0 4px rgba(0,0,0,0.5)',
                     }}
                   >
                     {/* Camera dot */}
