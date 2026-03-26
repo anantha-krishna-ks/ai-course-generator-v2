@@ -268,12 +268,12 @@ const MultipageCoursePreview = () => {
           return (
             <div className={cn(
               "flex gap-4 sm:gap-6 items-start",
-              isMobileView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
+              isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
             )}>
               {parsed.image && (
                 <img src={parsed.image} alt="" className={cn(
                   "rounded-xl shadow-sm object-cover",
-                  isMobileView ? "w-full" : "w-1/2"
+                  isCompactView ? "w-full" : "w-1/2"
                 )} />
               )}
               <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
@@ -332,11 +332,11 @@ const MultipageCoursePreview = () => {
           return (
             <div className={cn(
               "flex gap-4 sm:gap-6 items-start",
-              isMobileView ? "flex-col" : parsed.layout === "video-right" ? "flex-row-reverse" : "flex-row"
+              isCompactView ? "flex-col" : parsed.layout === "video-right" ? "flex-row-reverse" : "flex-row"
             )}>
               <div className={cn(
                 "rounded-xl overflow-hidden border border-border/40 bg-black/5",
-                isMobileView ? "w-full" : "w-1/2"
+                isCompactView ? "w-full" : "w-1/2"
               )}>
                 {parsed.video ? (
                   <video src={parsed.video} controls className="w-full rounded-xl" />
@@ -406,7 +406,7 @@ const MultipageCoursePreview = () => {
                 <iframe
                   src={block.content}
                   className="w-full border-0"
-                  style={{ height: isMobileView ? '400px' : '600px' }}
+                  style={{ height: isCompactView ? '400px' : '600px' }}
                   title="Document viewer"
                 />
               </div>
