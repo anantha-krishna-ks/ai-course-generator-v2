@@ -62,6 +62,8 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
+  // DOCUMENT
+  { id: "doc-upload", label: "Document", icon: FileText, category: "doc", categoryLabel: "DOCUMENT", type: "doc", variant: "doc-upload", description: "Upload a PDF document" },
   // ASSESSMENT
   { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
