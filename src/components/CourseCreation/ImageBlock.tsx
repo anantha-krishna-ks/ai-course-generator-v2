@@ -636,7 +636,39 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
           </div>
         )}
 
-        <input
+        {/* Ask AI Image & Version History buttons */}
+        {aiEnabled && (
+          <div className="flex items-center gap-2 mt-2 px-1">
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+              onClick={() => setShowGenerateDialog(true)}
+            >
+              <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-imgblock)' }} />
+              <svg width="0" height="0" className="absolute">
+                <defs>
+                  <linearGradient id="ai-gradient-imgblock" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                    <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              Ask AI Image
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
+              onClick={() => {}}
+            >
+              <GitBranch className="w-3 h-3" />
+              Version History
+            </Button>
+          </div>
+        )}
+
+
           ref={fileInputRef}
           type="file"
           accept="image/*"
