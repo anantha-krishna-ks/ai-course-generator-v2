@@ -430,6 +430,30 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "image-left":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
+            <img src={workspaceImg} alt="" className="flex-1 h-[28px] rounded-[3px] object-cover" />
+            <div className="flex-1 min-w-0 pt-[2px]">
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Visual Guide</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Image left with text.</p>
+            </div>
+          </div>
+        </div>
+      );
+    case "image-right":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[4px]")}>
+            <div className="flex-1 min-w-0 pt-[2px]">
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Description</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Text left with image.</p>
+            </div>
+            <img src={landscapeImg} alt="" className="flex-1 h-[28px] rounded-[3px] object-cover" />
+          </div>
+        </div>
+      );
     case "video-upload":
       return (
         <div className={wrapper}>
