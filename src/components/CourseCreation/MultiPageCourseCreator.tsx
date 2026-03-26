@@ -1189,6 +1189,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               onAddItem={(type) => handleAddItem(type)}
               sectionObjectives={sectionObjectivesMap[topLevel.id] || ""}
               onSectionObjectivesChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [topLevel.id]: obj }))}
+              sectionThumbnailUrl={topLevel.thumbnailUrl || null}
+              onSectionThumbnailChange={(url) => {
+                setItems((prev) => prev.map((i) =>
+                  i.id === topLevel.id ? { ...i, thumbnailUrl: url || undefined } : i
+                ));
+              }}
               onPreview={handlePreview}
             />
            );
