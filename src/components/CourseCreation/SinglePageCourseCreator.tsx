@@ -342,6 +342,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       case "heading-text": return "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content.</p>";
       case "text-only": return "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge.</p>";
       case "two-columns": return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem"><div><h3>Heading</h3><p>Content here.</p></div><div><h3>Heading</h3><p>Content here.</p></div></div>';
+      case "three-columns": return '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem"><div><h3>Column 1</h3><p>Content here.</p></div><div><h3>Column 2</h3><p>Content here.</p></div><div><h3>Column 3</h3><p>Content here.</p></div></div>';
       default: return "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>";
     }
   };
