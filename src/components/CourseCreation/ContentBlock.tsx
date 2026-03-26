@@ -483,10 +483,10 @@ export function ContentBlock({
                       </div>
 
                       <div className="pl-0 sm:pl-2">
-                        <div className="bg-background rounded-lg p-3 sm:p-4 border-2 border-primary/20">
-                          <p className="text-xs sm:text-sm font-semibold mb-2 text-primary">Content:</p>
+                        <div className="bg-background rounded-lg p-2.5 sm:p-3 md:p-4 border-2 border-primary/20 overflow-hidden">
+                          <p className="text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2 text-primary">Content:</p>
                           <div
-                            className="prose prose-sm dark:prose-invert max-w-none line-clamp-4"
+                            className="prose prose-sm dark:prose-invert max-w-none line-clamp-4 overflow-wrap-anywhere break-words"
                             dangerouslySetInnerHTML={{ __html: sanitizeHtml(version.content) }}
                           />
                         </div>
