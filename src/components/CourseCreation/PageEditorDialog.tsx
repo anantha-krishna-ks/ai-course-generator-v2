@@ -1016,6 +1016,46 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 // Wrap content + review bar in a unified frame
                                 elements.push(
                                   <div key={`ai-frame-${block.id}`} className="animate-fade-in rounded-xl border border-primary/20 bg-primary/[0.02] shadow-sm overflow-hidden">
+                                    {aiGenerating ? (
+                                      /* Premium AI generation loading state */
+                                      <div className="relative px-5 py-10 overflow-hidden">
+                                        {/* Animated gradient background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-[hsl(270,70%,60%)]/[0.04] animate-pulse" />
+                                        
+                                        {/* Shimmer lines - skeleton of content being generated */}
+                                        <div className="relative space-y-4 mb-8">
+                                          <div className="flex items-center gap-3">
+                                            <div className="h-4 rounded-full bg-primary/10 animate-pulse w-3/4" style={{ animationDelay: '0ms' }} />
+                                          </div>
+                                          <div className="space-y-2.5">
+                                            <div className="h-3 rounded-full bg-muted-foreground/8 animate-pulse w-full" style={{ animationDelay: '100ms' }} />
+                                            <div className="h-3 rounded-full bg-muted-foreground/8 animate-pulse w-[90%]" style={{ animationDelay: '200ms' }} />
+                                            <div className="h-3 rounded-full bg-muted-foreground/8 animate-pulse w-[70%]" style={{ animationDelay: '300ms' }} />
+                                          </div>
+                                          <div className="space-y-2.5 pt-1">
+                                            <div className="h-3 rounded-full bg-muted-foreground/8 animate-pulse w-full" style={{ animationDelay: '400ms' }} />
+                                            <div className="h-3 rounded-full bg-muted-foreground/8 animate-pulse w-[85%]" style={{ animationDelay: '500ms' }} />
+                                            <div className="h-3 rounded-full bg-muted-foreground/8 animate-pulse w-[60%]" style={{ animationDelay: '600ms' }} />
+                                          </div>
+                                          {/* Sweeping shimmer overlay */}
+                                          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-primary/[0.06] to-transparent" />
+                                        </div>
+
+                                        {/* Center icon + status */}
+                                        <div className="relative flex flex-col items-center gap-3">
+                                          <div className="relative w-10 h-10 flex items-center justify-center">
+                                            {/* Rotating ring */}
+                                            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary/40 border-r-primary/20 animate-spin" />
+                                            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                                          </div>
+                                          <p className="text-xs font-semibold bg-gradient-to-r from-primary to-[hsl(270,70%,60%)] bg-clip-text text-transparent">
+                                            Generating content…
+                                          </p>
+                                          <p className="text-[10px] text-muted-foreground/50">This may take a moment</p>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                    <>
                                     <div className="px-2 py-2">
                                       <ContentBlock
                                         id={block.id}
@@ -1031,12 +1071,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
-                                      {aiGenerating ? (
-                                        <div className="flex items-center gap-3 px-4 py-3">
-                                          <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />
-                                          <span className="text-xs font-medium text-muted-foreground">Generating content…</span>
-                                        </div>
-                                      ) : aiReviewMode === "review" ? (
+                                      {aiReviewMode === "review" ? (
                                         <div className="flex items-center gap-3 px-4 py-2.5">
                                           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                                             <Sparkles className="w-3.5 h-3.5 text-primary" />
@@ -1119,6 +1154,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         </div>
                                       )}
                                     </div>
+                                    </>
+                                    )}
                                   </div>
                                 );
                               } else {
