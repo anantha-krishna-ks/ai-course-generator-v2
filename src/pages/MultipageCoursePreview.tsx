@@ -236,7 +236,7 @@ const MultipageCoursePreview = () => {
                 <div className="absolute top-[16px] left-1/2 -translate-x-1/2 z-20">
                   <div className="w-[8px] h-[8px] rounded-full" style={{
                     background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
-                    boxShadow: '0 0 3px rgba(0,100,200,0.2), 0 0 0 1px rgba(50,50,55,0.5)',
+                    boxShadow: '0 0 3px rgba(0,100,200,0.2), 0 0 0 1px rgba(100,100,110,0.3)',
                   }} />
                 </div>
               )}
