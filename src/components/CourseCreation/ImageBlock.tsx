@@ -637,7 +637,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         )}
 
         {/* Ask AI Image & Version History buttons */}
-        {aiEnabled && (
+        {aiEnabled && editorMode !== "none" && (
           <div className="flex items-center gap-2 mt-2 px-1">
             <Button
               size="sm"
