@@ -125,13 +125,13 @@ const MultipageCoursePreview = () => {
           )}
           style={{
             maxWidth: deviceSizes[deviceView as keyof typeof deviceSizes]?.width,
-            background: 'linear-gradient(145deg, #2a2a2e 0%, #1a1a1e 30%, #0f0f12 100%)',
+            background: 'linear-gradient(145deg, #f0f0f3 0%, #e4e4e9 30%, #d8d8de 100%)',
             boxShadow: [
-              '0 25px 60px -12px rgba(0,0,0,0.4)',
-              '0 12px 28px -8px rgba(0,0,0,0.3)',
-              'inset 0 1px 0 rgba(255,255,255,0.08)',
-              'inset 0 -1px 0 rgba(0,0,0,0.3)',
-              '0 0 0 1px rgba(255,255,255,0.05)',
+              '0 25px 60px -12px rgba(0,0,0,0.15)',
+              '0 12px 28px -8px rgba(0,0,0,0.1)',
+              'inset 0 1px 0 rgba(255,255,255,0.9)',
+              'inset 0 -1px 0 rgba(0,0,0,0.06)',
+              '0 0 0 1px rgba(0,0,0,0.06)',
             ].join(', '),
           }}
         >
