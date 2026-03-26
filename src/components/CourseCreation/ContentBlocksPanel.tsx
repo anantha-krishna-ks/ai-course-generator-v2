@@ -427,6 +427,22 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "doc-upload":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2.5")}>
+            <div className="flex items-center gap-[4px]">
+              <div className="w-[12px] h-[14px] rounded-[2px] bg-[hsl(0,72%,51%)]/10 border border-[hsl(0,72%,51%)]/20 flex items-center justify-center">
+                <FileText className="w-[7px] h-[7px] text-[hsl(0,72%,51%)]/60" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] truncate">Course_Material.pdf</p>
+                <p className="text-[3px] text-[hsl(220,8%,55%)]">PDF · 2.4 MB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     case "question-block":
       return (
         <div className={wrapper}>
