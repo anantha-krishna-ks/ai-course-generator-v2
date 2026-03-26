@@ -264,7 +264,7 @@ const MultipageCoursePreview = () => {
                 isPhone ? "w-[100px]" : "w-[80px]"
               )}
               style={{
-                background: 'linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15), rgba(255,255,255,0.08))',
+                background: 'linear-gradient(90deg, rgba(0,0,0,0.06), rgba(0,0,0,0.12), rgba(0,0,0,0.06))',
               }}
             />
           </div>
