@@ -166,7 +166,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         ? "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge.</p>"
         : `<h2 style="font-size: 1.75rem; font-weight: 600;">Your heading text goes here</h2><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`;
     } else if (type === "image-description") {
-      content = JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
+      const layoutMap: Record<string, string> = { "image-bottom": "image-bottom", "image-left": "image-left", "image-right": "image-right" };
+      content = JSON.stringify({ layout: layoutMap[variant || ""] || "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
     } else if (type === "quiz") {
       content = "[]";
     }
