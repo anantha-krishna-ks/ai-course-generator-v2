@@ -78,8 +78,8 @@ const MultipageCoursePreview = () => {
   const devices = [
     { key: 'desktop' as const, icon: Monitor, label: 'Desktop' },
     { key: 'tablet' as const, icon: Tablet, label: 'Tablet' },
-    { key: 'tablet-landscape' as const, icon: Tablet, label: 'Landscape', rotate: true },
     { key: 'mobile' as const, icon: Smartphone, label: 'Mobile' },
+    { key: 'tablet-landscape' as const, icon: Smartphone, label: 'Landscape', rotate: true },
   ];
 
   const DeviceToggle = () => (
