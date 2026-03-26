@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch } from "lucide-react";
+import { ChapterImageDialog } from "@/components/EditCourse/ChapterImageDialog";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -202,6 +203,13 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+
+  const mockVersionHistory = [
+    { id: 3, imageUrl: imageUrl, timestamp: new Date().toISOString(), operation: "AI Generate", inputTokens: 1200, outputTokens: 1500 },
+    { id: 2, imageUrl: imageUrl, timestamp: new Date(Date.now() - 86400000).toISOString(), operation: "Upload", inputTokens: 0, outputTokens: 0 },
+    { id: 1, imageUrl: imageUrl, timestamp: new Date(Date.now() - 3 * 86400000).toISOString(), operation: "Initial", inputTokens: 0, outputTokens: 0 },
+  ];
   const [isClosing, setIsClosing] = useState(false);
   const [localAlt, setLocalAlt] = useState(altText);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -638,34 +646,48 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
 
         {/* Ask AI Image & Version History buttons */}
         {aiEnabled && editorMode !== "none" && (
-          <div className="flex items-center gap-2 mt-2 px-1">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
-              onClick={() => setShowGenerateDialog(true)}
-            >
-              <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-imgblock)' }} />
-              <svg width="0" height="0" className="absolute">
-                <defs>
-                  <linearGradient id="ai-gradient-imgblock" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                    <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              Ask AI Image
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
-              onClick={() => {}}
-            >
-              <GitBranch className="w-3 h-3" />
-              Version History
-            </Button>
-          </div>
+          <>
+            <div className="flex items-center gap-2 mt-2 px-1">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+                onClick={() => setShowGenerateDialog(true)}
+              >
+                <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-imgblock)' }} />
+                <svg width="0" height="0" className="absolute">
+                  <defs>
+                    <linearGradient id="ai-gradient-imgblock" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                      <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                Ask AI Image
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
+                onClick={() => setShowVersionHistory(true)}
+              >
+                <GitBranch className="w-3 h-3" />
+                Version History
+              </Button>
+            </div>
+
+            <ChapterImageDialog
+              open={showVersionHistory}
+              onClose={() => setShowVersionHistory(false)}
+              chapterTitle="Image Block"
+              versionHistory={mockVersionHistory}
+              onRestoreVersion={(versionId) => {
+                const version = mockVersionHistory.find(v => v.id === versionId);
+                if (version) onChange(version.imageUrl);
+                setShowVersionHistory(false);
+              }}
+            />
+          </>
         )}
 
 
