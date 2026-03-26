@@ -44,6 +44,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
+import { ImageBlock } from "./ImageBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { DropIndicator } from "./DropIndicator";
