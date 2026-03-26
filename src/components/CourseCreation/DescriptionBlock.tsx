@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Heading } from "lucide-react";
+import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
