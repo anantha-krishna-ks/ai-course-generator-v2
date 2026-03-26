@@ -687,7 +687,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         )}
       >
         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-          <ImageIcon className="w-6 h-6 text-primary/70" />
+          <Image className="w-6 h-6 text-primary/70" />
         </div>
         <p className="text-sm text-muted-foreground">Click to add an image...</p>
         <div className="flex items-center gap-2.5">
