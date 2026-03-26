@@ -51,7 +51,8 @@ const MultipageCoursePreview = () => {
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
-  const isCompactView = isMobileView || isTabletView;
+  const isLandscapeView = deviceView === 'tablet-landscape';
+  const isCompactView = isMobileView || isTabletView || isLandscapeView;
 
   const startCourse = useCallback((pageId?: string, fallbackFirstId?: string) => {
     setFoldDirection('out');
