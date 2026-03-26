@@ -217,6 +217,24 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "doc-upload":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-12 rounded-md bg-[hsl(0,72%,51%)]/10 border border-[hsl(0,72%,51%)]/20 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-[hsl(0,72%,51%)]/70" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-[hsl(220,15%,15%)] truncate">Course_Material.pdf</p>
+                <p className="text-[9px] text-[hsl(220,8%,55%)]">PDF · 2.4 MB</p>
+              </div>
+            </div>
+            <div className="h-px bg-[hsl(220,13%,91%)]" />
+            <p className="text-[9px] text-[hsl(220,8%,55%)] mt-2">Upload PDF documents up to 100 MB</p>
+          </div>
+        </div>
+      );
     case "question-block":
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
