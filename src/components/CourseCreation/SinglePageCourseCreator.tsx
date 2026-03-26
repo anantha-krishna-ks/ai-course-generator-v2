@@ -331,7 +331,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     if (type === "quiz") return "[]";
     if (type === "image") return "";
     if (type === "image-description") {
-      return JSON.stringify({ layout: variant === "image-bottom" ? "image-bottom" : "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
+      const layoutMap: Record<string, string> = { "image-bottom": "image-bottom", "image-left": "image-left", "image-right": "image-right" };
+      return JSON.stringify({ layout: layoutMap[variant || ""] || "image-top", imageUrl: "", description: "<p>Add a description here...</p>" });
     }
     if (type === "video-description") {
       return JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
