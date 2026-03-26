@@ -51,7 +51,8 @@ const MultipageCoursePreview = () => {
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
-  const isCompactView = isMobileView || isTabletView;
+  const isLandscapeView = deviceView === 'tablet-landscape';
+  const isCompactView = isMobileView || isTabletView || isLandscapeView;
 
   const startCourse = useCallback((pageId?: string, fallbackFirstId?: string) => {
     setFoldDirection('out');
@@ -71,15 +72,15 @@ const MultipageCoursePreview = () => {
   const deviceSizes = {
     mobile: { width: '375px', label: 'Mobile' },
     tablet: { width: '580px', label: 'Tablet' },
-    'tablet-landscape': { width: '860px', label: 'Tablet Landscape' },
+    'tablet-landscape': { width: '667px', label: 'Landscape' },
     desktop: { width: '100%', label: 'Desktop' },
   };
 
   const devices = [
     { key: 'desktop' as const, icon: Monitor, label: 'Desktop' },
     { key: 'tablet' as const, icon: Tablet, label: 'Tablet' },
-    { key: 'tablet-landscape' as const, icon: Tablet, label: 'Landscape', rotate: true },
     { key: 'mobile' as const, icon: Smartphone, label: 'Mobile' },
+    { key: 'tablet-landscape' as const, icon: Smartphone, label: 'Landscape', rotate: true },
   ];
 
   const DeviceToggle = () => (
@@ -131,7 +132,7 @@ const MultipageCoursePreview = () => {
               "rounded-[1.75rem] overflow-auto bg-background relative flex flex-col",
               deviceView === 'mobile' && "h-[620px]",
               deviceView === 'tablet' && "h-[600px]",
-              deviceView === 'tablet-landscape' && "h-[500px]"
+              deviceView === 'tablet-landscape' && "h-[375px]"
             )}>
               {children}
             </div>
