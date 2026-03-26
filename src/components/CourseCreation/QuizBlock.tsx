@@ -225,12 +225,15 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60 bg-muted/20">
           <div className="flex items-center gap-2.5">
-            <div className="w-1 h-5 bg-primary rounded-full" />
+            <MessageCircleQuestion className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">
-              {questions.length > 0
-                ? `Generated Questions (${questions.length})`
-                : (isQuizVariant ? "Quiz" : "Question")}
+              {isQuizVariant ? "Quiz" : "Questions"}
             </span>
+            {questions.length > 0 && (
+              <Badge variant="secondary" className="text-[11px] h-5 px-2 font-semibold">
+                {questions.length}
+              </Badge>
+            )}
           </div>
           {questions.length > 0 && (
             <button
@@ -244,143 +247,170 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
 
         {/* Questions list or empty state */}
         {questions.length === 0 ? (
-          <div className="px-5 py-8 text-center">
+          <div className="px-5 py-10 text-center">
             <MessageCircleQuestion className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-1">No questions yet</p>
-            <p className="text-xs text-muted-foreground/60 mb-5">
+            <p className="text-sm font-medium text-muted-foreground mb-1">No questions yet</p>
+            <p className="text-xs text-muted-foreground/60">
               {isQuizVariant && aiEnabled
                 ? "Generate a quiz with AI or add questions manually."
-                : "Add questions manually to build your quiz."}
+                : "Add questions manually to build your assessment."}
             </p>
           </div>
         ) : (
           <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleQuestionDragEnd}>
             <SortableContext items={questions.map(q => q.id)} strategy={verticalListSortingStrategy}>
-              <div className="p-4 space-y-4" style={{ backgroundColor: '#F8FAFC' }}>
-                {questions.map((question, index) => (
-                  <SortableQuestionCard key={question.id} question={question}>
-                    {(dragHandleProps) => (
-                      <div className="rounded-xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden" style={{ backgroundColor: '#FFFFFF' }}>
-                        {/* Question header */}
-                        <div className="flex items-start gap-3 px-5 pt-5 pb-4">
-                          <span
-                            className="shrink-0 cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-muted transition-colors mt-1"
-                            {...dragHandleProps}
+              <div className="p-3 space-y-2.5 bg-muted/30">
+                {questions.map((question, index) => {
+                  const isExpanded = expandedQuestions.has(question.id);
+                  return (
+                    <SortableQuestionCard key={question.id} question={question}>
+                      {(dragHandleProps) => (
+                        <div className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all overflow-hidden">
+                          {/* Collapsed header row */}
+                          <div
+                            className="flex items-center gap-2.5 px-3 py-3 cursor-pointer select-none"
+                            onClick={() => toggleExpanded(question.id)}
                           >
-                            <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
-                          </span>
-
-                          {/* Number circle */}
-                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
-                            {index + 1}
-                          </span>
-
-                          {/* Question text */}
-                          <div className="flex-1 min-w-0 pt-1">
-                            <p className="text-sm font-medium text-foreground leading-relaxed">
-                              {question.question || <span className="italic text-muted-foreground">Empty question</span>}
-                            </p>
-                          </div>
-
-                          {/* Edit & Delete buttons */}
-                          <div className="flex items-center gap-1 shrink-0">
-                            <button
-                              onClick={() => handleEditQuestion(question.id)}
-                              className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                            {/* Drag handle */}
+                            <span
+                              className="shrink-0 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                              {...dragHandleProps}
                             >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => setDeletingQuestionId(question.id)}
-                              className="p-2 rounded-md hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
+                              <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                            </span>
 
-                        {/* Options */}
-                        {question.options.length > 0 && (
-                          <div className="px-5 pb-3 space-y-2">
-                            {question.options.map((option, optIndex) => {
-                              const isCorrect = option === question.answer;
-                              return (
-                                <div
-                                  key={optIndex}
-                                  className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all",
-                                    isCorrect
-                                      ? "bg-primary/10 border border-primary/30 shadow-sm"
-                                      : "bg-muted/40 border border-transparent"
-                                  )}
+                            {/* Number */}
+                            <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                              {index + 1}
+                            </span>
+
+                            {/* Question text truncated */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate leading-snug">
+                                {question.question || <span className="italic text-muted-foreground">Empty question</span>}
+                              </p>
+                            </div>
+
+                            {/* Type badge */}
+                            <Badge variant="outline" className="text-[10px] h-5 px-2 font-semibold text-primary border-primary/30 bg-primary/5 shrink-0">
+                              {question.type}
+                            </Badge>
+
+                            {/* Option count */}
+                            {question.options.length > 0 && (
+                              <span className="text-[10px] text-muted-foreground shrink-0">
+                                {question.options.length} opts
+                              </span>
+                            )}
+
+                            {/* 3-dot menu */}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                <button className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground shrink-0">
+                                  <MoreHorizontal className="w-4 h-4" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuItem onClick={() => handleEditQuestion(question.id)}>
+                                  <Edit2 className="w-3.5 h-3.5 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                {aiEnabled && (
+                                  <DropdownMenuItem onClick={() => setRegeneratingQuestionId(question.id)}>
+                                    <RefreshCcw className="w-3.5 h-3.5 mr-2" />
+                                    Regenerate
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => setDeletingQuestionId(question.id)}
+                                  className="text-destructive focus:text-destructive"
                                 >
-                                  <div
-                                    className={cn(
-                                      "w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
-                                      isCorrect
-                                        ? "border-primary bg-primary"
-                                        : "border-muted-foreground/30"
-                                    )}
-                                  >
-                                    {isCorrect && (
-                                      <div className="w-2 h-2 rounded-full bg-primary-foreground" />
-                                    )}
-                                  </div>
-                                  <span className={cn(
-                                    "leading-relaxed",
-                                    isCorrect ? "font-medium text-foreground" : "text-muted-foreground"
-                                  )}>
-                                    {option}
-                                  </span>
-                                </div>
-                              );
-                            })}
+                                  <Trash2 className="w-3.5 h-3.5 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            {/* Chevron */}
+                            <ChevronDown className={cn(
+                              "w-4 h-4 text-muted-foreground transition-transform shrink-0",
+                              isExpanded && "rotate-180"
+                            )} />
                           </div>
-                        )}
 
-                        {/* Answer bar */}
-                        <div className="mx-5 mb-3 flex items-center gap-3 px-4 py-2.5 bg-muted/30 border border-border/60 rounded-lg">
-                          <Badge variant="outline" className="text-[11px] h-5 px-2.5 font-semibold text-primary border-primary/30 bg-primary/5">
-                            {question.type}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">Answer:</span>
-                          <span className="text-sm font-semibold text-foreground">{question.answer}</span>
-                        </div>
+                          {/* Expanded content */}
+                          {isExpanded && (
+                            <div className="border-t border-border/60 animate-in fade-in-50 slide-in-from-top-1 duration-150">
+                              {/* Options */}
+                              {question.options.length > 0 && (
+                                <div className="px-4 pt-3 pb-2 space-y-1.5">
+                                  {question.options.map((option, optIndex) => {
+                                    const isCorrect = question.type === "MCQ"
+                                      ? question.answer.split(", ").includes(option)
+                                      : option === question.answer;
+                                    return (
+                                      <div
+                                        key={optIndex}
+                                        className={cn(
+                                          "flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all",
+                                          isCorrect
+                                            ? "bg-primary/10 border border-primary/30"
+                                            : "bg-muted/40 border border-transparent"
+                                        )}
+                                      >
+                                        <div
+                                          className={cn(
+                                            "w-4.5 h-4.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
+                                            isCorrect
+                                              ? "border-primary bg-primary"
+                                              : "border-muted-foreground/30"
+                                          )}
+                                        >
+                                          {isCorrect && (
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                                          )}
+                                        </div>
+                                        <span className={cn(
+                                          "leading-relaxed text-sm",
+                                          isCorrect ? "font-medium text-foreground" : "text-muted-foreground"
+                                        )}>
+                                          {option}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
 
-                        {/* Explanation collapsible */}
-                        {question.explanation && (
-                          <Collapsible
-                            open={expandedQuestions.has(question.id)}
-                            onOpenChange={() => toggleExpanded(question.id)}
-                          >
-                            <CollapsibleTrigger asChild>
-                              <button className="flex items-center gap-2 px-5 pb-4 pt-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                                <ChevronDown className={cn(
-                                  "w-4 h-4 transition-transform",
-                                  expandedQuestions.has(question.id) && "rotate-180"
-                                )} />
-                                {expandedQuestions.has(question.id) ? "Hide" : "Show"} Explanation
-                              </button>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                              <div className="mx-5 mb-4 bg-primary/5 border border-primary/15 rounded-lg p-4">
-                                <p className="text-xs font-semibold text-foreground mb-1.5">Explanation:</p>
-                                <p className="text-sm text-muted-foreground leading-relaxed">{question.explanation}</p>
+                              {/* Answer bar */}
+                              <div className="mx-4 my-2.5 flex items-center gap-3 px-3.5 py-2.5 bg-primary/5 border border-primary/15 rounded-lg">
+                                <span className="text-xs font-semibold text-primary">Answer:</span>
+                                <span className="text-sm font-semibold text-foreground">{question.answer}</span>
                               </div>
-                            </CollapsibleContent>
-                          </Collapsible>
-                        )}
-                      </div>
-                    )}
-                  </SortableQuestionCard>
-                ))}
+
+                              {/* Explanation */}
+                              {question.explanation && (
+                                <div className="mx-4 mb-3 bg-muted/40 border border-border/60 rounded-lg p-3.5">
+                                  <p className="text-xs font-semibold text-muted-foreground mb-1">Explanation</p>
+                                  <p className="text-sm text-foreground/80 leading-relaxed">{question.explanation}</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </SortableQuestionCard>
+                  );
+                })}
               </div>
             </SortableContext>
           </DndContext>
         )}
 
-        {/* Action buttons */}
-        <div className="px-5 py-3.5 border-t border-border/60 bg-muted/10 flex items-center gap-2">
+        {/* Footer actions */}
+        <div className="px-4 py-3 border-t border-border/60 bg-muted/10 flex items-center gap-2">
           {isQuizVariant && aiEnabled && (
             <Button
               variant="outline"
