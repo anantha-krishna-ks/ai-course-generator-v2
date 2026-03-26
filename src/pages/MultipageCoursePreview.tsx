@@ -624,7 +624,7 @@ const MultipageCoursePreview = () => {
             className={cn(
               "flex transition-all duration-300",
               isDeviceFramed ? "min-h-full flex-1" : "min-h-[calc(100vh-57px)] flex-1",
-              isMobileView ? "flex-col" : "flex-row",
+              isCompactView ? "flex-col" : "flex-row",
               !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
               isDeviceFramed && "w-full"
             )}
@@ -633,7 +633,7 @@ const MultipageCoursePreview = () => {
             {/* Left: Course intro card */}
             <div className={cn(
               "relative overflow-hidden flex-1",
-              isMobileView ? "w-full" : "w-full lg:w-[40%]"
+              isCompactView ? "w-full" : "w-full lg:w-[40%]"
             )}>
               {/* Background with hero image or gradient */}
               <div className="absolute inset-0">
@@ -661,7 +661,7 @@ const MultipageCoursePreview = () => {
                   <rect width="100%" height="100%" fill="url(#ruled-lines)" />
                 </svg>
                 <div className="absolute left-12 top-0 bottom-0 w-[1px] bg-destructive/10" />
-                {!isMobileView && (
+                {!isCompactView && (
                   <>
                     <div className="absolute top-0 right-10 w-6 flex flex-col items-center drop-shadow-md">
                       <div className="w-full h-24 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15 rounded-b-none" />
@@ -676,12 +676,12 @@ const MultipageCoursePreview = () => {
 
               <div className={cn(
                 "relative z-10 flex flex-col justify-center h-full",
-                isMobileView ? "px-6 py-10" : "px-8 sm:px-12 lg:px-16 py-10"
+                isCompactView ? "px-6 py-10" : "px-8 sm:px-12 lg:px-16 py-10"
               )}>
                 <div className="space-y-5">
                   <h1 className={cn(
                     "font-semibold text-foreground leading-[1.1] tracking-tight",
-                    isMobileView ? "text-2xl" : "text-3xl sm:text-4xl lg:text-5xl"
+                    isCompactView ? "text-2xl" : "text-3xl sm:text-4xl lg:text-5xl"
                   )}>
                     {data.title}
                   </h1>
@@ -700,9 +700,9 @@ const MultipageCoursePreview = () => {
                   {descriptionText && (
                     <p className={cn(
                       "text-foreground/70 leading-relaxed max-w-lg",
-                      isMobileView ? "text-sm" : "text-base"
+                      isCompactView ? "text-sm" : "text-base"
                     )}>
-                      {descriptionText.substring(0, isMobileView ? 150 : 300)}{descriptionText.length > (isMobileView ? 150 : 300) ? "..." : ""}
+                      {descriptionText.substring(0, isCompactView ? 150 : 300)}{descriptionText.length > (isCompactView ? 150 : 300) ? "..." : ""}
                     </p>
                   )}
 
@@ -711,7 +711,7 @@ const MultipageCoursePreview = () => {
                     disabled={transitioning}
                     className={cn(
                       "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full h-auto font-semibold uppercase tracking-wider shadow-lg",
-                      isMobileView ? "px-8 py-2.5 text-xs w-full" : "px-10 py-3 text-sm"
+                      isCompactView ? "px-8 py-2.5 text-xs w-full" : "px-10 py-3 text-sm"
                     )}
                   >
                     <Play className="w-4 h-4 mr-1" />
@@ -724,10 +724,10 @@ const MultipageCoursePreview = () => {
             {/* Right: Course outline */}
             <div className={cn(
               "border-l bg-card flex-shrink-0 overflow-auto",
-              isMobileView ? "w-full border-l-0 border-t" : "w-full lg:w-[60%]"
+              isCompactView ? "w-full border-l-0 border-t" : "w-full lg:w-[60%]"
             )}>
               <ScrollArea className="h-full">
-                <div className={cn("p-6 space-y-1", isMobileView && "p-4")}>
+                <div className={cn("p-6 space-y-1", isCompactView && "p-4")}>
                   <div className="mb-4">
                     <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-3">Course Outline</h3>
                   </div>
@@ -741,7 +741,7 @@ const MultipageCoursePreview = () => {
                             onClick={() => toggleSection(item.id)}
                           >
                             {item.thumbnailUrl && (
-                              <div className={cn("relative w-full overflow-hidden", isMobileView ? "h-20" : "h-24")}>
+                              <div className={cn("relative w-full overflow-hidden", isCompactView ? "h-20" : "h-24")}>
                                 <img
                                   src={item.thumbnailUrl}
                                   alt=""
@@ -769,7 +769,7 @@ const MultipageCoursePreview = () => {
                               <div className="flex items-center gap-4 p-4 bg-muted/30">
                                 <div className={cn(
                                   "rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0",
-                                  isMobileView ? "w-10 h-10" : "w-12 h-12"
+                                  isCompactView ? "w-10 h-10" : "w-12 h-12"
                                 )}>
                                   <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
                                 </div>
@@ -861,13 +861,13 @@ const MultipageCoursePreview = () => {
             "flex transition-all duration-300 bg-background",
             isDeviceFramed ? "min-h-full flex-1" : "flex-1",
             !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
-            isMobileView && "flex-col relative",
+            isCompactView && "flex-col relative",
             isDeviceFramed && "w-full"
           )}
           style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
         >
           {/* Desktop sidebar */}
-          {!isMobileView && (
+          {!isCompactView && (
             <div className="w-[260px] flex-shrink-0 flex flex-col border-r bg-card">
               {/* Course title card */}
               <div className="bg-primary p-5 space-y-4">
@@ -896,11 +896,11 @@ const MultipageCoursePreview = () => {
           {/* Content area */}
           <div className={cn(
             "flex-1 overflow-auto",
-            isMobileView && "pb-20" // space for bottom bar
+            isCompactView && "pb-20" // space for bottom bar
           )}>
             <div className={cn(
               "max-w-3xl mx-auto space-y-6 sm:space-y-8",
-              isMobileView ? "px-5 py-6" : "px-8 sm:px-12 py-10"
+              isCompactView ? "px-5 py-6" : "px-8 sm:px-12 py-10"
             )}>
               {currentPage ? (
                 <>
@@ -911,7 +911,7 @@ const MultipageCoursePreview = () => {
                     </span>
                     <h2 className={cn(
                       "font-bold text-foreground leading-tight",
-                      isMobileView ? "text-xl" : "text-2xl sm:text-3xl"
+                      isCompactView ? "text-xl" : "text-2xl sm:text-3xl"
                     )}>
                       {currentPage.title || "Untitled"}
                     </h2>
@@ -936,7 +936,7 @@ const MultipageCoursePreview = () => {
                   )}
 
                   {/* Navigation - desktop inline, mobile uses bottom bar */}
-                  {!isMobileView && (
+                  {!isCompactView && (
                     <div className="flex items-center justify-between pt-8 border-t border-border/40">
                       <Button
                         variant="ghost"
@@ -969,7 +969,7 @@ const MultipageCoursePreview = () => {
           </div>
 
           {/* Mobile bottom navigation bar */}
-          {isMobileView && (
+          {isCompactView && (
             <div className="absolute bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border z-30 px-3 py-2 flex items-center gap-2">
               {/* Outline button */}
               <button
@@ -1014,7 +1014,7 @@ const MultipageCoursePreview = () => {
           )}
 
           {/* Mobile outline bottom sheet */}
-          {isMobileView && <MobileOutlineSheet />}
+          {isCompactView && <MobileOutlineSheet />}
         </div>
         )}
       </div>
