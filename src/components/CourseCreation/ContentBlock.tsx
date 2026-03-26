@@ -250,7 +250,15 @@ export function ContentBlock({
                     className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
                     onClick={() => setShowGenerateDialog(true)}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-3.5 h-3.5" style={{ stroke: 'url(#ai-gradient-btn)' }} />
+                    <svg width="0" height="0" className="absolute">
+                      <defs>
+                        <linearGradient id="ai-gradient-btn" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                          <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
                     Ask AI
                   </Button>
                 )}
