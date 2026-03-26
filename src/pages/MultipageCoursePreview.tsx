@@ -305,6 +305,91 @@ const MultipageCoursePreview = () => {
         } catch {
           return null;
         }
+      case "video":
+        return (
+          <div className="rounded-xl overflow-hidden border border-border/40 bg-black/5">
+            {block.content ? (
+              <video
+                src={block.content}
+                controls
+                className="w-full max-h-[400px] rounded-xl"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Video className="w-7 h-7 text-primary/60" />
+                </div>
+                <p className="text-sm text-muted-foreground">Video content</p>
+              </div>
+            )}
+          </div>
+        );
+      case "video-description": {
+        try {
+          const parsed = JSON.parse(block.content);
+          return (
+            <div className={cn(
+              "flex gap-4 sm:gap-6 items-start",
+              isMobileView ? "flex-col" : parsed.layout === "video-right" ? "flex-row-reverse" : "flex-row"
+            )}>
+              <div className={cn(
+                "rounded-xl overflow-hidden border border-border/40 bg-black/5",
+                isMobileView ? "w-full" : "w-1/2"
+              )}>
+                {parsed.video ? (
+                  <video src={parsed.video} controls className="w-full rounded-xl" />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 gap-2">
+                    <Video className="w-8 h-8 text-muted-foreground/40" />
+                    <p className="text-xs text-muted-foreground/50">No video</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
+            </div>
+          );
+        } catch {
+          return null;
+        }
+      }
+      case "audio":
+        return (
+          <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Music className="w-6 h-6 text-primary/70" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground mb-2">Audio</p>
+                {block.content ? (
+                  <audio src={block.content} controls className="w-full h-8" />
+                ) : (
+                  <div className="h-8 bg-muted/50 rounded-full flex items-center px-4">
+                    <div className="w-full h-1 bg-border rounded-full" />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      case "doc":
+        return (
+          <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-6 h-6 text-red-500/70" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground">Document</p>
+                <p className="text-xs text-muted-foreground mt-0.5">PDF file</p>
+              </div>
+              <Button variant="outline" size="sm" className="rounded-full gap-1.5 text-xs flex-shrink-0">
+                <Download className="w-3.5 h-3.5" />
+                View
+              </Button>
+            </div>
+          </div>
+        );
       default:
         return block.content ? (
           <div className="p-4 bg-muted/30 rounded-xl border border-border/40 text-sm text-muted-foreground">
