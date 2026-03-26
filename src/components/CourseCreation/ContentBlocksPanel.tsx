@@ -171,6 +171,30 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "image-left":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-3")}>
+            <img src={workspaceImg} alt="Workspace" className="flex-1 h-24 rounded-md object-cover" />
+            <div className="flex-1 min-w-0 pt-1">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Visual Guide</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Image on the left with supporting text content on the right side.</p>
+            </div>
+          </div>
+        </div>
+      );
+    case "image-right":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-3")}>
+            <div className="flex-1 min-w-0 pt-1">
+              <h5 className="text-[10px] font-semibold text-[hsl(220,15%,20%)] mb-1.5">Description</h5>
+              <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.65]">Text content on the left with a supporting image on the right side.</p>
+            </div>
+            <img src={landscapeImg} alt="Landscape" className="flex-1 h-24 rounded-md object-cover" />
+          </div>
+        </div>
+      );
     case "video-upload":
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
