@@ -864,9 +864,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     </div>
                     <textarea
                       value={sectionObjectives}
-                      onChange={(e) => onSectionObjectivesChange?.(e.target.value)}
-                      rows={3}
-                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-2.5 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors"
+                      onChange={(e) => {
+                        onSectionObjectivesChange?.(e.target.value);
+                        e.target.style.height = 'auto';
+                        e.target.style.height = e.target.scrollHeight + 'px';
+                      }}
+                      ref={(el) => {
+                        if (el) {
+                          el.style.height = 'auto';
+                          el.style.height = el.scrollHeight + 'px';
+                        }
+                      }}
+                      rows={2}
+                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-2.5 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
                       placeholder="Define the introduction for this section…"
                     />
                   </div>
