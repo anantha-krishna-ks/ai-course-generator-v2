@@ -120,7 +120,7 @@ export function AddContentButton({
           <div className={cn(
             "flex-1 h-px transition-all duration-200",
             isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
-            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-40 group-hover/add:opacity-100",
+            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )} />
           <div className={cn(
@@ -128,7 +128,7 @@ export function AddContentButton({
             isDragOver
               ? "w-9 h-9 border-primary border-dashed bg-primary/5 scale-110 opacity-100"
               : "w-7 h-7 border-foreground/20",
-            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-40 group-hover/add:opacity-100",
+            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )}>
             <Plus className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-foreground/40")} />
@@ -136,7 +136,7 @@ export function AddContentButton({
           <div className={cn(
             "flex-1 h-px transition-all duration-200",
             isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
-            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-40 group-hover/add:opacity-100",
+            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )} />
         </div>
