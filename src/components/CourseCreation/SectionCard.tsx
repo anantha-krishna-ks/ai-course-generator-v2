@@ -709,7 +709,7 @@ export function SectionCard({
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
                 autoFocus
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics, content, or scope should be included in this section..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
