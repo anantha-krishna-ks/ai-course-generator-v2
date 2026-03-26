@@ -61,6 +61,7 @@ const defaultContent: Record<LayoutType, string[]> = {
   "heading-text": ["<h2>Heading</h2><p>Start writing your content here...</p>"],
   "text-only": ["<p>Start writing your content here...</p>"],
   "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
+  "three-columns": ["<h2>Column 1</h2><p>Start writing here...</p>", "<h2>Column 2</h2><p>Start writing here...</p>", "<h2>Column 3</h2><p>Start writing here...</p>"],
 };
 
 export function DescriptionBlock({
