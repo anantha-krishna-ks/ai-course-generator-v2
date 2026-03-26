@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch } from "lucide-react";
+import { ChapterImageDialog } from "@/components/EditCourse/ChapterImageDialog";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
