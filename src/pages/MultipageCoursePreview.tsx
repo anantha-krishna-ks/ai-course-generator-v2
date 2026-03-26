@@ -168,7 +168,7 @@ const MultipageCoursePreview = () => {
               />
               <div
                 className="absolute top-[-2px] right-[70px] h-[3px] w-[28px] rounded-t-sm"
-                style={{ background: 'linear-gradient(90deg, #3a3a40, #2a2a30, #3a3a40)' }}
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
               />
               <div
                 className="absolute top-[-2px] right-[106px] h-[3px] w-[28px] rounded-t-sm"
