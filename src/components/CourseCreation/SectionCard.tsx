@@ -691,7 +691,7 @@ export function SectionCard({
             <textarea
               value={objectiveText}
               onChange={(e) => setObjectiveText(e.target.value)}
-              className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[80px]"
+              className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[80px]"
               placeholder="Define the learning objectives for this section..."
               onInput={(e) => {
                 const target = e.target as HTMLTextAreaElement;
