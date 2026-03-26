@@ -471,7 +471,7 @@ export function ContentBlock({
                               setShowVersionsDialog(false);
                               setSelectedVersionId(null);
                             }}
-                            className="flex-shrink-0 h-7 sm:h-8 text-xs px-2 sm:px-3"
+                            className="flex-shrink-0 h-7 sm:h-8 text-xs px-2 sm:px-3 rounded-full"
                           >
                             <RotateCcw className="w-3 h-3 mr-1.5" />
                             Restore Version
