@@ -859,6 +859,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     placeholder="Untitled section"
                   />
 
+                  {/* Section Image */}
+                  <div className="mt-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <ImageIcon className="w-4 h-4 text-primary/70" />
+                      <span className="text-sm font-medium text-muted-foreground">Section Image</span>
+                    </div>
+                    <ImageBlock
+                      imageUrl={sectionThumbnailUrl || ""}
+                      onChange={(url) => onSectionThumbnailChange?.(url || null)}
+                      aiEnabled={aiEnabled}
+                    />
+                  </div>
+
                   {/* Section Objectives */}
                   <div className="mt-5">
                     <div className="flex items-center gap-2 mb-2">
