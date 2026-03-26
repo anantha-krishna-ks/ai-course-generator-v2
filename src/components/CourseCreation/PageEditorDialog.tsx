@@ -876,7 +876,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         }
                       }}
                       rows={2}
-                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-2.5 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
+                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
                       placeholder="Define the introduction for this section…"
                     />
                   </div>
