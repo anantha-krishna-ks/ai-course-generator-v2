@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import emptyPagesImg from "@/assets/empty-pages.png";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2, Crosshair } from "lucide-react";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -859,7 +859,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Section Objectives */}
                   <div className="mt-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <Crosshair className="w-4 h-4 text-primary/70" />
+                      <BookOpen className="w-4 h-4 text-primary/70" />
                       <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                     </div>
                     <textarea
