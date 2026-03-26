@@ -273,8 +273,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     if (type === "quiz") return "[]";
     if (type === "image") return "";
     if (type === "image-description") {
+      const layoutMap: Record<string, string> = { "image-bottom": "image-bottom", "image-left": "image-left", "image-right": "image-right" };
       return JSON.stringify({
-        layout: variant === "image-bottom" ? "image-bottom" : "image-top",
+        layout: layoutMap[variant || ""] || "image-top",
         imageUrl: "",
         description: "<p>Add a description here...</p>",
       });
