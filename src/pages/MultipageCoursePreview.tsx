@@ -71,7 +71,7 @@ const MultipageCoursePreview = () => {
   const deviceSizes = {
     mobile: { width: '375px', label: 'Mobile' },
     tablet: { width: '580px', label: 'Tablet' },
-    'tablet-landscape': { width: '860px', label: 'Tablet Landscape' },
+    'tablet-landscape': { width: '667px', label: 'Landscape' },
     desktop: { width: '100%', label: 'Desktop' },
   };
 
