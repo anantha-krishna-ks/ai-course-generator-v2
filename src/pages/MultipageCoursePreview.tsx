@@ -796,9 +796,6 @@ const MultipageCoursePreview = () => {
             )}>
               {/* Background with hero image or gradient */}
               <div className="absolute inset-0">
-                {heroImage ? (
-                  <img src={heroImage} alt="" className="w-full h-full object-cover opacity-30" />
-                ) : null}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20" />
               </div>
 
