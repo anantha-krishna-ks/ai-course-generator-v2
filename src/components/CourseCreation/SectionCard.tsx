@@ -356,6 +356,8 @@ export function SectionCard({
     else setInternalThumbnail(url);
   };
   const [showImageBlock, setShowImageBlock] = useState(false);
+  const [showAIIntroDialog, setShowAIIntroDialog] = useState(false);
+  const [aiIntroPrompt, setAiIntroPrompt] = useState("");
   const [internalPages, setInternalPages] = useState<PageEntry[]>([]);
   const [focusedPageId, setFocusedPageId] = useState<string | null>(null);
   const newPageRef = useRef<HTMLInputElement>(null);
