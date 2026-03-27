@@ -346,7 +346,8 @@ const MultipageCoursePreview = () => {
   const allPages = getAllPages();
 
   const descriptionBlock = data.contentBlocks.find((b) => b.type === "description");
-  const descriptionText = descriptionBlock?.content || "";
+  const descriptionRaw = descriptionBlock?.content || "";
+  const descriptionText = descriptionRaw.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim();
 
   const heroImageBlock = data.contentBlocks.find((b) => b.type === "image" && b.content);
   const heroImage = heroImageBlock?.content || "";
