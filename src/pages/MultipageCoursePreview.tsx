@@ -347,7 +347,12 @@ const MultipageCoursePreview = () => {
 
   const descriptionBlock = data.contentBlocks.find((b) => b.type === "description");
   const descriptionRaw = descriptionBlock?.content || "";
-  const descriptionText = descriptionRaw.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim();
+  const descriptionLayoutMatch = descriptionRaw.match(/<!--layout:(\w[\w-]*)-->/);
+  const descriptionLayout = descriptionLayoutMatch ? descriptionLayoutMatch[1] : "heading-text";
+  const descriptionClean = descriptionRaw.replace(/<!--layout:\w[\w-]*-->/, "");
+  const COL_SEP = "<!--col-break-->";
+  const descriptionColumns = descriptionClean.includes(COL_SEP) ? descriptionClean.split(COL_SEP) : [descriptionClean];
+  const descriptionText = descriptionClean.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim();
 
   const heroImageBlock = data.contentBlocks.find((b) => b.type === "image" && b.content);
   const heroImage = heroImageBlock?.content || "";
@@ -876,12 +881,23 @@ const MultipageCoursePreview = () => {
                   </div>
 
                   {descriptionText && (
-                    <p className={cn(
-                      "text-foreground/70 leading-relaxed max-w-lg",
-                      isCompactView ? "text-sm" : "text-base"
-                    )}>
-                      {descriptionText.substring(0, isCompactView ? 150 : 300)}{descriptionText.length > (isCompactView ? 150 : 300) ? "..." : ""}
-                    </p>
+                    (descriptionLayout === "two-columns" || descriptionLayout === "three-columns") && descriptionColumns.length > 1 ? (
+                      <div className={cn(
+                        "grid gap-4 max-w-2xl",
+                        descriptionLayout === "three-columns" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
+                      )}>
+                        {descriptionColumns.map((col, i) => (
+                          <div key={i} className="prose prose-sm max-w-none text-foreground/70" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
+                        ))}
+                      </div>
+                    ) : (
+                      <p className={cn(
+                        "text-foreground/70 leading-relaxed max-w-lg",
+                        isCompactView ? "text-sm" : "text-base"
+                      )}>
+                        {descriptionText.substring(0, isCompactView ? 150 : 300)}{descriptionText.length > (isCompactView ? 150 : 300) ? "..." : ""}
+                      </p>
+                    )
                   )}
 
                   <Button
