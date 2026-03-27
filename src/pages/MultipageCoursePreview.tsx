@@ -347,7 +347,12 @@ const MultipageCoursePreview = () => {
 
   const descriptionBlock = data.contentBlocks.find((b) => b.type === "description");
   const descriptionRaw = descriptionBlock?.content || "";
-  const descriptionText = descriptionRaw.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim();
+  const descriptionLayoutMatch = descriptionRaw.match(/<!--layout:(\w[\w-]*)-->/);
+  const descriptionLayout = descriptionLayoutMatch ? descriptionLayoutMatch[1] : "heading-text";
+  const descriptionClean = descriptionRaw.replace(/<!--layout:\w[\w-]*-->/, "");
+  const COL_SEP = "<!--col-break-->";
+  const descriptionColumns = descriptionClean.includes(COL_SEP) ? descriptionClean.split(COL_SEP) : [descriptionClean];
+  const descriptionText = descriptionClean.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim();
 
   const heroImageBlock = data.contentBlocks.find((b) => b.type === "image" && b.content);
   const heroImage = heroImageBlock?.content || "";
