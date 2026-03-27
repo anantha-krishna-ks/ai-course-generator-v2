@@ -880,13 +880,6 @@ const MultipageCoursePreview = () => {
                     </div>
                   </div>
 
-                  {/* Render all content blocks */}
-                  {data.contentBlocks.map((block, idx) => (
-                    <div key={idx}>
-                      {renderBlockContent({ ...block, type: block.type === "description" ? "text" : block.type } as any)}
-                    </div>
-                  ))}
-
                   <Button
                     onClick={() => startCourse(undefined, allPages[0]?.id)}
                     disabled={transitioning}
@@ -898,6 +891,13 @@ const MultipageCoursePreview = () => {
                     <Play className="w-4 h-4 mr-1" />
                     Start Course
                   </Button>
+
+                  {/* Render all content blocks */}
+                  {data.contentBlocks.map((block, idx) => (
+                    <div key={idx}>
+                      {renderBlockContent({ ...block, type: block.type === "description" ? "text" : block.type } as any)}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
