@@ -877,9 +877,28 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
                   {/* Section Objectives */}
                   <div className="mt-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <BookOpen className="w-4 h-4 text-primary/70" />
-                      <span className="text-sm font-medium text-muted-foreground">Introduction</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-primary/70" />
+                        <span className="text-sm font-medium text-muted-foreground">Introduction</span>
+                      </div>
+                      {aiEnabled && (
+                        <button
+                          onClick={() => setShowAIIntroDialog(true)}
+                          className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors"
+                        >
+                          <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-page-intro)' }} />
+                          <svg width="0" height="0" className="absolute">
+                            <defs>
+                              <linearGradient id="ai-gradient-page-intro" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                                <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                          <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">Ask AI</span>
+                        </button>
+                      )}
                     </div>
                     <textarea
                       value={sectionObjectives}
