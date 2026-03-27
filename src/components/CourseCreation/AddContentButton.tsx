@@ -118,24 +118,24 @@ export function AddContentButton({
           }}
         >
           <div className={cn(
-            "flex-1 h-px transition-all duration-200",
-            isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
+            "flex-1 h-px transition-all duration-300",
+            isDragOver ? "bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-100" : "bg-gradient-to-r from-transparent via-foreground/10 to-transparent",
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )} />
           <div className={cn(
-            "mx-3 rounded-full border flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200",
+            "mx-3 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm",
             isDragOver
-              ? "w-9 h-9 border-primary border-dashed bg-primary/5 scale-110 opacity-100"
-              : "w-7 h-7 border-foreground/20",
+              ? "w-9 h-9 border-2 border-primary border-dashed bg-primary/5 scale-110 opacity-100 shadow-primary/20"
+              : "w-7 h-7 bg-muted/60 hover:bg-primary/10 hover:shadow-md hover:shadow-primary/10 hover:scale-110",
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
-            (forceOpen || isPopoverOpen) && "opacity-100"
+            (forceOpen || isPopoverOpen) && "opacity-100 bg-primary/10"
           )}>
-            <Plus className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-foreground/40")} />
+            <Plus className={cn("transition-all duration-300", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-muted-foreground group-hover/add:text-primary")} />
           </div>
           <div className={cn(
-            "flex-1 h-px transition-all duration-200",
-            isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
+            "flex-1 h-px transition-all duration-300",
+            isDragOver ? "bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-100" : "bg-gradient-to-r from-transparent via-foreground/10 to-transparent",
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )} />
