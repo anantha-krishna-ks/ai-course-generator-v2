@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight, ExternalLink, Upload, X, Target, CheckCircle2, XCircle } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight, ExternalLink, Upload, X, Target, CheckCircle2, XCircle, Sparkles } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -586,6 +586,20 @@ export function SectionCard({
                     )}>
                       {objectiveText.length}/{MAX_OBJECTIVE_LENGTH}
                     </span>
+                    {aiEnabled && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 gap-1 text-[10px] text-primary hover:text-primary hover:bg-primary/10 rounded-full shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // TODO: trigger AI generation for introduction
+                        }}
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Ask AI</span>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
