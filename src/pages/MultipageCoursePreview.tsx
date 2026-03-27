@@ -378,13 +378,34 @@ const MultipageCoursePreview = () => {
 
   const renderBlockContent = (block: PageContentBlock) => {
     switch (block.type) {
-      case "text":
+      case "text": {
+        const content = block.content || "";
+        const COL_SEPARATOR = "<!--col-break-->";
+        const layoutMatch = content.match(/<!--layout:(\w[\w-]*)-->/);
+        const layout = layoutMatch ? layoutMatch[1] : "heading-text";
+        const cleanContent = content.replace(/<!--layout:\w[\w-]*-->/, "");
+
+        if ((layout === "two-columns" || layout === "three-columns") && cleanContent.includes(COL_SEPARATOR)) {
+          const columns = cleanContent.split(COL_SEPARATOR);
+          return (
+            <div className={cn(
+              "grid gap-4 sm:gap-6",
+              layout === "three-columns" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
+            )}>
+              {columns.map((col, i) => (
+                <div key={i} className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
+              ))}
+            </div>
+          );
+        }
+
         return (
           <div
             className="prose prose-sm max-w-none text-foreground"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.content) }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(cleanContent) }}
           />
         );
+      }
       case "image":
         return block.content ? (
           <img src={block.content} alt="" className="w-full max-w-2xl rounded-xl shadow-sm" />
