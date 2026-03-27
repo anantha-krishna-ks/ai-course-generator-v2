@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight, ExternalLink, Upload, X, Target, CheckCircle2, XCircle, Sparkles } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight, ExternalLink, Upload, X, Target, CheckCircle2, XCircle, Sparkles, Send } from "lucide-react";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
