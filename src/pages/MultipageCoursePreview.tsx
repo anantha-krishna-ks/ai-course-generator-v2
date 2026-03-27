@@ -880,25 +880,12 @@ const MultipageCoursePreview = () => {
                     </div>
                   </div>
 
-                  {descriptionText && (
-                    (descriptionLayout === "two-columns" || descriptionLayout === "three-columns") && descriptionColumns.length > 1 ? (
-                      <div className={cn(
-                        "grid gap-4 max-w-2xl",
-                        descriptionLayout === "three-columns" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
-                      )}>
-                        {descriptionColumns.map((col, i) => (
-                          <div key={i} className="prose prose-sm max-w-none text-foreground/70" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
-                        ))}
-                      </div>
-                    ) : (
-                      <p className={cn(
-                        "text-foreground/70 leading-relaxed max-w-lg",
-                        isCompactView ? "text-sm" : "text-base"
-                      )}>
-                        {descriptionText.substring(0, isCompactView ? 150 : 300)}{descriptionText.length > (isCompactView ? 150 : 300) ? "..." : ""}
-                      </p>
-                    )
-                  )}
+                  {/* Render all content blocks */}
+                  {data.contentBlocks.map((block, idx) => (
+                    <div key={idx}>
+                      {renderBlockContent(block)}
+                    </div>
+                  ))}
 
                   <Button
                     onClick={() => startCourse(undefined, allPages[0]?.id)}
