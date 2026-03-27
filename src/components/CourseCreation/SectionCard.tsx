@@ -590,14 +590,22 @@ export function SectionCard({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 px-2 gap-1 text-[10px] text-primary hover:text-primary hover:bg-primary/10 rounded-full shrink-0"
+                        className="h-6 px-2 gap-1 text-[10px] hover:bg-primary/10 rounded-full shrink-0"
                         onClick={(e) => {
                           e.stopPropagation();
-                          // TODO: trigger AI generation for introduction
+                          setShowAIIntroDialog(true);
                         }}
                       >
-                        <Sparkles className="w-3 h-3" />
-                        <span>Ask AI</span>
+                        <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-intro)' }} />
+                        <svg width="0" height="0" className="absolute">
+                          <defs>
+                            <linearGradient id="ai-gradient-intro" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                              <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <span className="bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent font-medium">Ask AI</span>
                       </Button>
                     )}
                   </div>
