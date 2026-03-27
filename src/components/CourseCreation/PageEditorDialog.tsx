@@ -176,6 +176,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
   const [showQuizGenerateDialog, setShowQuizGenerateDialog] = useState(false);
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
+  const [showAIIntroDialog, setShowAIIntroDialog] = useState(false);
+  const [aiIntroPrompt, setAiIntroPrompt] = useState("");
   
   // AI review state
   const [aiReviewBlockId, setAiReviewBlockId] = useState<string | null>(null);
