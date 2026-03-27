@@ -416,19 +416,51 @@ const MultipageCoursePreview = () => {
           if (!Array.isArray(questions)) return null;
           return (
             <div className="space-y-4">
-              {questions.map((q: any, qi: number) => (
-                <div key={qi} className="bg-muted/40 rounded-xl p-4 sm:p-5 border border-border/60">
-                  <p className="font-medium text-foreground mb-3 text-sm sm:text-base">{qi + 1}. {q.text}</p>
-                  <div className="space-y-2">
-                    {q.answers?.map((a: any, ai: number) => (
-                      <div key={ai} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-background border border-border/40 text-sm">
-                        <div className="w-5 h-5 rounded-full border-2 border-border flex-shrink-0" />
-                        <span>{a.text}</span>
+              {questions.map((q: any, qi: number) => {
+                const questionText = q.question || q.text || "";
+                const options: string[] = q.options || (q.answers?.map((a: any) => typeof a === "string" ? a : a.text) ?? []);
+                const answer = q.answer || "";
+                const isMCQ = q.type === "MCQ";
+                return (
+                  <div key={qi} className="bg-muted/40 rounded-xl p-4 sm:p-5 border border-border/60">
+                    <div className="flex items-start gap-3 mb-3">
+                      <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">{qi + 1}</span>
+                      <p className="font-medium text-foreground text-sm sm:text-base leading-relaxed">{questionText}</p>
+                    </div>
+                    {q.type && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-xs font-semibold text-primary mb-3">{q.type}</span>
+                    )}
+                    <div className="space-y-2">
+                      {options.map((opt: string, ai: number) => {
+                        const isCorrect = opt === answer;
+                        return (
+                          <div key={ai} className={cn(
+                            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all",
+                            isCorrect ? "bg-primary/10 border-2 border-primary/30" : "bg-background border border-border/40"
+                          )}>
+                            {isMCQ ? (
+                              <div className={cn("w-4 h-4 rounded-sm border-2 flex-shrink-0 flex items-center justify-center", isCorrect ? "border-primary bg-primary" : "border-border")}>
+                                {isCorrect && <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2.5 6l2.5 2.5 4.5-5" /></svg>}
+                              </div>
+                            ) : (
+                              <div className={cn("w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center", isCorrect ? "border-primary bg-primary" : "border-border")}>
+                                {isCorrect && <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
+                              </div>
+                            )}
+                            <span className={isCorrect ? "font-semibold text-foreground" : "text-muted-foreground"}>{opt}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {q.explanation && (
+                      <div className="mt-3 bg-primary/5 border border-primary/20 rounded-lg p-3">
+                        <p className="text-xs font-semibold text-primary mb-1">Explanation:</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{q.explanation}</p>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           );
         } catch {
