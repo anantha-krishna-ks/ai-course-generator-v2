@@ -793,47 +793,67 @@ export function SectionCard({
 
       {/* AI Introduction Dialog */}
       <Dialog open={showAIIntroDialog} onOpenChange={setShowAIIntroDialog}>
-        <DialogContent className="w-[95vw] max-w-[500px] p-5">
-          <DialogHeader>
-            <DialogTitle className="text-base font-semibold text-foreground flex items-center gap-2">
-              <Sparkles className="w-4 h-4" style={{ stroke: 'url(#ai-gradient-dialog)' }} />
-              <svg width="0" height="0" className="absolute">
-                <defs>
-                  <linearGradient id="ai-gradient-dialog" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                    <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                  </linearGradient>
-                </defs>
-              </svg>
+        <DialogContent className="sm:max-w-[520px] gap-0 p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-4">
+            <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
               Generate Introduction
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              AI will generate an introduction for "{title || "Untitled section"}"
+            <p className="text-sm text-muted-foreground mt-1.5">
+              Describe what introduction you'd like to generate for "{title || "Untitled section"}".
             </p>
           </DialogHeader>
-          <div className="mt-3 space-y-3">
-            <textarea
-              value={aiIntroPrompt}
-              onChange={(e) => setAiIntroPrompt(e.target.value)}
-              placeholder="Add any specific instructions or context for the AI... (optional)"
-              className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-3 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[100px]"
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAIIntroDialog(false)} className="rounded-full px-4 text-sm">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  // TODO: trigger AI generation
-                  setShowAIIntroDialog(false);
-                  setAiIntroPrompt("");
+
+          <div className="px-6 pb-2">
+            <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
+              <textarea
+                value={aiIntroPrompt}
+                onChange={(e) => setAiIntroPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    // TODO: trigger AI generation
+                    setShowAIIntroDialog(false);
+                    setAiIntroPrompt("");
+                  }
                 }}
-                className="rounded-full px-5 text-sm gap-1.5 bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] hover:opacity-90 border-0"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Generate
-              </Button>
+                placeholder="e.g., Write a brief introduction covering the key objectives and what learners will achieve..."
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+                rows={4}
+              />
             </div>
+            <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+              Press Enter to generate · Shift+Enter for new line
+            </p>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setShowAIIntroDialog(false);
+                setAiIntroPrompt("");
+              }}
+              className="rounded-full px-4"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                // TODO: trigger AI generation
+                setShowAIIntroDialog(false);
+                setAiIntroPrompt("");
+              }}
+              disabled={!aiIntroPrompt.trim()}
+              className="rounded-full px-4 gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              Generate
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
