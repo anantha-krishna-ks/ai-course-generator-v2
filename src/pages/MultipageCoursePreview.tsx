@@ -196,20 +196,8 @@ const MultipageCoursePreview = () => {
             >
               {/* Dynamic Island (phone only) */}
               {deviceView === 'mobile' && (
-                <div className="absolute top-[18px] left-1/2 -translate-x-1/2 z-20">
-                  <div
-                    className="w-[100px] h-[28px] rounded-full flex items-center justify-center"
-                    style={{
-                      background: '#1a1a1e',
-                      boxShadow: '0 0 0 2px rgba(100,100,110,0.3), inset 0 0 4px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    {/* Camera dot */}
-                    <div className="w-[8px] h-[8px] rounded-full ml-6" style={{
-                      background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
-                      boxShadow: '0 0 2px rgba(0,100,200,0.3), inset 0 0 1px rgba(255,255,255,0.1)',
-                    }} />
-                  </div>
+                <div className="absolute top-[6px] left-1/2 -translate-x-1/2 z-20">
+                  <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#1a1a1e' }} />
                 </div>
               )}
 
