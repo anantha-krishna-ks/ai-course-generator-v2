@@ -176,6 +176,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
   const [showQuizGenerateDialog, setShowQuizGenerateDialog] = useState(false);
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
+  const [showAIIntroDialog, setShowAIIntroDialog] = useState(false);
+  const [aiIntroPrompt, setAiIntroPrompt] = useState("");
   
   // AI review state
   const [aiReviewBlockId, setAiReviewBlockId] = useState<string | null>(null);
@@ -877,9 +879,28 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
                   {/* Section Objectives */}
                   <div className="mt-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <BookOpen className="w-4 h-4 text-primary/70" />
-                      <span className="text-sm font-medium text-muted-foreground">Introduction</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-primary/70" />
+                        <span className="text-sm font-medium text-muted-foreground">Introduction</span>
+                      </div>
+                      {aiEnabled && (
+                        <button
+                          onClick={() => setShowAIIntroDialog(true)}
+                          className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors"
+                        >
+                          <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-page-intro)' }} />
+                          <svg width="0" height="0" className="absolute">
+                            <defs>
+                              <linearGradient id="ai-gradient-page-intro" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                                <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+                          <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">Ask AI</span>
+                        </button>
+                      )}
                     </div>
                     <textarea
                       value={sectionObjectives}
@@ -1519,6 +1540,71 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       onGenerate={handleQuizGenerate}
       isGenerating={isQuizGenerating}
     />
+
+    {/* AI Introduction Dialog */}
+    <Dialog open={showAIIntroDialog} onOpenChange={setShowAIIntroDialog}>
+      <DialogContent className="sm:max-w-[520px] gap-0 p-0 overflow-hidden">
+        <DialogHeader className="px-6 pt-6 pb-4">
+          <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+            <div className="p-1.5 rounded-lg bg-primary/10">
+              <Sparkles className="w-4 h-4 text-primary" />
+            </div>
+            Generate Introduction
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground mt-1.5">
+            Describe what introduction you'd like to generate for this section.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="px-6 pb-2">
+          <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
+            <textarea
+              value={aiIntroPrompt}
+              onChange={(e) => setAiIntroPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  setShowAIIntroDialog(false);
+                  setAiIntroPrompt("");
+                }
+              }}
+              placeholder="e.g., Write a brief introduction covering the key objectives and what learners will achieve..."
+              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+              rows={4}
+            />
+          </div>
+          <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+            Press Enter to generate · Shift+Enter for new line
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShowAIIntroDialog(false);
+              setAiIntroPrompt("");
+            }}
+            className="rounded-full px-4"
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => {
+              setShowAIIntroDialog(false);
+              setAiIntroPrompt("");
+            }}
+            disabled={!aiIntroPrompt.trim()}
+            className="rounded-full px-4 gap-1.5"
+          >
+            <Send className="w-3.5 h-3.5" />
+            Generate
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
     </>
   );
 }
