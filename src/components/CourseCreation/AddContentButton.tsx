@@ -118,24 +118,24 @@ export function AddContentButton({
           }}
         >
           <div className={cn(
-            "flex-1 h-px transition-all duration-300",
-            isDragOver ? "bg-primary/40 opacity-100" : "bg-border/60",
+            "flex-1 h-px transition-all duration-200",
+            isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )} />
           <div className={cn(
-            "mx-2 rounded-md border flex items-center justify-center transition-all duration-200",
+            "mx-3 rounded-full border flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200",
             isDragOver
-              ? "w-8 h-6 border-primary border-dashed bg-primary/5 scale-105 opacity-100"
-              : "w-6 h-5 border-border/80 bg-background hover:border-primary/40 hover:bg-primary/5 hover:scale-105",
+              ? "w-9 h-9 border-primary border-dashed bg-primary/5 scale-110 opacity-100"
+              : "w-7 h-7 border-foreground/20",
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
-            (forceOpen || isPopoverOpen) && "opacity-100 border-primary/30 bg-primary/5"
+            (forceOpen || isPopoverOpen) && "opacity-100"
           )}>
-            <Plus className={cn("transition-all duration-200", isDragOver ? "w-3 h-3 text-primary" : "w-3 h-3 text-muted-foreground group-hover/add:text-primary")} />
+            <Plus className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-foreground/40")} />
           </div>
           <div className={cn(
-            "flex-1 h-px transition-all duration-300",
-            isDragOver ? "bg-primary/40 opacity-100" : "bg-border/60",
+            "flex-1 h-px transition-all duration-200",
+            isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )} />
