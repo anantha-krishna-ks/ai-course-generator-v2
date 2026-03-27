@@ -883,7 +883,7 @@ const MultipageCoursePreview = () => {
                   {/* Render all content blocks */}
                   {data.contentBlocks.map((block, idx) => (
                     <div key={idx}>
-                      {renderBlockContent(block)}
+                      {renderBlockContent({ ...block, type: block.type === "description" ? "text" : block.type } as any)}
                     </div>
                   ))}
 
