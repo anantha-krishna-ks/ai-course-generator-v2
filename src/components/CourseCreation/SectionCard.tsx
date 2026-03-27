@@ -790,6 +790,53 @@ export function SectionCard({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* AI Introduction Dialog */}
+      <Dialog open={showAIIntroDialog} onOpenChange={setShowAIIntroDialog}>
+        <DialogContent className="w-[95vw] max-w-[500px] p-5">
+          <DialogHeader>
+            <DialogTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+              <Sparkles className="w-4 h-4" style={{ stroke: 'url(#ai-gradient-dialog)' }} />
+              <svg width="0" height="0" className="absolute">
+                <defs>
+                  <linearGradient id="ai-gradient-dialog" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                    <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              Generate Introduction
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              AI will generate an introduction for "{title || "Untitled section"}"
+            </p>
+          </DialogHeader>
+          <div className="mt-3 space-y-3">
+            <textarea
+              value={aiIntroPrompt}
+              onChange={(e) => setAiIntroPrompt(e.target.value)}
+              placeholder="Add any specific instructions or context for the AI... (optional)"
+              className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-3 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[100px]"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowAIIntroDialog(false)} className="rounded-full px-4 text-sm">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  // TODO: trigger AI generation
+                  setShowAIIntroDialog(false);
+                  setAiIntroPrompt("");
+                }}
+                className="rounded-full px-5 text-sm gap-1.5 bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] hover:opacity-90 border-0"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Generate
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
