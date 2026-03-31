@@ -285,7 +285,21 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+        {/* Welcome Banner */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-foreground">
+            Welcome back 👋
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            You have <span className="font-semibold text-primary">13 courses</span> created
+            {" · "}
+            <span className="font-semibold text-primary">+2</span> added this month
+            {" · "}
+            <span className="font-semibold text-primary">
+              {isLoadingTokens ? "..." : tokenData.availableTokens.toLocaleString()}
+            </span> tokens remaining
+          </p>
+        </div>
 
         {/* Quick Actions */}
         <Card className="relative p-6 mb-8 border-2 border-dashed border-primary/30 hover:border-primary/50 transition-colors bg-gradient-to-br from-primary/5 via-background to-accent/5 overflow-hidden">
