@@ -174,41 +174,64 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <div className="w-36 sm:w-44 h-24 sm:h-28 bg-background rounded-md border border-border shadow-sm overflow-hidden flex">
-                      {/* Sidebar */}
-                      <div className="w-10 sm:w-12 bg-muted/60 border-r border-border p-1.5 flex flex-col gap-1">
-                        <div className="w-4 h-1 bg-primary/40 rounded-sm" />
-                        <div className="mt-1 space-y-1.5">
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 rounded-full bg-primary/60" />
-                            <div className="h-[3px] bg-muted-foreground/25 rounded-sm flex-1" />
+                    <div className="w-[160px] sm:w-[190px] h-[100px] sm:h-[120px] rounded-lg border border-border/80 shadow-md overflow-hidden flex bg-background">
+                      {/* Sidebar nav */}
+                      <div className="w-[38px] sm:w-[46px] bg-muted/50 border-r border-border/60 py-2 px-1.5 flex flex-col">
+                        <div className="w-5 h-1.5 sm:w-6 sm:h-2 rounded-[2px] bg-primary/50 mb-2" />
+                        <div className="space-y-[5px] sm:space-y-[6px]">
+                          <div className="flex items-center gap-[3px] px-0.5 py-[2px] rounded-[2px] bg-primary/10">
+                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-primary/50" />
+                            <div className="h-[2px] sm:h-[3px] bg-primary/40 rounded-sm flex-1" />
                           </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
-                            <div className="h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
+                          <div className="flex items-center gap-[3px] px-0.5">
+                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-muted-foreground/15" />
+                            <div className="h-[2px] sm:h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
                           </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
-                            <div className="h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
+                          <div className="flex items-center gap-[3px] px-0.5">
+                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-muted-foreground/15" />
+                            <div className="h-[2px] sm:h-[3px] bg-muted-foreground/12 rounded-sm w-3/4" />
                           </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
-                            <div className="h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
+                          <div className="flex items-center gap-[3px] px-0.5">
+                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-muted-foreground/15" />
+                            <div className="h-[2px] sm:h-[3px] bg-muted-foreground/12 rounded-sm w-2/3" />
                           </div>
+                        </div>
+                        <div className="mt-auto">
+                          <div className="h-[2px] bg-muted-foreground/10 rounded-sm w-full" />
                         </div>
                       </div>
-                      {/* Main content area */}
-                      <div className="flex-1 p-2 sm:p-2.5 flex flex-col">
-                        <div className="h-1 sm:h-1.5 bg-foreground/15 rounded-sm w-3/5 mb-1.5" />
-                        <div className="flex-1 rounded bg-muted/50 border border-border/50 p-1.5 space-y-1">
-                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
-                          <div className="h-[3px] bg-muted-foreground/15 rounded-sm w-4/5" />
-                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
-                          <div className="h-[3px] bg-muted-foreground/12 rounded-sm w-3/5" />
+                      {/* Main editor */}
+                      <div className="flex-1 flex flex-col min-w-0">
+                        <div className="h-[14px] sm:h-[18px] bg-muted/30 border-b border-border/40 px-2 flex items-center gap-1">
+                          <div className="w-2 h-[3px] bg-muted-foreground/20 rounded-sm" />
+                          <div className="w-2 h-[3px] bg-muted-foreground/15 rounded-sm" />
+                          <div className="w-2 h-[3px] bg-muted-foreground/15 rounded-sm" />
+                          <div className="flex-1" />
+                          <div className="w-3 h-[3px] bg-primary/30 rounded-full" />
                         </div>
-                        <div className="flex justify-end mt-1.5 gap-1">
-                          <div className="h-2 w-6 rounded-full bg-muted-foreground/15" />
-                          <div className="h-2 w-6 rounded-full bg-primary/40" />
+                        <div className="flex-1 p-2 sm:p-2.5 flex flex-col gap-1.5 overflow-hidden">
+                          <div className="h-[4px] sm:h-[5px] bg-foreground/20 rounded-sm w-3/5" />
+                          <div className="rounded-[3px] border border-border/40 bg-muted/20 p-1.5 space-y-[3px] flex-1">
+                            <div className="h-[2px] bg-muted-foreground/20 rounded-sm w-full" />
+                            <div className="h-[2px] bg-muted-foreground/15 rounded-sm w-[85%]" />
+                            <div className="h-[2px] bg-muted-foreground/18 rounded-sm w-full" />
+                            <div className="h-[2px] bg-muted-foreground/12 rounded-sm w-[60%]" />
+                            <div className="h-[2px] bg-muted-foreground/15 rounded-sm w-[75%]" />
+                          </div>
+                          <div className="h-[16px] sm:h-[20px] rounded-[3px] bg-gradient-to-br from-primary/8 to-primary/4 border border-border/30 flex items-center justify-center">
+                            <div className="w-[6px] h-[6px] sm:w-[8px] sm:h-[8px] rounded-full bg-primary/15 border border-primary/20" />
+                          </div>
+                        </div>
+                        <div className="h-[12px] sm:h-[14px] border-t border-border/30 px-2 flex items-center justify-between">
+                          <div className="flex gap-0.5">
+                            <div className="w-1 h-1 rounded-full bg-primary/40" />
+                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+                          </div>
+                          <div className="flex gap-1">
+                            <div className="h-[5px] w-[14px] rounded-full bg-muted-foreground/12 border border-border/30" />
+                            <div className="h-[5px] w-[14px] rounded-full bg-primary/35" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -252,26 +275,36 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <div className="w-36 sm:w-44 h-24 sm:h-28 bg-background rounded-md border border-border shadow-sm overflow-hidden flex flex-col">
-                      {/* Header bar */}
-                      <div className="h-4 sm:h-5 bg-muted/60 border-b border-border px-2 flex items-center gap-1">
-                        <div className="w-3 h-1 bg-primary/40 rounded-sm" />
+                    <div className="w-[160px] sm:w-[190px] h-[100px] sm:h-[120px] rounded-lg border border-border/80 shadow-md overflow-hidden flex flex-col bg-background">
+                      {/* Top header */}
+                      <div className="h-[16px] sm:h-[20px] bg-muted/50 border-b border-border/60 px-2.5 flex items-center gap-1.5">
+                        <div className="w-4 h-1.5 sm:w-5 sm:h-2 rounded-[2px] bg-primary/50" />
                         <div className="flex-1" />
-                        <div className="w-4 h-1 bg-muted-foreground/20 rounded-sm" />
+                        <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-full bg-muted-foreground/15 border border-muted-foreground/20" />
+                        <div className="w-3 h-[3px] bg-muted-foreground/15 rounded-sm" />
                       </div>
-                      {/* Single scrollable content */}
-                      <div className="flex-1 p-2 sm:p-2.5 space-y-1.5 overflow-hidden">
-                        <div className="h-1 sm:h-1.5 bg-foreground/15 rounded-sm w-2/5 mx-auto" />
-                        <div className="space-y-1 px-2">
-                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
-                          <div className="h-[3px] bg-muted-foreground/15 rounded-sm w-4/5" />
-                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
-                          <div className="h-[3px] bg-muted-foreground/12 rounded-sm w-3/5" />
+                      {/* Progress bar */}
+                      <div className="px-3 sm:px-4 pt-2">
+                        <div className="h-[3px] bg-muted rounded-full w-full overflow-hidden">
+                          <div className="h-full w-1/3 bg-primary/40 rounded-full" />
                         </div>
-                        <div className="h-3 sm:h-4 bg-muted/50 rounded border border-border/50 w-full" />
-                        <div className="space-y-1 px-2">
-                          <div className="h-[3px] bg-muted-foreground/15 rounded-sm w-full" />
-                          <div className="h-[3px] bg-muted-foreground/12 rounded-sm w-3/4" />
+                      </div>
+                      {/* Scrollable content */}
+                      <div className="flex-1 px-3 sm:px-4 py-2 space-y-1.5 overflow-hidden">
+                        <div className="h-[4px] sm:h-[5px] bg-foreground/20 rounded-sm w-2/5 mx-auto" />
+                        <div className="h-[2px] bg-muted-foreground/15 rounded-sm w-3/5 mx-auto" />
+                        <div className="space-y-[3px] mt-1">
+                          <div className="h-[2px] bg-muted-foreground/18 rounded-sm w-full" />
+                          <div className="h-[2px] bg-muted-foreground/14 rounded-sm w-[90%]" />
+                          <div className="h-[2px] bg-muted-foreground/18 rounded-sm w-full" />
+                          <div className="h-[2px] bg-muted-foreground/12 rounded-sm w-[70%]" />
+                        </div>
+                        <div className="h-[14px] sm:h-[18px] rounded-[3px] bg-gradient-to-br from-muted/80 to-muted/40 border border-border/30 flex items-center justify-center">
+                          <div className="w-[5px] h-[5px] sm:w-[7px] sm:h-[7px] rounded-sm bg-muted-foreground/10 border border-muted-foreground/15" />
+                        </div>
+                        <div className="space-y-[3px]">
+                          <div className="h-[2px] bg-muted-foreground/14 rounded-sm w-full" />
+                          <div className="h-[2px] bg-muted-foreground/10 rounded-sm w-4/5" />
                         </div>
                       </div>
                     </div>
