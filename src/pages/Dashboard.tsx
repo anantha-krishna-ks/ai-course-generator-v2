@@ -288,16 +288,12 @@ const Dashboard = () => {
         {/* Welcome Banner */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">
-            Welcome back 👋
+            Welcome back, Admin 👋
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             You have <span className="font-semibold text-primary">13 courses</span> created
             {" · "}
             <span className="font-semibold text-primary">+2</span> added this month
-            {" · "}
-            <span className="font-semibold text-primary">
-              {isLoadingTokens ? "..." : tokenData.availableTokens.toLocaleString()}
-            </span> tokens remaining
           </p>
         </div>
 
