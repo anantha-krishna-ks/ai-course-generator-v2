@@ -176,66 +176,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <div className="w-[160px] sm:w-[190px] h-[100px] sm:h-[120px] rounded-lg border border-border/80 shadow-md overflow-hidden flex bg-background">
-                      {/* Sidebar nav */}
-                      <div className="w-[38px] sm:w-[46px] bg-muted/50 border-r border-border/60 py-2 px-1.5 flex flex-col">
-                        <div className="w-5 h-1.5 sm:w-6 sm:h-2 rounded-[2px] bg-primary/50 mb-2" />
-                        <div className="space-y-[5px] sm:space-y-[6px]">
-                          <div className="flex items-center gap-[3px] px-0.5 py-[2px] rounded-[2px] bg-primary/10">
-                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-primary/50" />
-                            <div className="h-[2px] sm:h-[3px] bg-primary/40 rounded-sm flex-1" />
-                          </div>
-                          <div className="flex items-center gap-[3px] px-0.5">
-                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-muted-foreground/15" />
-                            <div className="h-[2px] sm:h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
-                          </div>
-                          <div className="flex items-center gap-[3px] px-0.5">
-                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-muted-foreground/15" />
-                            <div className="h-[2px] sm:h-[3px] bg-muted-foreground/12 rounded-sm w-3/4" />
-                          </div>
-                          <div className="flex items-center gap-[3px] px-0.5">
-                            <div className="w-[5px] h-[5px] sm:w-[6px] sm:h-[6px] rounded-[2px] bg-muted-foreground/15" />
-                            <div className="h-[2px] sm:h-[3px] bg-muted-foreground/12 rounded-sm w-2/3" />
-                          </div>
-                        </div>
-                        <div className="mt-auto">
-                          <div className="h-[2px] bg-muted-foreground/10 rounded-sm w-full" />
-                        </div>
-                      </div>
-                      {/* Main editor */}
-                      <div className="flex-1 flex flex-col min-w-0">
-                        <div className="h-[14px] sm:h-[18px] bg-muted/30 border-b border-border/40 px-2 flex items-center gap-1">
-                          <div className="w-2 h-[3px] bg-muted-foreground/20 rounded-sm" />
-                          <div className="w-2 h-[3px] bg-muted-foreground/15 rounded-sm" />
-                          <div className="w-2 h-[3px] bg-muted-foreground/15 rounded-sm" />
-                          <div className="flex-1" />
-                          <div className="w-3 h-[3px] bg-primary/30 rounded-full" />
-                        </div>
-                        <div className="flex-1 p-2 sm:p-2.5 flex flex-col gap-1.5 overflow-hidden">
-                          <div className="h-[4px] sm:h-[5px] bg-foreground/20 rounded-sm w-3/5" />
-                          <div className="rounded-[3px] border border-border/40 bg-muted/20 p-1.5 space-y-[3px] flex-1">
-                            <div className="h-[2px] bg-muted-foreground/20 rounded-sm w-full" />
-                            <div className="h-[2px] bg-muted-foreground/15 rounded-sm w-[85%]" />
-                            <div className="h-[2px] bg-muted-foreground/18 rounded-sm w-full" />
-                            <div className="h-[2px] bg-muted-foreground/12 rounded-sm w-[60%]" />
-                            <div className="h-[2px] bg-muted-foreground/15 rounded-sm w-[75%]" />
-                          </div>
-                          <div className="h-[16px] sm:h-[20px] rounded-[3px] bg-gradient-to-br from-primary/8 to-primary/4 border border-border/30 flex items-center justify-center">
-                            <div className="w-[6px] h-[6px] sm:w-[8px] sm:h-[8px] rounded-full bg-primary/15 border border-primary/20" />
-                          </div>
-                        </div>
-                        <div className="h-[12px] sm:h-[14px] border-t border-border/30 px-2 flex items-center justify-between">
-                          <div className="flex gap-0.5">
-                            <div className="w-1 h-1 rounded-full bg-primary/40" />
-                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
-                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
-                          </div>
-                          <div className="flex gap-1">
-                            <div className="h-[5px] w-[14px] rounded-full bg-muted-foreground/12 border border-border/30" />
-                            <div className="h-[5px] w-[14px] rounded-full bg-primary/35" />
-                          </div>
-                        </div>
-                      </div>
+                    <div className="w-[160px] sm:w-[190px] h-[100px] sm:h-[120px] rounded-lg border border-border/80 shadow-md overflow-hidden">
+                      <img src={previewMultipage} alt="Multi-page layout preview" className="w-full h-full object-cover object-top" />
                     </div>
                   </div>
                   <div className="text-center">
