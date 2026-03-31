@@ -174,21 +174,42 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <div className="w-28 sm:w-32 h-16 sm:h-20 bg-muted rounded border border-border p-1.5 sm:p-2 flex gap-1.5 sm:gap-2">
-                      <div className="flex-1 space-y-0.5 sm:space-y-1">
-                        <div className="text-[7px] sm:text-[8px] text-muted-foreground font-medium">logo</div>
-                        <div className="text-[8px] sm:text-[9px] font-semibold text-foreground">Course Title</div>
-                        <div className="space-y-0.5 sm:space-y-1 mt-1 sm:mt-2">
-                          <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
-                          <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-4/5" />
-                          <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
+                    <div className="w-36 sm:w-44 h-24 sm:h-28 bg-background rounded-md border border-border shadow-sm overflow-hidden flex">
+                      {/* Sidebar */}
+                      <div className="w-10 sm:w-12 bg-muted/60 border-r border-border p-1.5 flex flex-col gap-1">
+                        <div className="w-4 h-1 bg-primary/40 rounded-sm" />
+                        <div className="mt-1 space-y-1.5">
+                          <div className="flex items-center gap-1">
+                            <div className="w-1 h-1 rounded-full bg-primary/60" />
+                            <div className="h-[3px] bg-muted-foreground/25 rounded-sm flex-1" />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+                            <div className="h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+                            <div className="h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-1 h-1 rounded-full bg-muted-foreground/20" />
+                            <div className="h-[3px] bg-muted-foreground/15 rounded-sm flex-1" />
+                          </div>
                         </div>
                       </div>
-                      <div className="w-10 sm:w-12 space-y-0.5 sm:space-y-1">
-                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
-                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
-                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
-                        <div className="h-1.5 sm:h-2 bg-muted-foreground/20 rounded" />
+                      {/* Main content area */}
+                      <div className="flex-1 p-2 sm:p-2.5 flex flex-col">
+                        <div className="h-1 sm:h-1.5 bg-foreground/15 rounded-sm w-3/5 mb-1.5" />
+                        <div className="flex-1 rounded bg-muted/50 border border-border/50 p-1.5 space-y-1">
+                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
+                          <div className="h-[3px] bg-muted-foreground/15 rounded-sm w-4/5" />
+                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
+                          <div className="h-[3px] bg-muted-foreground/12 rounded-sm w-3/5" />
+                        </div>
+                        <div className="flex justify-end mt-1.5 gap-1">
+                          <div className="h-2 w-6 rounded-full bg-muted-foreground/15" />
+                          <div className="h-2 w-6 rounded-full bg-primary/40" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -231,13 +252,27 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                    <div className="w-28 sm:w-32 h-16 sm:h-20 bg-muted rounded border border-border p-1.5 sm:p-2">
-                      <div className="text-[7px] sm:text-[8px] text-muted-foreground font-medium">logo</div>
-                      <div className="text-[8px] sm:text-[9px] font-semibold text-foreground text-center mt-0.5 sm:mt-1">Course Title</div>
-                      <div className="space-y-0.5 sm:space-y-1 mt-1 sm:mt-2 px-3 sm:px-4">
-                        <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
-                        <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-4/5 mx-auto" />
-                        <div className="h-0.5 sm:h-1 bg-muted-foreground/20 rounded w-full" />
+                    <div className="w-36 sm:w-44 h-24 sm:h-28 bg-background rounded-md border border-border shadow-sm overflow-hidden flex flex-col">
+                      {/* Header bar */}
+                      <div className="h-4 sm:h-5 bg-muted/60 border-b border-border px-2 flex items-center gap-1">
+                        <div className="w-3 h-1 bg-primary/40 rounded-sm" />
+                        <div className="flex-1" />
+                        <div className="w-4 h-1 bg-muted-foreground/20 rounded-sm" />
+                      </div>
+                      {/* Single scrollable content */}
+                      <div className="flex-1 p-2 sm:p-2.5 space-y-1.5 overflow-hidden">
+                        <div className="h-1 sm:h-1.5 bg-foreground/15 rounded-sm w-2/5 mx-auto" />
+                        <div className="space-y-1 px-2">
+                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
+                          <div className="h-[3px] bg-muted-foreground/15 rounded-sm w-4/5" />
+                          <div className="h-[3px] bg-muted-foreground/20 rounded-sm w-full" />
+                          <div className="h-[3px] bg-muted-foreground/12 rounded-sm w-3/5" />
+                        </div>
+                        <div className="h-3 sm:h-4 bg-muted/50 rounded border border-border/50 w-full" />
+                        <div className="space-y-1 px-2">
+                          <div className="h-[3px] bg-muted-foreground/15 rounded-sm w-full" />
+                          <div className="h-[3px] bg-muted-foreground/12 rounded-sm w-3/4" />
+                        </div>
                       </div>
                     </div>
                   </div>
