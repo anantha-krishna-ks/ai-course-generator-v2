@@ -1,4 +1,6 @@
-import { useState, useCallback, useRef, useEffect, ReactNode } from "react";
+import { useState, useCallback, useRef, useEffect, ReactNode, lazy, Suspense } from "react";
+import Lottie from "lottie-react";
+import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
@@ -1130,10 +1132,16 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
               {/* Empty State */}
               {items.length === 0 && (
-                <div className="mt-16 border-t border-dashed border-border pt-8">
-                  <p className="text-sm text-muted-foreground text-center">
-                    Your course outline will appear here
-                  </p>
+                <div className="mt-12 flex flex-col items-center justify-center gap-4">
+                  <div className="w-48 h-48">
+                    <Lottie animationData={emptyOutlineAnimation} loop autoplay />
+                  </div>
+                  <div className="text-center space-y-1.5">
+                    <p className="text-sm font-medium text-foreground/70">No items yet</p>
+                    <p className="text-xs text-muted-foreground max-w-[240px]">
+                      Add sections and pages to build your course outline
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
