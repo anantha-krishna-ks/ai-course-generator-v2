@@ -287,73 +287,27 @@ const Dashboard = () => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          <Card className="relative p-6 overflow-hidden border border-primary/20 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 hover:border-primary/40 transition-all">
-            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-primary/10" />
-            <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-primary/5" />
-            
-            <div className="relative flex items-start justify-between">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                  <BookOpen className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-xs font-semibold text-primary">Courses</span>
-                </div>
-                
-                <div>
-                  <p className="text-4xl font-bold text-foreground mb-1">13</p>
-                  <p className="text-sm text-muted-foreground">Total courses created</p>
-                </div>
-                
-                <div className="flex items-center gap-2 pt-2">
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/10">
-                    <TrendingUp className="w-3 h-3 text-primary" />
-                    <span className="text-xs font-semibold text-primary">+2</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">added this month</span>
-                </div>
+        <Card className="relative px-5 py-4 mb-8 overflow-hidden border border-primary/20 hover:border-primary/30 transition-all">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <BookOpen className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex items-center gap-6 flex-1 min-w-0">
+              <div>
+                <p className="text-2xl font-bold text-foreground leading-none">13</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Total courses</p>
               </div>
-              
-              <div className="w-16 h-16 rounded-3xl bg-white/80 backdrop-blur-sm flex items-center justify-center border border-primary/20 shadow-sm">
-                <BookOpen className="w-8 h-8 text-primary" />
+              <div className="h-8 w-px bg-border" />
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10">
+                  <TrendingUp className="w-3 h-3 text-primary" />
+                  <span className="text-xs font-semibold text-primary">+2</span>
+                </div>
+                <span className="text-xs text-muted-foreground">this month</span>
               </div>
             </div>
-          </Card>
-
-          <Card className="relative p-6 overflow-hidden border border-green-500/20 dark:border-green-400/20 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 hover:border-green-500/40 dark:hover:border-green-400/40 transition-all">
-            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-green-500/10 dark:bg-green-400/10" />
-            <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-green-500/5 dark:bg-green-400/5" />
-            
-            <div className="relative flex items-start justify-between">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 dark:bg-green-400/10 border border-green-500/20 dark:border-green-400/20">
-                  <Zap className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                  <span className="text-xs font-semibold text-green-600 dark:text-green-400">Tokens</span>
-                </div>
-                
-                <div>
-                  <p className="text-4xl font-bold text-foreground mb-1">
-                    {isLoadingTokens ? "..." : tokenData.availableTokens.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Available tokens</p>
-                </div>
-                
-                <div className="flex items-center gap-2 pt-2">
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-500/10 dark:bg-green-400/10">
-                    <TrendingUp className="w-3 h-3 text-green-600 dark:text-green-400" />
-                    <span className="text-xs font-semibold text-green-600 dark:text-green-400">
-                      {isLoadingTokens ? "..." : `${usagePercentage.toFixed(0)}%`}
-                    </span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">used so far</span>
-                </div>
-              </div>
-              
-              <div className="w-16 h-16 rounded-3xl bg-white/80 backdrop-blur-sm flex items-center justify-center border border-green-500/20 dark:border-green-400/20 shadow-sm">
-                <Zap className="w-8 h-8 text-green-600 dark:text-green-400" />
-              </div>
-            </div>
-          </Card>
-        </div>
+          </div>
+        </Card>
 
         {/* Quick Actions */}
         <Card className="relative p-6 mb-8 border-2 border-dashed border-primary/30 hover:border-primary/50 transition-colors bg-gradient-to-br from-primary/5 via-background to-accent/5 overflow-hidden">
