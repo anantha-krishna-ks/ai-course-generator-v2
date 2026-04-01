@@ -84,6 +84,8 @@ export function DescriptionBlock({
   const [isEditing, setIsEditing] = useState(false);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
+  const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
+  const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const blockRef = useRef<HTMLDivElement>(null);
 
   const {
