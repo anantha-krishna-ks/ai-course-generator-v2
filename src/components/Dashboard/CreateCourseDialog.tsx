@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Lottie from "lottie-react";
+import courseCreationAnimation from "@/assets/course-creation-lottie.json";
 import previewMultipage from "@/assets/preview-multipage.jpg";
 import previewSinglepage from "@/assets/preview-singlepage.jpg";
 import { useNavigate } from "react-router-dom";
@@ -41,26 +42,16 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
     return () => clearTimeout(timeout);
   }, [onComplete]);
 
-  const [animationData, setAnimationData] = useState<object | null>(null);
-
-  useEffect(() => {
-    import("@/assets/course-creation-lottie.json").then((mod) => {
-      setAnimationData(mod.default);
-    });
-  }, []);
-
   return (
     <div className="flex flex-col items-center justify-center py-10 px-4 space-y-4">
       {/* Lottie Animation */}
       <div className="w-40 h-40 sm:w-48 sm:h-48">
-        {animationData && (
-          <Lottie
-            animationData={animationData}
-            loop
-            autoplay
-            className="w-full h-full"
-          />
-        )}
+        <Lottie
+          animationData={courseCreationAnimation}
+          loop
+          autoplay
+          className="w-full h-full"
+        />
       </div>
       
       {/* Course title */}
