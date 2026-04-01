@@ -115,6 +115,9 @@ export function ContentBlock({
 
   const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
   const contentColumns = decodeContentColumns(content, layout);
+  
+  // Debug: remove after fixing
+  console.log('[ContentBlock Debug]', { id, layout, colCount, contentStart: content?.substring(0, 60) });
 
   const handleColumnChange = (colIndex: number, newContent: string) => {
     const updated = [...contentColumns];
