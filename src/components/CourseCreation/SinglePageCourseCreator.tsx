@@ -37,11 +37,21 @@ import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
-import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
+import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+
+export interface SinglePageRestoreState {
+  title: string;
+  items: CourseItem[];
+  contentBlocks: ContentBlockData[];
+  pageBlocksMap: Record<string, PageContentBlock[]>;
+  sectionImages: Record<string, string | null>;
+  aiOptions: AIOptions | null;
+}
 
 interface SinglePageCourseCreatorProps {
   courseTitle: string;
   aiOptions?: AIOptions | null;
+  initialRestoreState?: SinglePageRestoreState | null;
 }
 
 interface CourseItem {
