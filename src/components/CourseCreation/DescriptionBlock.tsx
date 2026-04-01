@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading } from "lucide-react";
+import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading, GitBranch, Sparkles, History, Clock, RotateCcw } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -12,8 +12,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { DescriptionEditor } from "./DescriptionEditor";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface DescriptionBlockProps {
   id: string;
