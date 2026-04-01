@@ -25,6 +25,32 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { sanitizeHtml } from "@/lib/sanitize";
 
+const COL_SEPARATOR = "<!--col-break-->";
+
+function detectColumnLayout(content: string): { colCount: number; layoutType: string } {
+  if (content.startsWith("<!--layout:")) {
+    const match = content.match(/<!--layout:(\w[\w-]*)-->/);
+    if (match) {
+      if (match[1] === "three-columns") return { colCount: 3, layoutType: match[1] };
+      if (match[1] === "two-columns") return { colCount: 2, layoutType: match[1] };
+    }
+  }
+  return { colCount: 1, layoutType: "single" };
+}
+
+function decodeContentColumns(content: string, colCount: number): string[] {
+  if (colCount <= 1) return [content];
+  const raw = content.replace(/<!--layout:\w[\w-]*-->/, "");
+  const parts = raw.split(COL_SEPARATOR);
+  while (parts.length < colCount) parts.push("<p></p>");
+  return parts.slice(0, colCount);
+}
+
+function encodeContentColumns(layoutType: string, columns: string[]): string {
+  if (layoutType === "single") return columns[0] || "";
+  return `<!--layout:${layoutType}-->${columns.join(COL_SEPARATOR)}`;
+}
+
 interface ContentBlockProps {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
