@@ -104,20 +104,11 @@ export function ContentBlock({
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [layout, setLayout] = useState<ContentLayoutType>(() => detectContentLayout(content));
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
-
-  // Sync layout state when content changes externally
-  useEffect(() => {
-    const detected = detectContentLayout(content);
-    if (detected !== layout) {
-      setLayout(detected);
-    }
-  }, [content]);
+  const layoutFromContent = detectContentLayout(content);
+  const layout = layoutFromContent;
 
   const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
   const contentColumns = decodeContentColumns(content, layout);
-  
-  // Debug: remove after fixing
-  console.log('[ContentBlock Debug]', { id, layout, colCount, contentStart: content?.substring(0, 60) });
 
   const handleColumnChange = (colIndex: number, newContent: string) => {
     const updated = [...contentColumns];
@@ -126,7 +117,6 @@ export function ContentBlock({
   };
 
   const handleLayoutChange = (newLayout: ContentLayoutType) => {
-    setLayout(newLayout);
     const newCols = contentLayoutDefaults[newLayout];
     onChange(encodeContentColumns(newLayout, newCols));
     setIsEditing(true);
