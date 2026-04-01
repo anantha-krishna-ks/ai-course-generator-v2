@@ -972,6 +972,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             onAddText={() => addIntroBlock("text", 0)}
                             onAddImage={() => addIntroBlock("image", 0)}
                             onAddVideo={() => addIntroBlock("video", 0)}
+                            onAddAudio={() => addIntroBlock("audio", 0)}
                             onAddDoc={() => addIntroBlock("doc", 0)}
                             onAddQuiz={() => addIntroBlock("quiz", 0)}
                             onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
