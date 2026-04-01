@@ -105,6 +105,14 @@ export function ContentBlock({
   const [layout, setLayout] = useState<ContentLayoutType>(() => detectContentLayout(content));
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
 
+  // Sync layout state when content changes externally
+  useEffect(() => {
+    const detected = detectContentLayout(content);
+    if (detected !== layout) {
+      setLayout(detected);
+    }
+  }, [content]);
+
   const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
   const contentColumns = decodeContentColumns(content, layout);
 
