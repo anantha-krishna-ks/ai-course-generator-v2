@@ -38,6 +38,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+import { GenerateExportDialog } from "./GenerateExportDialog";
 
 export interface SinglePageRestoreState {
   title: string;
@@ -142,6 +143,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const modifyInputRef = useRef<HTMLTextAreaElement>(null);
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
   const [showQuizGenerateDialog, setShowQuizGenerateDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
 
   // Currently active section/page for adding blocks
@@ -697,6 +699,27 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     );
   };
 
+  const handlePreview = useCallback(() => {
+    const returnState: SinglePageRestoreState = {
+      title,
+      items,
+      contentBlocks,
+      pageBlocksMap,
+      sectionImages,
+      aiOptions,
+    };
+
+    navigate("/multipage-preview", {
+      state: {
+        title,
+        items,
+        contentBlocks,
+        pageBlocksMap,
+        returnState,
+      },
+    });
+  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionImages, aiOptions]);
+
   const flatItems = getAllFlatItems();
 
   return (
@@ -733,7 +756,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={() => toast({ title: "Preview", description: "Single-page preview coming soon." })}>
+                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={handlePreview}>
                   <Eye className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
@@ -742,7 +765,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-              onClick={() => toast({ title: "Generate", description: "Course generation coming soon." })}
+              onClick={() => setShowExportDialog(true)}
             >
               <Wand2 className="w-4 h-4" />
               <span className="hidden sm:inline">Generate</span>
@@ -1206,6 +1229,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
       {/* Guided Tour */}
       <GuidedTour steps={tourSteps} isOpen={showTour} onClose={() => { setShowTour(false); setTourStep(-1); }} onStepChange={setTourStep} />
+
+      <GenerateExportDialog open={showExportDialog} onOpenChange={setShowExportDialog} courseTitle={title} />
     </div>
   );
 }
