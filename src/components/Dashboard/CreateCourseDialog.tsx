@@ -9,7 +9,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 
@@ -91,55 +91,67 @@ function LivePreviewPanel({
         </h2>
       </div>
 
-      {/* Course info cards */}
-      <div className="relative z-10 space-y-2.5 flex-1">
-        {/* Layout chip */}
-        <div className="flex items-center gap-2.5 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3.5 py-2.5">
-          <div className="w-7 h-7 rounded-md bg-primary-foreground/15 flex items-center justify-center shrink-0">
+      {/* Course specs grid */}
+      <div className="relative z-10 flex-1 space-y-3">
+        {/* Primary specs — 2x2 grid */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
             {selectedLayout === "multi-page" ? (
-              <Layers className="w-3.5 h-3.5 text-primary-foreground" />
+              <Layers className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
             ) : (
-              <FileText className="w-3.5 h-3.5 text-primary-foreground" />
+              <FileText className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
             )}
+            <p className="text-primary-foreground text-sm font-bold leading-tight">
+              {selectedLayout === "multi-page" ? "Multi" : "Single"}
+            </p>
+            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Layout</p>
           </div>
-          <div>
-            <p className="text-primary-foreground text-xs font-semibold leading-tight">
-              {selectedLayout === "multi-page" ? "Multi-page" : "Single-page"}
+          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
+            <Clock className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
+            <p className="text-primary-foreground text-sm font-bold leading-tight">
+              {selectedLayout === "multi-page" ? "60 min" : "5 min"}
             </p>
-            <p className="text-primary-foreground/50 text-[10px]">
-              {selectedLayout === "multi-page" ? "Multiple topics" : "Quick learning"}
+            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Duration</p>
+          </div>
+          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
+            <BrainCircuit className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
+            <p className="text-primary-foreground text-sm font-bold leading-tight">
+              {aiEnabled ? "Auto" : "Manual"}
             </p>
+            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Content</p>
+          </div>
+          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
+            <Target className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
+            <p className="text-primary-foreground text-sm font-bold leading-tight">
+              {aiEnabled ? "Yes" : "No"}
+            </p>
+            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Quiz</p>
           </div>
         </div>
 
-        {/* AI chip */}
-        <div className="flex items-center gap-2.5 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3.5 py-2.5">
-          <div className="w-7 h-7 rounded-md bg-primary-foreground/15 flex items-center justify-center shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-primary-foreground" />
+        {/* AI capability bar */}
+        <div className="rounded-xl bg-primary-foreground/[0.06] backdrop-blur-md border border-primary-foreground/[0.05] px-3.5 py-2.5">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-1.5">
+              <Zap className="w-3 h-3 text-primary-foreground/60" />
+              <span className="text-[10px] font-semibold text-primary-foreground/60 uppercase tracking-wider">AI Power</span>
+            </div>
+            <span className={cn(
+              "text-[10px] font-bold uppercase tracking-wider",
+              aiEnabled ? "text-primary-foreground" : "text-primary-foreground/30"
+            )}>
+              {aiEnabled ? "Active" : "Off"}
+            </span>
           </div>
-          <div>
-            <p className="text-primary-foreground text-xs font-semibold leading-tight">
-              AI Support
-            </p>
-            <p className="text-primary-foreground/50 text-[10px]">
-              {aiEnabled ? "Enabled — auto-generate content" : "Disabled — manual authoring"}
-            </p>
-          </div>
-        </div>
-
-        {/* Stats row */}
-        <div className="flex gap-2 pt-1">
-          <div className="flex-1 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3 py-2.5 text-center">
-            <BookOpen className="w-3.5 h-3.5 text-primary-foreground/60 mx-auto mb-1" />
-            <p className="text-primary-foreground text-xs font-bold">
-              {selectedLayout === "multi-page" ? "∞" : "1"}
-            </p>
-            <p className="text-primary-foreground/40 text-[9px]">Pages</p>
-          </div>
-          <div className="flex-1 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3 py-2.5 text-center">
-            <Clock className="w-3.5 h-3.5 text-primary-foreground/60 mx-auto mb-1" />
-            <p className="text-primary-foreground text-xs font-bold">5 min</p>
-            <p className="text-primary-foreground/40 text-[9px]">Per page</p>
+          <div className="w-full h-1.5 rounded-full bg-primary-foreground/10 overflow-hidden">
+            <div
+              className={cn(
+                "h-full rounded-full transition-all duration-500 ease-out",
+                aiEnabled
+                  ? "w-full bg-gradient-to-r from-primary-foreground/60 to-primary-foreground/90"
+                  : "w-[15%] bg-primary-foreground/20"
+              )}
+            />
           </div>
         </div>
       </div>
