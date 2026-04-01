@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History } from "lucide-react";
+import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -7,6 +7,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -27,28 +32,42 @@ import { sanitizeHtml } from "@/lib/sanitize";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
-function detectColumnLayout(content: string): { colCount: number; layoutType: string } {
+type ContentLayoutType = "heading-text" | "text-only" | "two-columns" | "three-columns";
+
+const contentLayoutOptions: { id: ContentLayoutType; label: string; icon: React.ComponentType<{ className?: string }>; columns: number }[] = [
+  { id: "heading-text", label: "Heading and text", icon: Heading, columns: 1 },
+  { id: "text-only", label: "Text", icon: Type, columns: 1 },
+  { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
+  { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
+];
+
+const contentLayoutDefaults: Record<ContentLayoutType, string[]> = {
+  "heading-text": ["<h2>Heading</h2><p>Start writing your content here...</p>"],
+  "text-only": ["<p>Start writing your content here...</p>"],
+  "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
+  "three-columns": ["<h2>Column 1</h2><p>Start writing here...</p>", "<h2>Column 2</h2><p>Start writing here...</p>", "<h2>Column 3</h2><p>Start writing here...</p>"],
+};
+
+function detectContentLayout(content: string): ContentLayoutType {
   if (content.startsWith("<!--layout:")) {
     const match = content.match(/<!--layout:(\w[\w-]*)-->/);
-    if (match) {
-      if (match[1] === "three-columns") return { colCount: 3, layoutType: match[1] };
-      if (match[1] === "two-columns") return { colCount: 2, layoutType: match[1] };
-    }
+    if (match) return match[1] as ContentLayoutType;
   }
-  return { colCount: 1, layoutType: "single" };
+  return "text-only";
 }
 
-function decodeContentColumns(content: string, colCount: number): string[] {
-  if (colCount <= 1) return [content];
+function decodeContentColumns(content: string, layout: ContentLayoutType): string[] {
+  const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
+  if (layout === "text-only") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
   const raw = content.replace(/<!--layout:\w[\w-]*-->/, "");
   const parts = raw.split(COL_SEPARATOR);
   while (parts.length < colCount) parts.push("<p></p>");
   return parts.slice(0, colCount);
 }
 
-function encodeContentColumns(layoutType: string, columns: string[]): string {
-  if (layoutType === "single") return columns[0] || "";
-  return `<!--layout:${layoutType}-->${columns.join(COL_SEPARATOR)}`;
+function encodeContentColumns(layout: ContentLayoutType, columns: string[]): string {
+  if (layout === "text-only") return columns[0] || "";
+  return `<!--layout:${layout}-->${columns.join(COL_SEPARATOR)}`;
 }
 
 interface ContentBlockProps {
