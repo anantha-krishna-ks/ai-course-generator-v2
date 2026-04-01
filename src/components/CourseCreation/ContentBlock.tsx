@@ -252,13 +252,55 @@ export function ContentBlock({
         )}
       >
         {/* Left sidebar icons */}
-        <div className="absolute -left-11 top-1 flex flex-col items-center gap-0.5 opacity-0 group-hover/block:opacity-100 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm">
+        <div className={cn("absolute -left-11 top-1 flex flex-col items-center gap-0.5 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm", isLayoutOpen ? "opacity-100" : "opacity-0 group-hover/block:opacity-100")}>
           <SidebarButton
             icon={GripVertical}
             label="Drag to reorder"
             className="cursor-grab active:cursor-grabbing"
             onClick={undefined}
           />
+          {type === "text" && (
+            <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-48 p-0">
+                <div className="px-3 pt-3 pb-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">Change layout</p>
+                </div>
+                <div className="px-1.5 pb-1.5">
+                  {contentLayoutOptions.map((opt) => {
+                    const Icon = opt.icon;
+                    const isActive = layout === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLayoutChange(opt.id);
+                          setIsLayoutOpen(false);
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
           <SidebarButton icon={Copy} label="Duplicate" onClick={onDuplicate} />
           <SidebarButton
             icon={Trash2}
