@@ -196,7 +196,7 @@ export function ContentBlock({
     }
   }, [showGenerateDialog]);
 
-  const hasContent = content && content !== "<p></p>" && content.replace(/<[^>]*>/g, "").trim() !== "";
+  const hasContent = content && content !== "<p></p>" && content.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim() !== "";
 
   const SidebarButton = ({
     icon: Icon,
