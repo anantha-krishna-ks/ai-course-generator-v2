@@ -201,21 +201,10 @@ const MultipageCoursePreview = () => {
                 </div>
               )}
 
-              {/* Dynamic Island - landscape */}
+              {/* Dynamic Island - landscape (thin bar on left side) */}
               {isLandscape && (
-                <div className="absolute left-[18px] top-1/2 -translate-y-1/2 z-20">
-                  <div
-                    className="w-[28px] h-[100px] rounded-full flex items-center justify-center"
-                    style={{
-                      background: '#1a1a1e',
-                      boxShadow: '0 0 0 2px rgba(100,100,110,0.3), inset 0 0 4px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    <div className="w-[8px] h-[8px] rounded-full mt-6" style={{
-                      background: 'radial-gradient(circle at 35% 35%, #1a2a4a, #0a0a15)',
-                      boxShadow: '0 0 2px rgba(0,100,200,0.3), inset 0 0 1px rgba(255,255,255,0.1)',
-                    }} />
-                  </div>
+                <div className="absolute left-[6px] top-1/2 -translate-y-1/2 z-20">
+                  <div className="h-[40px] w-[4px] rounded-full" style={{ background: '#1a1a1e' }} />
                 </div>
               )}
 
