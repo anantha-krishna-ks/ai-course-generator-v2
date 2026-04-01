@@ -159,6 +159,31 @@ const MultipageCoursePreview = () => {
             </>
           )}
 
+          {/* Side buttons for landscape (rotated: power on top, volume on bottom) */}
+          {isLandscape && (
+            <>
+              {/* Power button (top) */}
+              <div
+                className="absolute top-[-2px] right-[120px] h-[3px] w-[40px] rounded-t-sm"
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
+              />
+              {/* Volume buttons (bottom) */}
+              <div
+                className="absolute bottom-[-2px] right-[100px] h-[3px] w-[28px] rounded-b-sm"
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
+              />
+              <div
+                className="absolute bottom-[-2px] right-[140px] h-[3px] w-[28px] rounded-b-sm"
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
+              />
+              {/* Silent switch (bottom, near left) */}
+              <div
+                className="absolute bottom-[-2px] right-[200px] h-[3px] w-[16px] rounded-b-sm"
+                style={{ background: 'linear-gradient(90deg, #c8c8ce, #b8b8c0, #c8c8ce)' }}
+              />
+            </>
+          )}
+
           {/* Tablet side buttons */}
           {deviceView === 'tablet' && (
             <>
