@@ -144,30 +144,15 @@ function LivePreviewPanel({
         </div>
       </div>
 
-      {/* Bottom skeleton wireframe */}
+      {/* Bottom layout preview thumbnail */}
       <div className="relative z-10 mt-4">
-        <div className="rounded-lg bg-primary-foreground/8 backdrop-blur-sm p-3 space-y-2">
-          <p className="text-primary-foreground/30 text-[9px] font-semibold uppercase tracking-wider mb-1.5">Preview</p>
-          {selectedLayout === "multi-page" ? (
-            <>
-              <div className="h-1.5 rounded-full bg-primary-foreground/15 w-3/4" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-5/6" />
-              <div className="h-px bg-primary-foreground/8 my-1.5" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/15 w-2/3" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-4/5" />
-            </>
-          ) : (
-            <>
-              <div className="h-1.5 rounded-full bg-primary-foreground/15 w-1/2" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-4/5" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-3/4" />
-              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
-            </>
-          )}
+        <div className="rounded-xl overflow-hidden border border-primary-foreground/10 shadow-lg">
+          <img
+            src={selectedLayout === "multi-page" ? previewMultipage : previewSinglepage}
+            alt={`${selectedLayout} preview`}
+            className="w-full h-[100px] object-cover object-top opacity-80"
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-primary/80 to-transparent" />
         </div>
       </div>
     </div>
