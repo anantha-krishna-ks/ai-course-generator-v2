@@ -146,7 +146,6 @@ const Auth = () => {
         <div className="relative z-10 flex flex-col justify-center px-8 lg:px-12 xl:px-16 text-white">
           <div className="space-y-4 lg:space-y-6">
             <div className="inline-flex items-center gap-3 mb-4 lg:mb-8">
-              <img src={logo} alt="AI Course Generator" className="w-10 h-10 lg:w-12 lg:h-12" />
               <h1 className="text-xl lg:text-2xl font-semibold">AI COURSE GENERATOR</h1>
             </div>
             
