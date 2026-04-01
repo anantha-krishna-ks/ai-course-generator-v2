@@ -296,9 +296,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       case "text-only":
         return "<p>Employee-generated Learning empowers experts to create learning content using their own knowledge and expertise as a source of input for e-learning. This method ensures authentic and practical educational resources.</p>";
       case "two-columns":
-        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem"><div><h3>Heading</h3><p>Employee-generated Learning enables employees to learn from each other through shared expertise.</p></div><div><h3>Heading</h3><p>Employee-generated Learning enables employees to learn from each other through shared expertise.</p></div></div>';
+        return '<!--layout:two-columns--><h2>Heading</h2><p>Start writing here...</p><!--col-break--><h2>Heading</h2><p>Start writing here...</p>';
       case "three-columns":
-        return '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem"><div><h3>Column 1</h3><p>Start writing here...</p></div><div><h3>Column 2</h3><p>Start writing here...</p></div><div><h3>Column 3</h3><p>Start writing here...</p></div></div>';
+        return '<!--layout:three-columns--><h2>Column 1</h2><p>Start writing here...</p><!--col-break--><h2>Column 2</h2><p>Start writing here...</p><!--col-break--><h2>Column 3</h2><p>Start writing here...</p>';
       default:
         return "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>";
     }
