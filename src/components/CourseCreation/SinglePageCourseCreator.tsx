@@ -1229,6 +1229,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
       {/* Guided Tour */}
       <GuidedTour steps={tourSteps} isOpen={showTour} onClose={() => { setShowTour(false); setTourStep(-1); }} onStepChange={setTourStep} />
+
+      <GenerateExportDialog open={showExportDialog} onOpenChange={setShowExportDialog} courseTitle={title} />
     </div>
   );
 }
