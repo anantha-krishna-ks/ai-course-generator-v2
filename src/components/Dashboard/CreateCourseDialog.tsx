@@ -9,7 +9,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 
