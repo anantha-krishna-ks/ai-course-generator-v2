@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Play, Share2, Plus, X, Undo2,
+  ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Eye, Wand2, Plus, X, Undo2,
   FileStack, Layers, HelpCircle, Sparkles, Type, ImageIcon, Video, FileText as DocIcon,
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
   Check, Send, Loader2, ArrowLeft as ArrowLeftIcon,
