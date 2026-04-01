@@ -107,25 +107,11 @@ function LivePreviewPanel({
             <p className="text-primary-foreground/40 text-[9px] mt-0.5">Layout</p>
           </div>
           <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
-            <Clock className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
-            <p className="text-primary-foreground text-sm font-bold leading-tight">
-              {selectedLayout === "multi-page" ? "60 min" : "5 min"}
-            </p>
-            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Duration</p>
-          </div>
-          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
             <BrainCircuit className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
             <p className="text-primary-foreground text-sm font-bold leading-tight">
               {aiEnabled ? "Auto" : "Manual"}
             </p>
             <p className="text-primary-foreground/40 text-[9px] mt-0.5">Content</p>
-          </div>
-          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
-            <Target className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
-            <p className="text-primary-foreground text-sm font-bold leading-tight">
-              {aiEnabled ? "Yes" : "No"}
-            </p>
-            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Quiz</p>
           </div>
         </div>
 
