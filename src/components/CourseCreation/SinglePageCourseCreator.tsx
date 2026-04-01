@@ -143,6 +143,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const modifyInputRef = useRef<HTMLTextAreaElement>(null);
   const aiPromptRef = useRef<HTMLTextAreaElement>(null);
   const [showQuizGenerateDialog, setShowQuizGenerateDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
 
   // Currently active section/page for adding blocks
