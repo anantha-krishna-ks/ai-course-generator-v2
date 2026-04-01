@@ -38,6 +38,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+import { GenerateExportDialog } from "./GenerateExportDialog";
 
 export interface SinglePageRestoreState {
   title: string;
