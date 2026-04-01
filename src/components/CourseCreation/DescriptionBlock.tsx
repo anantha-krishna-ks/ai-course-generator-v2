@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading } from "lucide-react";
+import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading, GitBranch, Sparkles, History, Clock, RotateCcw } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -12,8 +12,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { DescriptionEditor } from "./DescriptionEditor";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface DescriptionBlockProps {
   id: string;
@@ -74,6 +84,8 @@ export function DescriptionBlock({
   const [isEditing, setIsEditing] = useState(false);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
+  const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
+  const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const blockRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -102,6 +114,27 @@ export function DescriptionBlock({
   }, [isEditing]);
 
   const columns = decodeColumns(content, layout);
+
+  const getMockVersionsForColumn = (colIndex: number) => [
+    {
+      id: 1,
+      content: columns[colIndex] || "<p>Current version content</p>",
+      editedBy: "You",
+      editedAt: new Date(),
+    },
+    {
+      id: 2,
+      content: `<h2>Previous Draft</h2><p>An earlier version of column ${colIndex + 1} with different content.</p>`,
+      editedBy: "AI Assistant",
+      editedAt: new Date(Date.now() - 86400000),
+    },
+    {
+      id: 3,
+      content: `<p>Initial draft of column ${colIndex + 1} created during course setup.</p>`,
+      editedBy: "You",
+      editedAt: new Date(Date.now() - 3 * 86400000),
+    },
+  ];
 
   const hasContent = columns.some(
     (col) => col && col !== "<p></p>" && col.replace(/<[^>]*>/g, "").trim() !== ""
@@ -192,6 +225,28 @@ export function DescriptionBlock({
           {columns.map((col, i) => (
             <div key={i} className="min-w-0">
               <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
+              <div className="flex items-center gap-2 mt-2 px-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  Ask AI Text
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
+                  onClick={() => {
+                    setVersionDialogCol(i);
+                    setSelectedVersionId(null);
+                  }}
+                >
+                  <GitBranch className="w-3 h-3" />
+                  Version History
+                </Button>
+              </div>
             </div>
           ))}
         </div>
@@ -292,6 +347,108 @@ export function DescriptionBlock({
           </button>
         )}
       </div>
+
+      {/* Per-column Version History Dialog */}
+      <Dialog open={versionDialogCol !== null} onOpenChange={(open) => {
+        if (!open) {
+          setVersionDialogCol(null);
+          setSelectedVersionId(null);
+        }
+      }}>
+        <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:max-w-4xl h-[85vh] sm:h-[80vh] p-0 flex flex-col overflow-hidden">
+          <DialogHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b flex-shrink-0">
+            <DialogTitle className="text-sm sm:text-base md:text-lg font-bold flex items-center gap-2">
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+              Version History — Column {(versionDialogCol ?? 0) + 1}
+            </DialogTitle>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+              View and restore previous versions of this column
+            </p>
+          </DialogHeader>
+
+          <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+              <span className="text-xs sm:text-sm font-medium">All Versions</span>
+            </div>
+            <Badge variant="secondary" className="text-xs">
+              {versionDialogCol !== null ? getMockVersionsForColumn(versionDialogCol).length : 0} versions
+            </Badge>
+          </div>
+
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="space-y-3 px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+              {versionDialogCol !== null && getMockVersionsForColumn(versionDialogCol).map((version, index) => {
+                const isCurrentVersion = index === 0;
+                return (
+                  <div
+                    key={version.id}
+                    className={cn(
+                      "border rounded-lg p-3 sm:p-4 transition-all hover:border-primary/50 bg-card shadow-sm relative",
+                      isCurrentVersion && "border-primary/40 bg-primary/[0.03] ring-1 ring-primary/15",
+                      selectedVersionId === version.id && "border-primary bg-primary/5"
+                    )}
+                    onClick={() => setSelectedVersionId(version.id)}
+                  >
+                    {isCurrentVersion && (
+                      <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full bg-primary" />
+                    )}
+                    <div className="space-y-2.5">
+                      <div className="flex items-start justify-between gap-2 sm:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-sm">
+                              Version {getMockVersionsForColumn(versionDialogCol).length - index}
+                            </h4>
+                            {isCurrentVersion && (
+                              <Badge variant="secondary" className="text-[11px] px-2.5 py-0.5 h-5 font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-full">Current</Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <span>{version.editedAt.toLocaleDateString('en-US', {
+                              month: 'short', day: 'numeric', year: 'numeric'
+                            })} at {version.editedAt.toLocaleTimeString('en-US', {
+                              hour: '2-digit', minute: '2-digit'
+                            })}</span>
+                            <span className="text-muted-foreground/60">·</span>
+                            <span>{version.editedBy}</span>
+                          </div>
+                        </div>
+                        {!isCurrentVersion && (
+                          <Button
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (versionDialogCol !== null) {
+                                handleColumnChange(versionDialogCol, version.content);
+                                setVersionDialogCol(null);
+                                setSelectedVersionId(null);
+                              }
+                            }}
+                            className="flex-shrink-0 h-7 sm:h-8 text-xs px-2 sm:px-3 rounded-full"
+                          >
+                            <RotateCcw className="w-3 h-3 mr-1.5" />
+                            Restore Version
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="bg-muted/50 rounded-lg p-3 border overflow-hidden">
+                        <div
+                          className="prose prose-sm dark:prose-invert max-w-none line-clamp-4 break-words"
+                          style={{ overflowWrap: 'anywhere' }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(version.content) }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
