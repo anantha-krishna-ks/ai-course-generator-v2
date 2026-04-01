@@ -731,11 +731,21 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
-            <Button variant="outline" size="icon" className="rounded-full border-border" onClick={() => toast({ title: "Preview", description: "Single-page preview coming soon." })}>
-              <Play className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2">
-              <Share2 className="w-4 h-4" /> <span className="hidden sm:inline">Publish</span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={() => toast({ title: "Preview", description: "Single-page preview coming soon." })}>
+                  <Eye className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Preview</TooltipContent>
+            </Tooltip>
+            <Button
+              variant="outline"
+              className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
+              onClick={() => toast({ title: "Generate", description: "Course generation coming soon." })}
+            >
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Generate</span>
             </Button>
             <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setShowTour(true)}>
               <HelpCircle className="w-4 h-4 text-muted-foreground" />
