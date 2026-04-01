@@ -10,8 +10,8 @@ const Index = () => {
       <div className="text-center animate-fade-in">
         <img 
           src={logo} 
-          alt="AI Course Generator" 
-          className="w-32 h-32 mx-auto mb-8 animate-scale-in"
+          alt="CourseED" 
+          className="h-16 mx-auto mb-8 animate-scale-in"
         />
         <h1 className="mb-4 text-5xl font-bold text-foreground">
           AI COURSE GENERATOR
