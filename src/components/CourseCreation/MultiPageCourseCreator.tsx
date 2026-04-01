@@ -49,7 +49,7 @@ import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
-import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
+import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
 interface CourseItem {
