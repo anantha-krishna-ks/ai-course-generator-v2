@@ -1010,25 +1010,6 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             </DndContext>
             </div>
 
-            {/* Intro content toolbar - hover to reveal */}
-            <div className={cn("group/toolbar", contentBlocks.length > 0 && "mt-2")}>
-              <div className="opacity-0 group-hover/toolbar:opacity-100 transition-opacity duration-200">
-                <AddContentButton
-                  variant="full"
-                  aiEnabled={aiEnabled}
-                  onAddText={() => addIntroBlock("text")}
-                  onAddImage={() => addIntroBlock("image")}
-                  onAddVideo={() => addIntroBlock("video")}
-                  onAddAudio={() => addIntroBlock("audio")}
-                  onAddDoc={() => addIntroBlock("doc")}
-                  onAddQuiz={() => addIntroBlock("quiz")}
-                  onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); setActiveItemId("intro"); }}
-                  onDropBlock={(type, variant) => addIntroBlock(type as any, undefined, variant)}
-                  onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
-                  forceOpen={contentBlocks.filter((b) => b.type !== "description").length === 0}
-                />
-              </div>
-            </div>
 
             {/* Inline Sections & Pages */}
             {flatItems.map(({ item, sectionIndex, parentId }) => {
