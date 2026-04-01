@@ -115,6 +115,27 @@ export function DescriptionBlock({
 
   const columns = decodeColumns(content, layout);
 
+  const getMockVersionsForColumn = (colIndex: number) => [
+    {
+      id: 1,
+      content: columns[colIndex] || "<p>Current version content</p>",
+      editedBy: "You",
+      editedAt: new Date(),
+    },
+    {
+      id: 2,
+      content: `<h2>Previous Draft</h2><p>An earlier version of column ${colIndex + 1} with different content.</p>`,
+      editedBy: "AI Assistant",
+      editedAt: new Date(Date.now() - 86400000),
+    },
+    {
+      id: 3,
+      content: `<p>Initial draft of column ${colIndex + 1} created during course setup.</p>`,
+      editedBy: "You",
+      editedAt: new Date(Date.now() - 3 * 86400000),
+    },
+  ];
+
   const hasContent = columns.some(
     (col) => col && col !== "<p></p>" && col.replace(/<[^>]*>/g, "").trim() !== ""
   );
