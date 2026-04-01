@@ -82,7 +82,37 @@ export function ContentBlock({
   const [prompt, setPrompt] = useState("");
   const [imageGenerating, setImageGenerating] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
+  const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
 
+  const { colCount, layoutType } = detectColumnLayout(content);
+  const contentColumns = decodeContentColumns(content, colCount);
+
+  const handleColumnChange = (colIndex: number, newContent: string) => {
+    const updated = [...contentColumns];
+    updated[colIndex] = newContent;
+    onChange(encodeContentColumns(layoutType, updated));
+  };
+
+  const getMockVersionsForColumn = (colIndex: number) => [
+    {
+      id: 1,
+      content: contentColumns[colIndex] || "<p>Current version content</p>",
+      editedBy: "You",
+      editedAt: new Date(),
+    },
+    {
+      id: 2,
+      content: `<h2>Previous Draft</h2><p>An earlier version of column ${colIndex + 1} with different content.</p>`,
+      editedBy: "AI Assistant",
+      editedAt: new Date(Date.now() - 86400000),
+    },
+    {
+      id: 3,
+      content: `<p>Initial draft of column ${colIndex + 1} created during course setup.</p>`,
+      editedBy: "You",
+      editedAt: new Date(Date.now() - 3 * 86400000),
+    },
+  ];
   const mockTextVersions = [
     {
       id: 1,
