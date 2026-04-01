@@ -1,5 +1,5 @@
 import { ChevronDown, Layers, FileStack } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Popover,
   PopoverContent,
@@ -8,10 +8,45 @@ import {
 import { cn } from "@/lib/utils";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 
+/** Shared state that gets transferred when switching layouts */
+export interface LayoutTransferState {
+  title: string;
+  items: Array<{
+    id: string;
+    type: "section" | "page" | "question";
+    title: string;
+    inclusions?: string;
+    exclusions?: string;
+    thumbnailUrl?: string;
+    children?: Array<{
+      id: string;
+      type: "section" | "page" | "question";
+      title: string;
+      inclusions?: string;
+      exclusions?: string;
+      thumbnailUrl?: string;
+    }>;
+  }>;
+  contentBlocks: Array<{
+    id: string;
+    type: string;
+    content: string;
+  }>;
+  pageBlocksMap: Record<string, Array<{
+    id: string;
+    type: string;
+    content: string;
+  }>>;
+  sectionObjectivesMap?: Record<string, string>;
+  sectionImages?: Record<string, string | null>;
+  aiOptions: AIOptions | null;
+}
+
 interface LayoutSelectorDropdownProps {
   currentLayout: "multi-page" | "single-page";
   title: string;
   aiOptions?: AIOptions | null;
+  transferState?: LayoutTransferState | null;
 }
 
 function MultiPageIllustration() {
@@ -58,12 +93,26 @@ function SinglePageIllustration() {
   );
 }
 
-export function LayoutSelectorDropdown({ currentLayout, title, aiOptions }: LayoutSelectorDropdownProps) {
+export function LayoutSelectorDropdown({ currentLayout, title, aiOptions, transferState }: LayoutSelectorDropdownProps) {
   const navigate = useNavigate();
 
   const handleSelect = (layout: "multi-page" | "single-page") => {
     if (layout === currentLayout) return;
-    const state = { title, layout, aiOptions: aiOptions?.enabled ? aiOptions : null };
+    
+    const state: Record<string, unknown> = { 
+      title, 
+      layout, 
+      aiOptions: aiOptions?.enabled ? aiOptions : null,
+    };
+
+    // Pass transfer state for data preservation
+    if (transferState) {
+      state.restoreState = {
+        ...transferState,
+        title,
+      };
+    }
+
     if (layout === "multi-page") {
       navigate("/create-course-multipage", { state });
     } else {
@@ -97,19 +146,16 @@ export function LayoutSelectorDropdown({ currentLayout, title, aiOptions }: Layo
               : "border-border hover:border-primary/30 hover:bg-muted/30"
           )}
         >
-          {/* Radio indicator */}
           <div className={cn(
             "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
             isMulti ? "border-primary" : "border-muted-foreground/30"
           )}>
             {isMulti && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
           </div>
-          {/* Text */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground">Multi-page layout</p>
             <p className="text-xs text-muted-foreground mt-0.5">A full-length course, covering multiple topics</p>
           </div>
-          {/* Illustration */}
           <MultiPageIllustration />
         </button>
 
@@ -123,19 +169,16 @@ export function LayoutSelectorDropdown({ currentLayout, title, aiOptions }: Layo
               : "border-border hover:border-primary/30 hover:bg-muted/30"
           )}
         >
-          {/* Radio indicator */}
           <div className={cn(
             "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
             !isMulti ? "border-primary" : "border-muted-foreground/30"
           )}>
             {!isMulti && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
           </div>
-          {/* Text */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground">Single-page layout</p>
             <p className="text-xs text-muted-foreground mt-0.5">A short, focused course designed for quick learning</p>
           </div>
-          {/* Illustration */}
           <SinglePageIllustration />
         </button>
       </PopoverContent>
