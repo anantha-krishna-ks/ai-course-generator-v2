@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History } from "lucide-react";
+import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3 } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -7,6 +7,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -27,28 +32,42 @@ import { sanitizeHtml } from "@/lib/sanitize";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
-function detectColumnLayout(content: string): { colCount: number; layoutType: string } {
+type ContentLayoutType = "heading-text" | "text-only" | "two-columns" | "three-columns";
+
+const contentLayoutOptions: { id: ContentLayoutType; label: string; icon: React.ComponentType<{ className?: string }>; columns: number }[] = [
+  { id: "heading-text", label: "Heading and text", icon: Heading, columns: 1 },
+  { id: "text-only", label: "Text", icon: Type, columns: 1 },
+  { id: "two-columns", label: "Two columns", icon: Columns2, columns: 2 },
+  { id: "three-columns", label: "Three columns", icon: Columns3, columns: 3 },
+];
+
+const contentLayoutDefaults: Record<ContentLayoutType, string[]> = {
+  "heading-text": ["<h2>Heading</h2><p>Start writing your content here...</p>"],
+  "text-only": ["<p>Start writing your content here...</p>"],
+  "two-columns": ["<h2>Heading</h2><p>Start writing here...</p>", "<h2>Heading</h2><p>Start writing here...</p>"],
+  "three-columns": ["<h2>Column 1</h2><p>Start writing here...</p>", "<h2>Column 2</h2><p>Start writing here...</p>", "<h2>Column 3</h2><p>Start writing here...</p>"],
+};
+
+function detectContentLayout(content: string): ContentLayoutType {
   if (content.startsWith("<!--layout:")) {
     const match = content.match(/<!--layout:(\w[\w-]*)-->/);
-    if (match) {
-      if (match[1] === "three-columns") return { colCount: 3, layoutType: match[1] };
-      if (match[1] === "two-columns") return { colCount: 2, layoutType: match[1] };
-    }
+    if (match) return match[1] as ContentLayoutType;
   }
-  return { colCount: 1, layoutType: "single" };
+  return "text-only";
 }
 
-function decodeContentColumns(content: string, colCount: number): string[] {
-  if (colCount <= 1) return [content];
+function decodeContentColumns(content: string, layout: ContentLayoutType): string[] {
+  const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
+  if (layout === "text-only") return [content.replace(/<!--layout:\w[\w-]*-->/, "")];
   const raw = content.replace(/<!--layout:\w[\w-]*-->/, "");
   const parts = raw.split(COL_SEPARATOR);
   while (parts.length < colCount) parts.push("<p></p>");
   return parts.slice(0, colCount);
 }
 
-function encodeContentColumns(layoutType: string, columns: string[]): string {
-  if (layoutType === "single") return columns[0] || "";
-  return `<!--layout:${layoutType}-->${columns.join(COL_SEPARATOR)}`;
+function encodeContentColumns(layout: ContentLayoutType, columns: string[]): string {
+  if (layout === "text-only") return columns[0] || "";
+  return `<!--layout:${layout}-->${columns.join(COL_SEPARATOR)}`;
 }
 
 interface ContentBlockProps {
@@ -83,14 +102,23 @@ export function ContentBlock({
   const [imageGenerating, setImageGenerating] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
+  const [layout, setLayout] = useState<ContentLayoutType>(() => detectContentLayout(content));
+  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
 
-  const { colCount, layoutType } = detectColumnLayout(content);
-  const contentColumns = decodeContentColumns(content, colCount);
+  const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
+  const contentColumns = decodeContentColumns(content, layout);
 
   const handleColumnChange = (colIndex: number, newContent: string) => {
     const updated = [...contentColumns];
     updated[colIndex] = newContent;
-    onChange(encodeContentColumns(layoutType, updated));
+    onChange(encodeContentColumns(layout, updated));
+  };
+
+  const handleLayoutChange = (newLayout: ContentLayoutType) => {
+    setLayout(newLayout);
+    const newCols = contentLayoutDefaults[newLayout];
+    onChange(encodeContentColumns(newLayout, newCols));
+    setIsEditing(true);
   };
 
   const getMockVersionsForColumn = (colIndex: number) => [
@@ -224,13 +252,55 @@ export function ContentBlock({
         )}
       >
         {/* Left sidebar icons */}
-        <div className="absolute -left-11 top-1 flex flex-col items-center gap-0.5 opacity-0 group-hover/block:opacity-100 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm">
+        <div className={cn("absolute -left-11 top-1 flex flex-col items-center gap-0.5 transition-all duration-200 bg-background/90 backdrop-blur-sm border border-border/60 rounded-xl p-1.5 shadow-sm", isLayoutOpen ? "opacity-100" : "opacity-0 group-hover/block:opacity-100")}>
           <SidebarButton
             icon={GripVertical}
             label="Drag to reorder"
             className="cursor-grab active:cursor-grabbing"
             onClick={undefined}
           />
+          {type === "text" && (
+            <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-48 p-0">
+                <div className="px-3 pt-3 pb-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">Change layout</p>
+                </div>
+                <div className="px-1.5 pb-1.5">
+                  {contentLayoutOptions.map((opt) => {
+                    const Icon = opt.icon;
+                    const isActive = layout === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLayoutChange(opt.id);
+                          setIsLayoutOpen(false);
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
           <SidebarButton icon={Copy} label="Duplicate" onClick={onDuplicate} />
           <SidebarButton
             icon={Trash2}
@@ -414,10 +484,22 @@ export function ContentBlock({
               onClick={() => setIsEditing(true)}
               className="w-full text-left px-4 py-3 rounded-lg border border-transparent hover:border-foreground/20 hover:bg-background/30 transition-all duration-200 cursor-text overflow-hidden max-w-full"
             >
-              <div
-                className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
+              {colCount > 1 ? (
+                <div className={cn("grid gap-6", colCount === 3 ? "grid-cols-3" : "grid-cols-2")}>
+                  {contentColumns.map((col, i) => (
+                    <div
+                      key={i}
+                      className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] text-lg leading-relaxed [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                      dangerouslySetInnerHTML={{ __html: col }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              )}
             </button>
           )}
         </div>
