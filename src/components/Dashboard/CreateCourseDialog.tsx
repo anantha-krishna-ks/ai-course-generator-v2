@@ -37,20 +37,34 @@ const defaultAIOptions: AIOptions = {
 
 function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComplete: () => void }) {
   useEffect(() => {
-    const timeout = setTimeout(onComplete, 1800);
+    const timeout = setTimeout(onComplete, 2400);
     return () => clearTimeout(timeout);
   }, [onComplete]);
 
+  const [animationData, setAnimationData] = useState<object | null>(null);
+
+  useEffect(() => {
+    import("@/assets/course-creation-lottie.json").then((mod) => {
+      setAnimationData(mod.default);
+    });
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 space-y-6">
-      {/* Premium spinner */}
-      <div className="relative w-12 h-12">
-        <div className="absolute inset-0 rounded-full border-2 border-primary/20" />
-        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary animate-spin" />
+    <div className="flex flex-col items-center justify-center py-10 px-4 space-y-4">
+      {/* Lottie Animation */}
+      <div className="w-40 h-40 sm:w-48 sm:h-48">
+        {animationData && (
+          <Lottie
+            animationData={animationData}
+            loop
+            autoplay
+            className="w-full h-full"
+          />
+        )}
       </div>
       
       {/* Course title */}
-      <div className="text-center space-y-2">
+      <div className="text-center space-y-1.5">
         <p className="text-sm text-muted-foreground">Creating your course</p>
         <p className="text-lg font-semibold text-foreground">"{courseTitle}"</p>
       </div>
