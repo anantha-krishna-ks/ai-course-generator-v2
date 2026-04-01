@@ -102,14 +102,23 @@ export function ContentBlock({
   const [imageGenerating, setImageGenerating] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
+  const [layout, setLayout] = useState<ContentLayoutType>(() => detectContentLayout(content));
+  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
 
-  const { colCount, layoutType } = detectColumnLayout(content);
-  const contentColumns = decodeContentColumns(content, colCount);
+  const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
+  const contentColumns = decodeContentColumns(content, layout);
 
   const handleColumnChange = (colIndex: number, newContent: string) => {
     const updated = [...contentColumns];
     updated[colIndex] = newContent;
-    onChange(encodeContentColumns(layoutType, updated));
+    onChange(encodeContentColumns(layout, updated));
+  };
+
+  const handleLayoutChange = (newLayout: ContentLayoutType) => {
+    setLayout(newLayout);
+    const newCols = contentLayoutDefaults[newLayout];
+    onChange(encodeContentColumns(newLayout, newCols));
+    setIsEditing(true);
   };
 
   const getMockVersionsForColumn = (colIndex: number) => [
