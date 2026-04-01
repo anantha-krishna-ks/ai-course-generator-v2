@@ -37,11 +37,21 @@ import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { SectionImageDialog } from "./SectionImageDialog";
-import { LayoutSelectorDropdown } from "./LayoutSelectorDropdown";
+import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+
+export interface SinglePageRestoreState {
+  title: string;
+  items: CourseItem[];
+  contentBlocks: ContentBlockData[];
+  pageBlocksMap: Record<string, PageContentBlock[]>;
+  sectionImages: Record<string, string | null>;
+  aiOptions: AIOptions | null;
+}
 
 interface SinglePageCourseCreatorProps {
   courseTitle: string;
   aiOptions?: AIOptions | null;
+  initialRestoreState?: SinglePageRestoreState | null;
 }
 
 interface CourseItem {
@@ -84,28 +94,30 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null }: SinglePageCourseCreatorProps) {
+export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: SinglePageCourseCreatorProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [title, setTitle] = useState(courseTitle);
-  const [showTour, setShowTour] = useState(true);
+  const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
+  const [showTour, setShowTour] = useState(!initialRestoreState);
   const [tourStep, setTourStep] = useState(0);
-  const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialAIOptions);
+  const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
 
   // Course outline items
-  const [items, setItems] = useState<CourseItem[]>([]);
+  const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
   // Page-level content blocks map
-  const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlock[]>>({});
+  const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlock[]>>(initialRestoreState?.pageBlocksMap ?? {});
   // Section images map
-  const [sectionImages, setSectionImages] = useState<Record<string, string | null>>({});
+  const [sectionImages, setSectionImages] = useState<Record<string, string | null>>(initialRestoreState?.sectionImages ?? {});
   const [showSectionImageDialog, setShowSectionImageDialog] = useState<string | null>(null);
   // Last added block tracking
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
 
   // Introduction content blocks (top-level)
-  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>([
-    { id: "description-block", type: "description", content: "" },
-  ]);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
+    initialRestoreState?.contentBlocks ?? [
+      { id: "description-block", type: "description", content: "" },
+    ],
+  );
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -706,7 +718,14 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 {title.length > 40 && <TooltipContent side="bottom" className="max-w-[300px] text-sm">{title}</TooltipContent>}
               </Tooltip>
               <span className="text-muted-foreground/30 select-none">|</span>
-              <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} />
+              <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} transferState={{
+                title,
+                items: items.map(i => ({ ...i, type: i.type as "section" | "page" | "question" })),
+                contentBlocks,
+                pageBlocksMap,
+                sectionImages,
+                aiOptions,
+              }} />
             </div>
           </div>
 
