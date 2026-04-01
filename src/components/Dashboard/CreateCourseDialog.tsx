@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Lottie from "lottie-react";
 import previewMultipage from "@/assets/preview-multipage.jpg";
 import previewSinglepage from "@/assets/preview-singlepage.jpg";
 import { useNavigate } from "react-router-dom";
