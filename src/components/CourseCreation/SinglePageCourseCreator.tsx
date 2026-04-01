@@ -699,6 +699,27 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     );
   };
 
+  const handlePreview = useCallback(() => {
+    const returnState: SinglePageRestoreState = {
+      title,
+      items,
+      contentBlocks,
+      pageBlocksMap,
+      sectionImages,
+      aiOptions,
+    };
+
+    navigate("/multipage-preview", {
+      state: {
+        title,
+        items,
+        contentBlocks,
+        pageBlocksMap,
+        returnState,
+      },
+    });
+  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionImages, aiOptions]);
+
   const flatItems = getAllFlatItems();
 
   return (
