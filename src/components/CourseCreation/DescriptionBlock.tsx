@@ -225,6 +225,28 @@ export function DescriptionBlock({
           {columns.map((col, i) => (
             <div key={i} className="min-w-0">
               <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
+              <div className="flex items-center gap-2 mt-2 px-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  Ask AI Text
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
+                  onClick={() => {
+                    setVersionDialogCol(i);
+                    setSelectedVersionId(null);
+                  }}
+                >
+                  <GitBranch className="w-3 h-3" />
+                  Version History
+                </Button>
+              </div>
             </div>
           ))}
         </div>
