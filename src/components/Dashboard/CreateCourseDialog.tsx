@@ -9,7 +9,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 
@@ -52,7 +52,7 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
   );
 }
 
-/** Live preview panel — shows a dynamic "course card" as user configures */
+/** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
   courseTitle,
   selectedLayout,
@@ -63,75 +63,111 @@ function LivePreviewPanel({
   aiEnabled: boolean;
 }) {
   return (
-    <div className="hidden md:flex flex-col w-[280px] shrink-0 rounded-l-lg bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary-glow))] p-6 relative overflow-hidden">
-      {/* Decorative circles */}
-      <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-primary-foreground/5" />
-      <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-primary-foreground/5" />
-      <div className="absolute top-1/2 right-0 w-20 h-20 rounded-full bg-primary-foreground/[0.03]" />
+    <div className="hidden lg:flex flex-col w-[320px] shrink-0 rounded-l-lg bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary-glow))] p-6 relative overflow-hidden select-none">
+      {/* Decorative elements */}
+      <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-primary-foreground/[0.06]" />
+      <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-primary-foreground/[0.06]" />
+      <div className="absolute top-1/3 -right-4 w-24 h-24 rounded-full bg-primary-foreground/[0.04]" />
+      <div className="absolute bottom-1/3 left-1/2 w-16 h-16 rounded-full bg-primary-foreground/[0.03]" />
 
-      {/* Top icon */}
-      <div className="relative z-10 mb-6">
-        <div className="w-11 h-11 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center">
+      {/* Top branding */}
+      <div className="relative z-10 mb-5">
+        <div className="w-11 h-11 rounded-xl bg-primary-foreground/15 backdrop-blur-sm flex items-center justify-center mb-3">
           <GraduationCap className="w-6 h-6 text-primary-foreground" />
         </div>
+        <p className="text-primary-foreground/50 text-[10px] font-semibold uppercase tracking-[0.2em]">
+          New Course
+        </p>
       </div>
 
-      {/* Live title preview */}
-      <div className="relative z-10 flex-1 flex flex-col">
-        <p className="text-primary-foreground/60 text-xs font-medium uppercase tracking-widest mb-2">
-          Course Preview
-        </p>
-        <h2 className="text-primary-foreground text-xl font-bold leading-snug min-h-[3.5rem] break-words">
+      {/* Live title */}
+      <div className="relative z-10 mb-5">
+        <h2 className="text-primary-foreground text-xl font-bold leading-snug break-words" style={{ overflowWrap: "anywhere" }}>
           {courseTitle || (
-            <span className="text-primary-foreground/30 italic font-normal text-lg">
+            <span className="text-primary-foreground/25 italic font-normal text-lg">
               Your title appears here...
             </span>
           )}
         </h2>
+      </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Layout & AI status chips */}
-        <div className="relative z-10 space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="px-2.5 py-1 rounded-full bg-primary-foreground/15 backdrop-blur-sm text-primary-foreground text-[11px] font-semibold flex items-center gap-1.5">
-              {selectedLayout === "multi-page" ? (
-                <Layers className="w-3 h-3" />
-              ) : (
-                <FileText className="w-3 h-3" />
-              )}
-              {selectedLayout === "multi-page" ? "Multi-page" : "Single-page"}
-            </div>
-            {aiEnabled && (
-              <div className="px-2.5 py-1 rounded-full bg-primary-foreground/15 backdrop-blur-sm text-primary-foreground text-[11px] font-semibold flex items-center gap-1.5">
-                <Wand2 className="w-3 h-3" />
-                AI
-              </div>
-            )}
-          </div>
-
-          {/* Mini skeleton preview of the layout */}
-          <div className="rounded-lg bg-primary-foreground/10 backdrop-blur-sm p-3 space-y-2">
+      {/* Course info cards */}
+      <div className="relative z-10 space-y-2.5 flex-1">
+        {/* Layout chip */}
+        <div className="flex items-center gap-2.5 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3.5 py-2.5">
+          <div className="w-7 h-7 rounded-md bg-primary-foreground/15 flex items-center justify-center shrink-0">
             {selectedLayout === "multi-page" ? (
-              <>
-                <div className="h-1.5 rounded-full bg-primary-foreground/20 w-3/4" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-full" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-5/6" />
-                <div className="h-px bg-primary-foreground/10 my-1" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/20 w-2/3" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-full" />
-              </>
+              <Layers className="w-3.5 h-3.5 text-primary-foreground" />
             ) : (
-              <>
-                <div className="h-1.5 rounded-full bg-primary-foreground/20 w-1/2" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-full" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-4/5" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-full" />
-                <div className="h-1.5 rounded-full bg-primary-foreground/15 w-3/4" />
-              </>
+              <FileText className="w-3.5 h-3.5 text-primary-foreground" />
             )}
           </div>
+          <div>
+            <p className="text-primary-foreground text-xs font-semibold leading-tight">
+              {selectedLayout === "multi-page" ? "Multi-page" : "Single-page"}
+            </p>
+            <p className="text-primary-foreground/50 text-[10px]">
+              {selectedLayout === "multi-page" ? "Multiple topics" : "Quick learning"}
+            </p>
+          </div>
+        </div>
+
+        {/* AI chip */}
+        <div className="flex items-center gap-2.5 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3.5 py-2.5">
+          <div className="w-7 h-7 rounded-md bg-primary-foreground/15 flex items-center justify-center shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-primary-foreground" />
+          </div>
+          <div>
+            <p className="text-primary-foreground text-xs font-semibold leading-tight">
+              AI Support
+            </p>
+            <p className="text-primary-foreground/50 text-[10px]">
+              {aiEnabled ? "Enabled — auto-generate content" : "Disabled — manual authoring"}
+            </p>
+          </div>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex gap-2 pt-1">
+          <div className="flex-1 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3 py-2.5 text-center">
+            <BookOpen className="w-3.5 h-3.5 text-primary-foreground/60 mx-auto mb-1" />
+            <p className="text-primary-foreground text-xs font-bold">
+              {selectedLayout === "multi-page" ? "∞" : "1"}
+            </p>
+            <p className="text-primary-foreground/40 text-[9px]">Pages</p>
+          </div>
+          <div className="flex-1 rounded-lg bg-primary-foreground/10 backdrop-blur-sm px-3 py-2.5 text-center">
+            <Clock className="w-3.5 h-3.5 text-primary-foreground/60 mx-auto mb-1" />
+            <p className="text-primary-foreground text-xs font-bold">5 min</p>
+            <p className="text-primary-foreground/40 text-[9px]">Per page</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom skeleton wireframe */}
+      <div className="relative z-10 mt-4">
+        <div className="rounded-lg bg-primary-foreground/8 backdrop-blur-sm p-3 space-y-2">
+          <p className="text-primary-foreground/30 text-[9px] font-semibold uppercase tracking-wider mb-1.5">Preview</p>
+          {selectedLayout === "multi-page" ? (
+            <>
+              <div className="h-1.5 rounded-full bg-primary-foreground/15 w-3/4" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-5/6" />
+              <div className="h-px bg-primary-foreground/8 my-1.5" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/15 w-2/3" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-4/5" />
+            </>
+          ) : (
+            <>
+              <div className="h-1.5 rounded-full bg-primary-foreground/15 w-1/2" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-4/5" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-3/4" />
+              <div className="h-1.5 rounded-full bg-primary-foreground/10 w-full" />
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -190,7 +226,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
-        className="w-[95vw] max-w-[900px] max-h-[90vh] overflow-hidden p-0"
+        className="w-[95vw] max-w-[960px] max-h-[90vh] overflow-hidden p-0"
         hideCloseButton={isLoading}
       >
         {isLoading ? (
@@ -204,8 +240,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
             />
           </div>
         ) : (
-          <div className="flex min-h-[480px] max-h-[85vh]">
-            {/* Left: Live preview panel */}
+          <div className="flex flex-col lg:flex-row min-h-[420px] max-h-[85vh]">
+            {/* Left: Live preview panel — hidden on mobile/tablet, shown lg+ */}
             <LivePreviewPanel
               courseTitle={courseTitle}
               selectedLayout={selectedLayout}
@@ -213,44 +249,44 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
             />
 
             {/* Right: Form area */}
-            <div className="flex-1 overflow-y-auto thin-scrollbar p-5 sm:p-6 md:p-8 flex flex-col">
+            <div className="flex-1 overflow-y-auto thin-scrollbar p-4 sm:p-6 md:p-8 flex flex-col min-h-0">
               {/* Hero title input */}
-              <div className="mb-6">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+              <div className="mb-5 sm:mb-6">
+                <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
                   Course Title
                 </label>
                 <input
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
-                  className="w-full text-xl sm:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
+                  className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
                   autoFocus
                 />
-                <p className="text-[11px] text-muted-foreground/60 mt-2">
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
                   💡 Used as the primary prompt for AI content generation
                 </p>
               </div>
 
               {/* Layout Options — kept as-is */}
-              <div className="mb-5">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">
+              <div className="mb-4 sm:mb-5">
+                <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 sm:mb-3 block">
                   Layout
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:gap-4">
                   {/* Multi-page */}
                   <button
                     type="button"
                     onClick={() => setSelectedLayout("multi-page")}
                     className={cn(
-                      "relative p-3 sm:p-4 rounded-lg border-2 transition-all text-left",
+                      "relative p-2.5 sm:p-3 md:p-4 rounded-lg border-2 transition-all text-left",
                       selectedLayout === "multi-page"
                         ? "border-primary bg-primary/5"
                         : "border-border hover:border-primary/50"
                     )}
                   >
-                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+                    <div className="absolute top-2.5 sm:top-3 md:top-4 left-2.5 sm:left-3 md:left-4">
                       <div className={cn(
-                        "w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
+                        "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
                         selectedLayout === "multi-page"
                           ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
                           : "border-muted-foreground/30 bg-background hover:border-muted-foreground/50"
@@ -258,19 +294,19 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                         <div className={cn(
                           "rounded-full bg-primary-foreground transition-all duration-300",
                           selectedLayout === "multi-page"
-                            ? "w-2 h-2 sm:w-2.5 sm:h-2.5 opacity-100 scale-100"
+                            ? "w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 opacity-100 scale-100"
                             : "w-0 h-0 opacity-0 scale-0"
                         )} />
                       </div>
                     </div>
-                    <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                      <div className="w-[140px] sm:w-[160px] h-[85px] sm:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
+                    <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
+                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
                         <img src={previewMultipage} alt="Multi-page layout preview" className="w-full h-full object-cover object-top" />
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="font-semibold text-sm sm:text-base text-foreground mb-0.5">Multi-page layout</h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground">A full-length course, covering multiple topics</p>
+                      <h3 className="font-semibold text-xs sm:text-sm md:text-base text-foreground mb-0.5">Multi-page layout</h3>
+                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground hidden sm:block">A full-length course, covering multiple topics</p>
                     </div>
                   </button>
 
@@ -279,15 +315,15 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     type="button"
                     onClick={() => setSelectedLayout("single-page")}
                     className={cn(
-                      "relative p-3 sm:p-4 rounded-lg border-2 transition-all text-left",
+                      "relative p-2.5 sm:p-3 md:p-4 rounded-lg border-2 transition-all text-left",
                       selectedLayout === "single-page"
                         ? "border-primary bg-primary/5"
                         : "border-border hover:border-primary/50"
                     )}
                   >
-                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+                    <div className="absolute top-2.5 sm:top-3 md:top-4 left-2.5 sm:left-3 md:left-4">
                       <div className={cn(
-                        "w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
+                        "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
                         selectedLayout === "single-page"
                           ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
                           : "border-muted-foreground/30 bg-background hover:border-muted-foreground/50"
@@ -295,26 +331,26 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                         <div className={cn(
                           "rounded-full bg-primary-foreground transition-all duration-300",
                           selectedLayout === "single-page"
-                            ? "w-2 h-2 sm:w-2.5 sm:h-2.5 opacity-100 scale-100"
+                            ? "w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 opacity-100 scale-100"
                             : "w-0 h-0 opacity-0 scale-0"
                         )} />
                       </div>
                     </div>
-                    <div className="mt-5 sm:mt-6 mb-3 sm:mb-4 flex justify-center">
-                      <div className="w-[140px] sm:w-[160px] h-[85px] sm:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
+                    <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
+                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
                         <img src={previewSinglepage} alt="Single-page layout preview" className="w-full h-full object-cover object-top" />
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="font-semibold text-sm sm:text-base text-foreground mb-0.5">Single-page layout</h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground">A short, focused course designed for quick learning</p>
+                      <h3 className="font-semibold text-xs sm:text-sm md:text-base text-foreground mb-0.5">Single-page layout</h3>
+                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground hidden sm:block">A short, focused course designed for quick learning</p>
                     </div>
                   </button>
                 </div>
               </div>
 
               {/* AI Support Toggle — kept as-is */}
-              <div className="mb-5">
+              <div className="mb-4 sm:mb-5">
                 <AIToggleRow
                   options={aiOptions}
                   onChange={setAIOptions}
@@ -322,15 +358,15 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 />
               </div>
 
-              {/* Spacer pushes button to bottom */}
-              <div className="flex-1" />
+              {/* Spacer */}
+              <div className="flex-1 min-h-0" />
 
               {/* Create button */}
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-end pt-2 sm:pt-3">
                 <Button
                   onClick={handleStartCreating}
                   disabled={!courseTitle.trim()}
-                  className="h-11 sm:h-12 px-7 sm:px-9 text-sm sm:text-base font-semibold rounded-full gap-2.5 shadow-sm"
+                  className="h-10 sm:h-11 md:h-12 px-5 sm:px-7 md:px-9 text-xs sm:text-sm md:text-base font-semibold rounded-full gap-2 shadow-sm"
                 >
                   <Wand2 className="w-4 h-4 sm:w-5 sm:h-5" />
                   Create Course
