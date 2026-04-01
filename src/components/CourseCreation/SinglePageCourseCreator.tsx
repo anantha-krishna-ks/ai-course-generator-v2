@@ -756,7 +756,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={() => toast({ title: "Preview", description: "Single-page preview coming soon." })}>
+                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={handlePreview}>
                   <Eye className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
@@ -765,7 +765,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-              onClick={() => toast({ title: "Generate", description: "Course generation coming soon." })}
+              onClick={() => setShowExportDialog(true)}
             >
               <Wand2 className="w-4 h-4" />
               <span className="hidden sm:inline">Generate</span>
