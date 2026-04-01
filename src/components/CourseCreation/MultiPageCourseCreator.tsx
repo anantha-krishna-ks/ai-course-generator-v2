@@ -592,7 +592,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 )}
               </Tooltip>
               <span className="text-muted-foreground/30 select-none">|</span>
-              <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} />
+              <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} transferState={{
+                title,
+                items: items as LayoutTransferState["items"],
+                contentBlocks,
+                pageBlocksMap,
+                sectionObjectivesMap,
+                aiOptions,
+              }} />
             </div>
           </div>
 
