@@ -718,7 +718,14 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 {title.length > 40 && <TooltipContent side="bottom" className="max-w-[300px] text-sm">{title}</TooltipContent>}
               </Tooltip>
               <span className="text-muted-foreground/30 select-none">|</span>
-              <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} />
+              <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} transferState={{
+                title,
+                items: items.map(i => ({ ...i, type: i.type as "section" | "page" | "question" })),
+                contentBlocks,
+                pageBlocksMap,
+                sectionImages,
+                aiOptions,
+              }} />
             </div>
           </div>
 
