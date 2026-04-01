@@ -232,7 +232,7 @@ export function DescriptionBlock({
                   className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                 >
                   <Sparkles className="w-3 h-3" />
-                  Ask AI Text
+                  Ask AI
                 </Button>
                 <Button
                   size="sm"

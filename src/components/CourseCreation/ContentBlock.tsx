@@ -421,7 +421,7 @@ export function ContentBlock({
                             </linearGradient>
                           </defs>
                         </svg>
-                        Ask AI Text
+                        Ask AI
                       </Button>
                       <Button
                         size="sm"
