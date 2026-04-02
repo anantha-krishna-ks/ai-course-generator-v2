@@ -36,7 +36,7 @@ import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
-import { SectionImageDialog } from "./SectionImageDialog";
+import { ImageBlock } from "./ImageBlock";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
