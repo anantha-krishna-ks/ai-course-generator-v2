@@ -20,6 +20,9 @@ const CreateCourseMultipage = () => {
   }
 
   // Convert LayoutTransferState to MultiPageCourseCreatorRestoreState if present
+  // Merge sectionImages back into items' thumbnailUrl
+  const sectionImagesFromTransfer = state.restoreState?.sectionImages ?? {};
+
   const restoreState: MultiPageCourseCreatorRestoreState | null = state.restoreState ? {
     title: state.restoreState.title,
     items: state.restoreState.items.map(item => ({
@@ -28,7 +31,7 @@ const CreateCourseMultipage = () => {
       title: item.title,
       inclusions: item.inclusions,
       exclusions: item.exclusions,
-      thumbnailUrl: item.thumbnailUrl,
+      thumbnailUrl: item.thumbnailUrl || (item.type === "section" && sectionImagesFromTransfer[item.id] ? sectionImagesFromTransfer[item.id]! : item.thumbnailUrl),
       children: item.children?.map(child => ({
         id: child.id,
         type: child.type,

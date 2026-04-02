@@ -19,6 +19,16 @@ const CreateCourseSinglepage = () => {
   }
 
   // Convert LayoutTransferState to SinglePageRestoreState if present
+  // Extract sectionImages from items' thumbnailUrl if not explicitly provided
+  const extractedSectionImages: Record<string, string | null> = {};
+  if (state.restoreState) {
+    for (const item of state.restoreState.items) {
+      if (item.type === "section" && item.thumbnailUrl) {
+        extractedSectionImages[item.id] = item.thumbnailUrl;
+      }
+    }
+  }
+
   const restoreState: SinglePageRestoreState | null = state.restoreState ? {
     title: state.restoreState.title,
     items: state.restoreState.items.map(item => ({
@@ -46,7 +56,7 @@ const CreateCourseSinglepage = () => {
         })),
       ])
     ),
-    sectionImages: state.restoreState.sectionImages ?? {},
+    sectionImages: { ...extractedSectionImages, ...(state.restoreState.sectionImages ?? {}) },
     aiOptions: state.restoreState.aiOptions,
   } : null;
 

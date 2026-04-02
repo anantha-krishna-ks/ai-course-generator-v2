@@ -744,10 +744,15 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               <span className="text-muted-foreground/30 select-none">|</span>
               <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} transferState={{
                 title,
-                items: items.map(i => ({ ...i, type: i.type as "section" | "page" | "question" })),
+                items: items.map(i => ({
+                  ...i,
+                  type: i.type as "section" | "page" | "question",
+                  thumbnailUrl: i.type === "section" ? (sectionImages[i.id] ?? undefined) : undefined,
+                })),
                 contentBlocks,
                 pageBlocksMap,
                 sectionImages,
+                sectionObjectivesMap,
                 aiOptions,
               }} />
             </div>

@@ -598,6 +598,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 contentBlocks,
                 pageBlocksMap,
                 sectionObjectivesMap,
+                sectionImages: Object.fromEntries(
+                  items.filter(i => i.type === "section" && i.thumbnailUrl).map(i => [i.id, i.thumbnailUrl!])
+                ),
                 aiOptions,
               }} />
             </div>
