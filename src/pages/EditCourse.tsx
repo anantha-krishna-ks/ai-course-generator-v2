@@ -90,6 +90,24 @@ function buildMockRestoreState(title: string): MultiPageCourseCreatorRestoreStat
       "page-2-2": [
         { id: "pb-2-2", type: "text", content: "<p>Key terms and definitions that you'll encounter throughout this course:</p><ul><li><strong>Term 1</strong> - Definition and explanation</li><li><strong>Term 2</strong> - Definition and explanation</li><li><strong>Term 3</strong> - Definition and explanation</li></ul>" },
       ],
+      "page-2-3": [
+        { id: "pb-2-3", type: "text", content: "<h3>Practical Applications</h3><p>In this section, we explore how theoretical concepts translate into real-world practice. You'll work through guided examples and scenarios designed to reinforce your understanding.</p>" },
+        { id: "pb-2-4", type: "image", content: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop" },
+      ],
+      "page-3-1": [
+        { id: "pb-3-1", type: "text", content: "<h3>Case Study 1: Industry Analysis</h3><p>This case study examines a real-world scenario where organizations applied the core principles discussed in earlier modules. Pay close attention to the decision-making process and outcomes.</p>" },
+        { id: "pb-3-2", type: "text", content: "<p><strong>Key Takeaways:</strong></p><ul><li>Strategic alignment with organizational goals</li><li>Risk assessment and mitigation strategies</li><li>Stakeholder communication and reporting</li></ul>" },
+      ],
+      "page-3-2": [
+        { id: "pb-3-3", type: "text", content: "<h3>Best Practices</h3><p>Based on industry research and expert insights, the following best practices have been identified:</p><ol><li>Establish clear objectives before beginning any project</li><li>Use data-driven decision making at every stage</li><li>Continuously monitor and evaluate outcomes</li><li>Document lessons learned for future reference</li></ol>" },
+      ],
+      "page-4-1": [
+        { id: "pb-4-1", type: "text", content: "<h3>Course Summary</h3><p>Throughout this course, you have explored the fundamental principles, key terminology, practical applications, and advanced topics. Let's review the major concepts covered:</p><ul><li><strong>Module 1:</strong> Introduction and learning objectives</li><li><strong>Module 2:</strong> Core concepts and terminology</li><li><strong>Module 3:</strong> Case studies and best practices</li><li><strong>Module 4:</strong> Assessment and review</li></ul><p>We encourage you to revisit any sections where you need additional clarity before taking the final assessment.</p>" },
+      ],
+      "q-4-1": [
+        { id: "pb-q-1", type: "text", content: "<h3>Final Assessment</h3><p>This quiz will test your understanding of the key concepts covered throughout the course. You will need to score at least 70% to pass.</p>" },
+        { id: "pb-q-2", type: "quiz", content: "" },
+      ],
     },
     sectionObjectivesMap: {
       "sec-1": "Introduce learners to the course structure and set clear expectations for the learning journey.",
