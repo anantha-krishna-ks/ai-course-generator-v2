@@ -5,7 +5,7 @@ import {
   ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Eye, Wand2, Plus, X, Undo2,
   FileStack, Layers, HelpCircle, Sparkles, Type, ImageIcon, Video, FileText as DocIcon,
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
-  Check, Send, Loader2, ArrowLeft as ArrowLeftIcon,
+  Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen,
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
@@ -36,7 +36,7 @@ import { DescriptionBlock } from "./DescriptionBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
-import { SectionImageDialog } from "./SectionImageDialog";
+import { ImageBlock } from "./ImageBlock";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
@@ -109,6 +109,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlock[]>>(initialRestoreState?.pageBlocksMap ?? {});
   // Section images map
   const [sectionImages, setSectionImages] = useState<Record<string, string | null>>(initialRestoreState?.sectionImages ?? {});
+  const [sectionObjectivesMap, setSectionObjectivesMap] = useState<Record<string, string>>({});
   const [showSectionImageDialog, setShowSectionImageDialog] = useState<string | null>(null);
   // Last added block tracking
   const [lastAddedBlockId, setLastAddedBlockId] = useState<string | null>(null);
@@ -1078,52 +1079,72 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
                     {/* Section title + image area */}
                     <div className="mb-6">
-                      <div className="flex gap-4">
-                        {/* Section image thumbnail */}
-                        <div
-                          onClick={() => setShowSectionImageDialog(item.id)}
-                          className="w-[120px] h-[110px] rounded-lg border border-dashed border-border bg-muted/30 flex items-center justify-center shrink-0 group/thumb cursor-pointer hover:border-primary/40 hover:bg-muted/50 transition-all duration-200 relative overflow-hidden"
-                        >
-                          {sectionImages[item.id] ? (
-                            <>
-                              <img src={sectionImages[item.id]!} alt="Section thumbnail" className="w-full h-full object-cover" />
-                              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200">
-                                <ImageIcon className="w-5 h-5 text-white mb-1" />
-                                <span className="text-[10px] font-medium text-white">Change image</span>
-                              </div>
-                            </>
-                          ) : (
-                            <div className="flex flex-col items-center gap-1.5 text-muted-foreground/50 group-hover/thumb:text-primary/60 transition-colors">
-                              <ImageIcon className="w-6 h-6" />
-                              <span className="text-[10px] font-medium">Add image</span>
-                            </div>
+                      <div className="mb-4">
+                        <span className="text-sm text-muted-foreground block mb-2">Section title</span>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
+                          className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                          placeholder="Untitled section"
+                        />
+                      </div>
+
+                      {/* Section Image - Full ImageBlock with AI features */}
+                      <div className="mt-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <ImageIcon className="w-4 h-4 text-primary/70" />
+                          <span className="text-sm font-medium text-muted-foreground">Section Image</span>
+                        </div>
+                        <ImageBlock
+                          imageUrl={sectionImages[item.id] || ""}
+                          onChange={(url) => setSectionImages((prev) => ({ ...prev, [item.id]: url || null }))}
+                          aiEnabled={aiEnabled}
+                        />
+                      </div>
+
+                      {/* Section Introduction */}
+                      <div className="mt-5">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="w-4 h-4 text-primary/70" />
+                            <span className="text-sm font-medium text-muted-foreground">Introduction</span>
+                          </div>
+                          {aiEnabled && (
+                            <button className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
+                              <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-section-intro)' }} />
+                              <svg width="0" height="0" className="absolute">
+                                <defs>
+                                  <linearGradient id="ai-gradient-section-intro" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                                    <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                                  </linearGradient>
+                                </defs>
+                              </svg>
+                              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">Ask AI</span>
+                            </button>
                           )}
                         </div>
-
-                        {/* Title input */}
-                        <div className="flex-1 min-w-0">
-                          <span className="text-sm text-muted-foreground block mb-2">Section title</span>
-                          <input
-                            type="text"
-                            value={item.title}
-                            onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
-                            className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
-                            placeholder="Untitled section"
-                          />
-                        </div>
+                        <textarea
+                          value={sectionObjectivesMap[item.id] || ""}
+                          onChange={(e) => {
+                            setSectionObjectivesMap((prev) => ({ ...prev, [item.id]: e.target.value }));
+                            e.target.style.height = 'auto';
+                            e.target.style.height = e.target.scrollHeight + 'px';
+                          }}
+                          ref={(el) => {
+                            if (el) {
+                              el.style.height = 'auto';
+                              el.style.height = el.scrollHeight + 'px';
+                            }
+                          }}
+                          rows={2}
+                          className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
+                          placeholder="Define the introduction for this section…"
+                        />
                       </div>
-                      <div className="border-t border-dashed border-border my-4" />
 
-                      {/* Section Image Dialog */}
-                      <SectionImageDialog
-                        open={showSectionImageDialog === item.id}
-                        onClose={() => setShowSectionImageDialog(null)}
-                        currentImage={sectionImages[item.id] || null}
-                        onImageChange={(url) => {
-                          setSectionImages((prev) => ({ ...prev, [item.id]: url }));
-                          setShowSectionImageDialog(null);
-                        }}
-                      />
+                      <div className="border-t border-dashed border-border my-4" />
                     </div>
 
                     {/* Section content blocks */}
