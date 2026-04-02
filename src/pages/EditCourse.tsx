@@ -98,7 +98,18 @@ function buildMockRestoreState(title: string): MultiPageCourseCreatorRestoreStat
       "sec-4": "Assess understanding and reinforce key takeaways from the course.",
     },
     activeEditorPageId: null,
-    aiOptions: { enabled: true, model: "gpt-4", temperature: 0.7, maxTokens: 2000 } as any,
+    aiOptions: {
+      enabled: true,
+      supportingDocuments: [],
+      bloomsTaxonomy: ["Remember", "Understand", "Apply"],
+      intendedLearners: "Beginners",
+      guidelines: "",
+      guidelinesDocuments: [],
+      exclusions: "",
+      exclusionsDocuments: [],
+      pageSpanTime: 10,
+      courseSpanTime: 60,
+    },
   };
 }
 
