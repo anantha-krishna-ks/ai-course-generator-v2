@@ -384,6 +384,34 @@ const MultipageCoursePreview = () => {
     setMobileOutlineOpen(false);
   };
 
+  // Demo fallback content for preview
+  const DEMO_VIDEO_URL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+  const DEMO_AUDIO_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+  const DEMO_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+  const DEMO_QUIZ_CONTENT = JSON.stringify([
+    {
+      question: "What is the primary purpose of instructional design?",
+      type: "SCQ",
+      options: ["Entertainment", "Creating effective learning experiences", "Data analysis", "Software development"],
+      answer: "Creating effective learning experiences",
+      explanation: "Instructional design focuses on creating effective and engaging learning experiences tailored to learner needs."
+    },
+    {
+      question: "Which of the following are key principles of multimedia learning?",
+      type: "MCQ",
+      options: ["Coherence principle", "Redundancy principle", "Signaling principle", "Complexity principle"],
+      answer: "Coherence principle",
+      explanation: "The coherence, redundancy, and signaling principles are core to Mayer's multimedia learning theory."
+    },
+    {
+      question: "Bloom's Taxonomy classifies learning objectives into cognitive levels.",
+      type: "SCQ",
+      options: ["True", "False"],
+      answer: "True",
+      explanation: "Bloom's Taxonomy organizes cognitive skills from lower-order (remembering) to higher-order (creating)."
+    }
+  ]);
+
   const renderBlockContent = (block: PageContentBlock) => {
     switch (block.type) {
       case "text": {
