@@ -314,26 +314,13 @@ const Dashboard = () => {
           className="mb-8"
         >
           <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm border border-border/60 px-8 py-7">
-            {/* Decorative gradient orbs */}
-            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/[0.08] blur-[80px]" />
-            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-[hsl(270,80%,55%)]/[0.06] blur-[60px]" />
-
-            {/* Decorative floating shapes */}
-            <div className="absolute top-4 right-6 flex gap-2 opacity-[0.15]">
-              <div className="w-8 h-8 rounded-lg border-2 border-primary rotate-12" />
-              <div className="w-5 h-5 rounded-full border-2 border-[hsl(270,80%,55%)] -mt-1" />
-              <div className="w-6 h-6 rounded-md border-2 border-primary/60 rotate-45 mt-3" />
-            </div>
-            <div className="absolute bottom-4 right-24 opacity-[0.1]">
-              <div className="w-10 h-10 rounded-full border-2 border-primary" />
-            </div>
+            {/* Subtle decorative gradient orbs — matching landing/auth aesthetic */}
+            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/[0.06] blur-[80px]" />
+            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-accent/[0.08] blur-[60px]" />
 
             <div className="relative flex items-center justify-between gap-4">
               <div>
-                <h1
-                  className="text-xl font-medium tracking-[-0.02em] bg-gradient-to-r from-primary via-[hsl(230,80%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent"
-                  style={{ fontFamily: "'Geist', sans-serif" }}
-                >
+                <h1 className="text-xl font-medium text-foreground tracking-[-0.02em]" style={{ fontFamily: "'Geist', sans-serif" }}>
                   Welcome back, Admin 👋
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5">
