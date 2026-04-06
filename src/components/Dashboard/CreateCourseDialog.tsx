@@ -149,6 +149,9 @@ function LivePreviewPanel({
             src={selectedLayout === "multi-page" ? previewMultipage : previewSinglepage}
             alt={`${selectedLayout} preview`}
             className="w-full h-[100px] object-cover object-top opacity-80"
+            loading="eager"
+            decoding="sync"
+            fetchPriority="high"
           />
           <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-primary/80 to-transparent" />
         </div>
@@ -287,7 +290,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                     <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
                       <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
-                        <img src={previewMultipage} alt="Multi-page layout preview" className="w-full h-full object-cover object-top" />
+                        <img src={previewMultipage} alt="Multi-page layout preview" className="w-full h-full object-cover object-top" loading="eager" decoding="sync" fetchPriority="high" />
                       </div>
                     </div>
                     <div className="text-center">
@@ -324,7 +327,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                     <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
                       <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
-                        <img src={previewSinglepage} alt="Single-page layout preview" className="w-full h-full object-cover object-top" />
+                        <img src={previewSinglepage} alt="Single-page layout preview" className="w-full h-full object-cover object-top" loading="eager" decoding="sync" fetchPriority="high" />
                       </div>
                     </div>
                     <div className="text-center">
