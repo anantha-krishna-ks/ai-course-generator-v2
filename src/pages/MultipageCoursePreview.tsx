@@ -385,9 +385,9 @@ const MultipageCoursePreview = () => {
   };
 
   // Demo fallback content for preview
-  const DEMO_VIDEO_URL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
-  const DEMO_AUDIO_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
-  const DEMO_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+  const DEMO_VIDEO_URL = "/demo/Motion_Video.mp4";
+  const DEMO_AUDIO_URL = "/demo/actAudio.mp3";
+  const DEMO_PDF_URL = "/demo/G2_EVS.pdf";
   const DEMO_QUIZ_CONTENT = JSON.stringify([
     {
       question: "What is the primary purpose of instructional design?",
