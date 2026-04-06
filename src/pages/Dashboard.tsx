@@ -313,23 +313,23 @@ const Dashboard = () => {
           animate="visible"
           className="mb-8"
         >
-          <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm border border-border/60 px-6 py-4">
+          <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm border border-border/60 px-7 py-5">
             <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/[0.06] blur-[80px]" />
             <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-accent/[0.08] blur-[60px]" />
 
             <div className="relative flex items-center justify-between gap-4">
-              <h1 className="text-lg font-medium tracking-[-0.02em] flex items-center gap-1" style={{ fontFamily: "'Geist', sans-serif" }}>
-                <span className="bg-gradient-to-r from-primary to-[hsl(280,80%,55%)] bg-clip-text text-transparent">Welcome back, Admin</span>
-                <span> 👋</span>
+              <h1 className="text-[22px] font-semibold tracking-[-0.03em] flex items-center gap-1.5" style={{ fontFamily: "'Geist', sans-serif" }}>
+                <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent">Welcome back, Admin</span>
+                <span>👋</span>
               </h1>
 
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <div className="flex items-center gap-3 bg-background/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/40">
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
                   <Layers className="w-3.5 h-3.5 text-primary" />
                   <span><span className="font-semibold text-foreground">13</span> courses created</span>
                 </div>
-                <span className="text-border">·</span>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <span className="w-px h-3.5 bg-border" />
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
                   <TrendingUp className="w-3.5 h-3.5 text-primary" />
                   <span className="font-semibold text-primary">+2</span>
                   <span>this month</span>
