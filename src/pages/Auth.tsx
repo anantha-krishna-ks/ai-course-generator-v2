@@ -110,8 +110,7 @@ const Auth = () => {
         initial="hidden"
         animate="visible"
         onClick={() => navigate("/")}
-        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-[14px] text-[#373a46] opacity-70 hover:opacity-100 transition-opacity"
-        style={{ fontFamily: "'Geist', sans-serif" }}
+        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back
@@ -119,7 +118,7 @@ const Auth = () => {
 
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
-        <div className="w-full max-w-[420px] flex flex-col gap-8">
+        <div className="w-full max-w-[460px] flex flex-col gap-8">
           {/* Header */}
           <motion.div
             custom={0}
@@ -128,18 +127,12 @@ const Auth = () => {
             animate="visible"
             className="text-center"
           >
-            <h1
-              className="text-[36px] text-[#1a1a2e] tracking-[-0.04em] leading-tight"
-              style={{ fontFamily: "'Geist', sans-serif", fontWeight: 500 }}
-            >
+            <h1 className="text-[38px] text-foreground tracking-[-0.04em] leading-tight font-medium">
               {mode === "login" && "Welcome back"}
               {mode === "signup" && "Create account"}
               {mode === "forgot" && "Reset password"}
             </h1>
-            <p
-              className="mt-3 text-[16px] text-[#373a46] opacity-60"
-              style={{ fontFamily: "'Geist', sans-serif" }}
-            >
+            <p className="mt-3 text-base text-muted-foreground">
               {mode === "login" && "Sign in to continue to your dashboard"}
               {mode === "signup" && "Enter your details to get started"}
               {mode === "forgot" && "Enter your login ID to receive a reset link"}
