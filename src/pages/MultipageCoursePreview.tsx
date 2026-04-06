@@ -569,7 +569,8 @@ const MultipageCoursePreview = () => {
           return null;
         }
       }
-      case "audio":
+      case "audio": {
+        const audioSrc = block.content || DEMO_AUDIO_URL;
         return (
           <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
             <div className="flex items-center gap-4">
@@ -577,18 +578,16 @@ const MultipageCoursePreview = () => {
                 <Music className="w-6 h-6 text-primary/70" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground mb-2">Audio</p>
-                {block.content ? (
-                  <audio src={block.content} controls className="w-full h-8" />
-                ) : (
-                  <div className="h-8 bg-muted/50 rounded-full flex items-center px-4">
-                    <div className="w-full h-1 bg-border rounded-full" />
-                  </div>
+                <p className="text-sm font-medium text-foreground mb-2">{block.content ? "Audio" : "Sample Audio Track"}</p>
+                <audio src={audioSrc} controls className="w-full h-8" />
+                {!block.content && (
+                  <p className="text-xs text-muted-foreground italic mt-1">Sample audio — replace with your own content</p>
                 )}
               </div>
             </div>
           </div>
         );
+      }
       case "doc":
         return (
           <div className="rounded-xl border border-border/60 bg-background overflow-hidden shadow-sm">
