@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -54,7 +55,7 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
         <DialogHeader className="px-6 pt-5 pb-4 bg-gradient-to-br from-primary/5 to-primary/10 border-b">
           <DialogTitle className="text-lg flex items-center gap-2.5 font-semibold">
             <div className="p-1.5 rounded-lg bg-primary/10">
-              <Sparkles className="w-4.5 h-4.5 text-primary" />
+              <AISparkles className="w-4.5 h-4.5" />
             </div>
             Generate Quiz
           </DialogTitle>

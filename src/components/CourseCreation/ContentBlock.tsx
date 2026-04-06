@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3 } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -382,7 +383,7 @@ export function ContentBlock({
                           variant="ghost"
                           className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                         >
-                          <Sparkles className="w-3 h-3" />
+                          <AISparkles className="w-3 h-3" />
                           Ask AI
                         </Button>
                         <Button
@@ -510,7 +511,7 @@ export function ContentBlock({
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
               <div className="p-1.5 rounded-lg bg-primary/10">
-                <Sparkles className="w-4 h-4 text-primary" />
+                <AISparkles className="w-4 h-4" />
               </div>
               {type === "image" ? "Generate image with AI" : "Generate text with AI"}
             </DialogTitle>
