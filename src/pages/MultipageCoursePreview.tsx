@@ -469,7 +469,8 @@ const MultipageCoursePreview = () => {
       }
       case "quiz":
         try {
-          const questions = JSON.parse(block.content);
+          const quizContent = block.content || DEMO_QUIZ_CONTENT;
+          const questions = JSON.parse(quizContent);
           if (!Array.isArray(questions)) return null;
           return (
             <div className="space-y-4">
