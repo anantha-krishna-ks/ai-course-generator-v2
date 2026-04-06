@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, Star } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  
 
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -74,30 +73,19 @@ const Index = () => {
           Powered by AI, designed for educators and teams.
         </motion.p>
 
-        {/* Email Input + CTA */}
-        <motion.div
+        {/* CTA Button */}
+        <motion.button
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex items-center gap-2 rounded-[40px] bg-[#fcfcfc] border border-[#e8e8e8] px-2 py-2 shadow-[0px_10px_40px_5px_rgba(194,194,194,0.25)] w-full max-w-[480px]"
+          onClick={() => navigate("/auth")}
+          className="flex items-center gap-2 rounded-[32px] bg-gradient-to-b from-[#2a2a3a] to-[#1a1a2e] px-8 py-4 text-[16px] font-medium text-white shadow-[inset_-4px_-6px_25px_0px_rgba(201,201,201,0.08),inset_4px_4px_10px_0px_rgba(29,29,29,0.24)] transition-all hover:opacity-90"
+          style={{ fontFamily: "'Geist', sans-serif" }}
         >
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 bg-transparent px-5 py-3 text-[15px] text-[#1a1a2e] placeholder:text-[#9ca3af] outline-none"
-            style={{ fontFamily: "'Geist', sans-serif" }}
-          />
-          <button
-            onClick={() => navigate("/auth")}
-            className="rounded-[32px] bg-gradient-to-b from-[#2a2a3a] to-[#1a1a2e] px-6 py-3 text-[14px] font-medium text-white shadow-[inset_-4px_-6px_25px_0px_rgba(201,201,201,0.08),inset_4px_4px_10px_0px_rgba(29,29,29,0.24)] transition-all hover:opacity-90 whitespace-nowrap"
-            style={{ fontFamily: "'Geist', sans-serif" }}
-          >
-            Get Started Free
-          </button>
-        </motion.div>
+          Get Started
+          <ArrowRight className="h-5 w-5" />
+        </motion.button>
 
         {/* Social Proof */}
         <motion.div
