@@ -415,7 +415,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold text-foreground tracking-[-0.02em]">All Courses</h2>
 
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" />
             <Input
               type="text"
               placeholder="Search courses..."
