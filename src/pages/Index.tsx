@@ -80,7 +80,7 @@ const Index = () => {
           initial="hidden"
           animate="visible"
           onClick={() => navigate("/auth")}
-          className="flex items-center gap-2 rounded-[32px] bg-gradient-to-b from-[#2a2a3a] to-[#1a1a2e] px-8 py-4 text-[16px] font-medium text-white shadow-[inset_-4px_-6px_25px_0px_rgba(201,201,201,0.08),inset_4px_4px_10px_0px_rgba(29,29,29,0.24)] transition-all hover:opacity-90"
+          className="flex items-center gap-2 rounded-[32px] bg-primary px-8 py-4 text-[16px] font-medium text-primary-foreground shadow-[0px_10px_40px_5px_rgba(0,90,200,0.15)] transition-all hover:bg-primary/90"
           style={{ fontFamily: "'Geist', sans-serif" }}
         >
           Get Started
