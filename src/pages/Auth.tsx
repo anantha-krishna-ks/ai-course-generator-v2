@@ -110,7 +110,7 @@ const Auth = () => {
         initial="hidden"
         animate="visible"
         onClick={() => navigate("/")}
-        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="absolute top-8 left-8 z-20 flex items-center gap-2 px-4 py-2 rounded-xl border border-white/30 bg-white/20 backdrop-blur-md text-sm text-foreground/70 hover:bg-white/40 hover:text-foreground hover:border-white/50 hover:shadow-sm transition-all duration-200 hover-scale"
       >
         <ArrowLeft className="h-4 w-4" />
         Back
