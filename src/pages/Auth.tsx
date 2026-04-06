@@ -110,8 +110,7 @@ const Auth = () => {
         initial="hidden"
         animate="visible"
         onClick={() => navigate("/")}
-        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-[14px] text-[#373a46] opacity-70 hover:opacity-100 transition-opacity"
-        style={{ fontFamily: "'Geist', sans-serif" }}
+        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back
@@ -119,7 +118,7 @@ const Auth = () => {
 
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
-        <div className="w-full max-w-[420px] flex flex-col gap-8">
+        <div className="w-full max-w-[460px] flex flex-col gap-8">
           {/* Header */}
           <motion.div
             custom={0}
@@ -128,18 +127,12 @@ const Auth = () => {
             animate="visible"
             className="text-center"
           >
-            <h1
-              className="text-[36px] text-[#1a1a2e] tracking-[-0.04em] leading-tight"
-              style={{ fontFamily: "'Geist', sans-serif", fontWeight: 500 }}
-            >
+            <h1 className="text-[38px] text-foreground tracking-[-0.04em] leading-tight font-medium">
               {mode === "login" && "Welcome back"}
               {mode === "signup" && "Create account"}
               {mode === "forgot" && "Reset password"}
             </h1>
-            <p
-              className="mt-3 text-[16px] text-[#373a46] opacity-60"
-              style={{ fontFamily: "'Geist', sans-serif" }}
-            >
+            <p className="mt-3 text-base text-muted-foreground">
               {mode === "login" && "Sign in to continue to your dashboard"}
               {mode === "signup" && "Enter your details to get started"}
               {mode === "forgot" && "Enter your login ID to receive a reset link"}
@@ -152,14 +145,13 @@ const Auth = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="rounded-2xl bg-[#fcfcfc] border border-[#e8e8e8] p-8 shadow-[0px_10px_40px_5px_rgba(194,194,194,0.25)]"
+            className="rounded-2xl bg-background/95 backdrop-blur-sm border border-border p-10 shadow-[0px_12px_48px_8px_rgba(194,194,194,0.3)] w-full max-w-[460px] mx-auto"
           >
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2.5">
                 <Label
                   htmlFor="email"
-                  className="text-[13px] font-medium text-[#1a1a2e]"
-                  style={{ fontFamily: "'Geist', sans-serif" }}
+                  className="text-sm font-medium text-foreground"
                 >
                   Login ID
                 </Label>
@@ -170,18 +162,16 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-11 rounded-xl border-[#e8e8e8] bg-white text-[14px] placeholder:text-[#9ca3af] focus-visible:ring-primary"
-                  style={{ fontFamily: "'Geist', sans-serif" }}
+                  className="h-12 rounded-xl border-border bg-background text-[15px] placeholder:text-muted-foreground focus-visible:ring-primary"
                 />
               </div>
 
               {mode !== "forgot" && (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <Label
                       htmlFor="password"
-                      className="text-[13px] font-medium text-[#1a1a2e]"
-                      style={{ fontFamily: "'Geist', sans-serif" }}
+                      className="text-sm font-medium text-foreground"
                     >
                       Password
                     </Label>
@@ -189,8 +179,7 @@ const Auth = () => {
                       <button
                         type="button"
                         onClick={() => setMode("forgot")}
-                        className="text-[12px] text-primary hover:underline"
-                        style={{ fontFamily: "'Geist', sans-serif" }}
+                        className="text-[13px] text-primary hover:underline"
                       >
                         Forgot password?
                       </button>
@@ -204,26 +193,24 @@ const Auth = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="h-11 rounded-xl border-[#e8e8e8] bg-white text-[14px] pr-10 focus-visible:ring-primary"
-                      style={{ fontFamily: "'Geist', sans-serif" }}
+                      className="h-12 rounded-xl border-border bg-background text-[15px] pr-11 focus-visible:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#1a1a2e] transition-colors"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
                     </button>
                   </div>
                 </div>
               )}
 
               {mode === "signup" && (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <Label
                     htmlFor="confirmPassword"
-                    className="text-[13px] font-medium text-[#1a1a2e]"
-                    style={{ fontFamily: "'Geist', sans-serif" }}
+                    className="text-sm font-medium text-foreground"
                   >
                     Confirm Password
                   </Label>
@@ -235,15 +222,14 @@ const Auth = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
-                      className="h-11 rounded-xl border-[#e8e8e8] bg-white text-[14px] pr-10 focus-visible:ring-primary"
-                      style={{ fontFamily: "'Geist', sans-serif" }}
+                      className="h-12 rounded-xl border-border bg-background text-[15px] pr-11 focus-visible:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#1a1a2e] transition-colors"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showConfirmPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
                     </button>
                   </div>
                 </div>
@@ -252,28 +238,24 @@ const Auth = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-[14px] font-medium transition-all hover:bg-primary/90 disabled:opacity-50"
-                style={{ fontFamily: "'Geist', sans-serif" }}
+                className="w-full h-12 flex items-center justify-center gap-2.5 rounded-xl bg-primary text-primary-foreground text-[15px] font-medium transition-all hover:bg-primary/90 disabled:opacity-50 mt-2"
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Loading...
+                    <Loader2 className="w-[18px] h-[18px] animate-spin" />
+                    Signing in...
                   </>
                 ) : (
                   <>
-                    {mode === "login" && <><LogIn className="w-4 h-4" />Sign in</>}
-                    {mode === "signup" && <><UserPlus className="w-4 h-4" />Create account</>}
-                    {mode === "forgot" && <><Mail className="w-4 h-4" />Send reset link</>}
+                    {mode === "login" && <><LogIn className="w-[18px] h-[18px]" />Sign in</>}
+                    {mode === "signup" && <><UserPlus className="w-[18px] h-[18px]" />Create account</>}
+                    {mode === "forgot" && <><Mail className="w-[18px] h-[18px]" />Send reset link</>}
                   </>
                 )}
               </button>
             </form>
 
-            <div
-              className="mt-6 text-center text-[13px] text-[#373a46] opacity-60"
-              style={{ fontFamily: "'Geist', sans-serif" }}
-            >
+            <div className="mt-7 text-center text-sm text-muted-foreground">
               {mode === "login" && (
                 <p>
                   Don't have an account?{" "}
