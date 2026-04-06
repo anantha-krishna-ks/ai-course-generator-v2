@@ -44,21 +44,21 @@ import { brandingService, BrandingSettings } from "@/services/brandingService";
 import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
 
 const mockCourses = [
-  { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
-  { id: 2, title: "Budgeting in Management", thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop", students: 189, progress: 92, lastUpdated: "1 week ago" },
-  { id: 3, title: "carbon accounting-0810-01", thumbnail: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=400&h=300&fit=crop", students: 456, progress: 78, lastUpdated: "3 days ago" },
-  { id: 4, title: "carbon accounting-0810", thumbnail: "https://images.unsplash.com/photo-1557683316-973673baf926?w=400&h=300&fit=crop", students: 312, progress: 88, lastUpdated: "5 days ago" },
-  { id: 5, title: "Carbon Accounting-0710", thumbnail: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=400&h=300&fit=crop", students: 523, progress: 95, lastUpdated: "1 day ago" },
-  { id: 6, title: "Financial Analysis Fundamentals", thumbnail: "https://images.unsplash.com/photo-1634017839464-5c339ebe3579?w=400&h=300&fit=crop", students: 398, progress: 82, lastUpdated: "4 days ago" },
-  { id: 7, title: "Advanced Cost Management", thumbnail: "https://images.unsplash.com/photo-1614851099511-773084f6911d?w=400&h=300&fit=crop", students: 276, progress: 76, lastUpdated: "6 days ago" },
-  { id: 8, title: "Taxation and Compliance 2024", thumbnail: "https://images.unsplash.com/photo-1579547945413-497e1b99dac0?w=400&h=300&fit=crop", students: 419, progress: 91, lastUpdated: "3 hours ago" },
-  { id: 9, title: "Strategic Financial Planning", thumbnail: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=400&h=300&fit=crop", students: 345, progress: 68, lastUpdated: "2 weeks ago" },
-  { id: 10, title: "Auditing Standards & Practices", thumbnail: "https://images.unsplash.com/photo-1604076913837-52ab5f7c1ac4?w=400&h=300&fit=crop", students: 502, progress: 94, lastUpdated: "12 hours ago" },
-  { id: 11, title: "Corporate Finance Essentials", thumbnail: "https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?w=400&h=300&fit=crop", students: 287, progress: 73, lastUpdated: "1 week ago" },
-  { id: 12, title: "Management Accounting Pro", thumbnail: "https://images.unsplash.com/photo-1614854262318-831574f15f1f?w=400&h=300&fit=crop", students: 431, progress: 87, lastUpdated: "5 days ago" },
-  { id: 13, title: "International Financial Reporting", thumbnail: "https://images.unsplash.com/photo-1567095761054-7a02e69e5b2b?w=400&h=300&fit=crop", students: 364, progress: 79, lastUpdated: "8 days ago" },
-  { id: 14, title: "Risk Assessment & Control", thumbnail: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=400&h=300&fit=crop", students: 215, progress: 65, lastUpdated: "10 days ago" },
-  { id: 15, title: "Financial Forecasting Methods", thumbnail: "https://images.unsplash.com/photo-1604076850742-4c7221f3101b?w=400&h=300&fit=crop", students: 478, progress: 89, lastUpdated: "4 hours ago" },
+  { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
+  { id: 2, title: "Budgeting in Management", thumbnail: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop", students: 189, progress: 92, lastUpdated: "1 week ago" },
+  { id: 3, title: "carbon accounting-0810-01", thumbnail: "https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=400&h=300&fit=crop", students: 456, progress: 78, lastUpdated: "3 days ago" },
+  { id: 4, title: "carbon accounting-0810", thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop", students: 312, progress: 88, lastUpdated: "5 days ago" },
+  { id: 5, title: "Carbon Accounting-0710", thumbnail: "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=400&h=300&fit=crop", students: 523, progress: 95, lastUpdated: "1 day ago" },
+  { id: 6, title: "Financial Analysis Fundamentals", thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop", students: 398, progress: 82, lastUpdated: "4 days ago" },
+  { id: 7, title: "Advanced Cost Management", thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop", students: 276, progress: 76, lastUpdated: "6 days ago" },
+  { id: 8, title: "Taxation and Compliance 2024", thumbnail: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop", students: 419, progress: 91, lastUpdated: "3 hours ago" },
+  { id: 9, title: "Strategic Financial Planning", thumbnail: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=300&fit=crop", students: 345, progress: 68, lastUpdated: "2 weeks ago" },
+  { id: 10, title: "Auditing Standards & Practices", thumbnail: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop", students: 502, progress: 94, lastUpdated: "12 hours ago" },
+  { id: 11, title: "Corporate Finance Essentials", thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=300&fit=crop", students: 287, progress: 73, lastUpdated: "1 week ago" },
+  { id: 12, title: "Management Accounting Pro", thumbnail: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop", students: 431, progress: 87, lastUpdated: "5 days ago" },
+  { id: 13, title: "International Financial Reporting", thumbnail: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=300&fit=crop", students: 364, progress: 79, lastUpdated: "8 days ago" },
+  { id: 14, title: "Risk Assessment & Control", thumbnail: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=300&fit=crop", students: 215, progress: 65, lastUpdated: "10 days ago" },
+  { id: 15, title: "Financial Forecasting Methods", thumbnail: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop", students: 478, progress: 89, lastUpdated: "4 hours ago" },
 ];
 
 const fadeUp = {
