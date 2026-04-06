@@ -313,21 +313,27 @@ const Dashboard = () => {
           animate="visible"
           className="mb-8"
         >
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-medium text-foreground tracking-[-0.02em]" style={{ fontFamily: "'Geist', sans-serif" }}>
-                Welcome back, Admin 👋
-              </h1>
-              <div className="flex items-center gap-2 mt-1.5">
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Layers className="w-3.5 h-3.5 text-primary" />
-                  <span><span className="font-semibold text-foreground">13</span> courses created</span>
-                </div>
-                <span className="text-border">·</span>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <TrendingUp className="w-3.5 h-3.5 text-primary" />
-                  <span className="font-semibold text-primary">+2</span>
-                  <span>this month</span>
+          <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-sm border border-border/60 px-8 py-7">
+            {/* Subtle decorative gradient orbs — matching landing/auth aesthetic */}
+            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/[0.06] blur-[80px]" />
+            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-accent/[0.08] blur-[60px]" />
+
+            <div className="relative flex items-center justify-between gap-4">
+              <div>
+                <h1 className="text-xl font-medium text-foreground tracking-[-0.02em]" style={{ fontFamily: "'Geist', sans-serif" }}>
+                  Welcome back, Admin 👋
+                </h1>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Layers className="w-3.5 h-3.5 text-primary" />
+                    <span><span className="font-semibold text-foreground">13</span> courses created</span>
+                  </div>
+                  <span className="text-border">·</span>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                    <span className="font-semibold text-primary">+2</span>
+                    <span>this month</span>
+                  </div>
                 </div>
               </div>
             </div>
