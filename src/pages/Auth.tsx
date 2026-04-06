@@ -118,7 +118,7 @@ const Auth = () => {
 
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
-        <div className="w-full max-w-[460px] flex flex-col gap-8">
+        <div className="w-full max-w-[460px] flex flex-col gap-8 bg-white/60 backdrop-blur-sm rounded-3xl p-8">
           {/* Header */}
           <motion.div
             custom={0}
