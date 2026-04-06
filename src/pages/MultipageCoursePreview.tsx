@@ -1062,19 +1062,23 @@ const MultipageCoursePreview = () => {
                     <div className="w-16 h-[3px] bg-primary rounded-full" />
                   </div>
 
-                  {currentPageBlocks.length > 0 ? (
-                    <div className="space-y-5 sm:space-y-6">
-                      {currentPageBlocks.map((block) => (
-                        <div key={block.id}>{renderBlockContent(block)}</div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="py-12 sm:py-16 flex flex-col items-center justify-center text-center">
-                      <img src={emptyPageIllustration} alt="Empty page" className="w-24 sm:w-28 h-24 sm:h-28 opacity-30 mb-5" />
-                      <p className="text-sm font-medium text-muted-foreground/50 mb-1">No content yet</p>
-                      <p className="text-xs text-muted-foreground/30">This page is waiting for content to be added</p>
-                    </div>
-                  )}
+                  {(() => {
+                    // Use actual blocks, or inject demo blocks if page has none
+                    const blocksToRender = currentPageBlocks.length > 0 ? currentPageBlocks : [
+                      { id: "demo-text", type: "text" as const, content: "<h3>Welcome to this lesson</h3><p>This page demonstrates how different content types appear in the course preview. Below you'll find sample video, audio, document, and quiz content blocks.</p>" },
+                      { id: "demo-video", type: "video" as const, content: "" },
+                      { id: "demo-audio", type: "audio" as const, content: "" },
+                      { id: "demo-doc", type: "doc" as const, content: "" },
+                      { id: "demo-quiz", type: "quiz" as const, content: "" },
+                    ];
+                    return (
+                      <div className="space-y-5 sm:space-y-6">
+                        {blocksToRender.map((block) => (
+                          <div key={block.id}>{renderBlockContent(block)}</div>
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* Navigation - desktop inline, mobile uses bottom bar */}
                   {!isCompactView && (
