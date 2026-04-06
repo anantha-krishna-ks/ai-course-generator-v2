@@ -318,7 +318,7 @@ const Dashboard = () => {
             <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-accent/[0.08] blur-[60px]" />
 
             <div className="relative flex items-center justify-between gap-4">
-              <h1 className="text-[22px] font-semibold tracking-[-0.03em] flex items-center gap-1.5" style={{ fontFamily: "'Geist', sans-serif" }}>
+              <h1 className="text-[22px] font-medium tracking-[-0.03em] flex items-center gap-1.5" style={{ fontFamily: "'Geist', sans-serif" }}>
                 <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent">Welcome back, Admin</span>
                 <span>👋</span>
               </h1>
