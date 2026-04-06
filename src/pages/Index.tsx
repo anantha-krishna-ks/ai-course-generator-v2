@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, Star } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
