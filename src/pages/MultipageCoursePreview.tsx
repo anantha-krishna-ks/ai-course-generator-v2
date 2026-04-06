@@ -523,25 +523,24 @@ const MultipageCoursePreview = () => {
         } catch {
           return null;
         }
-      case "video":
+      case "video": {
+        const videoSrc = block.content || DEMO_VIDEO_URL;
         return (
           <div className="rounded-xl overflow-hidden border border-border/40 bg-black/5">
-            {block.content ? (
-              <video
-                src={block.content}
-                controls
-                className="w-full max-h-[400px] rounded-xl"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center py-16 gap-3">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Video className="w-7 h-7 text-primary/60" />
-                </div>
-                <p className="text-sm text-muted-foreground">Video content</p>
+            <video
+              src={videoSrc}
+              controls
+              className="w-full max-h-[400px] rounded-xl"
+              poster={!block.content ? "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80" : undefined}
+            />
+            {!block.content && (
+              <div className="px-4 py-2 bg-muted/30 border-t border-border/30">
+                <p className="text-xs text-muted-foreground italic">Sample video — replace with your own content</p>
               </div>
             )}
           </div>
         );
+      }
       case "video-description": {
         try {
           const parsed = JSON.parse(block.content);
