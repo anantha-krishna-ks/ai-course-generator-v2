@@ -384,6 +384,34 @@ const MultipageCoursePreview = () => {
     setMobileOutlineOpen(false);
   };
 
+  // Demo fallback content for preview
+  const DEMO_VIDEO_URL = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+  const DEMO_AUDIO_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+  const DEMO_PDF_URL = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+  const DEMO_QUIZ_CONTENT = JSON.stringify([
+    {
+      question: "What is the primary purpose of instructional design?",
+      type: "SCQ",
+      options: ["Entertainment", "Creating effective learning experiences", "Data analysis", "Software development"],
+      answer: "Creating effective learning experiences",
+      explanation: "Instructional design focuses on creating effective and engaging learning experiences tailored to learner needs."
+    },
+    {
+      question: "Which of the following are key principles of multimedia learning?",
+      type: "MCQ",
+      options: ["Coherence principle", "Redundancy principle", "Signaling principle", "Complexity principle"],
+      answer: "Coherence principle",
+      explanation: "The coherence, redundancy, and signaling principles are core to Mayer's multimedia learning theory."
+    },
+    {
+      question: "Bloom's Taxonomy classifies learning objectives into cognitive levels.",
+      type: "SCQ",
+      options: ["True", "False"],
+      answer: "True",
+      explanation: "Bloom's Taxonomy organizes cognitive skills from lower-order (remembering) to higher-order (creating)."
+    }
+  ]);
+
   const renderBlockContent = (block: PageContentBlock) => {
     switch (block.type) {
       case "text": {
@@ -441,7 +469,8 @@ const MultipageCoursePreview = () => {
       }
       case "quiz":
         try {
-          const questions = JSON.parse(block.content);
+          const quizContent = block.content || DEMO_QUIZ_CONTENT;
+          const questions = JSON.parse(quizContent);
           if (!Array.isArray(questions)) return null;
           return (
             <div className="space-y-4">
@@ -495,25 +524,24 @@ const MultipageCoursePreview = () => {
         } catch {
           return null;
         }
-      case "video":
+      case "video": {
+        const videoSrc = block.content || DEMO_VIDEO_URL;
         return (
           <div className="rounded-xl overflow-hidden border border-border/40 bg-black/5">
-            {block.content ? (
-              <video
-                src={block.content}
-                controls
-                className="w-full max-h-[400px] rounded-xl"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center py-16 gap-3">
-                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Video className="w-7 h-7 text-primary/60" />
-                </div>
-                <p className="text-sm text-muted-foreground">Video content</p>
+            <video
+              src={videoSrc}
+              controls
+              className="w-full max-h-[400px] rounded-xl"
+              poster={!block.content ? "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80" : undefined}
+            />
+            {!block.content && (
+              <div className="px-4 py-2 bg-muted/30 border-t border-border/30">
+                <p className="text-xs text-muted-foreground italic">Sample video — replace with your own content</p>
               </div>
             )}
           </div>
         );
+      }
       case "video-description": {
         try {
           const parsed = JSON.parse(block.content);
@@ -542,7 +570,8 @@ const MultipageCoursePreview = () => {
           return null;
         }
       }
-      case "audio":
+      case "audio": {
+        const audioSrc = block.content || DEMO_AUDIO_URL;
         return (
           <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
             <div className="flex items-center gap-4">
@@ -550,101 +579,53 @@ const MultipageCoursePreview = () => {
                 <Music className="w-6 h-6 text-primary/70" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground mb-2">Audio</p>
-                {block.content ? (
-                  <audio src={block.content} controls className="w-full h-8" />
-                ) : (
-                  <div className="h-8 bg-muted/50 rounded-full flex items-center px-4">
-                    <div className="w-full h-1 bg-border rounded-full" />
-                  </div>
+                <p className="text-sm font-medium text-foreground mb-2">{block.content ? "Audio" : "Sample Audio Track"}</p>
+                <audio src={audioSrc} controls className="w-full h-8" />
+                {!block.content && (
+                  <p className="text-xs text-muted-foreground italic mt-1">Sample audio — replace with your own content</p>
                 )}
               </div>
             </div>
           </div>
         );
-      case "doc":
+      }
+      case "doc": {
+        const docSrc = block.content || DEMO_PDF_URL;
         return (
           <div className="rounded-xl border border-border/60 bg-background overflow-hidden shadow-sm">
-            {/* Top header bar - file info + download */}
             <div className="flex items-center gap-3 px-4 sm:px-5 py-3 border-b border-border/40 bg-muted/30">
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 border border-border/40">
                 <FileText className="w-5 h-5 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm sm:text-base font-semibold text-foreground truncate">
-                  Course Document
+                  {block.content ? "Course Document" : "Sample Course Document"}
                 </p>
+                {!block.content && (
+                  <p className="text-xs text-muted-foreground">Sample PDF — replace with your own document</p>
+                )}
               </div>
-              {block.content && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full gap-1.5 text-xs font-medium flex-shrink-0 h-8 px-4 border-border"
-                  onClick={() => window.open(block.content, '_blank')}
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  DOWNLOAD
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full gap-1.5 text-xs font-medium flex-shrink-0 h-8 px-4 border-border"
+                onClick={() => window.open(docSrc, '_blank')}
+              >
+                <Download className="w-3.5 h-3.5" />
+                DOWNLOAD
+              </Button>
             </div>
-
-            {/* Document viewer area */}
-            {block.content ? (
-              <div className="relative bg-muted/20">
-                <iframe
-                  src={block.content}
-                  className="w-full border-0"
-                  style={{ height: isCompactView ? '400px' : '600px' }}
-                  title="Document viewer"
-                />
-              </div>
-            ) : (
-              <div className="bg-muted/10">
-                {/* Mock document page */}
-                <div className="mx-auto max-w-[90%] sm:max-w-[85%] my-6 bg-background border border-border/30 rounded shadow-md">
-                  <div className="p-8 sm:p-12 space-y-6">
-                    <div className="h-5 w-3/4 bg-muted/60 rounded" />
-                    <div className="h-4 w-1/2 bg-primary/20 rounded" />
-                    <div className="space-y-2.5 pt-2">
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-5/6 bg-muted/40 rounded" />
-                    </div>
-                    <div className="space-y-2.5 pt-4">
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-4/6 bg-muted/40 rounded" />
-                    </div>
-                    <div className="mt-6 border border-border/30 rounded-lg overflow-hidden">
-                      <div className="bg-muted/30 p-2.5 flex gap-4">
-                        <div className="h-3 w-1/4 bg-muted/50 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/50 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/50 rounded" />
-                      </div>
-                      <div className="p-2.5 flex gap-4">
-                        <div className="h-3 w-1/4 bg-muted/30 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/30 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/30 rounded" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom bar - page info */}
-                <div className="flex items-center justify-between px-4 py-2 border-t border-border/30 bg-muted/20">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-muted-foreground/50" />
-                    <span className="text-xs font-medium text-muted-foreground">PAGE 1 OF 1</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground">100%</span>
-                    <Maximize2 className="w-3.5 h-3.5 text-muted-foreground/50" />
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="relative bg-muted/20">
+              <iframe
+                src={docSrc}
+                className="w-full border-0"
+                style={{ height: isCompactView ? '400px' : '600px' }}
+                title="Document viewer"
+              />
+            </div>
           </div>
         );
+      }
       default:
         return block.content ? (
           <div className="p-4 bg-muted/30 rounded-xl border border-border/40 text-sm text-muted-foreground">
