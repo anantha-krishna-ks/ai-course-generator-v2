@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers, GraduationCap } from "lucide-react";
+import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers } from "lucide-react";
 import { motion } from "framer-motion";
 import { tokenApi, TokenInfo } from "@/services/tokenApi";
 import { useToast } from "@/hooks/use-toast";
@@ -313,34 +313,21 @@ const Dashboard = () => {
           animate="visible"
           className="mb-8"
         >
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 border border-primary/15 p-8 backdrop-blur-sm">
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/4" />
-            
-            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground tracking-[-0.02em]" style={{ fontFamily: "'Geist', sans-serif" }}>
-                  Welcome back, Admin 👋
-                </h1>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  You have <span className="font-semibold text-primary">13 courses</span> created
-                  {" · "}
-                  <span className="font-semibold text-primary">+2</span> added this month
-                </p>
-              </div>
-
-              {/* Quick stat pills */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-sm border border-border shadow-sm">
-                  <Layers className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold text-foreground">15</span>
-                  <span className="text-xs text-muted-foreground">Courses</span>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-medium text-foreground tracking-[-0.02em]" style={{ fontFamily: "'Geist', sans-serif" }}>
+                Welcome back, Admin 👋
+              </h1>
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Layers className="w-3.5 h-3.5 text-primary" />
+                  <span><span className="font-semibold text-foreground">13</span> courses created</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur-sm border border-border shadow-sm">
-                  <GraduationCap className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold text-foreground">4.8k</span>
-                  <span className="text-xs text-muted-foreground">Students</span>
+                <span className="text-border">·</span>
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                  <span className="font-semibold text-primary">+2</span>
+                  <span>this month</span>
                 </div>
               </div>
             </div>
