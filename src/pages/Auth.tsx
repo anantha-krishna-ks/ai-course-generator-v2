@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogIn, UserPlus, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
+import { LogIn, UserPlus, Mail, Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import logo from "@/assets/logo.png";
 
 type AuthMode = "login" | "signup" | "forgot";
 
@@ -27,34 +24,20 @@ const Auth = () => {
     
     if (mode === "login") {
       setIsLoading(true);
-      
-      // Demo mode: Accept any credentials for testing
-      // This bypasses the external API which has CORS restrictions
       const DEMO_MODE = true;
       
       if (DEMO_MODE) {
-        // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 800));
         
         if (email && password) {
-          // Generate a demo token
           const demoToken = `demo_token_${Date.now()}`;
           localStorage.setItem("api_token", demoToken);
-          
-          toast({
-            title: "Login successful",
-            description: "Welcome back! (Demo Mode)",
-          });
-          
+          toast({ title: "Login successful", description: "Welcome back! (Demo Mode)" });
           setIsLoading(false);
           navigate("/dashboard");
           return;
         } else {
-          toast({
-            title: "Login failed",
-            description: "Please enter both login ID and password",
-            variant: "destructive",
-          });
+          toast({ title: "Login failed", description: "Please enter both login ID and password", variant: "destructive" });
           setIsLoading(false);
           return;
         }
@@ -65,32 +48,15 @@ const Auth = () => {
           "https://seab-testing.excelindia.com/contentv3api/api/user/login",
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              LoginId: email,
-              Password: password,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ LoginId: email, Password: password }),
           }
         );
-
         const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.Message || "Login failed");
-        }
-
+        if (!response.ok) throw new Error(data.Message || "Login failed");
         if (data.Status === 0) {
-          // Success - token is in Message field
-          const token = data.Message;
-          localStorage.setItem("api_token", token);
-          
-          toast({
-            title: "Login successful",
-            description: "Welcome back!",
-          });
-          
+          localStorage.setItem("api_token", data.Message);
+          toast({ title: "Login successful", description: "Welcome back!" });
           navigate("/dashboard");
         } else if (data.Status === 2) {
           throw new Error(data.Message || "Invalid credentials");
@@ -98,298 +64,260 @@ const Auth = () => {
           throw new Error("Unexpected response from server");
         }
       } catch (error) {
-        toast({
-          title: "Login failed",
-          description: error instanceof Error ? error.message : "Invalid login credentials",
-          variant: "destructive",
-        });
+        toast({ title: "Login failed", description: error instanceof Error ? error.message : "Invalid login credentials", variant: "destructive" });
       } finally {
         setIsLoading(false);
       }
     } else if (mode === "signup") {
-      toast({
-        title: "Sign up not available",
-        description: "Please contact your administrator to create an account",
-        variant: "destructive",
-      });
+      toast({ title: "Sign up not available", description: "Please contact your administrator to create an account", variant: "destructive" });
     } else if (mode === "forgot") {
-      toast({
-        title: "Password reset not available",
-        description: "Please contact your administrator to reset your password",
-        variant: "destructive",
-      });
+      toast({ title: "Password reset not available", description: "Please contact your administrator to reset your password", variant: "destructive" });
     }
   };
 
+  const fadeUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.12, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
+    }),
+  };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side - Decorative panel */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-2/5 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          {/* Geometric pattern */}
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full border-2 border-white"
-              style={{
-                width: `${Math.random() * 300 + 100}px`,
-                height: `${Math.random() * 300 + 100}px`,
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                transform: `translate(-50%, -50%)`,
-              }}
-            />
-          ))}
-        </div>
-        
-        <div className="relative z-10 flex flex-col justify-center px-8 lg:px-12 xl:px-16 text-white">
-          <div className="space-y-4 lg:space-y-6">
-            <div className="inline-flex items-center gap-3 mb-4 lg:mb-8">
-              <h1 className="text-xl lg:text-2xl font-semibold">AI COURSE GENERATOR</h1>
-            </div>
-            
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight">
-              Create AI-powered courses in minutes
-            </h2>
-            
-            <div className="pt-8 space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium">AI-Powered Generation</h3>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium">Customizable Content</h3>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium">Easy to Use</h3>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <section className="relative min-h-screen overflow-hidden bg-white">
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover [transform:scaleY(-1)]"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260302_085640_276ea93b-d7da-4418-a09b-2aa5b490e838.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[26.416%] from-[rgba(255,255,255,0)] to-[66.943%] to-white" />
       </div>
 
-      {/* Right side - Auth form */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-background">
-        <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-6 sm:mb-8">
-            <img 
-              src={logo} 
-              alt="AI Course Generator" 
-              className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4"
-            />
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
-              AI COURSE GENERATOR
+      {/* Back button */}
+      <motion.button
+        custom={0}
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        onClick={() => navigate("/")}
+        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-[14px] text-[#373a46] opacity-70 hover:opacity-100 transition-opacity"
+        style={{ fontFamily: "'Geist', sans-serif" }}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back
+      </motion.button>
+
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
+        <div className="w-full max-w-[420px] flex flex-col gap-8">
+          {/* Header */}
+          <motion.div
+            custom={0}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="text-center"
+          >
+            <h1
+              className="text-[36px] text-[#1a1a2e] tracking-[-0.04em] leading-tight"
+              style={{ fontFamily: "'Geist', sans-serif", fontWeight: 500 }}
+            >
+              {mode === "login" && "Welcome back"}
+              {mode === "signup" && "Create account"}
+              {mode === "forgot" && "Reset password"}
             </h1>
-          </div>
+            <p
+              className="mt-3 text-[16px] text-[#373a46] opacity-60"
+              style={{ fontFamily: "'Geist', sans-serif" }}
+            >
+              {mode === "login" && "Sign in to continue to your dashboard"}
+              {mode === "signup" && "Enter your details to get started"}
+              {mode === "forgot" && "Enter your login ID to receive a reset link"}
+            </p>
+          </motion.div>
 
-          <Card className="border-2 border-primary/10 shadow-card hover:border-primary/20 transition-colors">
-            <CardHeader className="space-y-1 pb-4 p-4 sm:p-6">
-              <CardTitle className="text-xl sm:text-2xl font-semibold">
-                {mode === "login" && "Welcome back"}
-                {mode === "signup" && "Create an account"}
-                {mode === "forgot" && "Reset password"}
-              </CardTitle>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                {mode === "login" && "Enter your login ID to sign in to your account"}
-                {mode === "signup" && "Enter your login ID to create your account"}
-                {mode === "forgot" && "Enter your login ID to receive a reset link"}
-              </p>
-            </CardHeader>
-            
-            <CardContent className="space-y-4 p-4 sm:p-6 pt-0">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Login ID
-                  </Label>
-                  <Input
-                    id="email"
-                    type="text"
-                    placeholder="Enter your login ID"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="h-9 sm:h-10"
-                  />
-                </div>
-
-                {mode !== "forgot" && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-medium">
-                        Password
-                      </Label>
-                      {mode === "login" && (
-                        <button
-                          type="button"
-                          onClick={() => setMode("forgot")}
-                          className="text-xs text-primary hover:underline"
-                        >
-                          Forgot password?
-                        </button>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="h-9 sm:h-10 pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {mode === "signup" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                      Confirm Password
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        className="h-9 sm:h-10 pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <Button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="w-full h-9 sm:h-10 bg-primary text-primary-foreground hover:bg-primary/90 text-sm gap-2"
+          {/* Form Card */}
+          <motion.div
+            custom={1}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="rounded-2xl bg-[#fcfcfc] border border-[#e8e8e8] p-8 shadow-[0px_10px_40px_5px_rgba(194,194,194,0.25)]"
+          >
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-[13px] font-medium text-[#1a1a2e]"
+                  style={{ fontFamily: "'Geist', sans-serif" }}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    <>
-                      {mode === "login" && (
-                        <>
-                          <LogIn className="w-4 h-4" />
-                          Sign in
-                        </>
-                      )}
-                      {mode === "signup" && (
-                        <>
-                          <UserPlus className="w-4 h-4" />
-                          Create account
-                        </>
-                      )}
-                      {mode === "forgot" && (
-                        <>
-                          <Mail className="w-4 h-4" />
-                          Send reset link
-                        </>
-                      )}
-                    </>
-                  )}
-                </Button>
-              </form>
-
-              <div className="text-center text-xs sm:text-sm text-muted-foreground">
-                {mode === "login" && (
-                  <p>
-                    Don't have an account?{" "}
-                    <button
-                      onClick={() => setMode("signup")}
-                      className="text-primary hover:underline font-medium"
-                    >
-                      Sign up
-                    </button>
-                  </p>
-                )}
-                {mode === "signup" && (
-                  <p>
-                    Already have an account?{" "}
-                    <button
-                      onClick={() => setMode("login")}
-                      className="text-primary hover:underline font-medium"
-                    >
-                      Sign in
-                    </button>
-                  </p>
-                )}
-                {mode === "forgot" && (
-                  <p>
-                    Remember your password?{" "}
-                    <button
-                      onClick={() => setMode("login")}
-                      className="text-primary hover:underline font-medium"
-                    >
-                      Back to sign in
-                    </button>
-                  </p>
-                )}
+                  Login ID
+                </Label>
+                <Input
+                  id="email"
+                  type="text"
+                  placeholder="Enter your login ID"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="h-11 rounded-xl border-[#e8e8e8] bg-white text-[14px] placeholder:text-[#9ca3af] focus-visible:ring-primary"
+                  style={{ fontFamily: "'Geist', sans-serif" }}
+                />
               </div>
-            </CardContent>
-          </Card>
 
-          <p className="text-center text-[10px] sm:text-xs text-muted-foreground mt-4 sm:mt-6 px-4">
+              {mode !== "forgot" && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label
+                      htmlFor="password"
+                      className="text-[13px] font-medium text-[#1a1a2e]"
+                      style={{ fontFamily: "'Geist', sans-serif" }}
+                    >
+                      Password
+                    </Label>
+                    {mode === "login" && (
+                      <button
+                        type="button"
+                        onClick={() => setMode("forgot")}
+                        className="text-[12px] text-primary hover:underline"
+                        style={{ fontFamily: "'Geist', sans-serif" }}
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="h-11 rounded-xl border-[#e8e8e8] bg-white text-[14px] pr-10 focus-visible:ring-primary"
+                      style={{ fontFamily: "'Geist', sans-serif" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#1a1a2e] transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {mode === "signup" && (
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="confirmPassword"
+                    className="text-[13px] font-medium text-[#1a1a2e]"
+                    style={{ fontFamily: "'Geist', sans-serif" }}
+                  >
+                    Confirm Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      className="h-11 rounded-xl border-[#e8e8e8] bg-white text-[14px] pr-10 focus-visible:ring-primary"
+                      style={{ fontFamily: "'Geist', sans-serif" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#1a1a2e] transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-[14px] font-medium transition-all hover:bg-primary/90 disabled:opacity-50"
+                style={{ fontFamily: "'Geist', sans-serif" }}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    {mode === "login" && <><LogIn className="w-4 h-4" />Sign in</>}
+                    {mode === "signup" && <><UserPlus className="w-4 h-4" />Create account</>}
+                    {mode === "forgot" && <><Mail className="w-4 h-4" />Send reset link</>}
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div
+              className="mt-6 text-center text-[13px] text-[#373a46] opacity-60"
+              style={{ fontFamily: "'Geist', sans-serif" }}
+            >
+              {mode === "login" && (
+                <p>
+                  Don't have an account?{" "}
+                  <button onClick={() => setMode("signup")} className="text-primary hover:underline font-medium">
+                    Sign up
+                  </button>
+                </p>
+              )}
+              {mode === "signup" && (
+                <p>
+                  Already have an account?{" "}
+                  <button onClick={() => setMode("login")} className="text-primary hover:underline font-medium">
+                    Sign in
+                  </button>
+                </p>
+              )}
+              {mode === "forgot" && (
+                <p>
+                  Remember your password?{" "}
+                  <button onClick={() => setMode("login")} className="text-primary hover:underline font-medium">
+                    Back to sign in
+                  </button>
+                </p>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Terms */}
+          <motion.p
+            custom={2}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="text-center text-[11px] text-[#373a46] opacity-40"
+            style={{ fontFamily: "'Geist', sans-serif" }}
+          >
             By continuing, you agree to our{" "}
-            <button className="underline hover:text-foreground">Terms of Service</button>
+            <button className="underline hover:opacity-100">Terms of Service</button>
             {" "}and{" "}
-            <button className="underline hover:text-foreground">Privacy Policy</button>
-          </p>
+            <button className="underline hover:opacity-100">Privacy Policy</button>
+          </motion.p>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
