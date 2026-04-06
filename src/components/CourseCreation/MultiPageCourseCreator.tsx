@@ -648,7 +648,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
           {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-muted/60 via-muted/30 to-muted/50 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,14%,96%)] via-[hsl(220,13%,91%)] to-[hsl(220,12%,94%)] pointer-events-none" />
 
           {/* Decorative notebook elements */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
