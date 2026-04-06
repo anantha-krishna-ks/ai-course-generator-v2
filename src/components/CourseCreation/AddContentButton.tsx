@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, Type, Image, Sparkles, Video, Mic, FileText, MessageCircleQuestion, MoreHorizontal, Send, X } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import { cn } from "@/lib/utils";
 import {
