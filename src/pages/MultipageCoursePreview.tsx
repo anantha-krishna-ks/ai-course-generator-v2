@@ -588,89 +588,43 @@ const MultipageCoursePreview = () => {
           </div>
         );
       }
-      case "doc":
+      case "doc": {
+        const docSrc = block.content || DEMO_PDF_URL;
         return (
           <div className="rounded-xl border border-border/60 bg-background overflow-hidden shadow-sm">
-            {/* Top header bar - file info + download */}
             <div className="flex items-center gap-3 px-4 sm:px-5 py-3 border-b border-border/40 bg-muted/30">
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 border border-border/40">
                 <FileText className="w-5 h-5 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm sm:text-base font-semibold text-foreground truncate">
-                  Course Document
+                  {block.content ? "Course Document" : "Sample Course Document"}
                 </p>
+                {!block.content && (
+                  <p className="text-xs text-muted-foreground">Sample PDF — replace with your own document</p>
+                )}
               </div>
-              {block.content && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full gap-1.5 text-xs font-medium flex-shrink-0 h-8 px-4 border-border"
-                  onClick={() => window.open(block.content, '_blank')}
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  DOWNLOAD
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full gap-1.5 text-xs font-medium flex-shrink-0 h-8 px-4 border-border"
+                onClick={() => window.open(docSrc, '_blank')}
+              >
+                <Download className="w-3.5 h-3.5" />
+                DOWNLOAD
+              </Button>
             </div>
-
-            {/* Document viewer area */}
-            {block.content ? (
-              <div className="relative bg-muted/20">
-                <iframe
-                  src={block.content}
-                  className="w-full border-0"
-                  style={{ height: isCompactView ? '400px' : '600px' }}
-                  title="Document viewer"
-                />
-              </div>
-            ) : (
-              <div className="bg-muted/10">
-                {/* Mock document page */}
-                <div className="mx-auto max-w-[90%] sm:max-w-[85%] my-6 bg-background border border-border/30 rounded shadow-md">
-                  <div className="p-8 sm:p-12 space-y-6">
-                    <div className="h-5 w-3/4 bg-muted/60 rounded" />
-                    <div className="h-4 w-1/2 bg-primary/20 rounded" />
-                    <div className="space-y-2.5 pt-2">
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-5/6 bg-muted/40 rounded" />
-                    </div>
-                    <div className="space-y-2.5 pt-4">
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-full bg-muted/40 rounded" />
-                      <div className="h-3 w-4/6 bg-muted/40 rounded" />
-                    </div>
-                    <div className="mt-6 border border-border/30 rounded-lg overflow-hidden">
-                      <div className="bg-muted/30 p-2.5 flex gap-4">
-                        <div className="h-3 w-1/4 bg-muted/50 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/50 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/50 rounded" />
-                      </div>
-                      <div className="p-2.5 flex gap-4">
-                        <div className="h-3 w-1/4 bg-muted/30 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/30 rounded" />
-                        <div className="h-3 w-1/4 bg-muted/30 rounded" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom bar - page info */}
-                <div className="flex items-center justify-between px-4 py-2 border-t border-border/30 bg-muted/20">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-muted-foreground/50" />
-                    <span className="text-xs font-medium text-muted-foreground">PAGE 1 OF 1</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground">100%</span>
-                    <Maximize2 className="w-3.5 h-3.5 text-muted-foreground/50" />
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="relative bg-muted/20">
+              <iframe
+                src={docSrc}
+                className="w-full border-0"
+                style={{ height: isCompactView ? '400px' : '600px' }}
+                title="Document viewer"
+              />
+            </div>
           </div>
         );
+      }
       default:
         return block.content ? (
           <div className="p-4 bg-muted/30 rounded-xl border border-border/40 text-sm text-muted-foreground">
