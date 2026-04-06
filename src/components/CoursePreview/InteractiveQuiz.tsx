@@ -141,7 +141,7 @@ export const InteractiveQuiz = ({ questions }: InteractiveQuizProps) => {
                         {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
                       </div>
                     )}
-                    <span className={isSelected ? "font-semibold text-foreground" : "text-muted-foreground"}>
+                    <span className={cn("text-[0.9rem] leading-relaxed", isSelected ? "font-semibold text-foreground" : "text-foreground/80")}>
                       {opt}
                     </span>
                     {validated && isAnswer && (
