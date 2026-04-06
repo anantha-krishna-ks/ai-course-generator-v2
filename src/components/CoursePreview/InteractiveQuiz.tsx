@@ -117,14 +117,14 @@ export const InteractiveQuiz = ({ questions }: InteractiveQuizProps) => {
                     {isMCQ ? (
                       <div
                         className={cn(
-                          "w-4 h-4 rounded-sm border-2 flex-shrink-0 flex items-center justify-center",
+                          "w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center",
                           isSelected
                             ? "border-primary bg-primary"
-                            : "border-border"
+                            : "border-muted-foreground/40"
                         )}
                       >
                         {isSelected && (
-                          <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg className="w-3.5 h-3.5 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <path d="M2.5 6l2.5 2.5 4.5-5" />
                           </svg>
                         )}
