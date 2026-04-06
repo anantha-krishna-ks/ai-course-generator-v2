@@ -13,6 +13,10 @@ import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap,
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 
+// Preload images immediately on module load so they're cached before dialog opens
+const preloadLink1 = new Image(); preloadLink1.src = previewMultipage;
+const preloadLink2 = new Image(); preloadLink2.src = previewSinglepage;
+
 interface CreateCourseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
