@@ -1,6 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
 import { ChapterImageDialog } from "@/components/EditCourse/ChapterImageDialog";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -796,7 +795,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
               <div className="p-1.5 rounded-lg bg-primary/10">
-                <AISparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 text-primary" />
               </div>
               Generate Image
             </DialogTitle>

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Sparkles, Plus, RefreshCcw, Edit2, Trash2, ChevronDown, AlertTriangle } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -138,7 +137,7 @@ export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuiz
             <div className="space-y-1">
               <DialogTitle className="text-xl sm:text-2xl flex items-center gap-2 font-semibold">
                 <div className="p-1.5 rounded-lg bg-primary/10">
-                  <AISparkles className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5 text-primary" />
                 </div>
                 Generate Quiz Questions
               </DialogTitle>

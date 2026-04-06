@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Plus, Edit2, Trash2, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
 import {
   Dialog,
   DialogContent,
@@ -686,7 +685,7 @@ export const ModifyStructureDialog = ({ open, onOpenChange }: ModifyStructureDia
         <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AISparkles className="w-5 h-5" />
+              <Sparkles className="w-5 h-5 text-primary" />
               Modify Course Structure
             </DialogTitle>
           </DialogHeader>

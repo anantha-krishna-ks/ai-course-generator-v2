@@ -1,5 +1,4 @@
 import { Clock, Sparkles, History, User, ArrowLeft as BackIcon, ChevronDown, RotateCcw } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
@@ -66,7 +65,7 @@ export function IntroductionDialog({
                 </Button>
               )}
               <DialogTitle className="text-base sm:text-xl lg:text-2xl flex items-center gap-1 sm:gap-2 truncate">
-                <AISparkles className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-primary flex-shrink-0" />
                 <span className="truncate">{showVersions ? "Version History" : "AI Assistant"}</span>
               </DialogTitle>
             </div>

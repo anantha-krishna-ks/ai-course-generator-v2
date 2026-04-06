@@ -110,7 +110,7 @@ const Auth = () => {
         initial="hidden"
         animate="visible"
         onClick={() => navigate("/")}
-        className="absolute top-8 left-8 z-20 flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 bg-white/20 backdrop-blur-md text-sm text-foreground/70 hover:bg-white/40 hover:text-foreground hover:border-white/50 hover:shadow-sm transition-all duration-200 hover-scale"
+        className="absolute top-8 left-8 z-20 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back
@@ -238,7 +238,7 @@ const Auth = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 flex items-center justify-center gap-2.5 rounded-full bg-primary text-primary-foreground text-[15px] font-medium transition-all hover:bg-primary/90 disabled:opacity-50 mt-2"
+                className="w-full h-12 flex items-center justify-center gap-2.5 rounded-xl bg-primary text-primary-foreground text-[15px] font-medium transition-all hover:bg-primary/90 disabled:opacity-50 mt-2"
               >
                 {isLoading ? (
                   <>

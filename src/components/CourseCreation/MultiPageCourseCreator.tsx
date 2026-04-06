@@ -648,7 +648,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
           {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,14%,96%)] via-[hsl(220,13%,91%)] to-[hsl(220,12%,94%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-accent/20 pointer-events-none" />
 
           {/* Decorative notebook elements */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -678,12 +678,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
             {/* Premium bookmark ribbon */}
             <div className="absolute top-0 right-10 w-6 flex flex-col items-center drop-shadow-md">
-              <div className="w-full h-24 bg-gradient-to-b from-muted-foreground/20 via-muted-foreground/15 to-muted-foreground/10 rounded-b-none" />
+              <div className="w-full h-24 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15 rounded-b-none" />
               <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none">
-                <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill="hsl(var(--muted-foreground) / 0.10)" />
+                <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill="hsl(var(--primary) / 0.15)" />
               </svg>
             </div>
-            <div className="absolute top-0 right-10 w-6 h-24 border-x border-muted-foreground/8" />
+            <div className="absolute top-0 right-10 w-6 h-24 border-x border-primary/10" />
           </div>
 
           {/* Content */}

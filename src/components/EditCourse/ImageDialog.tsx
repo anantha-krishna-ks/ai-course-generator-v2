@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Clock, Sparkles, History, ArrowLeft as BackIcon, Image as ImageIcon, RotateCcw } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -170,7 +169,7 @@ export function ImageDialog({
                     </>
                   ) : (
                     <>
-                      <AISparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                      <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
                       <span className="truncate">AI Regenerate</span>
                     </>
                   )}
