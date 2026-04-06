@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Loader2, BookOpen, Sparkles } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { cn } from "@/lib/utils";
 
 interface CreationLoaderProps {
@@ -58,7 +59,7 @@ export function CreationLoader({ courseTitle, onComplete }: CreationLoaderProps)
             <BookOpen className="w-10 h-10 text-primary" />
           </div>
           <div className="absolute -top-1 -right-1">
-            <Sparkles className="w-6 h-6 text-primary animate-bounce" />
+            <AISparkles className="w-6 h-6" />
           </div>
         </div>
 

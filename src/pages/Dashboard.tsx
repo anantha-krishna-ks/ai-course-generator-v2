@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { motion } from "framer-motion";
 import { tokenApi, TokenInfo } from "@/services/tokenApi";
 import { useToast } from "@/hooks/use-toast";
@@ -382,7 +383,7 @@ const Dashboard = () => {
                       className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
                     >
                       <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
-                        <Sparkles className="w-4 h-4 text-primary" />
+                        <AISparkles className="w-4 h-4" />
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <span className="text-sm font-semibold text-foreground">Generate using AI</span>
