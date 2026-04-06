@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Plus, Type, Image, Sparkles, Video, Mic, FileText, MessageCircleQuestion, MoreHorizontal, Send, X } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import { cn } from "@/lib/utils";
 import {
@@ -204,7 +205,7 @@ export function AddContentButton({
       <div className="my-2 rounded-xl border border-border bg-card shadow-sm animate-fade-in">
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/60">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-primary" />
+            <AISparkles className="w-4 h-4" />
             <span className="text-sm font-medium text-foreground">
               Generate {showAiPrompt === "text" ? "text" : "image"} with AI
             </span>
@@ -220,7 +221,7 @@ export function AddContentButton({
           {aiGenerating ? (
             <div className="flex flex-col items-center justify-center py-8 gap-3 animate-fade-in rounded-xl bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5">
               <div className="relative w-10 h-10 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary animate-pulse" />
+                <AISparkles className="w-6 h-6" />
               </div>
               <p className="text-sm font-medium text-primary animate-pulse">
                 {showAiPrompt === "text" ? "Generating text content..." : "Generating image..."}

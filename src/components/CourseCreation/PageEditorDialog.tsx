@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -1086,7 +1087,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           <div className="relative w-10 h-10 flex items-center justify-center">
                                             {/* Rotating ring */}
                                             <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary/40 border-r-primary/20 animate-spin" />
-                                            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                                            <AISparkles className="w-5 h-5" />
                                           </div>
                                           <p className="text-xs font-semibold bg-gradient-to-r from-primary to-[hsl(270,70%,60%)] bg-clip-text text-transparent">
                                             Generating content…
@@ -1114,7 +1115,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       {aiReviewMode === "review" ? (
                                         <div className="flex items-center gap-3 px-4 py-2.5">
                                           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                                            <Sparkles className="w-3.5 h-3.5 text-primary" />
+                                            <AISparkles className="w-3.5 h-3.5" />
                                             <span>AI Generated</span>
                                           </div>
                                           <div className="h-4 w-px bg-border/60" />
@@ -1323,7 +1324,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <div className="mt-4 rounded-xl border border-border bg-card shadow-sm animate-fade-in">
                   <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60">
                     <div className="flex items-center gap-2.5">
-                      <Sparkles className="w-4 h-4 text-primary" />
+                       <AISparkles className="w-4 h-4" />
                       <span className="text-sm font-medium text-foreground">Create a content block with AI</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1547,7 +1548,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         <DialogHeader className="px-6 pt-6 pb-4">
           <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
             <div className="p-1.5 rounded-lg bg-primary/10">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <AISparkles className="w-4 h-4" />
             </div>
             Generate Introduction
           </DialogTitle>
