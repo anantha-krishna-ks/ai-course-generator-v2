@@ -320,7 +320,7 @@ const Dashboard = () => {
 
             <div className="relative flex items-center justify-between gap-4">
               <h1 className="text-[22px] font-medium tracking-[-0.03em] flex items-center gap-1.5" style={{ fontFamily: "'Geist', sans-serif" }}>
-                <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent" style={{ fontFamily: "'Pacifico', cursive" }}>Welcome back, Admin</span>
+                <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent" style={{ fontFamily: "'Lobster Two', cursive" }}>Welcome back, Admin</span>
                 <span>👋</span>
               </h1>
 
