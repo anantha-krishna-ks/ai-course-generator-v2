@@ -7,11 +7,11 @@ const Index = () => {
   
 
   const fadeUp = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 12 },
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: i * 0.15, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] as const },
+      transition: { delay: i * 0.25, duration: 1.2, ease: [0.22, 0.61, 0.36, 1] as const },
     }),
   };
 
