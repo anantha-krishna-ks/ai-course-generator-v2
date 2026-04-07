@@ -320,7 +320,7 @@ const Dashboard = () => {
 
             <div className="relative flex items-center justify-between gap-4">
               <h1 className="text-[22px] font-medium tracking-[-0.03em] flex items-center gap-1.5" style={{ fontFamily: "'Geist', sans-serif" }}>
-                <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent" style={{ fontFamily: "'Instrument Serif', serif" }}>Welcome back, Admin</span>
+                <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent">Welcome back, Admin</span>
                 <span>👋</span>
               </h1>
 
@@ -347,7 +347,7 @@ const Dashboard = () => {
           initial="hidden"
           animate="visible"
         >
-          <Card className="relative p-6 mb-8 border border-border bg-card/70 backdrop-blur-sm overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 ring-1 ring-border/40">
+          <Card className="relative p-6 mb-8 border border-border/80 bg-card/70 backdrop-blur-sm overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
             {/* Decorative Diagonal Ribbon */}
             <div className="absolute -right-9 top-5 rotate-45 w-36 h-8 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 shadow-md flex items-center justify-center z-10">
               <span className="text-[10px] font-bold text-white uppercase tracking-widest drop-shadow-sm">Quick Start</span>
