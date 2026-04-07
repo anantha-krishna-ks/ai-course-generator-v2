@@ -395,7 +395,7 @@ const Dashboard = () => {
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="rounded-full hover:bg-primary/10 hover:text-primary transition-all"
+                  className="rounded-full border border-border hover:bg-primary/10 hover:text-primary transition-all"
                   onClick={() => window.location.reload()}
                 >
                   <RefreshCw className="w-4 h-4" />
