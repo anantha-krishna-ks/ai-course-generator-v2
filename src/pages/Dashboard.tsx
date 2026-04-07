@@ -393,12 +393,12 @@ const Dashboard = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button 
-                  variant="outline" 
-                  className="gap-2 rounded-full border-primary/30 hover:bg-primary/10 hover:border-primary/50 hover:text-primary transition-all"
-                  onClick={() => navigate("/blueprints")}
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-full hover:bg-primary/10 hover:text-primary transition-all"
+                  onClick={() => window.location.reload()}
                 >
-                  <BookOpen className="w-4 h-4" />
-                  Browse Blueprints
+                  <RefreshCw className="w-4 h-4" />
                 </Button>
               </div>
             </div>
