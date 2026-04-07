@@ -32,7 +32,7 @@ const Index = () => {
           />
         </video>
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[26.416%] from-[rgba(255,255,255,0)] to-[66.943%] to-white" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-[40%] to-white to-[85%]" />
       </div>
 
       {/* Content */}
