@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import authBgIllustration from "@/assets/auth-bg-illustration.png";
 
 type AuthMode = "login" | "signup" | "forgot";
 
@@ -85,23 +86,20 @@ const Auth = () => {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-white">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover [transform:scaleY(-1)]"
-        >
-          <source
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260302_085640_276ea93b-d7da-4418-a09b-2aa5b490e838.mp4"
-            type="video/mp4"
-          />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[26.416%] from-[rgba(255,255,255,0)] to-[66.943%] to-white" />
+    <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50/80 via-white to-primary/5">
+      {/* Decorative illustration */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+        <img
+          src={authBgIllustration}
+          alt=""
+          width={1024}
+          height={1024}
+          className="w-[600px] h-[600px] object-contain opacity-[0.07] translate-y-12"
+        />
       </div>
+      {/* Subtle gradient orbs */}
+      <div className="absolute top-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-150px] left-[-100px] w-[400px] h-[400px] rounded-full bg-blue-100/40 blur-3xl pointer-events-none" />
 
       {/* Back button */}
       <motion.button
