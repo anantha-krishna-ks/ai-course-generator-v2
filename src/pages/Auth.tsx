@@ -94,7 +94,7 @@ const Auth = () => {
           alt=""
           width={1024}
           height={1024}
-          className="w-[600px] h-[600px] object-contain opacity-[0.07] translate-y-12"
+          className="w-[500px] h-[500px] object-contain opacity-20 translate-y-8"
         />
       </div>
       {/* Subtle gradient orbs */}
