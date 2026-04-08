@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import authBgIllustration from "@/assets/auth-bg-illustration.png";
 
 type AuthMode = "login" | "signup" | "forgot";
 
