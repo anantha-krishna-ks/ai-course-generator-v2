@@ -86,7 +86,7 @@ const Auth = () => {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50/80 via-white to-primary/5">
+    <section className="relative min-h-screen overflow-hidden bg-white">
       {/* Scattered vector cards background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img
@@ -94,12 +94,11 @@ const Auth = () => {
           alt=""
           width={1920}
           height={1080}
-          className="w-full h-full object-cover opacity-40"
+          className="w-full h-full object-cover opacity-60"
         />
+        {/* Center fade so form area stays clean */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_white_25%,_transparent_70%)]" />
       </div>
-      {/* Subtle gradient orbs */}
-      <div className="absolute top-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-150px] left-[-100px] w-[400px] h-[400px] rounded-full bg-blue-100/40 blur-3xl pointer-events-none" />
 
       {/* Back button */}
       <motion.button
