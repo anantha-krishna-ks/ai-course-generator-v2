@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import authBgIllustration from "@/assets/auth-bg-illustration.png";
+import authBgVectors from "@/assets/auth-bg-vectors.png";
 
 type AuthMode = "login" | "signup" | "forgot";
 
@@ -87,14 +87,14 @@ const Auth = () => {
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50/80 via-white to-primary/5">
-      {/* Decorative illustration */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+      {/* Scattered vector cards background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <img
-          src={authBgIllustration}
+          src={authBgVectors}
           alt=""
-          width={1024}
-          height={1024}
-          className="w-[500px] h-[500px] object-contain opacity-20 translate-y-8"
+          width={1920}
+          height={1080}
+          className="w-full h-full object-cover opacity-40"
         />
       </div>
       {/* Subtle gradient orbs */}
