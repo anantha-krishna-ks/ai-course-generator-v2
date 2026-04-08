@@ -692,9 +692,9 @@ const MultipageCoursePreview = () => {
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pb-3 border-b border-border/60">
+          <div className="flex items-center justify-between px-5 pb-3 border-b border-border/60">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Course Outline</h3>
+            <h3 className="text-sm font-semibold text-foreground" id="mobile-outline-heading">Course Outline</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               {currentIndex + 1} of {totalPages} pages · {progress}% complete
             </p>
@@ -702,6 +702,7 @@ const MultipageCoursePreview = () => {
           <button
             onClick={() => setMobileOutlineOpen(false)}
             className="p-2 rounded-full hover:bg-muted transition-colors"
+            aria-label="Close course outline"
           >
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
@@ -732,7 +733,7 @@ const MultipageCoursePreview = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full">
+            <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full" aria-label="Go back">
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
@@ -867,7 +868,7 @@ const MultipageCoursePreview = () => {
                                 isCompactView ? "w-10 h-10" : "w-12 h-12"
                               )}>
                                 {item.thumbnailUrl ? (
-                                  <img src={item.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                                  <img src={item.thumbnailUrl} alt={`${item.title} section thumbnail`} className="w-full h-full object-cover" />
                                 ) : (
                                   <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
                                 )}
@@ -940,7 +941,7 @@ const MultipageCoursePreview = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => setStarted(false)} className="rounded-full">
+          <Button variant="ghost" size="icon" onClick={() => setStarted(false)} className="rounded-full" aria-label="Go back to course landing">
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <span className="text-sm font-medium text-foreground">Course Preview</span>
@@ -1045,6 +1046,7 @@ const MultipageCoursePreview = () => {
                         onClick={goToPrev}
                         disabled={currentIndex <= 0}
                         className="gap-2 text-muted-foreground"
+                        aria-label="Go to previous page"
                       >
                         <ArrowLeft className="w-4 h-4" />
                         Previous
@@ -1054,6 +1056,7 @@ const MultipageCoursePreview = () => {
                         onClick={goToNext}
                         disabled={currentIndex >= allPages.length - 1}
                         className="gap-2 text-muted-foreground"
+                        aria-label="Go to next page"
                       >
                         Next
                         <ChevronRight className="w-4 h-4" />
@@ -1077,8 +1080,9 @@ const MultipageCoursePreview = () => {
               <button
                 onClick={() => setMobileOutlineOpen(true)}
                 className="flex items-center gap-2 px-3 py-2 rounded-full bg-muted/60 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                aria-label="Open course outline"
               >
-                <Menu className="w-4 h-4" />
+                <Menu className="w-4 h-4" aria-hidden="true" />
                 <span className="text-xs">Outline</span>
               </button>
 
@@ -1101,6 +1105,7 @@ const MultipageCoursePreview = () => {
                   onClick={goToPrev}
                   disabled={currentIndex <= 0}
                   className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                  aria-label="Previous page"
                 >
                   <ArrowLeft className="w-4 h-4 text-foreground" />
                 </button>
@@ -1108,6 +1113,7 @@ const MultipageCoursePreview = () => {
                   onClick={goToNext}
                   disabled={currentIndex >= allPages.length - 1}
                   className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                  aria-label="Next page"
                 >
                   <ChevronRight className="w-4 h-4 text-foreground" />
                 </button>
