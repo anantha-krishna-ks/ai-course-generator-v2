@@ -179,6 +179,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                       }}
                       className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
                       disabled={aiOptions.pageSpanTime <= 1}
+                      aria-label="Decrease page duration"
                     >
                       <Minus className="w-4 h-4 text-primary" />
                     </button>
@@ -194,6 +195,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                       }}
                       className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
                       disabled={aiOptions.pageSpanTime >= 15}
+                      aria-label="Increase page duration"
                     >
                       <Plus className="w-4 h-4 text-primary" />
                     </button>
@@ -241,6 +243,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                             })
                           }
                           className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                          aria-label={`Remove document ${doc}`}
                         >
                           <X className="w-3 h-3" />
                         </button>

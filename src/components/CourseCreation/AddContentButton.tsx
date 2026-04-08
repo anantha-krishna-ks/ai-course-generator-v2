@@ -256,6 +256,7 @@ export function AddContentButton({
                 />
                 <button
                   onClick={handleAiSubmit}
+                  aria-label="Submit AI prompt"
                   disabled={!aiPrompt.trim()}
                   className={cn(
                     "w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center transition-colors mb-0.5",
