@@ -107,12 +107,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         {/* Page card */}
         <div className="flex-1 flex items-center gap-2.5 py-2.5 pr-3 pl-2.5 rounded-xl border border-border/60 bg-card shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] hover:border-border hover:shadow-sm transition-all duration-150 min-w-0 my-0.5">
           <button
-110:             {...attributes}
-111:             {...listeners}
-112:             className="cursor-grab active:cursor-grabbing p-0.5 rounded shrink-0 touch-none opacity-0 group-hover/row:opacity-60 hover:!opacity-100 transition-opacity"
-113:             aria-label="Drag to reorder page"
-114:           >
-115:             <GripVertical className="w-3 h-3 text-muted-foreground" />
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing p-0.5 rounded shrink-0 touch-none opacity-0 group-hover/row:opacity-60 hover:!opacity-100 transition-opacity"
+            aria-label="Drag to reorder page"
+          >
+            <GripVertical className="w-3 h-3 text-muted-foreground" />
           </button>
           <div className="w-6 h-6 rounded-md bg-accent/60 flex items-center justify-center shrink-0">
             <FileText className="w-3 h-3 text-muted-foreground/60" />
@@ -143,12 +143,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           </span>
           {hasPageScope && (
             <button
-145:               onClick={() => setShowInclusionsDialog(true)}
-146:               className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
-147:               aria-label="View page scope"
-148:             >
-149:               <ListChecks className="w-2.5 h-2.5 text-primary" />
-150:             </button>
+              onClick={() => setShowInclusionsDialog(true)}
+              className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
+              aria-label="View page scope"
+            >
+              <ListChecks className="w-2.5 h-2.5 text-primary" />
+            </button>
           )}
           <button
             onClick={() => setShowEditor(true)}
