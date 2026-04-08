@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn, UserPlus, Mail, Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
@@ -19,6 +19,16 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // WCAG 2.4.2 – Page title
+  useEffect(() => {
+    const titles: Record<AuthMode, string> = {
+      login: "Sign In - AI Course Generator",
+      signup: "Create Account - AI Course Generator",
+      forgot: "Reset Password - AI Course Generator",
+    };
+    document.title = titles[mode];
+  }, [mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,9 +96,12 @@ const Auth = () => {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-white">
+    <section className="relative min-h-screen overflow-hidden bg-white" aria-label="Authentication">
+      {/* Skip to main content - WCAG 2.4.1 */}
+      <a href="#auth-form" className="skip-to-main">Skip to authentication form</a>
+
       {/* Scattered vector cards background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
         <img
           src={authBgVectors}
           alt=""
@@ -101,20 +114,22 @@ const Auth = () => {
       </div>
 
       {/* Back button */}
-      <motion.button
+      <motion.a
+        href="/"
         custom={0}
         variants={fadeUp}
         initial="hidden"
         animate="visible"
-        onClick={() => navigate("/")}
+        onClick={(e: React.MouseEvent) => { e.preventDefault(); navigate("/"); }}
         className="absolute top-8 left-8 z-20 flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 bg-white/20 backdrop-blur-md text-sm text-foreground/70 hover:bg-white/40 hover:text-foreground hover:border-white/50 hover:shadow-sm transition-all duration-200 hover-scale"
+        aria-label="Go back to home page"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         Back
-      </motion.button>
+      </motion.a>
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
+      <main id="auth-form" role="main" className="relative z-10 min-h-screen flex items-center justify-center px-6">
         <div className="w-full max-w-[460px] flex flex-col gap-8 bg-white/60 backdrop-blur-sm rounded-3xl p-8">
           {/* Header */}
           <motion.div
@@ -144,7 +159,7 @@ const Auth = () => {
             animate="visible"
             className="rounded-2xl bg-background/95 backdrop-blur-sm border border-border p-10 shadow-[0px_12px_48px_8px_rgba(194,194,194,0.3)] w-full max-w-[460px] mx-auto"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" aria-label={mode === "login" ? "Sign in form" : mode === "signup" ? "Sign up form" : "Password reset form"}>
               <div className="space-y-2.5">
                 <Label
                   htmlFor="email"
@@ -157,6 +172,10 @@ const Auth = () => {
                   type="text"
                   placeholder="Enter your login ID"
                   value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  aria-required="true"
+                  autoComplete="username"
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="h-12 rounded-xl border-border bg-background text-[15px] placeholder:text-muted-foreground focus-visible:ring-primary"
@@ -190,14 +209,18 @@ const Auth = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      aria-required="true"
+                      autoComplete={mode === "login" ? "current-password" : "new-password"}
+                      required
                       className="h-12 rounded-xl border-border bg-background text-[15px] pr-11 focus-visible:ring-primary"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+                      {showPassword ? <EyeOff className="h-[18px] w-[18px]" aria-hidden="true" /> : <Eye className="h-[18px] w-[18px]" aria-hidden="true" />}
                     </button>
                   </div>
                 </div>
