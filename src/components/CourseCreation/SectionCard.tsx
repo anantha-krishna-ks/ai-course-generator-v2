@@ -107,11 +107,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         {/* Page card */}
         <div className="flex-1 flex items-center gap-2.5 py-2.5 pr-3 pl-2.5 rounded-xl border border-border/60 bg-card shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] hover:border-border hover:shadow-sm transition-all duration-150 min-w-0 my-0.5">
           <button
-            {...attributes}
-            {...listeners}
-            className="cursor-grab active:cursor-grabbing p-0.5 rounded shrink-0 touch-none opacity-0 group-hover/row:opacity-60 hover:!opacity-100 transition-opacity"
-          >
-            <GripVertical className="w-3 h-3 text-muted-foreground" />
+110:             {...attributes}
+111:             {...listeners}
+112:             className="cursor-grab active:cursor-grabbing p-0.5 rounded shrink-0 touch-none opacity-0 group-hover/row:opacity-60 hover:!opacity-100 transition-opacity"
+113:             aria-label="Drag to reorder page"
+114:           >
+115:             <GripVertical className="w-3 h-3 text-muted-foreground" />
           </button>
           <div className="w-6 h-6 rounded-md bg-accent/60 flex items-center justify-center shrink-0">
             <FileText className="w-3 h-3 text-muted-foreground/60" />
@@ -142,23 +143,24 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           </span>
           {hasPageScope && (
             <button
-              onClick={() => setShowInclusionsDialog(true)}
-              className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
-              title="View scope"
-            >
-              <ListChecks className="w-2.5 h-2.5 text-primary" />
-            </button>
+145:               onClick={() => setShowInclusionsDialog(true)}
+146:               className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 hover:bg-primary/20 transition-colors"
+147:               aria-label="View page scope"
+148:             >
+149:               <ListChecks className="w-2.5 h-2.5 text-primary" />
+150:             </button>
           )}
           <button
             onClick={() => setShowEditor(true)}
             className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/70 hover:text-primary transition-colors shrink-0"
+            aria-label={`Open page ${pageDisplayTitle}`}
           >
             Open
             <ChevronRight className="w-3 h-3" />
           </button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0">
+              <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0" aria-label={`More options for ${pageDisplayTitle}`}>
                 <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
@@ -419,7 +421,7 @@ export function SectionCard({
     <div className="group/section">
       <div className="flex items-start gap-2">
         {/* Drag handle */}
-        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-60 hover:!opacity-100 mt-3">
+        <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-60 hover:!opacity-100 mt-3" aria-label="Drag to reorder section">
           <GripVertical className="w-4 h-4 text-muted-foreground" />
         </button>
 
@@ -470,7 +472,7 @@ export function SectionCard({
                   <button
                     onClick={() => setShowInclusionsDialog(true)}
                     className="p-1.5 rounded-md text-primary hover:bg-primary/10 transition-colors"
-                    title="View scope"
+                    aria-label="View section scope"
                   >
                     <ListChecks className="w-3.5 h-3.5" />
                   </button>
@@ -481,6 +483,7 @@ export function SectionCard({
                     onOpenSection?.();
                   }}
                   className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground/70 hover:text-primary transition-colors shrink-0"
+                  aria-label="Open section"
                 >
                   Open
                   <ChevronRight className="w-3 h-3" />
@@ -488,7 +491,7 @@ export function SectionCard({
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted data-[state=open]:bg-primary/10 data-[state=open]:border-primary/30 flex items-center justify-center transition-colors shrink-0 group/trigger">
+                    <button className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted data-[state=open]:bg-primary/10 data-[state=open]:border-primary/30 flex items-center justify-center transition-colors shrink-0 group/trigger" aria-label="More section options">
                       <MoreHorizontal className="w-4 h-4 text-foreground/70 group-data-[state=open]/trigger:text-primary transition-colors" />
                     </button>
                   </DropdownMenuTrigger>
@@ -539,6 +542,7 @@ export function SectionCard({
                 <button
                   onClick={() => setIsCollapsed(!isCollapsed)}
                   className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                  aria-label={isCollapsed ? "Expand section" : "Collapse section"}
                 >
                   <ChevronDown className={cn(
                     "w-3.5 h-3.5 text-muted-foreground/50 transition-transform duration-300",
@@ -599,7 +603,7 @@ export function SectionCard({
                         }}
                       >
                         <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-intro)' }} />
-                        <svg width="0" height="0" className="absolute">
+                        <svg width="0" height="0" className="absolute" aria-hidden="true">
                           <defs>
                             <linearGradient id="ai-gradient-intro" x1="0%" y1="0%" x2="100%" y2="100%">
                               <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
