@@ -176,8 +176,6 @@ const Auth = () => {
                   required
                   aria-required="true"
                   autoComplete="username"
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
                   className="h-12 rounded-xl border-border bg-background text-[15px] placeholder:text-muted-foreground focus-visible:ring-primary"
                 />
               </div>
@@ -211,7 +209,6 @@ const Auth = () => {
                       required
                       aria-required="true"
                       autoComplete={mode === "login" ? "current-password" : "new-password"}
-                      required
                       className="h-12 rounded-xl border-border bg-background text-[15px] pr-11 focus-visible:ring-primary"
                     />
                     <button
