@@ -402,7 +402,6 @@ const Dashboard = () => {
                   onClick={() => window.location.reload()}
                   aria-label="Refresh courses"
                 >
-                >
                   <RefreshCw className="w-4 h-4" />
                 </Button>
               </div>
