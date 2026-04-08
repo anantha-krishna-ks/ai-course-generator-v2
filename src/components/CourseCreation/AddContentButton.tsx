@@ -210,9 +210,10 @@ export function AddContentButton({
               Generate {showAiPrompt === "text" ? "text" : "image"} with AI
             </span>
           </div>
-          <button
+           <button
             onClick={() => { setShowAiPrompt(null); setAiPrompt(""); setAiGenerating(false); }}
             className="p-1.5 rounded-md hover:bg-muted transition-colors"
+            aria-label="Close AI prompt"
           >
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
@@ -255,6 +256,7 @@ export function AddContentButton({
                 />
                 <button
                   onClick={handleAiSubmit}
+                  aria-label="Submit AI prompt"
                   disabled={!aiPrompt.trim()}
                   className={cn(
                     "w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center transition-colors mb-0.5",
