@@ -44,12 +44,12 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
   const showCustomerLogoInHeader = branding && (branding.brandingOption === "customer" || branding.brandingOption === "both") && branding.customerLogo;
 
   return (
-    <header className="border-b bg-card sticky top-0 z-50 backdrop-blur-sm bg-card/95">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="border-b bg-card sticky top-0 z-50 backdrop-blur-sm bg-card/95" role="banner">
+      <nav className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
             {showCustomerLogoInHeader && (
-              <img src={branding.customerLogo} alt={branding.customerName} className="w-8 h-8 object-contain" />
+              <img src={branding.customerLogo} alt={`${branding.customerName} logo`} className="w-8 h-8 object-contain" />
             )}
             <h1 className="text-lg font-bold text-foreground hidden sm:block">AI Course Generator</h1>
           </div>
@@ -59,8 +59,9 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
               <button 
                 onClick={onTokenClick}
                 className="hidden sm:flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-full border border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all cursor-pointer"
+                aria-label={`${tokenCount} tokens available. Click to view token details`}
               >
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
                 <span className="text-xs font-medium text-foreground">{tokenCount}</span>
                 <span className="text-xs text-muted-foreground">tokens</span>
               </button>
@@ -68,8 +69,8 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="ghost" className="rounded-full w-11 h-11 p-0 hover:bg-primary/10 border-2 border-primary/30 hover:border-primary/50 shadow-sm transition-all">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                <Button size="sm" variant="ghost" className="rounded-full w-11 h-11 p-0 hover:bg-primary/10 border-2 border-primary/30 hover:border-primary/50 shadow-sm transition-all" aria-label="User menu">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary" aria-hidden="true">
                     A
                   </div>
                 </Button>
@@ -101,7 +102,7 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
             </DropdownMenu>
           </div>
         </div>
-      </div>
+      </nav>
       
       <ChangePasswordDialog 
         open={changePasswordOpen}

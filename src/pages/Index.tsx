@@ -1,10 +1,14 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
-  
+
+  useEffect(() => {
+    document.title = "AI Course Generator - Create Courses with AI";
+  }, []);
 
   const fadeUp = {
     hidden: { opacity: 0, y: 12 },
@@ -16,14 +20,18 @@ const Index = () => {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-white">
+    <section className="relative min-h-screen overflow-hidden bg-white" aria-label="Landing page">
+      {/* Skip to main content - WCAG 2.4.1 */}
+      <a href="#main-content" className="skip-to-main">Skip to main content</a>
+
       {/* Background Video */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0" aria-hidden="true">
         <video
           autoPlay
           loop
           muted
           playsInline
+          aria-hidden="true"
           className="w-full h-full object-cover [transform:scaleY(-1)]"
         >
           <source
@@ -36,7 +44,7 @@ const Index = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-[1200px] px-6 pt-[290px] flex flex-col items-center gap-8">
+      <main id="main-content" role="main" className="relative z-10 mx-auto max-w-[1200px] px-6 pt-[290px] flex flex-col items-center gap-8">
         {/* Heading */}
         <motion.h1
           custom={0}
@@ -94,8 +102,10 @@ const Index = () => {
           initial="hidden"
           animate="visible"
           className="flex items-center gap-3 mt-2"
+          role="status"
+          aria-label="5 out of 5 stars rating. 1,020+ courses created by educators worldwide"
         >
-          <div className="flex -space-x-1">
+          <div className="flex -space-x-1" aria-hidden="true">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
@@ -110,7 +120,7 @@ const Index = () => {
             1,020+ courses created by educators worldwide
           </span>
         </motion.div>
-      </div>
+      </main>
     </section>
   );
 };

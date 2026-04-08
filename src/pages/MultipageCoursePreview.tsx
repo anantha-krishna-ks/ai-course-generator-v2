@@ -85,7 +85,7 @@ const MultipageCoursePreview = () => {
   ];
 
   const DeviceToggle = () => (
-    <div className="flex items-center gap-1.5 rounded-full bg-muted/50 p-1.5 border border-border">
+    <div className="flex items-center gap-1.5 rounded-full bg-muted/50 p-1.5 border border-border" role="radiogroup" aria-label="Device preview size">
       {devices.map(({ key, icon: Icon, label, rotate }) => {
         const isActive = deviceView === key;
         return (
@@ -98,9 +98,11 @@ const MultipageCoursePreview = () => {
                 ? "bg-background text-foreground shadow-sm border border-border/60"
                 : "text-muted-foreground hover:text-foreground border border-transparent"
             )}
-            title={label}
+            role="radio"
+            aria-checked={isActive}
+            aria-label={`${label} view`}
           >
-            <Icon className={cn("w-4 h-4", rotate && "rotate-90")} />
+            <Icon className={cn("w-4 h-4", rotate && "rotate-90")} aria-hidden="true" />
             {isActive && <span className="hidden sm:inline">{label}</span>}
           </button>
         );
@@ -316,6 +318,7 @@ const MultipageCoursePreview = () => {
       return;
     }
     setData(state);
+    document.title = `${state.title} - Course Preview`;
     const sections = new Set<string>();
     state.items.forEach((item) => {
       if (item.type === "section") sections.add(item.id);
@@ -445,7 +448,7 @@ const MultipageCoursePreview = () => {
       }
       case "image":
         return block.content ? (
-          <img src={block.content} alt="" className="w-full max-w-2xl rounded-xl shadow-sm" />
+          <img src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm" />
         ) : null;
       case "image-description": {
         try {
@@ -456,7 +459,7 @@ const MultipageCoursePreview = () => {
               isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
             )}>
               {parsed.image && (
-                <img src={parsed.image} alt="" className={cn(
+                <img src={parsed.image} alt="Course illustration" className={cn(
                   "rounded-xl shadow-sm object-cover",
                   isCompactView ? "w-full" : "w-1/2"
                 )} />
@@ -485,6 +488,7 @@ const MultipageCoursePreview = () => {
               src={videoSrc}
               controls
               className="w-full max-h-[400px] rounded-xl"
+              aria-label={block.content ? "Course video" : "Sample video"}
               poster={!block.content ? "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80" : undefined}
             />
             {!block.content && (
@@ -533,7 +537,7 @@ const MultipageCoursePreview = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground mb-2">{block.content ? "Audio" : "Sample Audio Track"}</p>
-                <audio src={audioSrc} controls className="w-full h-8" />
+                <audio src={audioSrc} controls className="w-full h-8" aria-label={block.content ? "Course audio" : "Sample audio track"} />
                 {!block.content && (
                   <p className="text-xs text-muted-foreground italic mt-1">Sample audio — replace with your own content</p>
                 )}
@@ -688,9 +692,9 @@ const MultipageCoursePreview = () => {
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pb-3 border-b border-border/60">
+          <div className="flex items-center justify-between px-5 pb-3 border-b border-border/60">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Course Outline</h3>
+            <h3 className="text-sm font-semibold text-foreground" id="mobile-outline-heading">Course Outline</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               {currentIndex + 1} of {totalPages} pages · {progress}% complete
             </p>
@@ -698,6 +702,7 @@ const MultipageCoursePreview = () => {
           <button
             onClick={() => setMobileOutlineOpen(false)}
             className="p-2 rounded-full hover:bg-muted transition-colors"
+            aria-label="Close course outline"
           >
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
@@ -728,7 +733,7 @@ const MultipageCoursePreview = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full">
+            <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full" aria-label="Go back">
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
@@ -863,7 +868,7 @@ const MultipageCoursePreview = () => {
                                 isCompactView ? "w-10 h-10" : "w-12 h-12"
                               )}>
                                 {item.thumbnailUrl ? (
-                                  <img src={item.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                                  <img src={item.thumbnailUrl} alt={`${item.title} section thumbnail`} className="w-full h-full object-cover" />
                                 ) : (
                                   <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
                                 )}
@@ -936,7 +941,7 @@ const MultipageCoursePreview = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => setStarted(false)} className="rounded-full">
+          <Button variant="ghost" size="icon" onClick={() => setStarted(false)} className="rounded-full" aria-label="Go back to course landing">
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <span className="text-sm font-medium text-foreground">Course Preview</span>
@@ -1041,6 +1046,7 @@ const MultipageCoursePreview = () => {
                         onClick={goToPrev}
                         disabled={currentIndex <= 0}
                         className="gap-2 text-muted-foreground"
+                        aria-label="Go to previous page"
                       >
                         <ArrowLeft className="w-4 h-4" />
                         Previous
@@ -1050,6 +1056,7 @@ const MultipageCoursePreview = () => {
                         onClick={goToNext}
                         disabled={currentIndex >= allPages.length - 1}
                         className="gap-2 text-muted-foreground"
+                        aria-label="Go to next page"
                       >
                         Next
                         <ChevronRight className="w-4 h-4" />
@@ -1073,8 +1080,9 @@ const MultipageCoursePreview = () => {
               <button
                 onClick={() => setMobileOutlineOpen(true)}
                 className="flex items-center gap-2 px-3 py-2 rounded-full bg-muted/60 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                aria-label="Open course outline"
               >
-                <Menu className="w-4 h-4" />
+                <Menu className="w-4 h-4" aria-hidden="true" />
                 <span className="text-xs">Outline</span>
               </button>
 
@@ -1097,6 +1105,7 @@ const MultipageCoursePreview = () => {
                   onClick={goToPrev}
                   disabled={currentIndex <= 0}
                   className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                  aria-label="Previous page"
                 >
                   <ArrowLeft className="w-4 h-4 text-foreground" />
                 </button>
@@ -1104,6 +1113,7 @@ const MultipageCoursePreview = () => {
                   onClick={goToNext}
                   disabled={currentIndex >= allPages.length - 1}
                   className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                  aria-label="Next page"
                 >
                   <ChevronRight className="w-4 h-4 text-foreground" />
                 </button>

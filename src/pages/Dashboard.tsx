@@ -117,6 +117,11 @@ const Dashboard = () => {
     return unsubscribe;
   }, []);
 
+  // WCAG 2.4.2 – Page title
+  useEffect(() => {
+    document.title = "Dashboard - AI Course Generator";
+  }, []);
+
   useEffect(() => {
     const fetchTokenInfo = async () => {
       try {
@@ -189,8 +194,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Skip to main content - WCAG 2.4.1 */}
+      <a href="#main-dashboard" className="skip-to-main">Skip to main content</a>
+
       {/* Animated Mesh Gradient Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-0 -left-40 w-[600px] h-[600px] rounded-full bg-primary/[0.04] blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
         <div className="absolute top-1/3 -right-20 w-[500px] h-[500px] rounded-full bg-primary/[0.03] blur-[100px] animate-pulse" style={{ animationDuration: '12s' }} />
         <div className="absolute -bottom-40 left-1/3 w-[700px] h-[700px] rounded-full bg-accent/[0.06] blur-[140px] animate-pulse" style={{ animationDuration: '10s' }} />
@@ -305,7 +313,7 @@ const Dashboard = () => {
       />
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="main-dashboard" role="main" className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Banner */}
         <motion.div
           custom={0}
@@ -397,6 +405,7 @@ const Dashboard = () => {
                   size="icon"
                   className="rounded-full border border-border hover:bg-primary/10 hover:text-primary transition-all"
                   onClick={() => window.location.reload()}
+                  aria-label="Refresh courses"
                 >
                   <RefreshCw className="w-4 h-4" />
                 </Button>
@@ -413,15 +422,16 @@ const Dashboard = () => {
           animate="visible"
           className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
         >
-          <h2 className="text-2xl font-bold text-foreground tracking-[-0.02em]">All Courses</h2>
+          <h2 className="text-2xl font-bold text-foreground tracking-[-0.02em]" id="courses-heading">All Courses</h2>
 
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
             <Input
-              type="text"
+              type="search"
               placeholder="Search courses..."
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
+              aria-label="Search courses"
               className="pl-10 h-10 rounded-full border border-border bg-card/80 backdrop-blur-sm focus:border-primary/50 focus-visible:ring-primary/20"
             />
           </div>
@@ -467,21 +477,26 @@ const Dashboard = () => {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8" role="list" aria-labelledby="courses-heading"
         >
           {currentCourses.map((course) => (
-            <motion.div key={course.id} variants={cardItem}>
+            <motion.div key={course.id} variants={cardItem} role="listitem">
               <Card 
                 onClick={() => navigate(`/edit-course/${course.id}`)}
                 className="group overflow-hidden transition-all duration-300 cursor-pointer border border-border/80 hover:border-primary/30 hover:shadow-lg bg-card/80 backdrop-blur-sm rounded-2xl"
+                tabIndex={0}
+                role="link"
+                aria-label={`${course.title} - Last updated ${course.lastUpdated}`}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/edit-course/${course.id}`); } }}
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img 
                     src={course.thumbnail} 
-                    alt={course.title}
+                    alt={`Thumbnail for ${course.title}`}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
                 </div>
                 
                 <div className="p-5 space-y-3.5">
@@ -632,7 +647,7 @@ const Dashboard = () => {
             </div>
           </motion.div>
         )}
-      </div>
+      </main>
 
       {/* Footer */}
       {(!branding || branding.brandingOption === "excelsoft" || branding.brandingOption === "both") && (
