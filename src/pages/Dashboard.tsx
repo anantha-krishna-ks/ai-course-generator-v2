@@ -569,9 +569,10 @@ const Dashboard = () => {
                       size="icon"
                       onClick={() => setCurrentPage(1)}
                       disabled={currentPage === 1}
+                      aria-label="Go to first page"
                       className="h-8 w-8 rounded-full border-border hover:bg-primary/10 hover:border-primary/50 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <ChevronsLeft className="h-3.5 w-3.5" />
+                      <ChevronsLeft className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
                   </PaginationItem>
 
@@ -621,9 +622,10 @@ const Dashboard = () => {
                       size="icon"
                       onClick={() => setCurrentPage(totalPages)}
                       disabled={currentPage === totalPages}
+                      aria-label="Go to last page"
                       className="h-8 w-8 rounded-full border-border hover:bg-primary/10 hover:border-primary/50 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <ChevronsRight className="h-3.5 w-3.5" />
+                      <ChevronsRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </Button>
                   </PaginationItem>
                 </PaginationContent>
@@ -658,6 +660,7 @@ const Dashboard = () => {
               <img 
                 src={logo} 
                 alt="courseED Logo" 
+                role="img"
                 className="h-10 w-auto"
               />
             </div>

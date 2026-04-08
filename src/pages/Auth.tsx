@@ -105,6 +105,7 @@ const Auth = () => {
         <img
           src={authBgVectors}
           alt=""
+          role="presentation"
           width={1920}
           height={1080}
           className="w-full h-full object-cover opacity-60"
@@ -258,6 +259,7 @@ const Auth = () => {
               <button
                 type="submit"
                 disabled={isLoading}
+                aria-label={mode === "login" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
                 className="w-full h-12 flex items-center justify-center gap-2.5 rounded-full bg-primary text-primary-foreground text-[15px] font-medium transition-all hover:bg-primary/90 disabled:opacity-50 mt-2"
               >
                 {isLoading ? (
@@ -313,9 +315,9 @@ const Auth = () => {
             style={{ fontFamily: "'Geist', sans-serif" }}
           >
             By continuing, you agree to our{" "}
-            <button className="underline hover:opacity-100">Terms of Service</button>
+            <button className="underline hover:opacity-100" aria-label="Read Terms of Service">Terms of Service</button>
             {" "}and{" "}
-            <button className="underline hover:opacity-100">Privacy Policy</button>
+            <button className="underline hover:opacity-100" aria-label="Read Privacy Policy">Privacy Policy</button>
           </motion.p>
         </div>
       </main>
