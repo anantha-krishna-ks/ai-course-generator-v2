@@ -318,7 +318,7 @@ const Auth = () => {
             <button className="underline hover:opacity-100">Privacy Policy</button>
           </motion.p>
         </div>
-      </div>
+      </main>
     </section>
   );
 };
