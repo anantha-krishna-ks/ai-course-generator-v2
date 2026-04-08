@@ -218,8 +218,9 @@ export function ContentBlock({
             "p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors",
             className
           )}
+          aria-label={label}
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="w-4 h-4" aria-hidden="true" />
         </button>
       </TooltipTrigger>
       <TooltipContent side="left" className="text-xs">
@@ -265,8 +266,9 @@ export function ContentBlock({
                 <button
                   onClick={(e) => e.stopPropagation()}
                   className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label="Change content layout"
                 >
-                  <LayoutGrid className="w-4 h-4" />
+                  <LayoutGrid className="w-4 h-4" aria-hidden="true" />
                 </button>
               </PopoverTrigger>
               <PopoverContent side="left" align="start" className="w-48 p-0">
@@ -316,9 +318,10 @@ export function ContentBlock({
                   <button
                     onClick={() => setShowGenerateDialog(true)}
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                    aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
-                    <Sparkles className="w-4 h-4" style={{ stroke: 'url(#ai-gradient)' }} />
-                    <svg width="0" height="0" className="absolute">
+                    <Sparkles className="w-4 h-4" style={{ stroke: 'url(#ai-gradient)' }} aria-hidden="true" />
+                    <svg width="0" height="0" className="absolute" aria-hidden="true">
                       <defs>
                         <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
@@ -344,8 +347,10 @@ export function ContentBlock({
         <div
           {...attributes}
           {...listeners}
+          role="button"
+          tabIndex={0}
           className="absolute -left-11 top-1 w-10 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/block:opacity-100"
-          aria-label="Drag to reorder"
+          aria-label="Drag to reorder content block"
         />
         {/* Content area - full width */}
         <div className="w-full">
