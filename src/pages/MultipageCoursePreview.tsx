@@ -609,6 +609,8 @@ const MultipageCoursePreview = () => {
                     : "border-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
                 )}
                 onClick={() => toggleSection(item.id)}
+                aria-expanded={isExpanded}
+                aria-label={`${item.title || "Untitled section"} section, ${isExpanded ? "collapse" : "expand"}`}
               >
                 <span className="truncate pr-2">{item.title || "Untitled section"}</span>
                 {isExpanded ? (
@@ -623,6 +625,8 @@ const MultipageCoursePreview = () => {
                     <button
                       key={child.id}
                       onClick={() => onPageSelect(child.id)}
+                      aria-label={`Navigate to ${child.title || "Untitled page"}`}
+                      aria-current={child.id === selectedId ? "page" : undefined}
                       className={cn(
                         "w-full flex items-center gap-2 pl-8 pr-5 py-2.5 text-left text-[13px] transition-colors border-l-[3px]",
                         child.id === selectedId
@@ -648,6 +652,8 @@ const MultipageCoursePreview = () => {
           <button
             key={item.id}
             onClick={() => onPageSelect(item.id)}
+            aria-label={`Navigate to ${item.title || "Untitled page"}`}
+            aria-current={item.id === selectedId ? "page" : undefined}
             className={cn(
               "w-full flex items-center gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
               item.id === selectedId
@@ -894,6 +900,7 @@ const MultipageCoursePreview = () => {
                                 <button
                                   key={child.id}
                                   onClick={() => startCourse(child.id)}
+                                  aria-label={`Start ${child.title || "Untitled page"}`}
                                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
                                 >
                                   {child.type === "question" ? (
@@ -914,6 +921,7 @@ const MultipageCoursePreview = () => {
                       <button
                         key={item.id}
                         onClick={() => startCourse(item.id)}
+                        aria-label={`Start ${item.title || "Untitled page"}`}
                         className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left text-sm text-muted-foreground border-b border-border/30 last:border-b-0 hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
                       >
                         {item.type === "question" ? (
