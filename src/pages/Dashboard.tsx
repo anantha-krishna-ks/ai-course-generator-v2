@@ -643,7 +643,7 @@ const Dashboard = () => {
             </div>
           </motion.div>
         )}
-      </div>
+      </main>
 
       {/* Footer */}
       {(!branding || branding.brandingOption === "excelsoft" || branding.brandingOption === "both") && (
