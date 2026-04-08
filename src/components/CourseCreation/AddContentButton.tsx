@@ -211,11 +211,11 @@ export function AddContentButton({
             </span>
           </div>
            <button
-214:             onClick={() => { setShowAiPrompt(null); setAiPrompt(""); setAiGenerating(false); }}
-215:             className="p-1.5 rounded-md hover:bg-muted transition-colors"
-216:             aria-label="Close AI prompt"
-217:           >
-218:             <X className="w-4 h-4 text-muted-foreground" />
+            onClick={() => { setShowAiPrompt(null); setAiPrompt(""); setAiGenerating(false); }}
+            className="p-1.5 rounded-md hover:bg-muted transition-colors"
+            aria-label="Close AI prompt"
+          >
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
         <div className="px-4 py-3">
