@@ -117,6 +117,11 @@ const Dashboard = () => {
     return unsubscribe;
   }, []);
 
+  // WCAG 2.4.2 – Page title
+  useEffect(() => {
+    document.title = "Dashboard - AI Course Generator";
+  }, []);
+
   useEffect(() => {
     const fetchTokenInfo = async () => {
       try {

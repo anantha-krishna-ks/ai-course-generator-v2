@@ -85,7 +85,7 @@ const MultipageCoursePreview = () => {
   ];
 
   const DeviceToggle = () => (
-    <div className="flex items-center gap-1.5 rounded-full bg-muted/50 p-1.5 border border-border">
+    <div className="flex items-center gap-1.5 rounded-full bg-muted/50 p-1.5 border border-border" role="radiogroup" aria-label="Device preview size">
       {devices.map(({ key, icon: Icon, label, rotate }) => {
         const isActive = deviceView === key;
         return (
@@ -98,9 +98,11 @@ const MultipageCoursePreview = () => {
                 ? "bg-background text-foreground shadow-sm border border-border/60"
                 : "text-muted-foreground hover:text-foreground border border-transparent"
             )}
-            title={label}
+            role="radio"
+            aria-checked={isActive}
+            aria-label={`${label} view`}
           >
-            <Icon className={cn("w-4 h-4", rotate && "rotate-90")} />
+            <Icon className={cn("w-4 h-4", rotate && "rotate-90")} aria-hidden="true" />
             {isActive && <span className="hidden sm:inline">{label}</span>}
           </button>
         );
@@ -316,6 +318,7 @@ const MultipageCoursePreview = () => {
       return;
     }
     setData(state);
+    document.title = `${state.title} - Course Preview`;
     const sections = new Set<string>();
     state.items.forEach((item) => {
       if (item.type === "section") sections.add(item.id);
@@ -445,7 +448,7 @@ const MultipageCoursePreview = () => {
       }
       case "image":
         return block.content ? (
-          <img src={block.content} alt="" className="w-full max-w-2xl rounded-xl shadow-sm" />
+          <img src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm" />
         ) : null;
       case "image-description": {
         try {
@@ -456,7 +459,7 @@ const MultipageCoursePreview = () => {
               isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
             )}>
               {parsed.image && (
-                <img src={parsed.image} alt="" className={cn(
+                <img src={parsed.image} alt="Course illustration" className={cn(
                   "rounded-xl shadow-sm object-cover",
                   isCompactView ? "w-full" : "w-1/2"
                 )} />
@@ -485,6 +488,7 @@ const MultipageCoursePreview = () => {
               src={videoSrc}
               controls
               className="w-full max-h-[400px] rounded-xl"
+              aria-label={block.content ? "Course video" : "Sample video"}
               poster={!block.content ? "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&q=80" : undefined}
             />
             {!block.content && (
@@ -533,7 +537,7 @@ const MultipageCoursePreview = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground mb-2">{block.content ? "Audio" : "Sample Audio Track"}</p>
-                <audio src={audioSrc} controls className="w-full h-8" />
+                <audio src={audioSrc} controls className="w-full h-8" aria-label={block.content ? "Course audio" : "Sample audio track"} />
                 {!block.content && (
                   <p className="text-xs text-muted-foreground italic mt-1">Sample audio — replace with your own content</p>
                 )}
