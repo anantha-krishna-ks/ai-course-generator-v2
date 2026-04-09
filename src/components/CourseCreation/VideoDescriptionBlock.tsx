@@ -61,7 +61,7 @@ export function VideoDescriptionBlock({ content, onChange }: VideoDescriptionBlo
           updateField("description", e.target.value);
         }}
         placeholder="Add a description..."
-        className="w-full h-full rounded-lg border border-transparent hover:border-foreground/20 focus:border-foreground/20 bg-transparent px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none resize-none transition-colors"
+        className="w-full h-full rounded-lg border border-transparent hover:border-foreground/20 focus:border-foreground/20 bg-transparent px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none resize-none transition-colors"
       />
     </div>
   );

@@ -72,7 +72,7 @@ export function ImageDescriptionBlock({ content, onChange, aiEnabled = false }: 
               dangerouslySetInnerHTML={{ __html: data.description }}
             />
           ) : (
-            <span className="text-sm text-muted-foreground/50 italic">
+            <span className="text-sm text-muted-foreground italic">
               Click to add a description...
             </span>
           )}

@@ -117,9 +117,10 @@ export function SectionImageDialog({
         {/* Close button */}
         <button
           onClick={onClose}
+          aria-label="Close dialog"
           className="absolute top-4 right-4 p-1.5 rounded-md hover:bg-muted transition-colors z-10"
         >
-          <X className="w-5 h-5 text-muted-foreground" />
+          <X className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
         </button>
 
         {/* Title area */}
@@ -138,9 +139,10 @@ export function SectionImageDialog({
             {/* Zoom controls */}
             <button
               onClick={() => setZoom((z) => Math.max(10, z - 10))}
+              aria-label="Zoom out"
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             </button>
             <Slider
               value={[zoom]}
@@ -152,9 +154,10 @@ export function SectionImageDialog({
             />
             <button
               onClick={() => setZoom((z) => Math.min(200, z + 10))}
+              aria-label="Zoom in"
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             </button>
 
             <div className="w-px h-5 bg-border mx-1" />
@@ -163,9 +166,9 @@ export function SectionImageDialog({
             <button
               onClick={() => fileInputRef.current?.click()}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="Replace image"
+              aria-label="Replace image"
             >
-              <Image className="w-4 h-4" />
+              <Image className="w-4 h-4" aria-hidden="true" focusable="false" />
             </button>
 
             <div className="w-px h-5 bg-border mx-1" />
@@ -173,11 +176,11 @@ export function SectionImageDialog({
             {/* Fit mode dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 px-2 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                  {fitMode === "contain" && <Maximize className="w-3.5 h-3.5" />}
-                  {fitMode === "cover" && <RectangleHorizontal className="w-3.5 h-3.5" />}
-                  {fitMode === "fill" && <RectangleHorizontal className="w-3.5 h-3.5" />}
-                  <ChevronDown className="w-3 h-3" />
+                <button className="flex items-center gap-1 px-2 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label="Image fit mode">
+                  {fitMode === "contain" && <Maximize className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                  {fitMode === "cover" && <RectangleHorizontal className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                  {fitMode === "fill" && <RectangleHorizontal className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                  <ChevronDown className="w-3 h-3" aria-hidden="true" focusable="false" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="bg-background border border-border min-w-[100px]">
@@ -203,9 +206,9 @@ export function SectionImageDialog({
                   "p-1.5 rounded-md transition-colors",
                   flipH ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
-                title="Flip horizontal"
+                aria-label="Flip horizontal"
               >
-                <FlipHorizontal className="w-3.5 h-3.5" />
+                <FlipHorizontal className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               </button>
               <button
                 onClick={() => setFlipV(!flipV)}
@@ -213,16 +216,16 @@ export function SectionImageDialog({
                   "p-1.5 rounded-md transition-colors",
                   flipV ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
-                title="Flip vertical"
+                aria-label="Flip vertical"
               >
-                <FlipVertical className="w-3.5 h-3.5" />
+                <FlipVertical className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               </button>
               <button
                 onClick={() => setRotation((r) => (r + 90) % 360)}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                title="Rotate 90°"
+                aria-label="Rotate 90 degrees"
               >
-                <RotateCw className="w-3.5 h-3.5" />
+                <RotateCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               </button>
             </div>
 
@@ -253,7 +256,7 @@ export function SectionImageDialog({
                 }}
               />
             ) : (
-              <span className="text-sm text-muted-foreground/50">No image yet</span>
+              <span className="text-sm text-muted-foreground">No image yet</span>
             )}
           </div>
 
@@ -291,7 +294,7 @@ export function SectionImageDialog({
               onClick={() => setRotation((r) => (r + 90) % 360)}
               className="gap-1.5 border-border"
             >
-              <RotateCw className="w-4 h-4" />
+              <RotateCw className="w-4 h-4" aria-hidden="true" focusable="false" />
               Rotate 90°
             </Button>
           )}

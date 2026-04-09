@@ -596,12 +596,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                         <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
                           <p className="text-sm text-muted-foreground italic">
                             Content was removed...{" "}
-                            <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2">
-                              <Undo2 className="w-3 h-3" /> Undo
+                            <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2" aria-label="Undo delete">
+                              <Undo2 className="w-3 h-3" aria-hidden="true" focusable="false" /> Undo
                             </button>
                           </p>
-                          <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            <X className="w-3.5 h-3.5" /> Close
+                          <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} aria-label="Dismiss" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Close
                           </button>
                         </div>
                       </div>
@@ -653,13 +653,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
                         <p className="text-sm text-muted-foreground italic">
                           Content was removed...{" "}
-                          <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2">
-                            <Undo2 className="w-3 h-3" /> Undo
+                            <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2" aria-label="Undo delete">
+                              <Undo2 className="w-3 h-3" aria-hidden="true" focusable="false" /> Undo
+                            </button>
+                          </p>
+                          <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} aria-label="Dismiss" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Close
                           </button>
-                        </p>
-                        <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                          <X className="w-3.5 h-3.5" /> Close
-                        </button>
                       </div>
                     </div>
                   );
@@ -729,8 +729,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-4">
-            <button onClick={handleBack} className="p-2 rounded-lg hover:bg-muted transition-colors" aria-label="Go back">
-              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+             <button onClick={handleBack} className="p-2 rounded-lg hover:bg-muted transition-colors" aria-label="Go back">
+               <ArrowLeft className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
             </button>
             <div className="flex items-center gap-3 min-w-0">
               <Tooltip>
@@ -762,8 +762,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={handlePreview}>
-                  <Eye className="w-4 h-4" />
+                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={handlePreview} aria-label="Preview course">
+                  <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Preview</TooltipContent>
@@ -773,11 +773,11 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
               onClick={() => setShowExportDialog(true)}
             >
-              <Wand2 className="w-4 h-4" />
+              <Wand2 className="w-4 h-4" aria-hidden="true" focusable="false" />
               <span className="hidden sm:inline">Generate</span>
             </Button>
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setShowTour(true)}>
-              <HelpCircle className="w-4 h-4 text-muted-foreground" />
+            <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setShowTour(true)} aria-label="Help tour">
+              <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             </Button>
           </div>
         </div>
@@ -788,18 +788,18 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         {/* Left Sidebar */}
         <div className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[360px]")}>
           {!sidebarCollapsed && (
-            <button onClick={() => setSidebarCollapsed(true)} className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
-              <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
+            <button onClick={() => setSidebarCollapsed(true)} aria-label="Collapse sidebar" className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
+              <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
             </button>
           )}
 
           {/* Tabs */}
           <div className="flex items-center gap-0 px-4 pt-3 border-b border-border whitespace-nowrap">
-            <button onClick={() => setActiveTab("outline")} className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "outline" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
-              <LayoutGrid className="w-3.5 h-3.5" /> Course outline
+            <button onClick={() => setActiveTab("outline")} aria-label="Course outline tab" className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "outline" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
+              <LayoutGrid className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Course outline
             </button>
-            <button onClick={() => setActiveTab("blocks")} className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "blocks" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
-              <Layers className="w-3.5 h-3.5" /> Content blocks
+            <button onClick={() => setActiveTab("blocks")} aria-label="Content blocks tab" className={cn("flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 transition-colors", activeTab === "blocks" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>
+              <Layers className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Content blocks
             </button>
           </div>
 
@@ -846,16 +846,16 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                               <SortableOutlineWrapper key={item.id} id={item.id}>
                                 {(listeners) => (
                                   <div onClick={() => scrollToItem(item.id)} className="group/nav-page flex items-center gap-2.5 py-2.5 transition-colors cursor-pointer relative rounded-md pl-1 hover:bg-muted/40 px-2">
-                                    <span className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing" {...listeners}>
-                                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                                    <span role="button" tabIndex={0} aria-label="Drag to reorder page" className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing" {...listeners}>
+                                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                     </span>
-                                    <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                     <span className="text-sm truncate flex-1 text-foreground/80">{item.title || "Untitled page"}</span>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
-                                        <button className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
-                                          <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                                        </button>
+                                         <button aria-label="Page options" className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
+                                           <MoreHorizontal className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                         </button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end" className="w-44">
                                         <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
@@ -883,16 +883,16 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                 {(listeners) => (
                                   <div className="rounded-xl border border-border bg-card p-4 space-y-3 transition-colors">
                                     <div className="flex items-center justify-between">
-                                      <span className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1" {...listeners} onClick={(e) => e.stopPropagation()}>
-                                        <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                      <span role="button" tabIndex={0} aria-label="Drag to reorder section" className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1" {...listeners} onClick={(e) => e.stopPropagation()}>
+                                        <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                         Section {currentSectionNumber}
                                       </span>
                                       <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
                                         <DropdownMenu>
                                           <DropdownMenuTrigger asChild>
-                                            <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                              <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                                            </button>
+                                             <button aria-label="Section options" className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                               <MoreHorizontal className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                             </button>
                                           </DropdownMenuTrigger>
                                           <DropdownMenuContent align="end" className="w-44">
                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
@@ -908,8 +908,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                           </DropdownMenuContent>
                                         </DropdownMenu>
                                         <span className="w-px h-4 bg-border" />
-                                        <button className="p-1.5 rounded-md hover:bg-muted transition-colors" onClick={() => setCollapsedSections(prev => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })}>
-                                          {collapsedSections.has(item.id) ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronUp className="w-4 h-4 text-muted-foreground" />}
+                                        <button aria-label={collapsedSections.has(item.id) ? "Expand section" : "Collapse section"} className="p-1.5 rounded-md hover:bg-muted transition-colors" onClick={() => setCollapsedSections(prev => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })}>
+                                          {collapsedSections.has(item.id) ? <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" /> : <ChevronUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />}
                                         </button>
                                       </div>
                                     </div>
@@ -921,13 +921,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                         <div className="space-y-1 pl-2 border-l-2 border-border/40 ml-1">
                                           {item.children.map((child) => (
                                             <div key={child.id} onClick={() => scrollToItem(child.id)} className="group/child flex items-center gap-2 py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors">
-                                              <FileText className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
+                                              <FileText className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" aria-hidden="true" focusable="false" />
                                               <span className="text-sm text-foreground/80 truncate flex-1">{child.title || "Untitled page"}</span>
                                               <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
-                                                  <button className="opacity-0 group-hover/child:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
-                                                    <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                                                  </button>
+                                                   <button aria-label="Page options" className="opacity-0 group-hover/child:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
+                                                     <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                                   </button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-44">
                                                   <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(child.title || ""); setRenameTarget({ id: child.id, title: child.title || "" }); }}>
@@ -947,7 +947,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                         </div>
                                       )}
                                       <button onClick={() => addPageToSection(item.id)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1 ml-1 pl-3">
-                                        <Plus className="w-3.5 h-3.5" /> Add page
+                                        <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Add page
                                       </button>
                                       <div className="border-t border-dashed border-border mt-2" />
                                     </>)}
@@ -1090,7 +1090,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                           type="text"
                           value={item.title}
                           onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
-                          className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                          className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                           placeholder="Untitled section"
                         />
                       </div>
@@ -1098,7 +1098,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       {/* Section Image - Full ImageBlock with AI features */}
                       <div className="mt-5">
                         <div className="flex items-center gap-2 mb-2">
-                          <ImageIcon className="w-4 h-4 text-primary/70" />
+                          <ImageIcon className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
                           <span className="text-sm font-medium text-muted-foreground">Section Image</span>
                         </div>
                         <ImageBlock
@@ -1112,13 +1112,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       <div className="mt-5">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4 text-primary/70" />
+                            <BookOpen className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
                             <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                           </div>
                           {aiEnabled && (
-                            <button className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
-                              <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-section-intro)' }} />
-                              <svg width="0" height="0" className="absolute">
+                            <button aria-label="Ask AI for introduction" className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
+                              <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-section-intro)' }} aria-hidden="true" focusable="false" />
+                              <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
                                 <defs>
                                   <linearGradient id="ai-gradient-section-intro" x1="0%" y1="0%" x2="100%" y2="100%">
                                     <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
@@ -1144,7 +1144,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             }
                           }}
                           rows={2}
-                          className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
+                          className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
                           placeholder="Define the introduction for this section…"
                         />
                       </div>
@@ -1164,7 +1164,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 <div key={item.id} id={`item-${item.id}`} className={cn("mt-10", parentId && "ml-4 pl-4 border-l-2 border-primary/20")}>
                   <div className="flex items-center gap-3 mb-4">
                     <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full bg-muted/30">
-                      <FileText className="w-3 h-3 mr-1.5" />
+                      <FileText className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
                       {item.title || "Untitled page"}
                     </span>
                     {!parentId && <div className="flex-1 h-px border-t border-dashed border-border" />}
@@ -1176,7 +1176,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       type="text"
                       value={item.title}
                       onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
-                      className="text-xl sm:text-2xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                      className="text-xl sm:text-2xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                       placeholder="Untitled page"
                     />
                     <div className="border-t border-dashed border-border my-4" />
