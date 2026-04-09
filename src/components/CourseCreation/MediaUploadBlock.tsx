@@ -91,7 +91,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
           {/* Header bar */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40 bg-muted/30">
             <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 border border-border/40">
-              <FileText className="w-5 h-5 text-muted-foreground" />
+              <FileText className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-foreground truncate">
@@ -102,16 +102,16 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
               <button
                 onClick={() => changeFileInputRef.current?.click()}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                title="Change document"
+                aria-label="Change document"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-4 h-4" aria-hidden="true" />
               </button>
               <button
                 onClick={handleRemove}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                title="Delete document"
+                aria-label="Delete document"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
             <input
@@ -138,7 +138,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             ) : (
               <div className="flex flex-col items-center justify-center py-16 px-6 gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center border border-border/40">
-                  <FileText className="w-8 h-8 text-muted-foreground" />
+                  <FileText className="w-8 h-8 text-muted-foreground" aria-hidden="true" />
                 </div>
                 <div className="text-center space-y-1">
                   <p className="text-sm font-medium text-foreground">{fileName || "Document file"}</p>
@@ -160,14 +160,14 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
           {/* Bottom bar */}
           <div className="flex items-center justify-between px-4 py-2 border-t border-border/30 bg-muted/20">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-muted-foreground/50" />
+              <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
               <span className="text-xs font-medium text-muted-foreground">
                 {fileName || "Document"}
               </span>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground">100%</span>
-              <Maximize2 className="w-3.5 h-3.5 text-muted-foreground/50" />
+              <Maximize2 className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -193,16 +193,16 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             <button
               onClick={() => changeFileInputRef.current?.click()}
               className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-              title={`Change ${config.label.toLowerCase()}`}
+              aria-label={`Change ${config.label.toLowerCase()}`}
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
             </button>
             <button
               onClick={handleRemove}
               className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-              title={`Delete ${config.label.toLowerCase()}`}
+              aria-label={`Delete ${config.label.toLowerCase()}`}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
           <input
@@ -236,7 +236,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
                 e.target.style.height = e.target.scrollHeight + 'px';
               }}
               placeholder="Add a description for this audio (optional)"
-              className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
+              className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
               rows={1}
             />
           </>
@@ -302,7 +302,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             e.target.style.height = e.target.scrollHeight + 'px';
           }}
           placeholder="Add a description for this audio (optional)"
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
+          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
           rows={1}
         />
       )}

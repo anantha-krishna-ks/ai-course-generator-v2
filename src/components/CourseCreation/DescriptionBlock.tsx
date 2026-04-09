@@ -15,6 +15,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -361,9 +362,9 @@ export function DescriptionBlock({
               <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
               Version History — Column {(versionDialogCol ?? 0) + 1}
             </DialogTitle>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
               View and restore previous versions of this column
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
@@ -411,7 +412,7 @@ export function DescriptionBlock({
                             })} at {version.editedAt.toLocaleTimeString('en-US', {
                               hour: '2-digit', minute: '2-digit'
                             })}</span>
-                            <span className="text-muted-foreground/60">·</span>
+                            <span className="text-muted-foreground">·</span>
                             <span>{version.editedBy}</span>
                           </div>
                         </div>
