@@ -131,37 +131,61 @@ export default function AIGenerateCourse() {
           </div>
 
           {/* Elegant step indicators */}
-          <div className="flex items-center gap-2 sm:gap-3 mb-4 px-1">
+          <nav aria-label="Course generation steps" className="flex items-center gap-1 sm:gap-0 mb-5 px-1">
             {STEPS.map((step, i) => {
               const isActive = step.id === currentStep;
               const isDone = step.id < currentStep;
+              const isUpcoming = step.id > currentStep;
               return (
-                <div key={step.id} className="flex items-center gap-2 sm:gap-3 flex-1">
-                  <div className="flex-1 flex flex-col gap-1.5">
-                    <motion.span
-                      animate={{ 
-                        color: isActive ? "hsl(var(--foreground))" : isDone ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-                      }}
-                      className="text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase hidden sm:block"
+                <div key={step.id} className="flex items-center flex-1">
+                  <div className="flex items-center gap-2 sm:gap-2.5 flex-1">
+                    {/* Step number circle */}
+                    <motion.div
+                      className={cn(
+                        "w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0 border-2 transition-colors",
+                        isDone && "border-primary bg-primary text-primary-foreground",
+                        isActive && "border-primary bg-primary/10 text-primary",
+                        isUpcoming && "border-border bg-muted text-muted-foreground"
+                      )}
+                      initial={false}
+                      animate={{ scale: isActive ? 1.05 : 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {isDone ? (
+                        <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" focusable="false" />
+                      ) : (
+                        step.id
+                      )}
+                    </motion.div>
+
+                    {/* Label — hidden on mobile */}
+                    <span
+                      className={cn(
+                        "text-[11px] sm:text-xs font-medium hidden sm:block leading-tight",
+                        isDone && "text-primary",
+                        isActive && "text-foreground font-semibold",
+                        isUpcoming && "text-muted-foreground"
+                      )}
                     >
                       {step.label}
-                    </motion.span>
-                    <div className="relative h-1 rounded-full bg-border overflow-hidden">
+                    </span>
+                  </div>
+
+                  {/* Connector line between steps */}
+                  {i < STEPS.length - 1 && (
+                    <div className="hidden sm:block flex-shrink-0 w-6 lg:w-10 h-[2px] mx-1 rounded-full overflow-hidden bg-border">
                       <motion.div
-                        className="absolute inset-y-0 left-0 rounded-full"
-                        style={{ background: "linear-gradient(90deg, hsl(211 100% 50%), hsl(270 80% 55%))" }}
+                        className="h-full rounded-full bg-primary"
                         initial={false}
-                        animate={{
-                          width: isDone ? "100%" : isActive ? "50%" : "0%",
-                        }}
-                        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                        animate={{ width: isDone ? "100%" : "0%" }}
+                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                       />
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
-          </div>
+          </nav>
 
           {/* Card with AI shimmer border */}
           <div className="relative rounded-2xl p-[1px] overflow-hidden">
