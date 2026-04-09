@@ -1079,10 +1079,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                   <div key={item.id} id={`item-${item.id}`} className="mt-12">
                     {/* Section divider label */}
                     <div className="flex items-center gap-3 mb-6">
-                      <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-primary border border-primary/30 rounded-full bg-primary/5">
+                      <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-primary-foreground border border-primary/30 rounded-full bg-primary">
                         Section {sectionIndex}: {item.title || "Untitled section"}
                       </span>
-                      <div className="flex-1 h-px border-t border-dashed border-border" />
+                      <div className="flex-1 h-px border-t border-dashed border-border" aria-hidden="true" />
                     </div>
 
                     {/* Section title + image area */}
@@ -1180,15 +1180,18 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                   </div>
 
                   <div className="mb-4">
-                    <span className="text-sm text-muted-foreground block mb-2">Page title</span>
+                    <label htmlFor={`page-title-${item.id}`} className="text-sm text-muted-foreground block mb-2">Page title</label>
                     <input
+                      id={`page-title-${item.id}`}
                       type="text"
                       value={item.title}
                       onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
                       className="text-xl sm:text-2xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                       placeholder="Untitled page"
+                      aria-label={`Title for page: ${item.title || 'Untitled page'}`}
+                      autoComplete="off"
                     />
-                    <div className="border-t border-dashed border-border my-4" />
+                    <div className="border-t border-dashed border-border my-4" aria-hidden="true" />
                   </div>
 
                   {renderItemBlocks(item.id)}
