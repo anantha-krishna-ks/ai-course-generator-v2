@@ -87,7 +87,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Learning Outcome */}
       <div>
-        <label htmlFor="learning-outcome" className="text-sm font-semibold text-foreground mb-2 block uppercase tracking-wider">
+        <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label mb-2 block uppercase tracking-wider">
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
@@ -102,7 +102,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Intended Learners */}
       <div>
-        <label htmlFor="intended-learners-detail" className="text-sm font-semibold text-foreground mb-2 block uppercase tracking-wider">
+        <label htmlFor="intended-learners-detail" className="text-sm font-semibold text-field-label mb-2 block uppercase tracking-wider">
           Intended Learners
         </label>
         <Textarea
@@ -117,7 +117,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Duration + Tone side by side */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <div className="text-sm font-semibold text-foreground mb-2.5 uppercase tracking-wider">
+          <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
             Duration
           </div>
           <ChipGroup
@@ -129,7 +129,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           />
         </div>
         <div>
-          <div className="text-sm font-semibold text-foreground mb-2.5 uppercase tracking-wider">
+          <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
             Tone
           </div>
           <ChipGroup
@@ -143,7 +143,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Proficiency */}
       <div>
-        <div className="text-sm font-semibold text-foreground mb-2.5 uppercase tracking-wider">
+        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
           Proficiency Level
         </div>
         <ChipGroup

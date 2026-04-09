@@ -27,6 +27,7 @@ All colors MUST be HSL.
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 44%;
+    --field-label: 222 10% 42%;
 
     --accent: 214 32% 91%;
     --accent-foreground: 222 47% 11%;
@@ -90,6 +91,7 @@ All colors MUST be HSL.
 
     --muted: 217 33% 18%;
     --muted-foreground: 215 20% 65%;
+    --field-label: 222 10% 70%;
 
     --accent: 214 25% 22%;
     --accent-foreground: 210 40% 98%;
