@@ -185,13 +185,13 @@ export function SectionImageDialog({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="bg-background border border-border min-w-[100px]">
                 <DropdownMenuItem onClick={() => setFitMode("contain")} className={cn("cursor-pointer", fitMode === "contain" && "bg-primary/10")}>
-                  <Maximize className="w-3.5 h-3.5 mr-2" /> Fit
+                  <Maximize className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Fit
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFitMode("cover")} className={cn("cursor-pointer", fitMode === "cover" && "bg-primary/10")}>
-                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Fill
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Fill
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFitMode("fill")} className={cn("cursor-pointer", fitMode === "fill" && "bg-primary/10")}>
-                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Stretch
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Stretch
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

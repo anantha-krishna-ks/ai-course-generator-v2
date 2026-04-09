@@ -175,7 +175,7 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                       Generate
                     </>
                   )}

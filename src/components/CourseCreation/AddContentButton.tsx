@@ -152,19 +152,19 @@ export function AddContentButton({
           <div className="flex items-center gap-1 px-2 py-2 w-full">
             <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-3 md:px-5 py-2.5 flex items-center flex-1 justify-evenly gap-1 md:gap-2 shadow-sm flex-nowrap min-w-0">
               <Button variant="ghost" className="gap-1.5 md:gap-2 text-muted-foreground text-xs md:text-[13px] h-8 md:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 md:px-4 transition-all duration-200" onClick={onAddText}>
-                <Type className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                <Type className="w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" focusable="false" />
                 <span>Text</span>
               </Button>
               <Button variant="ghost" className="gap-1.5 md:gap-2 text-muted-foreground text-xs md:text-[13px] h-8 md:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 md:px-4 transition-all duration-200" onClick={onAddImage}>
-                <Image className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                <Image className="w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" focusable="false" />
                 <span>Image</span>
               </Button>
               <Button variant="ghost" className="gap-1.5 md:gap-2 text-muted-foreground text-xs md:text-[13px] h-8 md:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 md:px-4 transition-all duration-200" onClick={onAddVideo}>
-                <Video className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                <Video className="w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" focusable="false" />
                 <span>Video</span>
               </Button>
               <Button variant="ghost" className="gap-1.5 md:gap-2 text-muted-foreground text-xs md:text-[13px] h-8 md:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 md:px-4 transition-all duration-200" onClick={onAddDoc}>
-                <FileText className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                <FileText className="w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" focusable="false" />
                 <span>Doc</span>
               </Button>
             </div>
@@ -184,7 +184,7 @@ export function AddContentButton({
               onClick={onAddText}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all duration-200"
             >
-              <Type className="w-3.5 h-3.5" />
+              <Type className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               <span>Text</span>
             </button>
             <div className="w-px h-4 bg-border/60" />
@@ -192,7 +192,7 @@ export function AddContentButton({
               onClick={onAddImage}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-all duration-200"
             >
-              <Image className="w-3.5 h-3.5" />
+              <Image className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               <span>Image</span>
             </button>
           </div>
@@ -215,7 +215,7 @@ export function AddContentButton({
             className="p-1.5 rounded-md hover:bg-muted transition-colors"
             aria-label="Close AI prompt"
           >
-            <X className="w-4 h-4 text-muted-foreground" />
+            <X className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
           </button>
         </div>
         <div className="px-4 py-3">
@@ -267,7 +267,7 @@ export function AddContentButton({
                       : "bg-muted text-muted-foreground"
                   )}
                 >
-                  <Send className="w-3.5 h-3.5" />
+                  <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                 </button>
               </div>
               <p className="text-[11px] text-muted-foreground mt-2 px-1">

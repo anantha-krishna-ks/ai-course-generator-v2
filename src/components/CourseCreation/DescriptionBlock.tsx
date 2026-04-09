@@ -233,7 +233,7 @@ export function DescriptionBlock({
                   variant="ghost"
                   className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                 >
-                  <Sparkles className="w-3 h-3" />
+                  <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Ask AI
                 </Button>
                 <Button
@@ -245,7 +245,7 @@ export function DescriptionBlock({
                     setSelectedVersionId(null);
                   }}
                 >
-                  <GitBranch className="w-3 h-3" />
+                  <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Version History
                 </Button>
               </div>
@@ -363,7 +363,7 @@ export function DescriptionBlock({
         <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:max-w-4xl h-[85vh] sm:h-[80vh] p-0 flex flex-col overflow-hidden">
           <DialogHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b flex-shrink-0">
             <DialogTitle className="text-sm sm:text-base md:text-lg font-bold flex items-center gap-2">
-              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
               Version History — Column {(versionDialogCol ?? 0) + 1}
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -373,7 +373,7 @@ export function DescriptionBlock({
 
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
               <span className="text-xs sm:text-sm font-medium">All Versions</span>
             </div>
             <Badge variant="secondary" className="text-xs">
@@ -410,7 +410,7 @@ export function DescriptionBlock({
                             )}
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <Clock className="w-3 h-3 flex-shrink-0" aria-hidden="true" focusable="false" />
                             <span>{version.editedAt.toLocaleDateString('en-US', {
                               month: 'short', day: 'numeric', year: 'numeric'
                             })} at {version.editedAt.toLocaleTimeString('en-US', {
@@ -433,7 +433,7 @@ export function DescriptionBlock({
                             }}
                             className="flex-shrink-0 h-7 sm:h-8 text-xs px-2 sm:px-3 rounded-full"
                           >
-                            <RotateCcw className="w-3 h-3 mr-1.5" />
+                            <RotateCcw className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
                             Restore Version
                           </Button>
                         )}

@@ -133,7 +133,7 @@ export const GenerateExportDialog = ({
                   {/* Check badge */}
                   {isSelected && (
                     <div className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} aria-hidden="true" focusable="false" />
                     </div>
                   )}
 
@@ -144,7 +144,7 @@ export const GenerateExportDialog = ({
                       isSelected ? cn(option.selectedBg, "scale-110 shadow-md") : cn(option.bg, "shadow-sm"),
                     )}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-5 w-5" aria-hidden="true" focusable="false" />
                   </div>
 
                   {/* Label */}
@@ -180,7 +180,7 @@ export const GenerateExportDialog = ({
             disabled={!selectedFormat}
             className="gap-2 sm:w-auto w-full h-9 text-[13px]"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             {selectedOption ? `Download ${selectedOption.label}` : "Download"}
           </Button>
         </DialogFooter>

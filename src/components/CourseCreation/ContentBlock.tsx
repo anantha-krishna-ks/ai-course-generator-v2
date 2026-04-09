@@ -393,7 +393,7 @@ export function ContentBlock({
                             setSelectedVersionId(null);
                           }}
                         >
-                          <GitBranch className="w-3 h-3" />
+                          <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
                           Version History
                         </Button>
                       </div>
@@ -420,7 +420,7 @@ export function ContentBlock({
                         className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
                         onClick={() => setShowVersionsDialog(true)}
                       >
-                        <GitBranch className="w-3 h-3" />
+                        <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
                         Version History
                       </Button>
                     </div>
@@ -431,7 +431,7 @@ export function ContentBlock({
           ) : !hasContent ? (
             <div className="w-full rounded-lg border-2 border-dashed border-foreground/20 bg-background/80 py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200 hover:border-primary/50">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Type className="w-6 h-6 text-primary/70" aria-hidden="true" />
+                <Type className="w-6 h-6 text-primary" aria-hidden="true" />
               </div>
               <p className="text-sm text-muted-foreground">Click to add text content...</p>
               <div className="flex items-center gap-2.5">
@@ -445,7 +445,7 @@ export function ContentBlock({
                     setIsEditing(true);
                   }}
                 >
-                  <PenLine className="w-3.5 h-3.5" />
+                  <PenLine className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                   Enter Text
                 </Button>
                 {aiEnabled && (
@@ -549,7 +549,7 @@ export function ContentBlock({
               disabled={!prompt.trim()}
               className="rounded-full px-4 gap-1.5"
             >
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Generate
             </Button>
           </div>
@@ -564,7 +564,7 @@ export function ContentBlock({
         <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:max-w-4xl h-[85vh] sm:h-[80vh] p-0 flex flex-col overflow-hidden">
           <DialogHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b flex-shrink-0">
             <DialogTitle className="text-sm sm:text-base md:text-lg font-bold flex items-center gap-2">
-              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
               Version History
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -574,7 +574,7 @@ export function ContentBlock({
 
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
               <span className="text-xs sm:text-sm font-medium">All Versions</span>
             </div>
             <Badge variant="secondary" className="text-xs">
@@ -612,13 +612,13 @@ export function ContentBlock({
                             )}
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <Clock className="w-3 h-3 flex-shrink-0" aria-hidden="true" focusable="false" />
                             <span>{version.editedAt.toLocaleDateString('en-US', {
                               month: 'short', day: 'numeric', year: 'numeric'
                             })} at {version.editedAt.toLocaleTimeString('en-US', {
                               hour: '2-digit', minute: '2-digit'
                             })}</span>
-                            <span className="text-muted-foreground/60">·</span>
+                            <span className="text-muted-foreground">·</span>
                             <span>{version.editedBy}</span>
                           </div>
                         </div>
@@ -633,7 +633,7 @@ export function ContentBlock({
                             }}
                             className="flex-shrink-0 h-7 sm:h-8 text-xs px-2 sm:px-3 rounded-full"
                           >
-                            <RotateCcw className="w-3 h-3 mr-1.5" />
+                            <RotateCcw className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
                             Restore Version
                           </Button>
                         )}
@@ -666,7 +666,7 @@ export function ContentBlock({
         <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:max-w-4xl h-[85vh] sm:h-[80vh] p-0 flex flex-col overflow-hidden">
           <DialogHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b flex-shrink-0">
             <DialogTitle className="text-sm sm:text-base md:text-lg font-bold flex items-center gap-2">
-              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
               Version History — Column {(versionDialogCol ?? 0) + 1}
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
@@ -676,7 +676,7 @@ export function ContentBlock({
 
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
             <div className="flex items-center gap-2">
-              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
+              <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
               <span className="text-xs sm:text-sm font-medium">All Versions</span>
             </div>
             <Badge variant="secondary" className="text-xs">
@@ -713,7 +713,7 @@ export function ContentBlock({
                             )}
                           </div>
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <Clock className="w-3 h-3 flex-shrink-0" aria-hidden="true" focusable="false" />
                             <span>{version.editedAt.toLocaleDateString('en-US', {
                               month: 'short', day: 'numeric', year: 'numeric'
                             })} at {version.editedAt.toLocaleTimeString('en-US', {
@@ -736,7 +736,7 @@ export function ContentBlock({
                             }}
                             className="flex-shrink-0 h-7 sm:h-8 text-xs px-2 sm:px-3 rounded-full"
                           >
-                            <RotateCcw className="w-3 h-3 mr-1.5" />
+                            <RotateCcw className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
                             Restore Version
                           </Button>
                         )}

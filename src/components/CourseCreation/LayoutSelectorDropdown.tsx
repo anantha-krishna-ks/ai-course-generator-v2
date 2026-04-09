@@ -127,12 +127,12 @@ export function LayoutSelectorDropdown({ currentLayout, title, aiOptions, transf
       <PopoverTrigger asChild>
         <button className="flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors rounded-md px-3 py-1.5 border border-border bg-muted/50 hover:bg-muted w-fit shadow-sm">
           {isMulti ? (
-            <Layers className="w-3.5 h-3.5 text-muted-foreground" />
+            <Layers className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
           ) : (
-            <FileStack className="w-3.5 h-3.5 text-muted-foreground" />
+            <FileStack className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
           )}
           {isMulti ? "Multi-page layout" : "Single-page layout"}
-          <ChevronDown className="w-3 h-3 text-muted-foreground" />
+          <ChevronDown className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[420px] p-3 space-y-2">
