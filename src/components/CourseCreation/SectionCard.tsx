@@ -594,11 +594,13 @@ export function SectionCard({
                           setObjectiveText(e.target.value);
                         }
                       }}
-                      className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50"
+                      aria-label="Section introduction"
+                      autoComplete="off"
+                      className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground"
                       placeholder="Write an introduction for this section…"
                     />
                     <span className={cn(
-                      "text-[9px] text-muted-foreground/50 tabular-nums transition-opacity",
+                      "text-[9px] text-muted-foreground tabular-nums transition-opacity",
                       isObjectiveFocused ? "opacity-100" : "opacity-0"
                     )}>
                       {objectiveText.length}/{MAX_OBJECTIVE_LENGTH}
