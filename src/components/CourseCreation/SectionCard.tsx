@@ -833,6 +833,7 @@ export function SectionCard({
           <div className="px-6 pb-2">
             <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
               <textarea
+                aria-label="AI introduction prompt"
                 value={aiIntroPrompt}
                 onChange={(e) => setAiIntroPrompt(e.target.value)}
                 onKeyDown={(e) => {
@@ -844,7 +845,7 @@ export function SectionCard({
                   }
                 }}
                 placeholder="e.g., Write a brief introduction covering the key objectives and what learners will achieve..."
-                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none p-4 focus:outline-none min-h-[120px]"
                 rows={4}
               />
             </div>

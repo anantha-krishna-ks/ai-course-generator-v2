@@ -103,7 +103,9 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                     onTitleChange(e.target.value);
                   }
                 }}
-                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50 transition-all"
+                aria-label={`Page title: ${title || 'Untitled page'}`}
+                autoComplete="off"
+                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground transition-all"
                 placeholder="Untitled page..."
               />
               <div className={cn(
@@ -112,7 +114,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               )} />
             </div>
             <span className={cn(
-              "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity",
+              "text-[9px] text-muted-foreground tabular-nums shrink-0 transition-opacity",
               isFocused ? "opacity-100" : "opacity-0"
             )}>
               {title.length}/{MAX_PAGE_TITLE_LENGTH}
