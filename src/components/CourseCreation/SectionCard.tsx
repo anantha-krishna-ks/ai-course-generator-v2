@@ -821,13 +821,13 @@ export function SectionCard({
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
               <div className="p-1.5 rounded-lg bg-primary/10">
-                <Sparkles className="w-4 h-4 text-primary" />
+                <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
               </div>
               Generate Introduction
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1.5">
+            <DialogDescription className="text-sm text-muted-foreground mt-1.5">
               Describe what introduction you'd like to generate for "{title || "Untitled section"}".
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="px-6 pb-2">
