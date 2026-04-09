@@ -77,14 +77,16 @@ export function AddContentButton({
 
   return (
     <>
-    <Popover open={forceOpen || undefined} onOpenChange={setIsPopoverOpen}>
+    <Popover open={forceOpen ? true : isPopoverOpen} onOpenChange={setIsPopoverOpen}>
       <PopoverTrigger asChild>
-        <div
+        <button
+          type="button"
           className={cn(
-            "group/add flex items-center justify-center my-2 cursor-pointer transition-all duration-200",
+            "group/add flex w-full items-center justify-center my-2 transition-all duration-200",
             isDragOver && "my-4"
           )}
           data-tour="text-toolbar"
+          aria-label="Add content"
           onDragOver={(e) => {
             if (Array.from(e.dataTransfer.types).indexOf("application/content-block") >= 0) {
               e.preventDefault();
@@ -118,29 +120,38 @@ export function AddContentButton({
             } catch {}
           }}
         >
-          <div className={cn(
-            "flex-1 h-px transition-all duration-200",
-            isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
-            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
-            (forceOpen || isPopoverOpen) && "opacity-100"
-          )} />
-          <div className={cn(
-            "mx-3 rounded-full border flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200",
-            isDragOver
-              ? "w-9 h-9 border-primary border-dashed bg-primary/5 scale-110 opacity-100"
-              : "w-7 h-7 border-foreground/20",
-            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
-            (forceOpen || isPopoverOpen) && "opacity-100"
-          )}>
-            <Plus aria-hidden="true" className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-muted-foreground")} />
+          <div
+            className={cn(
+              "flex-1 h-px transition-all duration-200",
+              isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
+              !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
+              (forceOpen || isPopoverOpen) && "opacity-100"
+            )}
+            aria-hidden="true"
+          />
+          <div
+            className={cn(
+              "mx-3 rounded-full border flex items-center justify-center bg-background/50 hover:bg-background hover:border-primary/50 hover:scale-110 transition-all duration-200",
+              isDragOver
+                ? "w-9 h-9 border-primary border-dashed bg-primary/5 scale-110 opacity-100"
+                : "w-7 h-7 border-foreground/20",
+              !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
+              (forceOpen || isPopoverOpen) && "opacity-100"
+            )}
+            aria-hidden="true"
+          >
+            <Plus aria-hidden="true" focusable="false" className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-muted-foreground")} />
           </div>
-          <div className={cn(
-            "flex-1 h-px transition-all duration-200",
-            isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
-            !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
-            (forceOpen || isPopoverOpen) && "opacity-100"
-          )} />
-        </div>
+          <div
+            className={cn(
+              "flex-1 h-px transition-all duration-200",
+              isDragOver ? "bg-primary/50 opacity-100" : "bg-foreground/15",
+              !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
+              (forceOpen || isPopoverOpen) && "opacity-100"
+            )}
+            aria-hidden="true"
+          />
+        </button>
       </PopoverTrigger>
       <PopoverContent
         side="top"
