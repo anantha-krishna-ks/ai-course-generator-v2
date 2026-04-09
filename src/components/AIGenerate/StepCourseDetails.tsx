@@ -112,31 +112,31 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         />
       </div>
 
-      {/* Duration + Tone side by side */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div>
-          <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-            Duration
-          </div>
-          <ChipGroup
-            options={DURATION_OPTIONS}
-            value={state.duration}
-            onChange={(v) => onChange({ duration: v as AIGenerateState["duration"] })}
-            ariaLabel="Course duration"
-            showDesc
-          />
+      {/* Duration */}
+      <div>
+        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+          Duration
         </div>
-        <div>
-          <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-            Tone
-          </div>
-          <ChipGroup
-            options={TONE_OPTIONS}
-            value={state.tone}
-            onChange={(v) => onChange({ tone: v as AIGenerateState["tone"] })}
-            ariaLabel="Course tone"
-          />
+        <ChipGroup
+          options={DURATION_OPTIONS}
+          value={state.duration}
+          onChange={(v) => onChange({ duration: v as AIGenerateState["duration"] })}
+          ariaLabel="Course duration"
+          showDesc
+        />
+      </div>
+
+      {/* Tone */}
+      <div>
+        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+          Tone
         </div>
+        <ChipGroup
+          options={TONE_OPTIONS}
+          value={state.tone}
+          onChange={(v) => onChange({ tone: v as AIGenerateState["tone"] })}
+          ariaLabel="Course tone"
+        />
       </div>
 
       {/* Proficiency */}
