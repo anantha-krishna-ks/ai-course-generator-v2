@@ -165,7 +165,28 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
                 transition={{ duration: 0.25, delay: i * 0.04 }}
-                className="group rounded-xl border border-border bg-background overflow-hidden"
+                className={cn(
+                  "group rounded-xl border bg-background overflow-hidden transition-colors",
+                  dragOverIdx === i && dragIdx !== i
+                    ? "border-primary/50 bg-primary/5"
+                    : "border-border",
+                  dragIdx === i && "opacity-50"
+                )}
+                onDragOver={(e) => { e.preventDefault(); setDragOverIdx(i); }}
+                onDragLeave={() => { if (dragOverIdx === i) setDragOverIdx(null); }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  if (dragIdx !== null && dragIdx !== i) {
+                    setObjectives((prev) => {
+                      const next = [...prev];
+                      const [moved] = next.splice(dragIdx, 1);
+                      next.splice(i, 0, moved);
+                      return next;
+                    });
+                  }
+                  setDragIdx(null);
+                  setDragOverIdx(null);
+                }}
               >
                 {editingIdx === i ? (
                   /* Edit mode */
