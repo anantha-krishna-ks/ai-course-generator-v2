@@ -1122,7 +1122,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                           </div>
                           {aiEnabled && (
-                            <button aria-label="Ask AI for introduction" className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
+                            <button aria-label={`Ask AI for section ${sectionIndex} introduction`} className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
                               <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-section-intro)' }} aria-hidden="true" focusable="false" />
                               <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
                                 <defs>
@@ -1132,7 +1132,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                   </linearGradient>
                                 </defs>
                               </svg>
-                              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">Ask AI</span>
+                              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent" aria-hidden="true">Ask AI</span>
                             </button>
                           )}
                         </div>
