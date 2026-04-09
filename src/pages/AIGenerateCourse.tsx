@@ -273,7 +273,7 @@ export default function AIGenerateCourse() {
               </div>
 
               {/* Card body */}
-              <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-280px)] overflow-y-auto thin-scrollbar">
+              <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5">
                 <AnimatePresence mode="wait" custom={direction} initial={false}>
                   <motion.div
                     key={currentStep}
