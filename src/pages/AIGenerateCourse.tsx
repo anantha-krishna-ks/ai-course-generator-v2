@@ -223,7 +223,7 @@ export default function AIGenerateCourse() {
 
             <motion.div
               layout
-              className="relative rounded-2xl bg-card shadow-lg overflow-hidden"
+              className="relative rounded-2xl bg-card shadow-[0_8px_30px_-12px_hsl(var(--foreground)/0.12)] overflow-hidden"
               transition={{ layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }}
             >
               {/* Traveling shimmer line at top */}
