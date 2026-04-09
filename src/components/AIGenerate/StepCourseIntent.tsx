@@ -24,7 +24,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Course Title */}
       <div className="space-y-1.5">
-        <label htmlFor="course-title" className="text-sm font-semibold text-foreground">
+        <label htmlFor="course-title" className="text-sm font-semibold text-foreground uppercase tracking-wider">
           Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <input
@@ -40,7 +40,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
-        <label htmlFor="learning-outcome" className="text-sm font-semibold text-foreground">
+        <label htmlFor="learning-outcome" className="text-sm font-semibold text-foreground uppercase tracking-wider">
           What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
 
@@ -101,7 +101,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Reference Documents */}
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-foreground">
+        <label className="text-sm font-semibold text-foreground uppercase tracking-wider">
           Reference Documents <span className="text-muted-foreground font-normal text-xs">(optional)</span>
         </label>
         <button
