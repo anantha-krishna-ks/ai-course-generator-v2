@@ -993,11 +993,14 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">
+              <label htmlFor="course-title-input" className="sr-only">Course title</label>
               <textarea
+                id="course-title-input"
                 value={title}
                 onChange={(e) => { if (e.target.value.length <= 275) setTitle(e.target.value); }}
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40 resize-none overflow-hidden leading-tight"
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground resize-none overflow-hidden leading-tight"
                 placeholder="Untitled course"
+                aria-label="Course title"
                 rows={1}
                 onInput={(e) => { const t = e.target as HTMLTextAreaElement; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
               />
@@ -1085,13 +1088,16 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                     {/* Section title + image area */}
                     <div className="mb-6">
                       <div className="mb-4">
-                        <span className="text-sm text-muted-foreground block mb-2">Section title</span>
+                        <label htmlFor={`section-title-${item.id}`} className="text-sm text-muted-foreground block mb-2">Section title</label>
                         <input
+                          id={`section-title-${item.id}`}
                           type="text"
                           value={item.title}
                           onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
                           className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                           placeholder="Untitled section"
+                          aria-label={`Title for section ${sectionIndex}`}
+                          autoComplete="off"
                         />
                       </div>
 
@@ -1130,7 +1136,9 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             </button>
                           )}
                         </div>
+                        <label htmlFor={`section-intro-${item.id}`} className="sr-only">Introduction for section {sectionIndex}</label>
                         <textarea
+                          id={`section-intro-${item.id}`}
                           value={sectionObjectivesMap[item.id] || ""}
                           onChange={(e) => {
                             setSectionObjectivesMap((prev) => ({ ...prev, [item.id]: e.target.value }));
@@ -1146,6 +1154,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                           rows={2}
                           className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
                           placeholder="Define the introduction for this section…"
+                          aria-label={`Introduction for section ${sectionIndex}`}
                         />
                       </div>
 
