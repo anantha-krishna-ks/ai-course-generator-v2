@@ -115,7 +115,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             <GripVertical className="w-3 h-3 text-muted-foreground" />
           </button>
           <div className="w-6 h-6 rounded-md bg-accent/60 flex items-center justify-center shrink-0">
-            <FileText className="w-3 h-3 text-muted-foreground/60" />
+            <FileText className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
           </div>
           <div className="flex-1 min-w-0">
             <input
@@ -131,7 +131,9 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
                   );
                 }
               }}
-              className="w-full text-[13px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50"
+              aria-label={`Page title: ${page.title || 'Untitled page'}`}
+              autoComplete="off"
+              className="w-full text-[13px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground"
               placeholder="Untitled page..."
             />
           </div>
