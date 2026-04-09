@@ -3,6 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Upload, Lightbulb, FileText, Info } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { TitleAutocomplete } from "./TitleAutocomplete";
 
 interface StepCourseIntentProps {
   state: AIGenerateState;
@@ -27,14 +28,11 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         <label htmlFor="course-title" className="text-sm font-semibold text-field-label uppercase tracking-wider">
           Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <input
+        <TitleAutocomplete
           id="course-title"
-          type="text"
           value={state.title}
-          onChange={(e) => onChange({ title: e.target.value })}
+          onChange={(v) => onChange({ title: v })}
           placeholder="e.g., Introduction to Machine Learning"
-          className="w-full text-base sm:text-lg font-semibold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 transition-colors placeholder:text-muted-foreground placeholder:font-normal text-foreground"
-          autoComplete="off"
         />
       </div>
 
