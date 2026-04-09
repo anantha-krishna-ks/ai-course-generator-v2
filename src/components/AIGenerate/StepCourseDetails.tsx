@@ -124,6 +124,7 @@ function AISuggestions({
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   const generate = useCallback(() => {
     if (!title.trim()) return;
