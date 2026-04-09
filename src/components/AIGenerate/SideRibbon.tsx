@@ -25,7 +25,7 @@ export function SideRibbon({ side }: SideRibbonProps) {
       style={{ [side]: 0 }}
       aria-hidden="true"
     >
-      <div className="relative w-full h-full bg-primary/[0.03]">
+      <div className="relative w-full h-full">
         {/* Gradient fade edges */}
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent z-10" />
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-10" />
