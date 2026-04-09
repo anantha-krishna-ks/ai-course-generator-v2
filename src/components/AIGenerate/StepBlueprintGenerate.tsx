@@ -80,7 +80,7 @@ function SummaryRow({ icon, label, value }: { icon: React.ReactNode; label: stri
     <div className="flex items-start gap-2">
       <div className="text-primary mt-0.5 shrink-0" aria-hidden="true">{icon}</div>
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
+        <p className="text-xs font-semibold text-foreground">{label}</p>
         <p className="text-xs font-medium text-foreground truncate">{value}</p>
       </div>
     </div>

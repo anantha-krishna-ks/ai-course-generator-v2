@@ -24,8 +24,8 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Course Title */}
       <div className="space-y-1.5">
-        <label htmlFor="course-title" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Course Title <span className="text-destructive" aria-hidden="true">*</span>
+        <label htmlFor="course-title" className="text-sm font-semibold text-foreground">
+          Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <input
           id="course-title"
@@ -40,8 +40,8 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
-        <label htmlFor="learning-outcome" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          What should learners gain? <span className="text-destructive" aria-hidden="true">*</span>
+        <label htmlFor="learning-outcome" className="text-sm font-semibold text-foreground">
+          What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
 
         <Textarea
@@ -101,8 +101,8 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Reference Documents */}
       <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Reference Documents <span className="text-muted-foreground font-normal normal-case tracking-normal">(optional)</span>
+        <label className="text-sm font-semibold text-foreground">
+          Reference Documents <span className="text-muted-foreground font-normal text-xs">(optional)</span>
         </label>
         <button
           type="button"

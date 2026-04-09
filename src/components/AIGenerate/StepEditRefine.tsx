@@ -24,7 +24,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
 
       {/* Title display */}
       <div className="rounded-xl border border-border bg-background p-3.5">
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Title</p>
+        <p className="text-xs font-semibold text-foreground">Title</p>
         <h2 className="text-base font-bold text-foreground mt-0.5">{state.title || "Untitled Course"}</h2>
         <div className="flex items-center gap-1.5 mt-2">
           <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
