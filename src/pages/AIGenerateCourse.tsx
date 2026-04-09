@@ -158,47 +158,72 @@ export default function AIGenerateCourse() {
             })}
           </div>
 
-          {/* Card with entrance animation */}
-          <motion.div
-            layout
-            className="relative rounded-2xl bg-card border border-border shadow-lg overflow-hidden"
-            transition={{ layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }}
-          >
-            {/* Subtle shimmer line at top */}
+          {/* Card with AI shimmer border */}
+          <div className="relative rounded-2xl p-[1px] overflow-hidden">
+            {/* Animated gradient border */}
             <motion.div
-              className="h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"
-              initial={false}
-              animate={{ opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                background: "linear-gradient(135deg, hsl(211 100% 50% / 0.3), hsl(270 80% 55% / 0.2), hsl(211 100% 50% / 0.1), hsl(270 80% 55% / 0.3))",
+                backgroundSize: "300% 300%",
+              }}
+              animate={{
+                backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+              }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               aria-hidden="true"
             />
 
-            {/* Card header with animated badge */}
-            <div className="flex items-center gap-3 px-5 sm:px-8 md:px-10 pt-4 sm:pt-5 pb-1">
-              <AnimatePresence mode="wait">
+            <motion.div
+              layout
+              className="relative rounded-2xl bg-card shadow-lg overflow-hidden"
+              transition={{ layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }}
+            >
+              {/* Traveling shimmer line at top */}
+              <div className="h-[2px] w-full overflow-hidden" aria-hidden="true">
                 <motion.div
-                  key={`badge-${currentStep}`}
-                  initial={{ rotateY: -90, opacity: 0 }}
-                  animate={{ rotateY: 0, opacity: 1 }}
-                  exit={{ rotateY: 90, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                  className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
-                  style={{ perspective: "600px" }}
-                >
-                  {currentStep}
-                </motion.div>
-              </AnimatePresence>
+                  className="h-full w-1/3"
+                  style={{
+                    background: "linear-gradient(90deg, transparent, hsl(211 100% 50% / 0.5), hsl(270 80% 55% / 0.4), transparent)",
+                  }}
+                  animate={{ x: ["-100%", "400%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                />
+              </div>
 
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={`label-${currentStep}`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                  className="text-xs sm:text-sm font-semibold text-foreground"
-                >
-                  {STEPS[currentStep - 1].label}
+              {/* Card header with AI badge */}
+              <div className="flex items-center gap-3 px-5 sm:px-8 md:px-10 pt-4 sm:pt-5 pb-1">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`badge-${currentStep}`}
+                    initial={{ rotateY: -90, opacity: 0 }}
+                    animate={{ rotateY: 0, opacity: 1 }}
+                    exit={{ rotateY: 90, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    className="relative w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] text-white flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
+                    style={{ perspective: "600px" }}
+                  >
+                    {currentStep}
+                  </motion.div>
+                </AnimatePresence>
+
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={`label-${currentStep}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                    className="text-xs sm:text-sm font-semibold text-foreground"
+                  >
+                    {STEPS[currentStep - 1].label}
+                  </motion.span>
+                </AnimatePresence>
+
+                <div className="ml-auto">
+                  <AISparkles className="w-4 h-4 opacity-60" />
+                </div>
+              </div>
                 </motion.span>
               </AnimatePresence>
             </div>
