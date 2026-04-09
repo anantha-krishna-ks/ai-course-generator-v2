@@ -119,6 +119,9 @@ export default function AIGenerateCourse() {
       </a>
       <Header />
 
+      <SideRibbon side="left" />
+      <SideRibbon side="right" />
+
       <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-4 py-6 sm:py-10">
         <div className="w-full max-w-3xl">
 
