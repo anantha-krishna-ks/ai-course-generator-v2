@@ -311,15 +311,18 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Intended Learners */}
       <div>
-        <label htmlFor="intended-learners-detail" className="text-sm font-semibold text-field-label mb-2 block uppercase tracking-wider">
+        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
           Intended Learners
-        </label>
-        <Textarea
-          id="intended-learners-detail"
+        </div>
+        <ChipGroup
+          options={[
+            { value: "beginners", label: "Beginners" },
+            { value: "intermediate", label: "Intermediate" },
+            { value: "expert", label: "Expert" },
+          ]}
           value={state.intendedLearners}
-          onChange={(e) => onChange({ intendedLearners: e.target.value })}
-          placeholder="e.g., New managers, sales teams, onboarding hires…"
-          className="min-h-[60px] resize-none rounded-xl text-sm"
+          onChange={(v) => onChange({ intendedLearners: v })}
+          ariaLabel="Intended learners"
         />
       </div>
 
