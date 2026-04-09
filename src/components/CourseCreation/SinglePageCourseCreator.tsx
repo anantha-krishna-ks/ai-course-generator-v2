@@ -724,7 +724,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const flatItems = getAllFlatItems();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" id="main-content">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
@@ -786,7 +786,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       {/* Main body with sidebar */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Left Sidebar */}
-        <div className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[360px]")}>
+        <nav aria-label="Course sidebar" className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[360px]")}>
           {!sidebarCollapsed && (
             <button onClick={() => setSidebarCollapsed(true)} aria-label="Collapse sidebar" className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
               <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
@@ -979,7 +979,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               />
             )}
           </div>
-        </div>
+        </nav>
 
         {/* Collapsed sidebar toggle */}
         {sidebarCollapsed && (
@@ -989,7 +989,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 min-w-0 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">
@@ -1203,7 +1203,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               </div>
             )}
           </div>
-        </div>
+        </main>
       </div>
 
       {/* Delete Confirmation */}
