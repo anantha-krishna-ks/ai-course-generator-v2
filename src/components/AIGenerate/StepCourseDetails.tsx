@@ -254,22 +254,20 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <Textarea
-          id="learning-outcome"
-          value={state.learningOutcome}
-          onChange={(e) => onChange({ learningOutcome: e.target.value })}
-          placeholder="e.g., Apply conflict resolution techniques in team settings…"
-          className="min-h-[72px] resize-none rounded-xl text-sm"
-        />
-
-        {/* AI Suggestions */}
-        <div className="mt-3">
+        <div className="rounded-xl border border-border overflow-hidden bg-background">
+          <Textarea
+            id="learning-outcome"
+            value={state.learningOutcome}
+            onChange={(e) => onChange({ learningOutcome: e.target.value })}
+            placeholder="e.g., Apply conflict resolution techniques in team settings…"
+            className="min-h-[72px] resize-none text-sm border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+          {/* AI Suggestions inline */}
           <AISuggestions
             title={state.title}
             onSelect={(text) => {
               const current = state.learningOutcome.trim();
               if (current.includes(text)) {
-                // Remove if already included
                 onChange({ learningOutcome: current.replace(text, "").replace(/\n{2,}/g, "\n").trim() });
               } else {
                 onChange({ learningOutcome: current ? `${current}\n${text}` : text });
