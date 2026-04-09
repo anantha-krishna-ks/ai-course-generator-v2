@@ -1,6 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -190,17 +190,27 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
               >
                 {editingIdx === i ? (
                   /* Edit mode */
-                  <div className="flex items-center gap-2 p-3">
-                    <Input
+                  <div className="flex items-start gap-2 p-3">
+                    <Textarea
                       value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
+                      onChange={(e) => {
+                        setEditValue(e.target.value);
+                        e.target.style.height = "auto";
+                        e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
+                      }}
+                      ref={(el) => {
+                        if (el) {
+                          el.style.height = "auto";
+                          el.style.height = `${Math.min(el.scrollHeight, 150)}px`;
+                          el.focus();
+                        }
+                      }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") handleSaveEdit();
+                        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSaveEdit(); }
                         if (e.key === "Escape") handleCancelEdit();
                       }}
-                      className="flex-1 text-sm h-8 rounded-lg"
+                      className="flex-1 text-sm min-h-[36px] max-h-[150px] resize-none rounded-lg"
                       aria-label="Edit learning objective"
-                      autoFocus
                     />
                     <Button
                       size="sm"
@@ -273,19 +283,23 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-center gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3">
-              <Input
+            <div className="flex items-start gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3">
+              <Textarea
                 value={newValue}
-                onChange={(e) => setNewValue(e.target.value)}
+                onChange={(e) => {
+                  setNewValue(e.target.value);
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
+                }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAdd();
+                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleAdd(); }
                   if (e.key === "Escape") {
                     setShowAddInput(false);
                     setNewValue("");
                   }
                 }}
                 placeholder="Type a new learning objective…"
-                className="flex-1 text-sm h-8 rounded-lg"
+                className="flex-1 text-sm min-h-[36px] max-h-[150px] resize-none rounded-lg"
                 aria-label="New learning objective"
                 autoFocus
               />
