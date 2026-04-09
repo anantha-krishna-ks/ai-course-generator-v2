@@ -68,6 +68,8 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
   const [editValue, setEditValue] = useState("");
   const [newValue, setNewValue] = useState("");
   const [showAddInput, setShowAddInput] = useState(false);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
   const generate = useCallback(() => {
     setLoading(true);
