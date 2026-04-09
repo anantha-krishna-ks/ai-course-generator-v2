@@ -131,60 +131,70 @@ export default function AIGenerateCourse() {
           </div>
 
           {/* Elegant step indicators */}
-          <nav aria-label="Course generation steps" className="flex items-center gap-1 sm:gap-0 mb-5 px-1">
-            {STEPS.map((step, i) => {
-              const isActive = step.id === currentStep;
-              const isDone = step.id < currentStep;
-              const isUpcoming = step.id > currentStep;
-              return (
-                <div key={step.id} className="flex items-center flex-1">
-                  <div className="flex items-center gap-2 sm:gap-2.5 flex-1">
-                    {/* Step number circle */}
-                    <motion.div
+          <nav aria-label="Course generation steps" className="mb-6">
+            <div className="flex items-center justify-between rounded-xl bg-muted/40 border border-border/60 px-2 py-2 sm:px-3 sm:py-2.5 backdrop-blur-sm">
+              {STEPS.map((step, i) => {
+                const isActive = step.id === currentStep;
+                const isDone = step.id < currentStep;
+                const isUpcoming = step.id > currentStep;
+                return (
+                  <div key={step.id} className="flex items-center flex-1 last:flex-initial">
+                    {/* Step pill */}
+                    <div
                       className={cn(
-                        "w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold shrink-0 border-2 transition-colors",
-                        isDone && "border-primary bg-primary text-primary-foreground",
-                        isActive && "border-primary bg-primary/10 text-primary",
-                        isUpcoming && "border-border bg-muted text-muted-foreground"
-                      )}
-                      initial={false}
-                      animate={{ scale: isActive ? 1.05 : 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {isDone ? (
-                        <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true" focusable="false" />
-                      ) : (
-                        step.id
-                      )}
-                    </motion.div>
-
-                    {/* Label — hidden on mobile */}
-                    <span
-                      className={cn(
-                        "text-[11px] sm:text-xs font-medium hidden sm:block leading-tight",
-                        isDone && "text-primary",
-                        isActive && "text-foreground font-semibold",
-                        isUpcoming && "text-muted-foreground"
+                        "flex items-center gap-2 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition-all duration-300",
+                        isActive && "bg-card shadow-sm border border-border/80",
+                        isDone && "opacity-80",
+                        isUpcoming && "opacity-50"
                       )}
                     >
-                      {step.label}
-                    </span>
-                  </div>
-
-                  {/* Connector line between steps */}
-                  {i < STEPS.length - 1 && (
-                    <div className="hidden sm:block flex-shrink-0 w-6 lg:w-10 h-[2px] mx-1 rounded-full overflow-hidden bg-border">
                       <motion.div
-                        className="h-full rounded-full bg-primary"
+                        className={cn(
+                          "w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-bold shrink-0 transition-colors duration-300",
+                          isDone && "bg-primary text-primary-foreground shadow-sm",
+                          isActive && "bg-primary text-primary-foreground shadow-md",
+                          isUpcoming && "bg-border/80 text-muted-foreground"
+                        )}
                         initial={false}
-                        animate={{ width: isDone ? "100%" : "0%" }}
-                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                      />
+                        animate={{ scale: isActive ? 1.1 : 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      >
+                        {isDone ? (
+                          <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        ) : (
+                          step.id
+                        )}
+                      </motion.div>
+
+                      <span
+                        className={cn(
+                          "text-[11px] sm:text-xs font-medium hidden sm:block whitespace-nowrap",
+                          isDone && "text-foreground",
+                          isActive && "text-foreground font-semibold",
+                          isUpcoming && "text-muted-foreground"
+                        )}
+                      >
+                        {step.label}
+                      </span>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+
+                    {/* Connector */}
+                    {i < STEPS.length - 1 && (
+                      <div className="flex-1 hidden sm:flex items-center justify-center px-1 min-w-[16px]">
+                        <div className="w-full h-[1.5px] rounded-full overflow-hidden bg-border/60">
+                          <motion.div
+                            className="h-full rounded-full bg-primary/60"
+                            initial={false}
+                            animate={{ width: isDone ? "100%" : "0%" }}
+                            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </nav>
 
           {/* Card with AI shimmer border */}
