@@ -19,6 +19,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -212,13 +213,13 @@ const Dashboard = () => {
 
       {/* Token Usage Dialog */}
       <Dialog open={isTokenDialogOpen} onOpenChange={setIsTokenDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-card" aria-describedby="token-dialog-desc">
+        <DialogContent className="sm:max-w-[600px] bg-card">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <Zap className="w-6 h-6 text-primary" aria-hidden="true" focusable="false" />
               Tokens Usage
             </DialogTitle>
-            <p id="token-dialog-desc" className="text-sm text-muted-foreground">View your token allocation, usage, and availability.</p>
+            <DialogDescription className="text-sm text-muted-foreground">View your token allocation, usage, and availability.</DialogDescription>
           </DialogHeader>
           
           <div className="space-y-6 py-4">
@@ -510,14 +511,13 @@ const Dashboard = () => {
                       <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                       <span className="font-medium">{course.lastUpdated}</span>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 text-xs px-3 gap-1.5 font-semibold rounded-full group-hover:bg-primary/10 group-hover:text-primary transition-all"
+                    <span 
+                      className="inline-flex items-center h-8 text-xs px-3 gap-1.5 font-semibold rounded-full group-hover:bg-primary/10 group-hover:text-primary transition-all"
+                      aria-hidden="true"
                     >
                       View
-                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" focusable="false" />
-                    </Button>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
                   </div>
                 </div>
               </Card>
@@ -634,9 +634,9 @@ const Dashboard = () => {
             )}
 
             <div className="flex items-center gap-2 whitespace-nowrap">
-              <span className="text-sm text-muted-foreground font-medium">Records Per Page:</span>
+              <span className="text-sm text-muted-foreground font-medium" id="bottom-rpp-label">Records Per Page:</span>
               <Select value={recordsPerPage.toString()} onValueChange={handleRecordsPerPageChange}>
-                <SelectTrigger className="w-20 h-8 text-xs rounded-full border-border" aria-label="Records per page">
+                <SelectTrigger className="w-20 h-8 text-xs rounded-full border-border" aria-labelledby="bottom-rpp-label">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
