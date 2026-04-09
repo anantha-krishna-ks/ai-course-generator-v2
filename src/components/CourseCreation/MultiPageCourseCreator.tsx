@@ -565,8 +565,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip to main content */}
+      <a href="#course-main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md">
+        Skip to main content
+      </a>
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" role="banner">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           {/* Left Section */}
           <div className="flex items-center gap-4">
@@ -645,7 +649,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
+      <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
         {/* Left Panel - Course Overview */}
         <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
@@ -660,19 +664,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             
             {/* Page corner fold */}
             <div className="absolute top-0 right-0 w-12 h-12">
-              <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor" aria-hidden="true" role="presentation">
+            <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor" aria-hidden="true" focusable="false" role="presentation">
                 <path d="M48 0 L48 48 L0 0 Z" />
               </svg>
             </div>
 
             {/* Horizontal ruled lines like a notebook */}
-            <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation">
+            <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation">
               <defs>
-                <pattern id="editor-ruled-lines" width="100%" height="32" patternUnits="userSpaceOnUse">
+                <pattern id="editor-ruled-lines-multipage" width="100%" height="32" patternUnits="userSpaceOnUse">
                   <line x1="0" y1="31" x2="100%" y2="31" stroke="currentColor" strokeWidth="1" className="text-foreground" />
                 </pattern>
               </defs>
-              <rect width="100%" height="100%" fill="url(#editor-ruled-lines)" />
+              <rect width="100%" height="100%" fill="url(#editor-ruled-lines-multipage)" />
             </svg>
 
             {/* Left margin line (like a notebook) */}
@@ -681,7 +685,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             {/* Premium bookmark ribbon */}
             <div className="absolute top-0 right-10 w-6 flex flex-col items-center drop-shadow-md">
               <div className="w-full h-24 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15 rounded-b-none" />
-              <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none" aria-hidden="true" role="presentation">
+              <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none" aria-hidden="true" focusable="false" role="presentation">
                 <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill="hsl(var(--primary) / 0.15)" />
               </svg>
             </div>
@@ -700,6 +704,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       setTitle(e.target.value);
                     }
                   }}
+                  aria-label="Course title"
+                  autoComplete="off"
                   className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground resize-none overflow-hidden leading-tight"
                   placeholder="Untitled course"
                   rows={1}
@@ -943,7 +949,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     return (
                       <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
                         <div
-                          className="prose prose-sm dark:prose-invert max-w-none text-foreground/60 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                          className="prose prose-sm dark:prose-invert max-w-none text-foreground [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
                           dangerouslySetInnerHTML={{ __html: displayContent }}
                         />
                       </div>
@@ -1158,7 +1164,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               )}
             </div>
         </div>
-      </div>
+      </main>
 
       {/* Standalone PageEditorDialog for child pages navigated from sidebar */}
       {(() => {

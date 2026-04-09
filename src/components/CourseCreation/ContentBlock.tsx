@@ -292,7 +292,7 @@ export function ContentBlock({
                           "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
                           isActive
                             ? "bg-primary/10 text-primary font-medium"
-                            : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
                         )}
                       >
                         <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
@@ -361,7 +361,7 @@ export function ContentBlock({
             <div className="w-full px-4 py-3">
               {hasContent ? (
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               ) : (
@@ -471,14 +471,14 @@ export function ContentBlock({
                   {contentColumns.map((col, i) => (
                     <div
                       key={i}
-                      className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] text-lg leading-relaxed [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                      className="prose prose-sm dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere] text-lg leading-relaxed [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
                       dangerouslySetInnerHTML={{ __html: col }}
                     />
                   ))}
                 </div>
               ) : (
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
+                  className="prose prose-sm dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere] [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight [&_div[style*='grid']]:!grid [&_div[style*='grid']]:!max-w-none [&_div[style*='grid']>div]:!max-w-none"
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               )}
@@ -516,6 +516,8 @@ export function ContentBlock({
                     handleGenerateSubmit();
                   }
                 }}
+                aria-label={type === "image" ? "Image generation prompt" : "Text generation prompt"}
+                autoComplete="off"
                 placeholder={type === "image"
                   ? "e.g., A modern illustration of cloud computing architecture..."
                   : "e.g., Write an introduction about the importance of cybersecurity in modern businesses..."

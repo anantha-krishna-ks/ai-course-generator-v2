@@ -819,6 +819,8 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                     handleGenerateSubmit();
                   }
                 }}
+                aria-label="Image generation prompt"
+                autoComplete="off"
                 placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons... (optional)"
                 className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none p-4 focus:outline-none min-h-[120px]"
                 rows={4}

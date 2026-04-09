@@ -236,6 +236,8 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
                 e.target.style.height = e.target.scrollHeight + 'px';
               }}
               placeholder="Add a description for this audio (optional)"
+              aria-label="Audio description"
+              autoComplete="off"
               className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
               rows={1}
             />
@@ -275,7 +277,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
           )}
         </div>
         <div className="text-center">
-          <p className="text-sm font-medium text-foreground/70">
+          <p className="text-sm font-medium text-foreground">
             Click to upload or drag & drop
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -301,9 +303,11 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             e.target.style.height = 'auto';
             e.target.style.height = e.target.scrollHeight + 'px';
           }}
-          placeholder="Add a description for this audio (optional)"
-          className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
-          rows={1}
+            placeholder="Add a description for this audio (optional)"
+            aria-label="Audio description"
+            autoComplete="off"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
+            rows={1}
         />
       )}
     </div>

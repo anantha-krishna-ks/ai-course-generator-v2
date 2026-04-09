@@ -103,7 +103,9 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                     onTitleChange(e.target.value);
                   }
                 }}
-                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50 transition-all"
+                aria-label={`Page title: ${title || 'Untitled page'}`}
+                autoComplete="off"
+                className="w-full text-sm font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground transition-all"
                 placeholder="Untitled page..."
               />
               <div className={cn(
@@ -112,7 +114,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               )} />
             </div>
             <span className={cn(
-              "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity",
+              "text-[9px] text-muted-foreground tabular-nums shrink-0 transition-opacity",
               isFocused ? "opacity-100" : "opacity-0"
             )}>
               {title.length}/{MAX_PAGE_TITLE_LENGTH}
@@ -184,12 +186,14 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 block">Inclusions</label>
               <textarea
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
                 autoFocus
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
+                aria-label="Page inclusions"
+                autoComplete="off"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics, content, or scope should be included in this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
@@ -207,23 +211,25 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
             <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
               <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
               <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
-                <span className="text-[9px] font-semibold text-muted-foreground/60">vs</span>
+                <span className="text-[9px] font-semibold text-muted-foreground" aria-hidden="true">vs</span>
               </div>
               <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
             </div>
             <div className="flex md:hidden items-center gap-3 py-3 px-2">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-              <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
+              <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-widest" aria-hidden="true">vs</span>
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
             {/* Exclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 block">Exclusions</label>
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
+                aria-label="Page exclusions"
+                autoComplete="off"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics or content should be excluded from this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
@@ -327,6 +333,7 @@ function PageScopeDocUploadZone({
                 type="button"
                 onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
                 className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                aria-label={`Remove document ${doc}`}
               >
                 <X className="w-3 h-3" />
               </button>
