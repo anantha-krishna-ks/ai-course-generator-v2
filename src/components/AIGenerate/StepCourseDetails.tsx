@@ -162,12 +162,7 @@ function AISuggestions({
   if (!visible && !loading) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="space-y-2.5"
-    >
+    <div className="border-t border-border/60 px-4 py-3 space-y-2.5 bg-muted/20">
       <div className="flex items-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
         <span className="text-xs font-semibold text-muted-foreground">Suggested course goals:</span>
@@ -240,7 +235,7 @@ function AISuggestions({
           Regenerate goals
         </button>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -254,22 +249,20 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <Textarea
-          id="learning-outcome"
-          value={state.learningOutcome}
-          onChange={(e) => onChange({ learningOutcome: e.target.value })}
-          placeholder="e.g., Apply conflict resolution techniques in team settings…"
-          className="min-h-[72px] resize-none rounded-xl text-sm"
-        />
-
-        {/* AI Suggestions */}
-        <div className="mt-3">
+        <div className="rounded-xl border border-border overflow-hidden bg-background">
+          <Textarea
+            id="learning-outcome"
+            value={state.learningOutcome}
+            onChange={(e) => onChange({ learningOutcome: e.target.value })}
+            placeholder="e.g., Apply conflict resolution techniques in team settings…"
+            className="min-h-[72px] resize-none text-sm border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+          {/* AI Suggestions inline */}
           <AISuggestions
             title={state.title}
             onSelect={(text) => {
               const current = state.learningOutcome.trim();
               if (current.includes(text)) {
-                // Remove if already included
                 onChange({ learningOutcome: current.replace(text, "").replace(/\n{2,}/g, "\n").trim() });
               } else {
                 onChange({ learningOutcome: current ? `${current}\n${text}` : text });
