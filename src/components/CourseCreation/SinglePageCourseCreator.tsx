@@ -850,7 +850,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                       <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                     </span>
                                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                                    <span className="text-sm truncate flex-1 text-foreground/80">{item.title || "Untitled page"}</span>
+                                    <span className="text-sm truncate flex-1 text-foreground">{item.title || "Untitled page"}</span>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
                                          <button aria-label="Page options" className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -922,7 +922,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                           {item.children.map((child) => (
                                             <div key={child.id} onClick={() => scrollToItem(child.id)} className="group/child flex items-center gap-2 py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors">
                                               <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                                              <span className="text-sm text-foreground/80 truncate flex-1">{child.title || "Untitled page"}</span>
+                                              <span className="text-sm text-foreground truncate flex-1">{child.title || "Untitled page"}</span>
                                               <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                    <button aria-label="Page options" className="opacity-0 group-hover/child:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -1098,7 +1098,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       {/* Section Image - Full ImageBlock with AI features */}
                       <div className="mt-5">
                         <div className="flex items-center gap-2 mb-2">
-                          <ImageIcon className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
+                          <ImageIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                           <span className="text-sm font-medium text-muted-foreground">Section Image</span>
                         </div>
                         <ImageBlock
@@ -1112,7 +1112,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       <div className="mt-5">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <BookOpen className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
+                            <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                             <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                           </div>
                           {aiEnabled && (

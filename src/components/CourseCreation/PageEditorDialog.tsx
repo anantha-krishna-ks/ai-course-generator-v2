@@ -513,7 +513,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
                     activeTab === "outline"
                       ? "text-foreground"
-                      : "text-muted-foreground/70 hover:text-muted-foreground"
+                      : "text-muted-foreground hover:text-muted-foreground"
                   )}
                 >
                   <LayoutGrid className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -525,7 +525,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
                     activeTab === "blocks"
                       ? "text-foreground"
-                      : "text-muted-foreground/70 hover:text-muted-foreground"
+                      : "text-muted-foreground hover:text-muted-foreground"
                   )}
                 >
                   <Layers className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -601,12 +601,12 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                         {...listeners}
                                       >
-                                        <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+                                        <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                       </span>
-                                      <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
+                                      <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                       <span className={cn(
                                         "text-sm truncate flex-1",
-                                        isCurrentPage ? "text-foreground font-medium" : "text-foreground/80"
+                                        isCurrentPage ? "text-foreground font-medium" : "text-foreground"
                                       )}>
                                         {item.title || "Untitled page"}
                                       </span>
@@ -660,7 +660,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           {...listeners}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+                                          <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                           Section {sectionIndex}
                                         </span>
                                         <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
@@ -748,9 +748,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                           className="opacity-0 group-hover/child-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                                           {...childListeners}
                                                         >
-                                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+                                                          <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                                         </span>
-                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
+                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                                         <span
                                                           onClick={(e) => {
                                                             e.stopPropagation();
@@ -758,7 +758,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                           }}
                                                           className={cn(
                                                             "flex-1 min-w-0 text-sm truncate cursor-pointer hover:underline",
-                                                            isCurrentChild ? "text-foreground font-medium" : "text-foreground/80"
+                                                            isCurrentChild ? "text-foreground font-medium" : "text-foreground"
                                                           )}
                                                           title={child.title || "Untitled page"}
                                                         >
@@ -861,14 +861,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         onPageTitleChange(e.target.value);
                       }
                     }}
-                    className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                    className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                     placeholder="Untitled section"
                   />
 
                   {/* Section Image */}
                   <div className="mt-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <ImageIcon className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
+                      <ImageIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                       <span className="text-sm font-medium text-muted-foreground">Section Image</span>
                     </div>
                     <ImageBlock
@@ -882,7 +882,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <div className="mt-5">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
+                        <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                         <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                       </div>
                       {aiEnabled && (
@@ -917,7 +917,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         }
                       }}
                       rows={2}
-                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground/40 focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
+                      className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
                       placeholder="Define the introduction for this section…"
                     />
                   </div>
@@ -936,11 +936,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-pointer transition-colors group"
                           >
                             <span className="text-xs text-muted-foreground font-medium w-6">{idx + 1}.</span>
-                            <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
+                            <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                             <span className="text-sm text-foreground flex-1 truncate">
                               {child.title || "Untitled page"}
                             </span>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
                           </div>
                         ))}
                       </div>
@@ -986,7 +986,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     onPageTitleChange(e.target.value);
                   }
                 }}
-                className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/40"
+                className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                 placeholder="Untitled page"
               />
 
@@ -1179,7 +1179,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                   }
                                                 }}
                                                 placeholder="e.g., Make it more concise, add examples..."
-                                                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none px-3 py-2.5 focus:outline-none"
+                                                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none px-3 py-2.5 focus:outline-none"
                                                 rows={1}
                                               />
                                             </div>
@@ -1570,7 +1570,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 }
               }}
               placeholder="e.g., Write a brief introduction covering the key objectives and what learners will achieve..."
-              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+              className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none p-4 focus:outline-none min-h-[120px]"
               rows={4}
             />
           </div>

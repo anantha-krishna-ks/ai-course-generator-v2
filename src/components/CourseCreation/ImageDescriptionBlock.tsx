@@ -68,7 +68,7 @@ export function ImageDescriptionBlock({ content, onChange, aiEnabled = false }: 
         >
           {hasDescription ? (
             <div
-              className="prose prose-sm dark:prose-invert max-w-none text-foreground/80"
+              className="prose prose-sm dark:prose-invert max-w-none text-foreground"
               dangerouslySetInnerHTML={{ __html: data.description }}
             />
           ) : (

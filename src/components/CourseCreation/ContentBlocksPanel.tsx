@@ -310,7 +310,7 @@ function BlockPreview({ id }: { id: string }) {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
-                  <MessageCircleQuestion className="w-3 h-3 text-primary/70" aria-hidden="true" focusable="false" />
+                  <MessageCircleQuestion className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
                 </div>
                 <span className="text-[11px] font-semibold text-[hsl(220,15%,15%)]">Module 1 Quiz</span>
               </div>
@@ -319,7 +319,7 @@ function BlockPreview({ id }: { id: string }) {
             <div className="space-y-1.5">
               {["Fundamentals of the topic", "Core concepts review", "Practical application"].map((q, i) => (
                 <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)]">
-                  <span className="text-[9px] font-semibold text-primary/60 shrink-0">{i + 1}.</span>
+                  <span className="text-[9px] font-semibold text-primary shrink-0">{i + 1}.</span>
                   <span className="text-[9px] text-[hsl(220,8%,46%)]">{q}</span>
                 </div>
               ))}
@@ -562,14 +562,14 @@ function BlockThumbnail({ id }: { id: string }) {
           <div className={cn(miniCard, "p-2.5")}>
             <div className="flex items-center gap-[3px] mb-[4px]">
               <div className="w-[8px] h-[8px] rounded-[2px] bg-primary/10 flex items-center justify-center">
-                <MessageCircleQuestion className="w-[5px] h-[5px] text-primary/60" />
+                <MessageCircleQuestion className="w-[5px] h-[5px] text-primary" />
               </div>
               <span className="text-[4px] font-bold text-[hsl(220,15%,18%)]">Module 1 Quiz</span>
             </div>
             <div className="space-y-[2px]">
               {["Basics", "Core concepts", "Practice"].map((label, i) => (
                 <div key={i} className="flex items-center gap-[3px] h-[8px] rounded-[2px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] px-[4px]">
-                  <span className="text-[3.5px] font-semibold text-primary/50">{i + 1}.</span>
+                  <span className="text-[3.5px] font-semibold text-primary">{i + 1}.</span>
                   <span className="text-[3.5px] text-[hsl(220,8%,50%)]">{label}</span>
                 </div>
               ))}
@@ -634,7 +634,7 @@ function BlockGridItem({
         >
           {locked && (
             <div className="absolute top-1.5 right-1.5">
-              <Lock className="w-3 h-3 text-muted-foreground/50" aria-hidden="true" focusable="false" />
+              <Lock className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
             </div>
           )}
           <div className="w-full flex items-center justify-center overflow-hidden rounded-lg">
@@ -643,7 +643,7 @@ function BlockGridItem({
           <span
             className={cn(
               "text-[10px] font-medium text-center leading-tight",
-              locked ? "text-muted-foreground/50" : "text-muted-foreground group-hover:text-foreground"
+              locked ? "text-muted-foreground" : "text-muted-foreground group-hover:text-foreground"
             )}
           >
             {block.label}
@@ -710,7 +710,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
         {/* Search */}
         <div className="px-4 pt-4 pb-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" aria-hidden="true" focusable="false" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

@@ -165,7 +165,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               description="Time per page in minutes"
             >
               {isLocked ? (
-                <p className="text-sm text-foreground/80 bg-muted/50 rounded-lg px-3 py-2.5">
+                <p className="text-sm text-foreground bg-muted/50 rounded-lg px-3 py-2.5">
                   {aiOptions.pageSpanTime} min
                 </p>
               ) : (
@@ -379,7 +379,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               description="Instructions for AI content generation"
             >
               {isLocked ? (
-                <p className="text-sm text-foreground/80 leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
+                <p className="text-sm text-foreground leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
                   {aiOptions.guidelines || <span className="italic text-muted-foreground">Not specified</span>}
                 </p>
               ) : (
@@ -414,7 +414,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               description="Topics the AI should avoid"
             >
               {isLocked ? (
-                <p className="text-sm text-foreground/80 leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
+                <p className="text-sm text-foreground leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
                   {aiOptions.exclusions || <span className="italic text-muted-foreground">Not specified</span>}
                 </p>
               ) : (

@@ -89,7 +89,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
 
           <div className="flex items-center gap-3 pl-5 pr-4 py-3">
             <div className="w-7 h-7 rounded-lg bg-accent/60 flex items-center justify-center shrink-0">
-              <FileText className="w-3.5 h-3.5 text-muted-foreground/60" aria-hidden="true" focusable="false" />
+              <FileText className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
             </div>
             <div className="flex-1 min-w-0 relative">
               <input

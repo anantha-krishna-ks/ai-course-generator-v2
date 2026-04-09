@@ -431,7 +431,7 @@ export function ContentBlock({
           ) : !hasContent ? (
             <div className="w-full rounded-lg border-2 border-dashed border-foreground/20 bg-background/80 py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200 hover:border-primary/50">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Type className="w-6 h-6 text-primary/70" aria-hidden="true" />
+                <Type className="w-6 h-6 text-primary" aria-hidden="true" />
               </div>
               <p className="text-sm text-muted-foreground">Click to add text content...</p>
               <div className="flex items-center gap-2.5">
@@ -618,7 +618,7 @@ export function ContentBlock({
                             })} at {version.editedAt.toLocaleTimeString('en-US', {
                               hour: '2-digit', minute: '2-digit'
                             })}</span>
-                            <span className="text-muted-foreground/60">·</span>
+                            <span className="text-muted-foreground">·</span>
                             <span>{version.editedBy}</span>
                           </div>
                         </div>

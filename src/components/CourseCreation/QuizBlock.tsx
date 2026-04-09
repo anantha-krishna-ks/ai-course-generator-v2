@@ -414,7 +414,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                               {question.explanation && (
                                 <div className="mx-4 mb-3 bg-muted/40 border border-border/60 rounded-lg p-3.5">
                                   <p className="text-xs font-semibold text-muted-foreground mb-1">Explanation</p>
-                                  <p className="text-sm text-foreground/80 leading-relaxed">{question.explanation}</p>
+                                  <p className="text-sm text-foreground leading-relaxed">{question.explanation}</p>
                                 </div>
                               )}
                             </div>
