@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { StepCourseIntent } from "@/components/AIGenerate/StepCourseIntent";
 import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
@@ -92,6 +92,29 @@ export default function AIGenerateCourse() {
 
   const remainingCards = STEPS.length - currentStep;
   const StepComponent = STEP_COMPONENTS[currentStep - 1];
+  const progress = ((currentStep - 1) / (STEPS.length - 1)) * 100;
+
+  // Content slide variants
+  const contentVariants = {
+    enter: (dir: number) => ({
+      opacity: 0,
+      x: dir > 0 ? 80 : -80,
+      scale: 0.96,
+      filter: "blur(6px)",
+    }),
+    center: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      filter: "blur(0px)",
+    },
+    exit: (dir: number) => ({
+      opacity: 0,
+      x: dir > 0 ? -80 : 80,
+      scale: 0.96,
+      filter: "blur(6px)",
+    }),
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -108,64 +131,94 @@ export default function AIGenerateCourse() {
             Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].label}
           </div>
 
-          {/* Mini step rail above the card */}
-          <div className="flex items-center gap-1 mb-3 px-1">
-            {STEPS.map((step) => {
+          {/* Elegant step indicators */}
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 px-1">
+            {STEPS.map((step, i) => {
               const isActive = step.id === currentStep;
               const isDone = step.id < currentStep;
               return (
-                <div key={step.id} className="flex items-center gap-1 flex-1">
-                  <motion.div
-                    className="h-1 rounded-full flex-1"
-                    animate={{
-                      backgroundColor: isDone || isActive
-                        ? "hsl(var(--primary))"
-                        : "hsl(var(--border))",
-                      opacity: isDone ? 0.35 : 1,
-                    }}
-                    transition={{ duration: 0.4 }}
-                  />
+                <div key={step.id} className="flex items-center gap-2 sm:gap-3 flex-1">
+                  <div className="flex-1 flex flex-col gap-1.5">
+                    <motion.span
+                      animate={{ 
+                        color: isActive ? "hsl(var(--foreground))" : isDone ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                      }}
+                      className="text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase hidden sm:block"
+                    >
+                      {step.label}
+                    </motion.span>
+                    <div className="relative h-1 rounded-full bg-border overflow-hidden">
+                      <motion.div
+                        className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                        initial={false}
+                        animate={{
+                          width: isDone ? "100%" : isActive ? "50%" : "0%",
+                        }}
+                        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                      />
+                    </div>
+                  </div>
                 </div>
               );
             })}
-            <span className="text-[10px] text-muted-foreground tabular-nums font-medium ml-1.5 shrink-0">
-              {currentStep}/{STEPS.length}
-            </span>
           </div>
 
-          {/* Main card */}
-          <div className="relative rounded-2xl bg-card border border-border shadow-lg overflow-hidden">
-            {/* Card header */}
-            <div className="flex items-center gap-2.5 px-5 sm:px-8 md:px-10 pt-5 sm:pt-6 pb-1">
-              <motion.div
-                key={`badge-${currentStep}`}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
-              >
-                {currentStep}
-              </motion.div>
-              <motion.span
-                key={`label-${currentStep}`}
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.08, duration: 0.25 }}
-                className="text-xs sm:text-sm font-semibold text-foreground"
-              >
-                {STEPS[currentStep - 1].label}
-              </motion.span>
+          {/* Card with entrance animation */}
+          <motion.div
+            layout
+            className="relative rounded-2xl bg-card border border-border shadow-lg overflow-hidden"
+            transition={{ layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }}
+          >
+            {/* Subtle shimmer line at top */}
+            <motion.div
+              className="h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+              initial={false}
+              animate={{ opacity: [0.3, 0.7, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              aria-hidden="true"
+            />
+
+            {/* Card header with animated badge */}
+            <div className="flex items-center gap-3 px-5 sm:px-8 md:px-10 pt-4 sm:pt-5 pb-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`badge-${currentStep}`}
+                  initial={{ rotateY: -90, opacity: 0 }}
+                  animate={{ rotateY: 0, opacity: 1 }}
+                  exit={{ rotateY: 90, opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                  className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
+                  style={{ perspective: "600px" }}
+                >
+                  {currentStep}
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={`label-${currentStep}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                  className="text-xs sm:text-sm font-semibold text-foreground"
+                >
+                  {STEPS[currentStep - 1].label}
+                </motion.span>
+              </AnimatePresence>
             </div>
 
-            {/* Card body with crossfade */}
-            <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-260px)] overflow-y-auto thin-scrollbar">
-              <AnimatePresence mode="wait" initial={false}>
+            {/* Card body */}
+            <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-280px)] overflow-y-auto thin-scrollbar">
+              <AnimatePresence mode="wait" custom={direction} initial={false}>
                 <motion.div
                   key={currentStep}
-                  initial={{ opacity: 0, x: direction > 0 ? 60 : -60, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, x: direction > 0 ? -60 : 60, filter: "blur(4px)" }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  custom={direction}
+                  variants={contentVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                   <StepComponent state={formState} onChange={updateState} />
                 </motion.div>
@@ -190,28 +243,32 @@ export default function AIGenerateCourse() {
               </span>
 
               {currentStep < 4 ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleNext}
-                  disabled={!canAdvance()}
-                  className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
-                >
-                  Next
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
-                </Button>
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleNext}
+                    disabled={!canAdvance()}
+                    className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
+                  >
+                    Next
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </Button>
+                </motion.div>
               ) : (
-                <Button
-                  size="sm"
-                  onClick={handleFinish}
-                  className="gap-1.5 rounded-full px-5 h-9"
-                >
-                  <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  Finish
-                </Button>
+                <motion.div whileTap={{ scale: 0.95 }}>
+                  <Button
+                    size="sm"
+                    onClick={handleFinish}
+                    className="gap-1.5 rounded-full px-5 h-9"
+                  >
+                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Finish
+                  </Button>
+                </motion.div>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </div>
