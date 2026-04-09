@@ -51,7 +51,7 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
             {showCustomerLogoInHeader && (
               <img src={branding.customerLogo} alt={`${branding.customerName} logo`} className="w-8 h-8 object-contain" />
             )}
-            <h1 className="text-lg font-bold text-foreground hidden sm:block">AI Course Generator</h1>
+            <span className="text-lg font-bold text-foreground hidden sm:block">AI Course Generator</span>
           </div>
           
           <div className="flex items-center gap-3">
