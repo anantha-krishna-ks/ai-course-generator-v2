@@ -390,6 +390,7 @@ const Dashboard = () => {
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      onClick={() => navigate("/ai-generate-course")}
                       className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
                     >
                       <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">

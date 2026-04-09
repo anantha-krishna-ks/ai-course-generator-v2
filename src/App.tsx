@@ -19,6 +19,7 @@ import TokenManagement from "./pages/TokenManagement";
 import AdminModule from "./pages/AdminModule";
 import Customers from "./pages/Customers";
 import Users from "./pages/Users";
+import AIGenerateCourse from "./pages/AIGenerateCourse";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/admin-module" element={<ProtectedRoute><AdminModule /></ProtectedRoute>} />
           <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+          <Route path="/ai-generate-course" element={<ProtectedRoute><AIGenerateCourse /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
