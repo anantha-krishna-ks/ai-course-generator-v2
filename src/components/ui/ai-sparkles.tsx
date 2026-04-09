@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 let gradientIdCounter = 0;
 
-interface AISparklesProps {
+interface AISparklesProps extends React.SVGAttributes<SVGElement> {
   className?: string;
 }
 
