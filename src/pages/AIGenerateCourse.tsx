@@ -95,18 +95,19 @@ export default function AIGenerateCourse() {
   const cardVariants = {
     enter: (dir: number) => ({
       opacity: 0,
-      y: dir > 0 ? 24 : -24,
-      scale: 0.98,
+      y: dir > 0 ? 16 : -16,
     }),
     center: {
       opacity: 1,
       y: 0,
-      scale: 1,
     },
     exit: (dir: number) => ({
       opacity: 0,
-      y: dir > 0 ? -24 : 24,
-      scale: 0.96,
+      y: dir > 0 ? -16 : 16,
+      position: "absolute" as const,
+      top: 0,
+      left: 0,
+      right: 0,
     }),
   };
 
