@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { FileText, ShieldX, BookOpen, Clock, Timer, Layers, Minus, Plus } from "lucide-react";
+import { Clock, Timer, Layers, FileText, ShieldX, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface StepCourseDetailsProps {
@@ -11,24 +11,16 @@ interface StepCourseDetailsProps {
 
 export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Course Details</h1>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Provide additional context to guide AI content generation.
-        </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-lg sm:text-xl font-bold text-foreground">How should the course be structured?</h1>
+        <p className="text-sm text-muted-foreground mt-1">Additional context to guide AI generation.</p>
       </div>
 
-      {/* Layout type */}
-      <div className="space-y-3">
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          Layout Type
-        </label>
-        <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Course layout type">
+      {/* Layout */}
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Layout</label>
+        <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Course layout type">
           {(["multi-page", "single-page"] as const).map((layout) => {
             const selected = state.layoutType === layout;
             return (
@@ -39,130 +31,85 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
                 aria-checked={selected}
                 onClick={() => onChange({ layoutType: layout })}
                 className={cn(
-                  "p-4 rounded-xl border-2 transition-all text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "p-3 rounded-xl border-2 transition-all text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   selected
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-border hover:border-primary/50 bg-background"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/40 bg-background"
                 )}
               >
-                <Layers className="w-5 h-5 mx-auto mb-2 text-primary" aria-hidden="true" focusable="false" />
-                <p className="text-sm font-semibold text-foreground">
-                  {layout === "multi-page" ? "Multi-page" : "Single-page"}
-                </p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {layout === "multi-page" ? "Full-length, multiple topics" : "Short, focused learning"}
-                </p>
+                <Layers className="w-4 h-4 text-primary mb-1.5" aria-hidden="true" focusable="false" />
+                <p className="text-sm font-semibold text-foreground">{layout === "multi-page" ? "Multi-page" : "Single-page"}</p>
+                <p className="text-[11px] text-muted-foreground">{layout === "multi-page" ? "Multiple topics" : "Quick learning"}</p>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Content Duration */}
-      <div className="space-y-3">
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-          <Clock className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-          Content Duration
+      {/* Duration */}
+      <div className="space-y-2">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <Clock className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+          Duration
         </label>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Page span */}
-          <div className="rounded-xl border border-border p-4 bg-card space-y-2">
-            <div className="flex items-center gap-2">
-              <Timer className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-              <span className="text-xs font-medium text-foreground">Per Page</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-full shrink-0"
-                onClick={() => onChange({ pageSpanTime: Math.max(1, state.pageSpanTime - 1) })}
-                aria-label="Decrease page duration"
-              >
-                <Minus className="w-3 h-3" aria-hidden="true" focusable="false" />
-              </Button>
-              <span className="text-lg font-bold text-foreground tabular-nums min-w-[3ch] text-center" aria-live="polite">
-                {state.pageSpanTime}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-full shrink-0"
-                onClick={() => onChange({ pageSpanTime: Math.min(30, state.pageSpanTime + 1) })}
-                aria-label="Increase page duration"
-              >
-                <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
-              </Button>
-              <span className="text-xs text-muted-foreground">min</span>
-            </div>
-          </div>
-
-          {/* Course span */}
-          <div className="rounded-xl border border-border p-4 bg-card space-y-2">
-            <div className="flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-              <span className="text-xs font-medium text-foreground">Total Course</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-full shrink-0"
-                onClick={() => onChange({ courseSpanTime: Math.max(5, state.courseSpanTime - 5) })}
-                aria-label="Decrease course duration"
-              >
-                <Minus className="w-3 h-3" aria-hidden="true" focusable="false" />
-              </Button>
-              <span className="text-lg font-bold text-foreground tabular-nums min-w-[3ch] text-center" aria-live="polite">
-                {state.courseSpanTime}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 rounded-full shrink-0"
-                onClick={() => onChange({ courseSpanTime: Math.min(480, state.courseSpanTime + 5) })}
-                aria-label="Increase course duration"
-              >
-                <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
-              </Button>
-              <span className="text-xs text-muted-foreground">min</span>
-            </div>
-          </div>
+        <div className="grid grid-cols-2 gap-3">
+          <DurationControl label="Per Page" value={state.pageSpanTime} min={1} max={30} step={1} unit="min" onChange={(v) => onChange({ pageSpanTime: v })} />
+          <DurationControl label="Total Course" value={state.courseSpanTime} min={5} max={480} step={5} unit="min" onChange={(v) => onChange({ courseSpanTime: v })} />
         </div>
       </div>
 
       {/* Guidelines */}
-      <div className="space-y-2">
-        <label htmlFor="guidelines" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-          <FileText className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+      <div className="space-y-1.5">
+        <label htmlFor="guidelines" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <FileText className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
           Guidelines
         </label>
         <Textarea
           id="guidelines"
           value={state.guidelines}
           onChange={(e) => onChange({ guidelines: e.target.value })}
-          placeholder="Any specific guidelines the AI should follow when generating content..."
-          className="min-h-[80px] resize-none rounded-xl"
+          placeholder="Specific guidelines for the AI..."
+          className="min-h-[60px] resize-none rounded-xl text-sm"
         />
       </div>
 
       {/* Exclusions */}
-      <div className="space-y-2">
-        <label htmlFor="exclusions" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-          <ShieldX className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+      <div className="space-y-1.5">
+        <label htmlFor="exclusions" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+          <ShieldX className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
           Exclusions
         </label>
         <Textarea
           id="exclusions"
           value={state.exclusions}
           onChange={(e) => onChange({ exclusions: e.target.value })}
-          placeholder="Topics or content to exclude from the course..."
-          className="min-h-[80px] resize-none rounded-xl"
+          placeholder="Topics to exclude..."
+          className="min-h-[60px] resize-none rounded-xl text-sm"
         />
+      </div>
+    </div>
+  );
+}
+
+function DurationControl({ label, value, min, max, step, unit, onChange }: {
+  label: string; value: number; min: number; max: number; step: number; unit: string;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div className="rounded-xl border border-border p-3 bg-background space-y-1.5">
+      <div className="flex items-center gap-1.5">
+        <Timer className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+        <span className="text-[11px] font-medium text-foreground">{label}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button type="button" variant="outline" size="icon" className="h-7 w-7 rounded-full shrink-0" onClick={() => onChange(Math.max(min, value - step))} aria-label={`Decrease ${label.toLowerCase()}`}>
+          <Minus className="w-3 h-3" aria-hidden="true" focusable="false" />
+        </Button>
+        <span className="text-base font-bold text-foreground tabular-nums min-w-[2.5ch] text-center" aria-live="polite">{value}</span>
+        <Button type="button" variant="outline" size="icon" className="h-7 w-7 rounded-full shrink-0" onClick={() => onChange(Math.min(max, value + step))} aria-label={`Increase ${label.toLowerCase()}`}>
+          <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
+        </Button>
+        <span className="text-[11px] text-muted-foreground">{unit}</span>
       </div>
     </div>
   );
