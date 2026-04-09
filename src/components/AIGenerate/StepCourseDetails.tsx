@@ -280,9 +280,19 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           <Textarea
             id="learning-outcome"
             value={state.learningOutcome}
-            onChange={(e) => onChange({ learningOutcome: e.target.value })}
+            onChange={(e) => {
+              onChange({ learningOutcome: e.target.value });
+              e.target.style.height = "auto";
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+            }}
+            ref={(el) => {
+              if (el) {
+                el.style.height = "auto";
+                el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+              }
+            }}
             placeholder="e.g., Apply conflict resolution techniques in team settings…"
-            className="min-h-[72px] resize-none text-sm border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-[72px] max-h-[200px] resize-none text-sm border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
           />
           {/* AI Suggestions inline */}
           <AISuggestions
