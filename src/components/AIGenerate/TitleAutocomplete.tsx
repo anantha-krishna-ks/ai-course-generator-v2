@@ -88,8 +88,7 @@ export function TitleAutocomplete({ value, onChange, id, placeholder }: TitleAut
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
   const fetchSuggestions = useCallback((text: string) => {
-    const words = text.trim().split(/\s+/);
-    if (words.length < 2 || text.trim().length < 4) {
+    if (text.trim().length < 2) {
       setSuggestions([]);
       setShowDropdown(false);
       return;
