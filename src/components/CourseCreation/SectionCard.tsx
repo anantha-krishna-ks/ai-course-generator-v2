@@ -14,7 +14,7 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEn
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ImageBlock } from "./ImageBlock";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -200,6 +200,9 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             <DialogTitle className="text-xl font-medium text-foreground">
               Delete "{pageDisplayTitle}"
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              This action permanently deletes the page and cannot be undone.
+            </DialogDescription>
           </DialogHeader>
           <div className="my-4 rounded-lg bg-destructive/5 border border-destructive/10 px-5 py-4">
             <p className="text-sm font-semibold text-foreground mb-2 text-left">Important information:</p>

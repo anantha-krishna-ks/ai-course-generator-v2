@@ -62,17 +62,20 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     onClick, 
     isActive, 
     children,
-    disabled = false
+    disabled = false,
+    label,
   }: { 
     onClick: () => void; 
     isActive?: boolean;
     children: React.ReactNode;
     disabled?: boolean;
+    label: string;
   }) => (
     <button 
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-label={label}
       className={cn(
         "p-1.5 rounded transition-colors",
         isActive 
@@ -92,29 +95,33 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={editor.isActive('bold')}
+          label="Bold"
         >
-          <Bold className="w-4 h-4" />
+          <Bold className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
         
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleItalic().run()}
           isActive={editor.isActive('italic')}
+          label="Italic"
         >
-          <Italic className="w-4 h-4" />
+          <Italic className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
         
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           isActive={editor.isActive('highlight')}
+          label="Highlight"
         >
-          <Highlighter className="w-4 h-4" />
+          <Highlighter className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
         
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleCode().run()}
           isActive={editor.isActive('code')}
+          label="Inline code"
         >
-          <Code className="w-4 h-4" />
+          <Code className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
         
         <div className="w-px h-5 bg-foreground/20 mx-1" />
@@ -125,13 +132,14 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
             <button 
               type="button"
               className="p-1.5 hover:bg-foreground/10 rounded transition-colors text-foreground/70"
+              aria-label="Text alignment"
             >
               {editor.isActive({ textAlign: 'center' }) ? (
-                <AlignCenter className="w-4 h-4" />
+                <AlignCenter className="w-4 h-4" aria-hidden="true" />
               ) : editor.isActive({ textAlign: 'right' }) ? (
-                <AlignRight className="w-4 h-4" />
+                <AlignRight className="w-4 h-4" aria-hidden="true" />
               ) : (
-                <AlignLeft className="w-4 h-4" />
+                <AlignLeft className="w-4 h-4" aria-hidden="true" />
               )}
             </button>
           </DropdownMenuTrigger>
@@ -160,22 +168,25 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}
+          label="Bulleted list"
         >
-          <List className="w-4 h-4" />
+          <List className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
         
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={editor.isActive('orderedList')}
+          label="Numbered list"
         >
-          <ListOrdered className="w-4 h-4" />
+          <ListOrdered className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
         
         <ToolbarButton 
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
+          label="Undo"
         >
-          <Undo className="w-4 h-4" />
+          <Undo className="w-4 h-4" aria-hidden="true" />
         </ToolbarButton>
       </div>
       

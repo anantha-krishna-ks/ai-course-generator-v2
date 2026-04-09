@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -177,9 +177,9 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               <ListChecks className="w-5 h-5 text-muted-foreground" />
               Scope
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-sm text-muted-foreground mt-1">
               Define the scope for "{displayTitle}"
-            </p>
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
@@ -252,6 +252,9 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
             <DialogTitle className="text-xl font-medium text-foreground">
               Delete "{displayTitle}"
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              This action permanently deletes the page and cannot be undone.
+            </DialogDescription>
           </DialogHeader>
           <div className="my-4 rounded-lg bg-destructive/5 border border-destructive/10 px-5 py-4">
             <p className="text-sm font-semibold text-foreground mb-2 text-left">Important information:</p>
