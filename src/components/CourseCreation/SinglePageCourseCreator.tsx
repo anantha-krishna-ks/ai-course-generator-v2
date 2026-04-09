@@ -724,7 +724,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const flatItems = getAllFlatItems();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" id="main-content">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
@@ -786,7 +786,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       {/* Main body with sidebar */}
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Left Sidebar */}
-        <div className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[360px]")}>
+        <nav aria-label="Course sidebar" className={cn("border-r border-border bg-muted/20 flex flex-col shrink-0 transition-all duration-300 relative", sidebarCollapsed ? "w-0 overflow-hidden border-r-0" : "w-[360px]")}>
           {!sidebarCollapsed && (
             <button onClick={() => setSidebarCollapsed(true)} aria-label="Collapse sidebar" className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors">
               <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
@@ -907,7 +907,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
-                                        <span className="w-px h-4 bg-border" />
+                                        <span className="w-px h-4 bg-border" aria-hidden="true" />
                                         <button aria-label={collapsedSections.has(item.id) ? "Expand section" : "Collapse section"} className="p-1.5 rounded-md hover:bg-muted transition-colors" onClick={() => setCollapsedSections(prev => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })}>
                                           {collapsedSections.has(item.id) ? <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" /> : <ChevronUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />}
                                         </button>
@@ -949,7 +949,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                       <button onClick={() => addPageToSection(item.id)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1 ml-1 pl-3">
                                         <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Add page
                                       </button>
-                                      <div className="border-t border-dashed border-border mt-2" />
+                                      <div className="border-t border-dashed border-border mt-2" aria-hidden="true" />
                                     </>)}
                                   </div>
                                 )}
@@ -979,7 +979,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               />
             )}
           </div>
-        </div>
+        </nav>
 
         {/* Collapsed sidebar toggle */}
         {sidebarCollapsed && (
@@ -989,15 +989,18 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 min-w-0 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">
+              <label htmlFor="course-title-input" className="sr-only">Course title</label>
               <textarea
+                id="course-title-input"
                 value={title}
                 onChange={(e) => { if (e.target.value.length <= 275) setTitle(e.target.value); }}
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40 resize-none overflow-hidden leading-tight"
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground resize-none overflow-hidden leading-tight"
                 placeholder="Untitled course"
+                aria-label="Course title"
                 rows={1}
                 onInput={(e) => { const t = e.target as HTMLTextAreaElement; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }}
               />
@@ -1006,7 +1009,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <div className="mt-2">
               <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-muted/50 rounded border border-border">{title.length}/ 275</span>
             </div>
-            <div className="mt-4 mb-8">
+            <div className="mt-4 mb-8" aria-hidden="true">
               <div className="h-1 bg-primary/30 rounded-full w-full" />
             </div>
 
@@ -1076,22 +1079,25 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                   <div key={item.id} id={`item-${item.id}`} className="mt-12">
                     {/* Section divider label */}
                     <div className="flex items-center gap-3 mb-6">
-                      <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-primary border border-primary/30 rounded-full bg-primary/5">
+                      <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-primary-foreground border border-primary/30 rounded-full bg-primary">
                         Section {sectionIndex}: {item.title || "Untitled section"}
                       </span>
-                      <div className="flex-1 h-px border-t border-dashed border-border" />
+                      <div className="flex-1 h-px border-t border-dashed border-border" aria-hidden="true" />
                     </div>
 
                     {/* Section title + image area */}
                     <div className="mb-6">
                       <div className="mb-4">
-                        <span className="text-sm text-muted-foreground block mb-2">Section title</span>
+                        <label htmlFor={`section-title-${item.id}`} className="text-sm text-muted-foreground block mb-2">Section title</label>
                         <input
+                          id={`section-title-${item.id}`}
                           type="text"
                           value={item.title}
                           onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
                           className="text-2xl sm:text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                           placeholder="Untitled section"
+                          aria-label={`Title for section ${sectionIndex}`}
+                          autoComplete="off"
                         />
                       </div>
 
@@ -1116,7 +1122,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                             <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                           </div>
                           {aiEnabled && (
-                            <button aria-label="Ask AI for introduction" className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
+                            <button aria-label={`Ask AI for section ${sectionIndex} introduction`} className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors">
                               <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-section-intro)' }} aria-hidden="true" focusable="false" />
                               <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
                                 <defs>
@@ -1126,11 +1132,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                   </linearGradient>
                                 </defs>
                               </svg>
-                              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">Ask AI</span>
+                              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent" aria-hidden="true">Ask AI</span>
                             </button>
                           )}
                         </div>
+                        <label htmlFor={`section-intro-${item.id}`} className="sr-only">Introduction for section {sectionIndex}</label>
                         <textarea
+                          id={`section-intro-${item.id}`}
                           value={sectionObjectivesMap[item.id] || ""}
                           onChange={(e) => {
                             setSectionObjectivesMap((prev) => ({ ...prev, [item.id]: e.target.value }));
@@ -1146,10 +1154,11 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                           rows={2}
                           className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 resize-none outline-none placeholder:text-muted-foreground focus:border-primary/40 focus:bg-muted/20 transition-colors overflow-hidden"
                           placeholder="Define the introduction for this section…"
+                          aria-label={`Introduction for section ${sectionIndex}`}
                         />
                       </div>
 
-                      <div className="border-t border-dashed border-border my-4" />
+                      <div className="border-t border-dashed border-border my-4" aria-hidden="true" />
                     </div>
 
                     {/* Section content blocks */}
@@ -1171,15 +1180,18 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                   </div>
 
                   <div className="mb-4">
-                    <span className="text-sm text-muted-foreground block mb-2">Page title</span>
+                    <label htmlFor={`page-title-${item.id}`} className="text-sm text-muted-foreground block mb-2">Page title</label>
                     <input
+                      id={`page-title-${item.id}`}
                       type="text"
                       value={item.title}
                       onChange={(e) => { if (e.target.value.length <= 350) updateItemTitle(item.id, e.target.value); }}
                       className="text-xl sm:text-2xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                       placeholder="Untitled page"
+                      aria-label={`Title for page: ${item.title || 'Untitled page'}`}
+                      autoComplete="off"
                     />
-                    <div className="border-t border-dashed border-border my-4" />
+                    <div className="border-t border-dashed border-border my-4" aria-hidden="true" />
                   </div>
 
                   {renderItemBlocks(item.id)}
@@ -1203,7 +1215,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               </div>
             )}
           </div>
-        </div>
+        </main>
       </div>
 
       {/* Delete Confirmation */}

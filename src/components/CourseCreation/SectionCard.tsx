@@ -438,12 +438,12 @@ export function SectionCard({
           {/* Section card with left accent */}
           <div className="relative rounded-xl border border-border bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_-1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-200 hover:border-border hover:shadow-sm">
             {/* Left accent bar */}
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40 rounded-l-xl" />
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40 rounded-l-xl" aria-hidden="true" />
 
             {/* Header */}
             <div className="pl-5 pr-4 pt-3.5 pb-3 flex items-center gap-3">
               {/* Section number pill */}
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full shrink-0">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-primary-foreground bg-primary px-2.5 py-1 rounded-full shrink-0">
                 {sectionNumber.toString().padStart(2, '0')}
               </span>
 
@@ -594,7 +594,7 @@ export function SectionCard({
                           setObjectiveText(e.target.value);
                         }
                       }}
-                      aria-label="Section introduction"
+                      aria-label={`Introduction for section ${sectionNumber}`}
                       autoComplete="off"
                       className="flex-1 text-xs text-foreground bg-transparent outline-none placeholder:text-muted-foreground"
                       placeholder="Write an introduction for this section…"
@@ -610,13 +610,14 @@ export function SectionCard({
                         variant="ghost"
                         size="sm"
                         className="h-6 px-2 gap-1 text-[10px] hover:bg-primary/10 rounded-full shrink-0"
+                        aria-label={`Ask AI for section ${sectionNumber} introduction`}
                         onClick={(e) => {
                           e.stopPropagation();
                           setShowAIIntroDialog(true);
                         }}
                       >
-                        <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-intro)' }} aria-hidden="true" />
-                        <svg width="0" height="0" className="absolute" aria-hidden="true">
+                        <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-intro)' }} aria-hidden="true" focusable="false" />
+                        <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
                           <defs>
                             <linearGradient id="ai-gradient-intro" x1="0%" y1="0%" x2="100%" y2="100%">
                               <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
@@ -624,7 +625,7 @@ export function SectionCard({
                             </linearGradient>
                           </defs>
                         </svg>
-                        <span className="bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent font-medium">Ask AI</span>
+                        <span className="bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent font-medium" aria-hidden="true">Ask AI</span>
                       </Button>
                     )}
                   </div>
