@@ -459,7 +459,9 @@ export function SectionCard({
                       onTitleChange(e.target.value);
                     }
                   }}
-                  className="w-full text-sm font-semibold text-foreground bg-transparent outline-none placeholder:text-muted-foreground/50 transition-all"
+                  aria-label={`Section ${sectionNumber} title`}
+                  autoComplete="off"
+                  className="w-full text-sm font-semibold text-foreground bg-transparent outline-none placeholder:text-muted-foreground transition-all"
                   placeholder="Untitled section..."
                 />
                 <div className={cn(
@@ -469,7 +471,7 @@ export function SectionCard({
               </div>
 
               <span className={cn(
-                "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity",
+                "text-[9px] text-muted-foreground tabular-nums shrink-0 transition-opacity",
                 isTitleFocused ? "opacity-100" : "opacity-0"
               )}>
                 {title.length}/{MAX_TITLE_LENGTH}
