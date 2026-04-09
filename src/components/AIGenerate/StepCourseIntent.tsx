@@ -76,13 +76,24 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               className="overflow-hidden"
             >
               <div className="flex items-start gap-2.5 text-xs bg-muted/40 border border-border/60 rounded-xl px-3.5 py-3">
                 <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary/70" aria-hidden="true" focusable="false" />
-                <div className="space-y-1">
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Example</span>
+                <div className="space-y-1 flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Example</span>
+                    <button
+                      type="button"
+                      onClick={() => setExampleRevealed(false)}
+                      className="text-[11px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+                      aria-label="Hide example"
+                    >
+                      Hide
+                    </button>
+                  </div>
                   <p className="text-muted-foreground italic leading-relaxed">
                     Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
                   </p>
