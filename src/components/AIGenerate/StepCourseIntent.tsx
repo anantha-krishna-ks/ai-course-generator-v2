@@ -15,16 +15,11 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
   return (
     <div className="space-y-5">
       {/* Hero banner */}
-      <div className="rounded-xl bg-gradient-to-br from-primary/8 via-primary/4 to-transparent border border-primary/10 px-4 py-4 flex gap-3 items-start">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-          <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-        </div>
-        <div>
-          <h1 className="text-base sm:text-lg font-bold text-foreground leading-snug">Let's build your course</h1>
-          <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">
-            Start building your course by uploading any relevant documents, then answer a few quick questions to help us generate the content.
-          </p>
-        </div>
+      <div className="flex items-center gap-2 rounded-lg bg-muted/50 border border-border/60 px-3 py-2">
+        <Sparkles className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+        <p className="text-[12px] text-muted-foreground leading-snug">
+          Upload relevant documents and answer a few questions to generate your course content.
+        </p>
       </div>
 
       {/* Course Title */}
