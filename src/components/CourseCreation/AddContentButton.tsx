@@ -132,7 +132,7 @@ export function AddContentButton({
             !isDragOver && !forceOpen && !isPopoverOpen && "opacity-0 group-hover/add:opacity-100",
             (forceOpen || isPopoverOpen) && "opacity-100"
           )}>
-            <Plus className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-foreground/40")} />
+            <Plus aria-hidden="true" className={cn("transition-all duration-200", isDragOver ? "w-4 h-4 text-primary" : "w-3.5 h-3.5 text-muted-foreground")} />
           </div>
           <div className={cn(
             "flex-1 h-px transition-all duration-200",
@@ -173,7 +173,7 @@ export function AddContentButton({
                 onClick={onMore}
                 className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 md:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs md:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
               >
-                <MoreHorizontal className="w-3.5 md:w-4 h-3.5 md:h-4" />
+                <MoreHorizontal className="w-3.5 md:w-4 h-3.5 md:h-4" aria-hidden="true" />
                 <span className="hidden md:inline">More</span>
               </button>
             )}
@@ -251,7 +251,7 @@ export function AddContentButton({
                       ? "e.g., Write an introduction about cybersecurity best practices..."
                       : "e.g., A modern illustration of cloud computing architecture..."
                   }
-                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none resize-none min-h-[28px] max-h-[120px] py-1"
+                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[120px] py-1"
                   rows={1}
                 />
                 <button
@@ -268,7 +268,7 @@ export function AddContentButton({
                   <Send className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+              <p className="text-[11px] text-muted-foreground mt-2 px-1">
                 Press Enter to generate · Shift+Enter for new line
               </p>
             </>

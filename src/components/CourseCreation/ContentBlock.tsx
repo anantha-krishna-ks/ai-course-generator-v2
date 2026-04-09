@@ -16,6 +16,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -446,7 +447,7 @@ export function ContentBlock({
           ) : !hasContent ? (
             <div className="w-full rounded-lg border-2 border-dashed border-foreground/20 bg-background/80 py-8 px-6 flex flex-col items-center justify-center gap-3 transition-all duration-200 hover:border-primary/50">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Type className="w-6 h-6 text-primary/70" />
+                <Type className="w-6 h-6 text-primary/70" aria-hidden="true" />
               </div>
               <p className="text-sm text-muted-foreground">Click to add text content...</p>
               <div className="flex items-center gap-2.5">
@@ -520,11 +521,11 @@ export function ContentBlock({
               </div>
               {type === "image" ? "Generate image with AI" : "Generate text with AI"}
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1.5">
+            <DialogDescription className="text-sm text-muted-foreground mt-1.5">
               {type === "image"
                 ? "Describe the image you'd like to generate for this block."
                 : "Describe what text content you'd like to generate for this block."}
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="px-6 pb-2">
@@ -543,11 +544,11 @@ export function ContentBlock({
                   ? "e.g., A modern illustration of cloud computing architecture..."
                   : "e.g., Write an introduction about the importance of cybersecurity in modern businesses..."
                 }
-                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none p-4 focus:outline-none min-h-[120px]"
                 rows={4}
               />
             </div>
-            <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+            <p className="text-[11px] text-muted-foreground mt-2 px-1">
               Press Enter to generate · Shift+Enter for new line
             </p>
           </div>
@@ -588,9 +589,9 @@ export function ContentBlock({
               <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
               Version History
             </DialogTitle>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
               View and restore previous versions
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
@@ -690,9 +691,9 @@ export function ContentBlock({
               <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
               Version History — Column {(versionDialogCol ?? 0) + 1}
             </DialogTitle>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
               View and restore previous versions of this column
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 border-b bg-muted/30 flex-shrink-0">
@@ -740,7 +741,7 @@ export function ContentBlock({
                             })} at {version.editedAt.toLocaleTimeString('en-US', {
                               hour: '2-digit', minute: '2-digit'
                             })}</span>
-                            <span className="text-muted-foreground/60">·</span>
+                            <span className="text-muted-foreground">·</span>
                             <span>{version.editedBy}</span>
                           </div>
                         </div>

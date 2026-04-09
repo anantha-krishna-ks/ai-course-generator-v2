@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -130,6 +130,7 @@ function ImageGeneratingLoader() {
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             <Sparkles
+              aria-hidden="true"
               className="w-9 h-9"
               style={{
                 color: "hsl(var(--primary))",
@@ -379,9 +380,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={handleClick}
               className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="Change image"
+              aria-label="Change image"
             >
-              <Image className="w-4 h-4" />
+              <Image className="w-4 h-4" aria-hidden="true" />
             </button>
 
             <div className="w-px h-4 bg-border" />
@@ -390,9 +391,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={() => setEditorMode("full")}
               className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="Edit image"
+              aria-label="Edit image"
             >
-              <SlidersHorizontal className="w-4 h-4" />
+              <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             </button>
 
             <div className="w-px h-4 bg-border" />
@@ -454,9 +455,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={handleDeleteImage}
               className="p-1.5 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-              title="Delete image"
+              aria-label="Delete image"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         )}
@@ -471,8 +472,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={() => setZoom(Math.max(50, zoom - 10))}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Zoom out"
             >
-              <Minus className="w-3.5 h-3.5" />
+              <Minus className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
             <Slider
               value={[zoom]}
@@ -485,8 +487,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={() => setZoom(Math.min(200, zoom + 10))}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Zoom in"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
 
             <div className="w-px h-5 bg-border mx-1" />
@@ -495,9 +498,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={handleClick}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="Replace image"
+              aria-label="Replace image"
             >
-              <Image className="w-4 h-4" />
+              <Image className="w-4 h-4" aria-hidden="true" />
             </button>
 
             <div className="w-px h-5 bg-border mx-1" />
@@ -505,12 +508,12 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             {/* Fit mode dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 px-2 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                  {fitMode === "contain" && <Maximize className="w-3.5 h-3.5" />}
-                  {fitMode === "cover" && <RectangleHorizontal className="w-3.5 h-3.5" />}
-                  {fitMode === "fill" && <RectangleHorizontal className="w-3.5 h-3.5" />}
+              <button className="flex items-center gap-1 px-2 py-1 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label={`Fit mode: ${fitModeLabels[fitMode]}`}>
+                  {fitMode === "contain" && <Maximize className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {fitMode === "cover" && <RectangleHorizontal className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {fitMode === "fill" && <RectangleHorizontal className="w-3.5 h-3.5" aria-hidden="true" />}
                   <span className="text-xs">{fitModeLabels[fitMode]}</span>
-                  <ChevronDown className="w-3 h-3" />
+                  <ChevronDown className="w-3 h-3" aria-hidden="true" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="bg-background border min-w-[100px]">
@@ -536,9 +539,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                   "p-1.5 rounded-md transition-colors",
                   flipH ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
-                title="Flip horizontal"
+                aria-label="Flip horizontal"
               >
-                <FlipHorizontal className="w-3.5 h-3.5" />
+                <FlipHorizontal className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
               <button
                 onClick={() => setFlipV(!flipV)}
@@ -546,16 +549,16 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                   "p-1.5 rounded-md transition-colors",
                   flipV ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
-                title="Flip vertical"
+                aria-label="Flip vertical"
               >
-                <FlipVertical className="w-3.5 h-3.5" />
+                <FlipVertical className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
               <button
                 onClick={() => setRotation((rotation + 90) % 360)}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                title="Rotate 90°"
+                aria-label="Rotate 90 degrees"
               >
-                <RotateCw className="w-3.5 h-3.5" />
+                <RotateCw className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </div>
 
@@ -565,9 +568,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             <button
               onClick={handleDeleteImage}
               className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-              title="Delete image"
+              aria-label="Delete image"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
 
             {/* Spacer + Done */}
@@ -637,7 +640,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                 ? "bg-primary/20 border-primary/40 shadow-primary/10"
                 : "bg-background border-border hover:border-primary/50 hover:bg-primary/10 hover:shadow-md"
             )}>
-              <GripHorizontal className={cn(
+              <GripHorizontal aria-hidden="true" className={cn(
                 "w-5 h-4 transition-colors",
                 isResizing ? "text-primary" : "text-muted-foreground group-hover/resize:text-primary"
               )} />
@@ -742,7 +745,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         )}
       >
         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-          <Image className="w-6 h-6 text-primary/70" />
+          <Image className="w-6 h-6 text-primary/70" aria-hidden="true" />
         </div>
         <p className="text-sm text-muted-foreground">Click to add an image...</p>
         <div className="flex items-center gap-2.5">
@@ -800,9 +803,9 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               </div>
               Generate Image
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1.5">
+            <DialogDescription className="text-sm text-muted-foreground mt-1.5">
               Optionally describe the image you'd like to generate.
-            </p>
+            </DialogDescription>
           </DialogHeader>
 
           <div className="px-6 pb-2">
@@ -817,12 +820,12 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                   }
                 }}
                 placeholder="e.g., A professional illustration showing cybersecurity concepts with a shield and lock icons... (optional)"
-                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 resize-none p-4 focus:outline-none min-h-[120px]"
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground resize-none p-4 focus:outline-none min-h-[120px]"
                 rows={4}
                 autoFocus
               />
             </div>
-            <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+            <p className="text-[11px] text-muted-foreground mt-2 px-1">
               Press Enter to generate · Shift+Enter for new line
             </p>
           </div>

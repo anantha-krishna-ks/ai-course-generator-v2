@@ -248,9 +248,9 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         {/* Questions list or empty state */}
         {questions.length === 0 ? (
           <div className="px-5 py-10 text-center">
-            <MessageCircleQuestion className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+            <MessageCircleQuestion className="w-10 h-10 text-muted-foreground mx-auto mb-3" aria-hidden="true" />
             <p className="text-sm font-medium text-muted-foreground mb-1">No questions yet</p>
-            <p className="text-xs text-muted-foreground/60">
+            <p className="text-xs text-muted-foreground">
               {isQuizVariant && aiEnabled
                 ? "Generate a quiz with AI or add questions manually."
                 : "Add questions manually to build your assessment."}
@@ -273,11 +273,14 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                           >
                             {/* Drag handle */}
                             <span
+                              role="button"
+                              tabIndex={0}
+                              aria-label="Drag to reorder question"
                               className="shrink-0 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted transition-colors"
                               onClick={(e) => e.stopPropagation()}
                               {...dragHandleProps}
                             >
-                              <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                              <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
                             </span>
 
                             {/* Number */}
@@ -307,8 +310,8 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                             {/* 3-dot menu */}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                <button className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground shrink-0">
-                                  <MoreHorizontal className="w-4 h-4" />
+                                 <button className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground shrink-0" aria-label="Question options">
+                                  <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
                                 </button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-40">
@@ -370,7 +373,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                                             )}
                                           >
                                             {isCorrect && (
-                                              <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg aria-hidden="true" className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M2.5 6l2.5 2.5 4.5-5" />
                                               </svg>
                                             )}
