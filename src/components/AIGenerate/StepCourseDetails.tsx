@@ -75,13 +75,6 @@ function ChipGroup({
 export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
   return (
     <div className="space-y-6">
-      {/* Info banner */}
-      <div className="flex items-center gap-2.5 rounded-xl bg-primary/8 border border-primary/15 px-4 py-3">
-        <Info className="w-4 h-4 text-primary shrink-0" aria-hidden="true" focusable="false" />
-        <p className="text-[13px] text-foreground leading-snug">
-          Help us understand your audience and preferences so AI can generate the best course for you.
-        </p>
-      </div>
 
       {/* Learning Outcome */}
       <div>
