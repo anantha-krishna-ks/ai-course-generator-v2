@@ -60,7 +60,7 @@ export default function AIGenerateCourse() {
   const canAdvance = (): boolean => {
     switch (currentStep) {
       case 1:
-        return !!formState.title.trim() && formState.bloomsTaxonomy.length > 0 && !!formState.intendedLearners;
+        return !!formState.title.trim() && !!formState.intendedLearners.trim();
       case 2:
       case 3:
       case 4:
