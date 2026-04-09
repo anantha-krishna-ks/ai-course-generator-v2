@@ -15,8 +15,8 @@ const AISparkles = ({ className }: AISparklesProps) => {
   const id = `ai-grad-${++gradientIdCounter}`;
   return (
     <>
-      <Sparkles className={cn("w-4 h-4", className)} style={{ stroke: `url(#${id})` }} />
-      <svg width="0" height="0" className="absolute">
+      <Sparkles className={cn("w-4 h-4", className)} style={{ stroke: `url(#${id})` }} aria-hidden="true" focusable="false" />
+      <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
