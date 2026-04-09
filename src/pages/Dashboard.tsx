@@ -212,18 +212,19 @@ const Dashboard = () => {
 
       {/* Token Usage Dialog */}
       <Dialog open={isTokenDialogOpen} onOpenChange={setIsTokenDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-card">
+        <DialogContent className="sm:max-w-[600px] bg-card" aria-describedby="token-dialog-desc">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Zap className="w-6 h-6 text-primary" />
+              <Zap className="w-6 h-6 text-primary" aria-hidden="true" focusable="false" />
               Tokens Usage
             </DialogTitle>
+            <p id="token-dialog-desc" className="text-sm text-muted-foreground">View your token allocation, usage, and availability.</p>
           </DialogHeader>
           
           <div className="space-y-6 py-4">
             <div className="flex items-center justify-between p-4 rounded-lg bg-primary/5 border border-primary/20">
               <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-primary" />
+                <Calendar className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                 <span className="text-sm font-medium text-muted-foreground">Renewed On</span>
               </div>
               <span className="text-sm font-bold text-foreground">{tokenData.renewedOn}</span>
@@ -313,7 +314,7 @@ const Dashboard = () => {
       />
 
       {/* Main Content */}
-      <main id="main-dashboard" role="main" className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="main-dashboard" className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Banner */}
         <motion.div
           custom={0}
@@ -334,12 +335,12 @@ const Dashboard = () => {
 
               <div className="flex items-center gap-3 bg-background/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/40">
                 <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-                  <Layers className="w-3.5 h-3.5 text-primary" />
+                  <Layers className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
                   <span><span className="font-semibold text-foreground">13</span> courses created</span>
                 </div>
                 <span className="w-px h-3.5 bg-border" />
                 <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-                  <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                  <TrendingUp className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
                   <span className="font-semibold text-primary">+2</span>
                   <span>this month</span>
                 </div>
@@ -370,7 +371,7 @@ const Dashboard = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all">
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
                       Create Course
                     </Button>
                   </DropdownMenuTrigger>
@@ -380,7 +381,7 @@ const Dashboard = () => {
                       className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
                     >
                       <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
-                        <PenLine className="w-4 h-4 text-primary" />
+                        <PenLine className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <span className="text-sm font-semibold text-foreground">Manual Generation</span>
@@ -407,7 +408,7 @@ const Dashboard = () => {
                   onClick={() => window.location.reload()}
                   aria-label="Refresh courses"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                 </Button>
               </div>
             </div>
@@ -457,7 +458,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground font-medium">Show:</span>
               <Select value={recordsPerPage.toString()} onValueChange={handleRecordsPerPageChange}>
-                <SelectTrigger className="w-20 h-9 rounded-full border-border">
+                <SelectTrigger className="w-20 h-9 rounded-full border-border" aria-label="Records per page">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -485,7 +486,7 @@ const Dashboard = () => {
                 onClick={() => navigate(`/edit-course/${course.id}`)}
                 className="group overflow-hidden transition-all duration-300 cursor-pointer border border-border/80 hover:border-primary/30 hover:shadow-lg bg-card/80 backdrop-blur-sm rounded-2xl"
                 tabIndex={0}
-                role="link"
+                role="button"
                 aria-label={`${course.title} - Last updated ${course.lastUpdated}`}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/edit-course/${course.id}`); } }}
               >
@@ -506,7 +507,7 @@ const Dashboard = () => {
                   
                   <div className="flex items-center justify-between pt-3 border-t border-border/50">
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Clock className="w-3.5 h-3.5" />
+                      <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                       <span className="font-medium">{course.lastUpdated}</span>
                     </div>
                     <Button 
@@ -515,7 +516,7 @@ const Dashboard = () => {
                       className="h-8 text-xs px-3 gap-1.5 font-semibold rounded-full group-hover:bg-primary/10 group-hover:text-primary transition-all"
                     >
                       View
-                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" focusable="false" />
                     </Button>
                   </div>
                 </div>
@@ -525,7 +526,7 @@ const Dashboard = () => {
           
           {filteredCourses.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-              <Search className="w-16 h-16 text-muted-foreground/40 mb-4" />
+              <Search className="w-16 h-16 text-muted-foreground mb-4" aria-hidden="true" focusable="false" />
               <h3 className="text-lg font-semibold text-foreground mb-2">No courses found</h3>
               <p className="text-sm text-muted-foreground">
                 {searchQuery 
@@ -635,7 +636,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-2 whitespace-nowrap">
               <span className="text-sm text-muted-foreground font-medium">Records Per Page:</span>
               <Select value={recordsPerPage.toString()} onValueChange={handleRecordsPerPageChange}>
-                <SelectTrigger className="w-20 h-8 text-xs rounded-full border-border">
+                <SelectTrigger className="w-20 h-8 text-xs rounded-full border-border" aria-label="Records per page">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
