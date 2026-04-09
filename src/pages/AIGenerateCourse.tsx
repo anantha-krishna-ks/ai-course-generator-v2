@@ -119,7 +119,7 @@ export default function AIGenerateCourse() {
       <Header />
 
       <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-4 py-6 sm:py-10">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-3xl">
 
           {/* Accessible step status */}
           <div className="sr-only" aria-live="polite">
