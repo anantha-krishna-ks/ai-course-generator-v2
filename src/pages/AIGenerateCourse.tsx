@@ -224,71 +224,69 @@ export default function AIGenerateCourse() {
                   <AISparkles className="w-4 h-4 opacity-60" />
                 </div>
               </div>
-                </motion.span>
-              </AnimatePresence>
-            </div>
 
-            {/* Card body */}
-            <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-280px)] overflow-y-auto thin-scrollbar">
-              <AnimatePresence mode="wait" custom={direction} initial={false}>
-                <motion.div
-                  key={currentStep}
-                  custom={direction}
-                  variants={contentVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+              {/* Card body */}
+              <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-280px)] overflow-y-auto thin-scrollbar">
+                <AnimatePresence mode="wait" custom={direction} initial={false}>
+                  <motion.div
+                    key={currentStep}
+                    custom={direction}
+                    variants={contentVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                  >
+                    <StepComponent state={formState} onChange={updateState} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Footer */}
+              <div className="border-t border-border px-5 sm:px-8 md:px-10 py-3 sm:py-3.5 flex items-center justify-between bg-card">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBack}
+                  className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full px-3 h-9"
+                  aria-label={currentStep > 1 ? `Back to ${STEPS[currentStep - 2].label}` : "Back to dashboard"}
                 >
-                  <StepComponent state={formState} onChange={updateState} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  <span className="hidden sm:inline">Back</span>
+                </Button>
 
-            {/* Footer */}
-            <div className="border-t border-border px-5 sm:px-8 md:px-10 py-3 sm:py-3.5 flex items-center justify-between bg-card">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full px-3 h-9"
-                aria-label={currentStep > 1 ? `Back to ${STEPS[currentStep - 2].label}` : "Back to dashboard"}
-              >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
-                <span className="hidden sm:inline">Back</span>
-              </Button>
+                <span className="text-[11px] text-muted-foreground font-medium hidden sm:block" aria-hidden="true">
+                  {remainingCards === 0 ? "Final step" : `${remainingCards} step${remainingCards > 1 ? "s" : ""} remaining`}
+                </span>
 
-              <span className="text-[11px] text-muted-foreground font-medium hidden sm:block" aria-hidden="true">
-                {remainingCards === 0 ? "Final step" : `${remainingCards} step${remainingCards > 1 ? "s" : ""} remaining`}
-              </span>
-
-              {currentStep < 4 ? (
-                <motion.div whileTap={{ scale: 0.95 }}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleNext}
-                    disabled={!canAdvance()}
-                    className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
-                  >
-                    Next
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div whileTap={{ scale: 0.95 }}>
-                  <Button
-                    size="sm"
-                    onClick={handleFinish}
-                    className="gap-1.5 rounded-full px-5 h-9"
-                  >
-                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    Finish
-                  </Button>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
+                {currentStep < 4 ? (
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleNext}
+                      disabled={!canAdvance()}
+                      className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
+                    >
+                      Next
+                      <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    <Button
+                      size="sm"
+                      onClick={handleFinish}
+                      className="gap-1.5 rounded-full px-5 h-9"
+                    >
+                      <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      Finish
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </main>
     </div>
