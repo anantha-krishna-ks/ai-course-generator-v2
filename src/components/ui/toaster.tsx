@@ -34,7 +34,7 @@ export function Toaster() {
             <div className="toast-ribbon absolute left-0 top-0 bottom-0 w-1 rounded-l-lg" />
             
             <div className="flex items-start gap-3 pl-4 pr-8 py-4 w-full">
-              <Icon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${iconColor}`} />
+              <Icon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${iconColor}`} aria-hidden="true" focusable="false" />
               <div className="grid gap-1 flex-1 min-w-0">
                 {title && <ToastTitle>{title}</ToastTitle>}
                 {description && <ToastDescription>{description}</ToastDescription>}

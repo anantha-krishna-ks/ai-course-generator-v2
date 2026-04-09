@@ -59,7 +59,6 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
               <button 
                 onClick={onTokenClick}
                 className="hidden sm:flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-full border border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all cursor-pointer"
-                aria-label={`${tokenCount} tokens`}
               >
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
                 <span className="text-xs font-medium text-foreground">{tokenCount}</span>
