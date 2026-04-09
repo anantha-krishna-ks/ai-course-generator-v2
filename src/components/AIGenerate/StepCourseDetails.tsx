@@ -92,17 +92,18 @@ function ChipGroup({
             type="button"
             role="radio"
             aria-checked={selected}
-            onClick={() => onChange(opt.value)}
+            onClick={() => onChange(selected ? "" : opt.value)}
             className={cn(
-              "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               selected
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
             )}
           >
+            {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
             {opt.label}
             {showDesc && opt.desc && (
-              <span className={cn("ml-1.5 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
+              <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
                 {opt.desc}
               </span>
             )}
