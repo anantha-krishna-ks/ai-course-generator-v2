@@ -186,7 +186,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 block">Inclusions</label>
               <textarea
                 value={inclusions}
                 onChange={(e) => onInclusionsChange?.(e.target.value)}
@@ -223,7 +223,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
 
             {/* Exclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 block">Exclusions</label>
               <textarea
                 value={exclusions}
                 onChange={(e) => onExclusionsChange?.(e.target.value)}

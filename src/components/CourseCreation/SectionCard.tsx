@@ -249,7 +249,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Inclusions</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 block">Inclusions</label>
               <textarea
                 value={page.inclusions}
                 onChange={(e) => onInclusionsChange(page.id, e.target.value)}
@@ -286,7 +286,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
 
             {/* Exclusions */}
             <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 block">Exclusions</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 block">Exclusions</label>
               <textarea
                 value={page.exclusions}
                 onChange={(e) => onExclusionsChange(page.id, e.target.value)}
@@ -503,7 +503,7 @@ export function SectionCard({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted data-[state=open]:bg-primary/10 data-[state=open]:border-primary/30 flex items-center justify-center transition-colors shrink-0 group/trigger" aria-label="More section options">
-                      <MoreHorizontal className="w-4 h-4 text-foreground/70 group-data-[state=open]/trigger:text-primary transition-colors" />
+                      <MoreHorizontal className="w-4 h-4 text-foreground group-data-[state=open]/trigger:text-primary transition-colors" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-52 bg-background border border-border p-1.5">
@@ -730,7 +730,7 @@ export function SectionCard({
           <div className="flex-1 overflow-y-auto min-h-0 pr-1">
             {/* Learning Objectives */}
             <div className="mt-4 rounded-xl border border-border bg-muted/20 p-4">
-              <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-primary/70" />Learning Objectives</label>
+              <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-primary/70" />Learning Objectives</label>
               <textarea
                 value={objectiveText}
                 onChange={(e) => setObjectiveText(e.target.value)}
@@ -749,7 +749,7 @@ export function SectionCard({
             <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
               {/* Inclusions */}
               <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-                <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />Inclusions</label>
+                <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />Inclusions</label>
               <textarea
                   value={inclusions}
                   onChange={(e) => onInclusionsChange?.(e.target.value)}
@@ -786,7 +786,7 @@ export function SectionCard({
 
               {/* Exclusions */}
               <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
-                <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><XCircle className="w-3.5 h-3.5 text-destructive/70" />Exclusions</label>
+                <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><XCircle className="w-3.5 h-3.5 text-destructive/70" />Exclusions</label>
               <textarea
                   value={exclusions}
                   onChange={(e) => onExclusionsChange?.(e.target.value)}

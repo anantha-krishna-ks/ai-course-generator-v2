@@ -292,7 +292,7 @@ export function ContentBlock({
                           "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
                           isActive
                             ? "bg-primary/10 text-primary font-medium"
-                            : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
                         )}
                       >
                         <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />

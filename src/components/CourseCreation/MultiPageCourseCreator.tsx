@@ -949,7 +949,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     return (
                       <div className="opacity-80 shadow-2xl rounded-lg border border-primary/30 bg-background/95 backdrop-blur-sm p-4">
                         <div
-                          className="prose prose-sm dark:prose-invert max-w-none text-foreground/60 [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
+                          className="prose prose-sm dark:prose-invert max-w-none text-foreground [&_h2]:!text-[1.75rem] [&_h2]:!font-semibold [&_h2]:!leading-tight"
                           dangerouslySetInnerHTML={{ __html: displayContent }}
                         />
                       </div>
