@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -124,6 +124,7 @@ function AISuggestions({
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   const generate = useCallback(() => {
     if (!title.trim()) return;
@@ -162,79 +163,105 @@ function AISuggestions({
   if (!visible && !loading) return null;
 
   return (
-    <div className="border-t border-border/60 px-4 py-3 space-y-2.5 bg-muted/20">
-      <div className="flex items-center gap-2">
+    <div className="border-t border-border/60 bg-muted/20">
+      <button
+        type="button"
+        onClick={() => setExpanded((prev) => !prev)}
+        className="w-full flex items-center gap-2 px-4 py-2.5 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        aria-expanded={expanded}
+        aria-label={expanded ? "Hide AI suggestions" : "Show AI suggestions"}
+      >
         <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-        <span className="text-xs font-semibold text-muted-foreground">Suggested course goals:</span>
-      </div>
+        <span className="text-xs font-semibold text-muted-foreground flex-1">Suggested course goals</span>
+        <motion.div
+          animate={{ rotate: expanded ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+        </motion.div>
+      </button>
 
-      <AnimatePresence mode="wait">
-        {loading ? (
+      <AnimatePresence initial={false}>
+        {expanded && (
           <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex items-center gap-2 py-4 justify-center"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden"
           >
-            <RefreshCw className="w-4 h-4 text-primary animate-spin" aria-hidden="true" focusable="false" />
-            <span className="text-xs text-muted-foreground">Generating suggestions…</span>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="suggestions"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-2"
-          >
-            {suggestions.map((text, i) => {
-              const isSelected = selected.has(i);
-              return (
-                <motion.button
-                  key={i}
+            <div className="px-4 pb-3 space-y-2.5">
+              <AnimatePresence mode="wait">
+                {loading ? (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-2 py-4 justify-center"
+                  >
+                    <RefreshCw className="w-4 h-4 text-primary animate-spin" aria-hidden="true" focusable="false" />
+                    <span className="text-xs text-muted-foreground">Generating suggestions…</span>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="suggestions"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-2"
+                  >
+                    {suggestions.map((text, i) => {
+                      const isSelected = selected.has(i);
+                      return (
+                        <motion.button
+                          key={i}
+                          type="button"
+                          onClick={() => handleSelect(i)}
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.08, duration: 0.25 }}
+                          className={cn(
+                            "w-full text-left px-4 py-3 rounded-xl border transition-all duration-200 text-sm leading-relaxed",
+                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                            isSelected
+                              ? "border-primary/50 bg-primary/5 text-foreground"
+                              : "border-border bg-background hover:border-primary/30 hover:bg-muted/40 text-foreground"
+                          )}
+                          aria-pressed={isSelected}
+                          aria-label={`Select suggestion: ${text}`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={cn(
+                              "mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                              isSelected ? "border-primary bg-primary" : "border-muted-foreground/30"
+                            )}>
+                              {isSelected && <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />}
+                            </div>
+                            <span>{text}</span>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {!loading && suggestions.length > 0 && (
+                <button
                   type="button"
-                  onClick={() => handleSelect(i)}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08, duration: 0.25 }}
-                  className={cn(
-                    "w-full text-left px-4 py-3 rounded-xl border transition-all duration-200 text-sm leading-relaxed",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    isSelected
-                      ? "border-primary/50 bg-primary/5 text-foreground"
-                      : "border-border bg-background hover:border-primary/30 hover:bg-muted/40 text-foreground"
-                  )}
-                  aria-pressed={isSelected}
-                  aria-label={`Select suggestion: ${text}`}
+                  onClick={generate}
+                  className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1"
+                  aria-label="Regenerate goal suggestions"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
-                      isSelected ? "border-primary bg-primary" : "border-muted-foreground/30"
-                    )}>
-                      {isSelected && <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />}
-                    </div>
-                    <span>{text}</span>
-                  </div>
-                </motion.button>
-              );
-            })}
+                  <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Regenerate goals
+                </button>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {!loading && suggestions.length > 0 && (
-        <button
-          type="button"
-          onClick={generate}
-          className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1"
-          aria-label="Regenerate goal suggestions"
-        >
-          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          Regenerate goals
-        </button>
-      )}
     </div>
   );
 }
