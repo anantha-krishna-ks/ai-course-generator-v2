@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "@/components/Header";
+import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
