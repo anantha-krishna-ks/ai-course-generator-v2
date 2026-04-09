@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Info, Users, Clock, MessageSquare, BarChart3 } from "lucide-react";
+import { Info } from "lucide-react";
 
 interface StepCourseDetailsProps {
   state: AIGenerateState;
