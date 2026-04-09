@@ -239,12 +239,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         <DialogContent className="w-[95vw] max-w-[1100px]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <ListChecks className="w-5 h-5 text-muted-foreground" />
+              <ListChecks className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
               Scope
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-sm text-muted-foreground mt-1">
               Define the scope for "{pageDisplayTitle}"
-            </p>
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex flex-col md:flex-row gap-0 md:gap-0">
             {/* Inclusions */}
@@ -254,7 +254,9 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
                 value={page.inclusions}
                 onChange={(e) => onInclusionsChange(page.id, e.target.value)}
                 autoFocus
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
+                aria-label="Page inclusions"
+                autoComplete="off"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics, content, or scope should be included in this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
@@ -288,7 +290,9 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
               <textarea
                 value={page.exclusions}
                 onChange={(e) => onExclusionsChange(page.id, e.target.value)}
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
+                aria-label="Page exclusions"
+                autoComplete="off"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px]"
                 placeholder="Define what topics or content should be excluded from this page..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
