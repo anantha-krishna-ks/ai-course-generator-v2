@@ -22,6 +22,7 @@ const STEPS = [
 export interface AIGenerateState {
   title: string;
   intendedLearners: string;
+  learningOutcome: string;
   bloomsTaxonomy: string[];
   supportingDocuments: string[];
   guidelines: string;
@@ -31,11 +32,15 @@ export interface AIGenerateState {
   pageSpanTime: number;
   courseSpanTime: number;
   layoutType: "multi-page" | "single-page";
+  duration: "brief" | "standard" | "extended";
+  tone: "professional" | "conversational" | "coaching";
+  proficiencyLevel: "beginner" | "intermediate" | "advanced" | "expert" | "mixed";
 }
 
 const initialState: AIGenerateState = {
   title: "",
   intendedLearners: "",
+  learningOutcome: "",
   bloomsTaxonomy: [],
   supportingDocuments: [],
   guidelines: "",
@@ -45,6 +50,9 @@ const initialState: AIGenerateState = {
   pageSpanTime: 5,
   courseSpanTime: 60,
   layoutType: "multi-page",
+  duration: "standard",
+  tone: "professional",
+  proficiencyLevel: "beginner",
 };
 
 const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
@@ -284,10 +292,10 @@ export default function AIGenerateCourse() {
               {/* Footer */}
               <div className="border-t border-border px-5 sm:px-8 md:px-10 py-3 sm:py-3.5 flex items-center justify-between bg-card">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={handleBack}
-                  className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full px-3 h-9"
+                  className="gap-1.5 rounded-full px-4 h-9"
                   aria-label={currentStep > 1 ? `Back to ${STEPS[currentStep - 2].label}` : "Back to dashboard"}
                 >
                   <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
@@ -301,13 +309,12 @@ export default function AIGenerateCourse() {
                 {currentStep < 4 ? (
                   <motion.div whileTap={{ scale: 0.95 }}>
                     <Button
-                      variant="ghost"
                       size="sm"
                       onClick={handleNext}
                       disabled={!canAdvance()}
-                      className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
+                      className="gap-1.5 rounded-full px-5 h-9"
                     >
-                      Next
+                      Continue
                       <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
                     </Button>
                   </motion.div>
