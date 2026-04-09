@@ -205,77 +205,8 @@ export default function AIGenerateCourse() {
             </div>
           </nav>
 
-          {/* Card with stacked cards effect */}
-          <div className="relative">
-            {/* Previous step cards (left stack) */}
-            {currentStep > 1 && (
-              <motion.div
-                className="absolute hidden lg:block rounded-2xl bg-card border border-border/40 shadow-sm"
-                style={{
-                  top: 8,
-                  bottom: 8,
-                  left: -10,
-                  width: 14,
-                  zIndex: 0,
-                }}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 0.6, x: 0 }}
-                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                aria-hidden="true"
-              />
-            )}
-            {currentStep > 2 && (
-              <motion.div
-                className="absolute hidden lg:block rounded-2xl bg-card border border-border/30 shadow-sm"
-                style={{
-                  top: 16,
-                  bottom: 16,
-                  left: -20,
-                  width: 14,
-                  zIndex: -1,
-                }}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 0.35, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.05, ease: [0.4, 0, 0.2, 1] }}
-                aria-hidden="true"
-              />
-            )}
-
-            {/* Upcoming step cards (right stack) */}
-            {currentStep < 4 && (
-              <motion.div
-                className="absolute hidden lg:block rounded-2xl bg-card border border-border/40 shadow-sm"
-                style={{
-                  top: 8,
-                  bottom: 8,
-                  right: -10,
-                  width: 14,
-                  zIndex: 0,
-                }}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 0.6, x: 0 }}
-                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                aria-hidden="true"
-              />
-            )}
-            {currentStep < 3 && (
-              <motion.div
-                className="absolute hidden lg:block rounded-2xl bg-card border border-border/30 shadow-sm"
-                style={{
-                  top: 16,
-                  bottom: 16,
-                  right: -20,
-                  width: 14,
-                  zIndex: -1,
-                }}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 0.35, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.05, ease: [0.4, 0, 0.2, 1] }}
-                aria-hidden="true"
-              />
-            )}
-
-            <div className="relative rounded-2xl p-[1px] overflow-hidden z-[1]">
+          {/* Card with AI shimmer border */}
+          <div className="relative rounded-2xl p-[1px] overflow-hidden">
             {/* Animated gradient border */}
             <motion.div
               className="absolute inset-0 rounded-2xl"
