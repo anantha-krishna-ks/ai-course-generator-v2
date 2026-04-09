@@ -213,8 +213,8 @@ export default function AIGenerateCourse() {
             </div>
 
             {/* Card body */}
-            <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-240px)] overflow-y-auto thin-scrollbar">
-              <AnimatePresence mode="wait" custom={direction}>
+            <div className="relative px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-240px)] overflow-y-auto thin-scrollbar">
+              <AnimatePresence initial={false} mode="popLayout" custom={direction}>
                 <motion.div
                   key={currentStep}
                   custom={direction}
@@ -222,7 +222,7 @@ export default function AIGenerateCourse() {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                 >
                   {currentStep === 1 && <StepCourseIntent state={formState} onChange={updateState} />}
                   {currentStep === 2 && <StepCourseDetails state={formState} onChange={updateState} />}
