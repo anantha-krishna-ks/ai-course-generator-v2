@@ -488,13 +488,13 @@ const Dashboard = () => {
                 className="group overflow-hidden transition-all duration-300 cursor-pointer border border-border/80 hover:border-primary/30 hover:shadow-lg bg-card/80 backdrop-blur-sm rounded-2xl"
                 tabIndex={0}
                 role="button"
-                aria-label={`${course.title}, last updated ${course.lastUpdated}`}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/edit-course/${course.id}`); } }}
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img 
                     src={course.thumbnail} 
-                    alt={`${course.title} course cover`}
+                    alt=""
+                    role="presentation"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
@@ -513,10 +513,9 @@ const Dashboard = () => {
                     </div>
                     <span 
                       className="inline-flex items-center h-8 text-xs px-3 gap-1.5 font-semibold rounded-full group-hover:bg-primary/10 group-hover:text-primary transition-all"
-                      aria-hidden="true"
                     >
                       View
-                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" focusable="false" />
                     </span>
                   </div>
                 </div>
