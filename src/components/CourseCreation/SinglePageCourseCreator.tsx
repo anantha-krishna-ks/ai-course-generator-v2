@@ -741,7 +741,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 </TooltipTrigger>
                 {title.length > 40 && <TooltipContent side="bottom" className="max-w-[300px] text-sm">{title}</TooltipContent>}
               </Tooltip>
-              <span className="text-muted-foreground/30 select-none">|</span>
+              <span className="text-muted-foreground select-none" aria-hidden="true">|</span>
               <LayoutSelectorDropdown currentLayout="single-page" title={title} aiOptions={aiOptions} transferState={{
                 title,
                 items: items.map(i => ({
@@ -921,7 +921,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                         <div className="space-y-1 pl-2 border-l-2 border-border/40 ml-1">
                                           {item.children.map((child) => (
                                             <div key={child.id} onClick={() => scrollToItem(child.id)} className="group/child flex items-center gap-2 py-2 px-2 rounded-md hover:bg-muted/40 cursor-pointer transition-colors">
-                                              <FileText className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" aria-hidden="true" focusable="false" />
+                                              <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                               <span className="text-sm text-foreground/80 truncate flex-1">{child.title || "Untitled page"}</span>
                                               <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
