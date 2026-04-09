@@ -596,12 +596,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                         <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
                           <p className="text-sm text-muted-foreground italic">
                             Content was removed...{" "}
-                            <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2">
-                              <Undo2 className="w-3 h-3" /> Undo
+                            <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2" aria-label="Undo delete">
+                              <Undo2 className="w-3 h-3" aria-hidden="true" focusable="false" /> Undo
                             </button>
                           </p>
-                          <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            <X className="w-3.5 h-3.5" /> Close
+                          <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} aria-label="Dismiss" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Close
                           </button>
                         </div>
                       </div>
@@ -653,13 +653,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       <div className="flex items-center justify-between px-5 py-3.5 rounded-lg border border-border bg-background/80 backdrop-blur-sm">
                         <p className="text-sm text-muted-foreground italic">
                           Content was removed...{" "}
-                          <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2">
-                            <Undo2 className="w-3 h-3" /> Undo
+                            <button onClick={() => undoItemBlockDelete(itemId, deletedId)} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors not-italic ml-2" aria-label="Undo delete">
+                              <Undo2 className="w-3 h-3" aria-hidden="true" focusable="false" /> Undo
+                            </button>
+                          </p>
+                          <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} aria-label="Dismiss" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Close
                           </button>
-                        </p>
-                        <button onClick={() => dismissItemDeletedBlock(itemId, deletedId)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                          <X className="w-3.5 h-3.5" /> Close
-                        </button>
                       </div>
                     </div>
                   );
