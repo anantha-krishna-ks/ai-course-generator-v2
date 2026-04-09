@@ -1,6 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Lightbulb } from "lucide-react";
+import { Upload, Lightbulb, FileText, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 interface StepCourseIntentProps {
@@ -13,12 +13,17 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div>
-        <h1 className="text-lg sm:text-xl font-bold text-foreground">Let's build your course</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Start building your course by uploading any relevant documents, then answer a few quick questions to help us generate the content.
-        </p>
+      {/* Hero banner */}
+      <div className="rounded-xl bg-gradient-to-br from-primary/8 via-primary/4 to-transparent border border-primary/10 px-4 py-4 flex gap-3 items-start">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+          <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+        </div>
+        <div>
+          <h1 className="text-base sm:text-lg font-bold text-foreground leading-snug">Let's build your course</h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">
+            Start building your course by uploading any relevant documents, then answer a few quick questions to help us generate the content.
+          </p>
+        </div>
       </div>
 
       {/* Course Title */}
@@ -39,14 +44,14 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <label htmlFor="learning-outcome" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            What should learners gain from this course? <span className="text-destructive" aria-hidden="true">*</span>
+            What should learners gain? <span className="text-destructive" aria-hidden="true">*</span>
           </label>
           <button
             type="button"
             onClick={() => setShowExample((v) => !v)}
-            className="flex items-center gap-1 text-[11px] text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+            className="flex items-center gap-1 text-[11px] text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded shrink-0"
             aria-expanded={showExample}
             aria-controls="example-hint"
           >
@@ -58,9 +63,12 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         {showExample && (
           <div
             id="example-hint"
-            className="text-xs text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2.5 italic"
+            className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 border border-border rounded-xl px-3 py-2.5"
           >
-            Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
+            <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary/60" aria-hidden="true" focusable="false" />
+            <span className="italic leading-relaxed">
+              Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
+            </span>
           </div>
         )}
 
@@ -80,11 +88,14 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         </label>
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label="Upload reference documents"
         >
-          <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
-          <span>Upload files</span>
+          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+            <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+          </div>
+          <span className="text-sm font-medium">Upload files</span>
+          <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
         </button>
         {state.supportingDocuments.length > 0 && (
           <p className="text-xs text-muted-foreground">{state.supportingDocuments.length} file(s) attached</p>
