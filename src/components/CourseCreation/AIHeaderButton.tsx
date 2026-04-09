@@ -283,7 +283,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                     <Upload className="w-5 h-5 text-primary" />
                   </div>
                   <span className="text-sm font-medium">Drop files here or click to upload</span>
-                  <span className="text-xs text-muted-foreground/70">PDF, DOCX, TXT — up to 20MB each</span>
+                  <span className="text-xs text-muted-foreground">PDF, DOCX, TXT — up to 20MB each</span>
                 </div>
               ) : aiOptions.supportingDocuments.length === 0 ? (
                 <p className="text-xs text-muted-foreground italic">No documents uploaded</p>

@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, Sparkles, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3 } from "lucide-react";
+import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -321,15 +321,7 @@ export function ContentBlock({
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
                     aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
-                    <Sparkles className="w-4 h-4" style={{ stroke: 'url(#ai-gradient)' }} aria-hidden="true" />
-                    <svg width="0" height="0" className="absolute" aria-hidden="true">
-                      <defs>
-                        <linearGradient id="ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                          <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                    <AISparkles className="w-4 h-4" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="text-xs">
@@ -373,7 +365,7 @@ export function ContentBlock({
                   dangerouslySetInnerHTML={{ __html: content }}
                 />
               ) : (
-                <span className="text-lg text-foreground/40 italic">No content</span>
+                <span className="text-lg text-muted-foreground italic">No content</span>
               )}
             </div>
           ) : isEditing ? (
@@ -419,15 +411,7 @@ export function ContentBlock({
                         className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                         onClick={() => setShowGenerateDialog(true)}
                       >
-                        <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-edit)' }} />
-                        <svg width="0" height="0" className="absolute">
-                          <defs>
-                            <linearGradient id="ai-gradient-edit" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                              <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
+                        <AISparkles className="w-3 h-3" />
                         Ask AI
                       </Button>
                       <Button
@@ -471,15 +455,7 @@ export function ContentBlock({
                     className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
                     onClick={() => setShowGenerateDialog(true)}
                   >
-                    <Sparkles className="w-3.5 h-3.5" style={{ stroke: 'url(#ai-gradient-btn)' }} />
-                    <svg width="0" height="0" className="absolute">
-                      <defs>
-                        <linearGradient id="ai-gradient-btn" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                          <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                    <AISparkles className="w-3.5 h-3.5" />
                     Ask AI
                   </Button>
                 )}

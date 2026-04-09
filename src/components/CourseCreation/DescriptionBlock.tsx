@@ -178,8 +178,9 @@ export function DescriptionBlock({
             "p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors",
             btnClass
           )}
+          aria-label={label}
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="w-4 h-4" aria-hidden="true" />
         </button>
       </TooltipTrigger>
       <TooltipContent side="left" className="text-xs">
@@ -191,7 +192,7 @@ export function DescriptionBlock({
   const renderPreview = () => {
     if (!hasContent) {
       return (
-        <span className="text-lg text-foreground/40 italic">
+        <span className="text-lg text-muted-foreground italic">
           Tell your learners what the course will be about...
         </span>
       );
@@ -283,8 +284,9 @@ export function DescriptionBlock({
             <button
               onClick={(e) => e.stopPropagation()}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Change description layout"
             >
-              <LayoutGrid className="w-4 h-4" />
+              <LayoutGrid className="w-4 h-4" aria-hidden="true" />
             </button>
           </PopoverTrigger>
           <PopoverContent side="left" align="start" className="w-48 p-0">
@@ -331,8 +333,10 @@ export function DescriptionBlock({
       <div
         {...attributes}
         {...listeners}
+        role="button"
+        tabIndex={0}
         className="absolute -left-11 top-1 w-10 h-8 cursor-grab active:cursor-grabbing z-10 opacity-0 group-hover/desc:opacity-100"
-        aria-label="Drag to reorder"
+        aria-label="Drag to reorder description block"
       />
 
       {/* Content area */}
