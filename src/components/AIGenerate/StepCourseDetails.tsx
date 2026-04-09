@@ -28,15 +28,6 @@ const PROFICIENCY_OPTIONS = [
   { value: "mixed" as const, label: "Mixed" },
 ];
 
-function SectionLabel({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-1.5 mb-2">
-      <Icon className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-      <span className="text-[13px] font-semibold text-foreground">{children}</span>
-    </div>
-  );
-}
-
 function ChipGroup({
   options,
   value,
@@ -51,7 +42,7 @@ function ChipGroup({
   showDesc?: boolean;
 }) {
   return (
-    <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={ariaLabel}>
+    <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={ariaLabel}>
       {options.map((opt) => {
         const selected = value === opt.value;
         return (
@@ -62,15 +53,15 @@ function ChipGroup({
             aria-checked={selected}
             onClick={() => onChange(opt.value)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-[13px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               selected
                 ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
             )}
           >
             {opt.label}
             {showDesc && opt.desc && (
-              <span className={cn("ml-1 text-[11px]", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
+              <span className={cn("ml-1.5 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
                 {opt.desc}
               </span>
             )}
@@ -83,49 +74,54 @@ function ChipGroup({
 
 export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Info banner */}
-      <div className="flex items-start gap-2.5 rounded-lg bg-muted/50 px-3.5 py-2.5">
-        <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" focusable="false" />
-        <p className="text-[13px] text-muted-foreground leading-relaxed">
+      <div className="flex items-start gap-3 rounded-xl bg-muted/40 border border-border/50 px-4 py-3">
+        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+          <Info className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
           Help us understand your audience and preferences so AI can generate the best course for you.
         </p>
       </div>
 
       {/* Learning Outcome */}
       <div>
-        <label htmlFor="learning-outcome" className="text-[13px] font-semibold text-foreground flex items-center gap-1.5 mb-1.5">
+        <label htmlFor="learning-outcome" className="text-sm font-semibold text-foreground mb-2 block">
           What do you want learners to be able to do after this course?
-          <span className="text-destructive text-xs" aria-hidden="true">*</span>
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <Textarea
           id="learning-outcome"
           value={state.learningOutcome}
           onChange={(e) => onChange({ learningOutcome: e.target.value })}
           placeholder="e.g., Apply conflict resolution techniques in team settings…"
-          className="min-h-[64px] resize-none rounded-xl text-sm bg-background"
+          className="min-h-[72px] resize-none rounded-xl text-sm"
         />
       </div>
 
       {/* Intended Learners */}
       <div>
-        <label htmlFor="intended-learners-detail" className="flex items-center gap-1.5 mb-1.5">
-          <Users className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-          <span className="text-[13px] font-semibold text-foreground">Intended Learners</span>
+        <label htmlFor="intended-learners-detail" className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <Users className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          Intended Learners
         </label>
         <Textarea
           id="intended-learners-detail"
           value={state.intendedLearners}
           onChange={(e) => onChange({ intendedLearners: e.target.value })}
           placeholder="e.g., New managers, sales teams, onboarding hires…"
-          className="min-h-[56px] resize-none rounded-xl text-sm bg-background"
+          className="min-h-[60px] resize-none rounded-xl text-sm"
         />
       </div>
 
-      {/* Compact row: Duration + Tone */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Duration + Tone side by side */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <SectionLabel icon={Clock}>Duration</SectionLabel>
+          <div className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            Duration
+          </div>
           <ChipGroup
             options={DURATION_OPTIONS}
             value={state.duration}
@@ -135,7 +131,10 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           />
         </div>
         <div>
-          <SectionLabel icon={MessageSquare}>Tone</SectionLabel>
+          <div className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            Tone
+          </div>
           <ChipGroup
             options={TONE_OPTIONS}
             value={state.tone}
@@ -147,7 +146,10 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Proficiency */}
       <div>
-        <SectionLabel icon={BarChart3}>Proficiency Level</SectionLabel>
+        <div className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-2">
+          <BarChart3 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          Proficiency Level
+        </div>
         <ChipGroup
           options={PROFICIENCY_OPTIONS}
           value={state.proficiencyLevel}
