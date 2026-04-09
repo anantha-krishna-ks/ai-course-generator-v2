@@ -2,6 +2,7 @@ import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, Lightbulb, FileText, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface StepCourseIntentProps {
   state: AIGenerateState;
@@ -9,7 +10,7 @@ interface StepCourseIntentProps {
 }
 
 export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
-  const [showExample, setShowExample] = useState(false);
+  const [exampleRevealed, setExampleRevealed] = useState(false);
 
   return (
     <div className="space-y-5">
@@ -44,33 +45,9 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between gap-2">
-          <label htmlFor="learning-outcome" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            What should learners gain? <span className="text-destructive" aria-hidden="true">*</span>
-          </label>
-          <button
-            type="button"
-            onClick={() => setShowExample((v) => !v)}
-            className="flex items-center gap-1 text-[11px] text-primary font-medium hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded shrink-0"
-            aria-expanded={showExample}
-            aria-controls="example-hint"
-          >
-            <Lightbulb className="w-3 h-3" aria-hidden="true" focusable="false" />
-            {showExample ? "Hide example" : "See example"}
-          </button>
-        </div>
-
-        {showExample && (
-          <div
-            id="example-hint"
-            className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 border border-border rounded-xl px-3 py-2.5"
-          >
-            <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary/60" aria-hidden="true" focusable="false" />
-            <span className="italic leading-relaxed">
-              Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
-            </span>
-          </div>
-        )}
+        <label htmlFor="learning-outcome" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          What should learners gain? <span className="text-destructive" aria-hidden="true">*</span>
+        </label>
 
         <Textarea
           id="learning-outcome"
@@ -79,6 +56,41 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           placeholder="Describe the key skills or knowledge learners will walk away with…"
           className="min-h-[80px] resize-none rounded-xl text-sm"
         />
+
+        {/* Persistent example hint - click to reveal, stays visible forever */}
+        <AnimatePresence>
+          {!exampleRevealed ? (
+            <motion.button
+              type="button"
+              onClick={() => setExampleRevealed(true)}
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-primary font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-0.5 transition-colors"
+              aria-label="Show an example of a learning outcome"
+            >
+              <Lightbulb className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              Need inspiration?
+            </motion.button>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="flex items-start gap-2.5 text-xs bg-muted/40 border border-border/60 rounded-xl px-3.5 py-3">
+                <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary/70" aria-hidden="true" focusable="false" />
+                <div className="space-y-1">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Example</span>
+                  <p className="text-muted-foreground italic leading-relaxed">
+                    Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Reference Documents */}
