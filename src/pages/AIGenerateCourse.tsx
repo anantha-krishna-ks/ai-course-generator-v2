@@ -121,15 +121,16 @@ export default function AIGenerateCourse() {
       <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-4 py-6 sm:py-10">
         <div className="w-full max-w-2xl relative">
 
-          {/* Stacked ghost cards behind — animate count based on remaining */}
+          {/* Stacked ghost cards behind — peel off dramatically when step advances */}
           <AnimatePresence>
             {remainingCards >= 3 && (
               <motion.div
                 key="ghost-3"
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 6, transition: { duration: 0.25 } }}
+                initial={{ opacity: 0, y: -8, scale: 0.92 }}
+                animate={{ opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 25 } }}
+                exit={{ opacity: 0, y: -40, scale: 1.03, rotateX: 4, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } }}
                 className="absolute inset-x-4 sm:inset-x-5 top-0 h-full rounded-2xl bg-card border border-border/60 -translate-y-4 sm:-translate-y-5 scale-[0.94]"
+                style={{ transformOrigin: "top center" }}
                 aria-hidden="true"
               />
             )}
@@ -138,10 +139,11 @@ export default function AIGenerateCourse() {
             {remainingCards >= 2 && (
               <motion.div
                 key="ghost-2"
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4, transition: { duration: 0.3 } }}
+                initial={{ opacity: 0, y: -5, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 25, delay: 0.03 } }}
+                exit={{ opacity: 0, y: -30, scale: 1.02, rotateX: 3, transition: { duration: 0.35, ease: [0.4, 0, 1, 1] } }}
                 className="absolute inset-x-2.5 sm:inset-x-3 top-0 h-full rounded-2xl bg-card border border-border/70 -translate-y-2.5 sm:-translate-y-3 scale-[0.97]"
+                style={{ transformOrigin: "top center" }}
                 aria-hidden="true"
               />
             )}
@@ -150,10 +152,11 @@ export default function AIGenerateCourse() {
             {remainingCards >= 1 && (
               <motion.div
                 key="ghost-1"
-                initial={{ opacity: 0, y: -2 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 2, transition: { duration: 0.35 } }}
+                initial={{ opacity: 0, y: -3, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 25, delay: 0.06 } }}
+                exit={{ opacity: 0, y: -20, scale: 1.01, rotateX: 2, transition: { duration: 0.3, ease: [0.4, 0, 1, 1] } }}
                 className="absolute inset-x-1 sm:inset-x-1.5 top-0 h-full rounded-2xl bg-card border border-border/80 -translate-y-1 sm:-translate-y-1.5 scale-[0.99]"
+                style={{ transformOrigin: "top center" }}
                 aria-hidden="true"
               />
             )}
