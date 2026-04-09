@@ -224,7 +224,17 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 ) : (
                   /* View mode */
                   <div className="flex items-start gap-3 px-4 py-3">
-                    <GripVertical className="w-4 h-4 text-muted-foreground/40 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                    <div
+                      draggable
+                      onDragStart={() => setDragIdx(i)}
+                      onDragEnd={() => { setDragIdx(null); setDragOverIdx(null); }}
+                      className="cursor-grab active:cursor-grabbing mt-0.5 shrink-0"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Reorder objective ${i + 1}`}
+                    >
+                      <GripVertical className="w-4 h-4 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+                    </div>
                     <span className="flex-1 text-sm text-foreground leading-relaxed">{obj}</span>
                     <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                       <Button
