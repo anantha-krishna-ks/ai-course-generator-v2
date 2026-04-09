@@ -1,6 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -68,8 +68,6 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
   const [editValue, setEditValue] = useState("");
   const [newValue, setNewValue] = useState("");
   const [showAddInput, setShowAddInput] = useState(false);
-  const [dragIdx, setDragIdx] = useState<number | null>(null);
-  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
   const generate = useCallback(() => {
     setLoading(true);
@@ -165,52 +163,21 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
                 transition={{ duration: 0.25, delay: i * 0.04 }}
-                className={cn(
-                  "group rounded-xl border bg-background overflow-hidden transition-colors",
-                  dragOverIdx === i && dragIdx !== i
-                    ? "border-primary/50 bg-primary/5"
-                    : "border-border",
-                  dragIdx === i && "opacity-50"
-                )}
-                onDragOver={(e) => { e.preventDefault(); setDragOverIdx(i); }}
-                onDragLeave={() => { if (dragOverIdx === i) setDragOverIdx(null); }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  if (dragIdx !== null && dragIdx !== i) {
-                    setObjectives((prev) => {
-                      const next = [...prev];
-                      const [moved] = next.splice(dragIdx, 1);
-                      next.splice(i, 0, moved);
-                      return next;
-                    });
-                  }
-                  setDragIdx(null);
-                  setDragOverIdx(null);
-                }}
+                className="group rounded-xl border border-border bg-background overflow-hidden"
               >
                 {editingIdx === i ? (
                   /* Edit mode */
-                  <div className="flex items-start gap-2 p-3">
-                    <Textarea
+                  <div className="flex items-center gap-2 p-3">
+                    <Input
                       value={editValue}
-                      onChange={(e) => {
-                        setEditValue(e.target.value);
-                        e.target.style.height = "auto";
-                        e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
-                      }}
-                      ref={(el) => {
-                        if (el) {
-                          el.style.height = "auto";
-                          el.style.height = `${Math.min(el.scrollHeight, 150)}px`;
-                          el.focus();
-                        }
-                      }}
+                      onChange={(e) => setEditValue(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSaveEdit(); }
+                        if (e.key === "Enter") handleSaveEdit();
                         if (e.key === "Escape") handleCancelEdit();
                       }}
-                      className="flex-1 text-sm min-h-[36px] max-h-[150px] resize-none rounded-lg"
+                      className="flex-1 text-sm h-8 rounded-lg"
                       aria-label="Edit learning objective"
+                      autoFocus
                     />
                     <Button
                       size="sm"
@@ -234,17 +201,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 ) : (
                   /* View mode */
                   <div className="flex items-start gap-3 px-4 py-3">
-                    <div
-                      draggable
-                      onDragStart={() => setDragIdx(i)}
-                      onDragEnd={() => { setDragIdx(null); setDragOverIdx(null); }}
-                      className="cursor-grab active:cursor-grabbing mt-0.5 shrink-0"
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`Reorder objective ${i + 1}`}
-                    >
-                      <GripVertical className="w-4 h-4 text-muted-foreground/40" aria-hidden="true" focusable="false" />
-                    </div>
+                    <GripVertical className="w-4 h-4 text-muted-foreground/40 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
                     <span className="flex-1 text-sm text-foreground leading-relaxed">{obj}</span>
                     <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                       <Button
@@ -283,23 +240,19 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3">
-              <Textarea
+            <div className="flex items-center gap-2 rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3">
+              <Input
                 value={newValue}
-                onChange={(e) => {
-                  setNewValue(e.target.value);
-                  e.target.style.height = "auto";
-                  e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
-                }}
+                onChange={(e) => setNewValue(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleAdd(); }
+                  if (e.key === "Enter") handleAdd();
                   if (e.key === "Escape") {
                     setShowAddInput(false);
                     setNewValue("");
                   }
                 }}
                 placeholder="Type a new learning objective…"
-                className="flex-1 text-sm min-h-[36px] max-h-[150px] resize-none rounded-lg"
+                className="flex-1 text-sm h-8 rounded-lg"
                 aria-label="New learning objective"
                 autoFocus
               />
