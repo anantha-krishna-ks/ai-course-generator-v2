@@ -4,7 +4,8 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { StepCourseIntent } from "@/components/AIGenerate/StepCourseIntent";
 import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
@@ -143,7 +144,8 @@ export default function AIGenerateCourse() {
                     </motion.span>
                     <div className="relative h-1 rounded-full bg-border overflow-hidden">
                       <motion.div
-                        className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                        className="absolute inset-y-0 left-0 rounded-full"
+                        style={{ background: "linear-gradient(90deg, hsl(211 100% 50%), hsl(270 80% 55%))" }}
                         initial={false}
                         animate={{
                           width: isDone ? "100%" : isActive ? "50%" : "0%",
@@ -157,112 +159,135 @@ export default function AIGenerateCourse() {
             })}
           </div>
 
-          {/* Card with entrance animation */}
-          <motion.div
-            layout
-            className="relative rounded-2xl bg-card border border-border shadow-lg overflow-hidden"
-            transition={{ layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }}
-          >
-            {/* Subtle shimmer line at top */}
+          {/* Card with AI shimmer border */}
+          <div className="relative rounded-2xl p-[1px] overflow-hidden">
+            {/* Animated gradient border */}
             <motion.div
-              className="h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent"
-              initial={false}
-              animate={{ opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                background: "linear-gradient(135deg, hsl(211 100% 50% / 0.3), hsl(270 80% 55% / 0.2), hsl(211 100% 50% / 0.1), hsl(270 80% 55% / 0.3))",
+                backgroundSize: "300% 300%",
+              }}
+              animate={{
+                backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+              }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               aria-hidden="true"
             />
 
-            {/* Card header with animated badge */}
-            <div className="flex items-center gap-3 px-5 sm:px-8 md:px-10 pt-4 sm:pt-5 pb-1">
-              <AnimatePresence mode="wait">
+            <motion.div
+              layout
+              className="relative rounded-2xl bg-card shadow-lg overflow-hidden"
+              transition={{ layout: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }}
+            >
+              {/* Traveling shimmer line at top */}
+              <div className="h-[2px] w-full overflow-hidden" aria-hidden="true">
                 <motion.div
-                  key={`badge-${currentStep}`}
-                  initial={{ rotateY: -90, opacity: 0 }}
-                  animate={{ rotateY: 0, opacity: 1 }}
-                  exit={{ rotateY: 90, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                  className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
-                  style={{ perspective: "600px" }}
-                >
-                  {currentStep}
-                </motion.div>
-              </AnimatePresence>
+                  className="h-full w-1/3"
+                  style={{
+                    background: "linear-gradient(90deg, transparent, hsl(211 100% 50% / 0.5), hsl(270 80% 55% / 0.4), transparent)",
+                  }}
+                  animate={{ x: ["-100%", "400%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                />
+              </div>
 
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={`label-${currentStep}`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                  className="text-xs sm:text-sm font-semibold text-foreground"
-                >
-                  {STEPS[currentStep - 1].label}
-                </motion.span>
-              </AnimatePresence>
-            </div>
-
-            {/* Card body */}
-            <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-280px)] overflow-y-auto thin-scrollbar">
-              <AnimatePresence mode="wait" custom={direction} initial={false}>
-                <motion.div
-                  key={currentStep}
-                  custom={direction}
-                  variants={contentVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <StepComponent state={formState} onChange={updateState} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Footer */}
-            <div className="border-t border-border px-5 sm:px-8 md:px-10 py-3 sm:py-3.5 flex items-center justify-between bg-card">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full px-3 h-9"
-                aria-label={currentStep > 1 ? `Back to ${STEPS[currentStep - 2].label}` : "Back to dashboard"}
-              >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
-                <span className="hidden sm:inline">Back</span>
-              </Button>
-
-              <span className="text-[11px] text-muted-foreground font-medium hidden sm:block" aria-hidden="true">
-                {remainingCards === 0 ? "Final step" : `${remainingCards} step${remainingCards > 1 ? "s" : ""} remaining`}
-              </span>
-
-              {currentStep < 4 ? (
-                <motion.div whileTap={{ scale: 0.95 }}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleNext}
-                    disabled={!canAdvance()}
-                    className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
+              {/* Card header with AI badge */}
+              <div className="flex items-center gap-3 px-5 sm:px-8 md:px-10 pt-4 sm:pt-5 pb-1">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`badge-${currentStep}`}
+                    initial={{ rotateY: -90, opacity: 0 }}
+                    animate={{ rotateY: 0, opacity: 1 }}
+                    exit={{ rotateY: 90, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    className="relative w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] text-white flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
+                    style={{ perspective: "600px" }}
                   >
-                    Next
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div whileTap={{ scale: 0.95 }}>
-                  <Button
-                    size="sm"
-                    onClick={handleFinish}
-                    className="gap-1.5 rounded-full px-5 h-9"
+                    {currentStep}
+                  </motion.div>
+                </AnimatePresence>
+
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={`label-${currentStep}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                    className="text-xs sm:text-sm font-semibold text-foreground"
                   >
-                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    Finish
-                  </Button>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
+                    {STEPS[currentStep - 1].label}
+                  </motion.span>
+                </AnimatePresence>
+
+                <div className="ml-auto">
+                  <AISparkles className="w-4 h-4 opacity-60" />
+                </div>
+              </div>
+
+              {/* Card body */}
+              <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5 min-h-[300px] sm:min-h-[360px] max-h-[calc(100vh-280px)] overflow-y-auto thin-scrollbar">
+                <AnimatePresence mode="wait" custom={direction} initial={false}>
+                  <motion.div
+                    key={currentStep}
+                    custom={direction}
+                    variants={contentVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+                  >
+                    <StepComponent state={formState} onChange={updateState} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Footer */}
+              <div className="border-t border-border px-5 sm:px-8 md:px-10 py-3 sm:py-3.5 flex items-center justify-between bg-card">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleBack}
+                  className="gap-1.5 text-muted-foreground hover:text-foreground rounded-full px-3 h-9"
+                  aria-label={currentStep > 1 ? `Back to ${STEPS[currentStep - 2].label}` : "Back to dashboard"}
+                >
+                  <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  <span className="hidden sm:inline">Back</span>
+                </Button>
+
+                <span className="text-[11px] text-muted-foreground font-medium hidden sm:block" aria-hidden="true">
+                  {remainingCards === 0 ? "Final step" : `${remainingCards} step${remainingCards > 1 ? "s" : ""} remaining`}
+                </span>
+
+                {currentStep < 4 ? (
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleNext}
+                      disabled={!canAdvance()}
+                      className="gap-1.5 text-foreground hover:text-foreground rounded-full px-3 h-9"
+                    >
+                      Next
+                      <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div whileTap={{ scale: 0.95 }}>
+                    <Button
+                      size="sm"
+                      onClick={handleFinish}
+                      className="gap-1.5 rounded-full px-5 h-9"
+                    >
+                      <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      Finish
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </main>
     </div>
