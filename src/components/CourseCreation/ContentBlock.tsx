@@ -321,7 +321,7 @@ export function ContentBlock({
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
                     aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
-                    <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <AISparkles className="w-4 h-4" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="text-xs">
@@ -381,7 +381,7 @@ export function ContentBlock({
                           variant="ghost"
                           className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                         >
-                          <AISparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          <AISparkles className="w-3 h-3" />
                           Ask AI
                         </Button>
                         <Button
@@ -411,7 +411,7 @@ export function ContentBlock({
                         className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                         onClick={() => setShowGenerateDialog(true)}
                       >
-                        <AISparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        <AISparkles className="w-3 h-3" />
                         Ask AI
                       </Button>
                       <Button
@@ -455,7 +455,7 @@ export function ContentBlock({
                     className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
                     onClick={() => setShowGenerateDialog(true)}
                   >
-                    <AISparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    <AISparkles className="w-3.5 h-3.5" />
                     Ask AI
                   </Button>
                 )}
@@ -493,7 +493,7 @@ export function ContentBlock({
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
               <div className="p-1.5 rounded-lg bg-primary/10">
-                <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
+                <AISparkles className="w-4 h-4" />
               </div>
               {type === "image" ? "Generate image with AI" : "Generate text with AI"}
             </DialogTitle>

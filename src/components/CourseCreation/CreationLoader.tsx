@@ -59,7 +59,7 @@ export function CreationLoader({ courseTitle, onComplete }: CreationLoaderProps)
             <BookOpen className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
           </div>
           <div className="absolute -top-1 -right-1">
-            <AISparkles className="w-6 h-6" aria-hidden="true" focusable="false" />
+            <AISparkles className="w-6 h-6" />
           </div>
         </div>
 

@@ -106,7 +106,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               "group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.25)]",
               open && "ring-primary/60 shadow-[0_0_16px_hsl(var(--primary)/0.3)]"
             )}>
-              <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <AISparkles className="w-4 h-4" />
             </div>
             {/* Status dot */}
             <span className={cn(
@@ -126,7 +126,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
           <SheetHeader className="px-5 pt-5 pb-4 border-b border-border/60 space-y-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/20">
-                <AISparkles className="w-5 h-5" aria-hidden="true" focusable="false" />
+                <AISparkles className="w-5 h-5" />
               </div>
               <div className="flex-1">
                 <SheetTitle className="text-base font-bold">AI Support</SheetTitle>
