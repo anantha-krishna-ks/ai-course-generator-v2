@@ -43,13 +43,13 @@ export function SideRibbon({ side }: SideRibbonProps) {
           {[...RIBBON_ITEMS, ...RIBBON_ITEMS].map((text, i) => (
             <div key={i} className="flex flex-col items-center gap-6">
               <span
-                className="text-[10px] font-semibold tracking-[0.3em] text-primary/[0.07]"
+                className="text-[11px] font-bold tracking-[0.25em] text-primary/15"
                 style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
               >
                 {text}
               </span>
               {i % 2 === 0 && (
-                <AISparkles className="w-3 h-3 opacity-[0.06]" />
+                <AISparkles className="w-3.5 h-3.5 opacity-[0.12]" />
               )}
             </div>
           ))}
