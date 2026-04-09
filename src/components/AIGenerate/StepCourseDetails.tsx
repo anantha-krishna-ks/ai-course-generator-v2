@@ -79,7 +79,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Learning Outcome */}
       <div>
         <label htmlFor="learning-outcome" className="flex items-center gap-2 text-sm font-semibold text-field-label mb-2 uppercase tracking-wider">
-          <span className="w-[3px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
+          <span className="w-[2px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
@@ -95,7 +95,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Intended Learners */}
       <div>
         <label htmlFor="intended-learners-detail" className="flex items-center gap-2 text-sm font-semibold text-field-label mb-2 uppercase tracking-wider">
-          <span className="w-[3px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
+          <span className="w-[2px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
           Intended Learners
         </label>
         <Textarea
@@ -110,7 +110,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Duration */}
       <div>
         <div className="flex items-center gap-2 text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          <span className="w-[3px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
+          <span className="w-[2px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
           Duration
         </div>
         <ChipGroup
@@ -125,7 +125,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Tone */}
       <div>
         <div className="flex items-center gap-2 text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          <span className="w-[3px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
+          <span className="w-[2px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
           Tone
         </div>
         <ChipGroup
@@ -139,7 +139,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Proficiency */}
       <div>
         <div className="flex items-center gap-2 text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          <span className="w-[3px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
+          <span className="w-[2px] h-4 rounded-full bg-primary shrink-0" aria-hidden="true" />
           Proficiency Level
         </div>
         <ChipGroup
