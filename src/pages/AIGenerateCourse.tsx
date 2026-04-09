@@ -401,6 +401,7 @@ export default function AIGenerateCourse() {
                 )}
               </div>
             </motion.div>
+            </div>
           </div>
         </div>
       </main>
