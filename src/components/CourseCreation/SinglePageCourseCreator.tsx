@@ -907,7 +907,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                             </DropdownMenuItem>
                                           </DropdownMenuContent>
                                         </DropdownMenu>
-                                        <span className="w-px h-4 bg-border" />
+                                        <span className="w-px h-4 bg-border" aria-hidden="true" />
                                         <button aria-label={collapsedSections.has(item.id) ? "Expand section" : "Collapse section"} className="p-1.5 rounded-md hover:bg-muted transition-colors" onClick={() => setCollapsedSections(prev => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })}>
                                           {collapsedSections.has(item.id) ? <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" /> : <ChevronUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />}
                                         </button>
@@ -949,7 +949,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                       <button onClick={() => addPageToSection(item.id)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-1 ml-1 pl-3">
                                         <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Add page
                                       </button>
-                                      <div className="border-t border-dashed border-border mt-2" />
+                                      <div className="border-t border-dashed border-border mt-2" aria-hidden="true" />
                                     </>)}
                                   </div>
                                 )}
@@ -1009,7 +1009,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <div className="mt-2">
               <span className="inline-block px-2 py-0.5 text-xs text-muted-foreground bg-muted/50 rounded border border-border">{title.length}/ 275</span>
             </div>
-            <div className="mt-4 mb-8">
+            <div className="mt-4 mb-8" aria-hidden="true">
               <div className="h-1 bg-primary/30 rounded-full w-full" />
             </div>
 
@@ -1158,7 +1158,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                         />
                       </div>
 
-                      <div className="border-t border-dashed border-border my-4" />
+                      <div className="border-t border-dashed border-border my-4" aria-hidden="true" />
                     </div>
 
                     {/* Section content blocks */}
