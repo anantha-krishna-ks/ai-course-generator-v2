@@ -80,14 +80,14 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
                   className="cursor-pointer"
                   onClick={() => setChangePasswordOpen(true)}
                 >
-                  <KeyRound className="w-4 h-4 mr-2" />
+                  <KeyRound className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
                   Change Password
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="cursor-pointer"
                   onClick={() => navigate("/admin-module")}
                 >
-                  <Shield className="w-4 h-4 mr-2" />
+                  <Shield className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
                   Admin Module
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -95,7 +95,7 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
                   className="cursor-pointer text-destructive focus:text-destructive"
                   onClick={() => navigate("/auth")}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
