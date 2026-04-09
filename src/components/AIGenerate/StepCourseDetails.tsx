@@ -235,7 +235,7 @@ function AISuggestions({
           Regenerate goals
         </button>
       )}
-    </motion.div>
+    </div>
   );
 }
 
