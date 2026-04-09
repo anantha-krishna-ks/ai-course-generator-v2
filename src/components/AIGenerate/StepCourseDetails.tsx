@@ -162,12 +162,7 @@ function AISuggestions({
   if (!visible && !loading) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="space-y-2.5"
-    >
+    <div className="border-t border-border/60 px-4 py-3 space-y-2.5 bg-muted/20">
       <div className="flex items-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
         <span className="text-xs font-semibold text-muted-foreground">Suggested course goals:</span>
