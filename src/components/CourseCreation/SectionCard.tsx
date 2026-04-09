@@ -138,7 +138,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             />
           </div>
           <span className={cn(
-            "text-[9px] text-muted-foreground/50 tabular-nums shrink-0 transition-opacity duration-200",
+            "text-[9px] text-muted-foreground tabular-nums shrink-0 transition-opacity duration-200",
             focusedPageId === page.id ? "opacity-100" : "opacity-0"
           )}>
             {page.title.length}/{MAX_PAGE_TITLE_LENGTH}
@@ -773,8 +773,8 @@ export function SectionCard({
               {/* Divider */}
               <div className="hidden md:flex flex-col items-center justify-center px-1 py-4">
                 <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
-                <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
-                  <span className="text-[9px] font-semibold text-muted-foreground">vs</span>
+              <div className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center my-2 shrink-0">
+                <span className="text-[9px] font-semibold text-muted-foreground" aria-hidden="true">vs</span>
                 </div>
                 <div className="flex-1 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
               </div>
