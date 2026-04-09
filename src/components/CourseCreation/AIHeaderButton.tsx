@@ -106,7 +106,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               "group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.25)]",
               open && "ring-primary/60 shadow-[0_0_16px_hsl(var(--primary)/0.3)]"
             )}>
-              <AISparkles className="w-4 h-4" />
+              <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
             </div>
             {/* Status dot */}
             <span className={cn(
@@ -126,7 +126,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
           <SheetHeader className="px-5 pt-5 pb-4 border-b border-border/60 space-y-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/20">
-                <AISparkles className="w-5 h-5" />
+                <AISparkles className="w-5 h-5" aria-hidden="true" focusable="false" />
               </div>
               <div className="flex-1">
                 <SheetTitle className="text-base font-bold">AI Support</SheetTitle>
@@ -136,7 +136,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               </div>
               {isLocked && (
                 <div className="flex items-center gap-1 text-[11px] text-primary bg-primary/10 px-2.5 py-1 rounded-full font-medium">
-                  <Lock className="w-3 h-3" />
+                  <Lock className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Active
                 </div>
               )}
@@ -148,7 +148,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
             {/* Notice */}
             {!isLocked && (
               <div className="flex gap-3 items-start p-3.5 rounded-xl bg-primary/5 border border-primary/15">
-                <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" focusable="false" />
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-foreground">One-time setup</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -181,7 +181,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                       disabled={aiOptions.pageSpanTime <= 1}
                       aria-label="Decrease page duration"
                     >
-                      <Minus className="w-4 h-4 text-primary" />
+                      <Minus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                     </button>
                     <div className="flex items-baseline gap-1 min-w-[60px] justify-center">
                       <span className="text-2xl font-bold text-foreground tabular-nums leading-none">{aiOptions.pageSpanTime ?? 5}</span>
@@ -197,7 +197,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                       disabled={aiOptions.pageSpanTime >= 15}
                       aria-label="Increase page duration"
                     >
-                      <Plus className="w-4 h-4 text-primary" />
+                      <Plus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                     </button>
                   </div>
                   <div className="flex gap-1.5">
@@ -231,7 +231,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                 <div className="flex flex-wrap gap-2 mb-3">
                   {aiOptions.supportingDocuments.map((doc, i) => (
                     <Badge key={i} variant="secondary" className="gap-1.5 text-xs font-normal h-7 pr-1.5">
-                      <FileText className="w-3 h-3" />
+                      <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
                       {doc}
                       {!isLocked && onOptionsChange && (
                         <button
@@ -245,7 +245,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                           className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
                           aria-label={`Remove document ${doc}`}
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-3 h-3" aria-hidden="true" focusable="false" />
                         </button>
                       )}
                     </Badge>
@@ -280,7 +280,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                   className="w-full border-2 border-dashed border-border/80 rounded-xl py-8 text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer"
                 >
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Upload className="w-5 h-5 text-primary" />
+                    <Upload className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                   </div>
                   <span className="text-sm font-medium">Drop files here or click to upload</span>
                   <span className="text-xs text-muted-foreground">PDF, DOCX, TXT — up to 20MB each</span>
@@ -324,7 +324,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                         isLocked && "cursor-default"
                       )}
                     >
-                      {selected && <Check className="w-3.5 h-3.5" />}
+                      {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
                       {level}
                     </button>
                   );
@@ -447,7 +447,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
                 className="w-full rounded-full gap-2 h-11 text-sm font-semibold"
                 onClick={() => { setSavedOnce(true); setOpen(false); }}
               >
-                <Check className="w-4 h-4" />
+                <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
                 Save & Apply Configuration
               </Button>
               <p className="text-[11px] text-muted-foreground text-center mt-2">
@@ -478,7 +478,7 @@ function DocUploadZone({
         <div className="flex flex-wrap gap-1.5">
           {documents.map((doc, i) => (
             <Badge key={i} variant="secondary" className="gap-1.5 text-xs font-normal h-6 pr-1.5">
-              <FileText className="w-3 h-3" />
+              <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
               {doc}
               {!isLocked && onDocumentsChange && (
                 <button
@@ -487,7 +487,7 @@ function DocUploadZone({
                   className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
                   aria-label={`Remove document ${doc}`}
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-3 h-3" aria-hidden="true" focusable="false" />
                 </button>
               )}
             </Badge>
@@ -509,7 +509,7 @@ function DocUploadZone({
           onClick={() => onDocumentsChange([...documents, `Reference_${Date.now().toString(36)}.pdf`])}
           className="w-full border border-dashed border-primary/50 rounded-lg py-3 text-muted-foreground hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
         >
-          <Upload className="w-3.5 h-3.5" />
+          <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
           <span className="font-medium">Attach reference document</span>
         </div>
       )}
@@ -532,7 +532,7 @@ function ConfigSection({
     <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-3">
       <div className="flex items-center gap-2.5">
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <Icon className="w-4 h-4 text-primary" />
+          <Icon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
         </div>
         <div>
           <p className="text-base font-semibold text-foreground">{label}</p>

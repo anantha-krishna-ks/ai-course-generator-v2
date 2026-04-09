@@ -518,13 +518,13 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="bg-background border min-w-[100px]">
                 <DropdownMenuItem onClick={() => setFitMode("contain")} className={cn(fitMode === "contain" && "bg-primary/10")}>
-                  <Maximize className="w-3.5 h-3.5 mr-2" /> Fit
+                  <Maximize className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Fit
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFitMode("cover")} className={cn(fitMode === "cover" && "bg-primary/10")}>
-                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Fill
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Fill
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFitMode("fill")} className={cn(fitMode === "fill" && "bg-primary/10")}>
-                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" /> Stretch
+                  <RectangleHorizontal className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Stretch
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -658,7 +658,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                 className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
                 onClick={() => setShowGenerateDialog(true)}
               >
-                <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-imgblock)' }} />
+                <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-imgblock)' }} aria-hidden="true" focusable="false" />
                 <svg width="0" height="0" className="absolute">
                   <defs>
                     <linearGradient id="ai-gradient-imgblock" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -675,7 +675,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                 className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
                 onClick={() => setShowVersionHistory(true)}
               >
-                <GitBranch className="w-3 h-3" />
+                <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
                 Version History
               </Button>
             </div>
@@ -755,7 +755,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
             className="rounded-full px-5 gap-1.5 h-9"
             onClick={handleClick}
           >
-            <ImagePlus className="w-3.5 h-3.5" />
+            <ImagePlus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             Upload Image
           </Button>
           {aiEnabled && (
@@ -765,7 +765,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               className="rounded-full px-5 gap-1.5 h-9 bg-primary/10 text-primary hover:bg-primary/20 border-0"
               onClick={handleGenerateClick}
             >
-              <Sparkles className="w-3.5 h-3.5" style={{ stroke: 'url(#ai-gradient-img)' }} />
+              <Sparkles className="w-3.5 h-3.5" style={{ stroke: 'url(#ai-gradient-img)' }} aria-hidden="true" focusable="false" />
               <svg width="0" height="0" className="absolute">
                 <defs>
                   <linearGradient id="ai-gradient-img" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -799,7 +799,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
           <DialogHeader className="px-6 pt-6 pb-4">
             <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
               <div className="p-1.5 rounded-lg bg-primary/10">
-                <AISparkles className="w-4 h-4" />
+                <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
               </div>
               Generate Image
             </DialogTitle>
@@ -849,7 +849,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
               onClick={handleGenerateSubmit}
               className="rounded-full px-4 gap-1.5"
             >
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Generate
             </Button>
           </div>

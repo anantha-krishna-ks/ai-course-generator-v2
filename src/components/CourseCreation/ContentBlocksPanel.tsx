@@ -273,7 +273,7 @@ function BlockPreview({ id }: { id: string }) {
           <div className={cn(card, "p-4")}>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-12 rounded-md bg-[hsl(0,72%,51%)]/10 border border-[hsl(0,72%,51%)]/20 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-[hsl(0,72%,51%)]/70" />
+                <FileText className="w-5 h-5 text-[hsl(0,72%,51%)]/70" aria-hidden="true" focusable="false" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] font-semibold text-[hsl(220,15%,15%)] truncate">Course_Material.pdf</p>
@@ -310,7 +310,7 @@ function BlockPreview({ id }: { id: string }) {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
-                  <MessageCircleQuestion className="w-3 h-3 text-primary/70" />
+                  <MessageCircleQuestion className="w-3 h-3 text-primary/70" aria-hidden="true" focusable="false" />
                 </div>
                 <span className="text-[11px] font-semibold text-[hsl(220,15%,15%)]">Module 1 Quiz</span>
               </div>
@@ -634,7 +634,7 @@ function BlockGridItem({
         >
           {locked && (
             <div className="absolute top-1.5 right-1.5">
-              <Lock className="w-3 h-3 text-muted-foreground/50" />
+              <Lock className="w-3 h-3 text-muted-foreground/50" aria-hidden="true" focusable="false" />
             </div>
           )}
           <div className="w-full flex items-center justify-center overflow-hidden rounded-lg">
@@ -662,7 +662,7 @@ function BlockGridItem({
           <p className="text-xs font-semibold text-foreground">{block.label}</p>
           {locked && lockedReason ? (
             <p className="text-[11px] text-amber-600 dark:text-amber-400 leading-snug mt-0.5 flex items-center gap-1">
-              <Lock className="w-3 h-3 shrink-0" />
+              <Lock className="w-3 h-3 shrink-0" aria-hidden="true" focusable="false" />
               {lockedReason}
             </p>
           ) : (
@@ -671,7 +671,7 @@ function BlockGridItem({
                 <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
               )}
               <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
-                <GripVertical className="w-2.5 h-2.5" />
+                <GripVertical className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
                 Click or drag to add
               </p>
             </>
@@ -710,7 +710,7 @@ export function ContentBlocksPanel({ onAddBlock, onOpenQuizGenerator, aiEnabled 
         {/* Search */}
         <div className="px-4 pt-4 pb-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" aria-hidden="true" focusable="false" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

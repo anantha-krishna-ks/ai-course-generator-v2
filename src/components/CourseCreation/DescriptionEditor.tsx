@@ -148,19 +148,19 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               onClick={() => editor.chain().focus().setTextAlign('left').run()}
               className={cn(editor.isActive({ textAlign: 'left' }) && "bg-primary/10")}
             >
-              <AlignLeft className="w-4 h-4 mr-2" /> Left
+              <AlignLeft className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" /> Left
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => editor.chain().focus().setTextAlign('center').run()}
               className={cn(editor.isActive({ textAlign: 'center' }) && "bg-primary/10")}
             >
-              <AlignCenter className="w-4 h-4 mr-2" /> Center
+              <AlignCenter className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" /> Center
             </DropdownMenuItem>
             <DropdownMenuItem 
               onClick={() => editor.chain().focus().setTextAlign('right').run()}
               className={cn(editor.isActive({ textAlign: 'right' }) && "bg-primary/10")}
             >
-              <AlignRight className="w-4 h-4 mr-2" /> Right
+              <AlignRight className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" /> Right
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

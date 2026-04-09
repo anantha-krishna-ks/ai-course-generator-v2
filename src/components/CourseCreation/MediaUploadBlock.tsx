@@ -179,7 +179,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
       <div className="rounded-lg border border-border bg-card p-4 animate-fade-in">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Icon className="w-4 h-4 text-primary" />
+            <Icon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">
@@ -271,9 +271,9 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
           )}
         >
           {isDragOver ? (
-            <Upload className="w-4 h-4" />
+            <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
           ) : (
-            <Icon className="w-4 h-4" />
+            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
           )}
         </div>
         <div className="text-center">

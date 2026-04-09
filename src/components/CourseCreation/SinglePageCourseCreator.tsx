@@ -156,9 +156,9 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const aiEnabled = !!aiOptions?.enabled;
 
   const tourSteps: TourStep[] = [
-    { target: "course-heading", icon: <Type className="w-5 h-5 text-muted-foreground" />, title: "Course Title", description: "Click to edit your course title.", placement: "bottom" },
-    { target: "content-blocks", icon: <ImageIcon className="w-5 h-5 text-muted-foreground" />, title: "Content Area", description: "Add text, images, and other content blocks to build your course.", placement: "bottom" },
-    { target: "header-actions", icon: <Sparkles className="w-5 h-5 text-muted-foreground" />, title: "AI Support, Preview & Publish", description: "AI Support improves your course, Preview shows it, Publish shares it.", placement: "bottom" },
+    { target: "course-heading", icon: <Type className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />, title: "Course Title", description: "Click to edit your course title.", placement: "bottom" },
+    { target: "content-blocks", icon: <ImageIcon className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />, title: "Content Area", description: "Add text, images, and other content blocks to build your course.", placement: "bottom" },
+    { target: "header-actions", icon: <Sparkles className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />, title: "AI Support, Preview & Publish", description: "AI Support improves your course, Preview shows it, Publish shares it.", placement: "bottom" },
   ];
 
   // DnD sensors
@@ -812,19 +812,19 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4">
-                        <Plus className="w-3.5 h-3.5" /> Add
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Add
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-52 p-1.5">
                       <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("section")}>
-                        <LayoutGrid className="w-4 h-4 text-muted-foreground" />
+                        <LayoutGrid className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                         <div className="flex flex-col gap-0.5">
                           <span className="text-sm font-medium">New section</span>
                           <span className="text-[11px] text-muted-foreground">Group related content</span>
                         </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => handleAddItem("page")}>
-                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                         <div className="flex flex-col gap-0.5">
                           <span className="text-sm font-medium">New page</span>
                           <span className="text-[11px] text-muted-foreground">Single learning unit</span>
@@ -859,10 +859,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end" className="w-44">
                                         <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
-                                          <Pencil className="w-3.5 h-3.5" /> Rename
+                                          <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Rename
                                         </DropdownMenuItem>
                                         <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
-                                          <Copy className="w-3.5 h-3.5" /> Duplicate
+                                          <Copy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Duplicate
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
@@ -896,10 +896,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                           </DropdownMenuTrigger>
                                           <DropdownMenuContent align="end" className="w-44">
                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(item.title || ""); setRenameTarget({ id: item.id, title: item.title || "" }); }}>
-                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                              <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Rename
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(item.id)}>
-                                              <Copy className="w-3.5 h-3.5" /> Duplicate
+                                              <Copy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Duplicate
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
@@ -931,10 +931,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-44">
                                                   <DropdownMenuItem className="gap-2 text-sm" onClick={() => { setRenameValue(child.title || ""); setRenameTarget({ id: child.id, title: child.title || "" }); }}>
-                                                    <Pencil className="w-3.5 h-3.5" /> Rename
+                                                    <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Rename
                                                   </DropdownMenuItem>
                                                   <DropdownMenuItem className="gap-2 text-sm" onClick={() => duplicateItem(child.id)}>
-                                                    <Copy className="w-3.5 h-3.5" /> Duplicate
+                                                    <Copy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Duplicate
                                                   </DropdownMenuItem>
                                                   <DropdownMenuSeparator />
                                                   <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(child.id)}>
@@ -1194,10 +1194,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 <p className="text-sm text-muted-foreground mb-4">Add sections and pages to build your course</p>
                 <div className="flex items-center justify-center gap-3">
                   <Button variant="outline" size="sm" className="gap-2" onClick={() => handleAddItem("section")}>
-                    <LayoutGrid className="w-4 h-4" /> Add section
+                    <LayoutGrid className="w-4 h-4" aria-hidden="true" focusable="false" /> Add section
                   </Button>
                   <Button variant="outline" size="sm" className="gap-2" onClick={() => handleAddItem("page")}>
-                    <FileText className="w-4 h-4" /> Add page
+                    <FileText className="w-4 h-4" aria-hidden="true" focusable="false" /> Add page
                   </Button>
                 </div>
               </div>
@@ -1226,7 +1226,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       <Dialog open={!!renameTarget} onOpenChange={(open) => { if (!open) setRenameTarget(null); }}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><Pencil className="w-4 h-4 text-muted-foreground" /> Rename</DialogTitle>
+            <DialogTitle className="flex items-center gap-2"><Pencil className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" /> Rename</DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">Enter a new name below.</DialogDescription>
           </DialogHeader>
           <div className="py-3">

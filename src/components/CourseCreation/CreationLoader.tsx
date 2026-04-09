@@ -56,10 +56,10 @@ export function CreationLoader({ courseTitle, onComplete }: CreationLoaderProps)
         {/* Animated Icon */}
         <div className="relative">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
-            <BookOpen className="w-10 h-10 text-primary" />
+            <BookOpen className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
           </div>
           <div className="absolute -top-1 -right-1">
-            <AISparkles className="w-6 h-6" />
+            <AISparkles className="w-6 h-6" aria-hidden="true" focusable="false" />
           </div>
         </div>
 

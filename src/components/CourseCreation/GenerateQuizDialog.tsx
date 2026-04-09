@@ -55,7 +55,7 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
         <DialogHeader className="px-6 pt-5 pb-4 bg-gradient-to-br from-primary/5 to-primary/10 border-b">
           <DialogTitle className="text-lg flex items-center gap-2.5 font-semibold">
             <div className="p-1.5 rounded-lg bg-primary/10">
-              <AISparkles className="w-4.5 h-4.5" />
+              <AISparkles className="w-4.5 h-4.5" aria-hidden="true" focusable="false" />
             </div>
             Generate Quiz
           </DialogTitle>
@@ -175,7 +175,7 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-3.5 h-3.5" />
+                      <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                       Generate
                     </>
                   )}

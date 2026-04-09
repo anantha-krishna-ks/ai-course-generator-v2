@@ -455,14 +455,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
           <div className="flex items-center gap-2.5">
-            <FileText className="w-4 h-4 text-muted-foreground" />
+            <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             <span className="text-sm font-medium text-foreground">Page editor</span>
           </div>
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={onPreview}>
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Preview</TooltipContent>
@@ -472,7 +472,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onClick={onClose}
               className="p-2.5 rounded-md hover:bg-muted transition-colors"
             >
-              <X className="w-5 h-5 text-muted-foreground" />
+              <X className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
             </button>
           </div>
         </div>
@@ -492,7 +492,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 onClick={() => setSidebarCollapsed(true)}
                 className="absolute -right-3 top-4 z-10 w-6 h-6 rounded-full border border-border bg-background shadow-sm flex items-center justify-center hover:bg-muted transition-colors"
               >
-                <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
+                <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
               </button>
             )}
 
@@ -516,7 +516,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       : "text-muted-foreground/70 hover:text-muted-foreground"
                   )}
                 >
-                  <LayoutGrid className="w-3 h-3" />
+                  <LayoutGrid className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Outline
                 </button>
                 <button
@@ -528,7 +528,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                       : "text-muted-foreground/70 hover:text-muted-foreground"
                   )}
                 >
-                  <Layers className="w-3 h-3" />
+                  <Layers className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Blocks
                 </button>
               </div>
@@ -544,20 +544,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4 bg-white hover:bg-white/90">
-                          <Plus className="w-3.5 h-3.5" />
+                          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                           Add
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-52 p-1.5">
                         <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("section")}>
-                          <LayoutGrid className="w-4 h-4 text-muted-foreground" />
+                          <LayoutGrid className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                           <div className="flex flex-col gap-0.5">
                             <span className="text-sm font-medium">New section</span>
                             <span className="text-[11px] text-muted-foreground">Group related pages</span>
                           </div>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("page")}>
-                          <FileText className="w-4 h-4 text-muted-foreground" />
+                          <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                           <div className="flex flex-col gap-0.5">
                             <span className="text-sm font-medium">New page</span>
                             <span className="text-[11px] text-muted-foreground">Single learning unit</span>
@@ -601,9 +601,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                         {...listeners}
                                       >
-                                        <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" />
+                                        <GripVertical className="w-3.5 h-3.5 text-muted-foreground/40" aria-hidden="true" focusable="false" />
                                       </span>
-                                      <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                                      <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
                                       <span className={cn(
                                         "text-sm truncate flex-1",
                                         isCurrentPage ? "text-foreground font-medium" : "text-foreground/80"
@@ -617,7 +617,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
                                             onClick={(e) => e.stopPropagation()}
                                           >
-                                            <Dots className="w-4 h-4 text-muted-foreground" />
+                                            <Dots className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                           </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="w-44">
@@ -625,10 +625,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             setRenameValue(item.title || "");
                                             setRenameTarget({ id: item.id, title: item.title || "" });
                                           }}>
-                                            <Pencil className="w-3.5 h-3.5" /> Rename
+                                            <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Rename
                                           </DropdownMenuItem>
                                           <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
-                                            <Copy className="w-3.5 h-3.5" /> Duplicate
+                                            <Copy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Duplicate
                                           </DropdownMenuItem>
                                           <DropdownMenuSeparator />
                                           <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
@@ -660,14 +660,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           {...listeners}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" aria-hidden="true" focusable="false" />
                                           Section {sectionIndex}
                                         </span>
                                         <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                               <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
-                                                <Dots className="w-4 h-4 text-muted-foreground" />
+                                                <Dots className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                               </button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-44">
@@ -675,10 +675,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                 setRenameValue(item.title || "");
                                                 setRenameTarget({ id: item.id, title: item.title || "" });
                                               }}>
-                                                <Pencil className="w-3.5 h-3.5" /> Rename
+                                                <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Rename
                                               </DropdownMenuItem>
                                               <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(item.id)}>
-                                                <Copy className="w-3.5 h-3.5" /> Duplicate
+                                                <Copy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Duplicate
                                               </DropdownMenuItem>
                                               <DropdownMenuSeparator />
                                               <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(item.id)}>
@@ -697,8 +697,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             })}
                                           >
                                             {collapsedSections.has(item.id)
-                                              ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                                              : <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                                              ? <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                              : <ChevronUp className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                             }
                                           </button>
                                         </div>
@@ -748,9 +748,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                           className="opacity-0 group-hover/child-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                                           {...childListeners}
                                                         >
-                                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" />
+                                                          <GripVertical className="w-3 h-3 text-muted-foreground/40" aria-hidden="true" focusable="false" />
                                                         </span>
-                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" />
+                                                        <FileText className="w-3.5 h-3.5 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
                                                         <span
                                                           onClick={(e) => {
                                                             e.stopPropagation();
@@ -771,7 +771,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                               className="opacity-0 group-hover/child-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
                                                               onClick={(e) => e.stopPropagation()}
                                                             >
-                                                              <Dots className="w-3.5 h-3.5 text-muted-foreground" />
+                                                              <Dots className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                                             </button>
                                                           </DropdownMenuTrigger>
                                                           <DropdownMenuContent align="end" className="w-44">
@@ -779,10 +779,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                               setRenameValue(child.title || "");
                                                               setRenameTarget({ id: child.id, title: child.title || "" });
                                                             }}>
-                                                              <Pencil className="w-3.5 h-3.5" /> Rename
+                                                              <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Rename
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem className="gap-2 text-sm" onClick={() => onDuplicateItem?.(child.id)}>
-                                                              <Copy className="w-3.5 h-3.5" /> Duplicate
+                                                              <Copy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Duplicate
                                                             </DropdownMenuItem>
                                                             <DropdownMenuSeparator />
                                                             <DropdownMenuItem className="gap-2 text-sm text-destructive focus:text-destructive" onClick={() => setDeleteConfirmId(child.id)}>
@@ -804,7 +804,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         onClick={() => onAddPageToSection?.(item.id)}
                                         className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors pt-2 ml-1 pl-3"
                                       >
-                                        <Plus className="w-3.5 h-3.5" />
+                                        <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                         Add page
                                       </button>
                                       <div className="border-t border-dashed border-border mt-3" />
@@ -837,7 +837,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onClick={() => setSidebarCollapsed(false)}
               className="shrink-0 px-2 py-4 border-r border-border hover:bg-muted/50 transition-colors flex items-start pt-6"
             >
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             </button>
           )}
 
@@ -868,7 +868,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   {/* Section Image */}
                   <div className="mt-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <ImageIcon className="w-4 h-4 text-primary/70" />
+                      <ImageIcon className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
                       <span className="text-sm font-medium text-muted-foreground">Section Image</span>
                     </div>
                     <ImageBlock
@@ -882,7 +882,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <div className="mt-5">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-primary/70" />
+                        <BookOpen className="w-4 h-4 text-primary/70" aria-hidden="true" focusable="false" />
                         <span className="text-sm font-medium text-muted-foreground">Introduction</span>
                       </div>
                       {aiEnabled && (
@@ -890,7 +890,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           onClick={() => setShowAIIntroDialog(true)}
                           className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors"
                         >
-                          <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-page-intro)' }} />
+                          <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-page-intro)' }} aria-hidden="true" focusable="false" />
                           <svg width="0" height="0" className="absolute">
                             <defs>
                               <linearGradient id="ai-gradient-page-intro" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -936,11 +936,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-muted/50 cursor-pointer transition-colors group"
                           >
                             <span className="text-xs text-muted-foreground font-medium w-6">{idx + 1}.</span>
-                            <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" />
+                            <FileText className="w-4 h-4 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
                             <span className="text-sm text-foreground flex-1 truncate">
                               {child.title || "Untitled page"}
                             </span>
-                            <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
                           </div>
                         ))}
                       </div>
@@ -954,7 +954,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           className="mt-3 gap-1.5"
                           onClick={() => onAddPageToSection?.(currentPageId!)}
                         >
-                          <Plus className="w-3.5 h-3.5" />
+                          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                           Add page
                         </Button>
                       </div>
@@ -966,7 +966,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         className="gap-1.5 mt-2"
                         onClick={() => onAddPageToSection?.(currentPageId!)}
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                         Add page
                       </Button>
                     )}
@@ -1027,7 +1027,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       onClick={() => dismissDeletedBlock(deletedId)}
                                       className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                     >
-                                      <X className="w-3.5 h-3.5" />
+                                      <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                       Close
                                     </button>
                                   </div>
@@ -1087,7 +1087,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           <div className="relative w-10 h-10 flex items-center justify-center">
                                             {/* Rotating ring */}
                                             <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-primary/40 border-r-primary/20 animate-spin" />
-                                            <AISparkles className="w-5 h-5" />
+                                            <AISparkles className="w-5 h-5" aria-hidden="true" focusable="false" />
                                           </div>
                                           <p className="text-xs font-semibold bg-gradient-to-r from-primary to-[hsl(270,70%,60%)] bg-clip-text text-transparent">
                                             Generating content…
@@ -1115,7 +1115,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       {aiReviewMode === "review" ? (
                                         <div className="flex items-center gap-3 px-4 py-2.5">
                                           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                                            <AISparkles className="w-3.5 h-3.5" />
+                                            <AISparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                             <span>AI Generated</span>
                                           </div>
                                           <div className="h-4 w-px bg-border/60" />
@@ -1125,7 +1125,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               onClick={handleAiReviewAdd}
                                               className="h-7 gap-1.5 rounded-lg px-3 text-xs font-medium"
                                             >
-                                              <Check className="w-3.5 h-3.5" />
+                                              <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                               Accept
                                             </Button>
                                             <Button
@@ -1137,7 +1137,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               }}
                                               className="h-7 gap-1.5 rounded-lg px-3 text-xs font-medium"
                                             >
-                                              <Pencil className="w-3 h-3" />
+                                              <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
                                               Modify
                                             </Button>
                                             <Button
@@ -1146,7 +1146,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               onClick={handleAiReviewCancel}
                                               className="h-7 rounded-lg px-2.5 text-xs font-medium text-muted-foreground hover:text-destructive"
                                             >
-                                              <X className="w-3.5 h-3.5" />
+                                              <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                               Discard
                                             </Button>
                                           </div>
@@ -1158,7 +1158,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               onClick={() => setAiReviewMode("review")}
                                               className="p-1 rounded-md hover:bg-background/80 transition-colors text-muted-foreground hover:text-foreground"
                                             >
-                                              <ArrowLeft className="w-3.5 h-3.5" />
+                                              <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                             </button>
                                             <span className="text-xs font-medium text-foreground">What do you want to modify?</span>
                                           </div>
@@ -1189,7 +1189,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               disabled={!modifyPrompt.trim() || aiGenerating}
                                               className="h-9 w-9 rounded-lg shrink-0"
                                             >
-                                              <Send className="w-3.5 h-3.5" />
+                                              <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                             </Button>
                                           </div>
                                         </div>
@@ -1272,7 +1272,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onClick={() => dismissDeletedBlock(deletedId)}
                                     className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                   >
-                                    <X className="w-3.5 h-3.5" />
+                                    <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                     Close
                                   </button>
                                 </div>
@@ -1294,19 +1294,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               <div className={cn("flex items-center gap-2", blocks.length > 0 && "mt-6")}>
                 <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
                   <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("text")}>
-                    <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Text</span>
                   </Button>
                   <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("image")}>
-                    <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Image</span>
                   </Button>
                   <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("video")}>
-                    <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Video</span>
                   </Button>
                   <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("doc")}>
-                    <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                    <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Doc</span>
                   </Button>
                 </div>
@@ -1314,7 +1314,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
                   className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
                 >
-                  <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                  <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                   <span className="hidden sm:inline">More</span>
                 </button>
               </div>
@@ -1324,7 +1324,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <div className="mt-4 rounded-xl border border-border bg-card shadow-sm animate-fade-in">
                   <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60">
                     <div className="flex items-center gap-2.5">
-                       <AISparkles className="w-4 h-4" />
+                       <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
                       <span className="text-sm font-medium text-foreground">Create a content block with AI</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -1332,7 +1332,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                         onClick={() => setShowAiBlock(false)}
                         className="p-1.5 rounded-md hover:bg-muted transition-colors"
                       >
-                        <X className="w-4 h-4 text-muted-foreground" />
+                        <X className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                       </button>
                     </div>
                   </div>
@@ -1340,9 +1340,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     {aiGenerating ? (
                       <div className="flex flex-col items-center justify-center py-12 gap-4 animate-fade-in rounded-xl bg-gradient-to-br from-[hsl(217,91%,60%)]/5 via-[hsl(270,70%,60%)]/5 to-[hsl(217,91%,60%)]/5">
                         <div className="relative w-12 h-12 flex items-center justify-center">
-                          <Sparkles className="w-8 h-8 animate-sparkle-spin" fill="url(#sparkle-grad)" color="url(#sparkle-grad)" />
-                          <Sparkles className="w-4 h-4 absolute -top-1 -left-1 animate-sparkle-float" fill="hsl(270,70%,60%)" color="hsl(270,70%,60%)" />
-                          <Sparkles className="w-3.5 h-3.5 absolute -bottom-0.5 -right-1 animate-sparkle-orbit" fill="hsl(217,91%,60%)" color="hsl(217,91%,60%)" />
+                          <Sparkles className="w-8 h-8 animate-sparkle-spin" fill="url(#sparkle-grad)" color="url(#sparkle-grad)" aria-hidden="true" focusable="false" />
+                          <Sparkles className="w-4 h-4 absolute -top-1 -left-1 animate-sparkle-float" fill="hsl(270,70%,60%)" color="hsl(270,70%,60%)" aria-hidden="true" focusable="false" />
+                          <Sparkles className="w-3.5 h-3.5 absolute -bottom-0.5 -right-1 animate-sparkle-orbit" fill="hsl(217,91%,60%)" color="hsl(217,91%,60%)" aria-hidden="true" focusable="false" />
                           <svg width="0" height="0" className="absolute">
                             <defs>
                               <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1393,7 +1393,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               : "bg-muted text-muted-foreground"
                           )}
                         >
-                          <Send className="w-3.5 h-3.5" />
+                          <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                         </button>
                       </div>
                     )}
@@ -1410,7 +1410,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                         )}
                       >
-                        <Type className="w-4 h-4" />
+                        <Type className="w-4 h-4" aria-hidden="true" focusable="false" />
                         Text
                       </button>
                       <button
@@ -1422,7 +1422,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                         )}
                       >
-                        <ImageIcon className="w-4 h-4" />
+                        <ImageIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
                         Image
                       </button>
                       <button
@@ -1432,7 +1432,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                         )}
                       >
-                        <MessageCircleQuestion className="w-4 h-4" />
+                        <MessageCircleQuestion className="w-4 h-4" aria-hidden="true" focusable="false" />
                         Quiz
                       </button>
                     </div>
@@ -1491,7 +1491,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       <DialogContent className="sm:max-w-[420px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Pencil className="w-4 h-4 text-muted-foreground" />
+            <Pencil className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             Rename
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
@@ -1548,7 +1548,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         <DialogHeader className="px-6 pt-6 pb-4">
           <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
             <div className="p-1.5 rounded-lg bg-primary/10">
-              <AISparkles className="w-4 h-4" />
+              <AISparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
             </div>
             Generate Introduction
           </DialogTitle>
@@ -1600,7 +1600,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             disabled={!aiIntroPrompt.trim()}
             className="rounded-full px-4 gap-1.5"
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             Generate
           </Button>
         </div>

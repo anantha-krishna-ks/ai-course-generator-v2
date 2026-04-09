@@ -137,28 +137,28 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const tourSteps: TourStep[] = [
     {
       target: "layout-selector",
-      icon: <Layers className="w-5 h-5 text-muted-foreground" />,
+      icon: <Layers className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />,
       title: "Layout Selection",
       description: "Preview different layouts to see how your course adapts.",
       placement: "bottom",
     },
     {
       target: "text-toolbar",
-      icon: <Image className="w-5 h-5 text-muted-foreground" />,
+      icon: <Image className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />,
       title: "Course Heading Text Toolbar",
       description: "Make your text stand out with formatting tools.",
       placement: "bottom",
     },
     {
       target: "add-item",
-      icon: <Plus className="w-5 h-5 text-muted-foreground" />,
+      icon: <Plus className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />,
       title: "Add Item",
       description: "Add Sections & Pages. Sections organize your course, but pages can stand alone or sit inside sections — giving you full flexibility.",
       placement: "bottom",
     },
     {
       target: "header-actions",
-      icon: <Sparkles className="w-5 h-5 text-muted-foreground" />,
+      icon: <Sparkles className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />,
       title: "AI Support, Preview & Publish",
       description: "AI Support improves your course, Preview shows it, Publish shares it.",
       placement: "bottom",
@@ -579,7 +579,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               className="p-2 rounded-lg hover:bg-muted transition-colors"
               aria-label="Go back"
             >
-              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+              <ArrowLeft className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
             </button>
 
             <div className="flex items-center gap-3 min-w-0">
@@ -622,7 +622,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     onClick={handlePreview}
                     aria-label="Preview course"
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
                   </Button>
                </TooltipTrigger>
                <TooltipContent>Preview</TooltipContent>
@@ -642,7 +642,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                onClick={() => setShowTour(true)}
                aria-label="Start guided tour"
              >
-               <HelpCircle className="w-4 h-4 text-muted-foreground" />
+               <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
              </Button>
           </div>
         </div>
@@ -819,7 +819,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onClick={() => dismissDeletedBlock(deletedId)}
                                   className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                 >
-                                  <X className="w-3.5 h-3.5" />
+                                  <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                   Close
                                 </button>
                               </div>
@@ -978,7 +978,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Course outline help">
-                        <HelpCircle className="w-4 h-4" />
+                        <HelpCircle className="w-4 h-4" aria-hidden="true" focusable="false" />
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="text-xs max-w-[200px]">
@@ -994,9 +994,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       className="gap-2 border-border rounded-full"
                       data-tour="add-item"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
                       Add item
-                      <ChevronDown className="w-3 h-3 ml-1" />
+                      <ChevronDown className="w-3 h-3 ml-1" aria-hidden="true" focusable="false" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-72 bg-background border border-border p-2">
@@ -1005,7 +1005,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
                     >
                       <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                        <LayoutGrid className="w-4 h-4 text-muted-foreground" />
+                        <LayoutGrid className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <span className="text-sm font-semibold text-foreground">New section</span>
@@ -1017,7 +1017,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
                     >
                       <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0 mt-0.5">
-                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <span className="text-sm font-semibold text-foreground">New page</span>
