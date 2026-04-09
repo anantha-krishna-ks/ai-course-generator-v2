@@ -443,7 +443,7 @@ export function SectionCard({
             {/* Header */}
             <div className="pl-5 pr-4 pt-3.5 pb-3 flex items-center gap-3">
               {/* Section number pill */}
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70 bg-primary/8 px-2.5 py-1 rounded-full shrink-0">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full shrink-0">
                 {sectionNumber.toString().padStart(2, '0')}
               </span>
 

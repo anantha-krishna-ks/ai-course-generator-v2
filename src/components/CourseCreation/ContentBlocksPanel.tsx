@@ -670,7 +670,7 @@ function BlockGridItem({
               {block.description && (
                 <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{block.description}</p>
               )}
-              <p className="text-[10px] text-muted-foreground/60 mt-1.5 flex items-center gap-1">
+              <p className="text-[10px] text-muted-foreground mt-1.5 flex items-center gap-1">
                 <GripVertical className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
                 Click or drag to add
               </p>
