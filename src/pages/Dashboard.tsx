@@ -488,13 +488,13 @@ const Dashboard = () => {
                 className="group overflow-hidden transition-all duration-300 cursor-pointer border border-border/80 hover:border-primary/30 hover:shadow-lg bg-card/80 backdrop-blur-sm rounded-2xl"
                 tabIndex={0}
                 role="button"
-                aria-label={`${course.title} - Last updated ${course.lastUpdated}`}
+                aria-label={`${course.title}, last updated ${course.lastUpdated}`}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/edit-course/${course.id}`); } }}
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img 
                     src={course.thumbnail} 
-                    alt={`Thumbnail for ${course.title}`}
+                    alt={`${course.title} course cover`}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
