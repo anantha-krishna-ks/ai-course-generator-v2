@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Info, Users, Clock, MessageSquare, BarChart3 } from "lucide-react";
+import { Info } from "lucide-react";
 
 interface StepCourseDetailsProps {
   state: AIGenerateState;
@@ -102,8 +102,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Intended Learners */}
       <div>
-        <label htmlFor="intended-learners-detail" className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-          <Users className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+        <label htmlFor="intended-learners-detail" className="text-sm font-semibold text-foreground mb-2 block">
           Intended Learners
         </label>
         <Textarea
@@ -118,8 +117,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       {/* Duration + Tone side by side */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <div className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          <div className="text-sm font-semibold text-foreground mb-2.5">
             Duration
           </div>
           <ChipGroup
@@ -131,8 +129,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           />
         </div>
         <div>
-          <div className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          <div className="text-sm font-semibold text-foreground mb-2.5">
             Tone
           </div>
           <ChipGroup
@@ -146,8 +143,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Proficiency */}
       <div>
-        <div className="text-sm font-semibold text-foreground mb-2.5 flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+        <div className="text-sm font-semibold text-foreground mb-2.5">
           Proficiency Level
         </div>
         <ChipGroup
