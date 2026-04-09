@@ -1162,7 +1162,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               )}
             </div>
         </div>
-      </div>
+      </main>
 
       {/* Standalone PageEditorDialog for child pages navigated from sidebar */}
       {(() => {
