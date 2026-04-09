@@ -190,17 +190,27 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
               >
                 {editingIdx === i ? (
                   /* Edit mode */
-                  <div className="flex items-center gap-2 p-3">
-                    <Input
+                  <div className="flex items-start gap-2 p-3">
+                    <Textarea
                       value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
+                      onChange={(e) => {
+                        setEditValue(e.target.value);
+                        e.target.style.height = "auto";
+                        e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
+                      }}
+                      ref={(el) => {
+                        if (el) {
+                          el.style.height = "auto";
+                          el.style.height = `${Math.min(el.scrollHeight, 150)}px`;
+                          el.focus();
+                        }
+                      }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") handleSaveEdit();
+                        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSaveEdit(); }
                         if (e.key === "Escape") handleCancelEdit();
                       }}
-                      className="flex-1 text-sm h-8 rounded-lg"
+                      className="flex-1 text-sm min-h-[36px] max-h-[150px] resize-none rounded-lg"
                       aria-label="Edit learning objective"
-                      autoFocus
                     />
                     <Button
                       size="sm"
