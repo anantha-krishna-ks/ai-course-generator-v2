@@ -51,7 +51,7 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
             {showCustomerLogoInHeader && (
               <img src={branding.customerLogo} alt={`${branding.customerName} logo`} className="w-8 h-8 object-contain" />
             )}
-            <span className="text-lg font-bold text-foreground hidden sm:block">AI Course Generator</span>
+            <h1 className="text-lg font-bold text-foreground hidden sm:block">AI Course Generator</h1>
           </div>
           
           <div className="flex items-center gap-3">
@@ -80,14 +80,14 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
                   className="cursor-pointer"
                   onClick={() => setChangePasswordOpen(true)}
                 >
-                  <KeyRound className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+                  <KeyRound className="w-4 h-4 mr-2" />
                   Change Password
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="cursor-pointer"
                   onClick={() => navigate("/admin-module")}
                 >
-                  <Shield className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+                  <Shield className="w-4 h-4 mr-2" />
                   Admin Module
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -95,7 +95,7 @@ const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: He
                   className="cursor-pointer text-destructive focus:text-destructive"
                   onClick={() => navigate("/auth")}
                 >
-                  <LogOut className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+                  <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
