@@ -98,21 +98,15 @@ export default function AIGenerateCourse() {
   const contentVariants = {
     enter: (dir: number) => ({
       opacity: 0,
-      x: dir > 0 ? 80 : -80,
-      scale: 0.96,
-      filter: "blur(6px)",
+      x: dir > 0 ? 40 : -40,
     }),
     center: {
       opacity: 1,
       x: 0,
-      scale: 1,
-      filter: "blur(0px)",
     },
     exit: (dir: number) => ({
       opacity: 0,
-      x: dir > 0 ? -80 : 80,
-      scale: 0.96,
-      filter: "blur(6px)",
+      x: dir > 0 ? -40 : 40,
     }),
   };
 
