@@ -591,7 +591,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   </TooltipContent>
                 )}
               </Tooltip>
-              <span className="text-muted-foreground/30 select-none">|</span>
+              <span className="text-muted-foreground select-none" aria-hidden="true">|</span>
               <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} transferState={{
                 title,
                 items: items as LayoutTransferState["items"],
@@ -700,7 +700,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       setTitle(e.target.value);
                     }
                   }}
-                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-foreground/40 resize-none overflow-hidden leading-tight"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground resize-none overflow-hidden leading-tight"
                   placeholder="Untitled course"
                   rows={1}
                   onInput={(e) => {
@@ -1149,7 +1149,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     <Lottie animationData={emptyOutlineAnimation} loop autoplay />
                   </div>
                   <div className="text-center space-y-1.5">
-                    <p className="text-sm font-medium text-foreground/70">No items yet</p>
+                    <p className="text-sm font-medium text-foreground">No items yet</p>
                     <p className="text-xs text-muted-foreground max-w-[240px]">
                       Add sections and pages to build your course outline
                     </p>

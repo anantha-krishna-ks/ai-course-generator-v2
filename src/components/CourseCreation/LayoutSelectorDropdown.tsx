@@ -51,7 +51,7 @@ interface LayoutSelectorDropdownProps {
 
 function MultiPageIllustration() {
   return (
-    <svg width="100" height="72" viewBox="0 0 100 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+    <svg width="100" height="72" viewBox="0 0 100 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0" aria-hidden="true" focusable="false" role="presentation">
       {/* Card background */}
       <rect x="4" y="4" width="92" height="64" rx="4" className="fill-muted/50 stroke-border" strokeWidth="1" />
       {/* Logo placeholder */}
@@ -74,7 +74,7 @@ function MultiPageIllustration() {
 
 function SinglePageIllustration() {
   return (
-    <svg width="100" height="72" viewBox="0 0 100 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+    <svg width="100" height="72" viewBox="0 0 100 72" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0" aria-hidden="true" focusable="false" role="presentation">
       {/* Card background */}
       <rect x="4" y="4" width="92" height="64" rx="4" className="fill-muted/50 stroke-border" strokeWidth="1" />
       {/* Logo placeholder */}
