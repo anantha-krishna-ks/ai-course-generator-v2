@@ -203,9 +203,14 @@ export default function AIGenerateCourse() {
             <motion.div
               key={currentStep}
               custom={direction}
-              initial={(dir: number) => ({ opacity: 0, y: dir > 0 ? 40 : -40 })}
-              animate={{ opacity: 1, y: 0 }}
-              exit={(dir: number) => ({ opacity: 0, y: dir > 0 ? -40 : 40 })}
+              variants={{
+                enter: (dir: number) => ({ opacity: 0, y: dir > 0 ? 40 : -40 }),
+                center: { opacity: 1, y: 0 },
+                exit: (dir: number) => ({ opacity: 0, y: dir > 0 ? -40 : 40 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
               transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <StepComponent state={formState} onChange={updateState} />
