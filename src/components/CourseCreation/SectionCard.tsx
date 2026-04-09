@@ -720,12 +720,12 @@ export function SectionCard({
         <DialogContent className="w-[95vw] max-w-[1100px] max-h-[90vh] flex flex-col overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <ListChecks className="w-5 h-5 text-muted-foreground" />
+              <ListChecks className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
               Scope
             </DialogTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <DialogDescription className="text-sm text-muted-foreground mt-1">
               Define the scope for "{title || "Untitled section"}"
-            </p>
+            </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto min-h-0 pr-1">
             {/* Learning Objectives */}
@@ -734,7 +734,9 @@ export function SectionCard({
               <textarea
                 value={objectiveText}
                 onChange={(e) => setObjectiveText(e.target.value)}
-                className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[80px] max-h-[200px] overflow-y-auto"
+                aria-label="Learning objectives"
+                autoComplete="off"
+                className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[80px] max-h-[200px] overflow-y-auto"
                 placeholder="Define the learning objectives for this section..."
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;
@@ -748,11 +750,13 @@ export function SectionCard({
               {/* Inclusions */}
               <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
                 <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />Inclusions</label>
-                <textarea
+              <textarea
                   value={inclusions}
                   onChange={(e) => onInclusionsChange?.(e.target.value)}
                   autoFocus
-                  className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px] max-h-[300px] overflow-y-auto"
+                  aria-label="Section inclusions"
+                  autoComplete="off"
+                  className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px] max-h-[300px] overflow-y-auto"
                   placeholder="Define what topics, content, or scope should be included in this section..."
                   onInput={(e) => {
                     const target = e.target as HTMLTextAreaElement;
@@ -783,10 +787,12 @@ export function SectionCard({
               {/* Exclusions */}
               <div className="flex-1 rounded-xl border border-border bg-muted/20 p-4">
                 <label className="text-xs font-semibold text-foreground/80 uppercase tracking-wider mb-2.5 flex items-center gap-1.5"><XCircle className="w-3.5 h-3.5 text-destructive/70" />Exclusions</label>
-                <textarea
+              <textarea
                   value={exclusions}
                   onChange={(e) => onExclusionsChange?.(e.target.value)}
-                  className="w-full text-sm text-foreground bg-background rounded-lg border border-foreground/20 p-4 outline-none placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px] max-h-[300px] overflow-y-auto"
+                  aria-label="Section exclusions"
+                  autoComplete="off"
+                  className="w-full text-sm text-foreground bg-background rounded-lg border border-border p-4 outline-none placeholder:text-muted-foreground transition-colors duration-200 focus:border-primary/50 resize-none min-h-[150px] max-h-[300px] overflow-y-auto"
                   placeholder="Define what topics or content should be excluded from this section..."
                   onInput={(e) => {
                     const target = e.target as HTMLTextAreaElement;
