@@ -1092,7 +1092,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           <p className="text-xs font-semibold bg-gradient-to-r from-primary to-[hsl(270,70%,60%)] bg-clip-text text-transparent">
                                             Generating content…
                                           </p>
-                                          <p className="text-[10px] text-muted-foreground/50">This may take a moment</p>
+                                          <p className="text-[10px] text-muted-foreground">This may take a moment</p>
                                         </div>
                                       </div>
                                     ) : (
@@ -1374,7 +1374,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             }
                           }}
                           placeholder="Example: Create a comparison table for collaboration vs individual work"
-                          className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none resize-none min-h-[28px] max-h-[150px] py-1"
+                          className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[150px] py-1"
                           rows={1}
                         />
                         <button
@@ -1574,7 +1574,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               rows={4}
             />
           </div>
-          <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+          <p className="text-[11px] text-muted-foreground mt-2 px-1">
             Press Enter to generate · Shift+Enter for new line
           </p>
         </div>
