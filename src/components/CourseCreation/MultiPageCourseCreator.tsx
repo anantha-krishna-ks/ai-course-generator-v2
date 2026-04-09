@@ -570,7 +570,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         Skip to main content
       </a>
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" role="banner">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           {/* Left Section */}
           <div className="flex items-center gap-4">
@@ -649,7 +649,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
+      <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
         {/* Left Panel - Course Overview */}
         <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
