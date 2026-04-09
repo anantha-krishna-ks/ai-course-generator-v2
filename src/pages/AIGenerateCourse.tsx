@@ -144,7 +144,8 @@ export default function AIGenerateCourse() {
                     </motion.span>
                     <div className="relative h-1 rounded-full bg-border overflow-hidden">
                       <motion.div
-                        className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                        className="absolute inset-y-0 left-0 rounded-full"
+                        style={{ background: "linear-gradient(90deg, hsl(211 100% 50%), hsl(270 80% 55%))" }}
                         initial={false}
                         animate={{
                           width: isDone ? "100%" : isActive ? "50%" : "0%",
