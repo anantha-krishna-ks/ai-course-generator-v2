@@ -280,7 +280,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             </div>
             <div className="flex md:hidden items-center gap-3 py-3 px-2">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-              <span className="text-[9px] font-semibold text-muted-foreground/50 uppercase tracking-widest">vs</span>
+              <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-widest" aria-hidden="true">vs</span>
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
@@ -556,7 +556,7 @@ export function SectionCard({
                   aria-label={isCollapsed ? "Expand section" : "Collapse section"}
                 >
                   <ChevronDown className={cn(
-                    "w-3.5 h-3.5 text-muted-foreground/50 transition-transform duration-300",
+                    "w-3.5 h-3.5 text-muted-foreground transition-transform duration-300",
                     isCollapsed && "-rotate-90"
                   )} />
                 </button>
@@ -849,7 +849,7 @@ export function SectionCard({
                 rows={4}
               />
             </div>
-            <p className="text-[11px] text-muted-foreground/50 mt-2 px-1">
+            <p className="text-[11px] text-muted-foreground mt-2 px-1">
               Press Enter to generate · Shift+Enter for new line
             </p>
           </div>
