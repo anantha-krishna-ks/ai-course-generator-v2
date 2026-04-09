@@ -333,6 +333,7 @@ function PageScopeDocUploadZone({
                 type="button"
                 onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
                 className="ml-0.5 rounded-full p-0.5 hover:bg-muted-foreground/20"
+                aria-label={`Remove document ${doc}`}
               >
                 <X className="w-3 h-3" />
               </button>
