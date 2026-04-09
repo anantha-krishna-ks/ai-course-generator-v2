@@ -565,6 +565,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip to main content */}
+      <a href="#course-main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md">
+        Skip to main content
+      </a>
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
