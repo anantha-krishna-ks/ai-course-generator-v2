@@ -983,8 +983,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
         {/* Collapsed sidebar toggle */}
         {sidebarCollapsed && (
-          <button onClick={() => setSidebarCollapsed(false)} className="shrink-0 px-2 py-4 border-r border-border hover:bg-muted/50 transition-colors flex items-start pt-6">
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          <button onClick={() => setSidebarCollapsed(false)} aria-label="Expand sidebar" className="shrink-0 px-2 py-4 border-r border-border hover:bg-muted/50 transition-colors flex items-start pt-6">
+            <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
           </button>
         )}
 
