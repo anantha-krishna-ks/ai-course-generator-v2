@@ -356,23 +356,29 @@ const SinglepageCoursePreview = () => {
         const sectionImage = data.sectionImages?.[item.id];
 
         sections.push(
-          <div key={item.id} className="space-y-4">
+          <div key={item.id} className="space-y-3">
             {/* Section header */}
             <button
-              className="w-full flex items-center gap-4 rounded-xl border border-border/60 p-4 bg-muted/30 hover:bg-muted/50 transition-colors text-left"
+              className={cn(
+                "w-full flex items-center gap-3 rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 transition-colors text-left",
+                isCompactView ? "p-3" : "p-4 gap-4"
+              )}
               onClick={() => toggleSection(item.id)}
               aria-expanded={isExpanded}
               aria-label={`${item.title || "Untitled section"}, ${isExpanded ? "collapse" : "expand"}`}
             >
-              <div className="w-12 h-12 rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <div className={cn(
+                "rounded-lg bg-card border border-border/40 flex items-center justify-center flex-shrink-0 overflow-hidden",
+                isCompactView ? "w-9 h-9" : "w-12 h-12"
+              )}>
                 {sectionImage ? (
                   <img src={sectionImage} alt={`${item.title} section`} className="w-full h-full object-cover" />
                 ) : (
-                  <ImageIcon className="w-5 h-5 text-muted-foreground/40" aria-hidden="true" />
+                  <ImageIcon className={cn("text-muted-foreground/40", isCompactView ? "w-4 h-4" : "w-5 h-5")} aria-hidden="true" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-base font-semibold text-foreground truncate">{item.title || "Untitled Section"}</h2>
+                <h2 className={cn("font-semibold text-foreground truncate", isCompactView ? "text-sm" : "text-base")}>{item.title || "Untitled Section"}</h2>
                 {item.children && item.children.length > 0 && (
                   <span className="text-xs text-muted-foreground">{item.children.length} {item.children.length === 1 ? "topic" : "topics"}</span>
                 )}
@@ -386,7 +392,7 @@ const SinglepageCoursePreview = () => {
 
             {/* Section children content - all rendered inline */}
             {isExpanded && item.children && item.children.length > 0 && (
-              <div className="space-y-6 pl-4 border-l-2 border-primary/20 ml-6">
+              <div className={cn("space-y-5 border-l-2 border-primary/20", isCompactView ? "pl-3 ml-4" : "pl-4 ml-6")}>
                 {item.children.map((child) => {
                   const childBlocks = data.pageBlocksMap[child.id] || [];
                   return (
@@ -444,35 +450,34 @@ const SinglepageCoursePreview = () => {
   const scrollContent = (
     <div
       className={cn(
-        "flex flex-col bg-background",
-        isDeviceFramed ? "min-h-full flex-1" : "flex-1 min-h-[calc(100vh-57px)]",
-        !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
-        isDeviceFramed && "w-full"
+        "bg-background w-full",
+        isDeviceFramed ? "flex-1 overflow-auto" : "flex-1 flex flex-col min-h-[calc(100vh-57px)]",
+        !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg mx-auto"
       )}
       style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
     >
       {/* Course header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
         <div className={cn(
           "relative z-10",
-          isCompactView ? "px-5 py-8" : "px-8 sm:px-12 lg:px-16 py-10"
+          isCompactView ? "px-4 py-5" : "px-8 sm:px-12 lg:px-16 py-10"
         )}>
           <h1 className={cn(
-            "font-semibold text-foreground leading-[1.1] tracking-tight",
-            isCompactView ? "text-xl" : "text-2xl sm:text-3xl lg:text-4xl"
+            "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
+            isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
           )}>
             {data.title}
           </h1>
-          <p className="text-sm text-muted-foreground mt-2">Single-page course</p>
+          <p className="text-xs text-muted-foreground mt-1.5">Single-page course</p>
         </div>
       </div>
 
       {/* All content in one scrollable area */}
       <div className={cn(
         "flex-1",
-        isCompactView ? "px-4 py-6" : "px-8 sm:px-12 py-10"
+        isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
       )}>
-        <div className="max-w-3xl mx-auto space-y-8">
+        <div className="max-w-3xl mx-auto space-y-6">
           {renderSinglePageContent()}
         </div>
       </div>
