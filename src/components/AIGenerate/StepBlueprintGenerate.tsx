@@ -470,10 +470,10 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 <img
                   src={pref.illustration}
                   alt=""
-                  className="w-12 h-12 object-contain mb-3"
+                  className="w-16 h-16 object-contain mb-2.5"
                   loading="lazy"
-                  width={48}
-                  height={48}
+                  width={64}
+                  height={64}
                   role="presentation"
                 />
 
