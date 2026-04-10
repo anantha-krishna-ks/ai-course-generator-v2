@@ -442,7 +442,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 className={cn(
                   "relative flex flex-row items-center gap-3 text-left rounded-2xl border px-4 py-3 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   checked
-                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
+                    ? "border-primary bg-primary/5 ring-1 ring-primary/20"
                     : "border-border bg-background hover:border-muted-foreground/25 hover:shadow-sm"
                 )}
               >
