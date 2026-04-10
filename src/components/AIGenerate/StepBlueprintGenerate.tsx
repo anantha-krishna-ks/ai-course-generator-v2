@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
+  Check,
   Sparkles,
   RefreshCw,
   X,
@@ -296,6 +297,32 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
           {objectives.length} objective{objectives.length !== 1 ? "s" : ""}
         </p>
       )}
+
+      {/* Tone */}
+      <div>
+        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+          Tone
+        </div>
+        <ChipGroup
+          options={TONE_OPTIONS}
+          value={state.tone}
+          onChange={(v) => onChange({ tone: v as AIGenerateState["tone"] })}
+          ariaLabel="Course tone"
+        />
+      </div>
+
+      {/* Proficiency Level */}
+      <div>
+        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+          Proficiency Level
+        </div>
+        <ChipGroup
+          options={PROFICIENCY_OPTIONS}
+          value={state.proficiencyLevel}
+          onChange={(v) => onChange({ proficiencyLevel: v as AIGenerateState["proficiencyLevel"] })}
+          ariaLabel="Proficiency level"
+        />
+      </div>
     </div>
   );
 }
