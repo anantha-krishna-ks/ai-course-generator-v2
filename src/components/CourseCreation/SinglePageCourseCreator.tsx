@@ -710,12 +710,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       aiOptions,
     };
 
-    navigate("/multipage-preview", {
+    navigate("/singlepage-preview", {
       state: {
         title,
         items,
         contentBlocks,
         pageBlocksMap,
+        sectionImages,
         returnState,
       },
     });
