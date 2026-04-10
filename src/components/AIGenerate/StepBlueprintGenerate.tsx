@@ -432,7 +432,6 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         <div className="grid grid-cols-3 gap-3">
           {CONTENT_PREFERENCES.map((pref) => {
             const checked = state.contentPreferences[pref.key];
-            const Icon = pref.icon;
             return (
               <button
                 key={pref.key}
@@ -448,35 +447,38 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                   })
                 }
                 className={cn(
-                  "relative flex flex-col items-center text-center rounded-xl border p-4 pt-5 pb-3.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "relative flex flex-col items-center text-center rounded-2xl border p-4 pt-5 pb-4 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   checked
-                    ? "border-primary bg-primary/5 shadow-sm"
-                    : "border-border bg-background hover:border-muted-foreground/30 hover:bg-muted/30"
+                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
+                    : "border-border bg-background hover:border-muted-foreground/25 hover:shadow-sm"
                 )}
               >
-                {/* Radio-style indicator */}
+                {/* Check indicator */}
                 <div
                   className={cn(
-                    "absolute top-2.5 right-2.5 w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center transition-colors",
+                    "absolute top-2.5 right-2.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200",
                     checked
-                      ? "border-primary bg-primary"
-                      : "border-muted-foreground/30"
+                      ? "border-primary bg-primary scale-100"
+                      : "border-muted-foreground/25 scale-90"
                   )}
                   aria-hidden="true"
                 >
                   {checked && <Check className="w-3 h-3 text-primary-foreground" />}
                 </div>
 
-                {/* Icon */}
-                <div className={cn(
-                  "w-10 h-10 rounded-lg flex items-center justify-center mb-2.5 transition-colors",
-                  checked ? "bg-primary/10" : "bg-muted"
-                )}>
-                  <Icon className={cn("w-5 h-5", checked ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
-                </div>
+                {/* Illustration */}
+                <img
+                  src={pref.illustration}
+                  alt=""
+                  className="w-12 h-12 object-contain mb-3"
+                  loading="lazy"
+                  width={48}
+                  height={48}
+                  role="presentation"
+                />
 
                 {/* Label */}
-                <span className={cn("text-sm font-semibold mb-1", checked ? "text-foreground" : "text-foreground")}>
+                <span className="text-sm font-semibold text-foreground mb-0.5">
                   {pref.label}
                 </span>
 
