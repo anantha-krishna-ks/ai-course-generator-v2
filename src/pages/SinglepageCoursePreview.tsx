@@ -585,16 +585,16 @@ const SinglepageCoursePreview = () => {
       {/* Sidebar overlay backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-foreground/20"
+          className="absolute inset-0 z-40 bg-foreground/20"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
       )}
 
-      {/* Slide-in sidebar — fixed relative to the scroll container */}
+      {/* Slide-in sidebar — absolute within the scroll container */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
+          "absolute top-0 left-0 bottom-0 z-50 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
           isCompactView ? "w-[220px]" : "w-[260px]",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
