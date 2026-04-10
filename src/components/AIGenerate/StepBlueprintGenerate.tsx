@@ -230,7 +230,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -20, height: 0 }}
                     transition={{ duration: 0.25, delay: i * 0.03 }}
-                    className="group rounded-xl border border-border bg-background overflow-hidden list-none"
+                    className="group rounded-xl border border-border bg-background overflow-hidden list-none p-1"
                     whileDrag={{
                       scale: 1.02,
                       boxShadow: "0 8px 25px -8px hsl(var(--foreground) / 0.15)",
@@ -282,7 +282,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                       </div>
                     ) : (
                       /* View mode */
-                      <div className="flex items-start gap-2 px-3 py-3">
+                      <div className="flex items-start gap-3 px-3.5 py-3.5">
                         {/* Drag handle */}
                         <div
                           className="mt-0.5 shrink-0 cursor-grab active:cursor-grabbing touch-none"
@@ -294,13 +294,13 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                         </div>
 
                         {/* Number badge */}
-                        <span className="mt-0.5 w-5 h-5 rounded-full bg-muted text-muted-foreground text-[10px] font-bold flex items-center justify-center shrink-0" aria-hidden="true">
+                        <span className="mt-0.5 w-6 h-6 rounded-full bg-muted text-muted-foreground text-xs font-bold flex items-center justify-center shrink-0" aria-hidden="true">
                           {i + 1}
                         </span>
 
                         {/* Text */}
                         <span className={cn(
-                          "flex-1 text-sm text-foreground leading-relaxed transition-opacity",
+                          "flex-1 text-[13px] text-foreground leading-relaxed transition-opacity",
                           isRegenerating && "opacity-40"
                         )}>
                           {obj.text}
