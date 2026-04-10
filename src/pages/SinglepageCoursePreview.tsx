@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Video, Music, Download } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Video, Music, Download, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
