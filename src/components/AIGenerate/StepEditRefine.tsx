@@ -421,9 +421,9 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                     </div>
 
                                     {/* Page row */}
-                                    <div className="flex-1 flex items-center gap-2 py-1.5 pr-2 pl-2 rounded-lg hover:bg-accent/40 transition-colors min-w-0 my-px">
-                                      <div className="w-5 h-5 rounded bg-accent/60 flex items-center justify-center shrink-0">
-                                        <FileText className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                    <div className="flex-1 flex items-center gap-2.5 py-2.5 pr-3 pl-2.5 rounded-xl border border-border/60 bg-card shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] hover:border-border hover:shadow-sm transition-all duration-150 min-w-0 my-0.5">
+                                      <div className="w-6 h-6 rounded-md bg-accent/60 flex items-center justify-center shrink-0">
+                                        <FileText className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                       </div>
 
                                       {isEditingThisPage ? (
@@ -438,13 +438,13 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                           }}
                                           aria-label="Page title"
                                           autoComplete="off"
-                                          className="flex-1 text-[12px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground border-b border-primary/30 pb-px min-w-0"
+                                          className="flex-1 text-[13px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground border-b border-primary/30 pb-px min-w-0"
                                           placeholder="Untitled page..."
                                           autoFocus
                                         />
                                       ) : (
                                         <span
-                                          className="flex-1 text-[12px] font-medium text-foreground truncate min-w-0 cursor-text"
+                                          className="flex-1 text-[13px] font-medium text-foreground truncate min-w-0 cursor-text"
                                           onClick={() => {
                                             setEditingPageId(page.id);
                                             setTimeout(() => pageInputRef.current?.focus(), 30);
@@ -468,18 +468,18 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                           <button
                                             type="button"
                                             onClick={() => duplicatePage(section.id, page.id)}
-                                            className="w-5 h-5 rounded flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                             aria-label={`Duplicate page ${page.title}`}
                                           >
-                                            <Copy className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                            <Copy className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                           </button>
                                           <button
                                             type="button"
                                             onClick={() => deletePage(section.id, page.id)}
-                                            className="w-5 h-5 rounded flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                             aria-label={`Delete page ${page.title}`}
                                           >
-                                            <Trash2 className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                            <Trash2 className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                           </button>
                                         </div>
                                       )}
