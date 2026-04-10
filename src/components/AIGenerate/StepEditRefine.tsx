@@ -2,8 +2,8 @@ import { useState, useCallback } from "react";
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
-  BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronRight, File,
-  Users, Target, MessageSquare
+  BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
+  MessageSquare, X, Check, MoreHorizontal
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
@@ -69,20 +69,23 @@ const DEFAULT_SECTIONS: Section[] = [
 
 const SECTION_ICONS = [BookOpen, Lightbulb, Wrench, ClipboardCheck];
 
-const PAGE_TYPE_COLORS: Record<Page["type"], string> = {
-  content: "bg-primary/10 text-primary",
-  quiz: "bg-warning/10 text-warning",
-  interactive: "bg-info/10 text-info",
-  summary: "bg-success/10 text-success",
+const PAGE_TYPE_META: Record<Page["type"], { label: string; color: string; dotColor: string }> = {
+  content: { label: "Content", color: "text-primary", dotColor: "bg-primary" },
+  quiz: { label: "Quiz", color: "text-warning", dotColor: "bg-warning" },
+  interactive: { label: "Interactive", color: "text-info", dotColor: "bg-info" },
+  summary: { label: "Summary", color: "text-success", dotColor: "bg-success" },
 };
 
 export function StepEditRefine({ state }: StepEditRefineProps) {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editDesc, setEditDesc] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>("s1");
+  const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [editPageTitle, setEditPageTitle] = useState("");
 
-  const handleDelete = useCallback((id: string) => {
+  const handleDeleteSection = useCallback((id: string) => {
     setSections((prev) => prev.filter((s) => s.id !== id));
     if (expandedId === id) setExpandedId(null);
   }, [expandedId]);
@@ -90,42 +93,85 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
   const startEdit = useCallback((section: Section) => {
     setEditingId(section.id);
     setEditTitle(section.title);
+    setEditDesc(section.description);
   }, []);
 
   const saveEdit = useCallback(() => {
     if (!editingId || !editTitle.trim()) return;
     setSections((prev) =>
-      prev.map((s) => (s.id === editingId ? { ...s, title: editTitle.trim() } : s))
+      prev.map((s) => (s.id === editingId ? { ...s, title: editTitle.trim(), description: editDesc.trim() } : s))
     );
     setEditingId(null);
-    setEditTitle("");
-  }, [editingId, editTitle]);
+  }, [editingId, editTitle, editDesc]);
 
   const cancelEdit = useCallback(() => {
     setEditingId(null);
-    setEditTitle("");
   }, []);
 
   const addSection = useCallback(() => {
     const newId = `s${Date.now()}`;
-    setSections((prev) => [
-      ...prev,
-      {
-        id: newId,
-        title: "New Section",
-        description: "New section description",
-        icon: SECTION_ICONS[prev.length % SECTION_ICONS.length],
-        pages: [{ id: `p${Date.now()}`, title: "New Page", type: "content" as const }],
-      },
-    ]);
-  }, []);
+    const newSection: Section = {
+      id: newId,
+      title: "New Section",
+      description: "Describe this section",
+      icon: SECTION_ICONS[sections.length % SECTION_ICONS.length],
+      pages: [{ id: `p${Date.now()}`, title: "New Page", type: "content" }],
+    };
+    setSections((prev) => [...prev, newSection]);
+    setExpandedId(newId);
+    // Auto-enter edit mode for new section
+    setEditingId(newId);
+    setEditTitle(newSection.title);
+    setEditDesc(newSection.description);
+  }, [sections.length]);
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
   }, []);
 
-  const totalPages = sections.reduce((sum, s) => sum + s.pages.length, 0);
+  // Page management
+  const addPage = useCallback((sectionId: string) => {
+    setSections((prev) =>
+      prev.map((s) =>
+        s.id === sectionId
+          ? { ...s, pages: [...s.pages, { id: `p${Date.now()}`, title: "New Page", type: "content" as const }] }
+          : s
+      )
+    );
+  }, []);
 
+  const deletePage = useCallback((sectionId: string, pageId: string) => {
+    setSections((prev) =>
+      prev.map((s) =>
+        s.id === sectionId
+          ? { ...s, pages: s.pages.filter((p) => p.id !== pageId) }
+          : s
+      )
+    );
+  }, []);
+
+  const startEditPage = useCallback((page: Page) => {
+    setEditingPageId(page.id);
+    setEditPageTitle(page.title);
+  }, []);
+
+  const saveEditPage = useCallback((sectionId: string) => {
+    if (!editingPageId || !editPageTitle.trim()) return;
+    setSections((prev) =>
+      prev.map((s) =>
+        s.id === sectionId
+          ? { ...s, pages: s.pages.map((p) => (p.id === editingPageId ? { ...p, title: editPageTitle.trim() } : p)) }
+          : s
+      )
+    );
+    setEditingPageId(null);
+  }, [editingPageId, editPageTitle]);
+
+  const cancelEditPage = useCallback(() => {
+    setEditingPageId(null);
+  }, []);
+
+  const totalPages = sections.reduce((sum, s) => sum + s.pages.length, 0);
   const durationLabel = state.duration === "brief" ? "~15 min" : state.duration === "extended" ? "~90 min" : "~45 min";
   const toneLabel = state.tone === "ai-determined" ? "AI Selected" : state.tone.charAt(0).toUpperCase() + state.tone.slice(1);
 
@@ -135,59 +181,45 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
       <div>
         <h1 className="text-lg sm:text-xl font-bold text-foreground">Course Overview</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Review your course structure, reorder sections, and explore pages.
+          Review structure, manage sections &amp; pages before generating.
         </p>
       </div>
 
-      {/* Summary dashboard */}
-      <div className="rounded-xl border border-border bg-background overflow-hidden">
-        {/* Course title row */}
-        <div className="px-4 py-3 border-b border-border flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <FileText className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+      {/* Compact summary strip */}
+      <div className="rounded-xl border border-border bg-muted/30 overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-2.5">
+          <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <FileText className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="text-sm font-bold text-foreground truncate">{state.title || "Untitled Course"}</h2>
-            <p className="text-[11px] text-muted-foreground truncate">
-              {state.intendedLearners || "All learners"}
-            </p>
           </div>
-          <AISparkles className="w-4 h-4 shrink-0 opacity-50" />
+          <AISparkles className="w-3.5 h-3.5 shrink-0 opacity-40" />
         </div>
-
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border">
+        <div className="border-t border-border grid grid-cols-4 divide-x divide-border">
           {[
-            { icon: Layers, label: "Sections", value: String(sections.length) },
-            { icon: File, label: "Pages", value: String(totalPages) },
-            { icon: Clock, label: "Duration", value: durationLabel },
-            { icon: MessageSquare, label: "Tone", value: toneLabel },
-          ].map((stat) => (
-            <div key={stat.label} className="px-3 py-2.5 flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                <stat.icon className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+            { icon: Layers, value: `${sections.length}`, label: "Sections" },
+            { icon: File, value: `${totalPages}`, label: "Pages" },
+            { icon: Clock, value: durationLabel, label: "Duration" },
+            { icon: MessageSquare, value: toneLabel, label: "Tone" },
+          ].map((s) => (
+            <div key={s.label} className="flex flex-col items-center py-2 gap-0.5">
+              <div className="flex items-center gap-1.5">
+                <s.icon className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <span className="text-xs font-bold text-foreground">{s.value}</span>
               </div>
-              <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">{stat.label}</p>
-                <p className="text-xs font-bold text-foreground">{stat.value}</p>
-              </div>
+              <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">{s.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Section label */}
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Course Structure</p>
-        <p className="text-[10px] text-muted-foreground">Click a section to view pages</p>
-      </div>
-
-      {/* Reorderable sections */}
+      {/* Sections */}
       <Reorder.Group
         axis="y"
         values={sections}
         onReorder={setSections}
-        className="space-y-1.5"
+        className="space-y-2"
       >
         <AnimatePresence initial={false}>
           {sections.map((section, index) => {
@@ -203,18 +235,22 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
               >
                 <motion.div
                   layout
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -40, transition: { duration: 0.2 } }}
-                  className={`rounded-xl border transition-colors ${
-                    isExpanded ? "border-primary/30 bg-primary/[0.02]" : "border-border bg-background hover:border-primary/20"
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                  className={`rounded-xl border overflow-hidden transition-colors ${
+                    isExpanded
+                      ? "border-primary/25 shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)]"
+                      : "border-border hover:border-primary/15"
                   }`}
                 >
-                  {/* Section header row */}
-                  <div className="flex items-center gap-0 p-2 sm:p-2.5 cursor-grab active:cursor-grabbing group">
+                  {/* Section header */}
+                  <div className={`flex items-center gap-2 p-2.5 sm:p-3 transition-colors ${
+                    isExpanded ? "bg-primary/[0.03]" : "bg-background"
+                  }`}>
                     {/* Drag handle */}
                     <div
-                      className="flex items-center justify-center w-6 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity"
+                      className="flex items-center justify-center w-5 shrink-0 cursor-grab active:cursor-grabbing opacity-30 hover:opacity-100 transition-opacity"
                       aria-label={`Drag to reorder ${section.title}`}
                       role="button"
                       tabIndex={0}
@@ -222,80 +258,87 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                       <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                     </div>
 
-                    {/* Section icon */}
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mr-3">
-                      <SectionIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                    {/* Number + Icon */}
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                      isExpanded ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                    }`}>
+                      <SectionIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                     </div>
 
-                    {/* Content - clickable to expand */}
-                    <button
-                      type="button"
-                      className="flex-1 min-w-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
-                      onClick={() => toggleExpand(section.id)}
-                      aria-expanded={isExpanded}
-                      aria-label={`${isExpanded ? "Collapse" : "Expand"} ${section.title} section`}
-                    >
-                      {isEditing ? (
-                        <div
-                          className="flex items-center gap-2"
-                          onClick={(e) => e.stopPropagation()}
-                          role="presentation"
-                        >
-                          <Input
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
-                            className="h-7 text-sm font-semibold px-2 rounded-lg"
-                            aria-label="Section title"
-                            autoFocus
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") saveEdit();
-                              if (e.key === "Escape") cancelEdit();
-                            }}
-                          />
-                          <Button size="sm" variant="default" className="h-7 px-2.5 text-xs rounded-lg" onClick={saveEdit}>Save</Button>
-                          <Button size="sm" variant="ghost" className="h-7 px-2 text-xs rounded-lg" onClick={cancelEdit}>Cancel</Button>
+                    {/* Title area */}
+                    {isEditing ? (
+                      <div className="flex-1 min-w-0 space-y-1.5" onClick={(e) => e.stopPropagation()} role="presentation">
+                        <Input
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          className="h-8 text-sm font-semibold px-2.5 rounded-lg"
+                          aria-label="Section title"
+                          placeholder="Section title"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveEdit();
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                        />
+                        <Input
+                          value={editDesc}
+                          onChange={(e) => setEditDesc(e.target.value)}
+                          className="h-7 text-xs px-2.5 rounded-lg"
+                          aria-label="Section description"
+                          placeholder="Brief description"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveEdit();
+                            if (e.key === "Escape") cancelEdit();
+                          }}
+                        />
+                        <div className="flex items-center gap-1.5">
+                          <Button size="sm" onClick={saveEdit} className="h-6 px-2.5 text-[11px] rounded-lg gap-1">
+                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            Save
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-6 px-2 text-[11px] rounded-lg">
+                            Cancel
+                          </Button>
                         </div>
-                      ) : (
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-primary/80">{String(index + 1).padStart(2, "0")}</span>
-                            <h3 className="text-sm font-semibold text-foreground truncate">{section.title}</h3>
-                          </div>
-                          <p className="text-[11px] text-muted-foreground mt-0.5 truncate pl-6">{section.description}</p>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="flex-1 min-w-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg py-0.5"
+                        onClick={() => toggleExpand(section.id)}
+                        aria-expanded={isExpanded}
+                        aria-label={`${isExpanded ? "Collapse" : "Expand"} ${section.title}`}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold text-muted-foreground tabular-nums">{String(index + 1).padStart(2, "0")}</span>
+                          <h3 className="text-[13px] font-semibold text-foreground truncate">{section.title}</h3>
+                          <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-px rounded-full font-medium shrink-0 ml-auto mr-1">
+                            {section.pages.length} {section.pages.length === 1 ? "page" : "pages"}
+                          </span>
                         </div>
-                      )}
-                    </button>
+                        <p className="text-[11px] text-muted-foreground truncate pl-5 mt-px">{section.description}</p>
+                      </button>
+                    )}
 
-                    {/* Pages count */}
-                    <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0 mx-2">
-                      {section.pages.length} pg
-                    </span>
-
-                    {/* Expand chevron */}
-                    <motion.div
-                      animate={{ rotate: isExpanded ? 90 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="shrink-0 mr-1"
-                    >
-                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                    </motion.div>
-
-                    {/* Actions */}
+                    {/* Expand chevron + actions */}
                     {!isEditing && (
-                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
+                      <div className="flex items-center gap-0.5 shrink-0">
+                        <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                        </motion.div>
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); startEdit(section); }}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                          aria-label={`Edit section ${section.title}`}
+                          className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-muted transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          aria-label={`Edit ${section.title}`}
                         >
                           <Pencil className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                         </button>
                         <button
                           type="button"
-                          onClick={(e) => { e.stopPropagation(); handleDelete(section.id); }}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                          aria-label={`Delete section ${section.title}`}
+                          onClick={(e) => { e.stopPropagation(); handleDeleteSection(section.id); }}
+                          className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          aria-label={`Delete ${section.title}`}
                         >
                           <Trash2 className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                         </button>
@@ -303,35 +346,111 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                     )}
                   </div>
 
-                  {/* Expanded pages panel */}
+                  {/* Expanded pages */}
                   <AnimatePresence initial={false}>
-                    {isExpanded && (
+                    {isExpanded && !isEditing && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="px-3 pb-3 pt-0.5">
-                          <div className="ml-8 border-l-2 border-primary/15 pl-3 space-y-1">
-                            {section.pages.map((page, pi) => (
-                              <motion.div
-                                key={page.id}
-                                initial={{ opacity: 0, x: -8 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: pi * 0.04, duration: 0.2 }}
-                                className="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg hover:bg-muted/50 transition-colors group/page"
-                              >
-                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${PAGE_TYPE_COLORS[page.type]}`}>
-                                  {page.type === "content" ? "📄" : page.type === "quiz" ? "❓" : page.type === "interactive" ? "🎯" : "📋"}
-                                </span>
-                                <span className="text-xs text-foreground font-medium flex-1 truncate">{page.title}</span>
-                                <span className="text-[9px] text-muted-foreground capitalize opacity-0 group-hover/page:opacity-100 transition-opacity">
-                                  {page.type}
-                                </span>
-                              </motion.div>
-                            ))}
+                        <div className="border-t border-border bg-background">
+                          {/* Page list */}
+                          <div className="divide-y divide-border">
+                            {section.pages.map((page, pi) => {
+                              const meta = PAGE_TYPE_META[page.type];
+                              const isEditingThisPage = editingPageId === page.id;
+
+                              return (
+                                <motion.div
+                                  key={page.id}
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  transition={{ delay: pi * 0.03 }}
+                                  className="flex items-center gap-2.5 px-4 py-2 group/page hover:bg-muted/30 transition-colors"
+                                >
+                                  {/* Page number */}
+                                  <span className="text-[10px] font-bold text-muted-foreground tabular-nums w-4 text-center shrink-0">
+                                    {pi + 1}
+                                  </span>
+
+                                  {/* Type dot */}
+                                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${meta.dotColor}`} aria-hidden="true" />
+
+                                  {isEditingThisPage ? (
+                                    <div className="flex-1 flex items-center gap-1.5 min-w-0">
+                                      <Input
+                                        value={editPageTitle}
+                                        onChange={(e) => setEditPageTitle(e.target.value)}
+                                        className="h-6 text-xs px-2 rounded-md flex-1"
+                                        aria-label="Page title"
+                                        autoFocus
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter") saveEditPage(section.id);
+                                          if (e.key === "Escape") cancelEditPage();
+                                        }}
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => saveEditPage(section.id)}
+                                        className="w-5 h-5 rounded flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
+                                        aria-label="Save page title"
+                                      >
+                                        <Check className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={cancelEditPage}
+                                        className="w-5 h-5 rounded flex items-center justify-center hover:bg-muted"
+                                        aria-label="Cancel editing"
+                                      >
+                                        <X className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <span className="text-xs text-foreground font-medium flex-1 truncate">{page.title}</span>
+                                      <span className={`text-[9px] font-medium ${meta.color} opacity-60`}>{meta.label}</span>
+
+                                      {/* Page actions */}
+                                      <div className="flex items-center gap-0.5 opacity-0 group-hover/page:opacity-100 focus-within:opacity-100 transition-opacity">
+                                        <button
+                                          type="button"
+                                          onClick={() => startEditPage(page)}
+                                          className="w-5 h-5 rounded flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                          aria-label={`Edit page ${page.title}`}
+                                        >
+                                          <Pencil className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => deletePage(section.id, page.id)}
+                                          className="w-5 h-5 rounded flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                          aria-label={`Delete page ${page.title}`}
+                                        >
+                                          <Trash2 className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Add page button */}
+                          <div className="px-4 py-2 border-t border-dashed border-border">
+                            <button
+                              type="button"
+                              onClick={() => addPage(section.id)}
+                              className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors group/add focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                              aria-label={`Add page to ${section.title}`}
+                            >
+                              <Plus className="w-3 h-3 group-hover/add:text-primary" aria-hidden="true" focusable="false" />
+                              Add page
+                            </button>
                           </div>
                         </div>
                       </motion.div>
@@ -348,7 +467,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
       <button
         type="button"
         onClick={addSection}
-        className="w-full rounded-xl border border-dashed border-border hover:border-primary/40 bg-background hover:bg-primary/[0.02] transition-colors p-2.5 flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="w-full rounded-xl border border-dashed border-border hover:border-primary/30 bg-background hover:bg-primary/[0.02] transition-all p-2.5 flex items-center justify-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         aria-label="Add new section"
       >
         <Plus className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" focusable="false" />
