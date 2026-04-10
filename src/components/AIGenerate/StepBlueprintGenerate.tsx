@@ -468,30 +468,109 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </p>
       )}
 
-      {/* Tone */}
+      {/* Content Preferences */}
       <div>
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          Tone
+          Content Preferences
         </div>
-        <ChipGroup
-          options={TONE_OPTIONS}
-          value={state.tone}
-          onChange={(v) => onChange({ tone: v as AIGenerateState["tone"] })}
-          ariaLabel="Course tone"
-        />
+        <div className="grid gap-2.5">
+          {CONTENT_PREFERENCES.map((pref) => {
+            const checked = state.contentPreferences[pref.key];
+            const Icon = pref.icon;
+            return (
+              <button
+                key={pref.key}
+                type="button"
+                role="checkbox"
+                aria-checked={checked}
+                onClick={() =>
+                  onChange({
+                    contentPreferences: {
+                      ...state.contentPreferences,
+                      [pref.key]: !checked,
+                    },
+                  })
+                }
+                className={cn(
+                  "flex items-center gap-3 w-full rounded-xl border p-3.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  checked
+                    ? "border-primary/40 bg-primary/5 shadow-sm"
+                    : "border-border bg-background hover:border-muted-foreground/30"
+                )}
+              >
+                {/* Checkbox indicator */}
+                <div
+                  className={cn(
+                    "flex items-center justify-center w-5 h-5 rounded-md shrink-0 transition-colors",
+                    checked
+                      ? "bg-primary text-primary-foreground"
+                      : "border-2 border-muted-foreground/30"
+                  )}
+                  aria-hidden="true"
+                >
+                  {checked && <Check className="w-3.5 h-3.5" />}
+                </div>
+
+                {/* Icon */}
+                <Icon className={cn("w-4.5 h-4.5 shrink-0", checked ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+
+                {/* Label */}
+                <span className={cn("flex-1 text-sm font-medium", checked ? "text-foreground" : "text-muted-foreground")}>
+                  {pref.label}
+                </span>
+
+                {/* Tooltip */}
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        className="shrink-0"
+                        onClick={(e) => e.stopPropagation()}
+                        role="img"
+                        aria-label={`Info about ${pref.label}`}
+                      >
+                        <HelpCircle className="w-4 h-4 text-muted-foreground/50 hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px]">
+                      <p className="text-xs">{pref.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Proficiency Level */}
+      {/* Course Tone */}
       <div>
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          Proficiency Level
+          Course Tone
         </div>
-        <ChipGroup
-          options={PROFICIENCY_OPTIONS}
-          value={state.proficiencyLevel}
-          onChange={(v) => onChange({ proficiencyLevel: v as AIGenerateState["proficiencyLevel"] })}
-          ariaLabel="Proficiency level"
-        />
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course tone">
+          {TONE_OPTIONS.map((opt) => {
+            const selected = state.tone === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onChange({ tone: opt.value })}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  selected
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <span className="text-base leading-none" aria-hidden="true">{opt.icon}</span>
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
