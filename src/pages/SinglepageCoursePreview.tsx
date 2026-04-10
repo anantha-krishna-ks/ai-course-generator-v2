@@ -546,7 +546,7 @@ const SinglepageCoursePreview = () => {
       style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
     >
       {/* In-preview top bar with hamburger */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border/60 bg-background/95 backdrop-blur-sm flex-shrink-0 z-20 sticky top-0">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border/60 bg-background flex-shrink-0 z-30 relative">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-1.5 rounded-lg hover:bg-muted transition-colors"
