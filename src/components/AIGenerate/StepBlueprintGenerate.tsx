@@ -300,7 +300,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
                         {/* Text */}
                         <span className={cn(
-                          "flex-1 text-sm text-foreground leading-relaxed transition-opacity",
+                          "flex-1 text-[15px] text-foreground leading-relaxed transition-opacity",
                           isRegenerating && "opacity-40"
                         )}>
                           {obj.text}
