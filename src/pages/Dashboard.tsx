@@ -368,7 +368,7 @@ const Dashboard = () => {
                 <h2 className="text-xl font-bold text-foreground mb-1">Ready to create something amazing?</h2>
                 <p className="text-sm text-muted-foreground">Start a new course or continue where you left off</p>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all">
@@ -403,6 +403,7 @@ const Dashboard = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <div className="h-6 w-px bg-border/60" aria-hidden="true" />
                 <Button 
                   variant="ghost" 
                   size="icon"
