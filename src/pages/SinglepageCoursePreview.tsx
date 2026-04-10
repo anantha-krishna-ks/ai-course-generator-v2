@@ -53,6 +53,7 @@ const SinglepageCoursePreview = () => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [outlineExpandedSections, setOutlineExpandedSections] = useState<Set<string>>(new Set());
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
 
   const isCompactView = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
   const isDeviceFramed = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
@@ -71,6 +72,25 @@ const SinglepageCoursePreview = () => {
     setExpandedSections(sections);
     setOutlineExpandedSections(new Set(sections));
   }, [navigate, previewState]);
+
+  // Track active section/page based on scroll position
+  useEffect(() => {
+    if (!data) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          setActiveItemId(visible[0].target.id.replace('preview-item-', ''));
+        }
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+    );
+    data.items.forEach((item) => {
+      const el = document.getElementById(`preview-item-${item.id}`);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [data, expandedSections]);
 
   const toggleOutlineSection = (id: string) => {
     setOutlineExpandedSections((prev) => {
@@ -596,26 +616,30 @@ const SinglepageCoursePreview = () => {
       <div className={cn("relative flex", !isCompactView && "flex-row")}>
         {/* Desktop left icon rail — only when sidebar closed */}
         {!isCompactView && !sidebarOpen && (
-          <div className="sticky top-[41px] self-start flex flex-col items-center py-2 w-10 flex-shrink-0 border-r border-border/40 bg-background z-[5]" style={{ height: 'fit-content' }}>
-            {data.items.map((item) => (
+          <div className="sticky top-[41px] self-start flex flex-col items-center gap-1 py-3 w-12 flex-shrink-0 border-r border-border/30 bg-background z-[5]" style={{ height: 'fit-content' }}>
+            {data.items.map((item, index) => (
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
                 className={cn(
-                  "w-8 h-8 flex items-center justify-center rounded-md transition-colors hover:bg-muted",
-                  item.type === "section" ? "text-primary" : "text-muted-foreground"
+                  "w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200",
+                  activeItemId === item.id
+                    ? "bg-primary/10 text-primary ring-1 ring-primary/30 shadow-sm"
+                    : item.type === "section"
+                      ? "text-primary/50 hover:bg-muted hover:text-primary"
+                      : "text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground"
                 )}
                 aria-label={`Navigate to ${item.title || "Untitled"}`}
               >
                 {item.type === "section" ? (
-                  <BookOpen className="w-4 h-4" aria-hidden="true" />
+                  <BookOpen className={cn("transition-all", activeItemId === item.id ? "w-[18px] h-[18px]" : "w-4 h-4")} aria-hidden="true" />
                 ) : (
-                  <FileText className="w-4 h-4" aria-hidden="true" />
+                  <FileText className={cn("transition-all", activeItemId === item.id ? "w-[18px] h-[18px]" : "w-4 h-4")} aria-hidden="true" />
                 )}
               </button>
             ))}
-            <div className="w-5 h-px bg-border/60 my-1" aria-hidden="true" />
-            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+            <div className="w-6 h-px bg-border/40 my-1.5" aria-hidden="true" />
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/40" aria-hidden="true" />
           </div>
         )}
 
