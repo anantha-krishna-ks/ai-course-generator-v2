@@ -438,25 +438,23 @@ export default function AIGenerateCourse() {
               Edits here will reset the next steps. Any progress on later steps may be lost. Review carefully before proceeding.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="flex flex-col items-center gap-4 pt-2">
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="dont-show-again"
-                checked={dontShowAgainChecked}
-                onCheckedChange={(checked) => setDontShowAgainChecked(checked === true)}
-                aria-label="Don't show this warning again"
-              />
-              <label htmlFor="dont-show-again" className="text-xs text-muted-foreground cursor-pointer select-none">
-                Don't show this again
-              </label>
-            </div>
-            <AlertDialogFooter className="flex-row gap-2 sm:justify-center w-full">
-              <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex-1 sm:flex-none">
-                Go back
-              </AlertDialogAction>
-              <AlertDialogCancel className="mt-0 flex-1 sm:flex-none">Stay here</AlertDialogCancel>
-            </AlertDialogFooter>
+          <div className="flex items-center gap-2 justify-center pt-1 pb-2">
+            <Checkbox
+              id="dont-show-again"
+              checked={dontShowAgainChecked}
+              onCheckedChange={(checked) => setDontShowAgainChecked(checked === true)}
+              aria-label="Don't show this warning again"
+            />
+            <label htmlFor="dont-show-again" className="text-xs text-muted-foreground cursor-pointer select-none">
+              Don't show this again
+            </label>
           </div>
+          <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
+            <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Go back
+            </AlertDialogAction>
+            <AlertDialogCancel className="mt-0">Stay here</AlertDialogCancel>
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
