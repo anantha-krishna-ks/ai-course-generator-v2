@@ -2,7 +2,17 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Check, Info } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Info, AlertTriangle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
@@ -93,17 +103,31 @@ export default function AIGenerateCourse() {
   const handleNext = () => {
     if (currentStep < 4) {
       setDirection(1);
-      setCurrentStep((s) => s + 1);
+      setCurrentStep((s) => {
+        const next = s + 1;
+        setHighestVisitedStep((h) => Math.max(h, next));
+        return next;
+      });
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setDirection(-1);
-      setCurrentStep((s) => s - 1);
+      // Only warn if user has visited steps beyond the one they're going back to
+      if (highestVisitedStep > currentStep - 1) {
+        setShowBackWarning(true);
+      } else {
+        confirmBack();
+      }
     } else {
       navigate("/dashboard");
     }
+  };
+
+  const confirmBack = () => {
+    setShowBackWarning(false);
+    setDirection(-1);
+    setCurrentStep((s) => s - 1);
   };
 
   const handleFinish = () => {
