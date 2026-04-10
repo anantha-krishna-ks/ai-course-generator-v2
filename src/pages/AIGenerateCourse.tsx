@@ -72,7 +72,6 @@ export default function AIGenerateCourse() {
   const [formState, setFormState] = useState<AIGenerateState>(initialState);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [showGenerating, setShowGenerating] = useState(false);
-  const [maxStepReached, setMaxStepReached] = useState(1);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
@@ -94,11 +93,7 @@ export default function AIGenerateCourse() {
   const handleNext = () => {
     if (currentStep < 4) {
       setDirection(1);
-      setCurrentStep((s) => {
-        const next = s + 1;
-        setMaxStepReached((prev) => Math.max(prev, next));
-        return next;
-      });
+      setCurrentStep((s) => s + 1);
     }
   };
 
@@ -383,23 +378,13 @@ export default function AIGenerateCourse() {
             </motion.div>
           </div>
 
-          {/* Disclaimer — only when editing a previously completed step */}
-          <AnimatePresence>
-            {currentStep < maxStepReached && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25 }}
-                className="mt-3 flex items-start gap-2.5 rounded-lg border border-primary/15 bg-primary/[0.08] px-4 py-3"
-              >
-                <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-                <p className="text-sm text-foreground leading-relaxed">
-                  Edits here will reset the next steps. Review carefully before proceeding.
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Disclaimer */}
+          <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-primary/15 bg-primary/[0.08] px-4 py-3">
+            <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+            <p className="text-sm text-foreground leading-relaxed">
+              Edits here will reset the next steps. Review carefully before proceeding.
+            </p>
+          </div>
         </div>
       </main>
 
