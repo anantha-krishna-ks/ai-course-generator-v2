@@ -69,7 +69,33 @@ const SinglepageCoursePreview = () => {
       if (item.type === "section") sections.add(item.id);
     });
     setExpandedSections(sections);
+    setOutlineExpandedSections(new Set(sections));
   }, [navigate, previewState]);
+
+  const toggleOutlineSection = (id: string) => {
+    setOutlineExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const scrollToSection = (id: string) => {
+    // Ensure the section is expanded in the content view
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    // Scroll to the element after a tick
+    setTimeout(() => {
+      const el = document.getElementById(`preview-item-${id}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    // Close sidebar on mobile
+    if (isCompactView) setSidebarOpen(false);
+  };
 
   const handleBack = useCallback(() => {
     if (previewState?.returnState) {
