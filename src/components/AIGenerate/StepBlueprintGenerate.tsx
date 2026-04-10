@@ -12,20 +12,44 @@ import {
   Pencil,
   Check,
   GripVertical,
+  HelpCircle,
+  MessageSquareText,
+  Blocks,
+  Image,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const TONE_OPTIONS = [
-  { value: "professional" as const, label: "Professional" },
-  { value: "conversational" as const, label: "Conversational" },
-  { value: "coaching" as const, label: "Coaching" },
+  { value: "ai-determined" as const, label: "AI Determined", icon: "🎯" },
+  { value: "professional" as const, label: "Professional", icon: "💼" },
+  { value: "conversational" as const, label: "Conversational", icon: "💬" },
+  { value: "coaching" as const, label: "Coaching", icon: "🎓" },
 ];
 
-const PROFICIENCY_OPTIONS = [
-  { value: "beginner" as const, label: "Beginner" },
-  { value: "intermediate" as const, label: "Intermediate" },
-  { value: "advanced" as const, label: "Advanced" },
-  { value: "expert" as const, label: "Expert" },
-  { value: "mixed" as const, label: "Mixed" },
+const CONTENT_PREFERENCES = [
+  {
+    key: "includeQuestions" as const,
+    label: "Include questions in sections",
+    description: "Auto-generate quiz questions within each section to reinforce learning.",
+    icon: MessageSquareText,
+  },
+  {
+    key: "interactiveBlocks" as const,
+    label: "Add interactive blocks to pages",
+    description: "Insert interactive elements like drag-and-drop, matching, and hotspots.",
+    icon: Blocks,
+  },
+  {
+    key: "addImages" as const,
+    label: "Add images to your content",
+    description: "AI will source or generate relevant images for each section.",
+    icon: Image,
+  },
 ];
 
 function ChipGroup({
