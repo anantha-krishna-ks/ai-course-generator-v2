@@ -1,6 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { cn } from "@/lib/utils";
