@@ -460,15 +460,17 @@ const SinglepageCoursePreview = () => {
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
         <div className={cn(
           "relative z-10",
-          isCompactView ? "px-4 py-5" : "px-8 sm:px-12 lg:px-16 py-10"
+          isCompactView ? "px-3 py-5" : "px-8 sm:px-12 py-10"
         )}>
-          <h1 className={cn(
-            "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
-            isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
-          )}>
-            {data.title}
-          </h1>
-          <p className="text-xs text-muted-foreground mt-1.5">Single-page course</p>
+          <div className="max-w-3xl mx-auto">
+            <h1 className={cn(
+              "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
+              isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
+            )}>
+              {data.title}
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1.5">Single-page course</p>
+          </div>
         </div>
       </div>
 
