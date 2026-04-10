@@ -1,8 +1,8 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Sparkles,
@@ -71,7 +71,21 @@ interface StepBlueprintGenerateProps {
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
 
-function generateObjectives(title: string): string[] {
+interface Objective {
+  id: string;
+  text: string;
+}
+
+let objIdCounter = 0;
+function makeId() {
+  return `obj-${++objIdCounter}-${Date.now()}`;
+}
+
+function toObjectives(texts: string[]): Objective[] {
+  return texts.map((text) => ({ id: makeId(), text }));
+}
+
+function generateObjectiveTexts(title: string): string[] {
   const t = title.toLowerCase();
   if (t.includes("machine learning") || t.includes("ml") || t.includes("ai")) {
     return [
@@ -113,20 +127,28 @@ function generateObjectives(title: string): string[] {
   ];
 }
 
+function regenerateSingleObjective(title: string, currentText: string): string {
+  const all = generateObjectiveTexts(title);
+  const other = all.filter((t) => t !== currentText);
+  return other[Math.floor(Math.random() * other.length)] || currentText;
+}
+
 export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerateProps) {
-  const [objectives, setObjectives] = useState<string[]>([]);
+  const [objectives, setObjectives] = useState<Objective[]>([]);
   const [loading, setLoading] = useState(false);
-  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const [newValue, setNewValue] = useState("");
   const [showAddInput, setShowAddInput] = useState(false);
+  const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
+  const dragConstraintsRef = useRef<HTMLDivElement>(null);
 
   const generate = useCallback(() => {
     setLoading(true);
-    setEditingIdx(null);
+    setEditingId(null);
     setShowAddInput(false);
     setTimeout(() => {
-      setObjectives(generateObjectives(state.title));
+      setObjectives(toObjectives(generateObjectiveTexts(state.title)));
       setLoading(false);
     }, 900);
   }, [state.title]);
@@ -138,35 +160,46 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelete = (idx: number) => {
-    setObjectives((prev) => prev.filter((_, i) => i !== idx));
-    if (editingIdx === idx) setEditingIdx(null);
+  const handleDelete = (id: string) => {
+    setObjectives((prev) => prev.filter((o) => o.id !== id));
+    if (editingId === id) setEditingId(null);
   };
 
-  const handleStartEdit = (idx: number) => {
-    setEditingIdx(idx);
-    setEditValue(objectives[idx]);
+  const handleStartEdit = (obj: Objective) => {
+    setEditingId(obj.id);
+    setEditValue(obj.text);
   };
 
   const handleSaveEdit = () => {
-    if (editingIdx === null || !editValue.trim()) return;
+    if (editingId === null || !editValue.trim()) return;
     setObjectives((prev) =>
-      prev.map((o, i) => (i === editingIdx ? editValue.trim() : o))
+      prev.map((o) => (o.id === editingId ? { ...o, text: editValue.trim() } : o))
     );
-    setEditingIdx(null);
+    setEditingId(null);
     setEditValue("");
   };
 
   const handleCancelEdit = () => {
-    setEditingIdx(null);
+    setEditingId(null);
     setEditValue("");
   };
 
   const handleAdd = () => {
     if (!newValue.trim()) return;
-    setObjectives((prev) => [...prev, newValue.trim()]);
+    setObjectives((prev) => [...prev, { id: makeId(), text: newValue.trim() }]);
     setNewValue("");
     setShowAddInput(false);
+  };
+
+  const handleRegenerateSingle = (obj: Objective) => {
+    setRegeneratingId(obj.id);
+    setTimeout(() => {
+      const newText = regenerateSingleObjective(state.title, obj.text);
+      setObjectives((prev) =>
+        prev.map((o) => (o.id === obj.id ? { ...o, text: newText } : o))
+      );
+      setRegeneratingId(null);
+    }, 600);
   };
 
   return (
@@ -176,7 +209,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         <div>
           <h1 className="text-lg sm:text-xl font-bold text-foreground">Learning Objectives</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            AI-suggested objectives based on your course title. Edit, remove, or add your own.
+            Drag to reorder. Edit, regenerate, or add your own objectives.
           </p>
         </div>
         <Button
@@ -185,16 +218,16 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
           onClick={generate}
           disabled={loading}
           className="rounded-full gap-1.5 shrink-0 h-8 px-3 text-xs"
-          aria-label="Regenerate learning objectives"
+          aria-label="Regenerate all learning objectives"
         >
           <RefreshCw className={cn("w-3.5 h-3.5", loading && "animate-spin")} aria-hidden="true" focusable="false" />
-          <span className="hidden sm:inline">Regenerate</span>
+          <span className="hidden sm:inline">Regenerate All</span>
         </Button>
       </div>
 
       {/* Objectives list */}
-      <div className="space-y-2">
-        <AnimatePresence mode="popLayout" initial={false}>
+      <div ref={dragConstraintsRef}>
+        <AnimatePresence mode="wait">
           {loading ? (
             <motion.div
               key="loading"
@@ -207,78 +240,126 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
               <span className="text-sm text-muted-foreground">Generating objectives…</span>
             </motion.div>
           ) : (
-            objectives.map((obj, i) => (
-              <motion.div
-                key={`${i}-${obj.slice(0, 20)}`}
-                layout
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
-                transition={{ duration: 0.25, delay: i * 0.04 }}
-                className="group rounded-xl border border-border bg-background overflow-hidden"
-              >
-                {editingIdx === i ? (
-                  /* Edit mode */
-                  <div className="flex items-center gap-2 p-3">
-                    <Input
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleSaveEdit();
-                        if (e.key === "Escape") handleCancelEdit();
-                      }}
-                      className="flex-1 text-sm h-8 rounded-lg"
-                      aria-label="Edit learning objective"
-                      autoFocus
-                    />
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={handleSaveEdit}
-                      className="h-7 w-7 p-0 text-primary hover:text-primary"
-                      aria-label="Save edit"
-                    >
-                      <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={handleCancelEdit}
-                      className="h-7 w-7 p-0 text-muted-foreground"
-                      aria-label="Cancel edit"
-                    >
-                      <X className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    </Button>
-                  </div>
-                ) : (
-                  /* View mode */
-                  <div className="flex items-start gap-3 px-4 py-3">
-                    <GripVertical className="w-4 h-4 text-muted-foreground/40 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-                    <span className="flex-1 text-sm text-foreground leading-relaxed">{obj}</span>
-                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleStartEdit(i)}
-                        className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
-                        aria-label={`Edit objective ${i + 1}`}
-                      >
-                        <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDelete(i)}
-                        className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
-                        aria-label={`Delete objective ${i + 1}`}
-                      >
-                        <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            ))
+            <Reorder.Group
+              key="list"
+              axis="y"
+              values={objectives}
+              onReorder={setObjectives}
+              className="space-y-2"
+            >
+              {objectives.map((obj, i) => {
+                const isRegenerating = regeneratingId === obj.id;
+                return (
+                  <Reorder.Item
+                    key={obj.id}
+                    value={obj}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -20, height: 0 }}
+                    transition={{ duration: 0.25, delay: i * 0.03 }}
+                    className="group rounded-xl border border-border bg-background overflow-hidden list-none"
+                    whileDrag={{
+                      scale: 1.02,
+                      boxShadow: "0 8px 25px -8px hsl(var(--foreground) / 0.15)",
+                      cursor: "grabbing",
+                    }}
+                  >
+                    {editingId === obj.id ? (
+                      /* Edit mode */
+                      <div className="flex items-center gap-2 p-3">
+                        <Input
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSaveEdit();
+                            if (e.key === "Escape") handleCancelEdit();
+                          }}
+                          className="flex-1 text-sm h-8 rounded-lg"
+                          aria-label="Edit learning objective"
+                          autoFocus
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleSaveEdit}
+                          className="h-7 w-7 p-0 text-primary hover:text-primary"
+                          aria-label="Save edit"
+                        >
+                          <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleCancelEdit}
+                          className="h-7 w-7 p-0 text-muted-foreground"
+                          aria-label="Cancel edit"
+                        >
+                          <X className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        </Button>
+                      </div>
+                    ) : (
+                      /* View mode */
+                      <div className="flex items-start gap-2 px-3 py-3">
+                        {/* Drag handle */}
+                        <div
+                          className="mt-0.5 shrink-0 cursor-grab active:cursor-grabbing touch-none"
+                          aria-label={`Drag to reorder objective ${i + 1}`}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <GripVertical className="w-4 h-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
+                        </div>
+
+                        {/* Number badge */}
+                        <span className="mt-0.5 w-5 h-5 rounded-full bg-muted text-muted-foreground text-[10px] font-bold flex items-center justify-center shrink-0" aria-hidden="true">
+                          {i + 1}
+                        </span>
+
+                        {/* Text */}
+                        <span className={cn(
+                          "flex-1 text-sm text-foreground leading-relaxed transition-opacity",
+                          isRegenerating && "opacity-40"
+                        )}>
+                          {obj.text}
+                        </span>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleRegenerateSingle(obj)}
+                            disabled={isRegenerating}
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-primary"
+                            aria-label={`Regenerate objective ${i + 1}`}
+                          >
+                            <RefreshCw className={cn("w-3.5 h-3.5", isRegenerating && "animate-spin")} aria-hidden="true" focusable="false" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleStartEdit(obj)}
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                            aria-label={`Edit objective ${i + 1}`}
+                          >
+                            <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDelete(obj.id)}
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+                            aria-label={`Delete objective ${i + 1}`}
+                          >
+                            <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </Reorder.Item>
+                );
+              })}
+            </Reorder.Group>
           )}
         </AnimatePresence>
       </div>
