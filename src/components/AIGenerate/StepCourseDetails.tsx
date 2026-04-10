@@ -121,10 +121,13 @@ function AISuggestions({
   title: string;
   onSelect: (text: string) => void;
 }) {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>(() => {
+    if (title.trim().length >= 3) return generateSuggestions(title);
+    return [];
+  });
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(() => title.trim().length >= 3);
   const [expanded, setExpanded] = useState(true);
 
   const generate = useCallback(() => {
