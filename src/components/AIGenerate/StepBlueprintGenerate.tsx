@@ -14,7 +14,6 @@ import {
   GripVertical,
 } from "lucide-react";
 import prefQuestionsImg from "@/assets/pref-questions.png";
-import prefInteractiveImg from "@/assets/pref-interactive.png";
 import prefImagesImg from "@/assets/pref-images.png";
 
 const TONE_OPTIONS = [
@@ -30,12 +29,6 @@ const CONTENT_PREFERENCES = [
     label: "Questions",
     description: "Auto-generate quizzes",
     illustration: prefQuestionsImg,
-  },
-  {
-    key: "interactiveBlocks" as const,
-    label: "Interactive",
-    description: "Drag-drop & matching",
-    illustration: prefInteractiveImg,
   },
   {
     key: "addImages" as const,
@@ -429,7 +422,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
           Content Preferences
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {CONTENT_PREFERENCES.map((pref) => {
             const checked = state.contentPreferences[pref.key];
             return (
@@ -447,7 +440,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                   })
                 }
                 className={cn(
-                  "relative flex flex-col items-center text-center rounded-2xl border p-4 pt-5 pb-4 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "relative flex flex-row items-center gap-3 text-left rounded-2xl border px-4 py-3 transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   checked
                     ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/20"
                     : "border-border bg-background hover:border-muted-foreground/25 hover:shadow-sm"
@@ -470,22 +463,22 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 <img
                   src={pref.illustration}
                   alt=""
-                  className="w-16 h-16 object-contain mb-2.5"
+                  className="w-12 h-12 object-contain shrink-0"
                   loading="lazy"
-                  width={64}
-                  height={64}
+                  width={48}
+                  height={48}
                   role="presentation"
                 />
 
-                {/* Label */}
-                <span className="text-sm font-semibold text-foreground mb-0.5">
-                  {pref.label}
-                </span>
-
-                {/* Description */}
-                <span className="text-[11px] leading-snug text-muted-foreground">
-                  {pref.description}
-                </span>
+                {/* Text */}
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold text-foreground">
+                    {pref.label}
+                  </span>
+                  <span className="text-[11px] leading-snug text-muted-foreground">
+                    {pref.description}
+                  </span>
+                </div>
               </button>
             );
           })}
