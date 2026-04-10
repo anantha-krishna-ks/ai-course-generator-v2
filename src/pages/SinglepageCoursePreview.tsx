@@ -648,6 +648,7 @@ const SinglepageCoursePreview = () => {
             </div>
           </div>
       </div>
+      </div>
     </div>
   );
 
