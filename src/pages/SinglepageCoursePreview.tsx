@@ -514,11 +514,80 @@ const SinglepageCoursePreview = () => {
     </div>
   );
 
+  // Outline sidebar content
+  const renderOutlineSidebar = () => {
+    if (!data) return null;
+    return (
+      <div className="py-3">
+        <div className="px-4 pb-3 mb-2 border-b border-border/60">
+          <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Course Outline</h3>
+        </div>
+        <div className="space-y-0.5">
+          {data.items.map((item) => {
+            if (item.type === "section") {
+              const isExpanded = outlineExpandedSections.has(item.id);
+              return (
+                <div key={item.id}>
+                  <button
+                    className="w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors hover:bg-muted/40 text-muted-foreground hover:text-foreground"
+                    onClick={() => toggleOutlineSection(item.id)}
+                    aria-expanded={isExpanded}
+                    aria-label={`${item.title || "Untitled section"}, ${isExpanded ? "collapse" : "expand"}`}
+                  >
+                    <span className="truncate pr-2 font-medium">{item.title || "Untitled section"}</span>
+                    {isExpanded ? (
+                      <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                    ) : (
+                      <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                    )}
+                  </button>
+                  {isExpanded && item.children && item.children.length > 0 && (
+                    <div>
+                      {item.children.map((child) => (
+                        <button
+                          key={child.id}
+                          onClick={() => scrollToSection(child.id.startsWith("") ? item.id : item.id)}
+                          className="w-full flex items-center gap-2 pl-8 pr-4 py-2 text-left text-[13px] text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+                          aria-label={`Navigate to ${child.title || "Untitled"}`}
+                        >
+                          {child.type === "page" ? (
+                            <FileText className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          ) : (
+                            <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          )}
+                          <span className="truncate">{child.title || "Untitled"}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+                aria-label={`Navigate to ${item.title || "Untitled"}`}
+              >
+                <FileText className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                <span className="truncate">{item.title || "Untitled"}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="rounded-full" aria-label={sidebarOpen ? "Close outline" : "Open outline"}>
+            {sidebarOpen ? <X className="w-4 h-4" aria-hidden="true" /> : <Menu className="w-4 h-4" aria-hidden="true" />}
+          </Button>
           <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full" aria-label="Go back">
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Button>
@@ -527,8 +596,34 @@ const SinglepageCoursePreview = () => {
         <DeviceToggle />
       </div>
 
-      <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
-        {renderDeviceFrame(scrollContent)}
+      <div className="flex-1 flex overflow-hidden bg-muted/20">
+        {/* Sidebar overlay backdrop (mobile) */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/30 z-30 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Sidebar */}
+        <div
+          className={cn(
+            "flex-shrink-0 bg-card border-r border-border z-40 transition-all duration-300 overflow-hidden",
+            // Mobile: fixed overlay
+            "fixed lg:relative top-[57px] bottom-0 left-0",
+            sidebarOpen ? "w-[280px] sm:w-[300px]" : "w-0 border-r-0"
+          )}
+        >
+          <ScrollArea className="h-full">
+            {renderOutlineSidebar()}
+          </ScrollArea>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 flex justify-center overflow-hidden">
+          {renderDeviceFrame(scrollContent)}
+        </div>
       </div>
     </div>
   );
