@@ -1,14 +1,21 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
   BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
-  MessageSquare, X, Check, MoreHorizontal
+  MessageSquare, MoreHorizontal, Copy, ChevronRight
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface StepEditRefineProps {
   state: AIGenerateState;
@@ -69,106 +76,116 @@ const DEFAULT_SECTIONS: Section[] = [
 
 const SECTION_ICONS = [BookOpen, Lightbulb, Wrench, ClipboardCheck];
 
-const PAGE_TYPE_META: Record<Page["type"], { label: string; color: string; dotColor: string }> = {
-  content: { label: "Content", color: "text-primary", dotColor: "bg-primary" },
-  quiz: { label: "Quiz", color: "text-warning", dotColor: "bg-warning" },
-  interactive: { label: "Interactive", color: "text-info", dotColor: "bg-info" },
-  summary: { label: "Summary", color: "text-success", dotColor: "bg-success" },
+const PAGE_TYPE_DOT: Record<Page["type"], string> = {
+  content: "bg-primary",
+  quiz: "bg-warning",
+  interactive: "bg-info",
+  summary: "bg-success",
 };
 
 export function StepEditRefine({ state }: StepEditRefineProps) {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editDesc, setEditDesc] = useState("");
-  const [expandedId, setExpandedId] = useState<string | null>("s1");
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
+  const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
-  const [editPageTitle, setEditPageTitle] = useState("");
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const pageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleDeleteSection = useCallback((id: string) => {
-    setSections((prev) => prev.filter((s) => s.id !== id));
-    if (expandedId === id) setExpandedId(null);
-  }, [expandedId]);
-
-  const startEdit = useCallback((section: Section) => {
-    setEditingId(section.id);
-    setEditTitle(section.title);
-    setEditDesc(section.description);
+  const toggleCollapse = useCallback((id: string) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }, []);
 
-  const saveEdit = useCallback(() => {
-    if (!editingId || !editTitle.trim()) return;
-    setSections((prev) =>
-      prev.map((s) => (s.id === editingId ? { ...s, title: editTitle.trim(), description: editDesc.trim() } : s))
-    );
-    setEditingId(null);
-  }, [editingId, editTitle, editDesc]);
+  const deleteSection = useCallback((id: string) => {
+    setSections((prev) => prev.filter((s) => s.id !== id));
+  }, []);
 
-  const cancelEdit = useCallback(() => {
-    setEditingId(null);
+  const duplicateSection = useCallback((id: string) => {
+    setSections((prev) => {
+      const idx = prev.findIndex((s) => s.id === id);
+      if (idx === -1) return prev;
+      const orig = prev[idx];
+      const copy: Section = {
+        ...orig,
+        id: `s${Date.now()}`,
+        title: `${orig.title} (copy)`,
+        pages: orig.pages.map((p) => ({ ...p, id: `p${Date.now()}-${Math.random().toString(36).slice(2, 6)}` })),
+      };
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+  }, []);
+
+  const updateSectionTitle = useCallback((id: string, title: string) => {
+    setSections((prev) => prev.map((s) => (s.id === id ? { ...s, title } : s)));
   }, []);
 
   const addSection = useCallback(() => {
     const newId = `s${Date.now()}`;
-    const newSection: Section = {
-      id: newId,
-      title: "New Section",
-      description: "Describe this section",
-      icon: SECTION_ICONS[sections.length % SECTION_ICONS.length],
-      pages: [{ id: `p${Date.now()}`, title: "New Page", type: "content" }],
-    };
-    setSections((prev) => [...prev, newSection]);
-    setExpandedId(newId);
-    // Auto-enter edit mode for new section
-    setEditingId(newId);
-    setEditTitle(newSection.title);
-    setEditDesc(newSection.description);
-  }, [sections.length]);
-
-  const toggleExpand = useCallback((id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
+    setSections((prev) => [
+      ...prev,
+      {
+        id: newId,
+        title: "",
+        description: "New section",
+        icon: SECTION_ICONS[prev.length % SECTION_ICONS.length],
+        pages: [{ id: `p${Date.now()}`, title: "New Page", type: "content" as const }],
+      },
+    ]);
+    setEditingTitleId(newId);
+    setTimeout(() => titleInputRef.current?.focus(), 60);
   }, []);
 
   // Page management
   const addPage = useCallback((sectionId: string) => {
+    const newPageId = `p${Date.now()}`;
     setSections((prev) =>
       prev.map((s) =>
         s.id === sectionId
-          ? { ...s, pages: [...s.pages, { id: `p${Date.now()}`, title: "New Page", type: "content" as const }] }
+          ? { ...s, pages: [...s.pages, { id: newPageId, title: "", type: "content" as const }] }
           : s
       )
     );
+    // Ensure section is expanded
+    setCollapsedIds((prev) => { const n = new Set(prev); n.delete(sectionId); return n; });
+    setEditingPageId(newPageId);
+    setTimeout(() => pageInputRef.current?.focus(), 60);
   }, []);
 
   const deletePage = useCallback((sectionId: string, pageId: string) => {
     setSections((prev) =>
       prev.map((s) =>
-        s.id === sectionId
-          ? { ...s, pages: s.pages.filter((p) => p.id !== pageId) }
-          : s
+        s.id === sectionId ? { ...s, pages: s.pages.filter((p) => p.id !== pageId) } : s
       )
     );
   }, []);
 
-  const startEditPage = useCallback((page: Page) => {
-    setEditingPageId(page.id);
-    setEditPageTitle(page.title);
+  const duplicatePage = useCallback((sectionId: string, pageId: string) => {
+    setSections((prev) =>
+      prev.map((s) => {
+        if (s.id !== sectionId) return s;
+        const idx = s.pages.findIndex((p) => p.id === pageId);
+        if (idx === -1) return s;
+        const copy = { ...s.pages[idx], id: `p${Date.now()}` };
+        const newPages = [...s.pages];
+        newPages.splice(idx + 1, 0, copy);
+        return { ...s, pages: newPages };
+      })
+    );
   }, []);
 
-  const saveEditPage = useCallback((sectionId: string) => {
-    if (!editingPageId || !editPageTitle.trim()) return;
+  const updatePageTitle = useCallback((sectionId: string, pageId: string, title: string) => {
     setSections((prev) =>
       prev.map((s) =>
         s.id === sectionId
-          ? { ...s, pages: s.pages.map((p) => (p.id === editingPageId ? { ...p, title: editPageTitle.trim() } : p)) }
+          ? { ...s, pages: s.pages.map((p) => (p.id === pageId ? { ...p, title } : p)) }
           : s
       )
     );
-    setEditingPageId(null);
-  }, [editingPageId, editPageTitle]);
-
-  const cancelEditPage = useCallback(() => {
-    setEditingPageId(null);
   }, []);
 
   const totalPages = sections.reduce((sum, s) => sum + s.pages.length, 0);
@@ -185,7 +202,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
         </p>
       </div>
 
-      {/* Compact summary strip */}
+      {/* Summary strip */}
       <div className="rounded-xl border border-border bg-muted/30 overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-2.5">
           <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -214,248 +231,289 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
         </div>
       </div>
 
-      {/* Sections */}
+      {/* Section cards */}
       <Reorder.Group
         axis="y"
         values={sections}
         onReorder={setSections}
-        className="space-y-2"
+        className="space-y-3"
       >
         <AnimatePresence initial={false}>
           {sections.map((section, index) => {
-            const isEditing = editingId === section.id;
-            const isExpanded = expandedId === section.id;
-            const SectionIcon = section.icon;
+            const isCollapsed = collapsedIds.has(section.id);
+            const isEditingTitle = editingTitleId === section.id;
 
             return (
-              <Reorder.Item
-                key={section.id}
-                value={section}
-                className="list-none"
-              >
+              <Reorder.Item key={section.id} value={section} className="list-none">
                 <motion.div
                   layout
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
-                  className={`rounded-xl border overflow-hidden transition-colors ${
-                    isExpanded
-                      ? "border-primary/25 shadow-[0_2px_12px_-4px_hsl(var(--primary)/0.1)]"
-                      : "border-border hover:border-primary/15"
-                  }`}
+                  className="group/section"
                 >
-                  {/* Section header */}
-                  <div className={`flex items-center gap-2 p-2.5 sm:p-3 transition-colors ${
-                    isExpanded ? "bg-primary/[0.03]" : "bg-background"
-                  }`}>
+                  <div className="flex items-start gap-1.5">
                     {/* Drag handle */}
                     <div
-                      className="flex items-center justify-center w-5 shrink-0 cursor-grab active:cursor-grabbing opacity-30 hover:opacity-100 transition-opacity"
-                      aria-label={`Drag to reorder ${section.title}`}
+                      className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-60 hover:!opacity-100 mt-3"
+                      aria-label={`Drag to reorder ${section.title || "Untitled section"}`}
                       role="button"
                       tabIndex={0}
                     >
-                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      <GripVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                     </div>
 
-                    {/* Number + Icon */}
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                      isExpanded ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                    }`}>
-                      <SectionIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="relative rounded-xl border border-border bg-card shadow-[0_1px_3px_0_rgba(0,0,0,0.04),0_1px_2px_-1px_rgba(0,0,0,0.03)] overflow-hidden transition-all duration-200 hover:shadow-sm">
+                        {/* Left accent */}
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40 rounded-l-xl" aria-hidden="true" />
 
-                    {/* Title area */}
-                    {isEditing ? (
-                      <div className="flex-1 min-w-0 space-y-1.5" onClick={(e) => e.stopPropagation()} role="presentation">
-                        <Input
-                          value={editTitle}
-                          onChange={(e) => setEditTitle(e.target.value)}
-                          className="h-8 text-sm font-semibold px-2.5 rounded-lg"
-                          aria-label="Section title"
-                          placeholder="Section title"
-                          autoFocus
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") saveEdit();
-                            if (e.key === "Escape") cancelEdit();
-                          }}
-                        />
-                        <Input
-                          value={editDesc}
-                          onChange={(e) => setEditDesc(e.target.value)}
-                          className="h-7 text-xs px-2.5 rounded-lg"
-                          aria-label="Section description"
-                          placeholder="Brief description"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") saveEdit();
-                            if (e.key === "Escape") cancelEdit();
-                          }}
-                        />
-                        <div className="flex items-center gap-1.5">
-                          <Button size="sm" onClick={saveEdit} className="h-6 px-2.5 text-[11px] rounded-lg gap-1">
-                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                            Save
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={cancelEdit} className="h-6 px-2 text-[11px] rounded-lg">
-                            Cancel
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        className="flex-1 min-w-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg py-0.5"
-                        onClick={() => toggleExpand(section.id)}
-                        aria-expanded={isExpanded}
-                        aria-label={`${isExpanded ? "Collapse" : "Expand"} ${section.title}`}
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-muted-foreground tabular-nums">{String(index + 1).padStart(2, "0")}</span>
-                          <h3 className="text-[13px] font-semibold text-foreground truncate">{section.title}</h3>
-                          <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-px rounded-full font-medium shrink-0 ml-auto mr-1">
-                            {section.pages.length} {section.pages.length === 1 ? "page" : "pages"}
+                        {/* Header */}
+                        <div className="pl-5 pr-3 pt-3 pb-2.5 flex items-center gap-2.5">
+                          {/* Section number pill */}
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-primary-foreground bg-primary px-2 py-0.5 rounded-full shrink-0">
+                            {String(index + 1).padStart(2, "0")}
                           </span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground truncate pl-5 mt-px">{section.description}</p>
-                      </button>
-                    )}
 
-                    {/* Expand chevron + actions */}
-                    {!isEditing && (
-                      <div className="flex items-center gap-0.5 shrink-0">
-                        <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                        </motion.div>
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); startEdit(section); }}
-                          className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-muted transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          aria-label={`Edit ${section.title}`}
-                        >
-                          <Pencil className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); handleDeleteSection(section.id); }}
-                          className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          aria-label={`Delete ${section.title}`}
-                        >
-                          <Trash2 className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Expanded pages */}
-                  <AnimatePresence initial={false}>
-                    {isExpanded && !isEditing && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div className="border-t border-border bg-background">
-                          {/* Page list */}
-                          <div className="divide-y divide-border">
-                            {section.pages.map((page, pi) => {
-                              const meta = PAGE_TYPE_META[page.type];
-                              const isEditingThisPage = editingPageId === page.id;
-
-                              return (
-                                <motion.div
-                                  key={page.id}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: pi * 0.03 }}
-                                  className="flex items-center gap-2.5 px-4 py-2 group/page hover:bg-muted/30 transition-colors"
-                                >
-                                  {/* Page number */}
-                                  <span className="text-[10px] font-bold text-muted-foreground tabular-nums w-4 text-center shrink-0">
-                                    {pi + 1}
-                                  </span>
-
-                                  {/* Type dot */}
-                                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${meta.dotColor}`} aria-hidden="true" />
-
-                                  {isEditingThisPage ? (
-                                    <div className="flex-1 flex items-center gap-1.5 min-w-0">
-                                      <Input
-                                        value={editPageTitle}
-                                        onChange={(e) => setEditPageTitle(e.target.value)}
-                                        className="h-6 text-xs px-2 rounded-md flex-1"
-                                        aria-label="Page title"
-                                        autoFocus
-                                        onKeyDown={(e) => {
-                                          if (e.key === "Enter") saveEditPage(section.id);
-                                          if (e.key === "Escape") cancelEditPage();
-                                        }}
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => saveEditPage(section.id)}
-                                        className="w-5 h-5 rounded flex items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
-                                        aria-label="Save page title"
-                                      >
-                                        <Check className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={cancelEditPage}
-                                        className="w-5 h-5 rounded flex items-center justify-center hover:bg-muted"
-                                        aria-label="Cancel editing"
-                                      >
-                                        <X className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <>
-                                      <span className="text-xs text-foreground font-medium flex-1 truncate">{page.title}</span>
-                                      <span className={`text-[9px] font-medium ${meta.color} opacity-60`}>{meta.label}</span>
-
-                                      {/* Page actions */}
-                                      <div className="flex items-center gap-0.5 opacity-0 group-hover/page:opacity-100 focus-within:opacity-100 transition-opacity">
-                                        <button
-                                          type="button"
-                                          onClick={() => startEditPage(page)}
-                                          className="w-5 h-5 rounded flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                          aria-label={`Edit page ${page.title}`}
-                                        >
-                                          <Pencil className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                                        </button>
-                                        <button
-                                          type="button"
-                                          onClick={() => deletePage(section.id, page.id)}
-                                          className="w-5 h-5 rounded flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                          aria-label={`Delete page ${page.title}`}
-                                        >
-                                          <Trash2 className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                                        </button>
-                                      </div>
-                                    </>
-                                  )}
-                                </motion.div>
-                              );
-                            })}
+                          {/* Title */}
+                          <div className="flex-1 min-w-0">
+                            {isEditingTitle ? (
+                              <input
+                                ref={titleInputRef}
+                                type="text"
+                                value={section.title}
+                                onChange={(e) => updateSectionTitle(section.id, e.target.value)}
+                                onBlur={() => setEditingTitleId(null)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === "Escape") {
+                                    setEditingTitleId(null);
+                                  }
+                                }}
+                                aria-label={`Section ${index + 1} title`}
+                                autoComplete="off"
+                                className="w-full text-sm font-semibold text-foreground bg-transparent outline-none placeholder:text-muted-foreground border-b border-primary/30 pb-0.5"
+                                placeholder="Untitled section..."
+                                autoFocus
+                              />
+                            ) : (
+                              <button
+                                type="button"
+                                className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                                onClick={() => {
+                                  setEditingTitleId(section.id);
+                                  setTimeout(() => titleInputRef.current?.focus(), 30);
+                                }}
+                                aria-label={`Edit title: ${section.title || "Untitled section"}`}
+                              >
+                                <h3 className="text-sm font-semibold text-foreground truncate">
+                                  {section.title || <span className="text-muted-foreground">Untitled section...</span>}
+                                </h3>
+                                <p className="text-[11px] text-muted-foreground truncate mt-px">{section.description}</p>
+                              </button>
+                            )}
                           </div>
 
-                          {/* Add page button */}
-                          <div className="px-4 py-2 border-t border-dashed border-border">
+                          {/* Actions */}
+                          <div className="flex items-center gap-0.5 shrink-0">
+                            <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full mr-1">
+                              {section.pages.length} {section.pages.length === 1 ? "page" : "pages"}
+                            </span>
+
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted data-[state=open]:bg-primary/10 data-[state=open]:border-primary/30 flex items-center justify-center transition-colors shrink-0"
+                                  aria-label={`More options for ${section.title || "section"}`}
+                                >
+                                  <MoreHorizontal className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-48 bg-background border border-border p-1.5 z-50">
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    setEditingTitleId(section.id);
+                                    setTimeout(() => titleInputRef.current?.focus(), 30);
+                                  }}
+                                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                                >
+                                  <Pencil className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  Rename
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => addPage(section.id)}
+                                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                                >
+                                  <Plus className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  Add page
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => duplicateSection(section.id)}
+                                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                                >
+                                  <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  Duplicate
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => deleteSection(section.id)}
+                                  className="cursor-pointer gap-3 px-3 py-2 text-destructive hover:!bg-muted focus:!bg-muted focus:!text-destructive"
+                                >
+                                  <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                  Delete section
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+
                             <button
-                              type="button"
-                              onClick={() => addPage(section.id)}
-                              className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors group/add focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-                              aria-label={`Add page to ${section.title}`}
+                              onClick={() => toggleCollapse(section.id)}
+                              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                              aria-label={isCollapsed ? "Expand section" : "Collapse section"}
                             >
-                              <Plus className="w-3 h-3 group-hover/add:text-primary" aria-hidden="true" focusable="false" />
-                              Add page
+                              <ChevronDown
+                                className={cn(
+                                  "w-3.5 h-3.5 text-muted-foreground transition-transform duration-300",
+                                  isCollapsed && "-rotate-90"
+                                )}
+                                aria-hidden="true"
+                                focusable="false"
+                              />
                             </button>
                           </div>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+
+                        {/* Pages tree */}
+                        <div
+                          className={cn(
+                            "grid transition-all duration-300 ease-in-out",
+                            isCollapsed ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
+                          )}
+                        >
+                          <div className="overflow-hidden">
+                            <div className="pl-7 pr-3 pb-2.5">
+                              {section.pages.length === 0 && (
+                                <div className="flex items-center gap-3 py-3 px-3 rounded-lg border border-dashed border-border/50 bg-accent/20 mb-1.5">
+                                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                    <FileText className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">No pages yet. Add pages to build this section.</p>
+                                </div>
+                              )}
+
+                              {section.pages.map((page, pi) => {
+                                const isLast = pi === section.pages.length - 1;
+                                const isEditingThisPage = editingPageId === page.id;
+
+                                return (
+                                  <div key={page.id} className="group/row relative flex items-center">
+                                    {/* Tree connector */}
+                                    <div className="relative w-5 flex items-center justify-center shrink-0 self-stretch">
+                                      <div
+                                        className={cn(
+                                          "absolute left-1/2 -translate-x-1/2 w-px bg-border/50",
+                                          pi === 0 ? "top-1/2 bottom-0" : isLast ? "top-0 h-1/2" : "inset-y-0"
+                                        )}
+                                      />
+                                      <div className="absolute left-1/2 top-1/2 -translate-y-1/2 w-2.5 h-px bg-border/50" />
+                                      <div className={cn(
+                                        "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[5px] h-[5px] rounded-full border-2 border-background z-10 transition-colors",
+                                        PAGE_TYPE_DOT[page.type]
+                                      )} />
+                                    </div>
+
+                                    {/* Page row */}
+                                    <div className="flex-1 flex items-center gap-2 py-1.5 pr-2 pl-2 rounded-lg hover:bg-accent/40 transition-colors min-w-0 my-px">
+                                      <div className="w-5 h-5 rounded bg-accent/60 flex items-center justify-center shrink-0">
+                                        <FileText className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                      </div>
+
+                                      {isEditingThisPage ? (
+                                        <input
+                                          ref={pageInputRef}
+                                          type="text"
+                                          value={page.title}
+                                          onChange={(e) => updatePageTitle(section.id, page.id, e.target.value)}
+                                          onBlur={() => setEditingPageId(null)}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === "Escape") setEditingPageId(null);
+                                          }}
+                                          aria-label="Page title"
+                                          autoComplete="off"
+                                          className="flex-1 text-[12px] font-medium text-foreground bg-transparent outline-none placeholder:text-muted-foreground border-b border-primary/30 pb-px min-w-0"
+                                          placeholder="Untitled page..."
+                                          autoFocus
+                                        />
+                                      ) : (
+                                        <span
+                                          className="flex-1 text-[12px] font-medium text-foreground truncate min-w-0 cursor-text"
+                                          onClick={() => {
+                                            setEditingPageId(page.id);
+                                            setTimeout(() => pageInputRef.current?.focus(), 30);
+                                          }}
+                                          role="button"
+                                          tabIndex={0}
+                                          onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                              e.preventDefault();
+                                              setEditingPageId(page.id);
+                                            }
+                                          }}
+                                        >
+                                          {page.title || <span className="text-muted-foreground">Untitled page...</span>}
+                                        </span>
+                                      )}
+
+                                      {/* Page actions on hover */}
+                                      {!isEditingThisPage && (
+                                        <div className="flex items-center gap-0 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
+                                          <button
+                                            type="button"
+                                            onClick={() => duplicatePage(section.id, page.id)}
+                                            className="w-5 h-5 rounded flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            aria-label={`Duplicate page ${page.title}`}
+                                          >
+                                            <Copy className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => deletePage(section.id, page.id)}
+                                            className="w-5 h-5 rounded flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            aria-label={`Delete page ${page.title}`}
+                                          >
+                                            <Trash2 className="w-2.5 h-2.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+
+                              {/* Add page (tree-style) */}
+                              <div className="relative flex items-center">
+                                <div className="relative w-5 flex items-center justify-center shrink-0 self-stretch">
+                                  {section.pages.length > 0 && (
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-0 h-1/2 w-px bg-border/50" />
+                                  )}
+                                  <div className={cn(
+                                    "absolute left-1/2 top-1/2 -translate-y-1/2 w-2.5 h-px bg-border/50",
+                                    section.pages.length > 0 ? "opacity-100" : "opacity-0"
+                                  )} />
+                                </div>
+                                <button
+                                  onClick={() => addPage(section.id)}
+                                  className="flex items-center gap-1.5 py-1.5 pl-2 pr-3 rounded-lg text-[11px] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-150"
+                                  aria-label={`Add page to ${section.title || "section"}`}
+                                >
+                                  <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                                  <span>Add page</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               </Reorder.Item>
             );
