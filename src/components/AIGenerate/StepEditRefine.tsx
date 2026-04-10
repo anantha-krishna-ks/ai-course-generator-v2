@@ -1,46 +1,91 @@
 import { useState, useCallback } from "react";
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
-import { Pencil, Trash2, GripVertical, Plus, FileText } from "lucide-react";
+import {
+  Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
+  BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronRight, File,
+  Users, Target, MessageSquare
+} from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
-
-import thumbIntro from "@/assets/section-thumb-intro.png";
-import thumbConcepts from "@/assets/section-thumb-concepts.png";
-import thumbPractical from "@/assets/section-thumb-practical.png";
-import thumbAssessment from "@/assets/section-thumb-assessment.png";
 
 interface StepEditRefineProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
 
+interface Page {
+  id: string;
+  title: string;
+  type: "content" | "quiz" | "interactive" | "summary";
+}
+
 interface Section {
   id: string;
   title: string;
-  pages: number;
   description: string;
-  thumbnail: string;
+  icon: typeof BookOpen;
+  pages: Page[];
 }
 
 const DEFAULT_SECTIONS: Section[] = [
-  { id: "s1", title: "Introduction", pages: 2, description: "Course overview and learning objectives", thumbnail: thumbIntro },
-  { id: "s2", title: "Core Concepts", pages: 4, description: "Fundamental principles and key theories", thumbnail: thumbConcepts },
-  { id: "s3", title: "Practical Application", pages: 3, description: "Hands-on exercises and scenarios", thumbnail: thumbPractical },
-  { id: "s4", title: "Assessment & Review", pages: 2, description: "Knowledge checks and summary", thumbnail: thumbAssessment },
+  {
+    id: "s1", title: "Introduction", description: "Course overview and learning objectives",
+    icon: BookOpen,
+    pages: [
+      { id: "p1-1", title: "Welcome & Overview", type: "content" },
+      { id: "p1-2", title: "Learning Objectives", type: "content" },
+    ],
+  },
+  {
+    id: "s2", title: "Core Concepts", description: "Fundamental principles and key theories",
+    icon: Lightbulb,
+    pages: [
+      { id: "p2-1", title: "Key Definitions", type: "content" },
+      { id: "p2-2", title: "Theoretical Framework", type: "content" },
+      { id: "p2-3", title: "Case Study Analysis", type: "interactive" },
+      { id: "p2-4", title: "Concept Check", type: "quiz" },
+    ],
+  },
+  {
+    id: "s3", title: "Practical Application", description: "Hands-on exercises and real-world scenarios",
+    icon: Wrench,
+    pages: [
+      { id: "p3-1", title: "Guided Walkthrough", type: "content" },
+      { id: "p3-2", title: "Practice Exercise", type: "interactive" },
+      { id: "p3-3", title: "Real-world Scenario", type: "content" },
+    ],
+  },
+  {
+    id: "s4", title: "Assessment & Review", description: "Knowledge checks and course summary",
+    icon: ClipboardCheck,
+    pages: [
+      { id: "p4-1", title: "Final Assessment", type: "quiz" },
+      { id: "p4-2", title: "Course Summary", type: "summary" },
+    ],
+  },
 ];
 
-const THUMBS = [thumbIntro, thumbConcepts, thumbPractical, thumbAssessment];
+const SECTION_ICONS = [BookOpen, Lightbulb, Wrench, ClipboardCheck];
+
+const PAGE_TYPE_COLORS: Record<Page["type"], string> = {
+  content: "bg-primary/10 text-primary",
+  quiz: "bg-warning/10 text-warning",
+  interactive: "bg-info/10 text-info",
+  summary: "bg-success/10 text-success",
+};
 
 export function StepEditRefine({ state }: StepEditRefineProps) {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleDelete = useCallback((id: string) => {
     setSections((prev) => prev.filter((s) => s.id !== id));
-  }, []);
+    if (expandedId === id) setExpandedId(null);
+  }, [expandedId]);
 
   const startEdit = useCallback((section: Section) => {
     setEditingId(section.id);
@@ -67,50 +112,74 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
       ...prev,
       {
         id: newId,
-        title: `New Section`,
-        pages: 1,
+        title: "New Section",
         description: "New section description",
-        thumbnail: THUMBS[prev.length % THUMBS.length],
+        icon: SECTION_ICONS[prev.length % SECTION_ICONS.length],
+        pages: [{ id: `p${Date.now()}`, title: "New Page", type: "content" as const }],
       },
     ]);
   }, []);
 
-  const totalPages = sections.reduce((sum, s) => sum + s.pages, 0);
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const totalPages = sections.reduce((sum, s) => sum + s.pages.length, 0);
+
+  const durationLabel = state.duration === "brief" ? "~15 min" : state.duration === "extended" ? "~90 min" : "~45 min";
+  const toneLabel = state.tone === "ai-determined" ? "AI Selected" : state.tone.charAt(0).toUpperCase() + state.tone.slice(1);
 
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-lg sm:text-xl font-bold text-foreground">Review your course</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Drag to reorder, edit or remove sections before finalizing.
-          </p>
+      <div>
+        <h1 className="text-lg sm:text-xl font-bold text-foreground">Course Overview</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          Review your course structure, reorder sections, and explore pages.
+        </p>
+      </div>
+
+      {/* Summary dashboard */}
+      <div className="rounded-xl border border-border bg-background overflow-hidden">
+        {/* Course title row */}
+        <div className="px-4 py-3 border-b border-border flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <FileText className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-sm font-bold text-foreground truncate">{state.title || "Untitled Course"}</h2>
+            <p className="text-[11px] text-muted-foreground truncate">
+              {state.intendedLearners || "All learners"}
+            </p>
+          </div>
+          <AISparkles className="w-4 h-4 shrink-0 opacity-50" />
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[11px] font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-            {sections.length} sections
-          </span>
-          <span className="text-[11px] font-medium text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-            {totalPages} pages
-          </span>
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-border">
+          {[
+            { icon: Layers, label: "Sections", value: String(sections.length) },
+            { icon: File, label: "Pages", value: String(totalPages) },
+            { icon: Clock, label: "Duration", value: durationLabel },
+            { icon: MessageSquare, label: "Tone", value: toneLabel },
+          ].map((stat) => (
+            <div key={stat.label} className="px-3 py-2.5 flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                <stat.icon className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">{stat.label}</p>
+                <p className="text-xs font-bold text-foreground">{stat.value}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Course title card */}
-      <div className="rounded-xl border border-border bg-background p-3.5 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-          <FileText className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Course Title</p>
-          <h2 className="text-sm font-bold text-foreground truncate">{state.title || "Untitled Course"}</h2>
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
-            {state.layoutType === "multi-page" ? "Multi-page" : "Single-page"}
-          </span>
-        </div>
+      {/* Section label */}
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Course Structure</p>
+        <p className="text-[10px] text-muted-foreground">Click a section to view pages</p>
       </div>
 
       {/* Reorderable sections */}
@@ -118,11 +187,13 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
         axis="y"
         values={sections}
         onReorder={setSections}
-        className="space-y-2"
+        className="space-y-1.5"
       >
         <AnimatePresence initial={false}>
           {sections.map((section, index) => {
             const isEditing = editingId === section.id;
+            const isExpanded = expandedId === section.id;
+            const SectionIcon = section.icon;
 
             return (
               <Reorder.Item
@@ -135,9 +206,12 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -40, transition: { duration: 0.2 } }}
-                  className="rounded-xl border border-border bg-background hover:border-primary/30 transition-colors group cursor-grab active:cursor-grabbing"
+                  className={`rounded-xl border transition-colors ${
+                    isExpanded ? "border-primary/30 bg-primary/[0.02]" : "border-border bg-background hover:border-primary/20"
+                  }`}
                 >
-                  <div className="flex items-center gap-0 p-2 sm:p-2.5">
+                  {/* Section header row */}
+                  <div className="flex items-center gap-0 p-2 sm:p-2.5 cursor-grab active:cursor-grabbing group">
                     {/* Drag handle */}
                     <div
                       className="flex items-center justify-center w-6 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity"
@@ -148,23 +222,25 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                       <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                     </div>
 
-                    {/* Thumbnail */}
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-muted/50 shrink-0 mr-3">
-                      <img
-                        src={section.thumbnail}
-                        alt=""
-                        role="presentation"
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        width={56}
-                        height={56}
-                      />
+                    {/* Section icon */}
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mr-3">
+                      <SectionIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
+                    {/* Content - clickable to expand */}
+                    <button
+                      type="button"
+                      className="flex-1 min-w-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+                      onClick={() => toggleExpand(section.id)}
+                      aria-expanded={isExpanded}
+                      aria-label={`${isExpanded ? "Collapse" : "Expand"} ${section.title} section`}
+                    >
                       {isEditing ? (
-                        <div className="flex items-center gap-2">
+                        <div
+                          className="flex items-center gap-2"
+                          onClick={(e) => e.stopPropagation()}
+                          role="presentation"
+                        >
                           <Input
                             value={editTitle}
                             onChange={(e) => setEditTitle(e.target.value)}
@@ -176,47 +252,40 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                               if (e.key === "Escape") cancelEdit();
                             }}
                           />
-                          <Button
-                            size="sm"
-                            variant="default"
-                            className="h-7 px-2.5 text-xs rounded-lg"
-                            onClick={saveEdit}
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 px-2 text-xs rounded-lg"
-                            onClick={cancelEdit}
-                          >
-                            Cancel
-                          </Button>
+                          <Button size="sm" variant="default" className="h-7 px-2.5 text-xs rounded-lg" onClick={saveEdit}>Save</Button>
+                          <Button size="sm" variant="ghost" className="h-7 px-2 text-xs rounded-lg" onClick={cancelEdit}>Cancel</Button>
                         </div>
                       ) : (
-                        <>
+                        <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-primary bg-primary/10 w-5 h-5 rounded-md flex items-center justify-center shrink-0">
-                              {index + 1}
-                            </span>
+                            <span className="text-[10px] font-bold text-primary/80">{String(index + 1).padStart(2, "0")}</span>
                             <h3 className="text-sm font-semibold text-foreground truncate">{section.title}</h3>
                           </div>
-                          <p className="text-[11px] text-muted-foreground mt-0.5 truncate ml-7">{section.description}</p>
-                        </>
+                          <p className="text-[11px] text-muted-foreground mt-0.5 truncate pl-6">{section.description}</p>
+                        </div>
                       )}
-                    </div>
+                    </button>
 
-                    {/* Pages badge */}
+                    {/* Pages count */}
                     <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full shrink-0 mx-2">
-                      {section.pages} {section.pages === 1 ? "page" : "pages"}
+                      {section.pages.length} pg
                     </span>
+
+                    {/* Expand chevron */}
+                    <motion.div
+                      animate={{ rotate: isExpanded ? 90 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="shrink-0 mr-1"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                    </motion.div>
 
                     {/* Actions */}
                     {!isEditing && (
                       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
                         <button
                           type="button"
-                          onClick={() => startEdit(section)}
+                          onClick={(e) => { e.stopPropagation(); startEdit(section); }}
                           className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                           aria-label={`Edit section ${section.title}`}
                         >
@@ -224,15 +293,50 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDelete(section.id)}
+                          onClick={(e) => { e.stopPropagation(); handleDelete(section.id); }}
                           className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                           aria-label={`Delete section ${section.title}`}
                         >
-                          <Trash2 className="w-3 h-3 text-muted-foreground hover:text-destructive" aria-hidden="true" focusable="false" />
+                          <Trash2 className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                         </button>
                       </div>
                     )}
                   </div>
+
+                  {/* Expanded pages panel */}
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-3 pb-3 pt-0.5">
+                          <div className="ml-8 border-l-2 border-primary/15 pl-3 space-y-1">
+                            {section.pages.map((page, pi) => (
+                              <motion.div
+                                key={page.id}
+                                initial={{ opacity: 0, x: -8 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: pi * 0.04, duration: 0.2 }}
+                                className="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg hover:bg-muted/50 transition-colors group/page"
+                              >
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${PAGE_TYPE_COLORS[page.type]}`}>
+                                  {page.type === "content" ? "📄" : page.type === "quiz" ? "❓" : page.type === "interactive" ? "🎯" : "📋"}
+                                </span>
+                                <span className="text-xs text-foreground font-medium flex-1 truncate">{page.title}</span>
+                                <span className="text-[9px] text-muted-foreground capitalize opacity-0 group-hover/page:opacity-100 transition-opacity">
+                                  {page.type}
+                                </span>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               </Reorder.Item>
             );
@@ -250,14 +354,6 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
         <Plus className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" focusable="false" />
         <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">Add Section</span>
       </button>
-
-      {/* AI hint */}
-      <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-3 flex items-start gap-2.5">
-        <AISparkles className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-        <p className="text-xs text-muted-foreground">
-          Drag sections to reorder, click edit to rename, or <span className="font-medium text-foreground">Finish</span> to save your course.
-        </p>
-      </div>
     </div>
   );
 }
