@@ -444,35 +444,34 @@ const SinglepageCoursePreview = () => {
   const scrollContent = (
     <div
       className={cn(
-        "flex flex-col bg-background",
-        isDeviceFramed ? "min-h-full flex-1" : "flex-1 min-h-[calc(100vh-57px)]",
-        !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg",
-        isDeviceFramed && "w-full"
+        "bg-background w-full",
+        isDeviceFramed ? "flex-1 overflow-auto" : "flex-1 flex flex-col min-h-[calc(100vh-57px)]",
+        !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg mx-auto"
       )}
       style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
     >
       {/* Course header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
         <div className={cn(
           "relative z-10",
-          isCompactView ? "px-5 py-8" : "px-8 sm:px-12 lg:px-16 py-10"
+          isCompactView ? "px-4 py-5" : "px-8 sm:px-12 lg:px-16 py-10"
         )}>
           <h1 className={cn(
-            "font-semibold text-foreground leading-[1.1] tracking-tight",
-            isCompactView ? "text-xl" : "text-2xl sm:text-3xl lg:text-4xl"
+            "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
+            isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
           )}>
             {data.title}
           </h1>
-          <p className="text-sm text-muted-foreground mt-2">Single-page course</p>
+          <p className="text-xs text-muted-foreground mt-1.5">Single-page course</p>
         </div>
       </div>
 
       {/* All content in one scrollable area */}
       <div className={cn(
         "flex-1",
-        isCompactView ? "px-4 py-6" : "px-8 sm:px-12 py-10"
+        isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
       )}>
-        <div className="max-w-3xl mx-auto space-y-8">
+        <div className="max-w-3xl mx-auto space-y-6">
           {renderSinglePageContent()}
         </div>
       </div>
