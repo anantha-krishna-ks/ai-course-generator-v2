@@ -540,13 +540,13 @@ const SinglepageCoursePreview = () => {
     <div
       className={cn(
         "bg-background w-full relative",
-        isDeviceFramed ? "flex-1 flex flex-col overflow-hidden" : "flex-1 flex flex-col min-h-[calc(100vh-57px)]",
+        isDeviceFramed ? "flex-1 overflow-auto" : "flex-1 overflow-auto min-h-[calc(100vh-57px)]",
         !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg mx-auto"
       )}
       style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
     >
-      {/* In-preview top bar with hamburger */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-border/60 bg-background flex-shrink-0 z-30 relative">
+      {/* In-preview top bar with hamburger — sticky within the scroll container */}
+      <div className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 border-b border-border/60 bg-background">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-1.5 rounded-lg hover:bg-muted transition-colors"
@@ -562,40 +562,40 @@ const SinglepageCoursePreview = () => {
         </span>
       </div>
 
-      {/* Body: sidebar + content */}
-      <div className="flex-1 flex overflow-hidden relative">
-        {/* Sidebar overlay backdrop */}
-        {sidebarOpen && (
-          <div
-            className="absolute inset-0 bg-black/30 z-10"
-            onClick={() => setSidebarOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Slide-in sidebar */}
+      {/* Sidebar overlay backdrop */}
+      {sidebarOpen && (
         <div
-          className={cn(
-            "absolute top-0 bottom-0 left-0 z-20 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
-            isCompactView ? "w-[220px]" : "w-[260px]",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          )}
-        >
-          <div className="px-4 py-3 border-b border-border/60 flex-shrink-0">
-            <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-2">
-              <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
-              Course Outline
-            </h3>
-          </div>
-          <ScrollArea className="flex-1">
-            <div className="py-1">
-              {renderOutlineItems()}
-            </div>
-          </ScrollArea>
-        </div>
+          className="fixed inset-0 bg-black/30 z-10"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+          style={{ top: 0 }}
+        />
+      )}
 
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-auto">
+      {/* Slide-in sidebar — fixed relative to the scroll container */}
+      <div
+        className={cn(
+          "fixed top-0 bottom-0 left-0 z-20 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
+          isCompactView ? "w-[220px]" : "w-[260px]",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        style={{ position: 'absolute' }}
+      >
+        <div className="px-4 py-3 border-b border-border/60 flex-shrink-0">
+          <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-2">
+            <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+            Course Outline
+          </h3>
+        </div>
+        <ScrollArea className="flex-1">
+          <div className="py-1">
+            {renderOutlineItems()}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Course content */}
+      <div className="relative">
           {/* Course header */}
           <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
             <div className={cn(
