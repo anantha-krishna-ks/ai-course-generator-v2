@@ -419,6 +419,26 @@ export default function AIGenerateCourse() {
         courseTitle={formState.title || "AI Generated Course"}
         onComplete={handleGenerationComplete}
       />
+
+      <AlertDialog open={showBackWarning} onOpenChange={setShowBackWarning}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+              <AlertTriangle className="w-6 h-6 text-destructive" aria-hidden="true" focusable="false" />
+            </div>
+            <AlertDialogTitle className="text-center">Go back and edit?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Edits here will reset the next steps. Any progress on later steps may be lost. Review carefully before proceeding.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
+            <AlertDialogCancel className="mt-0">Stay here</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Go back
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
