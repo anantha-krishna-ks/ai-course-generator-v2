@@ -10,8 +10,41 @@ interface StepCourseIntentProps {
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
 
+const DUMMY_SUGGESTIONS: Record<string, string> = {
+  default:
+    "Equip learners with practical skills and foundational knowledge they can immediately apply in real-world scenarios.",
+  machine:
+    "Enable learners to understand core ML algorithms, evaluate model performance, and deploy simple predictive models.",
+  leadership:
+    "Help new managers build strong teams by improving communication, feedback, and performance coaching skills.",
+  design:
+    "Empower learners to apply design thinking principles and create user-centered solutions through iterative prototyping.",
+  safety:
+    "Ensure employees can identify workplace hazards, follow safety protocols, and respond effectively to emergencies.",
+  data:
+    "Give learners the ability to collect, clean, analyze, and visualize data to support evidence-based decision making.",
+};
+
+function pickSuggestion(title: string): string {
+  const lower = title.toLowerCase();
+  for (const [key, value] of Object.entries(DUMMY_SUGGESTIONS)) {
+    if (key !== "default" && lower.includes(key)) return value;
+  }
+  return DUMMY_SUGGESTIONS.default;
+}
+
 export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
-  const [exampleRevealed, setExampleRevealed] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const showAskAI = state.title.trim().length >= 2;
+
+  const handleAskAI = useCallback(() => {
+    if (aiLoading) return;
+    setAiLoading(true);
+    setTimeout(() => {
+      onChange({ intendedLearners: pickSuggestion(state.title) });
+      setAiLoading(false);
+    }, 900);
+  }, [state.title, aiLoading, onChange]);
 
   return (
     <div className="space-y-5">
@@ -38,9 +71,43 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
-        <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label uppercase tracking-wider">
-          What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-        </label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label uppercase tracking-wider">
+            What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+          </label>
+
+          {showAskAI && (
+            <motion.button
+              type="button"
+              onClick={handleAskAI}
+              disabled={aiLoading}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors disabled:opacity-60"
+              aria-label="Ask AI to suggest a learning outcome"
+            >
+              {aiLoading ? (
+                <Loader2 className="w-3 h-3 animate-spin text-primary" aria-hidden="true" focusable="false" />
+              ) : (
+                <>
+                  <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-learning)' }} aria-hidden="true" focusable="false" />
+                  <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
+                    <defs>
+                      <linearGradient id="ai-gradient-learning" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
+                        <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </>
+              )}
+              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">
+                {aiLoading ? "Generating…" : "Ask AI"}
+              </span>
+            </motion.button>
+          )}
+        </div>
 
         <Textarea
           id="learning-outcome"
@@ -49,52 +116,6 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           placeholder="Describe the key skills or knowledge learners will walk away with…"
           className="min-h-[80px] resize-none rounded-xl text-sm"
         />
-
-        {/* Persistent example hint - click to reveal, stays visible forever */}
-        <AnimatePresence>
-          {!exampleRevealed ? (
-            <motion.button
-              type="button"
-              onClick={() => setExampleRevealed(true)}
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0, height: 0, marginTop: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-primary font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-0.5 transition-colors"
-              aria-label="Show an example of a learning outcome"
-            >
-              <Lightbulb className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              Need inspiration?
-            </motion.button>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="overflow-hidden"
-            >
-              <div className="flex items-start gap-2.5 text-xs bg-muted/40 border border-border/60 rounded-xl px-3.5 py-3">
-                <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary/70" aria-hidden="true" focusable="false" />
-                <div className="space-y-1 flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Example</span>
-                    <button
-                      type="button"
-                      onClick={() => setExampleRevealed(false)}
-                      className="text-[11px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
-                      aria-label="Hide example"
-                    >
-                      Hide
-                    </button>
-                  </div>
-                  <p className="text-muted-foreground italic leading-relaxed">
-                    Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Reference Documents */}
