@@ -559,120 +559,122 @@ const SinglepageCoursePreview = () => {
   const scrollContent = (
     <div
       className={cn(
-        "bg-background w-full relative flex flex-col h-full min-h-0 overflow-auto",
+        "bg-background w-full relative flex flex-col h-full min-h-0 overflow-hidden",
         isDeviceFramed && "flex-1",
         !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg mx-auto"
       )}
       style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
     >
-      {/* In-preview top bar with hamburger — sticky within the scroll container */}
-      <div className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 border-b border-border/60 bg-background">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-1.5 rounded-lg hover:bg-muted transition-colors"
-          aria-label={sidebarOpen ? "Close outline" : "Open outline"}
-        >
-          {sidebarOpen ? <X className="w-4 h-4 text-foreground" aria-hidden="true" /> : <Menu className="w-4 h-4 text-foreground" aria-hidden="true" />}
-        </button>
-        <span className={cn(
-          "font-medium text-foreground truncate",
-          isCompactView ? "text-xs" : "text-sm"
-        )}>
-          {data.title}
-        </span>
-      </div>
-
-      {/* Sidebar overlay backdrop */}
-      {sidebarOpen && (
-        <div
-          className="absolute inset-0 z-40 bg-foreground/20"
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Slide-in sidebar — absolute within the scroll container */}
-      <div
-        className={cn(
-          "absolute top-0 left-0 bottom-0 z-50 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
-          isCompactView ? "w-[220px]" : "w-[260px]",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="px-4 py-3 border-b border-border/60 flex-shrink-0">
-          <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-2">
-            <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
-            Course Outline
-          </h3>
+      <div className="flex-1 min-h-0 overflow-auto">
+        {/* In-preview top bar with hamburger — sticky within the visible scroll region */}
+        <div className="sticky top-0 z-30 flex items-center gap-2 px-3 py-2 border-b border-border/60 bg-background">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+            aria-label={sidebarOpen ? "Close outline" : "Open outline"}
+          >
+            {sidebarOpen ? <X className="w-4 h-4 text-foreground" aria-hidden="true" /> : <Menu className="w-4 h-4 text-foreground" aria-hidden="true" />}
+          </button>
+          <span className={cn(
+            "font-medium text-foreground truncate",
+            isCompactView ? "text-xs" : "text-sm"
+          )}>
+            {data.title}
+          </span>
         </div>
-        <ScrollArea className="flex-1">
-          <div className="py-1">
-            {renderOutlineItems()}
-          </div>
-        </ScrollArea>
-      </div>
 
-      {/* Course content */}
-      <div className={cn("relative flex", !isCompactView && "flex-row")}>
-        {/* Desktop left icon rail — only when sidebar closed */}
-        {!isCompactView && !sidebarOpen && (
-          <div className="sticky top-[41px] self-start flex flex-col items-center gap-1 py-3 w-12 flex-shrink-0 border-r border-border/30 bg-background z-[5]" style={{ height: 'fit-content' }}>
-            {data.items.map((item, index) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className={cn(
-                  "w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200",
-                  activeItemId === item.id
-                    ? "bg-primary/10 text-primary ring-1 ring-primary/30 shadow-sm"
-                    : item.type === "section"
-                      ? "text-primary/50 hover:bg-muted hover:text-primary"
-                      : "text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground"
-                )}
-                aria-label={`Navigate to ${item.title || "Untitled"}`}
-              >
-                {item.type === "section" ? (
-                  <BookOpen className={cn("transition-all", activeItemId === item.id ? "w-[18px] h-[18px]" : "w-4 h-4")} aria-hidden="true" />
-                ) : (
-                  <FileText className={cn("transition-all", activeItemId === item.id ? "w-[18px] h-[18px]" : "w-4 h-4")} aria-hidden="true" />
-                )}
-              </button>
-            ))}
-            <div className="w-6 h-px bg-border/40 my-1.5" aria-hidden="true" />
-            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/40" aria-hidden="true" />
-          </div>
-        )}
+        {/* Course content */}
+        <div className={cn("relative flex", !isCompactView && "flex-row")}>
+          {/* Desktop left icon rail — only when sidebar closed */}
+          {!isCompactView && !sidebarOpen && (
+            <div className="sticky top-[41px] self-start flex flex-col items-center gap-1 py-3 w-12 flex-shrink-0 border-r border-border/30 bg-background z-[5]" style={{ height: 'fit-content' }}>
+              {data.items.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={cn(
+                    "w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200",
+                    activeItemId === item.id
+                      ? "bg-primary/10 text-primary ring-1 ring-primary/30 shadow-sm"
+                      : item.type === "section"
+                        ? "text-primary/50 hover:bg-muted hover:text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                  aria-label={`Navigate to ${item.title || "Untitled"}`}
+                >
+                  {item.type === "section" ? (
+                    <BookOpen className={cn("transition-all", activeItemId === item.id ? "w-[18px] h-[18px]" : "w-4 h-4")} aria-hidden="true" />
+                  ) : (
+                    <FileText className={cn("transition-all", activeItemId === item.id ? "w-[18px] h-[18px]" : "w-4 h-4")} aria-hidden="true" />
+                  )}
+                </button>
+              ))}
+              <div className="w-6 h-px bg-border/40 my-1.5" aria-hidden="true" />
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+            </div>
+          )}
 
-        <div className="relative flex-1 min-w-0">
-          {/* Course header */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
+          <div className="relative flex-1 min-w-0">
+            {/* Course header */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
+              <div className={cn(
+                "relative z-[1]",
+                isCompactView ? "px-3 py-5" : "px-8 sm:px-12 py-10"
+              )}>
+                <div className="max-w-3xl mx-auto">
+                  <h1 className={cn(
+                    "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
+                    isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
+                  )}>
+                    {data.title}
+                  </h1>
+                  <p className="text-xs text-muted-foreground mt-1.5">Single-page course</p>
+                </div>
+              </div>
+            </div>
+
+            {/* All content */}
             <div className={cn(
-              "relative z-[1]",
-              isCompactView ? "px-3 py-5" : "px-8 sm:px-12 py-10"
+              "flex-1",
+              isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
             )}>
-              <div className="max-w-3xl mx-auto">
-                <h1 className={cn(
-                  "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
-                  isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
-                )}>
-                  {data.title}
-                </h1>
-                <p className="text-xs text-muted-foreground mt-1.5">Single-page course</p>
+              <div className="max-w-3xl mx-auto space-y-6">
+                {renderSinglePageContent()}
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* All content */}
-          <div className={cn(
-            "flex-1",
-            isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
-          )}>
-            <div className="max-w-3xl mx-auto space-y-6">
-              {renderSinglePageContent()}
+      {/* Sidebar overlay and panel — anchored to the visible preview viewport */}
+      {sidebarOpen && (
+        <>
+          <div
+            className="absolute inset-0 z-40 bg-foreground/20"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+
+          <div
+            className={cn(
+              "absolute inset-y-0 left-0 z-50 bg-card border-r border-border flex flex-col shadow-lg",
+              isCompactView ? "w-[220px]" : "w-[260px]"
+            )}
+          >
+            <div className="px-4 py-3 border-b border-border/60 flex-shrink-0">
+              <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-2">
+                <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+                Course Outline
+              </h3>
             </div>
+            <ScrollArea className="flex-1">
+              <div className="py-1">
+                {renderOutlineItems()}
+              </div>
+            </ScrollArea>
           </div>
-      </div>
-      </div>
+        </>
+      )}
     </div>
   );
 
