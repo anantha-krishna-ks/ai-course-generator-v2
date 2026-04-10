@@ -1,17 +1,48 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Lightbulb, FileText, Info } from "lucide-react";
-import { useState } from "react";
+import { Upload, Info, Sparkles } from "lucide-react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 
 interface StepCourseIntentProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
 
+function generateLearningOutcome(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("machine learning") || t.includes("ml") || t.includes("ai")) {
+    return "Equip learners with a solid understanding of core machine learning concepts, enabling them to prepare datasets, select appropriate algorithms, and evaluate model performance for real-world applications.";
+  }
+  if (t.includes("leadership") || t.includes("management") || t.includes("manager")) {
+    return "Help new managers build strong teams by improving communication, feedback, and performance coaching skills.";
+  }
+  if (t.includes("sales") || t.includes("marketing") || t.includes("email")) {
+    return "Enable marketing professionals to craft data-driven campaigns that increase engagement, optimize conversion rates, and deliver measurable ROI.";
+  }
+  if (t.includes("design") || t.includes("ux") || t.includes("ui")) {
+    return "Empower designers to create intuitive, accessible user experiences by applying research-backed design principles and modern prototyping techniques.";
+  }
+  if (t.includes("python") || t.includes("programming") || t.includes("coding")) {
+    return "Build a strong programming foundation so learners can write clean, efficient code and confidently tackle real-world software challenges.";
+  }
+  return `Provide learners with practical knowledge and skills in ${title || "the subject"}, enabling them to apply key concepts confidently in real-world scenarios.`;
+}
+
 export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
-  const [exampleRevealed, setExampleRevealed] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleAskAI = useCallback(() => {
+    if (!state.title.trim()) return;
+    setIsGenerating(true);
+    setTimeout(() => {
+      const suggestion = generateLearningOutcome(state.title);
+      onChange({ intendedLearners: suggestion });
+      setIsGenerating(false);
+    }, 800);
+  }, [state.title, onChange]);
 
   return (
     <div className="space-y-5">
@@ -38,9 +69,29 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
-        <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label uppercase tracking-wider">
-          What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-        </label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label uppercase tracking-wider">
+            What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+          </label>
+          {state.title.trim().length >= 2 && (
+            <button
+              type="button"
+              onClick={handleAskAI}
+              disabled={isGenerating}
+              className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+              aria-label="Ask AI to suggest a learning outcome"
+            >
+              {isGenerating ? (
+                <Sparkles className="w-3 h-3 text-primary animate-pulse" aria-hidden="true" focusable="false" />
+              ) : (
+                <AISparkles className="w-3 h-3" />
+              )}
+              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">
+                {isGenerating ? "Generating…" : "Ask AI"}
+              </span>
+            </button>
+          )}
+        </div>
 
         <Textarea
           id="learning-outcome"
@@ -49,52 +100,6 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           placeholder="Describe the key skills or knowledge learners will walk away with…"
           className="min-h-[80px] resize-none rounded-xl text-sm"
         />
-
-        {/* Persistent example hint - click to reveal, stays visible forever */}
-        <AnimatePresence>
-          {!exampleRevealed ? (
-            <motion.button
-              type="button"
-              onClick={() => setExampleRevealed(true)}
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0, height: 0, marginTop: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-primary font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-0.5 transition-colors"
-              aria-label="Show an example of a learning outcome"
-            >
-              <Lightbulb className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              Need inspiration?
-            </motion.button>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="overflow-hidden"
-            >
-              <div className="flex items-start gap-2.5 text-xs bg-muted/40 border border-border/60 rounded-xl px-3.5 py-3">
-                <FileText className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary/70" aria-hidden="true" focusable="false" />
-                <div className="space-y-1 flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Example</span>
-                    <button
-                      type="button"
-                      onClick={() => setExampleRevealed(false)}
-                      className="text-[11px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
-                      aria-label="Hide example"
-                    >
-                      Hide
-                    </button>
-                  </div>
-                  <p className="text-muted-foreground italic leading-relaxed">
-                    Help new managers build strong teams by improving communication, feedback, and performance coaching skills.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Reference Documents */}
