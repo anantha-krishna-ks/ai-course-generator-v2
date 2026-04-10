@@ -51,6 +51,8 @@ const SinglepageCoursePreview = () => {
   const [data, setData] = useState<PreviewState | null>(null);
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile'>('desktop');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [outlineExpandedSections, setOutlineExpandedSections] = useState<Set<string>>(new Set());
 
   const isCompactView = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
   const isDeviceFramed = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
