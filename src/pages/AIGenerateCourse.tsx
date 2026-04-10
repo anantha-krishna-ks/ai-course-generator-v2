@@ -317,16 +317,20 @@ export default function AIGenerateCourse() {
 
               {/* Footer */}
               <div className="border-t border-border px-5 sm:px-8 md:px-10 py-3 sm:py-3.5 flex items-center justify-between bg-card">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleBack}
-                  className="gap-1.5 rounded-full px-4 h-9"
-                  aria-label={currentStep > 1 ? `Back to ${STEPS[currentStep - 2].label}` : "Back to dashboard"}
-                >
-                  <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  <span className="hidden sm:inline">Back</span>
-                </Button>
+                {currentStep > 1 ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBack}
+                    className="gap-1.5 rounded-full px-4 h-9"
+                    aria-label={`Back to ${STEPS[currentStep - 2].label}`}
+                  >
+                    <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <span className="hidden sm:inline">Back</span>
+                  </Button>
+                ) : (
+                  <div />
+                )}
 
                 <span className="text-[11px] text-muted-foreground font-medium hidden sm:block" aria-hidden="true">
                   {remainingCards === 0 ? "Final step" : `${remainingCards} step${remainingCards > 1 ? "s" : ""} remaining`}
