@@ -384,7 +384,7 @@ const SinglepageCoursePreview = () => {
         const sectionImage = data.sectionImages?.[item.id];
 
         sections.push(
-          <div key={item.id} className="space-y-3">
+          <div key={item.id} id={`preview-item-${item.id}`} className="space-y-3 scroll-mt-4">
             {/* Section header */}
             <button
               className={cn(
