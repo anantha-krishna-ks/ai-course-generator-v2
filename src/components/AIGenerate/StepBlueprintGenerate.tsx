@@ -12,59 +12,46 @@ import {
   Pencil,
   Check,
   GripVertical,
+  HelpCircle,
+  MessageSquareText,
+  Blocks,
+  Image,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const TONE_OPTIONS = [
-  { value: "professional" as const, label: "Professional" },
-  { value: "conversational" as const, label: "Conversational" },
-  { value: "coaching" as const, label: "Coaching" },
+  { value: "ai-determined" as const, label: "AI Determined", icon: "🎯" },
+  { value: "professional" as const, label: "Professional", icon: "💼" },
+  { value: "conversational" as const, label: "Conversational", icon: "💬" },
+  { value: "coaching" as const, label: "Coaching", icon: "🎓" },
 ];
 
-const PROFICIENCY_OPTIONS = [
-  { value: "beginner" as const, label: "Beginner" },
-  { value: "intermediate" as const, label: "Intermediate" },
-  { value: "advanced" as const, label: "Advanced" },
-  { value: "expert" as const, label: "Expert" },
-  { value: "mixed" as const, label: "Mixed" },
+const CONTENT_PREFERENCES = [
+  {
+    key: "includeQuestions" as const,
+    label: "Include questions in sections",
+    description: "Auto-generate quiz questions within each section to reinforce learning.",
+    icon: MessageSquareText,
+  },
+  {
+    key: "interactiveBlocks" as const,
+    label: "Add interactive blocks to pages",
+    description: "Insert interactive elements like drag-and-drop, matching, and hotspots.",
+    icon: Blocks,
+  },
+  {
+    key: "addImages" as const,
+    label: "Add images to your content",
+    description: "AI will source or generate relevant images for each section.",
+    icon: Image,
+  },
 ];
 
-function ChipGroup({
-  options,
-  value,
-  onChange,
-  ariaLabel,
-}: {
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (v: string) => void;
-  ariaLabel: string;
-}) {
-  return (
-    <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={ariaLabel}>
-      {options.map((opt) => {
-        const selected = value === opt.value;
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(selected ? "" : opt.value)}
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              selected
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
-            )}
-          >
-            {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
-            {opt.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -444,30 +431,109 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </p>
       )}
 
-      {/* Tone */}
+      {/* Content Preferences */}
       <div>
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          Tone
+          Content Preferences
         </div>
-        <ChipGroup
-          options={TONE_OPTIONS}
-          value={state.tone}
-          onChange={(v) => onChange({ tone: v as AIGenerateState["tone"] })}
-          ariaLabel="Course tone"
-        />
+        <div className="grid gap-2.5">
+          {CONTENT_PREFERENCES.map((pref) => {
+            const checked = state.contentPreferences[pref.key];
+            const Icon = pref.icon;
+            return (
+              <button
+                key={pref.key}
+                type="button"
+                role="checkbox"
+                aria-checked={checked}
+                onClick={() =>
+                  onChange({
+                    contentPreferences: {
+                      ...state.contentPreferences,
+                      [pref.key]: !checked,
+                    },
+                  })
+                }
+                className={cn(
+                  "flex items-center gap-3 w-full rounded-xl border p-3.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  checked
+                    ? "border-primary/40 bg-primary/5 shadow-sm"
+                    : "border-border bg-background hover:border-muted-foreground/30"
+                )}
+              >
+                {/* Checkbox indicator */}
+                <div
+                  className={cn(
+                    "flex items-center justify-center w-5 h-5 rounded-md shrink-0 transition-colors",
+                    checked
+                      ? "bg-primary text-primary-foreground"
+                      : "border-2 border-muted-foreground/30"
+                  )}
+                  aria-hidden="true"
+                >
+                  {checked && <Check className="w-3.5 h-3.5" />}
+                </div>
+
+                {/* Icon */}
+                <Icon className={cn("w-4.5 h-4.5 shrink-0", checked ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+
+                {/* Label */}
+                <span className={cn("flex-1 text-sm font-medium", checked ? "text-foreground" : "text-muted-foreground")}>
+                  {pref.label}
+                </span>
+
+                {/* Tooltip */}
+                <TooltipProvider delayDuration={300}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span
+                        className="shrink-0"
+                        onClick={(e) => e.stopPropagation()}
+                        role="img"
+                        aria-label={`Info about ${pref.label}`}
+                      >
+                        <HelpCircle className="w-4 h-4 text-muted-foreground/50 hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[220px]">
+                      <p className="text-xs">{pref.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Proficiency Level */}
+      {/* Course Tone */}
       <div>
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          Proficiency Level
+          Course Tone
         </div>
-        <ChipGroup
-          options={PROFICIENCY_OPTIONS}
-          value={state.proficiencyLevel}
-          onChange={(v) => onChange({ proficiencyLevel: v as AIGenerateState["proficiencyLevel"] })}
-          ariaLabel="Proficiency level"
-        />
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course tone">
+          {TONE_OPTIONS.map((opt) => {
+            const selected = state.tone === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onChange({ tone: opt.value })}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  selected
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <span className="text-base leading-none" aria-hidden="true">{opt.icon}</span>
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
