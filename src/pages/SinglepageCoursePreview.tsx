@@ -424,7 +424,7 @@ const SinglepageCoursePreview = () => {
                 {item.children.map((child) => {
                   const childBlocks = data.pageBlocksMap[child.id] || [];
                   return (
-                    <div key={child.id} className="space-y-4">
+                    <div key={child.id} id={`preview-item-${child.id}`} className="space-y-4 scroll-mt-4">
                       <div className="flex items-center gap-2">
                         {child.type === "page" ? (
                           <FileText className="w-4 h-4 text-primary/60 flex-shrink-0" aria-hidden="true" />
@@ -546,7 +546,7 @@ const SinglepageCoursePreview = () => {
                       {item.children.map((child) => (
                         <button
                           key={child.id}
-                          onClick={() => scrollToSection(child.id.startsWith("") ? item.id : item.id)}
+                          onClick={() => scrollToSection(item.id)}
                           className="w-full flex items-center gap-2 pl-8 pr-4 py-2 text-left text-[13px] text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
                           aria-label={`Navigate to ${child.title || "Untitled"}`}
                         >
