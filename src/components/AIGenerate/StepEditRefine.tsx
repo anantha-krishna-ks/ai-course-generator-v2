@@ -211,7 +211,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
           <div className="min-w-0 flex-1">
             <h2 className="text-sm font-bold text-foreground truncate">{state.title || "Untitled Course"}</h2>
           </div>
-          <AISparkles className="w-3.5 h-3.5 shrink-0 opacity-40" />
+          
         </div>
         <div className="border-t border-border grid grid-cols-4 divide-x divide-border">
           {[
