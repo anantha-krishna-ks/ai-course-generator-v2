@@ -33,8 +33,12 @@ export interface AIGenerateState {
   courseSpanTime: number;
   layoutType: "multi-page" | "single-page";
   duration: "brief" | "standard" | "extended";
-  tone: "professional" | "conversational" | "coaching";
-  proficiencyLevel: "beginner" | "intermediate" | "advanced" | "expert" | "mixed";
+  tone: "professional" | "conversational" | "coaching" | "ai-determined";
+  contentPreferences: {
+    includeQuestions: boolean;
+    interactiveBlocks: boolean;
+    addImages: boolean;
+  };
 }
 
 const initialState: AIGenerateState = {
@@ -51,8 +55,12 @@ const initialState: AIGenerateState = {
   courseSpanTime: 60,
   layoutType: "multi-page",
   duration: "standard",
-  tone: "professional",
-  proficiencyLevel: "beginner",
+  tone: "ai-determined",
+  contentPreferences: {
+    includeQuestions: true,
+    interactiveBlocks: true,
+    addImages: true,
+  },
 };
 
 const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
