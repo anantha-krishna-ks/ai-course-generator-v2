@@ -12,17 +12,10 @@ import {
   Pencil,
   Check,
   GripVertical,
-  HelpCircle,
   MessageSquareText,
   Blocks,
   Image,
 } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 const TONE_OPTIONS = [
   { value: "ai-determined" as const, label: "AI Determined", icon: "🎯" },
