@@ -623,7 +623,6 @@ const SinglepageCoursePreview = () => {
               {renderSinglePageContent()}
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
