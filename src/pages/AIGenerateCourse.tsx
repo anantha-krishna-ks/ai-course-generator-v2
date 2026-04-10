@@ -82,6 +82,8 @@ export default function AIGenerateCourse() {
   const [formState, setFormState] = useState<AIGenerateState>(initialState);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [showGenerating, setShowGenerating] = useState(false);
+  const [showBackWarning, setShowBackWarning] = useState(false);
+  const [highestVisitedStep, setHighestVisitedStep] = useState(1);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
