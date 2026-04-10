@@ -130,11 +130,11 @@ export default function AIGenerateCourse() {
       <SideRibbon side="left" />
       <SideRibbon side="right" />
 
-      {/* Back to Dashboard - fixed left side */}
+      {/* Back to Dashboard - fixed left side (desktop), inline top (mobile) */}
       <Button
         variant="ghost"
         onClick={() => navigate("/dashboard")}
-        className="fixed left-4 top-20 z-30 gap-2 px-3 h-9 text-muted-foreground hover:text-foreground rounded-full hidden sm:inline-flex"
+        className="fixed left-4 top-20 z-30 gap-2 px-3 h-9 text-muted-foreground hover:text-foreground rounded-full hidden lg:inline-flex"
         aria-label="Back to Dashboard"
       >
         <span className="w-8 h-8 rounded-full border border-border flex items-center justify-center">
@@ -143,8 +143,21 @@ export default function AIGenerateCourse() {
         <span className="text-sm font-medium">Back to Dashboard</span>
       </Button>
 
-      <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-4 py-6 sm:py-10">
+      <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-3 sm:px-4 py-4 sm:py-6 md:py-10">
         <div className="w-full max-w-3xl">
+
+          {/* Mobile/tablet back button */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/dashboard")}
+            className="mb-3 gap-2 px-2 h-8 text-muted-foreground hover:text-foreground rounded-full lg:hidden"
+            aria-label="Back to Dashboard"
+          >
+            <span className="w-7 h-7 rounded-full border border-border flex items-center justify-center">
+              <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            </span>
+            <span className="text-sm font-medium">Back to Dashboard</span>
+          </Button>
 
           {/* Accessible step status */}
           <div className="sr-only" aria-live="polite">

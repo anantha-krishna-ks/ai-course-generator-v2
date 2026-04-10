@@ -334,7 +334,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                         </span>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        <div className="flex items-center gap-0.5 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                           <Button
                             size="sm"
                             variant="ghost"
