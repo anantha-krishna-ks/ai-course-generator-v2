@@ -11,6 +11,7 @@ import { StepCourseIntent } from "@/components/AIGenerate/StepCourseIntent";
 import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
+import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
 
 const STEPS = [
   { id: 1, label: "Course Intent" },
@@ -70,6 +71,7 @@ export default function AIGenerateCourse() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formState, setFormState] = useState<AIGenerateState>(initialState);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [showGenerating, setShowGenerating] = useState(false);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
@@ -105,8 +107,12 @@ export default function AIGenerateCourse() {
   };
 
   const handleFinish = () => {
-    navigate("/dashboard");
+    setShowGenerating(true);
   };
+
+  const handleGenerationComplete = useCallback(() => {
+    navigate("/ai-generated-course", { state: { title: formState.title || "AI Generated Course" } });
+  }, [navigate, formState.title]);
 
   const remainingCards = STEPS.length - currentStep;
   const StepComponent = STEP_COMPONENTS[currentStep - 1];
@@ -381,6 +387,12 @@ export default function AIGenerateCourse() {
           </div>
         </div>
       </main>
+
+      <AIGenerationLoadingDialog
+        open={showGenerating}
+        courseTitle={formState.title || "AI Generated Course"}
+        onComplete={handleGenerationComplete}
+      />
     </div>
   );
 }
