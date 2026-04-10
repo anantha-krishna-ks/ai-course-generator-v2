@@ -130,21 +130,21 @@ export default function AIGenerateCourse() {
       <SideRibbon side="left" />
       <SideRibbon side="right" />
 
+      {/* Back to Dashboard - fixed left side */}
+      <Button
+        variant="ghost"
+        onClick={() => navigate("/dashboard")}
+        className="fixed left-4 top-20 z-30 gap-2 px-3 h-9 text-muted-foreground hover:text-foreground rounded-full hidden sm:inline-flex"
+        aria-label="Back to Dashboard"
+      >
+        <span className="w-8 h-8 rounded-full border border-border flex items-center justify-center">
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </span>
+        <span className="text-sm font-medium">Back to Dashboard</span>
+      </Button>
+
       <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-4 py-6 sm:py-10">
         <div className="w-full max-w-3xl">
-
-          {/* Back to Dashboard */}
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-            className="mb-4 gap-2 px-3 h-9 text-muted-foreground hover:text-foreground rounded-full"
-            aria-label="Back to Dashboard"
-          >
-            <span className="w-8 h-8 rounded-full border border-border flex items-center justify-center">
-              <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
-            </span>
-            <span className="text-sm font-medium">Back to Dashboard</span>
-          </Button>
 
           {/* Accessible step status */}
           <div className="sr-only" aria-live="polite">
