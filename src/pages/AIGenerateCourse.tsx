@@ -84,6 +84,8 @@ export default function AIGenerateCourse() {
   const [showGenerating, setShowGenerating] = useState(false);
   const [showBackWarning, setShowBackWarning] = useState(false);
   const [highestVisitedStep, setHighestVisitedStep] = useState(1);
+  const [suppressBackWarning, setSuppressBackWarning] = useState(false);
+  const [dontShowAgainChecked, setDontShowAgainChecked] = useState(false);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
@@ -116,7 +118,8 @@ export default function AIGenerateCourse() {
   const handleBack = () => {
     if (currentStep > 1) {
       // Only warn if user has visited steps beyond the one they're going back to
-      if (highestVisitedStep > currentStep - 1) {
+      if (highestVisitedStep > currentStep - 1 && !suppressBackWarning) {
+        setDontShowAgainChecked(false);
         setShowBackWarning(true);
       } else {
         confirmBack();
@@ -127,6 +130,9 @@ export default function AIGenerateCourse() {
   };
 
   const confirmBack = () => {
+    if (dontShowAgainChecked) {
+      setSuppressBackWarning(true);
+    }
     setShowBackWarning(false);
     setDirection(-1);
     setCurrentStep((s) => s - 1);
@@ -431,11 +437,22 @@ export default function AIGenerateCourse() {
               Edits here will reset the next steps. Any progress on later steps may be lost. Review carefully before proceeding.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="flex items-center gap-2 justify-center pt-1 pb-2">
+            <Checkbox
+              id="dont-show-again"
+              checked={dontShowAgainChecked}
+              onCheckedChange={(checked) => setDontShowAgainChecked(checked === true)}
+              aria-label="Don't show this warning again"
+            />
+            <label htmlFor="dont-show-again" className="text-xs text-muted-foreground cursor-pointer select-none">
+              Don't show this again
+            </label>
+          </div>
           <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
-            <AlertDialogCancel className="mt-0">Stay here</AlertDialogCancel>
             <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Go back
             </AlertDialogAction>
+            <AlertDialogCancel className="mt-0">Stay here</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
