@@ -422,7 +422,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
           Content Preferences
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 shadow-none">
           {CONTENT_PREFERENCES.map((pref) => {
             const checked = state.contentPreferences[pref.key];
             return (
