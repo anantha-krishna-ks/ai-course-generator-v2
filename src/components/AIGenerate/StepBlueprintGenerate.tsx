@@ -34,20 +34,20 @@ const TONE_OPTIONS = [
 const CONTENT_PREFERENCES = [
   {
     key: "includeQuestions" as const,
-    label: "Include questions in sections",
-    description: "Auto-generate quiz questions within each section to reinforce learning.",
+    label: "Questions",
+    description: "Quiz questions in each section",
     icon: MessageSquareText,
   },
   {
     key: "interactiveBlocks" as const,
-    label: "Add interactive blocks to pages",
-    description: "Insert interactive elements like drag-and-drop, matching, and hotspots.",
+    label: "Interactive",
+    description: "Drag-drop & matching blocks",
     icon: Blocks,
   },
   {
     key: "addImages" as const,
-    label: "Add images to your content",
-    description: "AI will source or generate relevant images for each section.",
+    label: "Images",
+    description: "AI-generated visuals",
     icon: Image,
   },
 ];
@@ -436,7 +436,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
           Content Preferences
         </div>
-        <div className="grid gap-2.5">
+        <div className="grid grid-cols-3 gap-3">
           {CONTENT_PREFERENCES.map((pref) => {
             const checked = state.contentPreferences[pref.key];
             const Icon = pref.icon;
@@ -455,51 +455,42 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                   })
                 }
                 className={cn(
-                  "flex items-center gap-3 w-full rounded-xl border p-3.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "relative flex flex-col items-center text-center rounded-xl border p-4 pt-5 pb-3.5 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   checked
-                    ? "border-primary/40 bg-primary/5 shadow-sm"
-                    : "border-border bg-background hover:border-muted-foreground/30"
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-background hover:border-muted-foreground/30 hover:bg-muted/30"
                 )}
               >
-                {/* Checkbox indicator */}
+                {/* Radio-style indicator */}
                 <div
                   className={cn(
-                    "flex items-center justify-center w-5 h-5 rounded-md shrink-0 transition-colors",
+                    "absolute top-2.5 right-2.5 w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center transition-colors",
                     checked
-                      ? "bg-primary text-primary-foreground"
-                      : "border-2 border-muted-foreground/30"
+                      ? "border-primary bg-primary"
+                      : "border-muted-foreground/30"
                   )}
                   aria-hidden="true"
                 >
-                  {checked && <Check className="w-3.5 h-3.5" />}
+                  {checked && <Check className="w-3 h-3 text-primary-foreground" />}
                 </div>
 
                 {/* Icon */}
-                <Icon className={cn("w-4.5 h-4.5 shrink-0", checked ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+                <div className={cn(
+                  "w-10 h-10 rounded-lg flex items-center justify-center mb-2.5 transition-colors",
+                  checked ? "bg-primary/10" : "bg-muted"
+                )}>
+                  <Icon className={cn("w-5 h-5", checked ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+                </div>
 
                 {/* Label */}
-                <span className={cn("flex-1 text-sm font-medium", checked ? "text-foreground" : "text-muted-foreground")}>
+                <span className={cn("text-sm font-semibold mb-1", checked ? "text-foreground" : "text-foreground")}>
                   {pref.label}
                 </span>
 
-                {/* Tooltip */}
-                <TooltipProvider delayDuration={300}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        className="shrink-0"
-                        onClick={(e) => e.stopPropagation()}
-                        role="img"
-                        aria-label={`Info about ${pref.label}`}
-                      >
-                        <HelpCircle className="w-4 h-4 text-muted-foreground/50 hover:text-muted-foreground transition-colors" aria-hidden="true" focusable="false" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="max-w-[220px]">
-                      <p className="text-xs">{pref.description}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                {/* Description */}
+                <span className="text-[11px] leading-snug text-muted-foreground">
+                  {pref.description}
+                </span>
               </button>
             );
           })}
