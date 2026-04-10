@@ -232,7 +232,7 @@ const SinglepageCoursePreview = () => {
                 </div>
               )}
               <div className={cn(
-                "overflow-auto bg-background relative flex flex-col",
+                "overflow-hidden bg-background relative flex flex-col",
                 isPhone ? "rounded-[2.15rem]" : "rounded-[0.9rem]",
                 deviceView === 'mobile' && "h-[620px]",
                 deviceView === 'tablet' && "h-[600px]",
@@ -539,8 +539,8 @@ const SinglepageCoursePreview = () => {
   const scrollContent = (
     <div
       className={cn(
-        "bg-background w-full relative",
-        isDeviceFramed ? "flex-1 overflow-auto" : "flex-1 overflow-auto min-h-[calc(100vh-57px)]",
+        "bg-background w-full relative flex flex-col h-full min-h-0 overflow-auto",
+        isDeviceFramed && "flex-1",
         !isDeviceFramed && deviceView !== 'desktop' && "border-x border-border shadow-lg mx-auto"
       )}
       style={{ maxWidth: !isDeviceFramed && deviceView !== 'desktop' ? deviceSizes[deviceView as keyof typeof deviceSizes]?.width : undefined }}
@@ -565,21 +565,19 @@ const SinglepageCoursePreview = () => {
       {/* Sidebar overlay backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-10"
+          className="absolute inset-0 z-10 bg-foreground/20"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
-          style={{ top: 0 }}
         />
       )}
 
       {/* Slide-in sidebar — fixed relative to the scroll container */}
       <div
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-20 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
+          "absolute inset-y-0 left-0 z-20 bg-card border-r border-border transition-transform duration-300 ease-out flex flex-col",
           isCompactView ? "w-[220px]" : "w-[260px]",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
-        style={{ position: 'absolute' }}
       >
         <div className="px-4 py-3 border-b border-border/60 flex-shrink-0">
           <h3 className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-2">
@@ -628,7 +626,7 @@ const SinglepageCoursePreview = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -640,7 +638,7 @@ const SinglepageCoursePreview = () => {
         <DeviceToggle />
       </div>
 
-      <div className="flex-1 flex justify-center overflow-hidden bg-muted/20">
+      <div className="flex-1 min-h-0 flex justify-center overflow-hidden bg-muted/20">
         {renderDeviceFrame(scrollContent)}
       </div>
     </div>
