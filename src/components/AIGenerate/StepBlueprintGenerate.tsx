@@ -12,10 +12,10 @@ import {
   Pencil,
   Check,
   GripVertical,
-  MessageSquareText,
-  Blocks,
-  Image,
 } from "lucide-react";
+import prefQuestionsImg from "@/assets/pref-questions.png";
+import prefInteractiveImg from "@/assets/pref-interactive.png";
+import prefImagesImg from "@/assets/pref-images.png";
 
 const TONE_OPTIONS = [
   { value: "ai-determined" as const, label: "AI Determined", icon: "🎯" },
