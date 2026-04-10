@@ -95,7 +95,7 @@ export function AIGenerationLoadingDialog({ open, courseTitle, onComplete }: AIG
   return (
     <Dialog open={open}>
       <DialogContent
-        className="sm:max-w-[420px] p-0 gap-0 overflow-visible border-0 shadow-none [&>button]:hidden bg-transparent max-h-[95vh]"
+        className="w-[92vw] max-w-[500px] p-0 gap-0 overflow-visible border-0 shadow-none [&>button]:hidden bg-transparent max-h-[95vh]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
