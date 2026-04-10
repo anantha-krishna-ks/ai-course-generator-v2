@@ -1,8 +1,8 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Lightbulb, FileText, Info } from "lucide-react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Upload, Sparkles, Info, Loader2 } from "lucide-react";
+import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
 
 interface StepCourseIntentProps {
