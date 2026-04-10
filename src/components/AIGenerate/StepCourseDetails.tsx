@@ -341,31 +341,6 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         />
       </div>
 
-      {/* Tone */}
-      <div>
-        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          Tone
-        </div>
-        <ChipGroup
-          options={TONE_OPTIONS}
-          value={state.tone}
-          onChange={(v) => onChange({ tone: v as AIGenerateState["tone"] })}
-          ariaLabel="Course tone"
-        />
-      </div>
-
-      {/* Proficiency */}
-      <div>
-        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
-          Proficiency Level
-        </div>
-        <ChipGroup
-          options={PROFICIENCY_OPTIONS}
-          value={state.proficiencyLevel}
-          onChange={(v) => onChange({ proficiencyLevel: v as AIGenerateState["proficiencyLevel"] })}
-          ariaLabel="Proficiency level"
-        />
-      </div>
     </div>
   );
 }
