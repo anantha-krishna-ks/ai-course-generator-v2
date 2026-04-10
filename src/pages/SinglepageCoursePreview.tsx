@@ -593,32 +593,33 @@ const SinglepageCoursePreview = () => {
       </div>
 
       {/* Course content */}
-      {/* Desktop collapsed icon strip */}
-      {!isCompactView && !sidebarOpen && (
-        <div className="sticky top-[41px] z-20 float-left flex flex-col items-center py-2 px-1.5 bg-card/80 backdrop-blur-sm border-r border-b border-border/40 rounded-br-xl shadow-sm">
-          {data.items.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={cn(
-                "w-9 h-9 flex items-center justify-center rounded-lg transition-colors hover:bg-muted",
-                item.type === "section" ? "text-primary" : "text-muted-foreground"
-              )}
-              aria-label={`Navigate to ${item.title || "Untitled"}`}
-            >
-              {item.type === "section" ? (
-                <BookOpen className="w-4 h-4" aria-hidden="true" />
-              ) : (
-                <FileText className="w-4 h-4" aria-hidden="true" />
-              )}
-            </button>
-          ))}
-          <div className="w-6 h-px bg-border/60 my-1" aria-hidden="true" />
-          <ChevronDown className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-        </div>
-      )}
+      <div className={cn("relative flex", !isCompactView && "flex-row")}>
+        {/* Desktop left icon rail — only when sidebar closed */}
+        {!isCompactView && !sidebarOpen && (
+          <div className="sticky top-[41px] self-start flex flex-col items-center py-2 w-10 flex-shrink-0 border-r border-border/40 bg-background z-[5]" style={{ height: 'fit-content' }}>
+            {data.items.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={cn(
+                  "w-8 h-8 flex items-center justify-center rounded-md transition-colors hover:bg-muted",
+                  item.type === "section" ? "text-primary" : "text-muted-foreground"
+                )}
+                aria-label={`Navigate to ${item.title || "Untitled"}`}
+              >
+                {item.type === "section" ? (
+                  <BookOpen className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <FileText className="w-4 h-4" aria-hidden="true" />
+                )}
+              </button>
+            ))}
+            <div className="w-5 h-px bg-border/60 my-1" aria-hidden="true" />
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+          </div>
+        )}
 
-      <div className="relative">
+        <div className="relative flex-1 min-w-0">
           {/* Course header */}
           <div className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 flex-shrink-0">
             <div className={cn(
