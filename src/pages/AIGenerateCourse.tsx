@@ -2,7 +2,17 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Check, Info } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Info, AlertTriangle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
@@ -72,6 +82,8 @@ export default function AIGenerateCourse() {
   const [formState, setFormState] = useState<AIGenerateState>(initialState);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [showGenerating, setShowGenerating] = useState(false);
+  const [showBackWarning, setShowBackWarning] = useState(false);
+  const [highestVisitedStep, setHighestVisitedStep] = useState(1);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
@@ -93,17 +105,31 @@ export default function AIGenerateCourse() {
   const handleNext = () => {
     if (currentStep < 4) {
       setDirection(1);
-      setCurrentStep((s) => s + 1);
+      setCurrentStep((s) => {
+        const next = s + 1;
+        setHighestVisitedStep((h) => Math.max(h, next));
+        return next;
+      });
     }
   };
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setDirection(-1);
-      setCurrentStep((s) => s - 1);
+      // Only warn if user has visited steps beyond the one they're going back to
+      if (highestVisitedStep > currentStep - 1) {
+        setShowBackWarning(true);
+      } else {
+        confirmBack();
+      }
     } else {
       navigate("/dashboard");
     }
+  };
+
+  const confirmBack = () => {
+    setShowBackWarning(false);
+    setDirection(-1);
+    setCurrentStep((s) => s - 1);
   };
 
   const handleFinish = () => {
@@ -393,6 +419,26 @@ export default function AIGenerateCourse() {
         courseTitle={formState.title || "AI Generated Course"}
         onComplete={handleGenerationComplete}
       />
+
+      <AlertDialog open={showBackWarning} onOpenChange={setShowBackWarning}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+              <AlertTriangle className="w-6 h-6 text-destructive" aria-hidden="true" focusable="false" />
+            </div>
+            <AlertDialogTitle className="text-center">Go back and edit?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Edits here will reset the next steps. Any progress on later steps may be lost. Review carefully before proceeding.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
+            <AlertDialogCancel className="mt-0">Stay here</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Go back
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
