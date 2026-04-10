@@ -28,20 +28,20 @@ const CONTENT_PREFERENCES = [
   {
     key: "includeQuestions" as const,
     label: "Questions",
-    description: "Quiz questions in each section",
-    icon: MessageSquareText,
+    description: "Auto-generate quizzes",
+    illustration: prefQuestionsImg,
   },
   {
     key: "interactiveBlocks" as const,
     label: "Interactive",
-    description: "Drag-drop & matching blocks",
-    icon: Blocks,
+    description: "Drag-drop & matching",
+    illustration: prefInteractiveImg,
   },
   {
     key: "addImages" as const,
     label: "Images",
     description: "AI-generated visuals",
-    icon: Image,
+    illustration: prefImagesImg,
   },
 ];
 
