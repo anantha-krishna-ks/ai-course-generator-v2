@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { ChevronDown, MoreHorizontal, Plus, Image as ImageIcon, HelpCircle, Copy, Trash2, FileText, GripVertical, ListChecks, BookOpen, ChevronRight, ExternalLink, Upload, X, Target, CheckCircle2, XCircle, Sparkles, Send } from "lucide-react";
-import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +38,7 @@ interface SectionCardProps {
   onDelete?: () => void;
   onDuplicate?: () => void;
   onOpenSection?: () => void;
+  onOpenPage?: (pageId: string) => void;
   onAddPage?: () => void;
   onAddLearningObjective?: () => void;
   objective?: string;
@@ -64,12 +64,12 @@ interface SortablePageRowProps {
   onDelete: (id: string) => void;
   onInclusionsChange: (id: string, inclusions: string) => void;
   onExclusionsChange: (id: string, exclusions: string) => void;
+  onOpenPage?: (pageId: string) => void;
   aiEnabled?: boolean;
 }
 
-function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, aiEnabled }: SortablePageRowProps) {
+function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, onOpenPage, aiEnabled }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
   const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
@@ -153,7 +153,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             </button>
           )}
           <button
-            onClick={() => setShowEditor(true)}
+            onClick={() => onOpenPage?.(page.id)}
             className="flex items-center gap-0.5 text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors shrink-0"
             aria-label={`Open page ${pageDisplayTitle}`}
           >
@@ -314,17 +314,6 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         </DialogContent>
       </Dialog>
 
-      <PageEditorDialog
-        open={showEditor}
-        onClose={() => setShowEditor(false)}
-        pageTitle={page.title}
-        aiEnabled={aiEnabled}
-        onPageTitleChange={(newTitle) =>
-          setPages((prev) =>
-            prev.map((p) => p.id === page.id ? { ...p, title: newTitle } : p)
-          )
-        }
-      />
     </>
   );
 }
@@ -343,6 +332,7 @@ export function SectionCard({
   onDelete,
   onDuplicate,
   onOpenSection,
+  onOpenPage,
   onAddPage,
   onAddLearningObjective,
   objective: externalObjective,
@@ -682,6 +672,7 @@ export function SectionCard({
                               prev.map((p) => p.id === id ? { ...p, exclusions: val } : p)
                             );
                           }}
+                          onOpenPage={onOpenPage}
                           aiEnabled={aiEnabled}
                         />
                       ))}
