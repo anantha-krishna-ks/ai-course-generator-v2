@@ -1010,8 +1010,8 @@ const MultipageCoursePreview = () => {
                       className="h-full bg-primary-foreground rounded-full transition-all duration-500 relative"
                       style={{ width: `${progress}%` }}
                     >
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-primary-foreground transition-all duration-500 shadow-[0_0_0_2.5px_hsl(var(--primary)),0_0_8px_hsl(var(--primary)/0.5)]">
-                        <div className="absolute inset-[3px] rounded-full bg-primary animate-pulse" />
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary-foreground transition-all duration-500 shadow-[0_0_0_1.5px_hsl(var(--primary))]">
+                        <div className="absolute inset-[3px] rounded-full bg-primary" />
                       </div>
                     </div>
                   </div>
