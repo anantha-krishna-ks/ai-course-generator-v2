@@ -411,13 +411,15 @@ export default function AIGenerateCourse() {
             </motion.div>
           </div>
 
-          {/* Disclaimer */}
-          <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-primary/15 bg-primary/[0.08] px-4 py-3">
-            <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-            <p className="text-sm text-foreground leading-relaxed">
-              Edits here will reset the next steps. Review carefully before proceeding.
-            </p>
-          </div>
+          {/* Disclaimer – hidden on final step where there are no next steps to reset */}
+          {currentStep < STEPS.length && (
+            <div className="mt-3 flex items-start gap-2.5 rounded-lg border border-primary/15 bg-primary/[0.08] px-4 py-3">
+              <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+              <p className="text-sm text-foreground leading-relaxed">
+                Edits here will reset the next steps. Review carefully before proceeding.
+              </p>
+            </div>
+          )}
         </div>
       </main>
 
