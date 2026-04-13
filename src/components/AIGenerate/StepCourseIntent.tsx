@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Sparkles, Info, Loader2 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { Upload, Sparkles, Info, Loader2, X, FileText } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
 
@@ -36,6 +36,27 @@ function pickSuggestion(title: string): string {
 export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
   const [aiLoading, setAiLoading] = useState(false);
   const showAskAI = state.title.trim().length >= 2;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilesSelected = useCallback((files: FileList | null) => {
+    if (!files) return;
+    const accepted = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "text/plain"];
+    const newNames: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      if (accepted.includes(f.type) || f.name.match(/\.(pdf|docx?|pptx?|txt)$/i)) {
+        newNames.push(f.name);
+      }
+    }
+    if (newNames.length > 0) {
+      onChange({ supportingDocuments: [...state.supportingDocuments, ...newNames] });
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, [state.supportingDocuments, onChange]);
+
+  const removeFile = useCallback((index: number) => {
+    onChange({ supportingDocuments: state.supportingDocuments.filter((_, i) => i !== index) });
+  }, [state.supportingDocuments, onChange]);
 
   const handleAskAI = useCallback(() => {
     if (aiLoading) return;
@@ -125,6 +146,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         </label>
         <button
           type="button"
+          onClick={() => fileInputRef.current?.click()}
           className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label="Upload reference documents"
         >
@@ -134,8 +156,32 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           <span className="text-sm font-medium">Upload files</span>
           <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+          multiple
+          className="hidden"
+          onChange={(e) => handleFilesSelected(e.target.files)}
+          aria-label="Select reference documents"
+        />
         {state.supportingDocuments.length > 0 && (
-          <p className="text-xs text-muted-foreground">{state.supportingDocuments.length} file(s) attached</p>
+          <div className="space-y-1.5 mt-2">
+            {state.supportingDocuments.map((name, idx) => (
+              <div key={`${name}-${idx}`} className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+                <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                <span className="text-sm text-foreground truncate flex-1">{name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFile(idx)}
+                  className="p-0.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  aria-label={`Remove ${name}`}
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
