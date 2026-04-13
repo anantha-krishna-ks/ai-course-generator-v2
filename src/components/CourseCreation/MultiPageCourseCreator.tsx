@@ -541,7 +541,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     }
   };
 
-  const handlePreview = useCallback(() => {
+  const handlePreview = useCallback((initialPageId?: string | null) => {
     const returnState: MultiPageCourseCreatorRestoreState = {
       title,
       items,
@@ -559,6 +559,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         contentBlocks,
         pageBlocksMap,
         returnState,
+        initialPageId: initialPageId || null,
       },
     });
   }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions]);
