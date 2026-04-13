@@ -49,7 +49,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
   return (
     <div className="space-y-5">
       {/* Hero banner */}
-      <div className="flex items-center gap-2.5 rounded-xl bg-primary/8 border border-primary/15 px-4 py-3">
+      <div className="flex items-center gap-2.5 rounded-xl border border-primary/15 px-4 py-3 bg-secondary">
         <Info className="w-4 h-4 text-primary shrink-0" aria-hidden="true" focusable="false" />
         <p className="text-[13px] text-foreground leading-snug">
           Upload relevant documents and answer a few questions to generate your course content.
