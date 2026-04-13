@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Sparkles, Info, Loader2 } from "lucide-react";
-import { useState, useCallback } from "react";
+import { Upload, Sparkles, Info, Loader2, X, FileText } from "lucide-react";
+import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
 
