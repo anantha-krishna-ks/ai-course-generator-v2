@@ -36,6 +36,27 @@ function pickSuggestion(title: string): string {
 export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
   const [aiLoading, setAiLoading] = useState(false);
   const showAskAI = state.title.trim().length >= 2;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilesSelected = useCallback((files: FileList | null) => {
+    if (!files) return;
+    const accepted = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "text/plain"];
+    const newNames: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      if (accepted.includes(f.type) || f.name.match(/\.(pdf|docx?|pptx?|txt)$/i)) {
+        newNames.push(f.name);
+      }
+    }
+    if (newNames.length > 0) {
+      onChange({ supportingDocuments: [...state.supportingDocuments, ...newNames] });
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, [state.supportingDocuments, onChange]);
+
+  const removeFile = useCallback((index: number) => {
+    onChange({ supportingDocuments: state.supportingDocuments.filter((_, i) => i !== index) });
+  }, [state.supportingDocuments, onChange]);
 
   const handleAskAI = useCallback(() => {
     if (aiLoading) return;
