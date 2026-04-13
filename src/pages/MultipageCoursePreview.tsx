@@ -1005,11 +1005,13 @@ const MultipageCoursePreview = () => {
                   {data.title}
                 </h2>
                 <div className="space-y-1.5">
-                  <div className="w-full h-1 bg-primary-foreground/20 rounded-full overflow-hidden">
+                  <div className="w-full h-1 bg-primary-foreground/20 rounded-full overflow-visible relative">
                     <div
-                      className="h-full bg-primary-foreground rounded-full transition-all duration-500"
+                      className="h-full bg-primary-foreground rounded-full transition-all duration-500 relative"
                       style={{ width: `${progress}%` }}
-                    />
+                    >
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-primary-foreground shadow-[0_0_0_2px_hsl(var(--primary))] transition-all duration-500" />
+                    </div>
                   </div>
                   <span className="text-[11px] text-primary-foreground/70 uppercase tracking-widest font-semibold">
                     {progress}% Complete
