@@ -35,6 +35,7 @@ interface PreviewState {
   contentBlocks: ContentBlockData[];
   pageBlocksMap: Record<string, PageContentBlock[]>;
   returnState?: MultiPageCourseCreatorRestoreState;
+  initialPageId?: string | null;
 }
 
 const MultipageCoursePreview = () => {
@@ -324,6 +325,28 @@ const MultipageCoursePreview = () => {
       if (item.type === "section") sections.add(item.id);
     });
     setExpandedSections(sections);
+
+    // Auto-start and navigate to specific page if initialPageId is provided
+    if (state.initialPageId) {
+      // Find the first page to use as fallback
+      let fallbackFirstId: string | null = null;
+      for (const item of state.items) {
+        if (item.type === "page" || item.type === "question") {
+          fallbackFirstId = item.id;
+          break;
+        }
+        if (item.children) {
+          const firstChild = item.children[0];
+          if (firstChild) {
+            fallbackFirstId = firstChild.id;
+            break;
+          }
+        }
+      }
+      // Directly start the course at the target page
+      setStarted(true);
+      setSelectedId(state.initialPageId);
+    }
   }, [navigate, previewState]);
 
   if (!data) return null;

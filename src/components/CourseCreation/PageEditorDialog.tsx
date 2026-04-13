@@ -90,7 +90,7 @@ interface PageEditorDialogProps {
   onSectionObjectivesChange?: (objectives: string) => void;
   sectionThumbnailUrl?: string | null;
   onSectionThumbnailChange?: (url: string | null) => void;
-  onPreview?: () => void;
+  onPreview?: (pageId?: string | null) => void;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -461,7 +461,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={onPreview}>
+                <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
                   <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
                 </Button>
               </TooltipTrigger>
