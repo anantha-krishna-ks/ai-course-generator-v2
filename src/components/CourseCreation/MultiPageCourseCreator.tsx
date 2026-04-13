@@ -1063,11 +1063,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
                                   onDelete={() => deleteItem(item.id)}
                                   onDuplicate={() => duplicateItem(item.id)}
-                                   onOpenSection={() => setActiveEditorPageId(item.id)}
-                                   onAddPage={() => handleAddItem("page")}
-                                   onAddLearningObjective={() => {}}
-                                   objective={sectionObjectivesMap[item.id] || ""}
-                                   onObjectiveChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [item.id]: obj }))}
+                                  onOpenSection={() => setActiveEditorPageId(item.id)}
+                                  onOpenPage={navigateToPage}
+                                  onAddPage={() => handleAddItem("page")}
+                                  onAddLearningObjective={() => {}}
+                                  objective={sectionObjectivesMap[item.id] || ""}
+                                  onObjectiveChange={(obj) => setSectionObjectivesMap((prev) => ({ ...prev, [item.id]: obj }))}
                                   pages={(item.children || []).map(c => ({ id: c.id, title: c.title, inclusions: c.inclusions || "", exclusions: c.exclusions || "" }))}
                                   onPagesChange={(newPages) => {
                                     setItems((prev) => prev.map((i) => {
