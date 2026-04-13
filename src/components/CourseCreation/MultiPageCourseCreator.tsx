@@ -620,7 +620,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     variant="outline"
                     size="icon"
                     className="rounded-full border-border"
-                    onClick={handlePreview}
+                    onClick={() => handlePreview()}
                     aria-label="Preview course"
                   >
                     <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
