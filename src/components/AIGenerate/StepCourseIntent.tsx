@@ -146,6 +146,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         </label>
         <button
           type="button"
+          onClick={() => fileInputRef.current?.click()}
           className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           aria-label="Upload reference documents"
         >
@@ -155,8 +156,32 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           <span className="text-sm font-medium">Upload files</span>
           <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+          multiple
+          className="hidden"
+          onChange={(e) => handleFilesSelected(e.target.files)}
+          aria-label="Select reference documents"
+        />
         {state.supportingDocuments.length > 0 && (
-          <p className="text-xs text-muted-foreground">{state.supportingDocuments.length} file(s) attached</p>
+          <div className="space-y-1.5 mt-2">
+            {state.supportingDocuments.map((name, idx) => (
+              <div key={`${name}-${idx}`} className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+                <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                <span className="text-sm text-foreground truncate flex-1">{name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFile(idx)}
+                  className="p-0.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  aria-label={`Remove ${name}`}
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
