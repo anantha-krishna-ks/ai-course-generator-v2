@@ -294,6 +294,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
       <PageEditorDialog
         open={!!editorOpen}
         onClose={() => onCloseEditor?.()}
+        courseTitle={courseTitle}
         pageTitle={title}
         onPageTitleChange={onTitleChange}
         aiEnabled={aiEnabled}
