@@ -1239,6 +1239,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   key={child.id}
                   open={true}
                   onClose={() => setActiveEditorPageId(null)}
+                  courseTitle={title}
                   pageTitle={child.title}
                   onPageTitleChange={(newTitle) => updateItemTitle(child.id, newTitle)}
                   aiEnabled={!!aiOptions?.enabled}
