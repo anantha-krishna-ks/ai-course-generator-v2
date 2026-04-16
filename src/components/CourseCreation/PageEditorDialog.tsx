@@ -5,6 +5,14 @@ import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -69,6 +77,7 @@ interface CourseOutlineItem {
 interface PageEditorDialogProps {
   open: boolean;
   onClose: () => void;
+  courseTitle?: string;
   pageTitle: string;
   onPageTitleChange: (title: string) => void;
   aiEnabled?: boolean;
@@ -109,7 +118,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, courseTitle, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -448,15 +457,55 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
   }, []);
 
+  // Find parent section name for breadcrumb
+  const parentSectionName = (() => {
+    for (const item of courseItems) {
+      if (item.children?.some((c) => c.id === currentPageId)) return item.title;
+    }
+    return null;
+  })();
+
+  if (!open) return null;
+
   return (
     <>
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden data-[state=open]:!animate-none data-[state=closed]:!animate-none data-[state=open]:!duration-0 data-[state=closed]:!duration-0">
-        {/* Header */}
+    <div className="fixed inset-0 z-50 bg-background flex flex-col">
+        {/* Header with breadcrumb navigation */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
-          <div className="flex items-center gap-2.5">
-            <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-            <span className="text-sm font-medium text-foreground">Page editor</span>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full shrink-0"
+              onClick={onClose}
+              aria-label="Back to course editor"
+            >
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+            </Button>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink
+                    className="cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={onClose}
+                  >
+                    {courseTitle || "Course"}
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                {parentSectionName && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <span className="text-xs text-muted-foreground">{parentSectionName}</span>
+                    </BreadcrumbItem>
+                  </>
+                )}
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-xs font-medium">{pageTitle}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
           <div className="flex items-center gap-2">
             <Tooltip>
@@ -467,13 +516,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               </TooltipTrigger>
               <TooltipContent>Preview</TooltipContent>
             </Tooltip>
-            <span className="w-px h-5 bg-border" />
-            <button
-              onClick={onClose}
-              className="p-2.5 rounded-md hover:bg-muted transition-colors"
-            >
-              <X className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
-            </button>
           </div>
         </div>
 
@@ -1444,8 +1486,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+    </div>
 
     {/* AI Support Sheet - rendered outside Dialog to avoid Radix focus trap conflicts */}
     {aiEnabled && (

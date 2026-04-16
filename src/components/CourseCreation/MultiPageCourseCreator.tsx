@@ -1100,6 +1100,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   inclusions={item.inclusions || ""}
                                   exclusions={item.exclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
+                                  courseTitle={title}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
@@ -1183,6 +1184,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               key={topLevel.id}
               open={true}
               onClose={() => setActiveEditorPageId(null)}
+              courseTitle={title}
               pageTitle={topLevel.title}
               onPageTitleChange={(newTitle) => updateItemTitle(topLevel.id, newTitle)}
               aiEnabled={!!aiOptions?.enabled}
@@ -1238,6 +1240,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   key={child.id}
                   open={true}
                   onClose={() => setActiveEditorPageId(null)}
+                  courseTitle={title}
                   pageTitle={child.title}
                   onPageTitleChange={(newTitle) => updateItemTitle(child.id, newTitle)}
                   aiEnabled={!!aiOptions?.enabled}
