@@ -1100,6 +1100,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   inclusions={item.inclusions || ""}
                                   exclusions={item.exclusions || ""}
                                   aiEnabled={!!aiOptions?.enabled}
+                                  courseTitle={title}
                                   onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
                                   onInclusionsChange={(val) => updateItemInclusions(item.id, val)}
                                   onExclusionsChange={(val) => updateItemExclusions(item.id, val)}
