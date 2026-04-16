@@ -77,6 +77,7 @@ interface CourseOutlineItem {
 interface PageEditorDialogProps {
   open: boolean;
   onClose: () => void;
+  courseTitle?: string;
   pageTitle: string;
   onPageTitleChange: (title: string) => void;
   aiEnabled?: boolean;
