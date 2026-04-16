@@ -32,6 +32,7 @@ interface PageItemCardProps {
   inclusions?: string;
   exclusions?: string;
   aiEnabled?: boolean;
+  courseTitle?: string;
   onTitleChange: (title: string) => void;
   onInclusionsChange?: (inclusions: string) => void;
   onExclusionsChange?: (exclusions: string) => void;
