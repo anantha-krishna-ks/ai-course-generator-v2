@@ -1486,8 +1486,7 @@ export function PageEditorDialog({ open, onClose, courseTitle, pageTitle, onPage
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+    </div>
 
     {/* AI Support Sheet - rendered outside Dialog to avoid Radix focus trap conflicts */}
     {aiEnabled && (
