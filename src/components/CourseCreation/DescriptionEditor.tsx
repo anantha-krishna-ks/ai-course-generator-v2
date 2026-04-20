@@ -284,9 +284,31 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     return <div className="description-editor-shell rounded-xl border border-border bg-background p-4 text-sm text-muted-foreground">Loading editor...</div>;
   }
 
-  const fontSizeValue = (editor.getAttributes('textStyle').fontSize as string | undefined) ?? '16px';
+  const currentFontSize = editor.getAttributes('textStyle').fontSize as string | undefined;
+  const activePresetValue = (() => {
+    if (editor.isActive('heading', { level: 1 })) return 'h1';
+    if (editor.isActive('heading', { level: 2 })) return 'h2';
+    if (editor.isActive('heading', { level: 3 })) return 'h3';
+    const sizeMatch = TEXT_STYLE_PRESETS.find(
+      (preset) => preset.type === 'paragraph' && preset.fontSize === currentFontSize,
+    );
+    return sizeMatch ? sizeMatch.value : DEFAULT_PRESET_VALUE;
+  })();
   const textColorValue = getSafeColor(editor.getAttributes('textStyle').color as string | undefined, DEFAULT_TEXT_COLOR);
   const highlightValue = getSafeColor(editor.getAttributes('highlight').color as string | undefined, DEFAULT_HIGHLIGHT_COLOR);
+
+  const applyTextStylePreset = (value: string) => {
+    const preset = TEXT_STYLE_PRESETS.find((item) => item.value === value);
+    if (!preset) return;
+
+    runCommand((chain) => {
+      if (preset.type === 'heading' && preset.level) {
+        return chain.unsetFontSize().setHeading({ level: preset.level });
+      }
+      const next = chain.setParagraph();
+      return preset.fontSize ? next.setFontSize(preset.fontSize) : next.unsetFontSize();
+    });
+  };
 
   const primaryControls = (
     <>
@@ -305,17 +327,17 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     <>
       <label className="flex min-w-0 items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
         <Type aria-hidden="true" focusable="false" className="h-4 w-4 shrink-0" />
-        <span className="sr-only">Font size</span>
+        <span className="sr-only">Text style</span>
         <select
-          aria-label="Font size"
-          className="min-w-0 bg-transparent text-xs outline-none"
-          value={fontSizeValue}
+          aria-label="Text style"
+          className="min-w-[6.5rem] bg-transparent text-xs outline-none"
+          value={activePresetValue}
           onMouseDown={preventToolbarMouseDown}
-          onChange={(event) => runCommand((chain) => chain.setFontSize(event.target.value))}
+          onChange={(event) => applyTextStylePreset(event.target.value)}
         >
-          {FONT_SIZES.map((size) => (
-            <option key={size} value={size}>
-              {size}
+          {TEXT_STYLE_PRESETS.map((preset) => (
+            <option key={preset.value} value={preset.value}>
+              {preset.label}
             </option>
           ))}
         </select>
