@@ -139,49 +139,179 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         />
       </div>
 
-      {/* Reference Documents */}
-      <div className="space-y-1.5">
+      {/* Blueprint source selector */}
+      <div className="space-y-2">
         <label className="text-sm font-semibold text-field-label uppercase tracking-wider">
-          Reference Documents <span className="text-muted-foreground font-normal text-xs">(optional)</span>
+          Course Blueprint <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          aria-label="Upload reference documents"
-        >
-          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-            <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
-          </div>
-          <span className="text-sm font-medium">Upload files</span>
-          <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
-          multiple
-          className="hidden"
-          onChange={(e) => handleFilesSelected(e.target.files)}
-          aria-label="Select reference documents"
-        />
-        {state.supportingDocuments.length > 0 && (
-          <div className="space-y-1.5 mt-2">
-            {state.supportingDocuments.map((name, idx) => (
-              <div key={`${name}-${idx}`} className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
-                <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                <span className="text-sm text-foreground truncate flex-1">{name}</span>
-                <button
-                  type="button"
-                  onClick={() => removeFile(idx)}
-                  className="p-0.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                  aria-label={`Remove ${name}`}
-                >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                </button>
+        <p className="text-xs text-muted-foreground -mt-0.5">
+          Choose how you'd like to create the course structure.
+        </p>
+
+        <div role="radiogroup" aria-label="Blueprint source" className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          {/* Option A: Import outline */}
+          <button
+            type="button"
+            role="radio"
+            aria-checked={state.blueprintSource === "import"}
+            onClick={() => onChange({ blueprintSource: "import" })}
+            className={`group relative flex flex-col items-start gap-3 p-4 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+              state.blueprintSource === "import"
+                ? "border-primary bg-primary/5 shadow-sm"
+                : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
+            }`}
+          >
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+              state.blueprintSource === "import" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+            }`}>
+              <Upload className="w-5 h-5" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="text-sm font-semibold text-foreground">Import Course Outline</div>
+              <div className="text-xs text-muted-foreground leading-snug">
+                Upload an existing outline or reference docs (PDF, DOCX, PPTX, TXT).
               </div>
-            ))}
-          </div>
+            </div>
+            <span
+              className={`absolute top-3 right-3 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                state.blueprintSource === "import" ? "border-primary bg-primary" : "border-muted-foreground/40"
+              }`}
+              aria-hidden="true"
+            >
+              {state.blueprintSource === "import" && <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
+            </span>
+          </button>
+
+          {/* Option B: Generate with AI */}
+          <button
+            type="button"
+            role="radio"
+            aria-checked={state.blueprintSource === "ai"}
+            onClick={() => onChange({ blueprintSource: "ai" })}
+            className={`group relative flex flex-col items-start gap-3 p-4 rounded-xl border-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+              state.blueprintSource === "ai"
+                ? "border-primary bg-primary/5 shadow-sm"
+                : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
+            }`}
+          >
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+              state.blueprintSource === "ai"
+                ? "bg-gradient-to-br from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] text-white"
+                : "bg-muted text-muted-foreground"
+            }`}>
+              <Sparkles className="w-5 h-5" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="text-sm font-semibold text-foreground">Generate Blueprint with AI</div>
+              <div className="text-xs text-muted-foreground leading-snug">
+                Let AI craft the structure — define the number of sections and pages.
+              </div>
+            </div>
+            <span
+              className={`absolute top-3 right-3 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                state.blueprintSource === "ai" ? "border-primary bg-primary" : "border-muted-foreground/40"
+              }`}
+              aria-hidden="true"
+            >
+              {state.blueprintSource === "ai" && <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
+            </span>
+          </button>
+        </div>
+
+        {/* Conditional content for selected option */}
+        {state.blueprintSource === "import" && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="pt-2 space-y-2"
+          >
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label="Upload course outline documents"
+            >
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </div>
+              <span className="text-sm font-medium">Upload files</span>
+              <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+              multiple
+              className="hidden"
+              onChange={(e) => handleFilesSelected(e.target.files)}
+              aria-label="Select course outline documents"
+            />
+            {state.supportingDocuments.length > 0 && (
+              <div className="space-y-1.5 mt-2">
+                {state.supportingDocuments.map((name, idx) => (
+                  <div key={`${name}-${idx}`} className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                    <span className="text-sm text-foreground truncate flex-1">{name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(idx)}
+                      className="p-0.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      aria-label={`Remove ${name}`}
+                    >
+                      <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {state.blueprintSource === "ai" && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="pt-2 grid grid-cols-2 gap-3"
+          >
+            <div className="space-y-1.5">
+              <label htmlFor="bp-sections" className="text-xs font-semibold text-field-label uppercase tracking-wider">
+                No. of Sections
+              </label>
+              <input
+                id="bp-sections"
+                type="number"
+                min={1}
+                max={20}
+                value={state.blueprintSections}
+                onChange={(e) => onChange({ blueprintSections: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })}
+                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="bp-pages" className="text-xs font-semibold text-field-label uppercase tracking-wider">
+                Pages per Section
+              </label>
+              <input
+                id="bp-pages"
+                type="number"
+                min={1}
+                max={20}
+                value={state.blueprintPages}
+                onChange={(e) => onChange({ blueprintPages: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })}
+                className="w-full h-10 rounded-xl border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            <div className="col-span-2 flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/15 px-3 py-2">
+              <Sparkles className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+              <p className="text-[11px] text-foreground leading-snug">
+                AI will generate a blueprint with{" "}
+                <span className="font-semibold">{state.blueprintSections}</span> section{state.blueprintSections !== 1 ? "s" : ""} and{" "}
+                <span className="font-semibold">{state.blueprintPages}</span> page{state.blueprintPages !== 1 ? "s" : ""} per section.
+              </p>
+            </div>
+          </motion.div>
         )}
       </div>
     </div>
