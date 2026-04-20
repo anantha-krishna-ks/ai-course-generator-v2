@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
@@ -633,8 +633,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
               onClick={() => setShowExportDialog(true)}
             >
-              <Wand2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Generate</span>
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Export</span>
             </Button>
              <Button
                variant="ghost"

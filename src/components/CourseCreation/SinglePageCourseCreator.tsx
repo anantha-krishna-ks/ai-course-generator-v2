@@ -5,7 +5,7 @@ import {
   ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Eye, Wand2, Plus, X, Undo2,
   FileStack, Layers, HelpCircle, Sparkles, Type, ImageIcon, Video, FileText as DocIcon,
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
-  Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen,
+  Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen, Download,
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
@@ -774,8 +774,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
               onClick={() => setShowExportDialog(true)}
             >
-              <Wand2 className="w-4 h-4" aria-hidden="true" focusable="false" />
-              <span className="hidden sm:inline">Generate</span>
+              <Download className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <span className="hidden sm:inline">Export</span>
             </Button>
             <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setShowTour(true)} aria-label="Help tour">
               <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
