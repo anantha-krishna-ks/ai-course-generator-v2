@@ -28,7 +28,7 @@ const STEPS = [
   { id: 1, label: "Course Intent" },
   { id: 2, label: "Course Details" },
   { id: 3, label: "Preferences" },
-  { id: 4, label: "Edit & Refine" },
+  { id: 4, label: "Blueprint" },
 ] as const;
 
 export interface AIGenerateState {
