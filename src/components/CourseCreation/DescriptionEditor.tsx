@@ -148,7 +148,12 @@ function ColorSwatchPicker({
           <button
             key={c}
             type="button"
-            onClick={() => onPick(c)}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onPick(c);
+            }}
+            onClick={(event) => event.preventDefault()}
             aria-label={`Color ${c}`}
             className="h-6 w-6 rounded-md border border-foreground/10 hover:scale-110 transition-transform"
             style={{ backgroundColor: c }}
@@ -157,7 +162,12 @@ function ColorSwatchPicker({
       </div>
       <button
         type="button"
-        onClick={onClear}
+        onMouseDown={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          onClear();
+        }}
+        onClick={(event) => event.preventDefault()}
         className="mt-2 w-full text-xs text-muted-foreground hover:text-foreground py-1 rounded hover:bg-foreground/5"
       >
         Clear
@@ -436,7 +446,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <Palette className="w-4 h-4" aria-hidden="true" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-auto bg-background">
+          <PopoverContent
+            align="start"
+            className="p-0 w-auto bg-background"
+            onOpenAutoFocus={(event) => event.preventDefault()}
+          >
             <ColorSwatchPicker
               colors={TEXT_COLORS}
               onPick={setColor}
@@ -462,7 +476,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <Highlighter className="w-4 h-4" aria-hidden="true" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-auto bg-background">
+          <PopoverContent
+            align="start"
+            className="p-0 w-auto bg-background"
+            onOpenAutoFocus={(event) => event.preventDefault()}
+          >
             <ColorSwatchPicker
               colors={HIGHLIGHT_COLORS}
               onPick={setHighlight}
