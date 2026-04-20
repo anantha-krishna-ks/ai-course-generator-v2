@@ -285,7 +285,7 @@ export default function AIGenerateCourse() {
           </nav>
 
           {/* Card with AI shimmer border */}
-          <div className="relative rounded-2xl p-[1px] overflow-hidden shadow-[0_1px_1px_hsl(var(--foreground)/0.04),0_4px_10px_-4px_hsl(var(--foreground)/0.08),0_14px_36px_-12px_hsl(var(--foreground)/0.14)]">
+          <div className="relative rounded-2xl p-[1px] overflow-hidden shadow-[0_1px_1px_hsl(var(--foreground)/0.04),0_4px_10px_-4px_hsl(var(--foreground)/0.07),0_10px_24px_-12px_hsl(var(--foreground)/0.09)]">
             {/* Animated gradient border */}
             <motion.div
               className="absolute inset-0 rounded-2xl"
