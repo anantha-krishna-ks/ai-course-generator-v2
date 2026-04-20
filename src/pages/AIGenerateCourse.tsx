@@ -458,10 +458,14 @@ export default function AIGenerateCourse() {
             </label>
           </div>
           <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
-            <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction onClick={confirmBack} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-1.5">
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
               Go back
             </AlertDialogAction>
-            <AlertDialogCancel className="mt-0">Stay here</AlertDialogCancel>
+            <AlertDialogCancel className="mt-0 gap-1.5">
+              <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+              Stay here
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
