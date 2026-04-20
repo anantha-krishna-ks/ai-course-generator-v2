@@ -487,7 +487,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
       {/* Course Tone */}
       <div>
-        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+        <div className="text-base font-semibold text-foreground mb-2.5">
           Course Tone
         </div>
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course tone">
