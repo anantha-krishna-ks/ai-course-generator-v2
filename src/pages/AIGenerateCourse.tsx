@@ -103,7 +103,7 @@ export default function AIGenerateCourse() {
   const canAdvance = (): boolean => {
     switch (currentStep) {
       case 1:
-        return !!formState.title.trim() && !!formState.intendedLearners.trim();
+        return !!formState.title.trim();
       case 2:
       case 3:
       case 4:
