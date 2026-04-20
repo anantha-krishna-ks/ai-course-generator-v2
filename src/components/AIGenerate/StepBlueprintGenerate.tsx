@@ -172,7 +172,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
   return (
     <div className="space-y-4">
       {/* Two-column responsive grid for compact prefs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {/* Page Duration */}
         <PrefCard>
           <SectionHeader icon={Clock} title="Page Duration" desc="Approx. time per page" />
