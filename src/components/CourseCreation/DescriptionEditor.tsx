@@ -96,6 +96,19 @@ const CustomTextStyle = TextStyle.extend({
       },
     };
   },
+  addCommands() {
+    return {
+      ...this.parent?.(),
+      setFontSize:
+        (fontSize: string) =>
+        ({ chain }) =>
+          chain().setMark('textStyle', { fontSize }).run(),
+      unsetFontSize:
+        () =>
+        ({ chain }) =>
+          chain().setMark('textStyle', { fontSize: null }).removeEmptyTextStyle().run(),
+    };
+  },
 });
 
 interface TBProps {
@@ -501,6 +514,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
           <DropdownMenuTrigger asChild>
             <button
               type="button"
+              onMouseDown={(event) => event.preventDefault()}
               aria-label="Font size"
               title="Font size"
               className="inline-flex items-center gap-1 h-8 px-2 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0 text-xs font-medium"
@@ -520,7 +534,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
                 key={s.value}
                 onSelect={(event) => {
                   event.preventDefault();
-                  editor.chain().focus().setMark('textStyle', { fontSize: s.value }).run();
+                   editor.chain().focus().setFontSize(s.value).run();
                 }}
                 style={{ fontSize: s.value }}
               >
@@ -531,7 +545,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
             <DropdownMenuItem
               onSelect={(event) => {
                 event.preventDefault();
-                editor.chain().focus().setMark('textStyle', { fontSize: null }).run();
+                editor.chain().focus().unsetFontSize().run();
               }}
             >
               Reset
@@ -546,6 +560,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
           <DropdownMenuTrigger asChild>
             <button
               type="button"
+              onMouseDown={(event) => event.preventDefault()}
               aria-label="Text alignment"
               title="Alignment"
               className="inline-flex items-center gap-1 h-8 px-1.5 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
