@@ -171,6 +171,15 @@ interface TableGridPickerProps {
 function TableGridPicker({ onSelect }: TableGridPickerProps) {
   const [hover, setHover] = useState<{ rows: number; cols: number }>({ rows: 0, cols: 0 });
 
+  const handleCellMouseDown = (
+    event: MouseEvent<HTMLButtonElement>,
+    rows: number,
+    cols: number,
+  ) => {
+    event.preventDefault();
+    onSelect(rows, cols);
+  };
+
   const cells = [];
   for (let r = 1; r <= TABLE_GRID_SIZE; r += 1) {
     for (let c = 1; c <= TABLE_GRID_SIZE; c += 1) {
@@ -182,8 +191,7 @@ function TableGridPicker({ onSelect }: TableGridPickerProps) {
           aria-label={`Insert ${r} by ${c} table`}
           onMouseEnter={() => setHover({ rows: r, cols: c })}
           onFocus={() => setHover({ rows: r, cols: c })}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => onSelect(r, c)}
+          onMouseDown={(event) => handleCellMouseDown(event, r, c)}
           className={cn(
             'h-5 w-5 rounded-[3px] border transition-colors',
             active
@@ -219,7 +227,10 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: false,
+        underline: false,
+      }),
       TextStyle,
       FontSize,
       Underline,
