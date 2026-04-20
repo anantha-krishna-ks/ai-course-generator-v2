@@ -288,7 +288,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       }),
       Subscript,
       Superscript,
-      FontSize,
+      TextStyle,
       Color,
       Table.configure({ resizable: true, HTMLAttributes: { class: 'tt-table' } }),
       TableRow,
