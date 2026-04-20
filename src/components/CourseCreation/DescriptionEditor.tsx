@@ -446,7 +446,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <Palette className="w-4 h-4" aria-hidden="true" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-auto bg-background">
+          <PopoverContent
+            align="start"
+            className="p-0 w-auto bg-background"
+            onOpenAutoFocus={(event) => event.preventDefault()}
+          >
             <ColorSwatchPicker
               colors={TEXT_COLORS}
               onPick={setColor}
@@ -472,7 +476,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <Highlighter className="w-4 h-4" aria-hidden="true" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-auto bg-background">
+          <PopoverContent
+            align="start"
+            className="p-0 w-auto bg-background"
+            onOpenAutoFocus={(event) => event.preventDefault()}
+          >
             <ColorSwatchPicker
               colors={HIGHLIGHT_COLORS}
               onPick={setHighlight}
