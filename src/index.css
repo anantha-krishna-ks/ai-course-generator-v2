@@ -183,19 +183,7 @@ All colors MUST be HSL.
      ============================================================ */
   html { font-size: 16px; }
 
-  /* Override Tailwind tiny-size utilities */
-  .text-xs   { font-size: 0.8125rem !important; line-height: 1.25rem !important; }
-  .text-sm   { font-size: 0.9375rem !important; line-height: 1.4rem !important; }
-  .text-base { font-size: 1rem !important;      line-height: 1.55rem !important; }
-
-  /* Floor any inline arbitrary tiny sizes to 13px */
-  .text-\[9px\],
-  .text-\[10px\],
-  .text-\[11px\],
-  .text-\[12px\] {
-    font-size: 0.8125rem !important;
-    line-height: 1.25rem !important;
-  }
+  /* Heading rhythm — used when consumers don't override */
 
   /* Heading rhythm — used when consumers don't override */
   h1 { font-size: clamp(1.625rem, 1.4rem + 1vw, 2rem);   font-weight: 700; line-height: 1.2;  letter-spacing: -0.01em; }
