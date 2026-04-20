@@ -18,8 +18,13 @@ import {
   Crown,
   Timer,
   Hourglass,
+  Upload,
+  X,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
+import { useRef } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -143,6 +148,92 @@ function Chip({
     >
       {children}
     </button>
+  );
+}
+
+function DocUploadZone({
+  documents,
+  onDocumentsChange,
+  ariaLabel,
+}: {
+  documents: string[];
+  onDocumentsChange: (docs: string[]) => void;
+  ariaLabel: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFiles = (files: FileList | File[]) => {
+    const names = Array.from(files).map((f) => f.name);
+    onDocumentsChange([...documents, ...names]);
+  };
+
+  return (
+    <div className="space-y-2">
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={ariaLabel}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.currentTarget.classList.add("border-primary", "bg-primary/5");
+        }}
+        onDragLeave={(e) => {
+          e.currentTarget.classList.remove("border-primary", "bg-primary/5");
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.currentTarget.classList.remove("border-primary", "bg-primary/5");
+          if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
+        }}
+        className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-border bg-muted/20 hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-muted-foreground text-xs font-medium cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        <span>Drop files or click to upload</span>
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        className="hidden"
+        accept=".pdf,.doc,.docx,.txt,.md"
+        aria-label={`${ariaLabel} file input`}
+        onChange={(e) => {
+          if (e.target.files?.length) {
+            handleFiles(e.target.files);
+            e.target.value = "";
+          }
+        }}
+      />
+      {documents.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {documents.map((doc, i) => (
+            <Badge
+              key={i}
+              variant="secondary"
+              className="gap-1.5 pl-2 pr-1 py-1 rounded-full text-[11px] font-normal bg-muted text-foreground hover:bg-muted"
+            >
+              <FileText className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+              <span className="max-w-[180px] truncate">{doc}</span>
+              <button
+                type="button"
+                onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
+                className="rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors"
+                aria-label={`Remove ${doc}`}
+              >
+                <X className="w-3 h-3" aria-hidden="true" focusable="false" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -386,10 +477,10 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
       </PrefCard>
 
-      {/* Guidelines & Exclusions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <PrefCard>
-          <SectionHeader icon={BookOpen} title="Guidelines" desc="Style or content rules to follow" />
+      {/* Guidelines */}
+      <PrefCard>
+        <SectionHeader title="Guidelines" />
+        <div className="space-y-3">
           <Textarea
             value={state.guidelines}
             onChange={(e) => onChange({ guidelines: e.target.value })}
@@ -397,9 +488,18 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             className="min-h-[80px] resize-none rounded-xl text-sm"
             aria-label="Guidelines"
           />
-        </PrefCard>
-        <PrefCard>
-          <SectionHeader icon={Ban} title="Exclusions" desc="Topics or terms to avoid" />
+          <DocUploadZone
+            documents={state.guidelinesDocuments ?? []}
+            onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
+            ariaLabel="Upload guidelines documents"
+          />
+        </div>
+      </PrefCard>
+
+      {/* Exclusions */}
+      <PrefCard>
+        <SectionHeader title="Exclusions" />
+        <div className="space-y-3">
           <Textarea
             value={state.exclusions}
             onChange={(e) => onChange({ exclusions: e.target.value })}
@@ -407,8 +507,13 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             className="min-h-[80px] resize-none rounded-xl text-sm"
             aria-label="Exclusions"
           />
-        </PrefCard>
-      </div>
+          <DocUploadZone
+            documents={state.exclusionsDocuments ?? []}
+            onDocumentsChange={(docs) => onChange({ exclusionsDocuments: docs })}
+            ariaLabel="Upload exclusions documents"
+          />
+        </div>
+      </PrefCard>
     </div>
   );
 }
