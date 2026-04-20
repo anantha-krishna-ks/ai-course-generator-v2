@@ -181,12 +181,20 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
               </div>
             </div>
             <span
-              className={`absolute top-3 right-3 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                state.blueprintSource === "import" ? "border-primary bg-primary" : "border-muted-foreground/40"
+              className={`absolute top-3 left-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                state.blueprintSource === "import"
+                  ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
+                  : "border-muted-foreground/30 bg-background"
               }`}
               aria-hidden="true"
             >
-              {state.blueprintSource === "import" && <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
+              <span
+                className={`rounded-full bg-primary-foreground transition-all duration-300 ${
+                  state.blueprintSource === "import"
+                    ? "w-2 h-2 opacity-100 scale-100"
+                    : "w-0 h-0 opacity-0 scale-0"
+                }`}
+              />
             </span>
           </button>
 
@@ -220,12 +228,20 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
               </div>
             </div>
             <span
-              className={`absolute top-3 right-3 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                state.blueprintSource === "ai" ? "border-primary bg-primary" : "border-muted-foreground/40"
+              className={`absolute top-3 left-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                state.blueprintSource === "ai"
+                  ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
+                  : "border-muted-foreground/30 bg-background"
               }`}
               aria-hidden="true"
             >
-              {state.blueprintSource === "ai" && <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />}
+              <span
+                className={`rounded-full bg-primary-foreground transition-all duration-300 ${
+                  state.blueprintSource === "ai"
+                    ? "w-2 h-2 opacity-100 scale-100"
+                    : "w-0 h-0 opacity-0 scale-0"
+                }`}
+              />
             </span>
           </button>
         </div>
