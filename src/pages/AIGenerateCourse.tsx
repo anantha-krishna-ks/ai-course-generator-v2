@@ -320,41 +320,38 @@ export default function AIGenerateCourse() {
               </div>
 
               {/* Card header with ribbon-style step badge */}
-              <div className="flex items-center gap-3 pr-5 sm:pr-8 md:pr-10 pt-5 sm:pt-6 pb-2">
+              <div className="relative flex items-center gap-3 pr-5 sm:pr-8 md:pr-10 pt-6 sm:pt-7 pb-2">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`ribbon-${currentStep}`}
-                    initial={{ x: -20, opacity: 0 }}
+                    initial={{ x: -10, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -20, opacity: 0 }}
+                    exit={{ x: -10, opacity: 0 }}
                     transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                    className="relative shrink-0"
+                    className="relative shrink-0 -ml-2"
+                    style={{ filter: "drop-shadow(0 6px 12px hsl(211, 100%, 50%, 0.25))" }}
                   >
-                    {/* Folded tail behind ribbon */}
+                    {/* Folded tail tucked behind card on the left */}
                     <div
-                      className="absolute -left-0 -bottom-1.5 w-3 h-3 z-0"
+                      className="absolute -left-2 top-full w-2 h-2"
                       style={{
-                        background: "linear-gradient(135deg, hsl(211, 100%, 30%), hsl(270, 80%, 35%))",
-                        clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+                        background: "linear-gradient(135deg, hsl(232, 70%, 25%), hsl(211, 80%, 28%))",
+                        clipPath: "polygon(100% 0, 100% 100%, 0 0)",
                       }}
                       aria-hidden="true"
                     />
-                    {/* Main ribbon */}
+                    {/* Main ribbon body */}
                     <div
-                      className="relative z-10 flex items-center gap-2.5 pl-4 pr-6 py-2 text-white shadow-[0_4px_12px_-4px_hsl(211,100%,50%,0.4)]"
+                      className="relative flex items-center gap-2.5 pl-5 pr-7 py-2 text-white"
                       style={{
-                        background: "linear-gradient(90deg, hsl(232, 90%, 50%) 0%, hsl(211, 100%, 52%) 50%, hsl(195, 95%, 55%) 100%)",
-                        clipPath: "polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%)",
-                        borderTopRightRadius: "9999px",
-                        borderBottomRightRadius: "9999px",
-                        borderTopLeftRadius: "6px",
-                        borderBottomLeftRadius: "6px",
+                        background: "linear-gradient(90deg, hsl(232, 90%, 50%) 0%, hsl(211, 100%, 52%) 55%, hsl(195, 95%, 58%) 100%)",
+                        clipPath: "polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%)",
                       }}
                     >
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold backdrop-blur-sm">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold leading-none">
                         {currentStep}
                       </span>
-                      <span className="text-xs sm:text-sm font-semibold tracking-wide pr-2">
+                      <span className="text-xs sm:text-sm font-semibold tracking-wide leading-none pr-1">
                         {STEPS[currentStep - 1].label}
                       </span>
                     </div>
