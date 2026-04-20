@@ -98,7 +98,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
       {/* Learning Outcome */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label uppercase tracking-wider">
+          <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground">
             What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
           </label>
 
@@ -146,7 +146,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Blueprint source selector */}
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-field-label uppercase tracking-wider">
+        <label className="text-base font-semibold text-foreground">
           Course Blueprint <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <p className="text-xs text-muted-foreground -mt-0.5">
@@ -307,7 +307,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
             className="pt-2 grid grid-cols-2 gap-3"
           >
             <div className="space-y-1.5">
-              <label htmlFor="bp-sections" className="text-xs font-semibold text-field-label uppercase tracking-wider">
+              <label htmlFor="bp-sections" className="text-sm font-semibold text-foreground">
                 No. of Sections
               </label>
               <input
@@ -321,7 +321,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
               />
             </div>
             <div className="space-y-1.5">
-              <label htmlFor="bp-pages" className="text-xs font-semibold text-field-label uppercase tracking-wider">
+              <label htmlFor="bp-pages" className="text-sm font-semibold text-foreground">
                 Pages per Section
               </label>
               <input

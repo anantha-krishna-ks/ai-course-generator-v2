@@ -419,7 +419,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
       {/* Content Preferences */}
       <div>
-        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+        <div className="text-base font-semibold text-foreground mb-2.5">
           Content Preferences
         </div>
         <div className="grid grid-cols-2 gap-3 shadow-none">
