@@ -486,6 +486,7 @@ export default function AIGenerateCourse() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </div>
   );
 }
