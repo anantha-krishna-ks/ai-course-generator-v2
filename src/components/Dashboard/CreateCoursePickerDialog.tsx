@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import manualIllustration from "@/assets/create-manual-illustration.png";
 import aiIllustration from "@/assets/create-ai-illustration.png";
 
@@ -17,14 +18,16 @@ export function CreateCoursePickerDialog({
   onSelectManual,
   onSelectAI,
 }: CreateCoursePickerDialogProps) {
+  const [loaded, setLoaded] = useState<Record<string, boolean>>({});
+
   const options = [
     {
       key: "manual" as const,
       title: "Manual Generation",
       description: "Craft your course step by step with full creative control over every section and page.",
       illustration: manualIllustration,
-      bgClass: "from-[hsl(220,90%,97%)] to-[hsl(280,80%,97%)]",
-      ringClass: "hover:ring-[hsl(220,80%,75%)]",
+      bgClass: "from-[hsl(220,40%,98%)] to-[hsl(210,30%,96%)]",
+      ringClass: "hover:ring-primary/30",
       onClick: onSelectManual,
     },
     {
@@ -32,8 +35,8 @@ export function CreateCoursePickerDialog({
       title: "Generate using AI",
       description: "Turn your ideas into a complete course in seconds with an AI-powered blueprint.",
       illustration: aiIllustration,
-      bgClass: "from-[hsl(280,90%,97%)] to-[hsl(330,80%,97%)]",
-      ringClass: "hover:ring-[hsl(280,80%,75%)]",
+      bgClass: "from-[hsl(220,40%,98%)] to-[hsl(210,30%,96%)]",
+      ringClass: "hover:ring-primary/30",
       onClick: onSelectAI,
     },
   ];
@@ -66,15 +69,22 @@ export function CreateCoursePickerDialog({
               className={`group relative flex flex-col items-center text-center rounded-2xl border border-border bg-gradient-to-br ${opt.bgClass} p-5 transition-all hover:shadow-lg hover:border-primary/30 ring-2 ring-transparent ${opt.ringClass} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
               aria-label={opt.title}
             >
-              <div className="w-full aspect-square max-w-[200px] flex items-center justify-center mb-3">
+              <div className="relative w-full aspect-square max-w-[200px] flex items-center justify-center mb-3">
+                {!loaded[opt.key] && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-primary/60 animate-spin" aria-hidden="true" focusable="false" />
+                  </div>
+                )}
                 <img
                   src={opt.illustration}
                   alt=""
                   role="presentation"
-                  loading="lazy"
+                  fetchPriority="high"
+                  decoding="async"
                   width={768}
                   height={768}
-                  className="w-full h-full object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105"
+                  onLoad={() => setLoaded((prev) => ({ ...prev, [opt.key]: true }))}
+                  className={`w-full h-full object-contain drop-shadow-sm transition-all duration-300 group-hover:scale-105 ${loaded[opt.key] ? "opacity-100" : "opacity-0"}`}
                 />
               </div>
               <h3 className="text-base font-semibold text-foreground mb-1.5">{opt.title}</h3>
