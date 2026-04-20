@@ -197,7 +197,7 @@ export default function AIGenerateCourse() {
       </Button>
 
       <main id="main-content" className="flex-1 flex items-start sm:items-center justify-center px-3 sm:px-4 py-4 sm:py-6 md:py-10">
-        <div className="w-full max-w-3xl">
+        <div className="w-full max-w-4xl">
 
           {/* Mobile/tablet back button */}
           <Button
