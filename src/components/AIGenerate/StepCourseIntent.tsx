@@ -397,7 +397,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                         max={20}
                         value={f.value}
                         onChange={(e) => f.set(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                        className="flex-1 text-center text-2xl font-bold text-foreground bg-transparent border-0 border-b border-border focus-visible:border-primary outline-none focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-colors pb-0.5"
+                        className="w-10 mx-auto text-center text-2xl font-bold text-foreground bg-transparent border-0 border-b border-border focus-visible:border-primary outline-none focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-colors pb-0.5"
                         aria-label={f.label}
                       />
                       <button
