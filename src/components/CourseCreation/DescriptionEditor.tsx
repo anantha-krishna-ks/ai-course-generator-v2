@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import SunEditor from 'suneditor-react';
-import 'suneditor/dist/css/suneditor.min.css';
+import 'suneditor/css/editor';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DescriptionEditorProps {
@@ -57,7 +57,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         ? [
             ['undo', 'redo'],
             ['bold', 'italic', 'underline', 'strike'],
-            ['fontSize', 'fontColor', 'hiliteColor'],
+            ['fontSize', 'fontColor', 'backgroundColor'],
             ['align', 'list'],
             ['link', 'table', 'blockquote'],
             ['subscript', 'superscript'],
@@ -66,7 +66,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
             ['undo', 'redo'],
             ['bold', 'italic', 'underline', 'strike'],
             ['fontSize'],
-            ['fontColor', 'hiliteColor'],
+            ['fontColor', 'backgroundColor'],
             ['align'],
             ['list'],
             ['link', 'table', 'blockquote'],
@@ -89,7 +89,9 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       stickyToolbar: '-1',
       imageUploadUrl: undefined,
       videoUploadUrl: undefined,
-      backgroundColorItem: BACKGROUND_COLORS,
+      backgroundColor: {
+        items: BACKGROUND_COLORS,
+      },
     }),
     [isMobile],
   );
