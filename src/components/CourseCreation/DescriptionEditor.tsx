@@ -208,7 +208,14 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm dark:prose-invert max-w-none min-h-[220px] p-4 focus:outline-none [overflow-wrap:anywhere] break-words [&_*]:[overflow-wrap:anywhere] [&_*]:break-words',
+          'prose prose-sm dark:prose-invert max-w-none min-h-[220px] p-4 focus:outline-none ' +
+          '[overflow-wrap:anywhere] break-words [&_*]:[overflow-wrap:anywhere] [&_*]:break-words ' +
+          '[&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-muted/40 [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-3 [&_blockquote]:italic [&_blockquote]:text-foreground ' +
+          '[&_.tableWrapper]:overflow-x-auto [&_.tableWrapper]:my-3 ' +
+          '[&_table]:border-collapse [&_table]:w-full [&_table]:table-fixed ' +
+          '[&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:font-semibold ' +
+          '[&_td]:border [&_td]:border-border [&_td]:p-2 [&_td]:align-top ' +
+          '[&_.selectedCell]:bg-primary/10',
       },
     },
   });
