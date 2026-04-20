@@ -79,6 +79,9 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         </p>
       </div>
 
+      {/* Section divider: Title */}
+      <SectionDivider number={1} icon={Type} label="The Basics" />
+
       {/* Course Title */}
       <div>
         <label htmlFor="course-title" className="text-base font-semibold text-foreground mb-2 block">
