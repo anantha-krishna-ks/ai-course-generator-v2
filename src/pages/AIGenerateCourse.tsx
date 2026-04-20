@@ -176,10 +176,12 @@ export default function AIGenerateCourse() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      <div className="aurora-bg" aria-hidden="true" />
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground">
         Skip to main content
       </a>
+      <div className="relative z-10 flex flex-col flex-1">
       <Header />
 
       <SideRibbon side="left" />
