@@ -440,7 +440,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <DropdownMenuItem
                 key={s.value}
                 onClick={() =>
-                  editor.chain().focus().setMark('textStyle', { fontSize: s.value }).run()
+                  editor.chain().focus().setFontSize(s.value).run()
                 }
                 style={{ fontSize: s.value }}
               >
@@ -450,7 +450,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() =>
-                editor.chain().focus().setMark('textStyle', { fontSize: null }).run()
+                editor.chain().focus().unsetFontSize().run()
               }
             >
               Reset
