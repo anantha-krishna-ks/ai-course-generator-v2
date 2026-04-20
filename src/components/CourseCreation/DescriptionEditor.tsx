@@ -147,11 +147,19 @@ function ToolbarButton({ active = false, ariaLabel, icon: Icon, onMouseDown, onP
       aria-pressed={active}
       onMouseDown={onMouseDown}
       onClick={onPress}
-      className={cn('h-8 w-8 p-0', active && 'bg-primary/15 text-primary')}
+      title={ariaLabel}
+      className={cn(
+        'h-8 w-8 shrink-0 rounded-md p-0 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/40',
+        active && 'bg-primary/15 text-primary hover:bg-primary/20',
+      )}
     >
-      <Icon aria-hidden="true" focusable="false" className="h-4 w-4" />
+      <Icon aria-hidden="true" focusable="false" className="h-3.5 w-3.5" />
     </Button>
   );
+}
+
+function ToolbarDivider() {
+  return <span aria-hidden="true" className="mx-0.5 hidden h-5 w-px shrink-0 bg-border sm:block" />;
 }
 
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
