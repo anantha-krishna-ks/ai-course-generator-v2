@@ -3,6 +3,16 @@ import Lottie from "lottie-react";
 import courseCreationAnimation from "@/assets/course-creation-lottie.json";
 import previewMultipage from "@/assets/preview-multipage.jpg";
 import previewSinglepage from "@/assets/preview-singlepage.jpg";
+
+// Preload preview images at module load so they're decoded & cached
+// before the dialog ever opens — eliminates the first-open flash/delay.
+if (typeof window !== "undefined") {
+  [previewMultipage, previewSinglepage].forEach((src) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = src;
+  });
+}
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
