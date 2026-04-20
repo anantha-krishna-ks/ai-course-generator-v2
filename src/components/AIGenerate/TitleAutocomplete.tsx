@@ -176,7 +176,7 @@ export function TitleAutocomplete({ value, onChange, id, placeholder }: TitleAut
             if (suggestions.length > 0) setShowDropdown(true);
           }}
           placeholder={placeholder}
-          className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 pr-8 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal placeholder:text-base placeholder:tracking-normal text-foreground"
+          className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 pr-8 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
           autoComplete="off"
           role="combobox"
           aria-expanded={showDropdown}
