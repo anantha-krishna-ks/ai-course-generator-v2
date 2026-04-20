@@ -320,48 +320,41 @@ export default function AIGenerateCourse() {
               </div>
 
               {/* Card header with ribbon-style step badge */}
-              <div className="relative flex items-center gap-3 pr-5 sm:pr-8 md:pr-10 pt-7 sm:pt-8 pb-2">
+              <div className="flex items-center gap-3 pr-5 sm:pr-8 md:pr-10 pt-5 sm:pt-6 pb-2">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`ribbon-${currentStep}`}
-                    initial={{ x: -8, opacity: 0 }}
+                    initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -8, opacity: 0 }}
+                    exit={{ x: -20, opacity: 0 }}
                     transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                    className="relative shrink-0 -ml-3"
+                    className="relative shrink-0"
                   >
-                    {/* Folded tail (darker triangle) tucked under-left, behind the ribbon */}
+                    {/* Folded tail behind ribbon */}
                     <div
-                      className="absolute left-0 -bottom-1.5 w-3 h-3 z-0"
+                      className="absolute -left-0 -bottom-1.5 w-3 h-3 z-0"
                       style={{
-                        background: "linear-gradient(135deg, hsl(218, 35%, 28%), hsl(218, 30%, 22%))",
-                        clipPath: "polygon(0 0, 100% 100%, 100% 0)",
-                        boxShadow: "0 1px 2px hsl(218, 30%, 15%, 0.3)",
+                        background: "linear-gradient(135deg, hsl(211, 100%, 30%), hsl(270, 80%, 35%))",
+                        clipPath: "polygon(0 0, 100% 0, 100% 100%)",
                       }}
                       aria-hidden="true"
                     />
-                    {/* Main ribbon body with notched right end */}
+                    {/* Main ribbon */}
                     <div
-                      className="relative z-10 flex items-center gap-2.5 pl-4 pr-7 py-2 text-white"
+                      className="relative z-10 flex items-center gap-2.5 pl-4 pr-6 py-2 text-white shadow-[0_4px_12px_-4px_hsl(211,100%,50%,0.4)]"
                       style={{
-                        background: "linear-gradient(90deg, hsl(218, 55%, 38%) 0%, hsl(212, 60%, 44%) 55%, hsl(205, 60%, 50%) 100%)",
-                        clipPath: "polygon(0 0, 100% 0, calc(100% - 11px) 50%, 100% 100%, 0 100%)",
-                        filter: "drop-shadow(0 4px 8px hsl(218, 40%, 30%, 0.2))",
+                        background: "linear-gradient(90deg, hsl(232, 90%, 50%) 0%, hsl(211, 100%, 52%) 50%, hsl(195, 95%, 55%) 100%)",
+                        clipPath: "polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%)",
+                        borderTopRightRadius: "9999px",
+                        borderBottomRightRadius: "9999px",
+                        borderTopLeftRadius: "6px",
+                        borderBottomLeftRadius: "6px",
                       }}
                     >
-                      {/* Subtle inner highlight for fold realism */}
-                      <div
-                        className="absolute inset-0 opacity-40 pointer-events-none"
-                        style={{
-                          background: "linear-gradient(180deg, hsl(0, 0%, 100%, 0.18) 0%, transparent 45%, transparent 60%, hsl(0, 0%, 0%, 0.12) 100%)",
-                          clipPath: "polygon(0 0, 100% 0, calc(100% - 11px) 50%, 100% 100%, 0 100%)",
-                        }}
-                        aria-hidden="true"
-                      />
-                      <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-white/20 text-[11px] font-bold leading-none ring-1 ring-white/15">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold backdrop-blur-sm">
                         {currentStep}
                       </span>
-                      <span className="relative text-xs sm:text-sm font-semibold tracking-wide leading-none pr-1">
+                      <span className="text-xs sm:text-sm font-semibold tracking-wide pr-2">
                         {STEPS[currentStep - 1].label}
                       </span>
                     </div>
