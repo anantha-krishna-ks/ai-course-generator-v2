@@ -1,62 +1,67 @@
-import { useCallback, useState } from 'react';
-import { useEditor, EditorContent, Editor } from '@tiptap/react';
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Highlight from '@tiptap/extension-highlight';
+import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import { TextStyle } from '@tiptap/extension-text-style';
+import { TextStyle, FontSize, BackgroundColor } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
 import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  Highlighter,
-  Palette,
-  AlignLeft,
   AlignCenter,
-  AlignRight,
   AlignJustify,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  ChevronDown,
+  Highlighter,
+  Italic,
+  Link as LinkIcon,
   List,
   ListOrdered,
-  Undo,
-  Redo,
-  Link as LinkIcon,
-  Table as TableIcon,
+  Minus,
+  MoreHorizontal,
+  Palette,
+  Plus,
   Quote,
+  Redo,
+  Strikethrough,
   Subscript as SubscriptIcon,
   Superscript as SuperscriptIcon,
-  Type,
-  ChevronDown,
-  MoreHorizontal,
+  Table as TableIcon,
   Trash2,
-  Plus,
-  Minus,
+  Type,
+  Underline as UnderlineIcon,
+  Undo,
 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 interface DescriptionEditorProps {
   content: string;
   onChange: (content: string) => void;
   onBlur?: () => void;
+}
+
+interface SelectionSnapshot {
+  from: number;
+  to: number;
 }
 
 const FONT_SIZES = [
@@ -66,83 +71,111 @@ const FONT_SIZES = [
   { label: 'Large', value: '1.375rem' },
   { label: 'X-Large', value: '1.75rem' },
   { label: 'Huge', value: '2.25rem' },
-];
+] as const;
 
 const TEXT_COLORS = [
-  '#0F172A', '#475569', '#EF4444', '#F97316',
-  '#EAB308', '#22C55E', '#06B6D4', '#3B82F6',
-  '#8B5CF6', '#EC4899',
-];
+  'hsl(222 47% 11%)',
+  'hsl(215 25% 27%)',
+  'hsl(0 84% 60%)',
+  'hsl(24 95% 53%)',
+  'hsl(45 93% 47%)',
+  'hsl(142 71% 45%)',
+  'hsl(188 94% 43%)',
+  'hsl(217 91% 60%)',
+  'hsl(262 83% 58%)',
+  'hsl(330 81% 60%)',
+] as const;
 
-const HIGHLIGHT_COLORS = [
-  '#FEF3C7', '#FECACA', '#FED7AA', '#FDE68A',
-  '#D1FAE5', '#A7F3D0', '#BFDBFE', '#DDD6FE',
-  '#FBCFE8', '#E5E7EB',
-];
+const BACKGROUND_COLORS = [
+  'hsl(48 96% 89%)',
+  'hsl(0 93% 94%)',
+  'hsl(28 100% 90%)',
+  'hsl(48 97% 77%)',
+  'hsl(151 81% 90%)',
+  'hsl(152 76% 80%)',
+  'hsl(214 95% 88%)',
+  'hsl(252 95% 92%)',
+  'hsl(327 73% 90%)',
+  'hsl(220 14% 91%)',
+] as const;
 
-// TextStyle v3 provides fontSize natively via setFontSize/unsetFontSize commands.
+const preserveToolbarMouseDown = (event: MouseEvent<HTMLElement>) => {
+  event.preventDefault();
+};
 
-interface TBProps {
+interface ToolbarButtonProps {
+  label: string;
   onClick: () => void;
+  onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
   isActive?: boolean;
   disabled?: boolean;
-  label: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-const ToolbarButton = ({ onClick, isActive, disabled, label, children }: TBProps) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    aria-label={label}
-    title={label}
-    className={cn(
-      'inline-flex items-center justify-center h-8 w-8 rounded-md transition-all shrink-0',
-      isActive
-        ? 'bg-primary text-primary-foreground shadow-sm'
-        : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground',
-      disabled && 'opacity-40 cursor-not-allowed hover:bg-transparent',
-    )}
-  >
-    {children}
-  </button>
-);
-
-const Divider = () => (
-  <span aria-hidden="true" className="h-5 w-px bg-foreground/15 mx-0.5 shrink-0" />
-);
-
-function ColorSwatchPicker({
-  colors,
-  onPick,
-  onClear,
+function ToolbarButton({
   label,
-}: {
-  colors: string[];
-  onPick: (c: string) => void;
-  onClear: () => void;
-  label: string;
-}) {
+  onClick,
+  onMouseDown,
+  isActive,
+  disabled,
+  children,
+}: ToolbarButtonProps) {
   return (
-    <div className="p-2 w-[180px]">
-      <div className="text-xs font-medium text-muted-foreground mb-2 px-1">{label}</div>
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onMouseDown={onMouseDown}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent transition-colors',
+        isActive
+          ? 'bg-primary text-primary-foreground shadow-sm'
+          : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+        disabled && 'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Divider() {
+  return <span aria-hidden="true" className="mx-0.5 h-5 w-px shrink-0 bg-border" />;
+}
+
+interface ColorPickerProps {
+  colors: readonly string[];
+  label: string;
+  onClear: () => void;
+  onPick: (color: string) => void;
+  preserveSelection: (event: MouseEvent<HTMLElement>) => void;
+}
+
+function ColorPicker({ colors, label, onClear, onPick, preserveSelection }: ColorPickerProps) {
+  return (
+    <div className="w-[188px] p-2">
+      <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">{label}</div>
       <div className="grid grid-cols-5 gap-1.5">
-        {colors.map((c) => (
+        {colors.map((color) => (
           <button
-            key={c}
+            key={color}
             type="button"
-            onClick={() => onPick(c)}
-            aria-label={`Color ${c}`}
-            className="h-6 w-6 rounded-md border border-foreground/10 hover:scale-110 transition-transform"
-            style={{ backgroundColor: c }}
+            aria-label={`${label} ${color}`}
+            title={color}
+            onMouseDown={preserveSelection}
+            onClick={() => onPick(color)}
+            className="h-7 w-7 rounded-md border border-border transition-transform hover:scale-105"
+            style={{ backgroundColor: color }}
           />
         ))}
       </div>
       <button
         type="button"
+        onMouseDown={preserveSelection}
         onClick={onClear}
-        className="mt-2 w-full text-xs text-muted-foreground hover:text-foreground py-1 rounded hover:bg-foreground/5"
+        className="mt-2 w-full rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       >
         Clear
       </button>
@@ -150,55 +183,74 @@ function ColorSwatchPicker({
   );
 }
 
-function LinkPopover({ editor }: { editor: Editor }) {
-  const [url, setUrl] = useState('');
-  const [open, setOpen] = useState(false);
+interface LinkPopoverProps {
+  editor: Editor;
+  onRememberSelection: () => void;
+  runLinkCommand: (url: string) => void;
+}
 
-  const apply = () => {
-    if (!url) {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-    } else {
-      const href = url.match(/^https?:\/\//) ? url : `https://${url}`;
-      editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
-    }
-    setOpen(false);
-    setUrl('');
-  };
+function LinkPopover({ editor, onRememberSelection, runLinkCommand }: LinkPopoverProps) {
+  const [open, setOpen] = useState(false);
+  const [url, setUrl] = useState('');
 
   return (
     <Popover
       open={open}
-      onOpenChange={(v) => {
-        setOpen(v);
-        if (v) setUrl(editor.getAttributes('link').href || '');
+      onOpenChange={(nextOpen) => {
+        if (nextOpen) {
+          onRememberSelection();
+          setUrl(editor.getAttributes('link').href || '');
+        }
+        setOpen(nextOpen);
       }}
     >
       <PopoverTrigger asChild>
         <button
           type="button"
           aria-label="Insert link"
-          title="Link"
+          title="Insert link"
+          onMouseDown={(event) => {
+            preserveToolbarMouseDown(event);
+            onRememberSelection();
+          }}
           className={cn(
-            'inline-flex items-center justify-center h-8 w-8 rounded-md transition-all shrink-0',
+            'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors',
             editor.isActive('link')
               ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground',
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground',
           )}
         >
-          <LinkIcon className="w-4 h-4" aria-hidden="true" />
+          <LinkIcon className="h-4 w-4" aria-hidden="true" focusable="false" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[280px] p-2 bg-background">
-        <div className="flex gap-1.5">
+      <PopoverContent align="start" className="w-[280px] p-2">
+        <div className="flex gap-2">
           <Input
+            aria-label="Link URL"
             autoFocus
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(event) => setUrl(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                runLinkCommand(url);
+                setOpen(false);
+                setUrl('');
+              }
+            }}
             placeholder="https://example.com"
-            onKeyDown={(e) => e.key === 'Enter' && apply()}
-            className="h-8 text-sm"
+            className="h-8"
           />
-          <Button size="sm" onClick={apply} className="h-8">
+          <Button
+            type="button"
+            size="sm"
+            className="h-8"
+            onClick={() => {
+              runLinkCommand(url);
+              setOpen(false);
+              setUrl('');
+            }}
+          >
             Apply
           </Button>
         </div>
@@ -207,188 +259,203 @@ function LinkPopover({ editor }: { editor: Editor }) {
   );
 }
 
-function TableMenu({ editor }: { editor: Editor }) {
-  const inTable = editor.isActive('table');
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Table"
-          title="Table"
-          className={cn(
-            'inline-flex items-center justify-center h-8 w-8 rounded-md transition-all shrink-0',
-            inTable
-              ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground',
-          )}
-        >
-          <TableIcon className="w-4 h-4" aria-hidden="true" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="bg-background">
-        <DropdownMenuItem
-          onClick={() =>
-            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-          }
-        >
-          <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Insert table (3×3)
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs">Edit</DropdownMenuLabel>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().addRowAfter().run()}
-        >
-          <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Add row
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().addColumnAfter().run()}
-        >
-          <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Add column
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().deleteRow().run()}
-        >
-          <Minus className="w-4 h-4 mr-2" aria-hidden="true" /> Delete row
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().deleteColumn().run()}
-        >
-          <Minus className="w-4 h-4 mr-2" aria-hidden="true" /> Delete column
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().deleteTable().run()}
-          className="text-destructive focus:text-destructive"
-        >
-          <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" /> Delete table
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
+  const selectionRef = useRef<SelectionSnapshot | null>(null);
+
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({ link: false }),
-      Highlight.configure({ multicolor: true }),
+      Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Placeholder.configure({
         placeholder: 'Tell your learners what the course will be about...',
       }),
       Link.configure({
         openOnClick: false,
-        HTMLAttributes: { class: 'text-primary underline underline-offset-2' },
+        autolink: true,
+        HTMLAttributes: {
+          class: 'text-primary underline underline-offset-2',
+        },
       }),
+      TextStyle,
+      FontSize,
+      BackgroundColor,
+      Color,
       Subscript,
       Superscript,
-      TextStyle,
-      Color,
-      Table.configure({ resizable: true, HTMLAttributes: { class: 'tt-table' } }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'w-full border-collapse table-fixed',
+        },
+      }),
       TableRow,
       TableHeader,
       TableCell,
     ],
     content,
-    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    onUpdate: ({ editor: instance }) => {
+      onChange(instance.getHTML());
+    },
+    onSelectionUpdate: ({ editor: instance }) => {
+      const { from, to } = instance.state.selection;
+      selectionRef.current = { from, to };
+    },
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm dark:prose-invert max-w-none min-h-[140px] p-4 focus:outline-none text-base text-foreground leading-relaxed [&_h2]:!text-[1.5rem] [&_h2]:!font-semibold [&_table]:border-collapse [&_td]:border [&_td]:border-foreground/20 [&_td]:p-2 [&_th]:border [&_th]:border-foreground/20 [&_th]:p-2 [&_th]:bg-muted',
+          'prose prose-sm max-w-none min-h-[160px] p-4 text-foreground focus:outline-none [overflow-wrap:anywhere] [&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_h2]:text-2xl [&_h2]:font-semibold [&_ol]:pl-5 [&_table]:my-4 [&_td]:border [&_td]:border-border [&_td]:p-2 [&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:p-2 [&_ul]:pl-5',
       },
     },
   });
 
-  const setColor = useCallback(
-    (c: string) => editor?.chain().focus().setColor(c).run(),
-    [editor],
+  useEffect(() => {
+    if (!editor) return;
+
+    const incoming = content || '<p></p>';
+    const current = editor.getHTML();
+
+    if (incoming !== current) {
+      editor.commands.setContent(incoming, false);
+    }
+  }, [content, editor]);
+
+  const rememberSelection = useCallback(() => {
+    if (!editor) return;
+    const { from, to } = editor.state.selection;
+    selectionRef.current = { from, to };
+  }, [editor]);
+
+  const preserveSelection = useCallback(
+    (event: MouseEvent<HTMLElement>) => {
+      preserveToolbarMouseDown(event);
+      rememberSelection();
+    },
+    [rememberSelection],
   );
-  const clearColor = useCallback(() => editor?.chain().focus().unsetColor().run(), [editor]);
-  const setHighlight = useCallback(
-    (c: string) => editor?.chain().focus().setHighlight({ color: c }).run(),
-    [editor],
+
+  const chain = useCallback(() => {
+    if (!editor) return null;
+    const next = editor.chain().focus();
+    const selection = selectionRef.current;
+
+    if (selection) {
+      next.setTextSelection(selection);
+    }
+
+    return next;
+  }, [editor]);
+
+  const applyTextColor = useCallback(
+    (color: string) => {
+      chain()?.setColor(color).run();
+    },
+    [chain],
   );
-  const clearHighlight = useCallback(
-    () => editor?.chain().focus().unsetHighlight().run(),
-    [editor],
+
+  const clearTextColor = useCallback(() => {
+    chain()?.unsetColor().run();
+  }, [chain]);
+
+  const applyBackgroundColor = useCallback(
+    (color: string) => {
+      chain()?.setBackgroundColor(color).run();
+    },
+    [chain],
   );
+
+  const clearBackgroundColor = useCallback(() => {
+    chain()?.unsetBackgroundColor().run();
+  }, [chain]);
+
+  const applyLink = useCallback(
+    (url: string) => {
+      const next = chain();
+      if (!next) return;
+
+      if (!url.trim()) {
+        next.extendMarkRange('link').unsetLink().run();
+        return;
+      }
+
+      const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+      next.extendMarkRange('link').setLink({ href }).run();
+    },
+    [chain],
+  );
+
+  const currentSize = useMemo(() => {
+    if (!editor) return 'Size';
+
+    return (
+      FONT_SIZES.find((size) => editor.getAttributes('textStyle').fontSize === size.value)?.label ||
+      'Size'
+    );
+  }, [editor, editor?.state]);
 
   if (!editor) return null;
 
-  const currentSize =
-    FONT_SIZES.find((s) => editor.getAttributes('textStyle').fontSize === s.value)?.label ||
-    'Size';
-
-  const currentAlignIcon = editor.isActive({ textAlign: 'center' }) ? (
-    <AlignCenter className="w-4 h-4" aria-hidden="true" />
-  ) : editor.isActive({ textAlign: 'right' }) ? (
-    <AlignRight className="w-4 h-4" aria-hidden="true" />
-  ) : editor.isActive({ textAlign: 'justify' }) ? (
-    <AlignJustify className="w-4 h-4" aria-hidden="true" />
-  ) : (
-    <AlignLeft className="w-4 h-4" aria-hidden="true" />
-  );
-
   return (
-    <div className="space-y-2 animate-fade-in">
-      {/* Modern compact toolbar */}
-      <div className="flex items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm overflow-x-auto scrollbar-thin">
-        {/* Core formatting (always visible) */}
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border bg-background p-2 shadow-sm">
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive('bold')}
           label="Bold"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.toggleBold().run()}
+          isActive={editor.isActive('bold')}
         >
-          <Bold className="w-4 h-4" aria-hidden="true" />
+          <Bold className="h-4 w-4" aria-hidden="true" focusable="false" />
         </ToolbarButton>
+
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          isActive={editor.isActive('italic')}
           label="Italic"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.toggleItalic().run()}
+          isActive={editor.isActive('italic')}
         >
-          <Italic className="w-4 h-4" aria-hidden="true" />
+          <Italic className="h-4 w-4" aria-hidden="true" focusable="false" />
         </ToolbarButton>
+
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          isActive={editor.isActive('underline')}
           label="Underline"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.toggleUnderline().run()}
+          isActive={editor.isActive('underline')}
         >
-          <UnderlineIcon className="w-4 h-4" aria-hidden="true" />
+          <UnderlineIcon className="h-4 w-4" aria-hidden="true" focusable="false" />
         </ToolbarButton>
+
         <ToolbarButton
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          isActive={editor.isActive('strike')}
           label="Strikethrough"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.toggleStrike().run()}
+          isActive={editor.isActive('strike')}
         >
-          <Strikethrough className="w-4 h-4" aria-hidden="true" />
+          <Strikethrough className="h-4 w-4" aria-hidden="true" focusable="false" />
         </ToolbarButton>
 
         <Divider />
 
-        {/* Color & highlight */}
         <Popover>
           <PopoverTrigger asChild>
             <button
               type="button"
               aria-label="Text color"
               title="Text color"
-              className="inline-flex items-center justify-center h-8 w-8 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
+              onMouseDown={preserveSelection}
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <Palette className="w-4 h-4" aria-hidden="true" />
+              <Palette className="h-4 w-4" aria-hidden="true" focusable="false" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-auto bg-background">
-            <ColorSwatchPicker
+          <PopoverContent align="start" className="w-auto p-0">
+            <ColorPicker
               colors={TEXT_COLORS}
-              onPick={setColor}
-              onClear={clearColor}
               label="Text color"
+              onPick={applyTextColor}
+              onClear={clearTextColor}
+              preserveSelection={preserveSelection}
             />
           </PopoverContent>
         </Popover>
@@ -397,222 +464,266 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
           <PopoverTrigger asChild>
             <button
               type="button"
-              aria-label="Highlight color"
-              title="Highlight"
+              aria-label="Background color"
+              title="Background color"
+              onMouseDown={preserveSelection}
               className={cn(
-                'inline-flex items-center justify-center h-8 w-8 rounded-md transition-all shrink-0',
-                editor.isActive('highlight')
+                'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors',
+                editor.isActive('textStyle', { backgroundColor: editor.getAttributes('textStyle').backgroundColor })
                   ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground',
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
-              <Highlighter className="w-4 h-4" aria-hidden="true" />
+              <Highlighter className="h-4 w-4" aria-hidden="true" focusable="false" />
             </button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-auto bg-background">
-            <ColorSwatchPicker
-              colors={HIGHLIGHT_COLORS}
-              onPick={setHighlight}
-              onClear={clearHighlight}
-              label="Highlight"
+          <PopoverContent align="start" className="w-auto p-0">
+            <ColorPicker
+              colors={BACKGROUND_COLORS}
+              label="Background color"
+              onPick={applyBackgroundColor}
+              onClear={clearBackgroundColor}
+              preserveSelection={preserveSelection}
             />
           </PopoverContent>
         </Popover>
 
-        <Divider />
-
-        {/* Font size */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
               aria-label="Font size"
               title="Font size"
-              className="inline-flex items-center gap-1 h-8 px-2 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0 text-xs font-medium"
+              onMouseDown={preserveSelection}
+              className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <Type className="w-3.5 h-3.5" aria-hidden="true" />
-              <span className="hidden sm:inline max-w-[60px] truncate">{currentSize}</span>
-              <ChevronDown className="w-3 h-3" aria-hidden="true" />
+              <Type className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
+              <span className="max-w-[64px] truncate">{currentSize}</span>
+              <ChevronDown className="h-3 w-3" aria-hidden="true" focusable="false" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-background">
-            {FONT_SIZES.map((s) => (
+          <DropdownMenuContent align="start">
+            {FONT_SIZES.map((size) => (
               <DropdownMenuItem
-                key={s.value}
-                onClick={() =>
-                  editor.chain().focus().setFontSize(s.value).run()
-                }
-                style={{ fontSize: s.value }}
+                key={size.value}
+                onMouseDown={preserveSelection}
+                onClick={() => chain()?.setFontSize(size.value).run()}
+                style={{ fontSize: size.value }}
               >
-                {s.label}
+                {size.label}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() =>
-                editor.chain().focus().unsetFontSize().run()
-              }
-            >
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.unsetFontSize().run()}>
               Reset
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Divider />
-
-        {/* Alignment */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
               aria-label="Text alignment"
-              title="Alignment"
-              className="inline-flex items-center gap-1 h-8 px-1.5 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
+              title="Text alignment"
+              onMouseDown={preserveSelection}
+              className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md px-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              {currentAlignIcon}
-              <ChevronDown className="w-3 h-3" aria-hidden="true" />
+              {editor.isActive({ textAlign: 'center' }) ? (
+                <AlignCenter className="h-4 w-4" aria-hidden="true" focusable="false" />
+              ) : editor.isActive({ textAlign: 'right' }) ? (
+                <AlignRight className="h-4 w-4" aria-hidden="true" focusable="false" />
+              ) : editor.isActive({ textAlign: 'justify' }) ? (
+                <AlignJustify className="h-4 w-4" aria-hidden="true" focusable="false" />
+              ) : (
+                <AlignLeft className="h-4 w-4" aria-hidden="true" focusable="false" />
+              )}
+              <ChevronDown className="h-3 w-3" aria-hidden="true" focusable="false" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-background">
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('left').run()}>
-              <AlignLeft className="w-4 h-4 mr-2" aria-hidden="true" /> Left
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.setTextAlign('left').run()}>
+              <AlignLeft className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Left
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('center').run()}>
-              <AlignCenter className="w-4 h-4 mr-2" aria-hidden="true" /> Center
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.setTextAlign('center').run()}>
+              <AlignCenter className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Center
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('right').run()}>
-              <AlignRight className="w-4 h-4 mr-2" aria-hidden="true" /> Right
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.setTextAlign('right').run()}>
+              <AlignRight className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Right
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('justify').run()}>
-              <AlignJustify className="w-4 h-4 mr-2" aria-hidden="true" /> Justify
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.setTextAlign('justify').run()}>
+              <AlignJustify className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Justify
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Lists - hide on very small screens, available in More */}
-        <div className="hidden sm:flex items-center gap-0.5">
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            isActive={editor.isActive('bulletList')}
-            label="Bullet list"
-          >
-            <List className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            isActive={editor.isActive('orderedList')}
-            label="Numbered list"
-          >
-            <ListOrdered className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-        </div>
+        <Divider />
 
-        <div className="hidden md:flex items-center gap-0.5">
-          <Divider />
-          <LinkPopover editor={editor} />
-          <TableMenu editor={editor} />
+        <ToolbarButton
+          label="Bullet list"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.toggleBulletList().run()}
+          isActive={editor.isActive('bulletList')}
+        >
+          <List className="h-4 w-4" aria-hidden="true" focusable="false" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Numbered list"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.toggleOrderedList().run()}
+          isActive={editor.isActive('orderedList')}
+        >
+          <ListOrdered className="h-4 w-4" aria-hidden="true" focusable="false" />
+        </ToolbarButton>
+
+        <LinkPopover editor={editor} onRememberSelection={rememberSelection} runLinkCommand={applyLink} />
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="Table actions"
+              title="Table actions"
+              onMouseDown={preserveSelection}
+              className={cn(
+                'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors',
+                editor.isActive('table')
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+              )}
+            >
+              <TableIcon className="h-4 w-4" aria-hidden="true" focusable="false" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem
+              onMouseDown={preserveSelection}
+              onClick={() => chain()?.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+            >
+              <Plus className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Insert table
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Table</DropdownMenuLabel>
+            <DropdownMenuItem
+              disabled={!editor.isActive('table')}
+              onMouseDown={preserveSelection}
+              onClick={() => chain()?.addRowAfter().run()}
+            >
+              <Plus className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Add row
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={!editor.isActive('table')}
+              onMouseDown={preserveSelection}
+              onClick={() => chain()?.addColumnAfter().run()}
+            >
+              <Plus className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Add column
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={!editor.isActive('table')}
+              onMouseDown={preserveSelection}
+              onClick={() => chain()?.deleteRow().run()}
+            >
+              <Minus className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Delete row
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={!editor.isActive('table')}
+              onMouseDown={preserveSelection}
+              onClick={() => chain()?.deleteColumn().run()}
+            >
+              <Minus className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Delete column
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              disabled={!editor.isActive('table')}
+              onMouseDown={preserveSelection}
+              onClick={() => chain()?.deleteTable().run()}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Delete table
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <div className="hidden items-center gap-1 md:flex">
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
             label="Quote"
+            onMouseDown={preserveSelection}
+            onClick={() => chain()?.toggleBlockquote().run()}
+            isActive={editor.isActive('blockquote')}
           >
-            <Quote className="w-4 h-4" aria-hidden="true" />
+            <Quote className="h-4 w-4" aria-hidden="true" focusable="false" />
           </ToolbarButton>
+
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleSubscript().run()}
-            isActive={editor.isActive('subscript')}
             label="Subscript"
+            onMouseDown={preserveSelection}
+            onClick={() => chain()?.toggleSubscript().run()}
+            isActive={editor.isActive('subscript')}
           >
-            <SubscriptIcon className="w-4 h-4" aria-hidden="true" />
+            <SubscriptIcon className="h-4 w-4" aria-hidden="true" focusable="false" />
           </ToolbarButton>
+
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleSuperscript().run()}
-            isActive={editor.isActive('superscript')}
             label="Superscript"
+            onMouseDown={preserveSelection}
+            onClick={() => chain()?.toggleSuperscript().run()}
+            isActive={editor.isActive('superscript')}
           >
-            <SuperscriptIcon className="w-4 h-4" aria-hidden="true" />
+            <SuperscriptIcon className="h-4 w-4" aria-hidden="true" focusable="false" />
           </ToolbarButton>
         </div>
 
-        {/* Mobile "More" menu - houses what's hidden */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
               aria-label="More formatting options"
-              title="More"
-              className="md:hidden inline-flex items-center justify-center h-8 w-8 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
+              title="More formatting options"
+              onMouseDown={preserveSelection}
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:hidden"
             >
-              <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
+              <MoreHorizontal className="h-4 w-4" aria-hidden="true" focusable="false" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-background w-48">
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className="sm:hidden"
-            >
-              <List className="w-4 h-4 mr-2" aria-hidden="true" /> Bullet list
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.toggleBlockquote().run()}>
+              <Quote className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Quote
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              className="sm:hidden"
-            >
-              <ListOrdered className="w-4 h-4 mr-2" aria-hidden="true" /> Numbered list
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.toggleSubscript().run()}>
+              <SubscriptIcon className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Subscript
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                const url = window.prompt('Enter URL');
-                if (url) {
-                  const href = url.match(/^https?:\/\//) ? url : `https://${url}`;
-                  editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
-                }
-              }}
-            >
-              <LinkIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Insert link
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-              }
-            >
-              <TableIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Insert table
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleBlockquote().run()}>
-              <Quote className="w-4 h-4 mr-2" aria-hidden="true" /> Quote
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleSubscript().run()}>
-              <SubscriptIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Subscript
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleSuperscript().run()}>
-              <SuperscriptIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Superscript
+            <DropdownMenuItem onMouseDown={preserveSelection} onClick={() => chain()?.toggleSuperscript().run()}>
+              <SuperscriptIcon className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" /> Superscript
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Spacer pushes undo/redo to the right on wider screens */}
-        <div className="flex-1 min-w-0" />
+        <div className="min-w-0 flex-1" />
 
         <Divider />
 
         <ToolbarButton
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
           label="Undo"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.undo().run()}
+          disabled={!editor.can().undo()}
         >
-          <Undo className="w-4 h-4" aria-hidden="true" />
+          <Undo className="h-4 w-4" aria-hidden="true" focusable="false" />
         </ToolbarButton>
+
         <ToolbarButton
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
           label="Redo"
+          onMouseDown={preserveSelection}
+          onClick={() => chain()?.redo().run()}
+          disabled={!editor.can().redo()}
         >
-          <Redo className="w-4 h-4" aria-hidden="true" />
+          <Redo className="h-4 w-4" aria-hidden="true" focusable="false" />
         </ToolbarButton>
       </div>
 
-      {/* Editor */}
       <div
-        className="border border-foreground/15 rounded-xl bg-background/40 transition-colors focus-within:border-primary/40 focus-within:bg-background/70"
+        className="rounded-xl border border-border bg-background transition-colors focus-within:border-primary"
         onBlur={onBlur}
       >
         <EditorContent editor={editor} />
