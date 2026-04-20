@@ -95,54 +95,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         </p>
       </div>
 
-      {/* Learning Outcome */}
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground">
-            What should learners gain? <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-          </label>
-
-          {showAskAI && (
-            <motion.button
-              type="button"
-              onClick={handleAskAI}
-              disabled={aiLoading}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-primary/10 transition-colors disabled:opacity-60"
-              aria-label="Ask AI to suggest a learning outcome"
-            >
-              {aiLoading ? (
-                <Loader2 className="w-3 h-3 animate-spin text-primary" aria-hidden="true" focusable="false" />
-              ) : (
-                <>
-                  <Sparkles className="w-3 h-3" style={{ stroke: 'url(#ai-gradient-learning)' }} aria-hidden="true" focusable="false" />
-                  <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
-                    <defs>
-                      <linearGradient id="ai-gradient-learning" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="hsl(211, 100%, 50%)" />
-                        <stop offset="100%" stopColor="hsl(270, 80%, 55%)" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </>
-              )}
-              <span className="text-[10px] font-medium bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent">
-                {aiLoading ? "Generating…" : "Ask AI"}
-              </span>
-            </motion.button>
-          )}
-        </div>
-
-        <Textarea
-          id="learning-outcome"
-          value={state.intendedLearners}
-          onChange={(e) => onChange({ intendedLearners: e.target.value })}
-          placeholder="Describe the key skills or knowledge learners will walk away with…"
-          className="min-h-[80px] resize-none rounded-xl text-sm"
-        />
-      </div>
+      {/* Learning Outcome — hidden for now */}
 
       {/* Blueprint source selector */}
       <div className="space-y-2">
