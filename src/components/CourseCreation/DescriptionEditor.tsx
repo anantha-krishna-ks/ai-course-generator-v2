@@ -80,22 +80,7 @@ const HIGHLIGHT_COLORS = [
   '#FBCFE8', '#E5E7EB',
 ];
 
-// Custom FontSize extension built on TextStyle
-const FontSize = TextStyle.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      fontSize: {
-        default: null,
-        parseHTML: (el) => (el as HTMLElement).style.fontSize || null,
-        renderHTML: (attrs) => {
-          if (!attrs.fontSize) return {};
-          return { style: `font-size: ${attrs.fontSize}` };
-        },
-      },
-    };
-  },
-});
+// TextStyle v3 provides fontSize natively via setFontSize/unsetFontSize commands.
 
 interface TBProps {
   onClick: () => void;
