@@ -274,6 +274,59 @@ All colors MUST be HSL.
   .page-fold-in {
     animation: page-fade-in 0.3s ease-in forwards;
   }
+
+  /* Subtle moving aurora gradient background */
+  @keyframes aurora-drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    50%  { transform: translate3d(2%, -1.5%, 0) scale(1.05); }
+    100% { transform: translate3d(0, 0, 0) scale(1); }
+  }
+  @keyframes aurora-drift-2 {
+    0%   { transform: translate3d(0, 0, 0) scale(1.02); }
+    50%  { transform: translate3d(-2.5%, 2%, 0) scale(1); }
+    100% { transform: translate3d(0, 0, 0) scale(1.02); }
+  }
+  @keyframes aurora-drift-3 {
+    0%   { transform: translate3d(-50%, -50%, 0) scale(1); }
+    50%  { transform: translate3d(-48%, -52%, 0) scale(1.08); }
+    100% { transform: translate3d(-50%, -50%, 0) scale(1); }
+  }
+  .aurora-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .aurora-bg::before,
+  .aurora-bg::after {
+    content: "";
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    opacity: 0.5;
+    will-change: transform;
+  }
+  .aurora-bg::before {
+    width: 60vw;
+    height: 60vw;
+    top: -15vw;
+    left: -10vw;
+    background: radial-gradient(circle at 30% 30%, hsl(var(--primary) / 0.35), transparent 60%);
+    animation: aurora-drift 18s ease-in-out infinite;
+  }
+  .aurora-bg::after {
+    width: 55vw;
+    height: 55vw;
+    bottom: -15vw;
+    right: -10vw;
+    background: radial-gradient(circle at 70% 70%, hsl(195 95% 55% / 0.28), transparent 60%);
+    animation: aurora-drift-2 22s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aurora-bg::before,
+    .aurora-bg::after { animation: none; }
+  }
 }
 
 /* ============================================================
