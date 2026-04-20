@@ -1,17 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ComponentType, type MouseEvent, type SVGProps } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Extension, type ChainedCommands } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
-import TextStyle from '@tiptap/extension-text-style';
+import { TextStyle } from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import Table from '@tiptap/extension-table';
+import { Table } from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableHeader from '@tiptap/extension-table-header';
 import TableCell from '@tiptap/extension-table-cell';
@@ -115,8 +115,8 @@ const getSafeColor = (value: string | null | undefined, fallback: string) =>
 interface ToolbarButtonProps {
   active?: boolean;
   ariaLabel: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  onMouseDown: (event: React.MouseEvent<HTMLElement>) => void;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
+  onMouseDown: (event: MouseEvent<HTMLElement>) => void;
   onPress: () => void;
 }
 
