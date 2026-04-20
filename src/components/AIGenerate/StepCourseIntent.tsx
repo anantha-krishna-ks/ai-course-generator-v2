@@ -163,10 +163,18 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                 : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
             }`}
           >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-              state.blueprintSource === "import" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+            <div className={`w-full h-24 rounded-lg flex items-center justify-center transition-colors ${
+              state.blueprintSource === "import" ? "bg-primary/5" : "bg-muted/40 group-hover:bg-muted/60"
             }`}>
-              <Upload className="w-5 h-5" aria-hidden="true" focusable="false" />
+              <img
+                src={blueprintImportIllustration}
+                alt=""
+                role="presentation"
+                loading="lazy"
+                width={512}
+                height={512}
+                className="h-20 w-auto object-contain"
+              />
             </div>
             <div className="space-y-0.5">
               <div className="text-sm font-semibold text-foreground">Import Course Outline</div>
