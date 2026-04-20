@@ -365,7 +365,7 @@ const Dashboard = () => {
             
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pr-0 sm:pr-8">
               <div className="pr-8 sm:pr-0">
-                <h2 className="text-xl font-bold text-foreground mb-1">Ready to create something amazing?</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-1">Ready to create something amazing?</h2>
                 <p className="text-sm text-muted-foreground">Start a new course or continue where you left off</p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
