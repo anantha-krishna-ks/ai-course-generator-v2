@@ -217,7 +217,6 @@ All colors MUST be HSL.
     height: 1.1em;
     flex-shrink: 0;
   }
-  }
 
   /* WCAG 2.4.7 – Visible focus indicator for all interactive elements */
   :focus-visible {
