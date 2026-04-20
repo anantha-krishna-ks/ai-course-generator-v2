@@ -177,12 +177,7 @@ export default function AIGenerateCourse() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      <div className="aurora-bg" aria-hidden="true">
-        <div className="aurora-orb aurora-orb-1" />
-        <div className="aurora-orb aurora-orb-2" />
-        <div className="aurora-orb aurora-orb-3" />
-        <div className="aurora-orb aurora-orb-4" />
-      </div>
+      <div className="aurora-bg" aria-hidden="true" />
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground">
         Skip to main content
       </a>
