@@ -327,25 +327,36 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
   const primaryControls = (
     <>
-      <ToolbarButton ariaLabel="Bold" active={editor.isActive('bold')} icon={Bold} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBold())} />
-      <ToolbarButton ariaLabel="Italic" active={editor.isActive('italic')} icon={Italic} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleItalic())} />
-      <ToolbarButton ariaLabel="Underline" active={editor.isActive('underline')} icon={UnderlineIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleUnderline())} />
-      <ToolbarButton ariaLabel="Strike through" active={editor.isActive('strike')} icon={Strikethrough} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleStrike())} />
-      <ToolbarButton ariaLabel="Bulleted list" active={editor.isActive('bulletList')} icon={List} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBulletList())} />
-      <ToolbarButton ariaLabel="Numbered list" active={editor.isActive('orderedList')} icon={ListOrdered} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleOrderedList())} />
-      <ToolbarButton ariaLabel="Undo" icon={Undo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.undo())} />
-      <ToolbarButton ariaLabel="Redo" icon={Redo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.redo())} />
+      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+        <ToolbarButton ariaLabel="Bold" active={editor.isActive('bold')} icon={Bold} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBold())} />
+        <ToolbarButton ariaLabel="Italic" active={editor.isActive('italic')} icon={Italic} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleItalic())} />
+        <ToolbarButton ariaLabel="Underline" active={editor.isActive('underline')} icon={UnderlineIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleUnderline())} />
+        <ToolbarButton ariaLabel="Strike through" active={editor.isActive('strike')} icon={Strikethrough} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleStrike())} />
+      </div>
+      <ToolbarDivider />
+      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+        <ToolbarButton ariaLabel="Bulleted list" active={editor.isActive('bulletList')} icon={List} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBulletList())} />
+        <ToolbarButton ariaLabel="Numbered list" active={editor.isActive('orderedList')} icon={ListOrdered} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleOrderedList())} />
+      </div>
+      <ToolbarDivider />
+      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+        <ToolbarButton ariaLabel="Undo" icon={Undo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.undo())} />
+        <ToolbarButton ariaLabel="Redo" icon={Redo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.redo())} />
+      </div>
     </>
   );
 
   const secondaryControls = (
     <>
-      <label className="flex min-w-0 items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
-        <Type aria-hidden="true" focusable="false" className="h-4 w-4 shrink-0" />
+      <label
+        className="flex h-8 min-w-0 items-center gap-1.5 rounded-lg bg-background/70 px-2.5 text-xs font-medium text-foreground ring-1 ring-border/60 transition-colors hover:bg-accent"
+        onMouseDown={preventToolbarMouseDown}
+      >
+        <Type aria-hidden="true" focusable="false" className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         <span className="sr-only">Text style</span>
         <select
           aria-label="Text style"
-          className="min-w-[6.5rem] bg-transparent text-xs outline-none"
+          className="min-w-[5.5rem] cursor-pointer appearance-none bg-transparent pr-1 text-xs font-medium outline-none"
           value={activePresetValue}
           onMouseDown={preventToolbarMouseDown}
           onChange={(event) => applyTextStylePreset(event.target.value)}
@@ -358,77 +369,111 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         </select>
       </label>
 
-      <div className="flex items-center gap-1 rounded-md border border-border bg-background p-1">
+      <ToolbarDivider />
+
+      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
         <ToolbarButton ariaLabel="Align left" active={editor.isActive({ textAlign: 'left' })} icon={AlignLeft} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('left'))} />
         <ToolbarButton ariaLabel="Align center" active={editor.isActive({ textAlign: 'center' })} icon={AlignCenter} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('center'))} />
         <ToolbarButton ariaLabel="Align right" active={editor.isActive({ textAlign: 'right' })} icon={AlignRight} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('right'))} />
         <ToolbarButton ariaLabel="Justify text" active={editor.isActive({ textAlign: 'justify' })} icon={AlignJustify} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('justify'))} />
       </div>
 
-      <label className="relative flex h-8 items-center gap-2 rounded-md border border-border bg-background px-2 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
-        <Type aria-hidden="true" focusable="false" className="h-4 w-4" />
-        <span className="hidden sm:inline">Text</span>
-        <input
-          type="color"
-          aria-label="Text color"
-          value={textColorValue}
-          onMouseDown={preventToolbarMouseDown}
-          onChange={(event) => runCommand((chain) => chain.setColor(event.target.value))}
-          className="absolute inset-0 cursor-pointer opacity-0"
-        />
-      </label>
+      <ToolbarDivider />
 
-      <label className="relative flex h-8 items-center gap-2 rounded-md border border-border bg-background px-2 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
-        <Highlighter aria-hidden="true" focusable="false" className="h-4 w-4" />
-        <span className="hidden sm:inline">Highlight</span>
-        <input
-          type="color"
-          aria-label="Background color"
-          value={highlightValue}
+      <div className="flex items-center gap-1">
+        <label
+          className="relative flex h-8 cursor-pointer items-center gap-1.5 overflow-hidden rounded-lg bg-background/70 px-2 text-xs font-medium text-foreground ring-1 ring-border/60 transition-colors hover:bg-accent"
+          title="Text color"
           onMouseDown={preventToolbarMouseDown}
-          onChange={(event) => runCommand((chain) => chain.setHighlight({ color: event.target.value }))}
-          className="absolute inset-0 cursor-pointer opacity-0"
-        />
-      </label>
+        >
+          <span className="flex flex-col items-center leading-none">
+            <Type aria-hidden="true" focusable="false" className="h-3.5 w-3.5" />
+            <span aria-hidden="true" className="mt-0.5 h-1 w-3.5 rounded-sm" style={{ backgroundColor: textColorValue }} />
+          </span>
+          <span className="sr-only">Text color</span>
+          <input
+            type="color"
+            aria-label="Text color"
+            value={textColorValue}
+            onMouseDown={preventToolbarMouseDown}
+            onChange={(event) => runCommand((chain) => chain.setColor(event.target.value))}
+            className="absolute inset-0 cursor-pointer opacity-0"
+          />
+        </label>
 
-      <ToolbarButton ariaLabel="Insert or edit link" active={editor.isActive('link')} icon={Link2} onMouseDown={preventToolbarMouseDown} onPress={setLink} />
-      <ToolbarButton ariaLabel="Block quote" active={editor.isActive('blockquote')} icon={Quote} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBlockquote())} />
-      <ToolbarButton ariaLabel="Subscript" active={editor.isActive('subscript')} icon={SubscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSubscript())} />
-      <ToolbarButton ariaLabel="Superscript" active={editor.isActive('superscript')} icon={SuperscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSuperscript())} />
-      <ToolbarButton ariaLabel="Insert table" active={editor.isActive('table')} icon={Table2} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }))} />
+        <label
+          className="relative flex h-8 cursor-pointer items-center gap-1.5 overflow-hidden rounded-lg bg-background/70 px-2 text-xs font-medium text-foreground ring-1 ring-border/60 transition-colors hover:bg-accent"
+          title="Highlight color"
+          onMouseDown={preventToolbarMouseDown}
+        >
+          <span className="flex flex-col items-center leading-none">
+            <Highlighter aria-hidden="true" focusable="false" className="h-3.5 w-3.5" />
+            <span aria-hidden="true" className="mt-0.5 h-1 w-3.5 rounded-sm" style={{ backgroundColor: highlightValue }} />
+          </span>
+          <span className="sr-only">Highlight color</span>
+          <input
+            type="color"
+            aria-label="Highlight color"
+            value={highlightValue}
+            onMouseDown={preventToolbarMouseDown}
+            onChange={(event) => runCommand((chain) => chain.setHighlight({ color: event.target.value }))}
+            className="absolute inset-0 cursor-pointer opacity-0"
+          />
+        </label>
+      </div>
+
+      <ToolbarDivider />
+
+      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+        <ToolbarButton ariaLabel="Insert or edit link" active={editor.isActive('link')} icon={Link2} onMouseDown={preventToolbarMouseDown} onPress={setLink} />
+        <ToolbarButton ariaLabel="Block quote" active={editor.isActive('blockquote')} icon={Quote} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBlockquote())} />
+        <ToolbarButton ariaLabel="Subscript" active={editor.isActive('subscript')} icon={SubscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSubscript())} />
+        <ToolbarButton ariaLabel="Superscript" active={editor.isActive('superscript')} icon={SuperscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSuperscript())} />
+        <ToolbarButton ariaLabel="Insert table" active={editor.isActive('table')} icon={Table2} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }))} />
+      </div>
+
       {editor.isActive('table') && (
-        <>
-          <Button type="button" variant="outline" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.addRowAfter())} className="h-8 text-xs">
-            Row +
+        <div className="flex w-full items-center gap-1 rounded-lg bg-primary/5 p-1 ring-1 ring-primary/20 sm:w-auto">
+          <span className="px-1 text-[11px] font-semibold uppercase tracking-wide text-primary">Table</span>
+          <Button type="button" variant="ghost" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.addRowAfter())} className="h-7 px-2 text-xs">
+            + Row
           </Button>
-          <Button type="button" variant="outline" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.addColumnAfter())} className="h-8 text-xs">
-            Col +
+          <Button type="button" variant="ghost" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.addColumnAfter())} className="h-7 px-2 text-xs">
+            + Col
           </Button>
-          <Button type="button" variant="outline" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.deleteTable())} className="h-8 text-xs">
-            Delete table
+          <Button type="button" variant="ghost" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.deleteTable())} className="h-7 px-2 text-xs text-destructive hover:text-destructive">
+            Delete
           </Button>
-        </>
+        </div>
       )}
     </>
   );
 
   return (
-    <div className="description-editor-shell overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-      <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted/30 p-2">
+    <div className="description-editor-shell overflow-hidden rounded-2xl border border-border/80 bg-background shadow-sm transition-shadow focus-within:border-primary/40 focus-within:shadow-md">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1.5 border-b border-border/60 bg-gradient-to-b from-muted/60 to-muted/20 px-2 py-2 backdrop-blur-sm sm:gap-2 sm:px-3">
         {primaryControls}
         {isMobile ? (
           <Popover>
             <PopoverTrigger asChild>
-              <Button type="button" variant="outline" size="sm" aria-label="More formatting options" onMouseDown={preventToolbarMouseDown} className="ml-auto h-8 px-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-label="More formatting options"
+                onMouseDown={preventToolbarMouseDown}
+                className="ml-auto h-8 gap-1 rounded-lg bg-background/70 px-2 text-xs ring-1 ring-border/60 hover:bg-accent"
+              >
                 <MoreHorizontal aria-hidden="true" focusable="false" className="h-4 w-4" />
+                <span>More</span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[min(20rem,calc(100vw-2rem))]">
-              <div className="flex flex-wrap items-center gap-2">{secondaryControls}</div>
+            <PopoverContent align="end" className="w-[min(22rem,calc(100vw-1.5rem))] rounded-2xl border-border/80 p-3 shadow-lg">
+              <div className="flex flex-wrap items-center gap-1.5">{secondaryControls}</div>
             </PopoverContent>
           </Popover>
         ) : (
-          secondaryControls
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">{secondaryControls}</div>
         )}
       </div>
 
