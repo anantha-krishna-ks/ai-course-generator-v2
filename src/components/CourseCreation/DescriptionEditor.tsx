@@ -80,22 +80,7 @@ const HIGHLIGHT_COLORS = [
   '#FBCFE8', '#E5E7EB',
 ];
 
-// Custom FontSize extension built on TextStyle
-const FontSize = TextStyle.extend({
-  addAttributes() {
-    return {
-      ...this.parent?.(),
-      fontSize: {
-        default: null,
-        parseHTML: (el) => (el as HTMLElement).style.fontSize || null,
-        renderHTML: (attrs) => {
-          if (!attrs.fontSize) return {};
-          return { style: `font-size: ${attrs.fontSize}` };
-        },
-      },
-    };
-  },
-});
+// TextStyle v3 provides fontSize natively via setFontSize/unsetFontSize commands.
 
 interface TBProps {
   onClick: () => void;
@@ -303,7 +288,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       }),
       Subscript,
       Superscript,
-      FontSize,
+      TextStyle,
       Color,
       Table.configure({ resizable: true, HTMLAttributes: { class: 'tt-table' } }),
       TableRow,
@@ -455,7 +440,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <DropdownMenuItem
                 key={s.value}
                 onClick={() =>
-                  editor.chain().focus().setMark('textStyle', { fontSize: s.value }).run()
+                  editor.chain().focus().setFontSize(s.value).run()
                 }
                 style={{ fontSize: s.value }}
               >
@@ -465,7 +450,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() =>
-                editor.chain().focus().setMark('textStyle', { fontSize: null }).run()
+                editor.chain().focus().unsetFontSize().run()
               }
             >
               Reset
