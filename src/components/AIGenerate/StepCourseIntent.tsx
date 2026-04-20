@@ -102,7 +102,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         <label className="text-base font-semibold text-foreground">
           Course Blueprint <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <p className="text-xs text-muted-foreground -mt-0.5">
+        <p className="text-xs text-muted-foreground -mt-1.5">
           Choose how you'd like to create the course structure.
         </p>
 
