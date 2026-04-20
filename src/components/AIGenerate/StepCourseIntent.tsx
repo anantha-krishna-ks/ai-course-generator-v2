@@ -373,14 +373,47 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
               })}
             </div>
 
-            {/* AI summary */}
-            <div className="flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/15 px-3 py-2">
-              <Sparkles className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-              <p className="text-[11px] text-foreground leading-snug">
+            {/* Live blueprint visual preview */}
+            <div className="rounded-xl border border-primary/15 bg-gradient-to-br from-primary/5 to-transparent p-3">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider">Blueprint Preview</span>
+                </div>
+                <span className="text-[10px] font-medium text-muted-foreground">
+                  {state.blueprintSections * state.blueprintPages} total page{state.blueprintSections * state.blueprintPages !== 1 ? "s" : ""}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 max-h-[140px] overflow-y-auto thin-scrollbar pr-1">
+                {Array.from({ length: state.blueprintSections }).map((_, sIdx) => (
+                  <motion.div
+                    key={sIdx}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2, delay: sIdx * 0.03 }}
+                    className="flex items-center gap-1 rounded-lg border border-primary/20 bg-background/60 px-1.5 py-1"
+                    aria-label={`Section ${sIdx + 1}`}
+                  >
+                    <span className="text-[9px] font-bold text-primary tabular-nums w-3 text-center">{sIdx + 1}</span>
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: state.blueprintPages }).map((_, pIdx) => (
+                        <motion.span
+                          key={pIdx}
+                          initial={{ opacity: 0, y: 2 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.15, delay: sIdx * 0.03 + pIdx * 0.015 }}
+                          className="w-1.5 h-3 rounded-sm bg-primary/60"
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug mt-2.5">
                 AI will generate{" "}
-                <span className="font-semibold">{state.blueprintSections}</span> section{state.blueprintSections !== 1 ? "s" : ""} with{" "}
-                <span className="font-semibold">{state.blueprintPages}</span> page{state.blueprintPages !== 1 ? "s" : ""} each —{" "}
-                <span className="font-semibold">{state.blueprintSections * state.blueprintPages}</span> total page{state.blueprintSections * state.blueprintPages !== 1 ? "s" : ""}.
+                <span className="font-semibold text-foreground">{state.blueprintSections}</span> section{state.blueprintSections !== 1 ? "s" : ""}, each with{" "}
+                <span className="font-semibold text-foreground">{state.blueprintPages}</span> page{state.blueprintPages !== 1 ? "s" : ""}.
               </p>
             </div>
           </motion.div>
