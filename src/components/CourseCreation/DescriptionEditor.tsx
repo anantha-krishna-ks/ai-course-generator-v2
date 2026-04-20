@@ -215,6 +215,7 @@ function TableGridPicker({ onSelect }: TableGridPickerProps) {
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
   const isMobile = useIsMobile();
   const selectionRef = useRef<{ from: number; to: number } | null>(null);
+  const [tableMenuOpen, setTableMenuOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
