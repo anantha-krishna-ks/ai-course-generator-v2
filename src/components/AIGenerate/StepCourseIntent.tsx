@@ -163,17 +163,15 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                 : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
             }`}
           >
-            <div className={`w-full h-24 rounded-lg flex items-center justify-center transition-colors ${
-              state.blueprintSource === "import" ? "bg-primary/5" : "bg-muted/40 group-hover:bg-muted/60"
-            }`}>
+            <div className="w-full h-28 rounded-lg flex items-center justify-center bg-white border border-border/60 overflow-hidden">
               <img
                 src={blueprintImportIllustration}
                 alt=""
                 role="presentation"
                 loading="lazy"
-                width={512}
-                height={512}
-                className="h-20 w-auto object-contain"
+                width={768}
+                height={768}
+                className="h-24 w-auto object-contain"
               />
             </div>
             <div className="space-y-0.5">
@@ -204,17 +202,15 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                 : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
             }`}
           >
-            <div className={`w-full h-24 rounded-lg flex items-center justify-center transition-colors ${
-              state.blueprintSource === "ai" ? "bg-primary/5" : "bg-muted/40 group-hover:bg-muted/60"
-            }`}>
+            <div className="w-full h-28 rounded-lg flex items-center justify-center bg-white border border-border/60 overflow-hidden">
               <img
                 src={blueprintAiIllustration}
                 alt=""
                 role="presentation"
                 loading="lazy"
-                width={512}
-                height={512}
-                className="h-20 w-auto object-contain"
+                width={768}
+                height={768}
+                className="h-24 w-auto object-contain"
               />
             </div>
             <div className="space-y-0.5">
