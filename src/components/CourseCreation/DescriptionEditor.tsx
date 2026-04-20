@@ -229,7 +229,14 @@ function TableMenu({ editor }: { editor: Editor }) {
   const MAX = 8;
 
   const insert = (rows: number, cols: number) => {
-    editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+    const inserted = editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+
+    if (!inserted) {
+      requestAnimationFrame(() => {
+        editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+      });
+    }
+
     setOpen(false);
     setHover({ r: 0, c: 0 });
   };
@@ -251,7 +258,11 @@ function TableMenu({ editor }: { editor: Editor }) {
           <TableIcon className="w-4 h-4" aria-hidden="true" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="p-3 w-auto bg-background">
+      <PopoverContent
+        align="start"
+        className="p-3 w-auto bg-background"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
         <div
           className="grid gap-1"
           style={{ gridTemplateColumns: `repeat(${MAX}, 1.25rem)` }}
@@ -267,7 +278,12 @@ function TableMenu({ editor }: { editor: Editor }) {
                 type="button"
                 aria-label={`Insert ${r}×${c} table`}
                 onMouseEnter={() => setHover({ r, c })}
-                onClick={() => insert(r, c)}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  insert(r, c);
+                }}
+                onClick={(event) => event.preventDefault()}
                 className={cn(
                   'h-5 w-5 rounded-[3px] border transition-colors',
                   active
