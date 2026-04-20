@@ -363,7 +363,6 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             </div>
           </div>
         </div>
-        </div>
       </PrefCard>
 
       {/* Course Tone */}
