@@ -291,8 +291,7 @@ function TableMenu({ editor }: { editor: Editor }) {
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
+      StarterKit.configure({ link: false }),
       Highlight.configure({ multicolor: true }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Placeholder.configure({
