@@ -153,7 +153,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           Choose how you'd like to create the course structure.
         </p>
 
-        <div role="radiogroup" aria-label="Blueprint source" className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <div role="radiogroup" aria-label="Blueprint source" className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-0">
           {/* Option A: Import outline */}
           <button
             type="button"
