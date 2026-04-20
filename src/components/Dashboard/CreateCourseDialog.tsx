@@ -154,10 +154,13 @@ function LivePreviewPanel({
 
       {/* Bottom layout preview thumbnail */}
       <div className="relative z-10 mt-4">
-        <div className="rounded-xl overflow-hidden border border-primary-foreground/10 shadow-lg">
+        <div className="rounded-xl overflow-hidden border border-primary-foreground/10 shadow-lg bg-muted">
           <img
             src={selectedLayout === "multi-page" ? previewMultipage : previewSinglepage}
             alt={`${selectedLayout} preview`}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             className="w-full h-[100px] object-cover object-top opacity-80"
           />
           <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-primary/80 to-transparent" />
