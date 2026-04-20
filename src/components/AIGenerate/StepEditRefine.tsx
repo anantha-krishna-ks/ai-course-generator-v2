@@ -196,7 +196,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
     <div className="space-y-4">
       {/* Header */}
       <div>
-        <h1 className="text-lg sm:text-xl font-bold text-foreground">Course Overview</h1>
+        <h1 className="text-lg sm:text-xl font-bold text-foreground"><h1 className="text-xl font-semibold text-foreground">Course Blueprint</h1></h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           Review structure, manage sections &amp; pages before generating.
         </p>
