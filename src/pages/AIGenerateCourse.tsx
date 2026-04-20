@@ -27,7 +27,7 @@ import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationL
 const STEPS = [
   { id: 1, label: "Course Intent" },
   { id: 2, label: "Course Details" },
-  { id: 3, label: "Blueprint & Generate" },
+  { id: 3, label: "Preferences" },
   { id: 4, label: "Edit & Refine" },
 ] as const;
 
@@ -54,6 +54,7 @@ export interface AIGenerateState {
     interactiveBlocks: boolean;
     addImages: boolean;
   };
+  questionsPerPage: number;
 }
 
 const initialState: AIGenerateState = {
@@ -79,6 +80,7 @@ const initialState: AIGenerateState = {
     interactiveBlocks: true,
     addImages: true,
   },
+  questionsPerPage: 3,
 };
 
 const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
