@@ -387,9 +387,9 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
   );
 
   return (
-    <div className="space-y-2 animate-fade-in">
+    <div className="space-y-2 animate-fade-in w-full">
       {/* Modern compact toolbar */}
-      <div className="flex items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm overflow-x-auto scrollbar-thin">
+      <div className="flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm w-full">
         {/* Core formatting (always visible) */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -663,7 +663,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
       {/* Editor */}
       <div
-        className="border border-foreground/15 rounded-xl bg-background/40 transition-colors focus-within:border-primary/40 focus-within:bg-background/70"
+        className="border border-foreground/15 rounded-xl bg-background/40 transition-colors focus-within:border-primary/40 focus-within:bg-background/70 w-full [&_.ProseMirror]:min-h-[220px] [&_.ProseMirror]:w-full"
         onBlur={onBlur}
       >
         <EditorContent editor={editor} />
