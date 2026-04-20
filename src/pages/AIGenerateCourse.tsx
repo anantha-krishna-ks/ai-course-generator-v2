@@ -319,33 +319,46 @@ export default function AIGenerateCourse() {
                 />
               </div>
 
-              {/* Card header with AI badge */}
-              <div className="flex items-center gap-3 px-5 sm:px-8 md:px-10 pt-4 sm:pt-5 pb-1">
+              {/* Card header with ribbon-style step badge */}
+              <div className="flex items-center gap-3 pr-5 sm:pr-8 md:pr-10 pt-5 sm:pt-6 pb-2">
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={`badge-${currentStep}`}
-                    initial={{ rotateY: -90, opacity: 0 }}
-                    animate={{ rotateY: 0, opacity: 1 }}
-                    exit={{ rotateY: 90, opacity: 0 }}
+                    key={`ribbon-${currentStep}`}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: -20, opacity: 0 }}
                     transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                    className="relative w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] text-white flex items-center justify-center text-xs font-bold shadow-sm shrink-0"
-                    style={{ perspective: "600px" }}
+                    className="relative shrink-0"
                   >
-                    {currentStep}
+                    {/* Folded tail behind ribbon */}
+                    <div
+                      className="absolute -left-0 -bottom-1.5 w-3 h-3 z-0"
+                      style={{
+                        background: "linear-gradient(135deg, hsl(211, 100%, 30%), hsl(270, 80%, 35%))",
+                        clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+                      }}
+                      aria-hidden="true"
+                    />
+                    {/* Main ribbon */}
+                    <div
+                      className="relative z-10 flex items-center gap-2.5 pl-4 pr-6 py-2 text-white shadow-[0_4px_12px_-4px_hsl(211,100%,50%,0.4)]"
+                      style={{
+                        background: "linear-gradient(90deg, hsl(232, 90%, 50%) 0%, hsl(211, 100%, 52%) 50%, hsl(195, 95%, 55%) 100%)",
+                        clipPath: "polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%)",
+                        borderTopRightRadius: "9999px",
+                        borderBottomRightRadius: "9999px",
+                        borderTopLeftRadius: "6px",
+                        borderBottomLeftRadius: "6px",
+                      }}
+                    >
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/25 text-[11px] font-bold backdrop-blur-sm">
+                        {currentStep}
+                      </span>
+                      <span className="text-xs sm:text-sm font-semibold tracking-wide pr-2">
+                        {STEPS[currentStep - 1].label}
+                      </span>
+                    </div>
                   </motion.div>
-                </AnimatePresence>
-
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={`label-${currentStep}`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                    className="text-xs sm:text-sm font-semibold text-foreground"
-                  >
-                    {STEPS[currentStep - 1].label}
-                  </motion.span>
                 </AnimatePresence>
 
                 <div className="ml-auto">
