@@ -44,6 +44,7 @@ import {
 import logo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
 import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
+import { CreateCoursePickerDialog } from "@/components/Dashboard/CreateCoursePickerDialog";
 
 const mockCourses = [
   { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
@@ -99,6 +100,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [isTokenDialogOpen, setIsTokenDialogOpen] = useState(false);
   const [isCreateCourseDialogOpen, setIsCreateCourseDialogOpen] = useState(false);
+  const [isCreatePickerOpen, setIsCreatePickerOpen] = useState(false);
   const [tokenData, setTokenData] = useState<TokenInfo>({
     renewedOn: "Loading...",
     totalTokens: 0,
@@ -209,6 +211,14 @@ const Dashboard = () => {
       <CreateCourseDialog 
         open={isCreateCourseDialogOpen} 
         onOpenChange={setIsCreateCourseDialogOpen} 
+      />
+
+      {/* Create Course Picker Modal */}
+      <CreateCoursePickerDialog
+        open={isCreatePickerOpen}
+        onOpenChange={setIsCreatePickerOpen}
+        onSelectManual={() => setIsCreateCourseDialogOpen(true)}
+        onSelectAI={() => navigate("/ai-generate-course")}
       />
 
       {/* Token Usage Dialog */}
@@ -369,40 +379,13 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground">Start a new course or continue where you left off</p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all">
-                      <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
-                      Create Course
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="z-50 w-[300px] bg-background border border-border p-2 shadow-lg">
-                    <DropdownMenuItem
-                      onClick={() => setIsCreateCourseDialogOpen(true)}
-                      className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
-                    >
-                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
-                        <PenLine className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-semibold text-foreground">Manual Generation</span>
-                        <span className="text-[11px] text-muted-foreground leading-snug">Create your course step by step</span>
-                      </div>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => navigate("/ai-generate-course")}
-                      className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
-                    >
-                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
-                        <AISparkles className="w-4 h-4" />
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-semibold text-foreground">Generate using AI</span>
-                        <span className="text-[11px] text-muted-foreground leading-snug">Turn your ideas into a course with AI</span>
-                      </div>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  onClick={() => setIsCreatePickerOpen(true)}
+                  className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all"
+                >
+                  <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  Create Course
+                </Button>
                 <div className="h-6 w-px bg-border/60" aria-hidden="true" />
                 <Button 
                   variant="ghost" 
