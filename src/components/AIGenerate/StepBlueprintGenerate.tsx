@@ -18,8 +18,13 @@ import {
   Crown,
   Timer,
   Hourglass,
+  Upload,
+  X,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
+import { useRef } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
