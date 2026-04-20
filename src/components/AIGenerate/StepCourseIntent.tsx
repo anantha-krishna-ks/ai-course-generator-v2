@@ -304,92 +304,42 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
-            className="pt-2 space-y-3"
+            className="pt-3 space-y-4"
           >
-            {/* Twin steppers */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                {
-                  id: "bp-sections",
-                  label: "Sections",
-                  icon: Layers,
-                  value: state.blueprintSections,
-                  set: (n: number) => onChange({ blueprintSections: n }),
-                },
-                {
-                  id: "bp-pages",
-                  label: "Pages / Section",
-                  icon: File,
-                  value: state.blueprintPages,
-                  set: (n: number) => onChange({ blueprintPages: n }),
-                },
-              ].map((f) => {
-                const Icon = f.icon;
-                const dec = () => f.set(Math.max(1, f.value - 1));
-                const inc = () => f.set(Math.min(20, f.value + 1));
-                return (
-                  <div
-                    key={f.id}
-                    className="group relative rounded-xl border border-border bg-gradient-to-br from-background to-muted/30 p-3 transition-all hover:border-primary/30 hover:shadow-sm"
-                  >
-                    <div className="flex items-center gap-1.5 mb-2">
-                      <Icon className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                      <label htmlFor={f.id} className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                        {f.label}
-                      </label>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <button
-                        type="button"
-                        onClick={dec}
-                        disabled={f.value <= 1}
-                        className="w-8 h-8 rounded-full border border-border bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary disabled:opacity-40 disabled:hover:bg-background disabled:hover:text-foreground disabled:hover:border-border flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
-                        aria-label={`Decrease ${f.label}`}
-                      >
-                        <Minus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      </button>
-                      <div className="flex-1 relative pb-3.5">
-                        <input
-                          id={f.id}
-                          type="number"
-                          min={1}
-                          max={20}
-                          value={f.value}
-                          onChange={(e) => f.set(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                          onFocus={(e) => e.target.select()}
-                          className="w-full text-center text-2xl font-bold text-foreground bg-transparent border-0 border-b-2 border-dashed border-border/60 hover:border-primary/50 focus:border-primary focus:border-solid outline-none pb-0.5 transition-colors cursor-text [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          aria-label={`${f.label} (type or use buttons, 1–20)`}
-                          title="Click to type a value (1–20)"
-                        />
-                        <span className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 text-[9px] font-medium text-muted-foreground uppercase tracking-wider opacity-60">
-                          tap to edit
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={inc}
-                        disabled={f.value >= 20}
-                        className="w-8 h-8 rounded-full border border-border bg-background hover:bg-primary hover:text-primary-foreground hover:border-primary disabled:opacity-40 disabled:hover:bg-background disabled:hover:text-foreground disabled:hover:border-border flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
-                        aria-label={`Increase ${f.label}`}
-                      >
-                        <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label htmlFor="bp-sections" className="text-sm font-medium text-foreground">
+                  Sections
+                </label>
+                <input
+                  id="bp-sections"
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={state.blueprintSections}
+                  onChange={(e) => onChange({ blueprintSections: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label htmlFor="bp-pages" className="text-sm font-medium text-foreground">
+                  Pages per Section
+                </label>
+                <input
+                  id="bp-pages"
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={state.blueprintPages}
+                  onChange={(e) => onChange({ blueprintPages: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
             </div>
 
-            {/* AI summary */}
-            <div className="flex items-start gap-2 rounded-lg bg-primary/5 border border-primary/15 px-3 py-2">
-              <Sparkles className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-              <p className="text-[11px] text-foreground leading-snug">
-                AI will generate{" "}
-                <span className="font-semibold">{state.blueprintSections}</span> section{state.blueprintSections !== 1 ? "s" : ""} with{" "}
-                <span className="font-semibold">{state.blueprintPages}</span> page{state.blueprintPages !== 1 ? "s" : ""} each —{" "}
-                <span className="font-semibold">{state.blueprintSections * state.blueprintPages}</span> total page{state.blueprintSections * state.blueprintPages !== 1 ? "s" : ""}.
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Total: <span className="font-medium text-foreground">{state.blueprintSections * state.blueprintPages}</span> pages
+            </p>
           </motion.div>
         )}
       </div>
