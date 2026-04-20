@@ -16,6 +16,8 @@ import {
   Sprout,
   Rocket,
   Crown,
+  Timer,
+  Hourglass,
   type LucideIcon,
 } from "lucide-react";
 
@@ -37,6 +39,12 @@ const LEARNER_OPTIONS: { value: string; label: string; icon: LucideIcon }[] = [
   { value: "beginners", label: "Beginners", icon: Sprout },
   { value: "intermediate", label: "Intermediate", icon: Rocket },
   { value: "expert", label: "Expert", icon: Crown },
+];
+
+const DURATION_OPTIONS: { value: "brief" | "standard" | "extended"; label: string; desc: string; minutes: number; icon: LucideIcon }[] = [
+  { value: "brief", label: "Brief", desc: "< 5 min", minutes: 4, icon: Timer },
+  { value: "standard", label: "Standard", desc: "5–10 min", minutes: 8, icon: Clock },
+  { value: "extended", label: "Extended", desc: "10+ min", minutes: 12, icon: Hourglass },
 ];
 
 const TONE_OPTIONS = [
@@ -168,14 +176,30 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         {/* Page Duration */}
         <PrefCard>
           <SectionHeader icon={Clock} title="Page Duration" desc="Approx. time per page" />
-          <Stepper
-            value={state.pageSpanTime}
-            onChange={(v) => onChange({ pageSpanTime: v })}
-            min={1}
-            max={30}
-            unit="min"
-            ariaLabel="page duration"
-          />
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Page duration">
+            {DURATION_OPTIONS.map((opt) => {
+              const selected = state.pageSpanTime === opt.minutes;
+              const Icon = opt.icon;
+              return (
+                <Chip
+                  key={opt.value}
+                  selected={selected}
+                  onClick={() => onChange({ pageSpanTime: opt.minutes })}
+                  ariaLabel={`${opt.label} ${opt.desc}`}
+                >
+                  {selected ? (
+                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  )}
+                  {opt.label}
+                  <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
+                    {opt.desc}
+                  </span>
+                </Chip>
+              );
+            })}
+          </div>
         </PrefCard>
 
         {/* Intended Learners */}
