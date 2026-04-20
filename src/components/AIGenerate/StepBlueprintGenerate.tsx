@@ -54,16 +54,10 @@ const TONE_OPTIONS = [
   { value: "coaching" as const, label: "Coaching", icon: "🎓" },
 ];
 
-function SectionHeader({ icon: Icon, title, desc }: { icon: LucideIcon; title: string; desc?: string }) {
+function SectionHeader({ title }: { icon?: LucideIcon; title: string; desc?: string }) {
   return (
-    <div className="flex items-start gap-2.5 mb-2.5">
-      <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-        <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-      </span>
-      <div className="min-w-0">
-        <div className="text-sm font-semibold text-foreground leading-tight">{title}</div>
-        {desc && <div className="text-[11px] text-muted-foreground leading-snug mt-0.5">{desc}</div>}
-      </div>
+    <div className="mb-2.5">
+      <div className="text-[16px] font-semibold text-foreground leading-tight">{title}</div>
     </div>
   );
 }
