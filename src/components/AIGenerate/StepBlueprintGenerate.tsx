@@ -248,14 +248,14 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
       {/* Page-level Preferences */}
       <PrefCard>
         <SectionHeader icon={BookOpen} title="Page-level Preferences" desc="Control what each page contains" />
-        <div className="space-y-2.5">
-          {/* Questions toggle + count */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {/* Questions tile */}
           <div
             className={cn(
-              "rounded-xl border transition-all p-3",
+              "group relative rounded-2xl border transition-all duration-200 p-3.5",
               state.contentPreferences.includeQuestions
-                ? "border-primary/40 bg-primary/5"
-                : "border-border bg-background"
+                ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] shadow-[0_1px_0_0_hsl(var(--primary)/0.08)]"
+                : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
             )}
           >
             <div className="flex items-center justify-between gap-3">
@@ -264,82 +264,105 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 onClick={() => togglePref("includeQuestions")}
                 role="switch"
                 aria-checked={state.contentPreferences.includeQuestions}
-                className="flex items-center gap-2.5 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+                className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
                 aria-label="Include questions in pages"
               >
                 <span
                   className={cn(
-                    "w-9 h-5 rounded-full relative transition-colors shrink-0",
-                    state.contentPreferences.includeQuestions ? "bg-primary" : "bg-muted-foreground/30"
+                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                    state.contentPreferences.includeQuestions
+                      ? "bg-primary/15 text-primary"
+                      : "bg-muted text-muted-foreground group-hover:text-foreground"
                   )}
                   aria-hidden="true"
                 >
-                  <span
-                    className={cn(
-                      "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow transition-transform",
-                      state.contentPreferences.includeQuestions && "translate-x-4"
-                    )}
-                  />
+                  <HelpCircle className="w-4 h-4" />
                 </span>
-                <span className="flex items-center gap-1.5 min-w-0">
-                  <HelpCircle className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
-                  <span className="text-sm font-medium text-foreground">Questions</span>
-                  <span className="text-[11px] text-muted-foreground hidden sm:inline">— Include questions in pages</span>
+                <span className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold text-foreground leading-tight">Questions</span>
+                  <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">Include questions in pages</span>
                 </span>
               </button>
-              {state.contentPreferences.includeQuestions && (
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-muted-foreground hidden sm:inline">per page</span>
-                  <Stepper
-                    value={state.questionsPerPage}
-                    onChange={(v) => onChange({ questionsPerPage: v })}
-                    min={1}
-                    max={10}
-                    ariaLabel="questions per page"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Images toggle */}
-          <div
-            className={cn(
-              "rounded-xl border transition-all p-3",
-              state.contentPreferences.addImages
-                ? "border-primary/40 bg-primary/5"
-                : "border-border bg-background"
-            )}
-          >
-            <button
-              type="button"
-              onClick={() => togglePref("addImages")}
-              role="switch"
-              aria-checked={state.contentPreferences.addImages}
-              className="flex items-center gap-2.5 text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
-              aria-label="Add images to pages"
-            >
               <span
                 className={cn(
                   "w-9 h-5 rounded-full relative transition-colors shrink-0",
-                  state.contentPreferences.addImages ? "bg-primary" : "bg-muted-foreground/30"
+                  state.contentPreferences.includeQuestions ? "bg-primary" : "bg-muted-foreground/25"
                 )}
                 aria-hidden="true"
               >
                 <span
                   className={cn(
-                    "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow transition-transform",
+                    "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform",
+                    state.contentPreferences.includeQuestions && "translate-x-4"
+                  )}
+                />
+              </span>
+            </div>
+            {state.contentPreferences.includeQuestions && (
+              <div className="mt-3 pt-3 border-t border-primary/15 flex items-center justify-between gap-3">
+                <span className="text-xs font-medium text-muted-foreground">Questions per page</span>
+                <Stepper
+                  value={state.questionsPerPage}
+                  onChange={(v) => onChange({ questionsPerPage: v })}
+                  min={1}
+                  max={10}
+                  ariaLabel="questions per page"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Images tile */}
+          <div
+            className={cn(
+              "group relative rounded-2xl border transition-all duration-200 p-3.5",
+              state.contentPreferences.addImages
+                ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] shadow-[0_1px_0_0_hsl(var(--primary)/0.08)]"
+                : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+            )}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => togglePref("addImages")}
+                role="switch"
+                aria-checked={state.contentPreferences.addImages}
+                className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+                aria-label="Add images to pages"
+              >
+                <span
+                  className={cn(
+                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                    state.contentPreferences.addImages
+                      ? "bg-primary/15 text-primary"
+                      : "bg-muted text-muted-foreground group-hover:text-foreground"
+                  )}
+                  aria-hidden="true"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                </span>
+                <span className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold text-foreground leading-tight">Images</span>
+                  <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">Add images to the pages</span>
+                </span>
+              </button>
+              <span
+                className={cn(
+                  "w-9 h-5 rounded-full relative transition-colors shrink-0",
+                  state.contentPreferences.addImages ? "bg-primary" : "bg-muted-foreground/25"
+                )}
+                aria-hidden="true"
+              >
+                <span
+                  className={cn(
+                    "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform",
                     state.contentPreferences.addImages && "translate-x-4"
                   )}
                 />
               </span>
-              <span className="flex items-center gap-1.5">
-                <ImageIcon className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                <span className="text-sm font-medium text-foreground">Images</span>
-                <span className="text-[11px] text-muted-foreground hidden sm:inline">— Add images to the pages</span>
-              </span>
-            </button>
+            </div>
           </div>
+        </div>
         </div>
       </PrefCard>
 
