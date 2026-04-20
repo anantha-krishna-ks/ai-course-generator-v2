@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "suneditor/src/plugins": path.resolve(__dirname, "./node_modules/suneditor/src/plugins/index.js"),
     },
   },
 }));
