@@ -162,6 +162,56 @@ function ToolbarDivider() {
   return <span aria-hidden="true" className="mx-0.5 hidden h-5 w-px shrink-0 bg-border sm:block" />;
 }
 
+const TABLE_GRID_SIZE = 8;
+
+interface TableGridPickerProps {
+  onSelect: (rows: number, cols: number) => void;
+}
+
+function TableGridPicker({ onSelect }: TableGridPickerProps) {
+  const [hover, setHover] = useState<{ rows: number; cols: number }>({ rows: 0, cols: 0 });
+
+  const cells = [];
+  for (let r = 1; r <= TABLE_GRID_SIZE; r += 1) {
+    for (let c = 1; c <= TABLE_GRID_SIZE; c += 1) {
+      const active = r <= hover.rows && c <= hover.cols;
+      cells.push(
+        <button
+          key={`${r}-${c}`}
+          type="button"
+          aria-label={`Insert ${r} by ${c} table`}
+          onMouseEnter={() => setHover({ rows: r, cols: c })}
+          onFocus={() => setHover({ rows: r, cols: c })}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => onSelect(r, c)}
+          className={cn(
+            'h-5 w-5 rounded-[3px] border transition-colors',
+            active
+              ? 'border-primary bg-primary/30'
+              : 'border-border bg-background hover:border-primary/40',
+          )}
+        />,
+      );
+    }
+  }
+
+  return (
+    <div className="space-y-2" onMouseLeave={() => setHover({ rows: 0, cols: 0 })}>
+      <div
+        className="grid gap-1"
+        style={{ gridTemplateColumns: `repeat(${TABLE_GRID_SIZE}, minmax(0, 1fr))` }}
+      >
+        {cells}
+      </div>
+      <p className="text-center text-xs font-medium text-foreground">
+        {hover.rows > 0 && hover.cols > 0
+          ? `Insert a ${hover.rows} × ${hover.cols} table`
+          : 'Hover to choose size'}
+      </p>
+    </div>
+  );
+}
+
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
   const isMobile = useIsMobile();
   const selectionRef = useRef<{ from: number; to: number } | null>(null);
