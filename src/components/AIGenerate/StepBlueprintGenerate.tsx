@@ -477,10 +477,10 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
       </PrefCard>
 
-      {/* Guidelines & Exclusions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <PrefCard>
-          <SectionHeader icon={BookOpen} title="Guidelines" desc="Style or content rules to follow" />
+      {/* Guidelines */}
+      <PrefCard>
+        <SectionHeader title="Guidelines" />
+        <div className="space-y-3">
           <Textarea
             value={state.guidelines}
             onChange={(e) => onChange({ guidelines: e.target.value })}
@@ -488,9 +488,18 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             className="min-h-[80px] resize-none rounded-xl text-sm"
             aria-label="Guidelines"
           />
-        </PrefCard>
-        <PrefCard>
-          <SectionHeader icon={Ban} title="Exclusions" desc="Topics or terms to avoid" />
+          <DocUploadZone
+            documents={state.guidelinesDocuments ?? []}
+            onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
+            ariaLabel="Upload guidelines documents"
+          />
+        </div>
+      </PrefCard>
+
+      {/* Exclusions */}
+      <PrefCard>
+        <SectionHeader title="Exclusions" />
+        <div className="space-y-3">
           <Textarea
             value={state.exclusions}
             onChange={(e) => onChange({ exclusions: e.target.value })}
@@ -498,8 +507,13 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             className="min-h-[80px] resize-none rounded-xl text-sm"
             aria-label="Exclusions"
           />
-        </PrefCard>
-      </div>
+          <DocUploadZone
+            documents={state.exclusionsDocuments ?? []}
+            onDocumentsChange={(docs) => onChange({ exclusionsDocuments: docs })}
+            ariaLabel="Upload exclusions documents"
+          />
+        </div>
+      </PrefCard>
     </div>
   );
 }
