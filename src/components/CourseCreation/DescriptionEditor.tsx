@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ComponentType, type MouseEvent, type SVGProps } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type MouseEvent, type SVGProps } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Extension, type ChainedCommands } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -162,9 +162,60 @@ function ToolbarDivider() {
   return <span aria-hidden="true" className="mx-0.5 hidden h-5 w-px shrink-0 bg-border sm:block" />;
 }
 
+const TABLE_GRID_SIZE = 8;
+
+interface TableGridPickerProps {
+  onSelect: (rows: number, cols: number) => void;
+}
+
+function TableGridPicker({ onSelect }: TableGridPickerProps) {
+  const [hover, setHover] = useState<{ rows: number; cols: number }>({ rows: 0, cols: 0 });
+
+  const cells = [];
+  for (let r = 1; r <= TABLE_GRID_SIZE; r += 1) {
+    for (let c = 1; c <= TABLE_GRID_SIZE; c += 1) {
+      const active = r <= hover.rows && c <= hover.cols;
+      cells.push(
+        <button
+          key={`${r}-${c}`}
+          type="button"
+          aria-label={`Insert ${r} by ${c} table`}
+          onMouseEnter={() => setHover({ rows: r, cols: c })}
+          onFocus={() => setHover({ rows: r, cols: c })}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => onSelect(r, c)}
+          className={cn(
+            'h-5 w-5 rounded-[3px] border transition-colors',
+            active
+              ? 'border-primary bg-primary/30'
+              : 'border-border bg-background hover:border-primary/40',
+          )}
+        />,
+      );
+    }
+  }
+
+  return (
+    <div className="space-y-2" onMouseLeave={() => setHover({ rows: 0, cols: 0 })}>
+      <div
+        className="grid gap-1"
+        style={{ gridTemplateColumns: `repeat(${TABLE_GRID_SIZE}, minmax(0, 1fr))` }}
+      >
+        {cells}
+      </div>
+      <p className="text-center text-xs font-medium text-foreground">
+        {hover.rows > 0 && hover.cols > 0
+          ? `Insert a ${hover.rows} × ${hover.cols} table`
+          : 'Hover to choose size'}
+      </p>
+    </div>
+  );
+}
+
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
   const isMobile = useIsMobile();
   const selectionRef = useRef<{ from: number; to: number } | null>(null);
+  const [tableMenuOpen, setTableMenuOpen] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -327,19 +378,19 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
   const primaryControls = (
     <>
-      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+      <div className="flex items-center gap-0.5">
         <ToolbarButton ariaLabel="Bold" active={editor.isActive('bold')} icon={Bold} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBold())} />
         <ToolbarButton ariaLabel="Italic" active={editor.isActive('italic')} icon={Italic} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleItalic())} />
         <ToolbarButton ariaLabel="Underline" active={editor.isActive('underline')} icon={UnderlineIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleUnderline())} />
         <ToolbarButton ariaLabel="Strike through" active={editor.isActive('strike')} icon={Strikethrough} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleStrike())} />
       </div>
       <ToolbarDivider />
-      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+      <div className="flex items-center gap-0.5">
         <ToolbarButton ariaLabel="Bulleted list" active={editor.isActive('bulletList')} icon={List} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBulletList())} />
         <ToolbarButton ariaLabel="Numbered list" active={editor.isActive('orderedList')} icon={ListOrdered} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleOrderedList())} />
       </div>
       <ToolbarDivider />
-      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+      <div className="flex items-center gap-0.5">
         <ToolbarButton ariaLabel="Undo" icon={Undo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.undo())} />
         <ToolbarButton ariaLabel="Redo" icon={Redo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.redo())} />
       </div>
@@ -349,14 +400,14 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
   const secondaryControls = (
     <>
       <label
-        className="flex h-8 min-w-0 items-center gap-1.5 rounded-lg bg-background/70 px-2.5 text-xs font-medium text-foreground ring-1 ring-border/60 transition-colors hover:bg-accent"
+        className="flex h-8 min-w-0 items-center gap-1.5 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent"
         onMouseDown={preventToolbarMouseDown}
       >
         <Type aria-hidden="true" focusable="false" className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         <span className="sr-only">Text style</span>
         <select
           aria-label="Text style"
-          className="min-w-[5.5rem] cursor-pointer appearance-none bg-transparent pr-1 text-xs font-medium outline-none"
+          className="min-w-[5rem] cursor-pointer appearance-none bg-transparent pr-1 text-xs font-medium outline-none"
           value={activePresetValue}
           onMouseDown={preventToolbarMouseDown}
           onChange={(event) => applyTextStylePreset(event.target.value)}
@@ -371,7 +422,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
       <ToolbarDivider />
 
-      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+      <div className="flex items-center gap-0.5">
         <ToolbarButton ariaLabel="Align left" active={editor.isActive({ textAlign: 'left' })} icon={AlignLeft} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('left'))} />
         <ToolbarButton ariaLabel="Align center" active={editor.isActive({ textAlign: 'center' })} icon={AlignCenter} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('center'))} />
         <ToolbarButton ariaLabel="Align right" active={editor.isActive({ textAlign: 'right' })} icon={AlignRight} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('right'))} />
@@ -380,9 +431,9 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
       <ToolbarDivider />
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5">
         <label
-          className="relative flex h-8 cursor-pointer items-center gap-1.5 overflow-hidden rounded-lg bg-background/70 px-2 text-xs font-medium text-foreground ring-1 ring-border/60 transition-colors hover:bg-accent"
+          className="relative flex h-8 w-8 cursor-pointer items-center justify-center overflow-hidden rounded-md text-foreground transition-colors hover:bg-accent"
           title="Text color"
           onMouseDown={preventToolbarMouseDown}
         >
@@ -402,7 +453,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         </label>
 
         <label
-          className="relative flex h-8 cursor-pointer items-center gap-1.5 overflow-hidden rounded-lg bg-background/70 px-2 text-xs font-medium text-foreground ring-1 ring-border/60 transition-colors hover:bg-accent"
+          className="relative flex h-8 w-8 cursor-pointer items-center justify-center overflow-hidden rounded-md text-foreground transition-colors hover:bg-accent"
           title="Highlight color"
           onMouseDown={preventToolbarMouseDown}
         >
@@ -424,12 +475,42 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
 
       <ToolbarDivider />
 
-      <div className="flex items-center gap-0.5 rounded-lg bg-background/70 p-0.5 ring-1 ring-border/60">
+      <div className="flex items-center gap-0.5">
         <ToolbarButton ariaLabel="Insert or edit link" active={editor.isActive('link')} icon={Link2} onMouseDown={preventToolbarMouseDown} onPress={setLink} />
         <ToolbarButton ariaLabel="Block quote" active={editor.isActive('blockquote')} icon={Quote} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBlockquote())} />
         <ToolbarButton ariaLabel="Subscript" active={editor.isActive('subscript')} icon={SubscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSubscript())} />
         <ToolbarButton ariaLabel="Superscript" active={editor.isActive('superscript')} icon={SuperscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSuperscript())} />
-        <ToolbarButton ariaLabel="Insert table" active={editor.isActive('table')} icon={Table2} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }))} />
+        <Popover open={tableMenuOpen} onOpenChange={setTableMenuOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label="Insert table"
+              title="Insert table"
+              aria-pressed={editor.isActive('table')}
+              onMouseDown={preventToolbarMouseDown}
+              className={cn(
+                'h-8 w-8 shrink-0 rounded-md p-0 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
+                editor.isActive('table') && 'bg-primary/15 text-primary hover:bg-primary/20',
+              )}
+            >
+              <Table2 aria-hidden="true" focusable="false" className="h-3.5 w-3.5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="end"
+            className="w-auto rounded-xl border-border/80 p-3 shadow-lg"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
+            <TableGridPicker
+              onSelect={(rows, cols) => {
+                runCommand((chain) => chain.insertTable({ rows, cols, withHeaderRow: true }));
+                setTableMenuOpen(false);
+              }}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {editor.isActive('table') && (
