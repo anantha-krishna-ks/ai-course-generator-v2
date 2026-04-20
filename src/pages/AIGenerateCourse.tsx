@@ -43,6 +43,9 @@ export interface AIGenerateState {
   exclusionsDocuments: string[];
   pageSpanTime: number;
   courseSpanTime: number;
+  blueprintSource: "import" | "ai";
+  blueprintSections: number;
+  blueprintPages: number;
   layoutType: "multi-page" | "single-page";
   duration: "brief" | "standard" | "extended";
   tone: "professional" | "conversational" | "coaching" | "ai-determined";
@@ -65,6 +68,9 @@ const initialState: AIGenerateState = {
   exclusionsDocuments: [],
   pageSpanTime: 5,
   courseSpanTime: 60,
+  blueprintSource: "ai",
+  blueprintSections: 5,
+  blueprintPages: 4,
   layoutType: "multi-page",
   duration: "standard",
   tone: "ai-determined",
