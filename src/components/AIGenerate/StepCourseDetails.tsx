@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, SignalLow, SignalMedium, SignalHigh, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -76,7 +76,7 @@ function ChipGroup({
   ariaLabel,
   showDesc,
 }: {
-  options: { value: string; label: string; desc?: string }[];
+  options: { value: string; label: string; desc?: string; icon?: LucideIcon }[];
   value: string;
   onChange: (v: string) => void;
   ariaLabel: string;
@@ -86,6 +86,7 @@ function ChipGroup({
     <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={ariaLabel}>
       {options.map((opt) => {
         const selected = value === opt.value;
+        const Icon = opt.icon;
         return (
           <button
             key={opt.value}
@@ -100,7 +101,11 @@ function ChipGroup({
                 : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
             )}
           >
-            {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+            {selected ? (
+              <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            ) : Icon ? (
+              <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            ) : null}
             {opt.label}
             {showDesc && opt.desc && (
               <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
@@ -320,9 +325,9 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         </div>
         <ChipGroup
           options={[
-            { value: "beginners", label: "Beginners" },
-            { value: "intermediate", label: "Intermediate" },
-            { value: "expert", label: "Expert" },
+            { value: "beginners", label: "Beginners", icon: SignalLow },
+            { value: "intermediate", label: "Intermediate", icon: SignalMedium },
+            { value: "expert", label: "Expert", icon: SignalHigh },
           ]}
           value={state.intendedLearners}
           onChange={(v) => onChange({ intendedLearners: v })}
