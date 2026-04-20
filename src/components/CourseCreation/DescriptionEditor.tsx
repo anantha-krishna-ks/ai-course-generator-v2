@@ -80,8 +80,8 @@ const HIGHLIGHT_COLORS = [
   '#FBCFE8', '#E5E7EB',
 ];
 
-// Custom FontSize extension built on TextStyle
-const FontSize = TextStyle.extend({
+// Custom TextStyle that supports fontSize. Color extension extends this same TextStyle to add the `color` attribute.
+const CustomTextStyle = TextStyle.extend({
   addAttributes() {
     return {
       ...this.parent?.(),
@@ -224,13 +224,23 @@ function LinkPopover({ editor }: { editor: Editor }) {
 
 function TableMenu({ editor }: { editor: Editor }) {
   const inTable = editor.isActive('table');
+  const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState<{ r: number; c: number }>({ r: 0, c: 0 });
+  const MAX = 8;
+
+  const insert = (rows: number, cols: number) => {
+    editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+    setOpen(false);
+    setHover({ r: 0, c: 0 });
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <button
           type="button"
-          aria-label="Table"
-          title="Table"
+          aria-label="Insert table"
+          title="Insert table"
           className={cn(
             'inline-flex items-center justify-center h-8 w-8 rounded-md transition-all shrink-0',
             inTable
@@ -240,51 +250,61 @@ function TableMenu({ editor }: { editor: Editor }) {
         >
           <TableIcon className="w-4 h-4" aria-hidden="true" />
         </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="bg-background">
-        <DropdownMenuItem
-          onClick={() =>
-            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-          }
+      </PopoverTrigger>
+      <PopoverContent align="start" className="p-3 w-auto bg-background">
+        <div
+          className="grid gap-1"
+          style={{ gridTemplateColumns: `repeat(${MAX}, 1.25rem)` }}
+          onMouseLeave={() => setHover({ r: 0, c: 0 })}
         >
-          <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Insert table (3×3)
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs">Edit</DropdownMenuLabel>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().addRowAfter().run()}
-        >
-          <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Add row
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().addColumnAfter().run()}
-        >
-          <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Add column
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().deleteRow().run()}
-        >
-          <Minus className="w-4 h-4 mr-2" aria-hidden="true" /> Delete row
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().deleteColumn().run()}
-        >
-          <Minus className="w-4 h-4 mr-2" aria-hidden="true" /> Delete column
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          disabled={!inTable}
-          onClick={() => editor.chain().focus().deleteTable().run()}
-          className="text-destructive focus:text-destructive"
-        >
-          <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" /> Delete table
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {Array.from({ length: MAX * MAX }).map((_, i) => {
+            const r = Math.floor(i / MAX) + 1;
+            const c = (i % MAX) + 1;
+            const active = r <= hover.r && c <= hover.c;
+            return (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Insert ${r}×${c} table`}
+                onMouseEnter={() => setHover({ r, c })}
+                onClick={() => insert(r, c)}
+                className={cn(
+                  'h-5 w-5 rounded-[3px] border transition-colors',
+                  active
+                    ? 'bg-primary/80 border-primary'
+                    : 'bg-background border-foreground/20 hover:border-foreground/40',
+                )}
+              />
+            );
+          })}
+        </div>
+        <div className="mt-2 text-xs text-center text-muted-foreground tabular-nums">
+          {hover.r > 0 ? `Insert a ${hover.r}×${hover.c} table` : 'Pick table size'}
+        </div>
+        {inTable && (
+          <>
+            <div className="h-px bg-foreground/10 my-2" />
+            <div className="grid grid-cols-2 gap-1">
+              <Button size="sm" variant="ghost" className="h-7 text-xs justify-start" onClick={() => editor.chain().focus().addRowAfter().run()}>
+                <Plus className="w-3 h-3 mr-1" aria-hidden="true" /> Row
+              </Button>
+              <Button size="sm" variant="ghost" className="h-7 text-xs justify-start" onClick={() => editor.chain().focus().addColumnAfter().run()}>
+                <Plus className="w-3 h-3 mr-1" aria-hidden="true" /> Column
+              </Button>
+              <Button size="sm" variant="ghost" className="h-7 text-xs justify-start" onClick={() => editor.chain().focus().deleteRow().run()}>
+                <Minus className="w-3 h-3 mr-1" aria-hidden="true" /> Row
+              </Button>
+              <Button size="sm" variant="ghost" className="h-7 text-xs justify-start" onClick={() => editor.chain().focus().deleteColumn().run()}>
+                <Minus className="w-3 h-3 mr-1" aria-hidden="true" /> Column
+              </Button>
+              <Button size="sm" variant="ghost" className="h-7 text-xs justify-start col-span-2 text-destructive hover:text-destructive" onClick={() => editor.chain().focus().deleteTable().run()}>
+                <Trash2 className="w-3 h-3 mr-1" aria-hidden="true" /> Delete table
+              </Button>
+            </div>
+          </>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -303,8 +323,8 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       }),
       Subscript,
       Superscript,
-      FontSize,
-      Color,
+      CustomTextStyle,
+      Color.configure({ types: ['textStyle'] }),
       Table.configure({ resizable: true, HTMLAttributes: { class: 'tt-table' } }),
       TableRow,
       TableHeader,
