@@ -348,16 +348,23 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                       >
                         <Minus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                       </button>
-                      <input
-                        id={f.id}
-                        type="number"
-                        min={1}
-                        max={20}
-                        value={f.value}
-                        onChange={(e) => f.set(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
-                        className="flex-1 text-center text-2xl font-bold text-foreground bg-transparent border-0 outline-none focus-visible:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        aria-label={f.label}
-                      />
+                      <div className="flex-1 relative pb-3.5">
+                        <input
+                          id={f.id}
+                          type="number"
+                          min={1}
+                          max={20}
+                          value={f.value}
+                          onChange={(e) => f.set(Math.max(1, Math.min(20, Number(e.target.value) || 1)))}
+                          onFocus={(e) => e.target.select()}
+                          className="w-full text-center text-2xl font-bold text-foreground bg-transparent border-0 border-b-2 border-dashed border-border/60 hover:border-primary/50 focus:border-primary focus:border-solid outline-none pb-0.5 transition-colors cursor-text [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          aria-label={`${f.label} (type or use buttons, 1–20)`}
+                          title="Click to type a value (1–20)"
+                        />
+                        <span className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 text-[9px] font-medium text-muted-foreground uppercase tracking-wider opacity-60">
+                          tap to edit
+                        </span>
+                      </div>
                       <button
                         type="button"
                         onClick={inc}
