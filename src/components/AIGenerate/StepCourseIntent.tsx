@@ -1,6 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File, Download, AlertCircle } from "lucide-react";
+import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File, Download, AlertCircle, Type, Target, LayoutGrid, type LucideIcon } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
@@ -33,6 +33,23 @@ function pickSuggestion(title: string): string {
     if (key !== "default" && lower.includes(key)) return value;
   }
   return DUMMY_SUGGESTIONS.default;
+}
+
+function SectionDivider({ number, icon: Icon, label }: { number: number; icon: LucideIcon; label: string }) {
+  return (
+    <div className="flex items-center gap-3 pt-1" aria-hidden="true">
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="relative w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
+          {number}
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          <Icon className="w-3.5 h-3.5 text-primary/70" focusable="false" />
+          {label}
+        </span>
+      </div>
+      <span className="flex-1 h-px bg-gradient-to-r from-border via-border/60 to-transparent" />
+    </div>
+  );
 }
 
 export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
@@ -79,6 +96,9 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
         </p>
       </div>
 
+      {/* Section divider: Title */}
+      <SectionDivider number={1} icon={Type} label="The Basics" />
+
       {/* Course Title */}
       <div>
         <label htmlFor="course-title" className="text-base font-semibold text-foreground mb-2 block">
@@ -94,6 +114,9 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           💡 Used as the primary prompt for AI content generation
         </p>
       </div>
+
+      {/* Section divider: Learning Outcome */}
+      <SectionDivider number={2} icon={Target} label="Learning Outcome" />
 
       {/* Learning Outcome */}
       <div className="space-y-1.5">
@@ -143,6 +166,9 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           className="min-h-[80px] resize-none rounded-xl text-sm"
         />
       </div>
+
+      {/* Section divider: Blueprint */}
+      <SectionDivider number={3} icon={LayoutGrid} label="Course Blueprint" />
 
       {/* Blueprint source selector */}
       <div className="space-y-2">
