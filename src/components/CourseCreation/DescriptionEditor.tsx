@@ -631,21 +631,26 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-background w-48">
+          <DropdownMenuContent
+            align="end"
+            className="bg-background w-48"
+            onCloseAutoFocus={(event) => event.preventDefault()}
+          >
             <DropdownMenuItem
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleBulletList().run(); }}
               className="sm:hidden"
             >
               <List className="w-4 h-4 mr-2" aria-hidden="true" /> Bullet list
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleOrderedList().run(); }}
               className="sm:hidden"
             >
               <ListOrdered className="w-4 h-4 mr-2" aria-hidden="true" /> Numbered list
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => {
+              onSelect={(e) => {
+                e.preventDefault();
                 const url = window.prompt('Enter URL');
                 if (url) {
                   const href = url.match(/^https?:\/\//) ? url : `https://${url}`;
@@ -656,19 +661,17 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <LinkIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Insert link
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-              }
+              onSelect={(e) => { e.preventDefault(); editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(); }}
             >
               <TableIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Insert table
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleBlockquote().run(); }}>
               <Quote className="w-4 h-4 mr-2" aria-hidden="true" /> Quote
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleSubscript().run()}>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleSubscript().run(); }}>
               <SubscriptIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Subscript
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().toggleSuperscript().run()}>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleSuperscript().run(); }}>
               <SuperscriptIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Superscript
             </DropdownMenuItem>
           </DropdownMenuContent>
