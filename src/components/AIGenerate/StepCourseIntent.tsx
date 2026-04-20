@@ -204,12 +204,18 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                 : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
             }`}
           >
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-              state.blueprintSource === "ai"
-                ? "bg-gradient-to-br from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] text-white"
-                : "bg-muted text-muted-foreground"
+            <div className={`w-full h-24 rounded-lg flex items-center justify-center transition-colors ${
+              state.blueprintSource === "ai" ? "bg-primary/5" : "bg-muted/40 group-hover:bg-muted/60"
             }`}>
-              <Sparkles className="w-5 h-5" aria-hidden="true" focusable="false" />
+              <img
+                src={blueprintAiIllustration}
+                alt=""
+                role="presentation"
+                loading="lazy"
+                width={512}
+                height={512}
+                className="h-20 w-auto object-contain"
+              />
             </div>
             <div className="space-y-0.5">
               <div className="text-sm font-semibold text-foreground">Generate Blueprint with AI</div>
