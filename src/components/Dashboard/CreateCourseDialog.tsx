@@ -3,6 +3,16 @@ import Lottie from "lottie-react";
 import courseCreationAnimation from "@/assets/course-creation-lottie.json";
 import previewMultipage from "@/assets/preview-multipage.jpg";
 import previewSinglepage from "@/assets/preview-singlepage.jpg";
+
+// Preload preview images at module load so they're decoded & cached
+// before the dialog ever opens — eliminates the first-open flash/delay.
+if (typeof window !== "undefined") {
+  [previewMultipage, previewSinglepage].forEach((src) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = src;
+  });
+}
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -144,10 +154,13 @@ function LivePreviewPanel({
 
       {/* Bottom layout preview thumbnail */}
       <div className="relative z-10 mt-4">
-        <div className="rounded-xl overflow-hidden border border-primary-foreground/10 shadow-lg">
+        <div className="rounded-xl overflow-hidden border border-primary-foreground/10 shadow-lg bg-muted">
           <img
             src={selectedLayout === "multi-page" ? previewMultipage : previewSinglepage}
             alt={`${selectedLayout} preview`}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             className="w-full h-[100px] object-cover object-top opacity-80"
           />
           <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-primary/80 to-transparent" />
@@ -286,8 +299,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       </div>
                     </div>
                     <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
-                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
-                        <img src={previewMultipage} alt="Multi-page layout preview" className="w-full h-full object-cover object-top" />
+                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden bg-muted">
+                        <img src={previewMultipage} alt="Multi-page layout preview" loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover object-top" />
                       </div>
                     </div>
                     <div className="text-center">
@@ -323,8 +336,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       </div>
                     </div>
                     <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
-                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
-                        <img src={previewSinglepage} alt="Single-page layout preview" className="w-full h-full object-cover object-top" />
+                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden bg-muted">
+                        <img src={previewSinglepage} alt="Single-page layout preview" loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover object-top" />
                       </div>
                     </div>
                     <div className="text-center">
