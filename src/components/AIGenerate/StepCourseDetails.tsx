@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, SignalLow, SignalMedium, SignalHigh, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -325,9 +325,9 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         </div>
         <ChipGroup
           options={[
-            { value: "beginners", label: "Beginners", icon: SignalLow },
-            { value: "intermediate", label: "Intermediate", icon: SignalMedium },
-            { value: "expert", label: "Expert", icon: SignalHigh },
+            { value: "beginners", label: "Beginners", icon: Sprout },
+            { value: "intermediate", label: "Intermediate", icon: Rocket },
+            { value: "expert", label: "Expert", icon: Crown },
           ]}
           value={state.intendedLearners}
           onChange={(v) => onChange({ intendedLearners: v })}
