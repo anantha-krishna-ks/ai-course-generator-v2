@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ComponentType, type MouseEvent, type SVGProps } from 'react';
+import { useEffect, useRef, useState, type ComponentType, type MouseEvent, type SVGProps } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Extension, type ChainedCommands } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
