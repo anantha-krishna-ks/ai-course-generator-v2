@@ -360,7 +360,7 @@ const Dashboard = () => {
           <Card className="relative p-6 mb-8 border border-border/80 bg-card/70 backdrop-blur-sm overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
             {/* Decorative Diagonal Ribbon */}
             <div className="absolute -right-9 top-5 rotate-45 w-36 h-8 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 shadow-md flex items-center justify-center z-10">
-              <span className="text-[10px] font-bold text-white uppercase tracking-widest drop-shadow-sm">Quick Start</span>
+              <span style={{ fontSize: '10px', lineHeight: '12px' }} className="font-bold text-white uppercase tracking-widest drop-shadow-sm">Quick Start</span>
             </div>
             
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pr-0 sm:pr-8">
