@@ -79,8 +79,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       formats: ['p', 'blockquote'],
       plugins: undefined,
       resizingBar: false,
-      fontSizeUnit: 'px',
-      fontSize: [12, 14, 16, 18, 22, 28, 36],
+      fontSizeUnits: ['px'],
+      fontSize: {
+        unit: 'px',
+        items: ['12', '14', '16', '18', '22', '28', '36'],
+      },
       placeholder: 'Tell your learners what the course will be about...',
       attributesWhitelist: {
         all: 'style|class|colspan|rowspan|target|href|rel',
@@ -91,6 +94,9 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       videoUploadUrl: undefined,
       backgroundColor: {
         items: BACKGROUND_COLORS,
+      },
+      fontColor: {
+        items: TEXT_COLORS,
       },
     }),
     [isMobile],
