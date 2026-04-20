@@ -57,7 +57,24 @@ declare module '@tiptap/core' {
   }
 }
 
-const FONT_SIZES = ['12px', '14px', '16px', '18px', '22px', '28px', '36px'];
+type TextStylePreset = {
+  label: string;
+  value: string;
+  type: 'paragraph' | 'heading';
+  level?: 1 | 2 | 3;
+  fontSize?: string;
+};
+
+const TEXT_STYLE_PRESETS: TextStylePreset[] = [
+  { label: 'Heading 1', value: 'h1', type: 'heading', level: 1 },
+  { label: 'Heading 2', value: 'h2', type: 'heading', level: 2 },
+  { label: 'Heading 3', value: 'h3', type: 'heading', level: 3 },
+  { label: 'Large', value: 'large', type: 'paragraph', fontSize: '20px' },
+  { label: 'Normal', value: 'normal', type: 'paragraph', fontSize: '16px' },
+  { label: 'Small', value: 'small', type: 'paragraph', fontSize: '13px' },
+];
+
+const DEFAULT_PRESET_VALUE = 'normal';
 const DEFAULT_TEXT_COLOR = '#111827';
 const DEFAULT_HIGHLIGHT_COLOR = '#fef08a';
 
@@ -191,7 +208,14 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm dark:prose-invert max-w-none min-h-[220px] p-4 focus:outline-none [overflow-wrap:anywhere] break-words [&_*]:[overflow-wrap:anywhere] [&_*]:break-words',
+          'prose prose-sm dark:prose-invert max-w-none min-h-[220px] p-4 focus:outline-none ' +
+          '[overflow-wrap:anywhere] break-words [&_*]:[overflow-wrap:anywhere] [&_*]:break-words ' +
+          '[&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-muted/40 [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-3 [&_blockquote]:italic [&_blockquote]:text-foreground ' +
+          '[&_.tableWrapper]:overflow-x-auto [&_.tableWrapper]:my-3 ' +
+          '[&_table]:border-collapse [&_table]:w-full [&_table]:table-fixed ' +
+          '[&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:font-semibold ' +
+          '[&_td]:border [&_td]:border-border [&_td]:p-2 [&_td]:align-top ' +
+          '[&_.selectedCell]:bg-primary/10',
       },
     },
   });
@@ -267,9 +291,31 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     return <div className="description-editor-shell rounded-xl border border-border bg-background p-4 text-sm text-muted-foreground">Loading editor...</div>;
   }
 
-  const fontSizeValue = (editor.getAttributes('textStyle').fontSize as string | undefined) ?? '16px';
+  const currentFontSize = editor.getAttributes('textStyle').fontSize as string | undefined;
+  const activePresetValue = (() => {
+    if (editor.isActive('heading', { level: 1 })) return 'h1';
+    if (editor.isActive('heading', { level: 2 })) return 'h2';
+    if (editor.isActive('heading', { level: 3 })) return 'h3';
+    const sizeMatch = TEXT_STYLE_PRESETS.find(
+      (preset) => preset.type === 'paragraph' && preset.fontSize === currentFontSize,
+    );
+    return sizeMatch ? sizeMatch.value : DEFAULT_PRESET_VALUE;
+  })();
   const textColorValue = getSafeColor(editor.getAttributes('textStyle').color as string | undefined, DEFAULT_TEXT_COLOR);
   const highlightValue = getSafeColor(editor.getAttributes('highlight').color as string | undefined, DEFAULT_HIGHLIGHT_COLOR);
+
+  const applyTextStylePreset = (value: string) => {
+    const preset = TEXT_STYLE_PRESETS.find((item) => item.value === value);
+    if (!preset) return;
+
+    runCommand((chain) => {
+      if (preset.type === 'heading' && preset.level) {
+        return chain.unsetFontSize().setHeading({ level: preset.level });
+      }
+      const next = chain.setParagraph();
+      return preset.fontSize ? next.setFontSize(preset.fontSize) : next.unsetFontSize();
+    });
+  };
 
   const primaryControls = (
     <>
@@ -288,17 +334,17 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     <>
       <label className="flex min-w-0 items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
         <Type aria-hidden="true" focusable="false" className="h-4 w-4 shrink-0" />
-        <span className="sr-only">Font size</span>
+        <span className="sr-only">Text style</span>
         <select
-          aria-label="Font size"
-          className="min-w-0 bg-transparent text-xs outline-none"
-          value={fontSizeValue}
+          aria-label="Text style"
+          className="min-w-[6.5rem] bg-transparent text-xs outline-none"
+          value={activePresetValue}
           onMouseDown={preventToolbarMouseDown}
-          onChange={(event) => runCommand((chain) => chain.setFontSize(event.target.value))}
+          onChange={(event) => applyTextStylePreset(event.target.value)}
         >
-          {FONT_SIZES.map((size) => (
-            <option key={size} value={size}>
-              {size}
+          {TEXT_STYLE_PRESETS.map((preset) => (
+            <option key={preset.value} value={preset.value}>
+              {preset.label}
             </option>
           ))}
         </select>
