@@ -80,16 +80,19 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
       </div>
 
       {/* Course Title */}
-      <div className="space-y-1.5">
-        <label htmlFor="course-title" className="text-sm font-semibold text-field-label uppercase tracking-wider">
+      <div>
+        <label htmlFor="course-title" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
           Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <TitleAutocomplete
           id="course-title"
           value={state.title}
           onChange={(v) => onChange({ title: v })}
-          placeholder="e.g., Introduction to Machine Learning"
+          placeholder="What will you teach?"
         />
+        <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
+          💡 Used as the primary prompt for AI content generation
+        </p>
       </div>
 
       {/* Learning Outcome */}
