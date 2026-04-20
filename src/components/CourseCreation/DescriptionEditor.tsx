@@ -57,7 +57,24 @@ declare module '@tiptap/core' {
   }
 }
 
-const FONT_SIZES = ['12px', '14px', '16px', '18px', '22px', '28px', '36px'];
+type TextStylePreset = {
+  label: string;
+  value: string;
+  type: 'paragraph' | 'heading';
+  level?: 1 | 2 | 3;
+  fontSize?: string;
+};
+
+const TEXT_STYLE_PRESETS: TextStylePreset[] = [
+  { label: 'Heading 1', value: 'h1', type: 'heading', level: 1 },
+  { label: 'Heading 2', value: 'h2', type: 'heading', level: 2 },
+  { label: 'Heading 3', value: 'h3', type: 'heading', level: 3 },
+  { label: 'Large', value: 'large', type: 'paragraph', fontSize: '20px' },
+  { label: 'Normal', value: 'normal', type: 'paragraph', fontSize: '16px' },
+  { label: 'Small', value: 'small', type: 'paragraph', fontSize: '13px' },
+];
+
+const DEFAULT_PRESET_VALUE = 'normal';
 const DEFAULT_TEXT_COLOR = '#111827';
 const DEFAULT_HIGHLIGHT_COLOR = '#fef08a';
 
