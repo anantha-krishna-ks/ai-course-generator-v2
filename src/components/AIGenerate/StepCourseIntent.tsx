@@ -4,6 +4,8 @@ import { Upload, Sparkles, Info, Loader2, X, FileText } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
+import blueprintImportIllustration from "@/assets/blueprint-import.png";
+import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 
 interface StepCourseIntentProps {
   state: AIGenerateState;
