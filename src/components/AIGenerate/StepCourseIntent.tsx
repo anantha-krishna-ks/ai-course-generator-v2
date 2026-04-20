@@ -293,13 +293,15 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] hover:border-primary hover:bg-primary/10 transition-all text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               aria-label="Upload course outline documents"
             >
-              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full bg-primary/15 text-primary flex items-center justify-center">
                 <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
               </div>
-              <span className="text-sm font-medium">Upload files</span>
+              <span className="text-sm font-medium">
+                Drop files or <span className="text-primary font-semibold">click to upload</span>
+              </span>
               <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
             </button>
             <input
