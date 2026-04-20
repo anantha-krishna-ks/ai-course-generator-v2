@@ -296,8 +296,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       </div>
                     </div>
                     <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
-                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden">
-                        <img src={previewMultipage} alt="Multi-page layout preview" className="w-full h-full object-cover object-top" />
+                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden bg-muted">
+                        <img src={previewMultipage} alt="Multi-page layout preview" loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover object-top" />
                       </div>
                     </div>
                     <div className="text-center">
