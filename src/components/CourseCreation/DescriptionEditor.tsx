@@ -7,6 +7,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
+import Underline from '@tiptap/extension-underline';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Table } from '@tiptap/extension-table';
@@ -339,6 +340,7 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
       }),
       Subscript,
       Superscript,
+      Underline,
       CustomTextStyle,
       Color.configure({ types: ['textStyle'] }),
       Table.configure({ resizable: true, HTMLAttributes: { class: 'tt-table' } }),
