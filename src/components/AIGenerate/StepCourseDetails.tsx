@@ -276,7 +276,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Learning Outcome with AI suggestions */}
       <div>
-        <label htmlFor="learning-outcome" className="text-sm font-semibold text-field-label mb-2 block uppercase tracking-wider">
+        <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground mb-2 block">
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
@@ -315,7 +315,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Intended Learners */}
       <div>
-        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+        <div className="text-base font-semibold text-foreground mb-2.5">
           Intended Learners
         </div>
         <ChipGroup
@@ -332,7 +332,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Duration */}
       <div>
-        <div className="text-sm font-semibold text-field-label mb-2.5 uppercase tracking-wider">
+        <div className="text-base font-semibold text-foreground mb-2.5">
           Duration
         </div>
         <ChipGroup
