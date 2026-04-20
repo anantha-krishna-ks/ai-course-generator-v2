@@ -109,7 +109,11 @@ interface TBProps {
 const ToolbarButton = ({ onClick, isActive, disabled, label, children }: TBProps) => (
   <button
     type="button"
-    onClick={onClick}
+    onMouseDown={(event) => {
+      event.preventDefault();
+      if (!disabled) onClick();
+    }}
+    onClick={(event) => event.preventDefault()}
     disabled={disabled}
     aria-label={label}
     title={label}
@@ -506,13 +510,18 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <ChevronDown className="w-3 h-3" aria-hidden="true" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-background">
+          <DropdownMenuContent
+            align="start"
+            className="bg-background"
+            onCloseAutoFocus={(event) => event.preventDefault()}
+          >
             {FONT_SIZES.map((s) => (
               <DropdownMenuItem
                 key={s.value}
-                onClick={() =>
-                  editor.chain().focus().setMark('textStyle', { fontSize: s.value }).run()
-                }
+                onSelect={(event) => {
+                  event.preventDefault();
+                  editor.chain().focus().setMark('textStyle', { fontSize: s.value }).run();
+                }}
                 style={{ fontSize: s.value }}
               >
                 {s.label}
@@ -520,9 +529,10 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() =>
-                editor.chain().focus().setMark('textStyle', { fontSize: null }).run()
-              }
+              onSelect={(event) => {
+                event.preventDefault();
+                editor.chain().focus().setMark('textStyle', { fontSize: null }).run();
+              }}
             >
               Reset
             </DropdownMenuItem>
@@ -544,17 +554,21 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
               <ChevronDown className="w-3 h-3" aria-hidden="true" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="bg-background">
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('left').run()}>
+          <DropdownMenuContent
+            align="start"
+            className="bg-background"
+            onCloseAutoFocus={(event) => event.preventDefault()}
+          >
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('left').run(); }}>
               <AlignLeft className="w-4 h-4 mr-2" aria-hidden="true" /> Left
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('center').run()}>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('center').run(); }}>
               <AlignCenter className="w-4 h-4 mr-2" aria-hidden="true" /> Center
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('right').run()}>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('right').run(); }}>
               <AlignRight className="w-4 h-4 mr-2" aria-hidden="true" /> Right
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => editor.chain().focus().setTextAlign('justify').run()}>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('justify').run(); }}>
               <AlignJustify className="w-4 h-4 mr-2" aria-hidden="true" /> Justify
             </DropdownMenuItem>
           </DropdownMenuContent>
