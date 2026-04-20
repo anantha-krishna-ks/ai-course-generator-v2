@@ -81,7 +81,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
 
       {/* Course Title */}
       <div>
-        <label htmlFor="course-title" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+        <label htmlFor="course-title" className="text-base font-semibold text-foreground mb-2 block">
           Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <TitleAutocomplete
