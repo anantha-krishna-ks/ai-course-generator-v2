@@ -257,28 +257,6 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
             transition={{ duration: 0.2 }}
             className="pt-2 space-y-2"
           >
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              aria-label="Upload course outline documents"
-            >
-              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
-              </div>
-              <span className="text-sm font-medium">Upload files</span>
-              <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
-              multiple
-              className="hidden"
-              onChange={(e) => handleFilesSelected(e.target.files)}
-              aria-label="Select course outline documents"
-            />
-
             {/* Download template row */}
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-primary/15 bg-secondary/60 px-3 py-2.5">
               <div className="flex items-center gap-1.5 mr-1">
@@ -311,6 +289,28 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
                 </button>
               ))}
             </div>
+
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 bg-background transition-colors text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label="Upload course outline documents"
+            >
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </div>
+              <span className="text-sm font-medium">Upload files</span>
+              <span className="text-[11px] text-muted-foreground">PDF, DOCX, PPTX, or TXT</span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+              multiple
+              className="hidden"
+              onChange={(e) => handleFilesSelected(e.target.files)}
+              aria-label="Select course outline documents"
+            />
 
             {/* Relevance note */}
             <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2">
