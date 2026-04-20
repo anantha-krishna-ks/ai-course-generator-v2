@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,9 +11,9 @@ interface StepCourseDetailsProps {
 }
 
 const DURATION_OPTIONS = [
-  { value: "brief" as const, label: "Brief", desc: "< 5 min" },
-  { value: "standard" as const, label: "Standard", desc: "5–10 min" },
-  { value: "extended" as const, label: "Extended", desc: "10+ min" },
+  { value: "brief" as const, label: "Brief", desc: "< 5 min", icon: Timer },
+  { value: "standard" as const, label: "Standard", desc: "5–10 min", icon: Clock },
+  { value: "extended" as const, label: "Extended", desc: "10+ min", icon: Hourglass },
 ];
 
 const TONE_OPTIONS = [
