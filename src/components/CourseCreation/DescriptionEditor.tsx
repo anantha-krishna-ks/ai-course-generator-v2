@@ -1,7 +1,46 @@
-import { useEffect, useMemo, useState } from 'react';
-import SunEditor from 'suneditor-react';
-import 'suneditor/css/editor';
+import { useEffect, useRef, type ComponentType, type MouseEvent, type SVGProps } from 'react';
+import { EditorContent, useEditor } from '@tiptap/react';
+import { Extension, type ChainedCommands } from '@tiptap/core';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import { TextStyle } from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import Highlight from '@tiptap/extension-highlight';
+import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableHeader from '@tiptap/extension-table-header';
+import TableCell from '@tiptap/extension-table-cell';
+import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Highlighter,
+  Italic,
+  Link2,
+  List,
+  ListOrdered,
+  MoreHorizontal,
+  Quote,
+  Redo,
+  Strikethrough,
+  Subscript as SubscriptIcon,
+  Superscript as SuperscriptIcon,
+  Table2,
+  Type,
+  Underline as UnderlineIcon,
+  Undo,
+} from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 interface DescriptionEditorProps {
   content: string;
@@ -9,111 +48,337 @@ interface DescriptionEditorProps {
   onBlur?: () => void;
 }
 
-const TEXT_COLORS = [
-  '#111827',
-  '#374151',
-  '#dc2626',
-  '#ea580c',
-  '#ca8a04',
-  '#16a34a',
-  '#0891b2',
-  '#2563eb',
-  '#7c3aed',
-  '#db2777',
-];
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    fontSize: {
+      setFontSize: (fontSize: string) => ReturnType;
+      unsetFontSize: () => ReturnType;
+    };
+  }
+}
 
-const BACKGROUND_COLORS = [
-  '#fef3c7',
-  '#fee2e2',
-  '#ffedd5',
-  '#fde68a',
-  '#dcfce7',
-  '#bbf7d0',
-  '#dbeafe',
-  '#ede9fe',
-  '#fce7f3',
-  '#e5e7eb',
-];
+const FONT_SIZES = ['12px', '14px', '16px', '18px', '22px', '28px', '36px'];
+const DEFAULT_TEXT_COLOR = '#111827';
+const DEFAULT_HIGHLIGHT_COLOR = '#fef08a';
+
+const FontSize = Extension.create({
+  name: 'fontSize',
+
+  addOptions() {
+    return {
+      types: ['textStyle'],
+    };
+  },
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: (element) => element.style.fontSize || null,
+            renderHTML: (attributes) => {
+              if (!attributes.fontSize) {
+                return {};
+              }
+
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              };
+            },
+          },
+        },
+      },
+    ];
+  },
+
+  addCommands() {
+    return {
+      setFontSize:
+        (fontSize) =>
+        ({ chain }) =>
+          chain().setMark('textStyle', { fontSize }).run(),
+      unsetFontSize:
+        () =>
+        ({ chain }) =>
+          chain().setMark('textStyle', { fontSize: null }).removeEmptyTextStyle().run(),
+    };
+  },
+});
+
+const isHexColor = (value?: string | null) => /^#[0-9A-F]{6}$/i.test(value ?? '');
+
+const getSafeColor = (value: string | null | undefined, fallback: string) =>
+  isHexColor(value) ? value! : fallback;
+
+interface ToolbarButtonProps {
+  active?: boolean;
+  ariaLabel: string;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
+  onMouseDown: (event: MouseEvent<HTMLElement>) => void;
+  onPress: () => void;
+}
+
+function ToolbarButton({ active = false, ariaLabel, icon: Icon, onMouseDown, onPress }: ToolbarButtonProps) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      aria-label={ariaLabel}
+      aria-pressed={active}
+      onMouseDown={onMouseDown}
+      onClick={onPress}
+      className={cn('h-8 w-8 p-0', active && 'bg-primary/15 text-primary')}
+    >
+      <Icon aria-hidden="true" focusable="false" className="h-4 w-4" />
+    </Button>
+  );
+}
 
 export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
   const isMobile = useIsMobile();
-  const [value, setValue] = useState(content || '<p></p>');
+  const selectionRef = useRef<{ from: number; to: number } | null>(null);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextStyle,
+      FontSize,
+      Underline,
+      Color,
+      Highlight.configure({ multicolor: true }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: 'https',
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+        alignments: ['left', 'center', 'right', 'justify'],
+      }),
+      Placeholder.configure({
+        placeholder: 'Tell your learners what the course will be about...',
+      }),
+      Subscript,
+      Superscript,
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+    ],
+    content: content || '<p></p>',
+    immediatelyRender: false,
+    onCreate: ({ editor }) => {
+      const { from, to } = editor.state.selection;
+      selectionRef.current = { from, to };
+    },
+    onSelectionUpdate: ({ editor }) => {
+      const { from, to } = editor.state.selection;
+      selectionRef.current = { from, to };
+    },
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
+    },
+    onBlur: ({ editor }) => {
+      const { from, to } = editor.state.selection;
+      selectionRef.current = { from, to };
+      onBlur?.();
+    },
+    editorProps: {
+      attributes: {
+        class:
+          'prose prose-sm dark:prose-invert max-w-none min-h-[220px] p-4 focus:outline-none [overflow-wrap:anywhere] break-words [&_*]:[overflow-wrap:anywhere] [&_*]:break-words',
+      },
+    },
+  });
 
   useEffect(() => {
-    const nextValue = content || '<p></p>';
-    if (nextValue !== value) {
-      setValue(nextValue);
+    if (!editor) {
+      return;
     }
-  }, [content, value]);
 
-  const setOptions = useMemo(
-    () => ({
-      mode: 'classic' as const,
-      height: 'auto',
-      minHeight: '180px',
-      maxHeight: '480px',
-      defaultTag: 'p',
-      buttonList: isMobile
-        ? [
-            ['undo', 'redo'],
-            ['bold', 'italic', 'underline', 'strike'],
-            ['fontSize', 'fontColor', 'backgroundColor'],
-            ['align', 'list'],
-            ['link', 'table', 'blockquote'],
-            ['subscript', 'superscript'],
-          ]
-        : [
-            ['undo', 'redo'],
-            ['bold', 'italic', 'underline', 'strike'],
-            ['fontSize'],
-            ['fontColor', 'backgroundColor'],
-            ['align'],
-            ['list'],
-            ['link', 'table', 'blockquote'],
-            ['subscript', 'superscript'],
-          ],
-      colorList: TEXT_COLORS,
-      paragraphStyles: {
-        spaced: 'Spaced paragraph',
-      },
-      formats: ['p', 'blockquote'],
-      plugins: undefined,
-      resizingBar: false,
-      fontSizeUnits: ['px'],
-      fontSize: {
-        unit: 'px',
-        items: ['12', '14', '16', '18', '22', '28', '36'],
-      },
-      placeholder: 'Tell your learners what the course will be about...',
-      attributesWhitelist: {
-        all: 'style|class|colspan|rowspan|target|href|rel',
-      },
-      callBackSave: undefined,
-      stickyToolbar: '-1',
-      imageUploadUrl: undefined,
-      videoUploadUrl: undefined,
-      backgroundColor: {
-        items: BACKGROUND_COLORS,
-      },
-      fontColor: {
-        items: TEXT_COLORS,
-      },
-    }),
-    [isMobile],
+    const nextContent = content || '<p></p>';
+
+    if (editor.getHTML() !== nextContent) {
+      editor.commands.setContent(nextContent, { emitUpdate: false });
+    }
+  }, [content, editor]);
+
+  const rememberSelection = () => {
+    if (!editor) {
+      return;
+    }
+
+    const { from, to } = editor.state.selection;
+    selectionRef.current = { from, to };
+  };
+
+  const preventToolbarMouseDown = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    rememberSelection();
+  };
+
+  const runCommand = (apply: (chain: ChainedCommands) => ChainedCommands) => {
+    if (!editor) {
+      return;
+    }
+
+    let chain = editor.chain().focus();
+
+    if (selectionRef.current) {
+      chain = chain.setTextSelection(selectionRef.current);
+    }
+
+    apply(chain).run();
+    rememberSelection();
+  };
+
+  const setLink = () => {
+    if (!editor) {
+      return;
+    }
+
+    const currentHref = editor.getAttributes('link').href ?? '';
+    const nextHref = window.prompt('Enter link URL', currentHref);
+
+    if (nextHref === null) {
+      return;
+    }
+
+    if (!nextHref.trim()) {
+      runCommand((chain) => chain.extendMarkRange('link').unsetLink());
+      return;
+    }
+
+    runCommand((chain) =>
+      chain.extendMarkRange('link').setLink({
+        href: nextHref,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      }),
+    );
+  };
+
+  if (!editor) {
+    return <div className="description-editor-shell rounded-xl border border-border bg-background p-4 text-sm text-muted-foreground">Loading editor...</div>;
+  }
+
+  const fontSizeValue = (editor.getAttributes('textStyle').fontSize as string | undefined) ?? '16px';
+  const textColorValue = getSafeColor(editor.getAttributes('textStyle').color as string | undefined, DEFAULT_TEXT_COLOR);
+  const highlightValue = getSafeColor(editor.getAttributes('highlight').color as string | undefined, DEFAULT_HIGHLIGHT_COLOR);
+
+  const primaryControls = (
+    <>
+      <ToolbarButton ariaLabel="Bold" active={editor.isActive('bold')} icon={Bold} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBold())} />
+      <ToolbarButton ariaLabel="Italic" active={editor.isActive('italic')} icon={Italic} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleItalic())} />
+      <ToolbarButton ariaLabel="Underline" active={editor.isActive('underline')} icon={UnderlineIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleUnderline())} />
+      <ToolbarButton ariaLabel="Strike through" active={editor.isActive('strike')} icon={Strikethrough} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleStrike())} />
+      <ToolbarButton ariaLabel="Bulleted list" active={editor.isActive('bulletList')} icon={List} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBulletList())} />
+      <ToolbarButton ariaLabel="Numbered list" active={editor.isActive('orderedList')} icon={ListOrdered} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleOrderedList())} />
+      <ToolbarButton ariaLabel="Undo" icon={Undo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.undo())} />
+      <ToolbarButton ariaLabel="Redo" icon={Redo} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.redo())} />
+    </>
+  );
+
+  const secondaryControls = (
+    <>
+      <label className="flex min-w-0 items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
+        <Type aria-hidden="true" focusable="false" className="h-4 w-4 shrink-0" />
+        <span className="sr-only">Font size</span>
+        <select
+          aria-label="Font size"
+          className="min-w-0 bg-transparent text-xs outline-none"
+          value={fontSizeValue}
+          onMouseDown={preventToolbarMouseDown}
+          onChange={(event) => runCommand((chain) => chain.setFontSize(event.target.value))}
+        >
+          {FONT_SIZES.map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div className="flex items-center gap-1 rounded-md border border-border bg-background p-1">
+        <ToolbarButton ariaLabel="Align left" active={editor.isActive({ textAlign: 'left' })} icon={AlignLeft} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('left'))} />
+        <ToolbarButton ariaLabel="Align center" active={editor.isActive({ textAlign: 'center' })} icon={AlignCenter} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('center'))} />
+        <ToolbarButton ariaLabel="Align right" active={editor.isActive({ textAlign: 'right' })} icon={AlignRight} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('right'))} />
+        <ToolbarButton ariaLabel="Justify text" active={editor.isActive({ textAlign: 'justify' })} icon={AlignJustify} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.setTextAlign('justify'))} />
+      </div>
+
+      <label className="relative flex h-8 items-center gap-2 rounded-md border border-border bg-background px-2 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
+        <Type aria-hidden="true" focusable="false" className="h-4 w-4" />
+        <span className="hidden sm:inline">Text</span>
+        <input
+          type="color"
+          aria-label="Text color"
+          value={textColorValue}
+          onMouseDown={preventToolbarMouseDown}
+          onChange={(event) => runCommand((chain) => chain.setColor(event.target.value))}
+          className="absolute inset-0 cursor-pointer opacity-0"
+        />
+      </label>
+
+      <label className="relative flex h-8 items-center gap-2 rounded-md border border-border bg-background px-2 text-xs text-foreground" onMouseDown={preventToolbarMouseDown}>
+        <Highlighter aria-hidden="true" focusable="false" className="h-4 w-4" />
+        <span className="hidden sm:inline">Highlight</span>
+        <input
+          type="color"
+          aria-label="Background color"
+          value={highlightValue}
+          onMouseDown={preventToolbarMouseDown}
+          onChange={(event) => runCommand((chain) => chain.setHighlight({ color: event.target.value }))}
+          className="absolute inset-0 cursor-pointer opacity-0"
+        />
+      </label>
+
+      <ToolbarButton ariaLabel="Insert or edit link" active={editor.isActive('link')} icon={Link2} onMouseDown={preventToolbarMouseDown} onPress={setLink} />
+      <ToolbarButton ariaLabel="Block quote" active={editor.isActive('blockquote')} icon={Quote} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleBlockquote())} />
+      <ToolbarButton ariaLabel="Subscript" active={editor.isActive('subscript')} icon={SubscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSubscript())} />
+      <ToolbarButton ariaLabel="Superscript" active={editor.isActive('superscript')} icon={SuperscriptIcon} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.toggleSuperscript())} />
+      <ToolbarButton ariaLabel="Insert table" active={editor.isActive('table')} icon={Table2} onMouseDown={preventToolbarMouseDown} onPress={() => runCommand((chain) => chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }))} />
+      {editor.isActive('table') && (
+        <>
+          <Button type="button" variant="outline" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.addRowAfter())} className="h-8 text-xs">
+            Row +
+          </Button>
+          <Button type="button" variant="outline" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.addColumnAfter())} className="h-8 text-xs">
+            Col +
+          </Button>
+          <Button type="button" variant="outline" size="sm" onMouseDown={preventToolbarMouseDown} onClick={() => runCommand((chain) => chain.deleteTable())} className="h-8 text-xs">
+            Delete table
+          </Button>
+        </>
+      )}
+    </>
   );
 
   return (
-    <div className="description-editor-shell rounded-xl border border-border bg-background shadow-sm">
-      <SunEditor
-        setContents={value}
-        onChange={(nextContent) => {
-          setValue(nextContent);
-          onChange(nextContent);
-        }}
-        onBlur={() => onBlur?.()}
-        setDefaultStyle="font-family: inherit; font-size: 16px; color: hsl(var(--foreground));"
-        setOptions={setOptions}
-      />
+    <div className="description-editor-shell overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border bg-muted/30 p-2">
+        {primaryControls}
+        {isMobile ? (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button type="button" variant="outline" size="sm" aria-label="More formatting options" onMouseDown={preventToolbarMouseDown} className="ml-auto h-8 px-2">
+                <MoreHorizontal aria-hidden="true" focusable="false" className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-[min(20rem,calc(100vw-2rem))]">
+              <div className="flex flex-wrap items-center gap-2">{secondaryControls}</div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          secondaryControls
+        )}
+      </div>
+
+      <EditorContent editor={editor} />
     </div>
   );
 }
