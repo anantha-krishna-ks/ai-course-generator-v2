@@ -80,8 +80,8 @@ const HIGHLIGHT_COLORS = [
   '#FBCFE8', '#E5E7EB',
 ];
 
-// Custom FontSize extension built on TextStyle
-const FontSize = TextStyle.extend({
+// Custom TextStyle that supports fontSize. Color extension extends this same TextStyle to add the `color` attribute.
+const CustomTextStyle = TextStyle.extend({
   addAttributes() {
     return {
       ...this.parent?.(),
