@@ -192,10 +192,10 @@ function DocUploadZone({
           e.currentTarget.classList.remove("border-primary", "bg-primary/5");
           if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
         }}
-        className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-border bg-muted/20 hover:border-primary/50 hover:bg-primary/5 hover:text-primary text-muted-foreground text-xs font-medium cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] hover:border-primary hover:bg-primary/10 hover:text-primary text-foreground text-xs font-medium cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-        <span>Drop files or click to upload</span>
+        <Upload className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+        <span>Drop files or <span className="text-primary font-semibold underline-offset-2">click to upload</span></span>
       </div>
       <input
         ref={inputRef}
