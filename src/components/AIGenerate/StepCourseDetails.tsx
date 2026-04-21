@@ -125,6 +125,84 @@ function ChipGroup({
   );
 }
 
+function PageDurationStepper({
+  value,
+  onChange,
+  min = 1,
+  max = 15,
+  step = 1,
+  presets = [3, 5, 10, 15],
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  presets?: number[];
+}) {
+  const decrement = () => onChange(Math.max(min, value - step));
+  const increment = () => onChange(Math.min(max, value + step));
+
+  return (
+    <div className="rounded-lg border border-border/80 bg-background px-4 py-4">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+            <FileText className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+          </div>
+          <div>
+            <span className="text-sm font-medium text-foreground block leading-tight">Page Duration Settings</span>
+            <span className="text-[11px] text-muted-foreground">Page level Span Time (In Minutes)</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={decrement}
+            disabled={value <= min}
+            aria-label="Decrease page duration"
+            className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Minus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          </button>
+          <div className="flex items-baseline gap-1 min-w-[72px] justify-center">
+            <span className="text-3xl font-bold text-foreground tabular-nums leading-none">{value}</span>
+            <span className="text-sm text-muted-foreground font-medium">min</span>
+          </div>
+          <button
+            type="button"
+            onClick={increment}
+            disabled={value >= max}
+            aria-label="Increase page duration"
+            className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Plus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5 mt-4">
+        {presets.map((preset) => (
+          <button
+            key={preset}
+            type="button"
+            onClick={() => onChange(preset)}
+            className={cn(
+              "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-150",
+              value === preset
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+            )}
+          >
+            {preset} min
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AISuggestions({
   title,
   onSelect,
