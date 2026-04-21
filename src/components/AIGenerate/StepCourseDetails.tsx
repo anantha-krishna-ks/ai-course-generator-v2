@@ -84,6 +84,34 @@ function generateSuggestions(title: string): string[] {
   ];
 }
 
+// Mock AI suggestions for Learning Objectives (measurable, action-verb based)
+function generateObjectiveSuggestions(title: string): string[] {
+  const t = title.toLowerCase();
+  if (t.includes("machine learning") || t.includes("ml") || t.includes("ai")) {
+    return [
+      `Identify and describe the core components of ${title} workflows, including data preparation, model training, and evaluation.`,
+      `Apply appropriate ${title} techniques to solve a defined problem and interpret the resulting model performance metrics.`,
+    ];
+  }
+  if (t.includes("leadership") || t.includes("management") || t.includes("manager")) {
+    return [
+      `Describe key ${title} frameworks and explain how they influence team dynamics and decision-making.`,
+      `Apply ${title} principles in role-play scenarios to deliver constructive feedback and resolve workplace conflicts.`,
+    ];
+  }
+  if (t.includes("design") || t.includes("ux") || t.includes("ui")) {
+    return [
+      `Explain core ${title} principles and identify how they shape user experience across digital products.`,
+      `Apply ${title} methodologies to produce wireframes that address a specified user need.`,
+    ];
+  }
+  // Generic fallback — exactly 2
+  return [
+    `Identify and explain the foundational concepts of ${title || "the subject"} and describe their relevance in real-world contexts.`,
+    `Apply ${title || "subject"} techniques to complete a guided task and assess the outcome against defined criteria.`,
+  ];
+}
+
 function ChipGroup({
   options,
   value,
@@ -206,12 +234,18 @@ function PageDurationStepper({
 function AISuggestions({
   title,
   onSelect,
+  generator = generateSuggestions,
+  heading = "Suggested course goals",
+  regenerateLabel = "Regenerate goals",
 }: {
   title: string;
   onSelect: (text: string) => void;
+  generator?: (title: string) => string[];
+  heading?: string;
+  regenerateLabel?: string;
 }) {
   const [suggestions, setSuggestions] = useState<string[]>(() => {
-    if (title.trim().length >= 3) return generateSuggestions(title);
+    if (title.trim().length >= 3) return generator(title);
     return [];
   });
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -225,11 +259,11 @@ function AISuggestions({
     setSelected(new Set());
     // Simulate AI delay
     setTimeout(() => {
-      setSuggestions(generateSuggestions(title));
+      setSuggestions(generator(title));
       setVisible(true);
       setLoading(false);
     }, 800);
-  }, [title]);
+  }, [title, generator]);
 
   useEffect(() => {
     if (title.trim().length >= 3) {
@@ -265,7 +299,7 @@ function AISuggestions({
         aria-label={expanded ? "Hide AI suggestions" : "Show AI suggestions"}
       >
         <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-        <span className="text-xs font-semibold text-muted-foreground flex-1">Suggested course goals</span>
+        <span className="text-xs font-semibold text-muted-foreground flex-1">{heading}</span>
         <motion.div
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={{ duration: 0.2 }}
@@ -345,10 +379,10 @@ function AISuggestions({
                   type="button"
                   onClick={generate}
                   className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1"
-                  aria-label="Regenerate goal suggestions"
+                  aria-label={regenerateLabel}
                 >
                   <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  Regenerate goals
+                  {regenerateLabel}
                 </button>
               )}
             </div>
@@ -472,6 +506,47 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Learning Objectives with AI suggestions */}
+      <div>
+        <label htmlFor="learning-objectives" className="text-base font-semibold text-foreground mb-2 block">
+          Learning Objectives
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+        </label>
+        <div className="rounded-xl border border-border overflow-hidden bg-white">
+          <Textarea
+            id="learning-objectives"
+            value={state.learningObjectives}
+            onChange={(e) => {
+              onChange({ learningObjectives: e.target.value });
+              e.target.style.height = "auto";
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+            }}
+            ref={(el) => {
+              if (el) {
+                el.style.height = "auto";
+                el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+              }
+            }}
+            placeholder="e.g., Identify core principles and apply them to a guided task…"
+            className="min-h-[72px] max-h-[200px] resize-none text-sm border-0 rounded-none bg-white focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
+          />
+          <AISuggestions
+            title={state.title}
+            generator={generateObjectiveSuggestions}
+            heading="Suggested learning objectives"
+            regenerateLabel="Regenerate objectives"
+            onSelect={(text) => {
+              const current = state.learningObjectives.trim();
+              if (current.includes(text)) {
+                onChange({ learningObjectives: current.replace(text, "").replace(/\n{2,}/g, "\n").trim() });
+              } else {
+                onChange({ learningObjectives: current ? `${current}\n${text}` : text });
+              }
+            }}
+          />
         </div>
       </div>
 
