@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Layers, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -14,6 +14,21 @@ const DURATION_OPTIONS = [
   { value: "brief" as const, label: "Brief", desc: "< 5 min", icon: Timer },
   { value: "standard" as const, label: "Standard", desc: "5–10 min", icon: Clock },
   { value: "extended" as const, label: "Extended", desc: "10+ min", icon: Hourglass },
+];
+
+const PAGE_DURATION_OPTIONS = [
+  { value: "brief", label: "Brief", desc: "< 5 min", minutes: 4, icon: Timer },
+  { value: "standard", label: "Standard", desc: "5–10 min", minutes: 8, icon: Clock },
+  { value: "extended", label: "Extended", desc: "10+ min", minutes: 12, icon: Hourglass },
+];
+
+const BLOOMS_OPTIONS = [
+  { value: "knowledge", label: "Knowledge" },
+  { value: "comprehension", label: "Comprehension" },
+  { value: "application", label: "Application" },
+  { value: "analysis", label: "Analysis" },
+  { value: "synthesis", label: "Synthesis" },
+  { value: "evaluation", label: "Evaluation" },
 ];
 
 const TONE_OPTIONS = [
@@ -347,6 +362,81 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           ariaLabel="Course duration"
           showDesc
         />
+      </div>
+
+      {/* Page Duration */}
+      <div>
+        <div className="text-base font-semibold text-foreground mb-2.5">
+          Page Duration
+        </div>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Page duration">
+          {PAGE_DURATION_OPTIONS.map((opt) => {
+            const selected = state.pageSpanTime === opt.minutes;
+            const Icon = opt.icon;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onChange({ pageSpanTime: opt.minutes })}
+                aria-label={`${opt.label} ${opt.desc}`}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  selected
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                {selected ? (
+                  <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                ) : (
+                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                )}
+                {opt.label}
+                <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
+                  {opt.desc}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bloom's Taxonomy */}
+      <div>
+        <div className="text-base font-semibold text-foreground mb-2.5 flex items-center gap-2">
+          <Layers className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+          Bloom's Taxonomy
+        </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Bloom's taxonomy levels">
+          {BLOOMS_OPTIONS.map((b) => {
+            const selected = state.bloomsTaxonomy.includes(b.value);
+            return (
+              <button
+                key={b.value}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => {
+                  const set = new Set(state.bloomsTaxonomy);
+                  if (set.has(b.value)) set.delete(b.value);
+                  else set.add(b.value);
+                  onChange({ bloomsTaxonomy: Array.from(set) });
+                }}
+                aria-label={b.label}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  selected
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                {b.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
     </div>
