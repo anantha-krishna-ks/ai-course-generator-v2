@@ -367,7 +367,6 @@ export const GenerateExportDialog = ({
                       </div>
                     </div>
                   </div>
-                  </div>
 
                   {/* Row 4 — Completion Messages */}
                   <div className="p-5">
