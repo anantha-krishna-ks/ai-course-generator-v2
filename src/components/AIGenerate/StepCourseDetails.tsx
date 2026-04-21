@@ -300,7 +300,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <div className="rounded-xl border border-border overflow-hidden bg-background">
+        <div className="rounded-xl border border-border overflow-hidden bg-white">
           <Textarea
             id="learning-outcome"
             value={state.learningOutcome}
@@ -316,7 +316,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
               }
             }}
             placeholder="e.g., Apply conflict resolution techniques in team settings…"
-            className="min-h-[72px] max-h-[200px] resize-none text-sm border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
+            className="min-h-[72px] max-h-[200px] resize-none text-sm border-0 rounded-none bg-white focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
           />
           {/* AI Suggestions inline */}
           <AISuggestions
