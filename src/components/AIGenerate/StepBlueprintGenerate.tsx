@@ -349,6 +349,56 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
       </PrefCard>
 
+      {/* Number of Questions breakdown */}
+      {state.contentPreferences.includeQuestions && (
+        <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="flex items-stretch">
+            <div className="w-1 bg-primary shrink-0" aria-hidden="true" />
+            <div className="flex-1 p-4">
+              <div className="mb-3">
+                <div className="text-[15px] font-semibold text-foreground leading-tight">Number of Questions</div>
+                <p className="text-xs text-muted-foreground mt-0.5">Set how many of each question type to include per page.</p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {[
+                  { key: "singleChoice" as const, label: "Single Choice" },
+                  { key: "multipleChoice" as const, label: "Multiple Choice" },
+                  { key: "trueFalse" as const, label: "True / False" },
+                  { key: "fillInBlank" as const, label: "Fill in Blank" },
+                ].map((q) => {
+                  const id = `qtype-${q.key}`;
+                  return (
+                    <div key={q.key} className="space-y-1.5">
+                      <label htmlFor={id} className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide block">
+                        {q.label}
+                      </label>
+                      <select
+                        id={id}
+                        value={state.questionTypes[q.key]}
+                        onChange={(e) =>
+                          onChange({
+                            questionTypes: {
+                              ...state.questionTypes,
+                              [q.key]: Number(e.target.value),
+                            },
+                          })
+                        }
+                        aria-label={`${q.label} count`}
+                        className="w-full h-9 rounded-lg border border-border bg-background text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
+                      >
+                        {[0, 1, 2, 3, 4, 5].map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Course Tone */}
       <PrefCard>
         <SectionHeader icon={MessageSquare} title="Course Tone" desc="Voice and style of the content" />

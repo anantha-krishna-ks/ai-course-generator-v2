@@ -55,6 +55,12 @@ export interface AIGenerateState {
     addImages: boolean;
   };
   questionsPerPage: number;
+  questionTypes: {
+    singleChoice: number;
+    multipleChoice: number;
+    trueFalse: number;
+    fillInBlank: number;
+  };
 }
 
 const initialState: AIGenerateState = {
@@ -81,6 +87,12 @@ const initialState: AIGenerateState = {
     addImages: true,
   },
   questionsPerPage: 3,
+  questionTypes: {
+    singleChoice: 1,
+    multipleChoice: 1,
+    trueFalse: 1,
+    fillInBlank: 0,
+  },
 };
 
 const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
