@@ -3,7 +3,7 @@ import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
   BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
-  MessageSquare, MoreHorizontal, Copy, ChevronRight
+  MessageSquare, MoreHorizontal, Copy, ChevronRight, Sparkles, Loader2
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
