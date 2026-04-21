@@ -211,11 +211,8 @@ export const GenerateExportDialog = ({
                   </div>
 
                   {/* Row 2 — Background Image */}
-                  <div className="flex gap-4 p-5">
-                    <div className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                      <ImagePlus className="h-4 w-4" aria-hidden="true" focusable="false" />
-                    </div>
-                    <div className="flex-1 min-w-0">
+                  <div className="p-5">
+                    <div className="min-w-0">
                       <Label className="text-[14.5px] font-semibold text-foreground">
                         Background Image
                       </Label>
