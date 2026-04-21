@@ -20,6 +20,9 @@ import {
   Timer,
   Minus,
   Plus,
+  Sprout,
+  Gauge,
+  Award,
 } from "lucide-react";
 
 export interface AIOptions {
@@ -46,7 +49,11 @@ const BLOOMS_LEVELS = [
   "Create",
 ];
 
-const LEARNER_LEVELS = ["Beginners", "Intermediate", "Expert"] as const;
+const LEARNER_LEVELS = [
+  { label: "Beginners", icon: Sprout },
+  { label: "Intermediate", icon: Gauge },
+  { label: "Expert", icon: Award },
+] as const;
 
 /** The toggle + "Configure" button shown in the main dialog view */
 export function AIToggleRow({
@@ -250,13 +257,13 @@ export function AIConfigView({
             )}
           </p>
           <div className="flex gap-2 w-full">
-            {LEARNER_LEVELS.map((level) => {
-              const selected = options.intendedLearners === level;
+            {LEARNER_LEVELS.map(({ label, icon: Icon }) => {
+              const selected = options.intendedLearners === label;
               return (
                 <button
-                  key={level}
+                  key={label}
                   type="button"
-                  onClick={() => update({ intendedLearners: level })}
+                  onClick={() => update({ intendedLearners: label })}
                   className={cn(
                     "flex-1 px-5 py-2.5 rounded-full text-[0.938rem] font-medium border transition-all duration-200 flex items-center justify-center gap-1.5",
                     selected
@@ -264,8 +271,8 @@ export function AIConfigView({
                       : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
                   )}
                 >
-                  {selected && <Check className="w-3.5 h-3.5" />}
-                  {level}
+                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  {label}
                 </button>
               );
             })}
