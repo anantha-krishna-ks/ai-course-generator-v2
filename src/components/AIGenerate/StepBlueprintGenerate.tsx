@@ -278,48 +278,15 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
               </button>
             </div>
             {state.contentPreferences.includeQuestions && (
-              <div className="mt-3 pt-3 border-t border-primary/15 space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs font-medium text-muted-foreground">Questions per page</span>
-                  <Stepper
-                    value={state.questionsPerPage}
-                    onChange={(v) => onChange({ questionsPerPage: v })}
-                    min={1}
-                    max={10}
-                    ariaLabel="questions per page"
-                  />
-                </div>
-                <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                    Question types
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {([
-                      { key: "scq", label: "Single Choice" },
-                      { key: "mcq", label: "Multiple Choice" },
-                      { key: "trueFalse", label: "True / False" },
-                      { key: "fib", label: "Fill in Blank" },
-                    ] as const).map(({ key, label }) => (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between gap-2 rounded-lg border border-border bg-background/60 px-2.5 py-1.5"
-                      >
-                        <span className="text-[12px] font-medium text-foreground truncate">{label}</span>
-                        <Stepper
-                          value={state.questionTypes[key]}
-                          onChange={(v) =>
-                            onChange({
-                              questionTypes: { ...state.questionTypes, [key]: v },
-                            })
-                          }
-                          min={0}
-                          max={10}
-                          ariaLabel={`${label} count`}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="mt-3 pt-3 border-t border-primary/15 flex items-center justify-between gap-3">
+                <span className="text-xs font-medium text-muted-foreground">Questions per page</span>
+                <Stepper
+                  value={state.questionsPerPage}
+                  onChange={(v) => onChange({ questionsPerPage: v })}
+                  min={1}
+                  max={10}
+                  ariaLabel="questions per page"
+                />
               </div>
             )}
           </div>
