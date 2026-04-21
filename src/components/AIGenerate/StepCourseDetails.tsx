@@ -350,20 +350,6 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         />
       </div>
 
-      {/* Duration */}
-      <div>
-        <div className="text-base font-semibold text-foreground mb-2.5">
-          Duration
-        </div>
-        <ChipGroup
-          options={DURATION_OPTIONS}
-          value={state.duration}
-          onChange={(v) => onChange({ duration: v as AIGenerateState["duration"] })}
-          ariaLabel="Course duration"
-          showDesc
-        />
-      </div>
-
       {/* Page Duration */}
       <div>
         <div className="text-base font-semibold text-foreground mb-2.5">
