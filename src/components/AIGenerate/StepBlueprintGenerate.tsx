@@ -208,13 +208,6 @@ function DocUploadZone({
 }
 
 export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerateProps) {
-  const toggleBloom = (v: string) => {
-    const set = new Set(state.bloomsTaxonomy);
-    if (set.has(v)) set.delete(v);
-    else set.add(v);
-    onChange({ bloomsTaxonomy: Array.from(set) });
-  };
-
   const togglePref = (key: keyof AIGenerateState["contentPreferences"]) => {
     onChange({
       contentPreferences: {
