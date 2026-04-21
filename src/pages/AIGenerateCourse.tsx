@@ -73,7 +73,7 @@ const initialState: AIGenerateState = {
   title: "",
   intendedLearners: "",
   learningOutcome: "",
-  learningObjectives: [],
+  learningObjectives: [""],
   bloomsTaxonomy: [],
   supportingDocuments: [],
   guidelines: "",
