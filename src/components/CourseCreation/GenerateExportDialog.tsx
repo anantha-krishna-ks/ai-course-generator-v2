@@ -195,47 +195,45 @@ export const GenerateExportDialog = ({
                       <p className="text-[13px] text-muted-foreground mt-1">
                         Minimum time learners must spend on each page before progressing.
                       </p>
-                      <div className="mt-3 inline-flex items-center rounded-lg border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40">
-                        <Input
-                          id="scorm-duration"
-                          type="number"
-                          min={durationUnit === "seconds" ? 5 : 1}
-                          max={durationUnit === "seconds" ? 600 : 60}
-                          value={
-                            durationUnit === "seconds"
-                              ? pageDuration
-                              : Math.max(1, Math.round(pageDuration / 60))
-                          }
-                          onChange={(e) => {
-                            const n = Number(e.target.value) || 0;
-                            setPageDuration(durationUnit === "seconds" ? n : n * 60);
-                          }}
-                          className="h-11 w-24 text-[15px] font-semibold border-0 bg-transparent px-3 focus-visible:ring-0"
-                        />
-                        <div
-                          role="group"
-                          aria-label="Duration unit"
-                          className="flex items-stretch h-11 border-l border-border bg-muted/60"
-                        >
-                          {(["seconds", "minutes"] as const).map((unit) => {
-                            const active = durationUnit === unit;
-                            return (
-                              <button
-                                key={unit}
-                                type="button"
-                                onClick={() => setDurationUnit(unit)}
-                                aria-pressed={active}
-                                className={cn(
-                                  "px-3 text-[13px] font-medium transition-colors",
-                                  active
-                                    ? "bg-primary text-primary-foreground"
-                                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                                )}
-                              >
-                                {unit === "seconds" ? "sec" : "min"}
-                              </button>
-                            );
-                          })}
+                      <div className="mt-3 inline-flex items-stretch rounded-lg border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40">
+                        {/* Minutes */}
+                        <div className="flex items-center">
+                          <Input
+                            id="scorm-duration"
+                            type="number"
+                            min={0}
+                            max={60}
+                            value={Math.floor(pageDuration / 60)}
+                            onChange={(e) => {
+                              const mins = Math.max(0, Math.min(60, Number(e.target.value) || 0));
+                              const secs = pageDuration % 60;
+                              setPageDuration(mins * 60 + secs);
+                            }}
+                            aria-label="Minutes"
+                            className="h-11 w-16 text-[15px] font-semibold border-0 bg-transparent px-3 text-right focus-visible:ring-0"
+                          />
+                          <span className="text-[13px] text-muted-foreground pr-2">min</span>
+                        </div>
+
+                        {/* Separator */}
+                        <span aria-hidden="true" className="self-center text-[18px] font-semibold text-muted-foreground px-1 select-none">:</span>
+
+                        {/* Seconds */}
+                        <div className="flex items-center border-l border-border">
+                          <Input
+                            type="number"
+                            min={0}
+                            max={59}
+                            value={pageDuration % 60}
+                            onChange={(e) => {
+                              const secs = Math.max(0, Math.min(59, Number(e.target.value) || 0));
+                              const mins = Math.floor(pageDuration / 60);
+                              setPageDuration(mins * 60 + secs);
+                            }}
+                            aria-label="Seconds"
+                            className="h-11 w-16 text-[15px] font-semibold border-0 bg-transparent px-3 text-right focus-visible:ring-0"
+                          />
+                          <span className="text-[13px] text-muted-foreground pr-3">sec</span>
                         </div>
                       </div>
                     </div>
