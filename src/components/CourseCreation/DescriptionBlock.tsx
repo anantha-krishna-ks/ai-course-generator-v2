@@ -294,7 +294,7 @@ export function DescriptionBlock({
               <p className="text-xs font-medium text-muted-foreground">Change layout</p>
             </div>
             <div className="px-1.5 pb-1.5">
-              {layoutOptions.map((opt) => {
+              {layoutOptions.filter((opt) => opt.id !== "three-columns").map((opt) => {
                 const Icon = opt.icon;
                 const isActive = layout === opt.id;
                 return (
