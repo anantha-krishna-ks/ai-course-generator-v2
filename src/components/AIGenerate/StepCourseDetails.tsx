@@ -199,24 +199,6 @@ function PageDurationStepper({
           ))}
         </div>
       </div>
-
-      <div className="flex flex-wrap gap-1.5 mt-4">
-        {presets.map((preset) => (
-          <button
-            key={preset}
-            type="button"
-            onClick={() => onChange(preset)}
-            className={cn(
-              "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-150",
-              value === preset
-                ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
-            )}
-          >
-            {preset} min
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
