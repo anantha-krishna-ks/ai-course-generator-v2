@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import { Badge } from "@/components/ui/badge";
+import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
