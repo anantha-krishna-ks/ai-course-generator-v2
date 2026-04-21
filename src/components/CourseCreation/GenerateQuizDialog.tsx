@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
+import { Sparkles, CircleDot, CheckSquare, ToggleLeft, Type } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -27,6 +26,13 @@ export interface GenerateQuizConfig {
   exclusions: string;
 }
 
+const questionTypes = [
+  { key: "scq", label: "Single Choice", icon: CircleDot },
+  { key: "mcq", label: "Multiple Choice", icon: CheckSquare },
+  { key: "tf", label: "True / False", icon: ToggleLeft },
+  { key: "fib", label: "Fill in Blank", icon: Type },
+] as const;
+
 export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = false }: GenerateQuizDialogProps) {
   const [scqCount, setScqCount] = useState("1");
   const [mcqCount, setMcqCount] = useState("1");
@@ -36,6 +42,19 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
   const [specificInstructions, setSpecificInstructions] = useState(false);
   const [inclusions, setInclusions] = useState("");
   const [exclusions, setExclusions] = useState("");
+
+  const valueByKey: Record<string, string> = {
+    scq: scqCount,
+    mcq: mcqCount,
+    tf: trueFalseCount,
+    fib: fibCount,
+  };
+  const setterByKey: Record<string, (v: string) => void> = {
+    scq: setScqCount,
+    mcq: setMcqCount,
+    tf: setTrueFalseCount,
+    fib: setFibCount,
+  };
 
   const handleGenerate = () => {
     onGenerate({
@@ -51,39 +70,51 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)]">
-        <DialogHeader className="px-6 pt-5 pb-4 bg-gradient-to-br from-primary/5 to-primary/10 border-b">
-          <DialogTitle className="text-lg flex items-center gap-2.5 font-semibold">
-            <div className="p-1.5 rounded-lg bg-primary/10">
-              <AISparkles className="w-4.5 h-4.5" />
+      <DialogContent
+        className="w-[95vw] max-w-[820px] max-h-[90vh] p-0 overflow-hidden grid grid-rows-[auto_minmax(0,1fr)_auto] rounded-2xl border shadow-2xl"
+        style={{ backgroundColor: "#F9FAFB" }}
+      >
+        {/* Header */}
+        <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white">
+          <div className="flex items-center justify-between pr-8">
+            <div>
+              <DialogTitle className="text-base font-semibold tracking-tight">
+                Generate Quiz
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Configure question types and quantity to auto-generate a quiz.
+              </DialogDescription>
             </div>
-            Generate Quiz
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            Configure question types and quantity to auto-generate a quiz.
-          </DialogDescription>
+            <div className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/[0.06] px-2.5 py-1.5 rounded-lg border border-primary/15">
+              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              AI Quiz
+            </div>
+          </div>
         </DialogHeader>
 
+        {/* Scrollable body */}
         <div className="min-h-0 row-start-2">
           <ScrollArea className="h-full">
-            <div className="space-y-5 p-6">
+            <div className="px-6 pt-4 pb-6 space-y-5">
               {/* Question Type Counts */}
-              <div className="space-y-4 bg-card border rounded-xl p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-5 bg-primary rounded-full" />
-                  <h3 className="text-sm font-semibold text-foreground">Number of Questions</h3>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {[
-                    { label: "Single Choice", value: scqCount, setter: setScqCount },
-                    { label: "Multiple Choice", value: mcqCount, setter: setMcqCount },
-                    { label: "True/False", value: trueFalseCount, setter: setTrueFalseCount },
-                    { label: "Fill in Blank", value: fibCount, setter: setFibCount },
-                  ].map(({ label, value, setter }) => (
-                    <div key={label} className="space-y-2">
-                      <Label className="text-xs font-semibold text-foreground uppercase tracking-wide">{label}</Label>
-                      <Select value={value} onValueChange={setter}>
-                        <SelectTrigger className="w-full bg-background">
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Number of Questions
+                </Label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {questionTypes.map(({ key, label, icon: Icon }) => (
+                    <div
+                      key={key}
+                      className="rounded-xl border-2 border-border/60 bg-white p-3 space-y-2 transition-all duration-150 hover:bg-gray-50"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-muted text-muted-foreground/70">
+                          <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        </div>
+                        <span className="text-xs font-semibold text-foreground leading-tight">{label}</span>
+                      </div>
+                      <Select value={valueByKey[key]} onValueChange={setterByKey[key]}>
+                        <SelectTrigger className="w-full h-9 bg-white border-gray-300 rounded-lg text-sm" aria-label={`${label} count`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -100,90 +131,96 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
               </div>
 
               {/* Difficulty Level */}
-              <div className="bg-card border rounded-xl p-5 shadow-sm space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-5 bg-primary rounded-full" />
-                  <h3 className="text-sm font-semibold text-foreground">Difficulty Level</h3>
-                </div>
-                <div className="flex gap-2">
-                  {["easy", "medium", "hard"].map((level) => (
-                    <button
-                      key={level}
-                      onClick={() => setDifficultyLevel(level)}
-                      className={cn(
-                        "px-4 py-2 rounded-full text-xs font-medium capitalize transition-all border",
-                        difficultyLevel === level
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                          : "bg-background text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
-                      )}
-                    >
-                      {level}
-                    </button>
-                  ))}
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Difficulty Level
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {["easy", "medium", "hard"].map((level) => {
+                    const isActive = difficultyLevel === level;
+                    return (
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => setDifficultyLevel(level)}
+                        className={cn(
+                          "px-3.5 py-3 rounded-xl border-2 text-sm font-medium capitalize transition-all duration-150",
+                          isActive
+                            ? "border-primary bg-primary/[0.04] text-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                            : "border-border/60 bg-white text-foreground hover:bg-gray-50"
+                        )}
+                      >
+                        {level}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Custom Instructions */}
-              <div className="bg-card border rounded-xl p-5 shadow-sm space-y-3">
+              <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 bg-primary rounded-full" />
-                    <h3 className="text-sm font-semibold text-foreground">Custom Instructions</h3>
-                  </div>
-                  <Switch checked={specificInstructions} onCheckedChange={setSpecificInstructions} />
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Custom Instructions
+                  </Label>
+                  <Switch
+                    checked={specificInstructions}
+                    onCheckedChange={setSpecificInstructions}
+                    aria-label="Toggle custom instructions"
+                  />
                 </div>
                 {specificInstructions && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in-50 slide-in-from-top-2 duration-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-in fade-in-50 slide-in-from-top-2 duration-200">
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
+                      <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
+                        <span className="w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
                         Inclusions
                       </Label>
                       <Textarea
                         placeholder="Topics to include..."
                         value={inclusions}
                         onChange={(e) => setInclusions(e.target.value)}
-                        className="min-h-[80px] resize-none text-sm"
+                        className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-destructive" />
+                      <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
+                        <span className="w-2 h-2 rounded-full bg-destructive" aria-hidden="true" />
                         Exclusions
                       </Label>
                       <Textarea
                         placeholder="Topics to exclude..."
                         value={exclusions}
                         onChange={(e) => setExclusions(e.target.value)}
-                        className="min-h-[80px] resize-none text-sm"
+                        className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
                       />
                     </div>
                   </div>
                 )}
               </div>
-
-              {/* Actions */}
-              <div className="flex justify-end gap-3 pt-2">
-                <Button variant="outline" onClick={onClose} className="rounded-full px-5">
-                  Cancel
-                </Button>
-                <Button onClick={handleGenerate} disabled={isGenerating} className="rounded-full px-5 gap-1.5">
-                  {isGenerating ? (
-                    <>
-                      <div className="w-3.5 h-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      Generate
-                    </>
-                  )}
-                </Button>
-              </div>
             </div>
           </ScrollArea>
         </div>
+
+        {/* Footer */}
+        <DialogFooter className="px-6 py-3.5 border-t border-border bg-white">
+          <Button variant="outline" onClick={onClose} className="rounded-xl">
+            Cancel
+          </Button>
+          <Button onClick={handleGenerate} disabled={isGenerating} className="rounded-xl gap-1.5">
+            {isGenerating ? (
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                Generate
+              </>
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
