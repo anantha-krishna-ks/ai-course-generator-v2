@@ -11,13 +11,6 @@ interface StepCourseDetailsProps {
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
 
-import { BeginnerIcon, IntermediateIcon, ExpertIcon } from "./learnerLevelIcons";
-
-interface StepCourseDetailsProps {
-  state: AIGenerateState;
-  onChange: (partial: Partial<AIGenerateState>) => void;
-}
-
 const DURATION_OPTIONS = [
   { value: "brief" as const, label: "Brief", desc: "< 5 min", icon: Timer },
   { value: "standard" as const, label: "Standard", desc: "5–10 min", icon: Clock },
@@ -356,16 +349,32 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
             <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
           </div>
         </div>
-        <ChipGroup
-          options={[
-            { value: "beginners", label: "Beginners", icon: Sprout },
-            { value: "intermediate", label: "Intermediate", icon: Rocket },
-            { value: "expert", label: "Expert", icon: Crown },
-          ]}
-          value={state.intendedLearners}
-          onChange={(v) => onChange({ intendedLearners: v })}
-          ariaLabel="Intended learners"
-        />
+        <div className="flex flex-wrap gap-3" role="radiogroup" aria-label="Intended learners">
+          {LEARNER_LEVEL_OPTIONS.map((opt) => {
+            const selected = state.intendedLearners === opt.value;
+            const Icon = opt.Icon;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onChange({ intendedLearners: selected ? "" : opt.value })}
+                className={cn(
+                  "flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-w-[100px]",
+                  selected
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
+                )}
+              >
+                <Icon className="w-10 h-10 drop-shadow-sm" />
+                <span className={cn(selected ? "text-foreground" : "text-muted-foreground")}>
+                  {opt.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Page Duration */}
@@ -434,13 +443,13 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
                 }}
                 aria-label={b.label}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "px-4 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   selected
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-muted text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                 )}
               >
-                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                {selected && <Check className="w-3.5 h-3.5 inline-block mr-1.5" aria-hidden="true" focusable="false" />}
                 {b.label}
               </button>
             );
@@ -448,6 +457,84 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         </div>
       </div>
 
+      {/* Tone */}
+      <div>
+        <label className="text-base font-semibold text-foreground mb-2 block">
+          Tone
+        </label>
+        <ChipGroup
+          options={TONE_OPTIONS}
+          value={state.tone}
+          onChange={(v) => onChange({ tone: v as any })}
+          ariaLabel="Course tone"
+        />
+      </div>
+
+      {/* Key Topics */}
+      <div>
+        <label htmlFor="topics" className="text-base font-semibold text-foreground mb-2 block">
+          Key Topics
+        </label>
+        <Textarea
+          id="topics"
+          value={state.topics}
+          onChange={(e) => {
+            onChange({ topics: e.target.value });
+            e.target.style.height = "auto";
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+          }}
+          ref={(el) => {
+            if (el) {
+              el.style.height = "auto";
+              el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+            }
+          }}
+          placeholder="e.g., Active listening, giving feedback, conflict resolution"
+          className="min-h-[72px] max-h-[200px] resize-none text-sm rounded-xl border-border/80 bg-background"
+        />
+      </div>
+
+      {/* Supporting Docs */}
+      <div>
+        <label className="text-base font-semibold text-foreground mb-2 block">
+          Supporting Documents
+        </label>
+        <div className="relative">
+          <input
+            type="file"
+            multiple
+            className="hidden"
+            id="courseDocs"
+            onChange={(e) => {
+              const files = e.target.files;
+              if (!files) return;
+              // Placeholder until file upload is wired
+              onChange({ uploadedDocs: Array.from(files).map((f) => f.name) });
+            }}
+          />
+          <label
+            htmlFor="courseDocs"
+            className="flex items-center gap-3 p-4 rounded-xl border-2 border-dashed border-border/80 bg-muted/30 hover:bg-muted/50 hover:border-primary/30 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+          >
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            </div>
+            <div className="flex-1">
+              <div className="text-sm font-medium text-foreground">Click to upload files</div>
+              <div className="text-xs text-muted-foreground">PDF, DOC, TXT up to 20MB each</div>
+            </div>
+          </label>
+        </div>
+        {state.uploadedDocs && state.uploadedDocs.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {state.uploadedDocs.map((name, i) => (
+              <span key={i} className="text-xs px-2.5 py-1 rounded-md bg-primary/10 text-primary">
+                {name}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
