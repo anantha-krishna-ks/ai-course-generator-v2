@@ -268,11 +268,8 @@ export const GenerateExportDialog = ({
                   </div>
 
                   {/* Row 3 — Opacity */}
-                  <div className="flex gap-4 p-5">
-                    <div className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                      <Sliders className="h-4 w-4" aria-hidden="true" focusable="false" />
-                    </div>
-                    <div className="flex-1 min-w-0">
+                  <div className="p-5">
+                    <div className="min-w-0">
                       <div className="flex items-center justify-between gap-3">
                         <div>
                           <Label htmlFor="scorm-opacity" className="text-[14.5px] font-semibold text-foreground">
@@ -354,10 +351,7 @@ export const GenerateExportDialog = ({
                   </div>
 
                   {/* Row 4 — Completion Messages */}
-                  <div className="flex gap-4 p-5">
-                    <div className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                      <CheckCircle2 className="h-4 w-4" aria-hidden="true" focusable="false" />
-                    </div>
+                  <div className="p-5">
                     <div className="flex-1 min-w-0">
                       <Label className="text-[14.5px] font-semibold text-foreground">
                         Completion Messages
