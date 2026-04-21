@@ -689,6 +689,68 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
         <Plus className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" focusable="false" />
         <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">Add Section</span>
       </button>
+
+      {/* Regenerate title dialog */}
+      <Dialog open={!!regenTarget} onOpenChange={(open) => { if (!open) closeRegenDialog(); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              </span>
+              Regenerate {regenTarget?.kind === "page" ? "page" : "section"} title
+            </DialogTitle>
+            <DialogDescription>
+              {regenTarget?.currentTitle ? (
+                <>Current: <span className="text-foreground font-medium">{regenTarget.currentTitle}</span></>
+              ) : (
+                <>Describe what you'd like the new title to convey.</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <label htmlFor="regen-prompt" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Instructions <span className="text-muted-foreground/70 normal-case font-normal">(optional)</span>
+            </label>
+            <Textarea
+              id="regen-prompt"
+              value={regenPrompt}
+              onChange={(e) => setRegenPrompt(e.target.value)}
+              placeholder={
+                regenTarget?.kind === "page"
+                  ? "e.g. Make it more action-oriented and concise…"
+                  : "e.g. Sound more practical and outcome-focused…"
+              }
+              rows={4}
+              className="resize-none text-sm bg-background border border-border focus:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg"
+              autoFocus
+            />
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button type="button" variant="outline" onClick={closeRegenDialog} className="rounded-full">
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (!regenTarget) return;
+                if (regenTarget.kind === "section") {
+                  regenerateSectionTitle(regenTarget.sectionId);
+                } else {
+                  regeneratePageTitle(regenTarget.sectionId, regenTarget.pageId);
+                }
+                closeRegenDialog();
+              }}
+              className="rounded-full gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              Regenerate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
