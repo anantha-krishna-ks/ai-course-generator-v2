@@ -269,47 +269,58 @@ export const GenerateExportDialog = ({
 
                   {/* Row 3 — Opacity */}
                   <div className="p-5">
-                    <div className="min-w-0">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <Label htmlFor="scorm-opacity" className="text-[14.5px] font-semibold text-foreground">
-                            Background Opacity
-                          </Label>
-                          <p className="text-[13px] text-muted-foreground mt-1">
-                            How prominent the background image appears.
-                          </p>
-                        </div>
-                        <div className="flex items-baseline gap-1 rounded-lg bg-primary/10 px-3 py-1.5 ring-1 ring-primary/20 shrink-0">
-                          <span className="text-[18px] font-bold text-primary tabular-nums leading-none">{opacity}</span>
-                          <span className="text-[13px] font-semibold text-primary/70">%</span>
-                        </div>
-                      </div>
+                    <Label htmlFor="scorm-opacity" className="text-[14.5px] font-semibold text-foreground">
+                      Background Opacity
+                    </Label>
+                    <p className="text-[13px] text-muted-foreground mt-1">
+                      Drag the slider to adjust how visible the background appears.
+                    </p>
 
-                      {/* Live preview */}
+                    {/* Live preview with overlaid value */}
+                    <div
+                      className="relative mt-4 h-24 rounded-xl overflow-hidden border border-border"
+                      style={{
+                        backgroundImage: bgImage
+                          ? `url(${bgImage.url})`
+                          : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                      aria-hidden="true"
+                    >
                       <div
-                        className="relative mt-4 h-16 rounded-xl overflow-hidden border border-border"
-                        style={{
-                          backgroundImage: bgImage
-                            ? `url(${bgImage.url})`
-                            : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                        aria-hidden="true"
-                      >
-                        <div
-                          className="absolute inset-0 bg-background transition-opacity"
-                          style={{ opacity: 1 - opacity / 100 }}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-[13px] font-semibold text-foreground px-2.5 py-1 rounded-md bg-background/70 backdrop-blur-sm border border-border/50">
-                            Live preview
-                          </span>
+                        className="absolute inset-0 bg-background transition-opacity"
+                        style={{ opacity: 1 - opacity / 100 }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex items-baseline gap-1 px-4 py-2 rounded-xl bg-background/85 backdrop-blur-sm border border-border shadow-sm">
+                          <span className="text-[28px] font-bold text-foreground tabular-nums leading-none">{opacity}</span>
+                          <span className="text-[15px] font-semibold text-muted-foreground">%</span>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Preset chips */}
-                      <div className="mt-3 grid grid-cols-5 gap-2">
+                    {/* Slider directly tied to the preview */}
+                    <div className="mt-4">
+                      <Slider
+                        id="scorm-opacity"
+                        value={[opacity]}
+                        onValueChange={(v) => setOpacity(v[0])}
+                        min={0}
+                        max={100}
+                        step={1}
+                        aria-label="Background opacity"
+                      />
+                      <div className="flex justify-between mt-2 text-[12.5px] font-medium text-muted-foreground">
+                        <span>Transparent</span>
+                        <span>Fully visible</span>
+                      </div>
+                    </div>
+
+                    {/* Quick presets */}
+                    <div className="mt-4 flex items-center gap-2">
+                      <span className="text-[12.5px] font-medium text-muted-foreground shrink-0">Quick set:</span>
+                      <div className="flex flex-wrap gap-1.5">
                         {[0, 25, 50, 75, 100].map((preset) => {
                           const active = opacity === preset;
                           return (
@@ -319,33 +330,16 @@ export const GenerateExportDialog = ({
                               onClick={() => setOpacity(preset)}
                               aria-pressed={active}
                               className={cn(
-                                "h-9 rounded-lg text-[13.5px] font-semibold border transition-all",
+                                "h-7 px-2.5 rounded-full text-[12.5px] font-semibold border transition-colors",
                                 active
-                                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                                  : "bg-background text-foreground border-border hover:bg-muted hover:border-primary/40"
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground"
                               )}
                             >
                               {preset}%
                             </button>
                           );
                         })}
-                      </div>
-
-                      {/* Slider */}
-                      <div className="mt-4">
-                        <Slider
-                          id="scorm-opacity"
-                          value={[opacity]}
-                          onValueChange={(v) => setOpacity(v[0])}
-                          min={0}
-                          max={100}
-                          step={1}
-                          aria-label="Background opacity"
-                        />
-                        <div className="flex justify-between mt-2 text-[12.5px] font-medium text-muted-foreground">
-                          <span>Transparent</span>
-                          <span>Opaque</span>
-                        </div>
                       </div>
                     </div>
                   </div>
