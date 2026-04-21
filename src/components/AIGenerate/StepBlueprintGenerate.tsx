@@ -502,14 +502,14 @@ function ScormPreferencesAccordion({
               <Sliders className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
             </div>
             <div className="min-w-0 text-left">
-              <div className="text-[15px] font-semibold text-foreground leading-tight">
+              <div className="text-[16px] font-semibold text-foreground leading-tight">
                 SCORM Preferences
               </div>
-              <div className="text-[12.5px] text-muted-foreground leading-snug mt-0.5">
+              <div className="text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                 Configure how the package behaves inside an LMS
               </div>
             </div>
-            <span className="ml-auto mr-2 hidden sm:inline-flex items-center text-[10.5px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+            <span className="ml-auto mr-2 hidden sm:inline-flex items-center text-[11px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
               Optional
             </span>
           </div>
@@ -518,13 +518,13 @@ function ScormPreferencesAccordion({
           <div className="divide-y divide-border">
             {/* Page Duration */}
             <div className="p-5">
-              <Label className="text-[14px] font-semibold text-foreground">Page Duration</Label>
-              <p className="text-[12.5px] text-muted-foreground mt-1">
+              <Label className="text-[16px] font-semibold text-foreground">Page Duration</Label>
+              <p className="text-[13.5px] text-muted-foreground mt-1">
                 Minimum time learners must spend on each page before progressing.
               </p>
               <div className="mt-3 flex items-end gap-3">
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                  <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
                     Minutes
                   </span>
                   <Input
@@ -542,7 +542,7 @@ function ScormPreferencesAccordion({
                 </div>
                 <span aria-hidden="true" className="text-[22px] font-light text-muted-foreground pb-2 select-none">:</span>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                  <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
                     Seconds
                   </span>
                   <Input
@@ -563,8 +563,8 @@ function ScormPreferencesAccordion({
 
             {/* Background Image */}
             <div className="p-5">
-              <Label className="text-[14px] font-semibold text-foreground">Background Image</Label>
-              <p className="text-[12.5px] text-muted-foreground mt-1">
+              <Label className="text-[16px] font-semibold text-foreground">Background Image</Label>
+              <p className="text-[13.5px] text-muted-foreground mt-1">
                 Displayed behind every SCORM page. PNG or JPG, recommended 1920×1080.
               </p>
               {state.scormBgImage ? (
@@ -576,11 +576,11 @@ function ScormPreferencesAccordion({
                     aria-label={state.scormBgImage.name}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13.5px] font-medium text-foreground truncate">{state.scormBgImage.name}</p>
+                    <p className="text-[14px] font-medium text-foreground truncate">{state.scormBgImage.name}</p>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="text-[12px] font-medium text-primary hover:underline mt-1"
+                      className="text-[13px] font-medium text-primary hover:underline mt-1"
                     >
                       Replace image
                     </button>
@@ -601,7 +601,7 @@ function ScormPreferencesAccordion({
                   className="mt-3 w-full flex items-center justify-center gap-2.5 py-5 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] text-primary hover:bg-primary/[0.08] hover:border-primary/60 transition-colors"
                 >
                   <Upload className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
-                  <span className="text-[14px] font-semibold">Upload background image</span>
+                  <span className="text-[15px] font-semibold">Upload background image</span>
                 </button>
               )}
               <input
@@ -620,10 +620,10 @@ function ScormPreferencesAccordion({
 
             {/* Background Opacity */}
             <div className="p-5">
-              <Label className="text-[14.5px] font-semibold text-foreground">
+              <Label className="text-[16px] font-semibold text-foreground">
                 Background Opacity
               </Label>
-              <p className="text-[13px] text-muted-foreground mt-1">
+              <p className="text-[13.5px] text-muted-foreground mt-1">
                 Drag the slider to adjust how visible the background appears.
               </p>
 
@@ -643,13 +643,13 @@ function ScormPreferencesAccordion({
                 />
                 <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/85 backdrop-blur-sm border border-border/60 pointer-events-none">
                   <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
-                  <span className="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wide">
+                  <span className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide">
                     {state.scormBgImage ? "Live preview" : "Sample preview"}
                   </span>
                 </div>
                 {!state.scormBgImage && (
                   <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur-sm border border-border/60 pointer-events-none">
-                    <span className="text-[10.5px] font-medium text-muted-foreground">Upload an image to preview yours</span>
+                    <span className="text-[11.5px] font-medium text-muted-foreground">Upload an image to preview yours</span>
                   </div>
                 )}
               </div>
@@ -661,7 +661,7 @@ function ScormPreferencesAccordion({
                     className="absolute -top-9 -translate-x-1/2 pointer-events-none transition-all"
                     style={{ left: `${state.scormBgOpacity}%` }}
                   >
-                    <div className="relative flex items-center justify-center min-w-[44px] h-7 px-2 rounded-lg bg-primary text-primary-foreground text-[12.5px] font-semibold tabular-nums shadow-md">
+                    <div className="relative flex items-center justify-center min-w-[44px] h-7 px-2 rounded-lg bg-primary text-primary-foreground text-[13.5px] font-semibold tabular-nums shadow-md">
                       {state.scormBgOpacity}%
                       <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-primary" />
                     </div>
@@ -685,7 +685,7 @@ function ScormPreferencesAccordion({
                             "w-px h-1.5",
                             state.scormBgOpacity >= t ? "bg-primary/60" : "bg-border"
                           )} />
-                          <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
+                          <span className="text-[12px] font-medium text-muted-foreground tabular-nums">
                             {t}
                           </span>
                         </div>
@@ -694,7 +694,7 @@ function ScormPreferencesAccordion({
                   </div>
                 </div>
 
-                <div className="flex justify-between mt-3 text-[12.5px] font-medium text-muted-foreground">
+                <div className="flex justify-between mt-3 text-[13.5px] font-medium text-muted-foreground">
                   <span className="flex items-center gap-1.5">
                     <span className="h-2 w-2 rounded-full bg-muted border border-border" />
                     Transparent
@@ -710,10 +710,10 @@ function ScormPreferencesAccordion({
             {/* Completion Messages */}
             <div className="p-5">
               <div className="flex-1 min-w-0">
-                <Label className="text-[14.5px] font-semibold text-foreground">
+                <Label className="text-[16px] font-semibold text-foreground">
                   Completion Messages
                 </Label>
-                <p className="text-[13px] text-muted-foreground mt-1">
+                <p className="text-[13.5px] text-muted-foreground mt-1">
                   Shown to learners based on their final result.
                 </p>
 
@@ -722,7 +722,7 @@ function ScormPreferencesAccordion({
                   <div className="rounded-xl border border-border bg-background overflow-hidden">
                     <div className="flex items-center gap-2 px-3.5 py-2.5 bg-primary/5 border-b border-border">
                       <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                      <Label htmlFor="scorm-pass-msg" className="text-[13.5px] font-semibold text-foreground">
+                      <Label htmlFor="scorm-pass-msg" className="text-[14.5px] font-semibold text-foreground">
                         Pass criteria message
                       </Label>
                     </div>
@@ -731,7 +731,7 @@ function ScormPreferencesAccordion({
                       value={state.scormPassMessage}
                       onChange={(e) => onChange({ scormPassMessage: e.target.value })}
                       rows={3}
-                      className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+                      className="text-[14.5px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
                     />
                   </div>
 
@@ -739,7 +739,7 @@ function ScormPreferencesAccordion({
                   <div className="rounded-xl border border-border bg-background overflow-hidden">
                     <div className="flex items-center gap-2 px-3.5 py-2.5 bg-destructive/5 border-b border-border">
                       <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" focusable="false" />
-                      <Label htmlFor="scorm-fail-msg" className="text-[13.5px] font-semibold text-foreground">
+                      <Label htmlFor="scorm-fail-msg" className="text-[14.5px] font-semibold text-foreground">
                         Fail criteria message
                       </Label>
                     </div>
@@ -748,7 +748,7 @@ function ScormPreferencesAccordion({
                       value={state.scormFailMessage}
                       onChange={(e) => onChange({ scormFailMessage: e.target.value })}
                       rows={3}
-                      className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+                      className="text-[14.5px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
                     />
                   </div>
                 </div>
