@@ -362,7 +362,10 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                 }}
                                 aria-label={`Edit title: ${section.title || "Untitled section"}`}
                               >
-                                <h3 className="text-sm font-semibold text-foreground truncate">
+                                <h3 className={cn(
+                                  "text-sm font-semibold text-foreground truncate",
+                                  regeneratingIds.has(section.id) && "bg-gradient-to-r from-primary/40 via-primary to-primary/40 bg-clip-text text-transparent animate-pulse"
+                                )}>
                                   {section.title || <span className="text-muted-foreground">Untitled section...</span>}
                                 </h3>
                                 <p className="text-[11px] text-muted-foreground truncate mt-px">{section.description}</p>
@@ -375,6 +378,21 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                             <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full mr-1">
                               {section.pages.length} {section.pages.length === 1 ? "page" : "pages"}
                             </span>
+
+                            <button
+                              type="button"
+                              onClick={() => regenerateSectionTitle(section.id)}
+                              disabled={regeneratingIds.has(section.id)}
+                              className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex items-center justify-center transition-colors shrink-0 disabled:opacity-60 disabled:cursor-not-allowed group/regen"
+                              aria-label={`Regenerate title for ${section.title || "section"}`}
+                              title="Regenerate title with AI"
+                            >
+                              {regeneratingIds.has(section.id) ? (
+                                <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" aria-hidden="true" focusable="false" />
+                              ) : (
+                                <Sparkles className="w-3.5 h-3.5 text-muted-foreground group-hover/regen:text-primary" aria-hidden="true" focusable="false" />
+                              )}
+                            </button>
 
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
