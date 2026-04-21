@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -511,39 +511,88 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Learning Objectives with AI suggestions */}
       <div>
-        <label htmlFor="learning-objectives" className="text-base font-semibold text-foreground mb-2 block">
+        <label className="text-base font-semibold text-foreground mb-2 block">
           Learning Objectives
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
         <div className="rounded-xl border border-border overflow-hidden bg-white">
-          <Textarea
-            id="learning-objectives"
-            value={state.learningObjectives}
-            onChange={(e) => {
-              onChange({ learningObjectives: e.target.value });
-              e.target.style.height = "auto";
-              e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
-            }}
-            ref={(el) => {
-              if (el) {
-                el.style.height = "auto";
-                el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
-              }
-            }}
-            placeholder="e.g., Identify core principles and apply them to a guided task…"
-            className="min-h-[72px] max-h-[200px] resize-none text-sm border-0 rounded-none bg-white focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
-          />
+          <div className="p-3 space-y-2">
+            {state.learningObjectives.length === 0 && (
+              <p className="text-xs text-muted-foreground px-1 py-2">
+                Add one or more measurable objectives, or pick from AI suggestions below.
+              </p>
+            )}
+            {state.learningObjectives.map((obj, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2 rounded-lg border border-border bg-background px-3 py-2 focus-within:border-primary/50 transition-colors"
+              >
+                <div className="mt-2 w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                  <Target className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                </div>
+                <Textarea
+                  value={obj}
+                  onChange={(e) => {
+                    const next = [...state.learningObjectives];
+                    next[idx] = e.target.value;
+                    onChange({ learningObjectives: next });
+                    e.target.style.height = "auto";
+                    e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+                  }}
+                  ref={(el) => {
+                    if (el) {
+                      el.style.height = "auto";
+                      el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+                    }
+                  }}
+                  placeholder={`Objective ${idx + 1}`}
+                  rows={1}
+                  className="flex-1 min-h-[36px] max-h-[160px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
+                  aria-label={`Learning objective ${idx + 1}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = state.learningObjectives.filter((_, i) => i !== idx);
+                    onChange({ learningObjectives: next });
+                  }}
+                  aria-label={`Remove objective ${idx + 1}`}
+                  className="mt-1 w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => onChange({ learningObjectives: [...state.learningObjectives, ""] })}
+              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
+              aria-label="Add another learning objective"
+            >
+              <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+              Add objective
+            </button>
+          </div>
           <AISuggestions
             title={state.title}
             generator={generateObjectiveSuggestions}
             heading="Suggested learning objectives"
             regenerateLabel="Regenerate objectives"
             onSelect={(text) => {
-              const current = state.learningObjectives.trim();
-              if (current.includes(text)) {
-                onChange({ learningObjectives: current.replace(text, "").replace(/\n{2,}/g, "\n").trim() });
+              const current = state.learningObjectives;
+              const existingIdx = current.indexOf(text);
+              if (existingIdx !== -1) {
+                onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
               } else {
-                onChange({ learningObjectives: current ? `${current}\n${text}` : text });
+                // Replace first empty slot if any, otherwise append
+                const emptyIdx = current.findIndex((o) => !o.trim());
+                if (emptyIdx !== -1) {
+                  const next = [...current];
+                  next[emptyIdx] = text;
+                  onChange({ learningObjectives: next });
+                } else {
+                  onChange({ learningObjectives: [...current, text] });
+                }
               }
             }}
           />
