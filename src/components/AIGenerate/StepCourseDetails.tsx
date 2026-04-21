@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -121,6 +121,84 @@ function ChipGroup({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+function PageDurationStepper({
+  value,
+  onChange,
+  min = 1,
+  max = 15,
+  step = 1,
+  presets = [3, 5, 10, 15],
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  presets?: number[];
+}) {
+  const decrement = () => onChange(Math.max(min, value - step));
+  const increment = () => onChange(Math.min(max, value + step));
+
+  return (
+    <div className="rounded-lg border border-border/80 bg-background px-4 py-4">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
+            <FileText className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+          </div>
+          <div>
+            <span className="text-sm font-medium text-foreground block leading-tight">Page Duration Settings</span>
+            <span className="text-[11px] text-muted-foreground">Page level Span Time (In Minutes)</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={decrement}
+            disabled={value <= min}
+            aria-label="Decrease page duration"
+            className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Minus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          </button>
+          <div className="flex items-baseline gap-1 min-w-[72px] justify-center">
+            <span className="text-3xl font-bold text-foreground tabular-nums leading-none">{value}</span>
+            <span className="text-sm text-muted-foreground font-medium">min</span>
+          </div>
+          <button
+            type="button"
+            onClick={increment}
+            disabled={value >= max}
+            aria-label="Increase page duration"
+            className="w-9 h-9 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Plus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5 mt-4">
+        {presets.map((preset) => (
+          <button
+            key={preset}
+            type="button"
+            onClick={() => onChange(preset)}
+            className={cn(
+              "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-150",
+              value === preset
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+            )}
+          >
+            {preset} min
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -346,44 +424,17 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Page Duration */}
       <div className="rounded-xl border border-border bg-card p-4">
-        <div className="mb-2.5">
+        <div className="mb-3">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Page Duration
             <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
           </div>
+          <p className="text-xs text-muted-foreground mt-1">Set the duration for each page of content</p>
         </div>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Page duration">
-          {PAGE_DURATION_OPTIONS.map((opt) => {
-            const selected = state.pageSpanTime === opt.minutes;
-            const Icon = opt.icon;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => onChange({ pageSpanTime: opt.minutes })}
-                aria-label={`${opt.label} ${opt.desc}`}
-                className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  selected
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                {selected ? (
-                  <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                ) : (
-                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                )}
-                {opt.label}
-                <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
-                  {opt.desc}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <PageDurationStepper
+          value={state.pageSpanTime || 5}
+          onChange={(v) => onChange({ pageSpanTime: v })}
+        />
       </div>
 
       {/* Bloom's Taxonomy */}
