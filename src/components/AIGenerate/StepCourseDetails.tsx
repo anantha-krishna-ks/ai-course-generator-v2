@@ -379,10 +379,10 @@ function AISuggestions({
                   type="button"
                   onClick={generate}
                   className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1"
-                  aria-label="Regenerate goal suggestions"
+                  aria-label={regenerateLabel}
                 >
                   <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  Regenerate goals
+                  {regenerateLabel}
                 </button>
               )}
             </div>
