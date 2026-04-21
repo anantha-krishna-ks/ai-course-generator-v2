@@ -85,7 +85,7 @@ export const GenerateExportDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn("w-[92vw] p-0 overflow-hidden gap-0 max-h-[90vh] flex flex-col", isScorm ? "max-w-[640px]" : "max-w-[520px]")}>
+      <DialogContent className="w-[92vw] max-w-[560px] p-0 overflow-hidden gap-0 max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
           <div className="flex items-center gap-2.5 mb-1">
