@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
 import {
   HtmlIcon,
   PowerPointIcon,
@@ -278,11 +279,9 @@ export const GenerateExportDialog = ({
 
                     {/* Live preview with overlaid value */}
                     <div
-                      className="relative mt-4 h-24 rounded-xl overflow-hidden border border-border"
+                      className="relative mt-4 h-40 rounded-2xl overflow-hidden border border-border shadow-inner"
                       style={{
-                        backgroundImage: bgImage
-                          ? `url(${bgImage.url})`
-                          : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
+                        backgroundImage: `url(${bgImage ? bgImage.url : scormPlaceholder})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }}
@@ -293,59 +292,78 @@ export const GenerateExportDialog = ({
                         style={{ opacity: 1 - opacity / 100 }}
                       />
                       {/* Non-interactive label pill in the corner */}
-                      <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-sm border border-border/60 pointer-events-none">
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-                        <span className="text-[11.5px] font-medium text-muted-foreground uppercase tracking-wide">Preview</span>
-                      </div>
-                      {/* Centered live value — plain text, not a button */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span className="tabular-nums leading-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)]">
-                          <span className="text-[34px] font-bold text-foreground">{opacity}</span>
-                          <span className="text-[18px] font-semibold text-muted-foreground ml-0.5">%</span>
+                      <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/85 backdrop-blur-sm border border-border/60 pointer-events-none">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+                        <span className="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wide">
+                          {bgImage ? "Live preview" : "Sample preview"}
                         </span>
                       </div>
-                    </div>
-
-                    {/* Slider directly tied to the preview */}
-                    <div className="mt-4">
-                      <Slider
-                        id="scorm-opacity"
-                        value={[opacity]}
-                        onValueChange={(v) => setOpacity(v[0])}
-                        min={0}
-                        max={100}
-                        step={1}
-                        aria-label="Background opacity"
-                      />
-                      <div className="flex justify-between mt-2 text-[12.5px] font-medium text-muted-foreground">
-                        <span>Transparent</span>
-                        <span>Fully visible</span>
+                      {/* Centered live value */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="tabular-nums leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
+                          <span className="text-[40px] font-bold text-foreground">{opacity}</span>
+                          <span className="text-[20px] font-semibold text-muted-foreground ml-0.5">%</span>
+                        </span>
                       </div>
+                      {!bgImage && (
+                        <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur-sm border border-border/60 pointer-events-none">
+                          <span className="text-[10.5px] font-medium text-muted-foreground">Upload an image to preview yours</span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Quick presets */}
-                    <div className="mt-4 flex items-center gap-2">
-                      <span className="text-[12.5px] font-medium text-muted-foreground shrink-0">Quick set:</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {[0, 25, 50, 75, 100].map((preset) => {
-                          const active = opacity === preset;
-                          return (
-                            <button
-                              key={preset}
-                              type="button"
-                              onClick={() => setOpacity(preset)}
-                              aria-pressed={active}
-                              className={cn(
-                                "h-7 px-2.5 rounded-full text-[12.5px] font-semibold border transition-colors",
-                                active
-                                  ? "bg-primary text-primary-foreground border-primary"
-                                  : "bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground"
-                              )}
-                            >
-                              {preset}%
-                            </button>
-                          );
-                        })}
+                    {/* Modern slider with value bubble + tick marks */}
+                    <div className="mt-6 px-1">
+                      <div className="relative">
+                        {/* Value bubble */}
+                        <div
+                          className="absolute -top-9 -translate-x-1/2 pointer-events-none transition-all"
+                          style={{ left: `${opacity}%` }}
+                        >
+                          <div className="relative flex items-center justify-center min-w-[44px] h-7 px-2 rounded-lg bg-primary text-primary-foreground text-[12.5px] font-bold tabular-nums shadow-md">
+                            {opacity}%
+                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-primary" />
+                          </div>
+                        </div>
+
+                        <Slider
+                          id="scorm-opacity"
+                          value={[opacity]}
+                          onValueChange={(v) => setOpacity(v[0])}
+                          min={0}
+                          max={100}
+                          step={1}
+                          aria-label="Background opacity"
+                          className="[&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:shadow-lg [&_[role=slider]]:border-[3px] [&_[data-orientation=horizontal]]:h-2.5 [&>span:first-child]:bg-muted [&>span:first-child>span]:bg-gradient-to-r [&>span:first-child>span]:from-primary/70 [&>span:first-child>span]:to-primary"
+                        />
+
+                        {/* Tick marks */}
+                        <div className="relative mt-2 px-[2px]" aria-hidden="true">
+                          <div className="flex justify-between">
+                            {[0, 25, 50, 75, 100].map((t) => (
+                              <div key={t} className="flex flex-col items-center gap-1">
+                                <div className={cn(
+                                  "w-px h-1.5",
+                                  opacity >= t ? "bg-primary/60" : "bg-border"
+                                )} />
+                                <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
+                                  {t}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between mt-3 text-[12.5px] font-medium text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-muted border border-border" />
+                          Transparent
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          Fully visible
+                          <span className="h-2 w-2 rounded-full bg-primary" />
+                        </span>
                       </div>
                     </div>
                   </div>
