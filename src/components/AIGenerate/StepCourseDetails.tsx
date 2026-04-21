@@ -84,6 +84,34 @@ function generateSuggestions(title: string): string[] {
   ];
 }
 
+// Mock AI suggestions for Learning Objectives (measurable, action-verb based)
+function generateObjectiveSuggestions(title: string): string[] {
+  const t = title.toLowerCase();
+  if (t.includes("machine learning") || t.includes("ml") || t.includes("ai")) {
+    return [
+      `Identify and describe the core components of ${title} workflows, including data preparation, model training, and evaluation.`,
+      `Apply appropriate ${title} techniques to solve a defined problem and interpret the resulting model performance metrics.`,
+    ];
+  }
+  if (t.includes("leadership") || t.includes("management") || t.includes("manager")) {
+    return [
+      `Describe key ${title} frameworks and explain how they influence team dynamics and decision-making.`,
+      `Apply ${title} principles in role-play scenarios to deliver constructive feedback and resolve workplace conflicts.`,
+    ];
+  }
+  if (t.includes("design") || t.includes("ux") || t.includes("ui")) {
+    return [
+      `Explain core ${title} principles and identify how they shape user experience across digital products.`,
+      `Apply ${title} methodologies to produce wireframes that address a specified user need.`,
+    ];
+  }
+  // Generic fallback — exactly 2
+  return [
+    `Identify and explain the foundational concepts of ${title || "the subject"} and describe their relevance in real-world contexts.`,
+    `Apply ${title || "subject"} techniques to complete a guided task and assess the outcome against defined criteria.`,
+  ];
+}
+
 function ChipGroup({
   options,
   value,
