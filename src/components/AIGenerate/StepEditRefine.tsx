@@ -609,7 +609,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                         <div className="flex items-center gap-0 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
                                           <button
                                             type="button"
-                                            onClick={() => regeneratePageTitle(section.id, page.id)}
+                                            onClick={() => openRegenDialog({ kind: "page", sectionId: section.id, pageId: page.id, currentTitle: page.title })}
                                             disabled={regeneratingIds.has(page.id)}
                                             className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                                             aria-label={`Regenerate title for page ${page.title}`}
