@@ -509,6 +509,47 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         </div>
       </div>
 
+      {/* Learning Objectives with AI suggestions */}
+      <div>
+        <label htmlFor="learning-objectives" className="text-base font-semibold text-foreground mb-2 block">
+          Learning Objectives
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+        </label>
+        <div className="rounded-xl border border-border overflow-hidden bg-white">
+          <Textarea
+            id="learning-objectives"
+            value={state.learningObjectives}
+            onChange={(e) => {
+              onChange({ learningObjectives: e.target.value });
+              e.target.style.height = "auto";
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+            }}
+            ref={(el) => {
+              if (el) {
+                el.style.height = "auto";
+                el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+              }
+            }}
+            placeholder="e.g., Identify core principles and apply them to a guided task…"
+            className="min-h-[72px] max-h-[200px] resize-none text-sm border-0 rounded-none bg-white focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
+          />
+          <AISuggestions
+            title={state.title}
+            generator={generateObjectiveSuggestions}
+            heading="Suggested learning objectives"
+            regenerateLabel="Regenerate objectives"
+            onSelect={(text) => {
+              const current = state.learningObjectives.trim();
+              if (current.includes(text)) {
+                onChange({ learningObjectives: current.replace(text, "").replace(/\n{2,}/g, "\n").trim() });
+              } else {
+                onChange({ learningObjectives: current ? `${current}\n${text}` : text });
+              }
+            }}
+          />
+        </div>
+      </div>
+
     </div>
   );
 }
