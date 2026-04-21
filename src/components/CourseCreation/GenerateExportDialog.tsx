@@ -43,7 +43,23 @@ export const GenerateExportDialog = ({
   courseTitle,
 }: GenerateExportDialogProps) => {
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [pageDuration, setPageDuration] = useState<number>(30);
+  const [bgImage, setBgImage] = useState<{ name: string; url: string } | null>(null);
+  const [opacity, setOpacity] = useState<number>(40);
+  const [passMessage, setPassMessage] = useState<string>(
+    "Congratulations! You have successfully completed the course."
+  );
+  const [failMessage, setFailMessage] = useState<string>(
+    "You did not meet the passing criteria. Please review the material and try again."
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const handleBgUpload = (file: File | undefined) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setBgImage({ name: file.name, url });
+  };
 
   const handleDownload = () => {
     if (!selectedFormat) return;
@@ -65,6 +81,7 @@ export const GenerateExportDialog = ({
   };
 
   const selectedOption = exportOptions.find((o) => o.id === selectedFormat);
+  const isScorm = selectedFormat === "scorm";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
