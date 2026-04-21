@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileText, Presentation, FileType, Globe, FileCheck, Check, Wand2 } from "lucide-react";
+import { Download, Check, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import {
+  HtmlIcon,
+  PowerPointIcon,
+  WordIcon,
+  ScormIcon,
+  PdfIcon,
+} from "./exportFormatIcons";
 
 interface GenerateExportDialogProps {
   open: boolean;
@@ -19,46 +26,11 @@ interface GenerateExportDialogProps {
 }
 
 const exportOptions = [
-  {
-    id: "html",
-    label: "HTML",
-    description: "Interactive web format",
-    icon: Globe,
-    bg: "bg-orange-500",
-    selectedBg: "bg-orange-600",
-  },
-  {
-    id: "ppt",
-    label: "PowerPoint",
-    description: "Slide presentation",
-    icon: Presentation,
-    bg: "bg-red-500",
-    selectedBg: "bg-red-600",
-  },
-  {
-    id: "word",
-    label: "Word",
-    description: "Editable document",
-    icon: FileText,
-    bg: "bg-blue-600",
-    selectedBg: "bg-blue-700",
-  },
-  {
-    id: "scorm",
-    label: "SCORM",
-    description: "LMS package",
-    icon: FileCheck,
-    bg: "bg-emerald-600",
-    selectedBg: "bg-emerald-700",
-  },
-  {
-    id: "pdf",
-    label: "PDF",
-    description: "Print-ready file",
-    icon: FileType,
-    bg: "bg-violet-600",
-    selectedBg: "bg-violet-700",
-  },
+  { id: "html", label: "HTML", description: "Interactive web format", Icon: HtmlIcon },
+  { id: "ppt", label: "PowerPoint", description: "Slide presentation", Icon: PowerPointIcon },
+  { id: "word", label: "Word", description: "Editable document", Icon: WordIcon },
+  { id: "scorm", label: "SCORM", description: "LMS package", Icon: ScormIcon },
+  { id: "pdf", label: "PDF", description: "Print-ready file", Icon: PdfIcon },
 ];
 
 export const GenerateExportDialog = ({
@@ -116,7 +88,7 @@ export const GenerateExportDialog = ({
         <div className="p-4 sm:p-5">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {exportOptions.map((option) => {
-              const Icon = option.icon;
+              const Icon = option.Icon;
               const isSelected = selectedFormat === option.id;
               return (
                 <button
@@ -130,21 +102,19 @@ export const GenerateExportDialog = ({
                       : "border-border/60"
                   )}
                 >
-                  {/* Check badge */}
                   {isSelected && (
                     <div className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} aria-hidden="true" focusable="false" />
                     </div>
                   )}
 
-                  {/* Icon */}
                   <div
                     className={cn(
-                      "flex h-11 w-11 items-center justify-center rounded-xl text-white transition-transform duration-200",
-                      isSelected ? cn(option.selectedBg, "scale-110 shadow-md") : cn(option.bg, "shadow-sm"),
+                      "flex h-12 w-12 items-center justify-center transition-transform duration-200",
+                      isSelected && "scale-110",
                     )}
                   >
-                    <Icon className="h-5 w-5" aria-hidden="true" focusable="false" />
+                    <Icon className="h-11 w-11 drop-shadow-sm" />
                   </div>
 
                   {/* Label */}
