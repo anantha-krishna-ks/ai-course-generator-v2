@@ -385,8 +385,8 @@ const Dashboard = () => {
                         <PenLine className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                       </div>
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-semibold text-foreground">Manual Generation</span>
-                        <span className="text-[11px] text-muted-foreground leading-snug">Create your course step by step</span>
+                        <span className="text-sm font-semibold text-foreground">Step-by-Step Creation</span>
+                        <span className="text-[11px] text-muted-foreground leading-snug">Build with AI support</span>
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -397,8 +397,8 @@ const Dashboard = () => {
                         <AISparkles className="w-4 h-4" />
                       </div>
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-semibold text-foreground">Generate using AI</span>
-                        <span className="text-[11px] text-muted-foreground leading-snug">Turn your ideas into a course with AI</span>
+                        <span className="text-sm font-semibold text-foreground">AI Auto-Generate</span>
+                        <span className="text-[11px] text-muted-foreground leading-snug">Have AI create your course end-to-end</span>
                       </div>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
