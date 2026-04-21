@@ -346,44 +346,17 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Page Duration */}
       <div className="rounded-xl border border-border bg-card p-4">
-        <div className="mb-2.5">
+        <div className="mb-3">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Page Duration
             <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
           </div>
+          <p className="text-xs text-muted-foreground mt-1">Set the duration for each page of content</p>
         </div>
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Page duration">
-          {PAGE_DURATION_OPTIONS.map((opt) => {
-            const selected = state.pageSpanTime === opt.minutes;
-            const Icon = opt.icon;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => onChange({ pageSpanTime: opt.minutes })}
-                aria-label={`${opt.label} ${opt.desc}`}
-                className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  selected
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                {selected ? (
-                  <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                ) : (
-                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                )}
-                {opt.label}
-                <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
-                  {opt.desc}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <PageDurationStepper
+          value={state.pageSpanTime || 5}
+          onChange={(v) => onChange({ pageSpanTime: v })}
+        />
       </div>
 
       {/* Bloom's Taxonomy */}
