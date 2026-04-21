@@ -277,7 +277,7 @@ export const GenerateExportDialog = ({
                         value={passMessage}
                         onChange={(e) => setPassMessage(e.target.value)}
                         rows={2}
-                        className="mt-1.5 text-[12.5px] min-h-[52px] resize-none border-0 bg-muted/30 focus-visible:ring-1 focus-visible:ring-emerald-500/40"
+                        className="mt-1.5 text-[12.5px] min-h-[52px] resize-none border-0 bg-muted/30 focus-visible:ring-1 focus-visible:ring-primary/40"
                       />
                     </div>
 
