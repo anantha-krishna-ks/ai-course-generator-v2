@@ -526,7 +526,12 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                         />
                                       ) : (
                                         <span
-                                          className="flex-1 text-[13px] font-medium text-foreground truncate min-w-0 cursor-text"
+                                          className={cn(
+                                            "flex-1 text-[13px] font-medium truncate min-w-0 cursor-text",
+                                            regeneratingIds.has(page.id)
+                                              ? "bg-gradient-to-r from-primary/40 via-primary to-primary/40 bg-clip-text text-transparent animate-pulse"
+                                              : "text-foreground"
+                                          )}
                                           onClick={() => {
                                             setEditingPageId(page.id);
                                             setTimeout(() => pageInputRef.current?.focus(), 30);
@@ -547,6 +552,20 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                       {/* Page actions on hover */}
                                       {!isEditingThisPage && (
                                         <div className="flex items-center gap-0 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
+                                          <button
+                                            type="button"
+                                            onClick={() => regeneratePageTitle(section.id, page.id)}
+                                            disabled={regeneratingIds.has(page.id)}
+                                            className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+                                            aria-label={`Regenerate title for page ${page.title}`}
+                                            title="Regenerate title with AI"
+                                          >
+                                            {regeneratingIds.has(page.id) ? (
+                                              <Loader2 className="w-3 h-3 text-primary animate-spin" aria-hidden="true" focusable="false" />
+                                            ) : (
+                                              <Sparkles className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                            )}
+                                          </button>
                                           <button
                                             type="button"
                                             onClick={() => duplicatePage(section.id, page.id)}
