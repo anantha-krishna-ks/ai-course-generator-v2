@@ -194,9 +194,12 @@ export const GenerateExportDialog = ({
                       <p className="text-[13px] text-muted-foreground mt-1">
                         Minimum time learners must spend on each page before progressing.
                       </p>
-                      <div className="mt-3 inline-flex items-stretch rounded-lg border border-border bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary/40">
+                      <div className="mt-3 flex items-end gap-3">
                         {/* Minutes */}
-                        <div className="flex items-center">
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                            Minutes
+                          </span>
                           <Input
                             id="scorm-duration"
                             type="number"
@@ -209,16 +212,20 @@ export const GenerateExportDialog = ({
                               setPageDuration(mins * 60 + secs);
                             }}
                             aria-label="Minutes"
-                            className="h-11 w-16 text-[15px] font-semibold border-0 bg-transparent px-3 text-right focus-visible:ring-0"
+                            className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg border border-border bg-background focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
                           />
-                          <span className="text-[13px] text-muted-foreground pr-2">min</span>
                         </div>
 
                         {/* Separator */}
-                        <span aria-hidden="true" className="self-center text-[18px] font-semibold text-muted-foreground px-1 select-none">:</span>
+                        <span aria-hidden="true" className="text-[22px] font-light text-muted-foreground pb-2 select-none">
+                          :
+                        </span>
 
                         {/* Seconds */}
-                        <div className="flex items-center border-l border-border">
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                            Seconds
+                          </span>
                           <Input
                             type="number"
                             min={0}
@@ -230,9 +237,8 @@ export const GenerateExportDialog = ({
                               setPageDuration(mins * 60 + secs);
                             }}
                             aria-label="Seconds"
-                            className="h-11 w-16 text-[15px] font-semibold border-0 bg-transparent px-3 text-right focus-visible:ring-0"
+                            className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg border border-border bg-background focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
                           />
-                          <span className="text-[13px] text-muted-foreground pr-3">sec</span>
                         </div>
                       </div>
                     </div>
