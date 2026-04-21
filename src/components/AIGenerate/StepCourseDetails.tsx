@@ -145,12 +145,12 @@ function PageDurationStepper({
 
   return (
     <div className="rounded-lg border border-border/80 bg-background px-4 py-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex flex-col items-center text-center gap-4">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center">
             <FileText className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
           </div>
-          <div>
+          <div className="text-left">
             <span className="text-sm font-medium text-foreground block leading-tight">Page Duration Settings</span>
             <span className="text-[11px] text-muted-foreground">Page level Span Time (In Minutes)</span>
           </div>
@@ -180,24 +180,24 @@ function PageDurationStepper({
             <Plus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
           </button>
         </div>
-      </div>
 
-      <div className="flex flex-wrap gap-1.5 mt-4">
-        {presets.map((preset) => (
-          <button
-            key={preset}
-            type="button"
-            onClick={() => onChange(preset)}
-            className={cn(
-              "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-150",
-              value === preset
-                ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
-            )}
-          >
-            {preset} min
-          </button>
-        ))}
+        <div className="flex flex-wrap justify-center gap-1.5">
+          {presets.map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => onChange(preset)}
+              className={cn(
+                "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-150",
+                value === preset
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+              )}
+            >
+              {preset} min
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
