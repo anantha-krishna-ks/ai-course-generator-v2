@@ -55,6 +55,12 @@ export interface AIGenerateState {
     addImages: boolean;
   };
   questionsPerPage: number;
+  questionTypes: {
+    singleChoice: number;
+    multipleChoice: number;
+    trueFalse: number;
+    fillInBlank: number;
+  };
 }
 
 const initialState: AIGenerateState = {
