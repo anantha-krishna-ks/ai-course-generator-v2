@@ -11,6 +11,13 @@ interface StepCourseDetailsProps {
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
 
+import { BeginnerIcon, IntermediateIcon, ExpertIcon } from "./learnerLevelIcons";
+
+interface StepCourseDetailsProps {
+  state: AIGenerateState;
+  onChange: (partial: Partial<AIGenerateState>) => void;
+}
+
 const DURATION_OPTIONS = [
   { value: "brief" as const, label: "Brief", desc: "< 5 min", icon: Timer },
   { value: "standard" as const, label: "Standard", desc: "5–10 min", icon: Clock },
@@ -44,6 +51,13 @@ const PROFICIENCY_OPTIONS = [
   { value: "advanced" as const, label: "Advanced" },
   { value: "expert" as const, label: "Expert" },
   { value: "mixed" as const, label: "Mixed" },
+];
+
+// Learner level options with document icons
+const LEARNER_LEVEL_OPTIONS = [
+  { value: "beginners" as const, label: "Beginners", Icon: BeginnerIcon },
+  { value: "intermediate" as const, label: "Intermediate", Icon: IntermediateIcon },
+  { value: "expert" as const, label: "Expert", Icon: ExpertIcon },
 ];
 
 // Mock AI suggestions based on course title keywords
