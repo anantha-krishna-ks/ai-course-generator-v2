@@ -292,11 +292,17 @@ export const GenerateExportDialog = ({
                         className="absolute inset-0 bg-background transition-opacity"
                         style={{ opacity: 1 - opacity / 100 }}
                       />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="flex items-baseline gap-1 px-4 py-2 rounded-xl bg-background/85 backdrop-blur-sm border border-border shadow-sm">
-                          <span className="text-[28px] font-bold text-foreground tabular-nums leading-none">{opacity}</span>
-                          <span className="text-[15px] font-semibold text-muted-foreground">%</span>
-                        </div>
+                      {/* Non-interactive label pill in the corner */}
+                      <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-sm border border-border/60 pointer-events-none">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+                        <span className="text-[11.5px] font-medium text-muted-foreground uppercase tracking-wide">Preview</span>
+                      </div>
+                      {/* Centered live value — plain text, not a button */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="tabular-nums leading-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)]">
+                          <span className="text-[34px] font-bold text-foreground">{opacity}</span>
+                          <span className="text-[18px] font-semibold text-muted-foreground ml-0.5">%</span>
+                        </span>
                       </div>
                     </div>
 
