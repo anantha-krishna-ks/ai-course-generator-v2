@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { Download, Check, Wand2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Download, Check, Wand2, Clock, ImagePlus, Sliders, CheckCircle2, XCircle, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +43,23 @@ export const GenerateExportDialog = ({
   courseTitle,
 }: GenerateExportDialogProps) => {
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [pageDuration, setPageDuration] = useState<number>(30);
+  const [bgImage, setBgImage] = useState<{ name: string; url: string } | null>(null);
+  const [opacity, setOpacity] = useState<number>(40);
+  const [passMessage, setPassMessage] = useState<string>(
+    "Congratulations! You have successfully completed the course."
+  );
+  const [failMessage, setFailMessage] = useState<string>(
+    "You did not meet the passing criteria. Please review the material and try again."
+  );
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const handleBgUpload = (file: File | undefined) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setBgImage({ name: file.name, url });
+  };
 
   const handleDownload = () => {
     if (!selectedFormat) return;
@@ -61,10 +81,11 @@ export const GenerateExportDialog = ({
   };
 
   const selectedOption = exportOptions.find((o) => o.id === selectedFormat);
+  const isScorm = selectedFormat === "scorm";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[92vw] max-w-[520px] p-0 overflow-hidden gap-0">
+      <DialogContent className={cn("w-[92vw] p-0 overflow-hidden gap-0 max-h-[90vh] flex flex-col", isScorm ? "max-w-[640px]" : "max-w-[520px]")}>
         {/* Header */}
         <div className="px-5 pt-5 pb-4 sm:px-6 sm:pt-6">
           <div className="flex items-center gap-2.5 mb-1">
@@ -84,55 +105,192 @@ export const GenerateExportDialog = ({
 
         <div className="h-px bg-border" />
 
-        {/* Grid layout */}
-        <div className="p-4 sm:p-5">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            {exportOptions.map((option) => {
-              const Icon = option.Icon;
-              const isSelected = selectedFormat === option.id;
-              return (
-                <button
-                  key={option.id}
-                  onClick={() => setSelectedFormat(option.id)}
-                  className={cn(
-                    "group relative flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-200",
-                    "hover:bg-accent/50 hover:shadow-sm",
-                    isSelected
-                      ? "border-primary/50 bg-primary/[0.06] ring-1 ring-primary/20 shadow-sm"
-                      : "border-border/60"
-                  )}
-                >
-                  {isSelected && (
-                    <div className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} aria-hidden="true" focusable="false" />
-                    </div>
-                  )}
-
-                  <div
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Grid layout */}
+          <div className="p-4 sm:p-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {exportOptions.map((option) => {
+                const Icon = option.Icon;
+                const isSelected = selectedFormat === option.id;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => setSelectedFormat(option.id)}
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center transition-transform duration-200",
-                      isSelected && "scale-110",
+                      "group relative flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-200",
+                      "hover:bg-accent/50 hover:shadow-sm",
+                      isSelected
+                        ? "border-primary/50 bg-primary/[0.06] ring-1 ring-primary/20 shadow-sm"
+                        : "border-border/60"
                     )}
                   >
-                    <Icon className="h-11 w-11 drop-shadow-sm" />
-                  </div>
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary">
+                        <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} aria-hidden="true" focusable="false" />
+                      </div>
+                    )}
 
-                  {/* Label */}
-                  <div>
-                    <p className={cn(
-                      "text-[13px] font-semibold leading-tight",
-                      isSelected ? "text-primary" : "text-foreground"
-                    )}>
-                      {option.label}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
-                      {option.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+                    <div
+                      className={cn(
+                        "flex h-12 w-12 items-center justify-center transition-transform duration-200",
+                        isSelected && "scale-110",
+                      )}
+                    >
+                      <Icon className="h-11 w-11 drop-shadow-sm" />
+                    </div>
+
+                    {/* Label */}
+                    <div>
+                      <p className={cn(
+                        "text-[13px] font-semibold leading-tight",
+                        isSelected ? "text-primary" : "text-foreground"
+                      )}>
+                        {option.label}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                        {option.description}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {/* SCORM Preferences */}
+          {isScorm && (
+            <div className="px-4 sm:px-5 pb-5 space-y-3">
+              <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                <div className="flex items-stretch">
+                  <div className="w-1 bg-primary shrink-0" aria-hidden="true" />
+                  <div className="flex-1 p-4 space-y-4">
+                    <div>
+                      <h3 className="text-[14px] font-semibold text-foreground">SCORM Preferences</h3>
+                      <p className="text-[12px] text-muted-foreground mt-0.5">
+                        Configure how your SCORM package behaves inside an LMS.
+                      </p>
+                    </div>
+
+                    {/* Page Duration */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="scorm-duration" className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                        <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        Page Duration (seconds)
+                      </Label>
+                      <Input
+                        id="scorm-duration"
+                        type="number"
+                        min={5}
+                        max={600}
+                        value={pageDuration}
+                        onChange={(e) => setPageDuration(Number(e.target.value))}
+                        className="h-9 text-sm"
+                      />
+                      <p className="text-[11px] text-muted-foreground">Minimum time learners must spend per page.</p>
+                    </div>
+
+                    {/* Background Image */}
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                        <ImagePlus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        Background Image
+                      </Label>
+                      {bgImage ? (
+                        <div className="relative rounded-lg border border-border overflow-hidden">
+                          <div
+                            className="h-24 w-full bg-center bg-cover"
+                            style={{ backgroundImage: `url(${bgImage.url})` }}
+                            role="img"
+                            aria-label={bgImage.name}
+                          />
+                          <div className="flex items-center justify-between px-2.5 py-1.5 bg-muted/40 text-[12px]">
+                            <span className="truncate text-foreground">{bgImage.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => setBgImage(null)}
+                              aria-label="Remove background image"
+                              className="text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-full flex flex-col items-center justify-center gap-1 py-4 rounded-lg border-2 border-dashed border-primary/40 bg-primary/[0.04] text-primary hover:bg-primary/[0.08] transition-colors"
+                        >
+                          <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          <span className="text-[12px] font-medium">Click to upload background</span>
+                          <span className="text-[10px] text-muted-foreground">PNG, JPG • Recommended 1920×1080</span>
+                        </button>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        className="hidden"
+                        onChange={(e) => handleBgUpload(e.target.files?.[0])}
+                        aria-label="Upload background image"
+                      />
+                    </div>
+
+                    {/* Opacity */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="scorm-opacity" className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                          <Sliders className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          Background Opacity
+                        </Label>
+                        <span className="text-[12px] font-medium text-foreground tabular-nums">{opacity}%</span>
+                      </div>
+                      <Slider
+                        id="scorm-opacity"
+                        value={[opacity]}
+                        onValueChange={(v) => setOpacity(v[0])}
+                        min={0}
+                        max={100}
+                        step={5}
+                        aria-label="Background opacity"
+                      />
+                    </div>
+
+                    {/* Pass message */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="scorm-pass" className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+                        Pass Criteria Message
+                      </Label>
+                      <Textarea
+                        id="scorm-pass"
+                        value={passMessage}
+                        onChange={(e) => setPassMessage(e.target.value)}
+                        rows={2}
+                        className="text-sm min-h-[60px] resize-none"
+                      />
+                    </div>
+
+                    {/* Fail message */}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="scorm-fail" className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                        <XCircle className="w-3 h-3 text-destructive" aria-hidden="true" focusable="false" />
+                        Fail Criteria Message
+                      </Label>
+                      <Textarea
+                        id="scorm-fail"
+                        value={failMessage}
+                        onChange={(e) => setFailMessage(e.target.value)}
+                        rows={2}
+                        className="text-sm min-h-[60px] resize-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
