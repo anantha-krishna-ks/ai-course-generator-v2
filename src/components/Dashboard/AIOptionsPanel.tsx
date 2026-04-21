@@ -249,7 +249,7 @@ export function AIConfigView({
               <span className="text-destructive ml-1">— Please select a level</span>
             )}
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full">
             {LEARNER_LEVELS.map((level) => {
               const selected = options.intendedLearners === level;
               return (
@@ -258,12 +258,13 @@ export function AIConfigView({
                   type="button"
                   onClick={() => update({ intendedLearners: level })}
                   className={cn(
-                    "flex-1 py-3 rounded-lg text-[0.938rem] font-medium border transition-all duration-200 text-center",
+                    "flex-1 px-5 py-2.5 rounded-full text-[0.938rem] font-medium border transition-all duration-200 flex items-center justify-center gap-1.5",
                     selected
-                      ? "bg-primary/10 text-primary border-primary"
-                      : "bg-background text-muted-foreground border-border hover:border-primary/40"
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
                   )}
                 >
+                  {selected && <Check className="w-3.5 h-3.5" />}
                   {level}
                 </button>
               );
