@@ -349,54 +349,82 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
 
         {/* Number of Questions breakdown */}
-        {state.contentPreferences.includeQuestions && (
-          <div className="mt-3 rounded-xl border border-border bg-background/60 shadow-sm overflow-hidden">
-            <div className="flex items-stretch">
-              <div className="w-1 bg-primary shrink-0" aria-hidden="true" />
-              <div className="flex-1 p-3.5">
-                <div className="mb-3">
-                  <div className="text-[14px] font-semibold text-foreground leading-tight">Number of Questions</div>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">Set how many of each question type to include per page.</p>
+        {state.contentPreferences.includeQuestions && (() => {
+          const QUESTION_TYPES = [
+            { key: "singleChoice" as const, label: "Single Choice", desc: "One correct answer", icon: "◉", accent: "from-blue-500/10 to-blue-500/[0.02]" },
+            { key: "multipleChoice" as const, label: "Multiple Choice", desc: "Multiple correct", icon: "☷", accent: "from-purple-500/10 to-purple-500/[0.02]" },
+            { key: "trueFalse" as const, label: "True / False", desc: "Binary choice", icon: "⇄", accent: "from-emerald-500/10 to-emerald-500/[0.02]" },
+            { key: "fillInBlank" as const, label: "Fill in Blank", desc: "Open response", icon: "▭", accent: "from-amber-500/10 to-amber-500/[0.02]" },
+          ];
+          const total = QUESTION_TYPES.reduce((sum, q) => sum + state.questionTypes[q.key], 0);
+          return (
+            <div className="mt-3 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/[0.04] to-transparent shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-primary/10 bg-background/40">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="w-7 h-7 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0" aria-hidden="true">
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-semibold text-foreground leading-tight">Question Mix</div>
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">Set count per type, per page</p>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {[
-                    { key: "singleChoice" as const, label: "Single Choice" },
-                    { key: "multipleChoice" as const, label: "Multiple Choice" },
-                    { key: "trueFalse" as const, label: "True / False" },
-                    { key: "fillInBlank" as const, label: "Fill in Blank" },
-                  ].map((q) => {
-                    const id = `qtype-${q.key}`;
-                    return (
-                      <div key={q.key} className="space-y-1.5">
-                        <label htmlFor={id} className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide block">
-                          {q.label}
-                        </label>
-                        <select
-                          id={id}
-                          value={state.questionTypes[q.key]}
-                          onChange={(e) =>
-                            onChange({
-                              questionTypes: {
-                                ...state.questionTypes,
-                                [q.key]: Number(e.target.value),
-                              },
-                            })
-                          }
-                          aria-label={`${q.label} count`}
-                          className="w-full h-9 rounded-lg border border-border bg-background text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
-                        >
-                          {[0, 1, 2, 3, 4, 5].map((n) => (
-                            <option key={n} value={n}>{n}</option>
-                          ))}
-                        </select>
-                      </div>
-                    );
-                  })}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[11px] font-medium text-muted-foreground">Total</span>
+                  <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 rounded-full bg-primary text-primary-foreground text-xs font-bold tabular-nums">
+                    {total}
+                  </span>
                 </div>
               </div>
+              <div className="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {QUESTION_TYPES.map((q) => {
+                  const value = state.questionTypes[q.key];
+                  const active = value > 0;
+                  const setValue = (v: number) =>
+                    onChange({
+                      questionTypes: { ...state.questionTypes, [q.key]: Math.max(0, Math.min(5, v)) },
+                    });
+                  return (
+                    <div
+                      key={q.key}
+                      className={cn(
+                        "group rounded-xl border bg-background p-3 transition-all duration-200",
+                        active
+                          ? "border-primary/40 shadow-[0_1px_0_0_hsl(var(--primary)/0.08)]"
+                          : "border-border hover:border-primary/25"
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span
+                            className={cn(
+                              "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-base font-semibold transition-colors",
+                              active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                            )}
+                            aria-hidden="true"
+                          >
+                            {q.icon}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="text-[13px] font-semibold text-foreground leading-tight truncate">{q.label}</div>
+                            <div className="text-[11px] text-muted-foreground leading-snug mt-0.5 truncate">{q.desc}</div>
+                          </div>
+                        </div>
+                        <Stepper
+                          value={value}
+                          onChange={setValue}
+                          min={0}
+                          max={5}
+                          ariaLabel={`${q.label} count`}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </PrefCard>
 
 
