@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import { Badge } from "@/components/ui/badge";
+import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -617,48 +618,89 @@ function ScormPreferencesAccordion({
 
             {/* Background Opacity */}
             <div className="p-5">
-              <Label className="text-[14px] font-semibold text-foreground">Background Opacity</Label>
-              <p className="text-[12.5px] text-muted-foreground mt-1">
+              <Label className="text-[14.5px] font-semibold text-foreground">
+                Background Opacity
+              </Label>
+              <p className="text-[13px] text-muted-foreground mt-1">
                 Drag the slider to adjust how visible the background appears.
               </p>
-              <div className="mt-3 flex items-center gap-4">
+
+              {/* Live preview */}
+              <div
+                className="relative mt-4 h-40 rounded-2xl overflow-hidden border border-border shadow-inner"
+                style={{
+                  backgroundImage: `url(${state.scormBgImage ? state.scormBgImage.url : scormPlaceholder})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+                aria-hidden="true"
+              >
                 <div
-                  className="relative h-16 w-28 rounded-lg border border-border bg-muted/40 overflow-hidden shrink-0"
-                  role="img"
-                  aria-label="Sample preview"
-                >
-                  {state.scormBgImage ? (
-                    <div
-                      className="absolute inset-0 bg-center bg-cover"
-                      style={{
-                        backgroundImage: `url(${state.scormBgImage.url})`,
-                        opacity: state.scormBgOpacity / 100,
-                      }}
-                    />
-                  ) : (
-                    <span className="absolute inset-0 flex items-center justify-center text-[10.5px] text-muted-foreground px-2 text-center">
-                      Upload an image to preview
-                    </span>
-                  )}
+                  className="absolute inset-0 bg-background transition-opacity"
+                  style={{ opacity: 1 - state.scormBgOpacity / 100 }}
+                />
+                <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/85 backdrop-blur-sm border border-border/60 pointer-events-none">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+                  <span className="text-[11.5px] font-semibold text-muted-foreground uppercase tracking-wide">
+                    {state.scormBgImage ? "Live preview" : "Sample preview"}
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[12.5px] font-semibold text-foreground tabular-nums">
-                      {state.scormBgOpacity}%
-                    </span>
+                {!state.scormBgImage && (
+                  <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur-sm border border-border/60 pointer-events-none">
+                    <span className="text-[10.5px] font-medium text-muted-foreground">Upload an image to preview yours</span>
                   </div>
+                )}
+              </div>
+
+              {/* Slider with value bubble + tick marks */}
+              <div className="mt-6 px-1">
+                <div className="relative">
+                  <div
+                    className="absolute -top-9 -translate-x-1/2 pointer-events-none transition-all"
+                    style={{ left: `${state.scormBgOpacity}%` }}
+                  >
+                    <div className="relative flex items-center justify-center min-w-[44px] h-7 px-2 rounded-lg bg-primary text-primary-foreground text-[12.5px] font-semibold tabular-nums shadow-md">
+                      {state.scormBgOpacity}%
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-primary" />
+                    </div>
+                  </div>
+
                   <Slider
                     value={[state.scormBgOpacity]}
                     onValueChange={([v]) => onChange({ scormBgOpacity: v })}
                     min={0}
                     max={100}
-                    step={5}
+                    step={1}
                     aria-label="Background opacity"
+                    className="[&_[role=slider]]:h-6 [&_[role=slider]]:w-6 [&_[role=slider]]:shadow-lg [&_[role=slider]]:border-[3px] [&_[data-orientation=horizontal]]:h-2.5 [&>span:first-child]:bg-muted [&>span:first-child>span]:bg-gradient-to-r [&>span:first-child>span]:from-primary/70 [&>span:first-child>span]:to-primary"
                   />
-                  <div className="flex justify-between mt-1.5 text-[10.5px] text-muted-foreground">
-                    <span>Transparent</span>
-                    <span>Fully visible</span>
+
+                  <div className="relative mt-2 px-[2px]" aria-hidden="true">
+                    <div className="flex justify-between">
+                      {[0, 25, 50, 75, 100].map((t) => (
+                        <div key={t} className="flex flex-col items-center gap-1">
+                          <div className={cn(
+                            "w-px h-1.5",
+                            state.scormBgOpacity >= t ? "bg-primary/60" : "bg-border"
+                          )} />
+                          <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
+                            {t}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                </div>
+
+                <div className="flex justify-between mt-3 text-[12.5px] font-medium text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-muted border border-border" />
+                    Transparent
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    Fully visible
+                    <span className="h-2 w-2 rounded-full bg-primary" />
+                  </span>
                 </div>
               </div>
             </div>
