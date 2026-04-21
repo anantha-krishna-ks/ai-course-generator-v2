@@ -206,6 +206,45 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
     );
   }, []);
 
+  const regenerateSectionTitle = useCallback((sectionId: string) => {
+    setRegeneratingIds((prev) => new Set(prev).add(sectionId));
+    setTimeout(() => {
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === sectionId ? { ...s, title: pickRandom(SECTION_TITLE_POOL, s.title) } : s
+        )
+      );
+      setRegeneratingIds((prev) => {
+        const n = new Set(prev);
+        n.delete(sectionId);
+        return n;
+      });
+    }, 700);
+  }, []);
+
+  const regeneratePageTitle = useCallback((sectionId: string, pageId: string) => {
+    setRegeneratingIds((prev) => new Set(prev).add(pageId));
+    setTimeout(() => {
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === sectionId
+            ? {
+                ...s,
+                pages: s.pages.map((p) =>
+                  p.id === pageId ? { ...p, title: pickRandom(PAGE_TITLE_POOL, p.title) } : p
+                ),
+              }
+            : s
+        )
+      );
+      setRegeneratingIds((prev) => {
+        const n = new Set(prev);
+        n.delete(pageId);
+        return n;
+      });
+    }, 700);
+  }, []);
+
   const totalPages = sections.reduce((sum, s) => sum + s.pages.length, 0);
   const durationLabel = state.duration === "brief" ? "~15 min" : state.duration === "extended" ? "~90 min" : "~45 min";
   const toneLabel = state.tone === "ai-determined" ? "AI Selected" : state.tone.charAt(0).toUpperCase() + state.tone.slice(1);
