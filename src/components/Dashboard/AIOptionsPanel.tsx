@@ -49,7 +49,11 @@ const BLOOMS_LEVELS = [
   "Create",
 ];
 
-const LEARNER_LEVELS = ["Beginners", "Intermediate", "Expert"] as const;
+const LEARNER_LEVELS = [
+  { label: "Beginners", icon: Sprout },
+  { label: "Intermediate", icon: Gauge },
+  { label: "Expert", icon: Award },
+] as const;
 
 /** The toggle + "Configure" button shown in the main dialog view */
 export function AIToggleRow({
