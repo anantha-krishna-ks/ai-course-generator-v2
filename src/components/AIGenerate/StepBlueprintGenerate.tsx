@@ -1,5 +1,14 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import {
   Check,
@@ -12,6 +21,7 @@ import {
   Upload,
   X,
   FileText,
+  Sliders,
   type LucideIcon,
 } from "lucide-react";
 import { useRef } from "react";
