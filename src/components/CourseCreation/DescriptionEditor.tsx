@@ -419,6 +419,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     <div className="space-y-2 animate-fade-in w-full">
       {/* Modern compact toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm w-full">
+        {/* Paragraph style dropdown */}
+        <StyleDropdown editor={editor} />
+
+        <Divider />
+
         {/* Core formatting (always visible) */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
