@@ -45,6 +45,7 @@ export const GenerateExportDialog = ({
 }: GenerateExportDialogProps) => {
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
   const [pageDuration, setPageDuration] = useState<number>(30);
+  const [durationUnit, setDurationUnit] = useState<"seconds" | "minutes">("seconds");
   const [bgImage, setBgImage] = useState<{ name: string; url: string } | null>(null);
   const [opacity, setOpacity] = useState<number>(40);
   const [passMessage, setPassMessage] = useState<string>(
@@ -198,15 +199,44 @@ export const GenerateExportDialog = ({
                         <Input
                           id="scorm-duration"
                           type="number"
-                          min={5}
-                          max={600}
-                          value={pageDuration}
-                          onChange={(e) => setPageDuration(Number(e.target.value))}
+                          min={durationUnit === "seconds" ? 5 : 1}
+                          max={durationUnit === "seconds" ? 600 : 60}
+                          value={
+                            durationUnit === "seconds"
+                              ? pageDuration
+                              : Math.max(1, Math.round(pageDuration / 60))
+                          }
+                          onChange={(e) => {
+                            const n = Number(e.target.value) || 0;
+                            setPageDuration(durationUnit === "seconds" ? n : n * 60);
+                          }}
                           className="h-11 w-24 text-[15px] font-semibold border-0 bg-transparent px-3 focus-visible:ring-0"
                         />
-                        <span className="text-[13.5px] text-muted-foreground bg-muted/60 h-11 inline-flex items-center px-3 border-l border-border">
-                          seconds
-                        </span>
+                        <div
+                          role="group"
+                          aria-label="Duration unit"
+                          className="flex items-stretch h-11 border-l border-border bg-muted/60"
+                        >
+                          {(["seconds", "minutes"] as const).map((unit) => {
+                            const active = durationUnit === unit;
+                            return (
+                              <button
+                                key={unit}
+                                type="button"
+                                onClick={() => setDurationUnit(unit)}
+                                aria-pressed={active}
+                                className={cn(
+                                  "px-3 text-[13px] font-medium transition-colors",
+                                  active
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                                )}
+                              >
+                                {unit === "seconds" ? "sec" : "min"}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
