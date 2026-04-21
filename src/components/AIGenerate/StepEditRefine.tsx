@@ -3,10 +3,11 @@ import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
   BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
-  MessageSquare, MoreHorizontal, Copy, ChevronRight, RefreshCw, Loader2
+  MessageSquare, MoreHorizontal, Copy, ChevronRight, RefreshCw, Loader2, Sparkles
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
@@ -16,6 +17,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface StepEditRefineProps {
   state: AIGenerateState;
@@ -106,8 +115,31 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [regeneratingIds, setRegeneratingIds] = useState<Set<string>>(new Set());
+  const [regenTarget, setRegenTarget] = useState<
+    | { kind: "section"; sectionId: string; currentTitle: string }
+    | { kind: "page"; sectionId: string; pageId: string; currentTitle: string }
+    | null
+  >(null);
+  const [regenPrompt, setRegenPrompt] = useState("");
   const titleInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
+
+  const openRegenDialog = useCallback(
+    (
+      target:
+        | { kind: "section"; sectionId: string; currentTitle: string }
+        | { kind: "page"; sectionId: string; pageId: string; currentTitle: string }
+    ) => {
+      setRegenTarget(target);
+      setRegenPrompt("");
+    },
+    []
+  );
+
+  const closeRegenDialog = useCallback(() => {
+    setRegenTarget(null);
+    setRegenPrompt("");
+  }, []);
 
   const toggleCollapse = useCallback((id: string) => {
     setCollapsedIds((prev) => {
@@ -381,7 +413,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
 
                             <button
                               type="button"
-                              onClick={() => regenerateSectionTitle(section.id)}
+                              onClick={() => openRegenDialog({ kind: "section", sectionId: section.id, currentTitle: section.title })}
                               disabled={regeneratingIds.has(section.id)}
                               className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex items-center justify-center transition-colors shrink-0 disabled:opacity-60 disabled:cursor-not-allowed group/regen"
                               aria-label={`Regenerate title for ${section.title || "section"}`}
@@ -415,7 +447,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                   Rename
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => regenerateSectionTitle(section.id)}
+                                  onClick={() => openRegenDialog({ kind: "section", sectionId: section.id, currentTitle: section.title })}
                                   className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                                 >
                                   <RefreshCw className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
@@ -577,7 +609,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                         <div className="flex items-center gap-0 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
                                           <button
                                             type="button"
-                                            onClick={() => regeneratePageTitle(section.id, page.id)}
+                                            onClick={() => openRegenDialog({ kind: "page", sectionId: section.id, pageId: page.id, currentTitle: page.title })}
                                             disabled={regeneratingIds.has(page.id)}
                                             className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                                             aria-label={`Regenerate title for page ${page.title}`}
@@ -657,6 +689,68 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
         <Plus className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" focusable="false" />
         <span className="text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">Add Section</span>
       </button>
+
+      {/* Regenerate title dialog */}
+      <Dialog open={!!regenTarget} onOpenChange={(open) => { if (!open) closeRegenDialog(); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              </span>
+              Regenerate {regenTarget?.kind === "page" ? "page" : "section"} title
+            </DialogTitle>
+            <DialogDescription>
+              {regenTarget?.currentTitle ? (
+                <>Current: <span className="text-foreground font-medium">{regenTarget.currentTitle}</span></>
+              ) : (
+                <>Describe what you'd like the new title to convey.</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <label htmlFor="regen-prompt" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Instructions <span className="text-muted-foreground/70 normal-case font-normal">(optional)</span>
+            </label>
+            <Textarea
+              id="regen-prompt"
+              value={regenPrompt}
+              onChange={(e) => setRegenPrompt(e.target.value)}
+              placeholder={
+                regenTarget?.kind === "page"
+                  ? "e.g. Make it more action-oriented and concise…"
+                  : "e.g. Sound more practical and outcome-focused…"
+              }
+              rows={4}
+              className="resize-none text-sm bg-background border border-border focus:border-primary focus-visible:ring-0 focus-visible:ring-offset-0 rounded-lg"
+              autoFocus
+            />
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button type="button" variant="outline" onClick={closeRegenDialog} className="rounded-full">
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                if (!regenTarget) return;
+                if (regenTarget.kind === "section") {
+                  regenerateSectionTitle(regenTarget.sectionId);
+                } else {
+                  regeneratePageTitle(regenTarget.sectionId, regenTarget.pageId);
+                }
+                closeRegenDialog();
+              }}
+              className="rounded-full gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              Regenerate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
