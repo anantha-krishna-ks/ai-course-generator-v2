@@ -88,7 +88,7 @@ export const GenerateExportDialog = ({
         <div className="p-4 sm:p-5">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {exportOptions.map((option) => {
-              const Icon = option.icon;
+              const Icon = option.Icon;
               const isSelected = selectedFormat === option.id;
               return (
                 <button
@@ -102,21 +102,19 @@ export const GenerateExportDialog = ({
                       : "border-border/60"
                   )}
                 >
-                  {/* Check badge */}
                   {isSelected && (
                     <div className="absolute top-2 right-2 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} aria-hidden="true" focusable="false" />
                     </div>
                   )}
 
-                  {/* Icon */}
                   <div
                     className={cn(
-                      "flex h-11 w-11 items-center justify-center rounded-xl text-white transition-transform duration-200",
-                      isSelected ? cn(option.selectedBg, "scale-110 shadow-md") : cn(option.bg, "shadow-sm"),
+                      "flex h-12 w-12 items-center justify-center transition-transform duration-200",
+                      isSelected && "scale-110",
                     )}
                   >
-                    <Icon className="h-5 w-5" aria-hidden="true" focusable="false" />
+                    <Icon className="h-11 w-11 drop-shadow-sm" />
                   </div>
 
                   {/* Label */}
