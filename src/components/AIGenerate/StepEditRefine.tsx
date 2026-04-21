@@ -413,7 +413,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
 
                             <button
                               type="button"
-                              onClick={() => regenerateSectionTitle(section.id)}
+                              onClick={() => openRegenDialog({ kind: "section", sectionId: section.id, currentTitle: section.title })}
                               disabled={regeneratingIds.has(section.id)}
                               className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex items-center justify-center transition-colors shrink-0 disabled:opacity-60 disabled:cursor-not-allowed group/regen"
                               aria-label={`Regenerate title for ${section.title || "section"}`}
