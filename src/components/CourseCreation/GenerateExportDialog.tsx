@@ -45,7 +45,6 @@ export const GenerateExportDialog = ({
 }: GenerateExportDialogProps) => {
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
   const [pageDuration, setPageDuration] = useState<number>(30);
-  const [durationUnit, setDurationUnit] = useState<"seconds" | "minutes">("seconds");
   const [bgImage, setBgImage] = useState<{ name: string; url: string } | null>(null);
   const [opacity, setOpacity] = useState<number>(40);
   const [passMessage, setPassMessage] = useState<string>(
