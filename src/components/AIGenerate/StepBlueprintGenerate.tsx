@@ -325,20 +325,25 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                   <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">Add images to the pages</span>
                 </span>
               </button>
-              <span
+              <button
+                type="button"
+                onClick={() => togglePref("addImages")}
+                role="switch"
+                aria-checked={state.contentPreferences.addImages}
+                aria-label="Toggle add images to pages"
                 className={cn(
-                  "w-9 h-5 rounded-full relative transition-colors shrink-0",
+                  "w-9 h-5 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   state.contentPreferences.addImages ? "bg-primary" : "bg-muted-foreground/25"
                 )}
-                aria-hidden="true"
               >
                 <span
                   className={cn(
                     "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform",
                     state.contentPreferences.addImages && "translate-x-4"
                   )}
+                  aria-hidden="true"
                 />
-              </span>
+              </button>
             </div>
           </div>
         </div>
