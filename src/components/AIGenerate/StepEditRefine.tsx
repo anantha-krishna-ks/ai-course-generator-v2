@@ -83,11 +83,29 @@ const PAGE_TYPE_DOT: Record<Page["type"], string> = {
   summary: "bg-success",
 };
 
+const SECTION_TITLE_POOL = [
+  "Foundations & Context", "Core Principles", "Key Frameworks", "Strategic Insights",
+  "Applied Techniques", "Best Practices", "Real-World Scenarios", "Hands-on Practice",
+  "Advanced Topics", "Common Pitfalls", "Tools & Templates", "Wrap-up & Next Steps",
+];
+
+const PAGE_TITLE_POOL = [
+  "Setting the Stage", "Why It Matters", "Core Concept Overview", "Step-by-Step Guide",
+  "Worked Example", "Try It Yourself", "Quick Knowledge Check", "Common Mistakes",
+  "Pro Tips", "Case Study Deep Dive", "Reflection & Recap", "Action Checklist",
+];
+
+function pickRandom<T>(pool: T[], avoid?: T): T {
+  const filtered = avoid ? pool.filter((p) => p !== avoid) : pool;
+  return filtered[Math.floor(Math.random() * filtered.length)];
+}
+
 export function StepEditRefine({ state }: StepEditRefineProps) {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [regeneratingIds, setRegeneratingIds] = useState<Set<string>>(new Set());
   const titleInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
 
