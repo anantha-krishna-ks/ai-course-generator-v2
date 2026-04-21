@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { Download, Check, Wand2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Download, Check, Wand2, Clock, ImagePlus, Sliders, CheckCircle2, XCircle, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
   DialogContent,
