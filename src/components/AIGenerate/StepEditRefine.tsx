@@ -481,14 +481,37 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                 </div>
                               )}
 
-                              {section.pages.map((page, pi) => {
+                              <Reorder.Group
+                                axis="y"
+                                values={section.pages}
+                                onReorder={(newPages) =>
+                                  setSections((prev) =>
+                                    prev.map((s) =>
+                                      s.id === section.id ? { ...s, pages: newPages } : s
+                                    )
+                                  )
+                                }
+                                className="space-y-0"
+                              >
+                                {section.pages.map((page, pi) => {
                                 const isLast = pi === section.pages.length - 1;
                                 const isEditingThisPage = editingPageId === page.id;
 
                                 return (
-                                  <div key={page.id} className="group/row relative flex items-center">
+                                  <Reorder.Item key={page.id} value={page} className="list-none">
+                                    <div className="group/row relative flex items-center">
+                                    {/* Drag handle */}
+                                    <div
+                                      className="cursor-grab active:cursor-grabbing p-0.5 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/row:opacity-60 hover:!opacity-100"
+                                      aria-label={`Drag to reorder ${page.title || "Untitled page"}`}
+                                      role="button"
+                                      tabIndex={0}
+                                    >
+                                      <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                    </div>
+
                                     {/* Tree connector */}
-                                    <div className="relative w-5 flex items-center justify-center shrink-0 self-stretch">
+                                    <div className="relative w-4 flex items-center justify-center shrink-0 self-stretch">
                                       <div
                                         className={cn(
                                           "absolute left-1/2 -translate-x-1/2 w-px bg-border/50",
@@ -585,9 +608,11 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                         </div>
                                       )}
                                     </div>
-                                  </div>
+                                    </div>
+                                  </Reorder.Item>
                                 );
                               })}
+                              </Reorder.Group>
 
                               {/* Add page (tree-style) */}
                               <div className="relative flex items-center">
