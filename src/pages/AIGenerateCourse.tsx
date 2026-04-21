@@ -35,6 +35,7 @@ export interface AIGenerateState {
   title: string;
   intendedLearners: string;
   learningOutcome: string;
+  learningObjectives: string;
   bloomsTaxonomy: string[];
   supportingDocuments: string[];
   guidelines: string;
@@ -72,6 +73,7 @@ const initialState: AIGenerateState = {
   title: "",
   intendedLearners: "",
   learningOutcome: "",
+  learningObjectives: "",
   bloomsTaxonomy: [],
   supportingDocuments: [],
   guidelines: "",
