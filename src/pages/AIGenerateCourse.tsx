@@ -61,6 +61,11 @@ export interface AIGenerateState {
     trueFalse: number;
     fillInBlank: number;
   };
+  scormPageDurationSec: number;
+  scormBgImage: { name: string; url: string } | null;
+  scormBgOpacity: number;
+  scormPassMessage: string;
+  scormFailMessage: string;
 }
 
 const initialState: AIGenerateState = {
@@ -93,6 +98,11 @@ const initialState: AIGenerateState = {
     trueFalse: 1,
     fillInBlank: 0,
   },
+  scormPageDurationSec: 30,
+  scormBgImage: null,
+  scormBgOpacity: 40,
+  scormPassMessage: "Congratulations! You have successfully completed the course.",
+  scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
 };
 
 const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];

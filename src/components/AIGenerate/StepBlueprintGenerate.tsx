@@ -1,5 +1,14 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import {
   Check,
@@ -12,6 +21,7 @@ import {
   Upload,
   X,
   FileText,
+  Sliders,
   type LucideIcon,
 } from "lucide-react";
 import { useRef } from "react";
@@ -457,6 +467,238 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
           />
         </div>
       </PrefCard>
+
+      {/* SCORM Preferences (collapsed accordion) */}
+      <ScormPreferencesAccordion state={state} onChange={onChange} />
     </div>
+  );
+}
+
+function ScormPreferencesAccordion({
+  state,
+  onChange,
+}: {
+  state: AIGenerateState;
+  onChange: (partial: Partial<AIGenerateState>) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mins = Math.floor(state.scormPageDurationSec / 60);
+  const secs = state.scormPageDurationSec % 60;
+
+  const handleFile = (file: File) => {
+    const url = URL.createObjectURL(file);
+    onChange({ scormBgImage: { name: file.name, url } });
+  };
+
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="scorm" className="rounded-xl border border-border bg-card overflow-hidden">
+        <AccordionTrigger className="px-4 py-3 hover:no-underline [&[data-state=open]]:border-b [&[data-state=open]]:border-border">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/20 shrink-0">
+              <Sliders className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="min-w-0 text-left">
+              <div className="text-[15px] font-semibold text-foreground leading-tight">
+                SCORM Preferences
+              </div>
+              <div className="text-[12.5px] text-muted-foreground leading-snug mt-0.5">
+                Configure how the package behaves inside an LMS
+              </div>
+            </div>
+            <span className="ml-auto mr-2 hidden sm:inline-flex items-center text-[10.5px] font-semibold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+              Optional
+            </span>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="p-0">
+          <div className="divide-y divide-border">
+            {/* Page Duration */}
+            <div className="p-5">
+              <Label className="text-[14px] font-semibold text-foreground">Page Duration</Label>
+              <p className="text-[12.5px] text-muted-foreground mt-1">
+                Minimum time learners must spend on each page before progressing.
+              </p>
+              <div className="mt-3 flex items-end gap-3">
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                    Minutes
+                  </span>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={60}
+                    value={mins}
+                    onChange={(e) => {
+                      const m = Math.max(0, Math.min(60, Number(e.target.value) || 0));
+                      onChange({ scormPageDurationSec: m * 60 + secs });
+                    }}
+                    aria-label="Minutes"
+                    className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg"
+                  />
+                </div>
+                <span aria-hidden="true" className="text-[22px] font-light text-muted-foreground pb-2 select-none">:</span>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                    Seconds
+                  </span>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={secs}
+                    onChange={(e) => {
+                      const s = Math.max(0, Math.min(59, Number(e.target.value) || 0));
+                      onChange({ scormPageDurationSec: mins * 60 + s });
+                    }}
+                    aria-label="Seconds"
+                    className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Background Image */}
+            <div className="p-5">
+              <Label className="text-[14px] font-semibold text-foreground">Background Image</Label>
+              <p className="text-[12.5px] text-muted-foreground mt-1">
+                Displayed behind every SCORM page. PNG or JPG, recommended 1920×1080.
+              </p>
+              {state.scormBgImage ? (
+                <div className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-muted/30 p-2.5">
+                  <div
+                    className="h-16 w-24 rounded-lg bg-center bg-cover shrink-0 border border-border"
+                    style={{ backgroundImage: `url(${state.scormBgImage.url})` }}
+                    role="img"
+                    aria-label={state.scormBgImage.name}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[13.5px] font-medium text-foreground truncate">{state.scormBgImage.name}</p>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-[12px] font-medium text-primary hover:underline mt-1"
+                    >
+                      Replace image
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onChange({ scormBgImage: null })}
+                    aria-label="Remove background image"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-background"
+                  >
+                    <X className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-3 w-full flex items-center justify-center gap-2.5 py-5 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] text-primary hover:bg-primary/[0.08] hover:border-primary/60 transition-colors"
+                >
+                  <Upload className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+                  <span className="text-[14px] font-semibold">Upload background image</span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleFile(f);
+                  e.target.value = "";
+                }}
+                aria-label="Background image file"
+              />
+            </div>
+
+            {/* Background Opacity */}
+            <div className="p-5">
+              <Label className="text-[14px] font-semibold text-foreground">Background Opacity</Label>
+              <p className="text-[12.5px] text-muted-foreground mt-1">
+                Drag the slider to adjust how visible the background appears.
+              </p>
+              <div className="mt-3 flex items-center gap-4">
+                <div
+                  className="relative h-16 w-28 rounded-lg border border-border bg-muted/40 overflow-hidden shrink-0"
+                  role="img"
+                  aria-label="Sample preview"
+                >
+                  {state.scormBgImage ? (
+                    <div
+                      className="absolute inset-0 bg-center bg-cover"
+                      style={{
+                        backgroundImage: `url(${state.scormBgImage.url})`,
+                        opacity: state.scormBgOpacity / 100,
+                      }}
+                    />
+                  ) : (
+                    <span className="absolute inset-0 flex items-center justify-center text-[10.5px] text-muted-foreground px-2 text-center">
+                      Upload an image to preview
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[12.5px] font-semibold text-foreground tabular-nums">
+                      {state.scormBgOpacity}%
+                    </span>
+                  </div>
+                  <Slider
+                    value={[state.scormBgOpacity]}
+                    onValueChange={([v]) => onChange({ scormBgOpacity: v })}
+                    min={0}
+                    max={100}
+                    step={5}
+                    aria-label="Background opacity"
+                  />
+                  <div className="flex justify-between mt-1.5 text-[10.5px] text-muted-foreground">
+                    <span>Transparent</span>
+                    <span>Fully visible</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Completion Messages */}
+            <div className="p-5 space-y-4">
+              <div>
+                <Label className="text-[14px] font-semibold text-foreground">Completion Messages</Label>
+                <p className="text-[12.5px] text-muted-foreground mt-1">
+                  Shown to learners based on their final result.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="scorm-pass-msg" className="text-[12.5px] font-medium text-foreground">
+                  Pass criteria message
+                </Label>
+                <Textarea
+                  id="scorm-pass-msg"
+                  value={state.scormPassMessage}
+                  onChange={(e) => onChange({ scormPassMessage: e.target.value })}
+                  rows={2}
+                  className="resize-none rounded-lg text-sm"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="scorm-fail-msg" className="text-[12.5px] font-medium text-foreground">
+                  Fail criteria message
+                </Label>
+                <Textarea
+                  id="scorm-fail-msg"
+                  value={state.scormFailMessage}
+                  onChange={(e) => onChange({ scormFailMessage: e.target.value })}
+                  rows={2}
+                  className="resize-none rounded-lg text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 }
