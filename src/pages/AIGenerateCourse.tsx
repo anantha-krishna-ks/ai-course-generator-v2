@@ -61,6 +61,11 @@ export interface AIGenerateState {
     trueFalse: number;
     fillInBlank: number;
   };
+  scormPageDurationSec: number;
+  scormBgImage: { name: string; url: string } | null;
+  scormBgOpacity: number;
+  scormPassMessage: string;
+  scormFailMessage: string;
 }
 
 const initialState: AIGenerateState = {
