@@ -447,7 +447,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                   Rename
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => regenerateSectionTitle(section.id)}
+                                  onClick={() => openRegenDialog({ kind: "section", sectionId: section.id, currentTitle: section.title })}
                                   className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                                 >
                                   <RefreshCw className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
