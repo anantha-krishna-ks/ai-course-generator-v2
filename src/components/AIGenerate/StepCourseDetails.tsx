@@ -337,6 +337,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       <div>
         <div className="text-base font-semibold text-foreground mb-2.5">
           Intended Learners
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </div>
         <ChipGroup
           options={[
@@ -354,6 +355,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       <div>
         <div className="text-base font-semibold text-foreground mb-2.5">
           Page Duration
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </div>
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Page duration">
           {PAGE_DURATION_OPTIONS.map((opt) => {
@@ -391,9 +393,9 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
 
       {/* Bloom's Taxonomy */}
       <div>
-        <div className="text-base font-semibold text-foreground mb-2.5 flex items-center gap-2">
-          <Layers className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+        <div className="text-base font-semibold text-foreground mb-2.5">
           Bloom's Taxonomy
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Bloom's taxonomy levels">
           {BLOOMS_OPTIONS.map((b) => {
