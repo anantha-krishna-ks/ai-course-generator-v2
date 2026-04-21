@@ -115,8 +115,31 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
   const [regeneratingIds, setRegeneratingIds] = useState<Set<string>>(new Set());
+  const [regenTarget, setRegenTarget] = useState<
+    | { kind: "section"; sectionId: string; currentTitle: string }
+    | { kind: "page"; sectionId: string; pageId: string; currentTitle: string }
+    | null
+  >(null);
+  const [regenPrompt, setRegenPrompt] = useState("");
   const titleInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
+
+  const openRegenDialog = useCallback(
+    (
+      target:
+        | { kind: "section"; sectionId: string; currentTitle: string }
+        | { kind: "page"; sectionId: string; pageId: string; currentTitle: string }
+    ) => {
+      setRegenTarget(target);
+      setRegenPrompt("");
+    },
+    []
+  );
+
+  const closeRegenDialog = useCallback(() => {
+    setRegenTarget(null);
+    setRegenPrompt("");
+  }, []);
 
   const toggleCollapse = useCallback((id: string) => {
     setCollapsedIds((prev) => {
