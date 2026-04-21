@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
 import {
   HtmlIcon,
   PowerPointIcon,
