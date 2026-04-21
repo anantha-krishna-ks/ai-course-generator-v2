@@ -20,6 +20,9 @@ import {
   Timer,
   Minus,
   Plus,
+  Sprout,
+  Gauge,
+  Award,
 } from "lucide-react";
 
 export interface AIOptions {
