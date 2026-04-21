@@ -3,21 +3,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
   Check,
-  Clock,
-  Layers,
-  Users,
   HelpCircle,
   Image as ImageIcon,
   MessageSquare,
-  Ban,
   BookOpen,
   Minus,
   Plus,
-  Sprout,
-  Rocket,
-  Crown,
-  Timer,
-  Hourglass,
   Upload,
   X,
   FileText,
@@ -30,27 +21,6 @@ interface StepBlueprintGenerateProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
-
-const BLOOMS_OPTIONS = [
-  { value: "knowledge", label: "Knowledge" },
-  { value: "comprehension", label: "Comprehension" },
-  { value: "application", label: "Application" },
-  { value: "analysis", label: "Analysis" },
-  { value: "synthesis", label: "Synthesis" },
-  { value: "evaluation", label: "Evaluation" },
-];
-
-const LEARNER_OPTIONS: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "beginners", label: "Beginners", icon: Sprout },
-  { value: "intermediate", label: "Intermediate", icon: Rocket },
-  { value: "expert", label: "Expert", icon: Crown },
-];
-
-const DURATION_OPTIONS: { value: "brief" | "standard" | "extended"; label: string; desc: string; minutes: number; icon: LucideIcon }[] = [
-  { value: "brief", label: "Brief", desc: "< 5 min", minutes: 4, icon: Timer },
-  { value: "standard", label: "Standard", desc: "5–10 min", minutes: 8, icon: Clock },
-  { value: "extended", label: "Extended", desc: "10+ min", minutes: 12, icon: Hourglass },
-];
 
 const TONE_OPTIONS = [
   { value: "ai-determined" as const, label: "AI Determined", icon: "🎯" },
@@ -238,13 +208,6 @@ function DocUploadZone({
 }
 
 export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerateProps) {
-  const toggleBloom = (v: string) => {
-    const set = new Set(state.bloomsTaxonomy);
-    if (set.has(v)) set.delete(v);
-    else set.add(v);
-    onChange({ bloomsTaxonomy: Array.from(set) });
-  };
-
   const togglePref = (key: keyof AIGenerateState["contentPreferences"]) => {
     onChange({
       contentPreferences: {
@@ -256,86 +219,6 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
   return (
     <div className="space-y-4">
-      {/* Two-column responsive grid for compact prefs */}
-      <div className="grid grid-cols-1 gap-3">
-        {/* Page Duration */}
-        <PrefCard>
-          <SectionHeader icon={Clock} title="Page Duration" desc="Approx. time per page" />
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Page duration">
-            {DURATION_OPTIONS.map((opt) => {
-              const selected = state.pageSpanTime === opt.minutes;
-              const Icon = opt.icon;
-              return (
-                <Chip
-                  key={opt.value}
-                  selected={selected}
-                  onClick={() => onChange({ pageSpanTime: opt.minutes })}
-                  ariaLabel={`${opt.label} ${opt.desc}`}
-                >
-                  {selected ? (
-                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  ) : (
-                    <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  )}
-                  {opt.label}
-                  <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
-                    {opt.desc}
-                  </span>
-                </Chip>
-              );
-            })}
-          </div>
-        </PrefCard>
-
-        {/* Intended Learners */}
-        <PrefCard>
-          <SectionHeader icon={Users} title="Intended Learners" desc="Target proficiency level" />
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Intended learners">
-            {LEARNER_OPTIONS.map((opt) => {
-              const selected = state.intendedLearners === opt.value;
-              const Icon = opt.icon;
-              return (
-                <Chip
-                  key={opt.value}
-                  selected={selected}
-                  onClick={() => onChange({ intendedLearners: selected ? "" : opt.value })}
-                  ariaLabel={opt.label}
-                >
-                  {selected ? (
-                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  ) : (
-                    <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  )}
-                  {opt.label}
-                </Chip>
-              );
-            })}
-          </div>
-        </PrefCard>
-      </div>
-
-      {/* Bloom's Taxonomy */}
-      <PrefCard>
-        <SectionHeader icon={Layers} title="Bloom's Taxonomy" desc="Cognitive levels to target" />
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Bloom's taxonomy levels">
-          {BLOOMS_OPTIONS.map((b) => {
-            const selected = state.bloomsTaxonomy.includes(b.value);
-            return (
-              <Chip
-                key={b.value}
-                selected={selected}
-                ariaPressed={selected}
-                onClick={() => toggleBloom(b.value)}
-                ariaLabel={b.label}
-              >
-                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
-                {b.label}
-              </Chip>
-            );
-          })}
-        </div>
-      </PrefCard>
-
       {/* Page-level Preferences */}
       <PrefCard>
         <SectionHeader icon={BookOpen} title="Page-level Preferences" desc="Control what each page contains" />
