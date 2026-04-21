@@ -259,11 +259,11 @@ function AISuggestions({
     setSelected(new Set());
     // Simulate AI delay
     setTimeout(() => {
-      setSuggestions(generateSuggestions(title));
+      setSuggestions(generator(title));
       setVisible(true);
       setLoading(false);
     }, 800);
-  }, [title]);
+  }, [title, generator]);
 
   useEffect(() => {
     if (title.trim().length >= 3) {
@@ -299,7 +299,7 @@ function AISuggestions({
         aria-label={expanded ? "Hide AI suggestions" : "Show AI suggestions"}
       >
         <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-        <span className="text-xs font-semibold text-muted-foreground flex-1">Suggested course goals</span>
+        <span className="text-xs font-semibold text-muted-foreground flex-1">{heading}</span>
         <motion.div
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={{ duration: 0.2 }}
