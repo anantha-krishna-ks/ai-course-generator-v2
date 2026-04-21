@@ -3,21 +3,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
   Check,
-  Clock,
-  Layers,
-  Users,
   HelpCircle,
   Image as ImageIcon,
   MessageSquare,
-  Ban,
   BookOpen,
   Minus,
   Plus,
-  Sprout,
-  Rocket,
-  Crown,
-  Timer,
-  Hourglass,
   Upload,
   X,
   FileText,
@@ -30,27 +21,6 @@ interface StepBlueprintGenerateProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }
-
-const BLOOMS_OPTIONS = [
-  { value: "knowledge", label: "Knowledge" },
-  { value: "comprehension", label: "Comprehension" },
-  { value: "application", label: "Application" },
-  { value: "analysis", label: "Analysis" },
-  { value: "synthesis", label: "Synthesis" },
-  { value: "evaluation", label: "Evaluation" },
-];
-
-const LEARNER_OPTIONS: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "beginners", label: "Beginners", icon: Sprout },
-  { value: "intermediate", label: "Intermediate", icon: Rocket },
-  { value: "expert", label: "Expert", icon: Crown },
-];
-
-const DURATION_OPTIONS: { value: "brief" | "standard" | "extended"; label: string; desc: string; minutes: number; icon: LucideIcon }[] = [
-  { value: "brief", label: "Brief", desc: "< 5 min", minutes: 4, icon: Timer },
-  { value: "standard", label: "Standard", desc: "5–10 min", minutes: 8, icon: Clock },
-  { value: "extended", label: "Extended", desc: "10+ min", minutes: 12, icon: Hourglass },
-];
 
 const TONE_OPTIONS = [
   { value: "ai-determined" as const, label: "AI Determined", icon: "🎯" },
