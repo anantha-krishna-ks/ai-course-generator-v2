@@ -268,7 +268,7 @@ export const GenerateExportDialog = ({
                   {/* Pass / Fail messages */}
                   <div className="grid grid-cols-1 gap-2.5">
                     <div className="rounded-xl border border-border/60 bg-background p-3">
-                      <Label htmlFor="scorm-pass" className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-emerald-600">
+                      <Label htmlFor="scorm-pass" className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-primary">
                         <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
                         Pass Message
                       </Label>
