@@ -374,6 +374,61 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
             <p className="text-sm text-muted-foreground leading-snug">
               AI will generate <span className="font-semibold text-foreground">{state.blueprintSections}</span> section{state.blueprintSections !== 1 ? "s" : ""}, each with <span className="font-semibold text-foreground">{state.blueprintPages}</span> page{state.blueprintPages !== 1 ? "s" : ""} — <span className="font-medium text-primary">{state.blueprintSections * state.blueprintPages} total page{state.blueprintSections * state.blueprintPages !== 1 ? "s" : ""}</span>.
             </p>
+
+            {/* Supporting Documents */}
+            <div className="pt-2 space-y-2">
+              <div>
+                <label className="text-base font-semibold text-foreground block">
+                  Inclusion of Supporting Documents
+                </label>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Optionally provide reference materials to inform AI generation.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full flex flex-col items-center justify-center gap-1.5 py-5 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] hover:border-primary hover:bg-primary/10 transition-all text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label="Upload supporting documents"
+              >
+                <div className="w-9 h-9 rounded-full bg-primary/15 text-primary flex items-center justify-center">
+                  <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+                </div>
+                <span className="text-sm font-medium">
+                  Drop files or <span className="text-primary font-semibold">click to upload</span>
+                </span>
+                <span className="text-[11px] text-muted-foreground">PDF, DOC, DOCX, or TXT • Max 25MB per file</span>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx,.txt"
+                multiple
+                className="hidden"
+                onChange={(e) => handleFilesSelected(e.target.files)}
+                aria-label="Select supporting documents"
+              />
+
+              {state.supportingDocuments.length > 0 && (
+                <div className="space-y-1.5 mt-2">
+                  {state.supportingDocuments.map((name, idx) => (
+                    <div key={`${name}-${idx}`} className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+                      <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                      <span className="text-sm text-foreground truncate flex-1">{name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(idx)}
+                        className="p-0.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        aria-label={`Remove ${name}`}
+                      >
+                        <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </div>
