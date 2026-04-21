@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Download, Check, Wand2, Sliders, CheckCircle2, XCircle, Upload, X } from "lucide-react";
+import { Download, Check, Wand2, Sliders, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
+
 import {
   HtmlIcon,
   PowerPointIcon,
