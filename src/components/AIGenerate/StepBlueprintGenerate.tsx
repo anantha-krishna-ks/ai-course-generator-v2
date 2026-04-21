@@ -22,6 +22,8 @@ import {
   X,
   FileText,
   Sliders,
+  CheckCircle2,
+  XCircle,
   type LucideIcon,
 } from "lucide-react";
 import { useRef } from "react";
@@ -706,36 +708,50 @@ function ScormPreferencesAccordion({
             </div>
 
             {/* Completion Messages */}
-            <div className="p-5 space-y-4">
-              <div>
-                <Label className="text-[14px] font-semibold text-foreground">Completion Messages</Label>
-                <p className="text-[12.5px] text-muted-foreground mt-1">
+            <div className="p-5">
+              <div className="flex-1 min-w-0">
+                <Label className="text-[14.5px] font-semibold text-foreground">
+                  Completion Messages
+                </Label>
+                <p className="text-[13px] text-muted-foreground mt-1">
                   Shown to learners based on their final result.
                 </p>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="scorm-pass-msg" className="text-[12.5px] font-medium text-foreground">
-                  Pass criteria message
-                </Label>
-                <Textarea
-                  id="scorm-pass-msg"
-                  value={state.scormPassMessage}
-                  onChange={(e) => onChange({ scormPassMessage: e.target.value })}
-                  rows={2}
-                  className="resize-none rounded-lg text-sm"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="scorm-fail-msg" className="text-[12.5px] font-medium text-foreground">
-                  Fail criteria message
-                </Label>
-                <Textarea
-                  id="scorm-fail-msg"
-                  value={state.scormFailMessage}
-                  onChange={(e) => onChange({ scormFailMessage: e.target.value })}
-                  rows={2}
-                  className="resize-none rounded-lg text-sm"
-                />
+
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  {/* Pass */}
+                  <div className="rounded-xl border border-border bg-background overflow-hidden">
+                    <div className="flex items-center gap-2 px-3.5 py-2.5 bg-primary/5 border-b border-border">
+                      <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                      <Label htmlFor="scorm-pass-msg" className="text-[13.5px] font-semibold text-foreground">
+                        Pass criteria message
+                      </Label>
+                    </div>
+                    <Textarea
+                      id="scorm-pass-msg"
+                      value={state.scormPassMessage}
+                      onChange={(e) => onChange({ scormPassMessage: e.target.value })}
+                      rows={3}
+                      className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+                    />
+                  </div>
+
+                  {/* Fail */}
+                  <div className="rounded-xl border border-border bg-background overflow-hidden">
+                    <div className="flex items-center gap-2 px-3.5 py-2.5 bg-destructive/5 border-b border-border">
+                      <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" focusable="false" />
+                      <Label htmlFor="scorm-fail-msg" className="text-[13.5px] font-semibold text-foreground">
+                        Fail criteria message
+                      </Label>
+                    </div>
+                    <Textarea
+                      id="scorm-fail-msg"
+                      value={state.scormFailMessage}
+                      onChange={(e) => onChange({ scormFailMessage: e.target.value })}
+                      rows={3}
+                      className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
