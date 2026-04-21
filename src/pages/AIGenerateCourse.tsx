@@ -105,6 +105,11 @@ export default function AIGenerateCourse() {
       case 1:
         return !!formState.title.trim();
       case 2:
+        return (
+          !!formState.intendedLearners.trim() &&
+          !!formState.pageSpanTime &&
+          formState.bloomsTaxonomy.length > 0
+        );
       case 3:
       case 4:
         return true;
