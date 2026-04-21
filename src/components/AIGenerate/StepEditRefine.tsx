@@ -415,6 +415,13 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                   Rename
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
+                                  onClick={() => regenerateSectionTitle(section.id)}
+                                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                                >
+                                  <Sparkles className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  Regenerate title
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
                                   onClick={() => addPage(section.id)}
                                   className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                                 >
