@@ -1,7 +1,8 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Timer, Clock, Hourglass, type LucideIcon } from "lucide-react";
+import { BeginnerIcon, IntermediateIcon, ExpertIcon } from "./learnerLevelIcons";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,6 +44,13 @@ const PROFICIENCY_OPTIONS = [
   { value: "advanced" as const, label: "Advanced" },
   { value: "expert" as const, label: "Expert" },
   { value: "mixed" as const, label: "Mixed" },
+];
+
+// Learner level options with document icons
+const LEARNER_LEVEL_OPTIONS = [
+  { value: "beginners" as const, label: "Beginners", Icon: BeginnerIcon },
+  { value: "intermediate" as const, label: "Intermediate", Icon: IntermediateIcon },
+  { value: "expert" as const, label: "Expert", Icon: ExpertIcon },
 ];
 
 // Mock AI suggestions based on course title keywords
@@ -341,16 +349,32 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
             <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
           </div>
         </div>
-        <ChipGroup
-          options={[
-            { value: "beginners", label: "Beginners", icon: Sprout },
-            { value: "intermediate", label: "Intermediate", icon: Rocket },
-            { value: "expert", label: "Expert", icon: Crown },
-          ]}
-          value={state.intendedLearners}
-          onChange={(v) => onChange({ intendedLearners: v })}
-          ariaLabel="Intended learners"
-        />
+        <div className="flex flex-wrap gap-3" role="radiogroup" aria-label="Intended learners">
+          {LEARNER_LEVEL_OPTIONS.map((opt) => {
+            const selected = state.intendedLearners === opt.value;
+            const Icon = opt.Icon;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onChange({ intendedLearners: selected ? "" : opt.value })}
+                className={cn(
+                  "flex flex-col items-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-w-[100px]",
+                  selected
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
+                )}
+              >
+                <Icon className="w-10 h-10 drop-shadow-sm" />
+                <span className={cn(selected ? "text-foreground" : "text-muted-foreground")}>
+                  {opt.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Page Duration */}
@@ -419,13 +443,13 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
                 }}
                 aria-label={b.label}
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "px-4 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   selected
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-muted text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                 )}
               >
-                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                {selected && <Check className="w-3.5 h-3.5 inline-block mr-1.5" aria-hidden="true" focusable="false" />}
                 {b.label}
               </button>
             );
