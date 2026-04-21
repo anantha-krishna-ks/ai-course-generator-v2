@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Download, FileText, Presentation, FileType, Globe, FileCheck, Check, Wand2 } from "lucide-react";
+import { Download, Check, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import {
+  HtmlIcon,
+  PowerPointIcon,
+  WordIcon,
+  ScormIcon,
+  PdfIcon,
+} from "./exportFormatIcons";
 
 interface GenerateExportDialogProps {
   open: boolean;
@@ -19,46 +26,11 @@ interface GenerateExportDialogProps {
 }
 
 const exportOptions = [
-  {
-    id: "html",
-    label: "HTML",
-    description: "Interactive web format",
-    icon: Globe,
-    bg: "bg-orange-500",
-    selectedBg: "bg-orange-600",
-  },
-  {
-    id: "ppt",
-    label: "PowerPoint",
-    description: "Slide presentation",
-    icon: Presentation,
-    bg: "bg-red-500",
-    selectedBg: "bg-red-600",
-  },
-  {
-    id: "word",
-    label: "Word",
-    description: "Editable document",
-    icon: FileText,
-    bg: "bg-blue-600",
-    selectedBg: "bg-blue-700",
-  },
-  {
-    id: "scorm",
-    label: "SCORM",
-    description: "LMS package",
-    icon: FileCheck,
-    bg: "bg-emerald-600",
-    selectedBg: "bg-emerald-700",
-  },
-  {
-    id: "pdf",
-    label: "PDF",
-    description: "Print-ready file",
-    icon: FileType,
-    bg: "bg-violet-600",
-    selectedBg: "bg-violet-700",
-  },
+  { id: "html", label: "HTML", description: "Interactive web format", Icon: HtmlIcon },
+  { id: "ppt", label: "PowerPoint", description: "Slide presentation", Icon: PowerPointIcon },
+  { id: "word", label: "Word", description: "Editable document", Icon: WordIcon },
+  { id: "scorm", label: "SCORM", description: "LMS package", Icon: ScormIcon },
+  { id: "pdf", label: "PDF", description: "Print-ready file", Icon: PdfIcon },
 ];
 
 export const GenerateExportDialog = ({
