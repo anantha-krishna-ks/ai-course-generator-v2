@@ -234,12 +234,18 @@ function PageDurationStepper({
 function AISuggestions({
   title,
   onSelect,
+  generator = generateSuggestions,
+  heading = "Suggested course goals",
+  regenerateLabel = "Regenerate goals",
 }: {
   title: string;
   onSelect: (text: string) => void;
+  generator?: (title: string) => string[];
+  heading?: string;
+  regenerateLabel?: string;
 }) {
   const [suggestions, setSuggestions] = useState<string[]>(() => {
-    if (title.trim().length >= 3) return generateSuggestions(title);
+    if (title.trim().length >= 3) return generator(title);
     return [];
   });
   const [selected, setSelected] = useState<Set<number>>(new Set());
