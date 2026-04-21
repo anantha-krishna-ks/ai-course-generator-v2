@@ -160,99 +160,78 @@ export const GenerateExportDialog = ({
 
           {/* SCORM Preferences */}
           {isScorm && (
-            <div className="px-4 sm:px-5 pb-5">
+            <div className="px-5 sm:px-6 pb-6">
               <div className="rounded-2xl border border-border/70 bg-gradient-to-b from-primary/[0.03] to-transparent overflow-hidden">
                 {/* Section header */}
-                <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/60 bg-background/40 backdrop-blur-sm">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
-                    <Sliders className="h-3.5 w-3.5 text-primary" aria-hidden="true" focusable="false" />
+                <div className="flex items-center gap-3 px-5 py-4 border-b border-border/60 bg-background/40 backdrop-blur-sm">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                    <Sliders className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-[13px] font-semibold text-foreground leading-tight">SCORM Preferences</h3>
-                    <p className="text-[11px] text-muted-foreground leading-tight">Tune playback inside an LMS</p>
+                    <h3 className="text-[15px] font-semibold text-foreground leading-tight">SCORM Preferences</h3>
+                    <p className="text-[13px] text-muted-foreground leading-tight mt-0.5">Tune playback inside an LMS</p>
                   </div>
                 </div>
 
-                <div className="p-4 space-y-3.5">
-                  {/* Row: Page duration + Opacity */}
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <div className="rounded-xl border border-border/60 bg-background p-3">
-                      <Label htmlFor="scorm-duration" className="flex items-center gap-1.5 text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wide">
-                        <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
-                        Page Duration
-                      </Label>
-                      <div className="mt-2 flex items-baseline gap-1.5">
-                        <Input
-                          id="scorm-duration"
-                          type="number"
-                          min={5}
-                          max={600}
-                          value={pageDuration}
-                          onChange={(e) => setPageDuration(Number(e.target.value))}
-                          className="h-9 text-sm font-medium border-0 bg-muted/40 px-2.5 focus-visible:ring-1"
-                        />
-                        <span className="text-[11px] text-muted-foreground shrink-0">sec</span>
-                      </div>
-                    </div>
-
-                    <div className="rounded-xl border border-border/60 bg-background p-3">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="scorm-opacity" className="flex items-center gap-1.5 text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wide">
-                          <Sliders className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          Opacity
-                        </Label>
-                        <span className="text-[12px] font-semibold text-primary tabular-nums">{opacity}%</span>
-                      </div>
-                      <div className="mt-3.5">
-                        <Slider
-                          id="scorm-opacity"
-                          value={[opacity]}
-                          onValueChange={(v) => setOpacity(v[0])}
-                          min={0}
-                          max={100}
-                          step={5}
-                          aria-label="Background opacity"
-                        />
-                      </div>
+                <div className="p-5 space-y-4">
+                  {/* Page Duration */}
+                  <div className="rounded-xl border border-border/60 bg-background p-4">
+                    <Label htmlFor="scorm-duration" className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
+                      <Clock className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                      Page Duration
+                    </Label>
+                    <p className="text-[12.5px] text-muted-foreground mt-0.5">Minimum time learners spend per page.</p>
+                    <div className="mt-3 flex items-center gap-2">
+                      <Input
+                        id="scorm-duration"
+                        type="number"
+                        min={5}
+                        max={600}
+                        value={pageDuration}
+                        onChange={(e) => setPageDuration(Number(e.target.value))}
+                        className="h-10 text-[14px] font-medium border-0 bg-muted/40 px-3 focus-visible:ring-1 max-w-[140px]"
+                      />
+                      <span className="text-[13px] text-muted-foreground">seconds</span>
                     </div>
                   </div>
 
                   {/* Background Image */}
-                  <div className="rounded-xl border border-border/60 bg-background p-3">
-                    <Label className="flex items-center gap-1.5 text-[10.5px] font-semibold text-muted-foreground uppercase tracking-wide">
-                      <ImagePlus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  <div className="rounded-xl border border-border/60 bg-background p-4">
+                    <Label className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
+                      <ImagePlus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
                       Background Image
                     </Label>
+                    <p className="text-[12.5px] text-muted-foreground mt-0.5">Shown behind every SCORM page.</p>
                     {bgImage ? (
-                      <div className="mt-2 flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/30 p-2">
+                      <div className="mt-3 flex items-center gap-3 rounded-lg border border-border/60 bg-muted/30 p-2.5">
                         <div
-                          className="h-12 w-16 rounded-md bg-center bg-cover shrink-0 border border-border/40"
+                          className="h-14 w-20 rounded-md bg-center bg-cover shrink-0 border border-border/40"
                           style={{ backgroundImage: `url(${bgImage.url})` }}
                           role="img"
                           aria-label={bgImage.name}
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="text-[12px] font-medium text-foreground truncate">{bgImage.name}</p>
-                          <p className="text-[10.5px] text-muted-foreground">Background image</p>
+                          <p className="text-[13.5px] font-medium text-foreground truncate">{bgImage.name}</p>
+                          <p className="text-[12px] text-muted-foreground">Background image</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setBgImage(null)}
                           aria-label="Remove background image"
-                          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background"
+                          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background"
                         >
-                          <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          <X className="w-4 h-4" aria-hidden="true" focusable="false" />
                         </button>
                       </div>
                     ) : (
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="mt-2 w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-dashed border-primary/40 bg-primary/[0.04] text-primary hover:bg-primary/[0.08] transition-colors"
+                        className="mt-3 w-full flex flex-col items-center justify-center gap-1 py-5 rounded-lg border-2 border-dashed border-primary/40 bg-primary/[0.04] text-primary hover:bg-primary/[0.08] transition-colors"
                       >
-                        <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                        <span className="text-[12px] font-medium">Upload image</span>
-                        <span className="text-[10.5px] text-muted-foreground">PNG, JPG · 1920×1080</span>
+                        <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        <span className="text-[13.5px] font-medium">Click to upload background</span>
+                        <span className="text-[12px] text-muted-foreground">PNG or JPG · Recommended 1920×1080</span>
                       </button>
                     )}
                     <input
@@ -265,33 +244,113 @@ export const GenerateExportDialog = ({
                     />
                   </div>
 
+                  {/* Opacity — modern UI: live preview + preset chips + slider */}
+                  <div className="rounded-xl border border-border/60 bg-background p-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="scorm-opacity" className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
+                        <Sliders className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                        Background Opacity
+                      </Label>
+                      <div className="flex items-baseline gap-1 rounded-md bg-primary/10 px-2.5 py-1">
+                        <span className="text-[15px] font-bold text-primary tabular-nums leading-none">{opacity}</span>
+                        <span className="text-[11px] font-medium text-primary/70">%</span>
+                      </div>
+                    </div>
+                    <p className="text-[12.5px] text-muted-foreground mt-0.5">How prominent the background image appears.</p>
+
+                    {/* Live preview strip */}
+                    <div
+                      className="relative mt-3 h-14 rounded-lg overflow-hidden border border-border/60"
+                      style={{
+                        backgroundImage: bgImage
+                          ? `url(${bgImage.url})`
+                          : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%)",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                      aria-hidden="true"
+                    >
+                      <div
+                        className="absolute inset-0 bg-background transition-opacity"
+                        style={{ opacity: 1 - opacity / 100 }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-[12.5px] font-medium text-foreground/80 px-2 py-0.5 rounded bg-background/60 backdrop-blur-sm">
+                          Preview
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Preset chips */}
+                    <div className="mt-3 grid grid-cols-5 gap-1.5">
+                      {[0, 25, 50, 75, 100].map((preset) => {
+                        const active = opacity === preset;
+                        return (
+                          <button
+                            key={preset}
+                            type="button"
+                            onClick={() => setOpacity(preset)}
+                            aria-pressed={active}
+                            className={cn(
+                              "h-8 rounded-md text-[12.5px] font-semibold border transition-colors",
+                              active
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "bg-muted/40 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
+                            )}
+                          >
+                            {preset}%
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Fine-tune slider */}
+                    <div className="mt-4">
+                      <Slider
+                        id="scorm-opacity"
+                        value={[opacity]}
+                        onValueChange={(v) => setOpacity(v[0])}
+                        min={0}
+                        max={100}
+                        step={1}
+                        aria-label="Background opacity"
+                      />
+                      <div className="flex justify-between mt-1.5 text-[11.5px] text-muted-foreground">
+                        <span>Transparent</span>
+                        <span>Opaque</span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Pass / Fail messages */}
-                  <div className="grid grid-cols-1 gap-2.5">
-                    <div className="rounded-xl border border-border/60 bg-background p-3">
-                      <Label htmlFor="scorm-pass" className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-primary">
-                        <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-border/60 bg-background p-4">
+                      <Label htmlFor="scorm-pass" className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
                         Pass Message
                       </Label>
+                      <p className="text-[12.5px] text-muted-foreground mt-0.5">Shown on successful completion.</p>
                       <Textarea
                         id="scorm-pass"
                         value={passMessage}
                         onChange={(e) => setPassMessage(e.target.value)}
-                        rows={2}
-                        className="mt-1.5 text-[12.5px] min-h-[52px] resize-none border-0 bg-muted/30 focus-visible:ring-1 focus-visible:ring-primary/40"
+                        rows={3}
+                        className="mt-2 text-[13.5px] min-h-[72px] resize-none border-0 bg-muted/30 focus-visible:ring-1 focus-visible:ring-primary/40"
                       />
                     </div>
 
-                    <div className="rounded-xl border border-border/60 bg-background p-3">
-                      <Label htmlFor="scorm-fail" className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-destructive">
-                        <XCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <div className="rounded-xl border border-border/60 bg-background p-4">
+                      <Label htmlFor="scorm-fail" className="flex items-center gap-1.5 text-[13px] font-semibold text-foreground">
+                        <XCircle className="w-3.5 h-3.5 text-destructive" aria-hidden="true" focusable="false" />
                         Fail Message
                       </Label>
+                      <p className="text-[12.5px] text-muted-foreground mt-0.5">Shown when learners fall short.</p>
                       <Textarea
                         id="scorm-fail"
                         value={failMessage}
                         onChange={(e) => setFailMessage(e.target.value)}
-                        rows={2}
-                        className="mt-1.5 text-[12.5px] min-h-[52px] resize-none border-0 bg-muted/30 focus-visible:ring-1 focus-visible:ring-destructive/40"
+                        rows={3}
+                        className="mt-2 text-[13.5px] min-h-[72px] resize-none border-0 bg-muted/30 focus-visible:ring-1 focus-visible:ring-destructive/40"
                       />
                     </div>
                   </div>
