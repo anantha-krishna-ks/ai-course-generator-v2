@@ -419,6 +419,11 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
     <div className="space-y-2 animate-fade-in w-full">
       {/* Modern compact toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm w-full">
+        {/* Paragraph style dropdown */}
+        <StyleDropdown editor={editor} />
+
+        <Divider />
+
         {/* Core formatting (always visible) */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -721,5 +726,81 @@ export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEdit
         <EditorContent editor={editor} />
       </div>
     </div>
+  );
+}
+
+type StyleId = 'paragraph' | 'h1' | 'h2' | 'h3' | 'h4' | 'quote';
+
+const STYLE_OPTIONS: {
+  id: StyleId;
+  label: string;
+  preview: string;
+  className: string;
+}[] = [
+  { id: 'paragraph', label: 'Normal', preview: 'Normal', className: 'text-sm text-foreground' },
+  { id: 'h1', label: 'Heading 1', preview: 'Heading 1', className: 'text-2xl font-bold text-foreground' },
+  { id: 'h2', label: 'Heading 2', preview: 'Heading 2', className: 'text-xl font-bold text-foreground' },
+  { id: 'h3', label: 'Heading 3', preview: 'Heading 3', className: 'text-base font-semibold text-foreground' },
+  { id: 'h4', label: 'Heading 4', preview: 'Heading 4', className: 'text-sm font-semibold text-foreground' },
+  { id: 'quote', label: 'Quote', preview: 'Quote', className: 'text-sm italic text-muted-foreground' },
+];
+
+function StyleDropdown({ editor }: { editor: Editor }) {
+  const getCurrent = (): StyleId => {
+    if (editor.isActive('heading', { level: 1 })) return 'h1';
+    if (editor.isActive('heading', { level: 2 })) return 'h2';
+    if (editor.isActive('heading', { level: 3 })) return 'h3';
+    if (editor.isActive('heading', { level: 4 })) return 'h4';
+    if (editor.isActive('blockquote')) return 'quote';
+    return 'paragraph';
+  };
+
+  const current = getCurrent();
+  const currentLabel = STYLE_OPTIONS.find((s) => s.id === current)?.label ?? 'Normal';
+
+  const apply = (id: StyleId) => {
+    const chain = editor.chain().focus();
+    if (id === 'paragraph') chain.setParagraph().run();
+    else if (id === 'quote') chain.setParagraph().toggleBlockquote().run();
+    else {
+      const level = Number(id.replace('h', '')) as 1 | 2 | 3 | 4;
+      chain.setHeading({ level }).run();
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Paragraph style"
+          title="Paragraph style"
+          className="inline-flex items-center gap-1 h-8 px-2 rounded-md text-foreground/80 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0 text-sm font-medium min-w-[88px]"
+        >
+          <span className="truncate">{currentLabel}</span>
+          <ChevronDown className="w-3.5 h-3.5 opacity-70" aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56 p-1.5 bg-background">
+        {STYLE_OPTIONS.map((opt) => {
+          const isActive = current === opt.id;
+          return (
+            <DropdownMenuItem
+              key={opt.id}
+              onSelect={(e) => {
+                e.preventDefault();
+                apply(opt.id);
+              }}
+              className={cn(
+                'rounded-md px-2.5 py-2 cursor-pointer focus:bg-primary/10',
+                isActive && 'bg-primary/10 ring-1 ring-primary/30',
+              )}
+            >
+              <span className={cn('block leading-tight', opt.className)}>{opt.preview}</span>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
