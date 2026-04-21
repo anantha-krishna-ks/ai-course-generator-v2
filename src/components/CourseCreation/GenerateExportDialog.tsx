@@ -298,13 +298,7 @@ export const GenerateExportDialog = ({
                           {bgImage ? "Live preview" : "Sample preview"}
                         </span>
                       </div>
-                      {/* Centered live value */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <span className="tabular-nums leading-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)]">
-                          <span className="text-[40px] font-bold text-foreground">{opacity}</span>
-                          <span className="text-[20px] font-semibold text-muted-foreground ml-0.5">%</span>
-                        </span>
-                      </div>
+                      {/* Centered live value removed per design — value shown in slider bubble */}
                       {!bgImage && (
                         <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 rounded-md bg-background/80 backdrop-blur-sm border border-border/60 pointer-events-none">
                           <span className="text-[10.5px] font-medium text-muted-foreground">Upload an image to preview yours</span>
