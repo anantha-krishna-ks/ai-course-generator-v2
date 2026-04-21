@@ -22,6 +22,8 @@ import {
   X,
   FileText,
   Sliders,
+  CheckCircle2,
+  XCircle,
   type LucideIcon,
 } from "lucide-react";
 import { useRef } from "react";
