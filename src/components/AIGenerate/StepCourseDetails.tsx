@@ -98,7 +98,7 @@ function ChipGroup({
   showDesc?: boolean;
 }) {
   return (
-    <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={ariaLabel}>
+    <div className="flex gap-2 w-full" role="radiogroup" aria-label={ariaLabel}>
       {options.map((opt) => {
         const selected = value === opt.value;
         const Icon = opt.icon;
@@ -110,23 +110,14 @@ function ChipGroup({
             aria-checked={selected}
             onClick={() => onChange(selected ? "" : opt.value)}
             className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "flex-1 px-5 py-2.5 rounded-full text-[0.938rem] font-medium border transition-all duration-200 flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               selected
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
             )}
           >
-            {selected ? (
-              <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            ) : Icon ? (
-              <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            ) : null}
+            {Icon && <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
             {opt.label}
-            {showDesc && opt.desc && (
-              <span className={cn("ml-1 text-xs", selected ? "text-primary-foreground/70" : "text-muted-foreground")}>
-                {opt.desc}
-              </span>
-            )}
           </button>
         );
       })}
