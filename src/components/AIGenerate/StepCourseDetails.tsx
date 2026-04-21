@@ -23,12 +23,12 @@ const PAGE_DURATION_OPTIONS = [
 ];
 
 const BLOOMS_OPTIONS = [
-  { value: "knowledge", label: "Knowledge" },
-  { value: "comprehension", label: "Comprehension" },
-  { value: "application", label: "Application" },
-  { value: "analysis", label: "Analysis" },
-  { value: "synthesis", label: "Synthesis" },
-  { value: "evaluation", label: "Evaluation" },
+  { value: "remember", label: "Remember" },
+  { value: "understand", label: "Understand" },
+  { value: "apply", label: "Apply" },
+  { value: "analyze", label: "Analyze" },
+  { value: "evaluate", label: "Evaluate" },
+  { value: "create", label: "Create" },
 ];
 
 const TONE_OPTIONS = [
