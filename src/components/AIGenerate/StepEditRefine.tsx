@@ -3,7 +3,7 @@ import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
   BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
-  MessageSquare, MoreHorizontal, Copy, ChevronRight, Sparkles, Loader2
+  MessageSquare, MoreHorizontal, Copy, ChevronRight, RefreshCw, Loader2
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
@@ -390,7 +390,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                               {regeneratingIds.has(section.id) ? (
                                 <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" aria-hidden="true" focusable="false" />
                               ) : (
-                                <Sparkles className="w-3.5 h-3.5 text-muted-foreground group-hover/regen:text-primary" aria-hidden="true" focusable="false" />
+                                <RefreshCw className="w-3.5 h-3.5 text-muted-foreground group-hover/regen:text-primary" aria-hidden="true" focusable="false" />
                               )}
                             </button>
 
@@ -418,7 +418,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                   onClick={() => regenerateSectionTitle(section.id)}
                                   className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
                                 >
-                                  <Sparkles className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  <RefreshCw className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                   Regenerate title
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -563,7 +563,7 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                             {regeneratingIds.has(page.id) ? (
                                               <Loader2 className="w-3 h-3 text-primary animate-spin" aria-hidden="true" focusable="false" />
                                             ) : (
-                                              <Sparkles className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                              <RefreshCw className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                             )}
                                           </button>
                                           <button
