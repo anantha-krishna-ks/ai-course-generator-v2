@@ -3,7 +3,7 @@ import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
   BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
-  MessageSquare, MoreHorizontal, Copy, ChevronRight
+  MessageSquare, MoreHorizontal, Copy, ChevronRight, Sparkles, Loader2
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
@@ -83,11 +83,29 @@ const PAGE_TYPE_DOT: Record<Page["type"], string> = {
   summary: "bg-success",
 };
 
+const SECTION_TITLE_POOL = [
+  "Foundations & Context", "Core Principles", "Key Frameworks", "Strategic Insights",
+  "Applied Techniques", "Best Practices", "Real-World Scenarios", "Hands-on Practice",
+  "Advanced Topics", "Common Pitfalls", "Tools & Templates", "Wrap-up & Next Steps",
+];
+
+const PAGE_TITLE_POOL = [
+  "Setting the Stage", "Why It Matters", "Core Concept Overview", "Step-by-Step Guide",
+  "Worked Example", "Try It Yourself", "Quick Knowledge Check", "Common Mistakes",
+  "Pro Tips", "Case Study Deep Dive", "Reflection & Recap", "Action Checklist",
+];
+
+function pickRandom<T>(pool: T[], avoid?: T): T {
+  const filtered = avoid ? pool.filter((p) => p !== avoid) : pool;
+  return filtered[Math.floor(Math.random() * filtered.length)];
+}
+
 export function StepEditRefine({ state }: StepEditRefineProps) {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
+  const [regeneratingIds, setRegeneratingIds] = useState<Set<string>>(new Set());
   const titleInputRef = useRef<HTMLInputElement>(null);
   const pageInputRef = useRef<HTMLInputElement>(null);
 
@@ -186,6 +204,45 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
           : s
       )
     );
+  }, []);
+
+  const regenerateSectionTitle = useCallback((sectionId: string) => {
+    setRegeneratingIds((prev) => new Set(prev).add(sectionId));
+    setTimeout(() => {
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === sectionId ? { ...s, title: pickRandom(SECTION_TITLE_POOL, s.title) } : s
+        )
+      );
+      setRegeneratingIds((prev) => {
+        const n = new Set(prev);
+        n.delete(sectionId);
+        return n;
+      });
+    }, 700);
+  }, []);
+
+  const regeneratePageTitle = useCallback((sectionId: string, pageId: string) => {
+    setRegeneratingIds((prev) => new Set(prev).add(pageId));
+    setTimeout(() => {
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === sectionId
+            ? {
+                ...s,
+                pages: s.pages.map((p) =>
+                  p.id === pageId ? { ...p, title: pickRandom(PAGE_TITLE_POOL, p.title) } : p
+                ),
+              }
+            : s
+        )
+      );
+      setRegeneratingIds((prev) => {
+        const n = new Set(prev);
+        n.delete(pageId);
+        return n;
+      });
+    }, 700);
   }, []);
 
   const totalPages = sections.reduce((sum, s) => sum + s.pages.length, 0);
@@ -305,7 +362,10 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                 }}
                                 aria-label={`Edit title: ${section.title || "Untitled section"}`}
                               >
-                                <h3 className="text-sm font-semibold text-foreground truncate">
+                                <h3 className={cn(
+                                  "text-sm font-semibold text-foreground truncate",
+                                  regeneratingIds.has(section.id) && "bg-gradient-to-r from-primary/40 via-primary to-primary/40 bg-clip-text text-transparent animate-pulse"
+                                )}>
                                   {section.title || <span className="text-muted-foreground">Untitled section...</span>}
                                 </h3>
                                 <p className="text-[11px] text-muted-foreground truncate mt-px">{section.description}</p>
@@ -318,6 +378,21 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                             <span className="text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full mr-1">
                               {section.pages.length} {section.pages.length === 1 ? "page" : "pages"}
                             </span>
+
+                            <button
+                              type="button"
+                              onClick={() => regenerateSectionTitle(section.id)}
+                              disabled={regeneratingIds.has(section.id)}
+                              className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-primary/10 hover:border-primary/30 hover:text-primary flex items-center justify-center transition-colors shrink-0 disabled:opacity-60 disabled:cursor-not-allowed group/regen"
+                              aria-label={`Regenerate title for ${section.title || "section"}`}
+                              title="Regenerate title with AI"
+                            >
+                              {regeneratingIds.has(section.id) ? (
+                                <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" aria-hidden="true" focusable="false" />
+                              ) : (
+                                <Sparkles className="w-3.5 h-3.5 text-muted-foreground group-hover/regen:text-primary" aria-hidden="true" focusable="false" />
+                              )}
+                            </button>
 
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -338,6 +413,13 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                 >
                                   <Pencil className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                   Rename
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => regenerateSectionTitle(section.id)}
+                                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                                >
+                                  <Sparkles className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                  Regenerate title
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => addPage(section.id)}
@@ -444,7 +526,12 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                         />
                                       ) : (
                                         <span
-                                          className="flex-1 text-[13px] font-medium text-foreground truncate min-w-0 cursor-text"
+                                          className={cn(
+                                            "flex-1 text-[13px] font-medium truncate min-w-0 cursor-text",
+                                            regeneratingIds.has(page.id)
+                                              ? "bg-gradient-to-r from-primary/40 via-primary to-primary/40 bg-clip-text text-transparent animate-pulse"
+                                              : "text-foreground"
+                                          )}
                                           onClick={() => {
                                             setEditingPageId(page.id);
                                             setTimeout(() => pageInputRef.current?.focus(), 30);
@@ -465,6 +552,20 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                       {/* Page actions on hover */}
                                       {!isEditingThisPage && (
                                         <div className="flex items-center gap-0 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
+                                          <button
+                                            type="button"
+                                            onClick={() => regeneratePageTitle(section.id, page.id)}
+                                            disabled={regeneratingIds.has(page.id)}
+                                            className="w-7 h-7 rounded-md flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+                                            aria-label={`Regenerate title for page ${page.title}`}
+                                            title="Regenerate title with AI"
+                                          >
+                                            {regeneratingIds.has(page.id) ? (
+                                              <Loader2 className="w-3 h-3 text-primary animate-spin" aria-hidden="true" focusable="false" />
+                                            ) : (
+                                              <Sparkles className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                            )}
+                                          </button>
                                           <button
                                             type="button"
                                             onClick={() => duplicatePage(section.id, page.id)}
