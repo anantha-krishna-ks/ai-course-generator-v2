@@ -2,8 +2,10 @@ import { useState, useCallback, useRef, useEffect, ReactNode, lazy, Suspense } f
 import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2 } from "lucide-react";
+import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
+import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
@@ -113,8 +115,12 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
 
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isEditCoursePage = location.pathname.startsWith("/edit-course");
   const { toast } = useToast();
   const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
+  const [showCloneDialog, setShowCloneDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showTour, setShowTour] = useState(() => {
     if (initialRestoreState) return false;
     return !sessionStorage.getItem("multipage-tour-dismissed");
@@ -645,6 +651,38 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
              >
                <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
              </Button>
+            {isEditCoursePage && (
+              <DropdownMenu>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                        aria-label="More course actions"
+                      >
+                        <MoreVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>More</TooltipContent>
+                </Tooltip>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
+                    <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Clone course
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Delete course
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </header>
@@ -1292,6 +1330,28 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         onOpenChange={setShowExportDialog}
         courseTitle={title}
       />
+
+      {isEditCoursePage && (
+        <>
+          <CloneCourseDialog
+            open={showCloneDialog}
+            onClose={setShowCloneDialog}
+            currentTitle={title}
+            onClone={(newTitle) => {
+              toast({ title: "Course cloned", description: `"${newTitle}" created from "${title}".` });
+            }}
+          />
+          <DeleteCourseDialog
+            open={showDeleteDialog}
+            onClose={setShowDeleteDialog}
+            courseTitle={title}
+            onDelete={() => {
+              toast({ title: "Course deleted", description: `"${title}" has been deleted.`, variant: "destructive" });
+              navigate("/dashboard");
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
