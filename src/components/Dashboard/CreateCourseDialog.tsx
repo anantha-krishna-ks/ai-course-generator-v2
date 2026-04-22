@@ -240,6 +240,13 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               onBack={() => setShowAIConfig(false)}
             />
           </div>
+        ) : showScormConfig ? (
+          <div className="p-4 sm:p-5 md:p-8 overflow-y-auto max-h-[85vh] thin-scrollbar">
+            <ScormPreferencesContent
+              onBack={() => setShowScormConfig(false)}
+              onSave={() => setShowScormConfig(false)}
+            />
+          </div>
         ) : (
           <div className="flex flex-col lg:flex-row min-h-[420px] max-h-[85vh]">
             {/* Left: Live preview panel — hidden on mobile/tablet, shown lg+ */}
