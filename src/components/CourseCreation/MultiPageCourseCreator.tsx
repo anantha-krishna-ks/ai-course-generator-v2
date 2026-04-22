@@ -54,6 +54,7 @@ import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
+import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 
 interface CourseItem {
   id: string;
@@ -130,6 +131,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     return !sessionStorage.getItem("multipage-tour-dismissed");
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
     initialRestoreState?.contentBlocks ?? [
@@ -772,7 +774,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                          variant="ghost"
                          size="sm"
                          className="h-7 px-2.5 text-[11px] font-medium text-primary hover:bg-primary/10 rounded-full"
-                         onClick={() => setShowTour(true)}
+                         onClick={() => setShowTokenDialog(true)}
                        >
                          View details
                        </Button>
@@ -1436,6 +1438,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         open={showExportDialog}
         onOpenChange={setShowExportDialog}
         courseTitle={title}
+      />
+
+      <TokenConsumptionDialog
+        open={showTokenDialog}
+        onClose={() => setShowTokenDialog(false)}
+        imageVersionHistory={[]}
       />
 
       {isEditCoursePage && (
