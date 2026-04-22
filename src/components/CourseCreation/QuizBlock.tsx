@@ -72,29 +72,32 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
-  // Parse questions + passCriteria from content (supports legacy array shape)
-  const parseContent = (raw: string): { questions: Question[]; passCriteria: number } => {
+  // Parse questions + passCriteria + navPage from content (supports legacy array shape)
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1 };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
           passCriteria: typeof parsed.passCriteria === "number" ? parsed.passCriteria : 1,
+          failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1 };
+    return { questions: [], passCriteria: 1, failNavigationPage: "" };
   };
 
   const initial = parseContent(content);
   const [questions, setQuestionsState] = useState<Question[]>(initial.questions);
   const [passCriteria, setPassCriteriaState] = useState<number>(initial.passCriteria);
+  const [failNavigationPage, setFailNavigationPageState] = useState<string>(initial.failNavigationPage);
+  const [showPassCriteriaDialog, setShowPassCriteriaDialog] = useState(false);
 
-  const persist = (qs: Question[], pc: number) => {
-    onChange(JSON.stringify({ questions: qs, passCriteria: pc }));
+  const persist = (qs: Question[], pc: number, fnp: string) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp }));
   };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
@@ -103,7 +106,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
       // Clamp passCriteria within new range (min 1, max next.length)
       const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
       if (clamped !== passCriteria) setPassCriteriaState(clamped);
-      persist(next, clamped);
+      persist(next, clamped, failNavigationPage);
       return next;
     });
   };
@@ -111,7 +114,12 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const setPassCriteria = (value: number) => {
     const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
     setPassCriteriaState(clamped);
-    persist(questions, clamped);
+    persist(questions, clamped, failNavigationPage);
+  };
+
+  const setFailNavigationPage = (value: string) => {
+    setFailNavigationPageState(value);
+    persist(questions, passCriteria, value);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
