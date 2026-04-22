@@ -115,8 +115,12 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
 
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isEditCoursePage = location.pathname.startsWith("/edit-course");
   const { toast } = useToast();
   const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
+  const [showCloneDialog, setShowCloneDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showTour, setShowTour] = useState(() => {
     if (initialRestoreState) return false;
     return !sessionStorage.getItem("multipage-tour-dismissed");
