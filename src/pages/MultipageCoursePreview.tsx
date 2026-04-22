@@ -976,6 +976,11 @@ const MultipageCoursePreview = () => {
           </div>
           )}
         </div>
+        <GenerateExportDialog
+          open={showExportDialog}
+          onOpenChange={setShowExportDialog}
+          courseTitle={data?.title}
+        />
       </div>
     );
   }
