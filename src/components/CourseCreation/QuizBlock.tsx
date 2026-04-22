@@ -616,33 +616,48 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
 
       {/* Pass Criteria Dialog */}
       <Dialog open={showPassCriteriaDialog} onOpenChange={setShowPassCriteriaDialog}>
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-              Pass Criteria
-            </DialogTitle>
-            <DialogDescription>
-              Define the passing rule for this quiz and where learners go if they don't pass.
-            </DialogDescription>
+        <DialogContent
+          className="w-[95vw] max-w-[560px] p-0 overflow-hidden rounded-2xl border shadow-2xl gap-0"
+          style={{ backgroundColor: "#F9FAFB" }}
+        >
+          {/* Header */}
+          <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white space-y-0">
+            <div className="flex items-center justify-between pr-8">
+              <div>
+                <DialogTitle className="text-base font-semibold tracking-tight">
+                  Pass Criteria
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  Define the passing rule and where learners go if they don't pass.
+                </DialogDescription>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/[0.06] px-2.5 py-1.5 rounded-lg border border-primary/15">
+                <Trophy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                SCORM
+              </div>
+            </div>
           </DialogHeader>
 
-          <div className="py-2 space-y-5">
+          {/* Body */}
+          <div className="px-6 pt-4 pb-6 space-y-5">
             {/* No. of Questions (min correct) */}
-            <div className="rounded-xl border border-border p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="h-4 w-1 rounded-full bg-primary" aria-hidden="true" />
-                <Label className="text-sm font-semibold text-foreground">Pass Criteria</Label>
-              </div>
-              <div className="space-y-2 mt-3">
-                <Label htmlFor="pc-no-of-questions" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  No. of Questions
-                </Label>
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="pc-no-of-questions"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                No. of Questions
+              </Label>
+              <div className="rounded-xl border-2 border-border/60 bg-white p-3">
                 <Select
                   value={String(passCriteria)}
                   onValueChange={(v) => setPassCriteria(Number(v))}
                 >
-                  <SelectTrigger id="pc-no-of-questions" aria-label="Minimum correct answers required" className="h-10">
+                  <SelectTrigger
+                    id="pc-no-of-questions"
+                    aria-label="Minimum correct answers required"
+                    className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -653,27 +668,30 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  Minimum Correct Responses Required (Applicable to SCORM)
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  Minimum correct responses required to pass.
                 </p>
               </div>
             </div>
 
             {/* Page Navigation */}
-            <div className="rounded-xl border border-border p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="h-4 w-1 rounded-full bg-primary" aria-hidden="true" />
-                <Label className="text-sm font-semibold text-foreground">Page Navigation</Label>
-              </div>
-              <div className="space-y-2 mt-3">
-                <Label htmlFor="pc-fail-nav" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  When Pass Criteria Not Achieved
-                </Label>
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="pc-fail-nav"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Page Navigation
+              </Label>
+              <div className="rounded-xl border-2 border-border/60 bg-white p-3">
                 <Select
                   value={failNavigationPage || "__none__"}
                   onValueChange={(v) => setFailNavigationPage(v === "__none__" ? "" : v)}
                 >
-                  <SelectTrigger id="pc-fail-nav" aria-label="Page to navigate to when learner fails" className="h-10">
+                  <SelectTrigger
+                    id="pc-fail-nav"
+                    aria-label="Page to navigate to when learner fails"
+                    className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
+                  >
                     <SelectValue placeholder="Select page" />
                   </SelectTrigger>
                   <SelectContent>
@@ -683,18 +701,27 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                     <SelectItem value="chapter-3">Chapter 3</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  Learner will be redirected to this page if they don't meet the pass criteria.
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  Learner will be redirected here if they don't meet the pass criteria.
                 </p>
               </div>
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowPassCriteriaDialog(false)}>
-              Close
+          {/* Footer */}
+          <DialogFooter className="px-6 py-3.5 border-t border-border bg-white">
+            <Button
+              variant="outline"
+              onClick={() => setShowPassCriteriaDialog(false)}
+              className="rounded-xl"
+            >
+              Cancel
             </Button>
-            <Button onClick={() => setShowPassCriteriaDialog(false)}>
+            <Button
+              onClick={() => setShowPassCriteriaDialog(false)}
+              className="rounded-xl gap-1.5"
+            >
+              <Trophy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Save
             </Button>
           </DialogFooter>
