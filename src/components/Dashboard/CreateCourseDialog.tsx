@@ -225,8 +225,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent
           className={cn(
-            "max-h-[90vh] overflow-hidden p-0",
-            isLoading ? "w-[90vw] max-w-[520px]" : "w-[95vw] max-w-[1100px]"
+            "h-[92vh] max-h-[92vh] overflow-hidden p-0",
+            isLoading ? "w-[90vw] max-w-[520px] h-auto" : "w-[95vw] max-w-[1100px]"
           )}
           hideCloseButton={isLoading}
         >
