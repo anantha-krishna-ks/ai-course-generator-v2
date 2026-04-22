@@ -684,14 +684,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  onClick={() => setShowTour(true)}
                  aria-label="Start guided tour"
                >
-                 <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-               </Button>
-             </div>
-           </div>
-         </div>
-       </header>
-        </div>
-      </header>
+                  <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </header>
 
       {/* Main Content */}
       <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
