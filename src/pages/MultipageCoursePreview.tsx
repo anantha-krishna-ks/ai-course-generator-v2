@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
+import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 
 interface CourseItem {
   id: string;
@@ -767,7 +768,10 @@ const MultipageCoursePreview = () => {
             </Button>
             <span className="text-sm font-medium text-foreground">Course Preview</span>
           </div>
-          <DeviceToggle />
+          <div className="flex items-center gap-2">
+            <DeviceToggle />
+            <GlossaryDialog />
+          </div>
         </div>
 
         <div className={cn(
@@ -977,7 +981,10 @@ const MultipageCoursePreview = () => {
           </Button>
           <span className="text-sm font-medium text-foreground">Course Preview</span>
         </div>
-        <DeviceToggle />
+        <div className="flex items-center gap-2">
+          <DeviceToggle />
+          <GlossaryDialog />
+        </div>
       </div>
 
       <div className={cn(
