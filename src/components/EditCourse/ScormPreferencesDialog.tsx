@@ -59,7 +59,7 @@ export function ScormPreferencesDialog({ open, onOpenChange }: ScormPreferencesD
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[640px] max-h-[90vh] p-0 overflow-hidden flex flex-col">
-        <DialogHeader className="px-5 sm:px-6 pt-5 pb-4 border-b border-border">
+        <DialogHeader className="px-5 sm:px-6 py-3.5 border-b border-border">
           <DialogTitle className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/20 shrink-0">
               <Sliders className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
@@ -68,7 +68,7 @@ export function ScormPreferencesDialog({ open, onOpenChange }: ScormPreferencesD
               SCORM Preferences
             </span>
           </DialogTitle>
-          <DialogDescription className="text-[13.5px] text-muted-foreground pl-12 -mt-1">
+          <DialogDescription className="sr-only">
             Configure how the package behaves inside an LMS
           </DialogDescription>
         </DialogHeader>
