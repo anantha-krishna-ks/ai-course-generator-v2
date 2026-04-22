@@ -772,6 +772,7 @@ const MultipageCoursePreview = () => {
           </div>
           <div className="flex items-center gap-2">
             <DeviceToggle />
+            <span aria-hidden="true" className="hidden sm:block h-7 w-px bg-border mx-1" />
             <GlossaryDialog />
             <Button
               variant="outline"
@@ -998,6 +999,7 @@ const MultipageCoursePreview = () => {
         </div>
         <div className="flex items-center gap-2">
           <DeviceToggle />
+          <span aria-hidden="true" className="hidden sm:block h-7 w-px bg-border mx-1" />
           <GlossaryDialog />
           <Button
             variant="outline"
