@@ -225,15 +225,15 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent
           className={cn(
-            "max-h-[90vh] overflow-hidden p-0",
-            isLoading ? "w-[90vw] max-w-[520px]" : "w-[95vw] max-w-[1100px]"
+            "h-[92vh] max-h-[92vh] overflow-hidden p-0",
+            isLoading ? "w-[90vw] max-w-[520px] h-auto" : "w-[95vw] max-w-[1100px]"
           )}
           hideCloseButton={isLoading}
         >
         {isLoading ? (
           <InlineLoader courseTitle={courseTitle} onComplete={handleLoaderComplete} />
         ) : showAIConfig ? (
-          <div className="p-4 sm:p-5 md:p-8 overflow-y-auto max-h-[85vh] thin-scrollbar">
+          <div className="p-4 sm:p-5 md:p-8 overflow-y-auto h-full thin-scrollbar">
             <AIConfigView
               options={aiOptions}
               onChange={setAIOptions}
@@ -241,14 +241,14 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
             />
           </div>
         ) : showScormConfig ? (
-          <div className="p-4 sm:p-5 md:p-8 overflow-y-auto max-h-[85vh] thin-scrollbar">
+          <div className="p-4 sm:p-5 md:p-8 overflow-y-auto h-full thin-scrollbar">
             <ScormPreferencesContent
               onBack={() => setShowScormConfig(false)}
               onSave={() => setShowScormConfig(false)}
             />
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row min-h-[420px] max-h-[85vh]">
+          <div className="flex flex-col lg:flex-row h-full min-h-[420px]">
             {/* Left: Live preview panel — hidden on mobile/tablet, shown lg+ */}
             <LivePreviewPanel
               courseTitle={courseTitle}
