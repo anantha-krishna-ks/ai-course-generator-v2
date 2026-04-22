@@ -2,8 +2,10 @@ import { useState, useCallback, useRef, useEffect, ReactNode, lazy, Suspense } f
 import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2 } from "lucide-react";
+import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
+import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
