@@ -657,10 +657,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                    </TooltipTrigger>
                    <TooltipContent>More</TooltipContent>
                  </Tooltip>
-                 <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-52">
                    <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
+                     <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
+                     SCORM preferences
                    </DropdownMenuItem>
                    <DropdownMenuItem
                      onClick={() => setShowDeleteDialog(true)}
