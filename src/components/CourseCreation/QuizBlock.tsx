@@ -70,22 +70,46 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
-  // Parse questions from content
-  const [questions, setQuestionsState] = useState<Question[]>(() => {
+  // Parse questions + passCriteria from content (supports legacy array shape)
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number } => {
     try {
-      const parsed = JSON.parse(content);
-      return Array.isArray(parsed) ? parsed : [];
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1 };
+      if (parsed && typeof parsed === "object") {
+        return {
+          questions: Array.isArray(parsed.questions) ? parsed.questions : [],
+          passCriteria: typeof parsed.passCriteria === "number" ? parsed.passCriteria : 1,
+        };
+      }
     } catch {
-      return [];
+      /* fallthrough */
     }
-  });
+    return { questions: [], passCriteria: 1 };
+  };
+
+  const initial = parseContent(content);
+  const [questions, setQuestionsState] = useState<Question[]>(initial.questions);
+  const [passCriteria, setPassCriteriaState] = useState<number>(initial.passCriteria);
+
+  const persist = (qs: Question[], pc: number) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc }));
+  };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
     setQuestionsState((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
-      onChange(JSON.stringify(next));
+      // Clamp passCriteria within new range (min 1, max next.length)
+      const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
+      if (clamped !== passCriteria) setPassCriteriaState(clamped);
+      persist(next, clamped);
       return next;
     });
+  };
+
+  const setPassCriteria = (value: number) => {
+    const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
+    setPassCriteriaState(clamped);
+    persist(questions, clamped);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
