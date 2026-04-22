@@ -131,11 +131,6 @@ const Dashboard = () => {
         setTokenData(data);
       } catch (error) {
         console.error("Failed to fetch token info:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load token information. Please try again.",
-          variant: "destructive",
-        });
       } finally {
         setIsLoadingTokens(false);
       }
