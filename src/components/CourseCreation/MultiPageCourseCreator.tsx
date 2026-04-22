@@ -677,24 +677,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                <Download className="w-4 h-4" />
                <span className="hidden sm:inline">Export</span>
              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                onClick={() => setShowTour(true)}
-                aria-label="Start guided tour"
-              >
-                <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-              </Button>
-                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    Delete course
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
+               <Button
+                 variant="ghost"
+                 size="icon"
+                 className="rounded-full"
+                 onClick={() => setShowTour(true)}
+                 aria-label="Start guided tour"
+               >
+                 <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+               </Button>
+             </div>
+           </div>
+         </div>
+       </header>
         </div>
       </header>
 
