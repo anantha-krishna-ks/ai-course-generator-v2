@@ -471,6 +471,39 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
         />
       </div>
 
+      {/* Questions Configuration */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="mb-3">
+          <div className="text-[16px] font-semibold text-foreground leading-tight">
+            Questions Configuration
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Set how many questions to include per page and overall</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <QuestionCounter
+            icon={HelpCircle}
+            label="Questions per page"
+            sublabel="Per page"
+            value={state.questionsPerPage}
+            onChange={(v) => onChange({ questionsPerPage: v })}
+            min={1}
+            max={10}
+            ariaLabel="questions per page"
+          />
+          <QuestionCounter
+            icon={ListChecks}
+            label="No. of Questions"
+            sublabel="Total in course"
+            value={state.totalQuestions}
+            onChange={(v) => onChange({ totalQuestions: v })}
+            min={1}
+            max={200}
+            step={1}
+            ariaLabel="total number of questions"
+          />
+        </div>
+      </div>
+
       {/* Bloom's Taxonomy */}
       <div className="rounded-xl border border-border bg-card p-4">
         <div className="mb-2.5">
