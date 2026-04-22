@@ -55,6 +55,7 @@ import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
+import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 
 interface CourseItem {
   id: string;
@@ -132,6 +133,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showTokenDialog, setShowTokenDialog] = useState(false);
+  const [showScormDialog, setShowScormDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
     initialRestoreState?.contentBlocks ?? [
@@ -657,10 +659,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                    </TooltipTrigger>
                    <TooltipContent>More</TooltipContent>
                  </Tooltip>
-                 <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-52">
                    <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
+                     <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
+                     SCORM preferences
                    </DropdownMenuItem>
                    <DropdownMenuItem
                      onClick={() => setShowDeleteDialog(true)}
@@ -1446,6 +1452,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         open={showTokenDialog}
         onClose={() => setShowTokenDialog(false)}
         imageVersionHistory={[]}
+      />
+
+      <ScormPreferencesDialog
+        open={showScormDialog}
+        onOpenChange={setShowScormDialog}
       />
 
       {isEditCoursePage && (
