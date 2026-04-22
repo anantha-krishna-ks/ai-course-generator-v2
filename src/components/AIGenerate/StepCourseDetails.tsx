@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, HelpCircle, ListChecks, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -393,6 +393,66 @@ function AISuggestions({
   );
 }
 
+function QuestionCounter({
+  icon: Icon,
+  label,
+  sublabel,
+  value,
+  onChange,
+  min = 1,
+  max = 100,
+  step = 1,
+  ariaLabel,
+}: {
+  icon: LucideIcon;
+  label: string;
+  sublabel: string;
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  ariaLabel: string;
+}) {
+  const decrement = () => onChange(Math.max(min, value - step));
+  const increment = () => onChange(Math.min(max, value + step));
+
+  return (
+    <div className="rounded-lg border border-border/80 bg-background px-4 py-3 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+          <Icon className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="min-w-0">
+          <span className="text-sm font-medium text-foreground block leading-tight truncate">{label}</span>
+          <span className="text-[11px] text-muted-foreground">{sublabel}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          onClick={decrement}
+          disabled={value <= min}
+          aria-label={`Decrease ${ariaLabel}`}
+          className="w-8 h-8 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <Minus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+        </button>
+        <span className="text-xl font-bold text-foreground tabular-nums leading-none min-w-[28px] text-center">{value}</span>
+        <button
+          type="button"
+          onClick={increment}
+          disabled={value >= max}
+          aria-label={`Increase ${ariaLabel}`}
+          className="w-8 h-8 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          <Plus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
   return (
     <div className="space-y-6">
@@ -469,6 +529,39 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           value={state.pageSpanTime || 5}
           onChange={(v) => onChange({ pageSpanTime: v })}
         />
+      </div>
+
+      {/* Questions Configuration */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="mb-3">
+          <div className="text-[16px] font-semibold text-foreground leading-tight">
+            Questions Configuration
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Set how many questions to include per page and overall</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <QuestionCounter
+            icon={HelpCircle}
+            label="Questions per page"
+            sublabel="Per page"
+            value={state.questionsPerPage}
+            onChange={(v) => onChange({ questionsPerPage: v })}
+            min={1}
+            max={10}
+            ariaLabel="questions per page"
+          />
+          <QuestionCounter
+            icon={ListChecks}
+            label="No. of Questions"
+            sublabel="Total in course"
+            value={state.totalQuestions}
+            onChange={(v) => onChange({ totalQuestions: v })}
+            min={1}
+            max={200}
+            step={1}
+            ariaLabel="total number of questions"
+          />
+        </div>
       </div>
 
       {/* Bloom's Taxonomy */}
