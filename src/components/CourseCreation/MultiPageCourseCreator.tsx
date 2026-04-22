@@ -132,6 +132,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showTokenDialog, setShowTokenDialog] = useState(false);
+  const [showScormDialog, setShowScormDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
     initialRestoreState?.contentBlocks ?? [
