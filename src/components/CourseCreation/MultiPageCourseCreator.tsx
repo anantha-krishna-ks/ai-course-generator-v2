@@ -1330,6 +1330,28 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         onOpenChange={setShowExportDialog}
         courseTitle={title}
       />
+
+      {isEditCoursePage && (
+        <>
+          <CloneCourseDialog
+            open={showCloneDialog}
+            onClose={setShowCloneDialog}
+            currentTitle={title}
+            onClone={(newTitle) => {
+              toast({ title: "Course cloned", description: `"${newTitle}" created from "${title}".` });
+            }}
+          />
+          <DeleteCourseDialog
+            open={showDeleteDialog}
+            onClose={setShowDeleteDialog}
+            courseTitle={title}
+            onDelete={() => {
+              toast({ title: "Course deleted", description: `"${title}" has been deleted.`, variant: "destructive" });
+              navigate("/dashboard");
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
