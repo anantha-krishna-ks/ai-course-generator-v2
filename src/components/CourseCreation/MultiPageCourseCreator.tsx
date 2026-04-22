@@ -672,6 +672,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  </DropdownMenuContent>
                </DropdownMenu>
              )}
+             {isEditCoursePage && (
+               <span
+                 aria-hidden="true"
+                 className="hidden sm:block h-7 w-px bg-gradient-to-b from-transparent via-border to-transparent mx-1"
+               />
+             )}
              <Button
                variant="outline"
                className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
