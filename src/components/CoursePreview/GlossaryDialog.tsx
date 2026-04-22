@@ -54,29 +54,29 @@ export const GlossaryDialog = () => {
           <Info className="w-4 h-4" aria-hidden="true" focusable="false" />
         </button>
       </DialogTrigger>
-      <DialogContent className="w-[95vw] max-w-4xl h-[85vh] max-h-[85vh] p-0 flex flex-col overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
-          <DialogTitle className="text-xl font-semibold">Glossary</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="w-[97vw] max-w-6xl h-[92vh] max-h-[92vh] p-0 flex flex-col overflow-hidden">
+        <DialogHeader className="px-8 pt-7 pb-5 border-b">
+          <DialogTitle className="text-2xl font-semibold text-foreground">Glossary</DialogTitle>
+          <DialogDescription className="text-base text-foreground/80">
             Key terms and definitions referenced throughout this course.
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="flex-1 thin-scrollbar">
-          <div className="px-6 py-4">
+          <div className="px-8 py-5">
             <Table>
               <TableHeader className="sticky top-0 bg-background z-10">
                 <TableRow>
-                  <TableHead className="w-[35%] text-foreground font-semibold">Glossary Term</TableHead>
-                  <TableHead className="text-foreground font-semibold">Description</TableHead>
+                  <TableHead className="w-[35%] text-foreground font-semibold text-base">Glossary Term</TableHead>
+                  <TableHead className="text-foreground font-semibold text-base">Description</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {GLOSSARY.map((entry) => (
                   <TableRow key={entry.term} className="align-top">
-                    <TableCell className="font-medium text-foreground py-3" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>
+                    <TableCell className="font-semibold text-foreground py-4 text-[15px]" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>
                       {entry.term}
                     </TableCell>
-                    <TableCell className="text-muted-foreground py-3 leading-relaxed" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>
+                    <TableCell className="text-foreground/85 py-4 leading-relaxed text-[15px]" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>
                       {entry.description}
                     </TableCell>
                   </TableRow>
