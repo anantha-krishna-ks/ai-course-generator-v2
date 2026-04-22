@@ -19,9 +19,11 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
+import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -177,6 +179,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [isLoading, setIsLoading] = useState(false);
   const [aiOptions, setAIOptions] = useState<AIOptions>(defaultAIOptions);
   const [showAIConfig, setShowAIConfig] = useState(false);
+  const [scormEnabled, setScormEnabled] = useState(false);
+  const [showScormDialog, setShowScormDialog] = useState(false);
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
@@ -349,12 +353,60 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               </div>
 
               {/* AI Support Toggle — kept as-is */}
-              <div className="mb-4 sm:mb-5">
+              <div className="mb-3 sm:mb-4">
                 <AIToggleRow
                   options={aiOptions}
                   onChange={setAIOptions}
                   onConfigure={() => setShowAIConfig(true)}
                 />
+              </div>
+
+              {/* SCORM Preferences Toggle */}
+              <div className="mb-4 sm:mb-5">
+                <div
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-3 rounded-lg border transition-all",
+                    scormEnabled
+                      ? "border-border bg-card shadow-sm"
+                      : "border-border bg-background"
+                  )}
+                >
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
+                    <Package
+                      className={cn(
+                        "w-4 h-4 transition-colors duration-300",
+                        scormEnabled ? "text-foreground" : "text-muted-foreground"
+                      )}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-semibold text-foreground block">
+                      SCORM Preferences
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {scormEnabled
+                        ? "Click configure to set up SCORM options"
+                        : "Configure SCORM packaging & completion rules"}
+                    </span>
+                  </div>
+                  {scormEnabled && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowScormDialog(true)}
+                      className="shrink-0 gap-1.5 text-xs h-8 rounded-full"
+                    >
+                      <Settings2 className="w-3.5 h-3.5" />
+                      Configure
+                    </Button>
+                  )}
+                  <Switch
+                    checked={scormEnabled}
+                    onCheckedChange={setScormEnabled}
+                    aria-label="Enable SCORM Preferences"
+                  />
+                </div>
               </div>
 
               {/* Spacer */}
@@ -375,6 +427,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
           </div>
         )}
       </DialogContent>
+      <ScormPreferencesDialog open={showScormDialog} onOpenChange={setShowScormDialog} />
     </Dialog>
   );
 }
