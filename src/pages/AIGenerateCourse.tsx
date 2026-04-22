@@ -95,6 +95,7 @@ const initialState: AIGenerateState = {
     addImages: true,
   },
   questionsPerPage: 3,
+  totalQuestions: 10,
   questionTypes: {
     singleChoice: 1,
     multipleChoice: 1,
