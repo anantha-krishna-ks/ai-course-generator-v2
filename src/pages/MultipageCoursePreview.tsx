@@ -9,6 +9,7 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
+import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 
 interface CourseItem {
   id: string;
@@ -51,6 +52,7 @@ const MultipageCoursePreview = () => {
   const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile'>('desktop');
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
@@ -774,7 +776,7 @@ const MultipageCoursePreview = () => {
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-              onClick={handleBack}
+              onClick={() => setShowExportDialog(true)}
             >
               <Download className="w-4 h-4" aria-hidden="true" focusable="false" />
               <span className="hidden sm:inline">Export</span>
@@ -995,7 +997,7 @@ const MultipageCoursePreview = () => {
           <Button
             variant="outline"
             className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-            onClick={() => setStarted(false)}
+            onClick={() => setShowExportDialog(true)}
           >
             <Download className="w-4 h-4" aria-hidden="true" focusable="false" />
             <span className="hidden sm:inline">Export</span>
@@ -1184,6 +1186,11 @@ const MultipageCoursePreview = () => {
         </div>
         )}
       </div>
+      <GenerateExportDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        courseTitle={data?.title}
+      />
     </div>
   );
 };
