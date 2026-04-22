@@ -361,9 +361,9 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
           </div>
         </div>
         {state.contentPreferences.includeQuestions && (
-          <div className="mt-3 rounded-xl border border-primary/20 bg-primary/[0.03] p-3.5">
+          <div className="mt-3 rounded-xl border border-border bg-background p-4">
             <div className="mb-3">
-              <div className="text-[14px] font-semibold text-foreground leading-tight">Number of Questions</div>
+              <div className="text-[15px] font-semibold text-foreground leading-tight">Number of Questions</div>
               <p className="text-xs text-muted-foreground mt-0.5">Set how many of each question type to include per page.</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
