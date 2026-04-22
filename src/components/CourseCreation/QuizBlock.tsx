@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
-import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical, MoreHorizontal } from "lucide-react";
+import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical, MoreHorizontal, Trophy } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DndContext,
   closestCenter,
@@ -70,22 +72,46 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
-  // Parse questions from content
-  const [questions, setQuestionsState] = useState<Question[]>(() => {
+  // Parse questions + passCriteria from content (supports legacy array shape)
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number } => {
     try {
-      const parsed = JSON.parse(content);
-      return Array.isArray(parsed) ? parsed : [];
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1 };
+      if (parsed && typeof parsed === "object") {
+        return {
+          questions: Array.isArray(parsed.questions) ? parsed.questions : [],
+          passCriteria: typeof parsed.passCriteria === "number" ? parsed.passCriteria : 1,
+        };
+      }
     } catch {
-      return [];
+      /* fallthrough */
     }
-  });
+    return { questions: [], passCriteria: 1 };
+  };
+
+  const initial = parseContent(content);
+  const [questions, setQuestionsState] = useState<Question[]>(initial.questions);
+  const [passCriteria, setPassCriteriaState] = useState<number>(initial.passCriteria);
+
+  const persist = (qs: Question[], pc: number) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc }));
+  };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
     setQuestionsState((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
-      onChange(JSON.stringify(next));
+      // Clamp passCriteria within new range (min 1, max next.length)
+      const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
+      if (clamped !== passCriteria) setPassCriteriaState(clamped);
+      persist(next, clamped);
       return next;
     });
+  };
+
+  const setPassCriteria = (value: number) => {
+    const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
+    setPassCriteriaState(clamped);
+    persist(questions, clamped);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -244,6 +270,53 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
             </button>
           )}
         </div>
+
+        {/* Pass Criteria — minimum correct responses required (applicable to SCORM) */}
+        {isQuizVariant && questions.length > 0 && (
+          <div className="flex items-center justify-between gap-3 px-5 py-2.5 border-b border-border/60 bg-primary/[0.03]">
+            <div className="flex items-center gap-2 min-w-0">
+              <Trophy className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+              <span className="text-xs font-semibold text-foreground">Pass Criteria</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className="text-[10px] font-medium text-muted-foreground hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-full bg-muted cursor-help"
+                    tabIndex={0}
+                  >
+                    SCORM
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[260px] text-xs">
+                  Minimum number of correct responses a learner must achieve to pass this quiz when exported as SCORM.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="quiz-pass-criteria" className="text-xs text-muted-foreground">
+                Min. correct
+              </label>
+              <Select
+                value={String(passCriteria)}
+                onValueChange={(v) => setPassCriteria(Number(v))}
+              >
+                <SelectTrigger
+                  id="quiz-pass-criteria"
+                  aria-label="Minimum correct responses required to pass"
+                  className="h-8 w-[88px] text-xs font-semibold"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: questions.length }, (_, i) => i + 1).map((n) => (
+                    <SelectItem key={n} value={String(n)} className="text-xs">
+                      {n} / {questions.length}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
 
         {/* Questions list or empty state */}
         {questions.length === 0 ? (
