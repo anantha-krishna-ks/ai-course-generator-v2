@@ -55,9 +55,9 @@ export const GlossaryDialog = () => {
         </button>
       </DialogTrigger>
       <DialogContent className="w-[97vw] max-w-6xl h-[92vh] max-h-[92vh] p-0 flex flex-col overflow-hidden">
-        <DialogHeader className="px-8 pt-7 pb-5 border-b">
+        <DialogHeader className="px-8 pt-5 pb-4 border-b">
           <DialogTitle className="text-2xl font-semibold text-foreground">Glossary</DialogTitle>
-          <DialogDescription className="text-base text-foreground/80">
+          <DialogDescription className="sr-only">
             Key terms and definitions referenced throughout this course.
           </DialogDescription>
         </DialogHeader>
