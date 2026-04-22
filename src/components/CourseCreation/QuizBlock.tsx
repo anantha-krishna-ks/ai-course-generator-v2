@@ -272,10 +272,9 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           <div className="flex items-center gap-2">
             {isQuizVariant && questions.length > 0 && (
               <Button
-                variant="outline"
                 size="sm"
                 onClick={() => setShowPassCriteriaDialog(true)}
-                className="h-7 px-2.5 gap-1.5 text-xs font-medium border-primary/40 text-primary hover:bg-primary/5 rounded-full"
+                className="h-7 px-2.5 gap-1.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-full"
               >
                 <Trophy className="w-3 h-3" aria-hidden="true" focusable="false" />
                 Pass Criteria
