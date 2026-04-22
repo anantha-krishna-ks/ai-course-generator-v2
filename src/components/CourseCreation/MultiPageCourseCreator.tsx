@@ -54,6 +54,7 @@ import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
+import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 
 interface CourseItem {
   id: string;
@@ -130,6 +131,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     return !sessionStorage.getItem("multipage-tour-dismissed");
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
     initialRestoreState?.contentBlocks ?? [
