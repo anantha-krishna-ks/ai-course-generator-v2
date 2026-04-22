@@ -56,6 +56,7 @@ export interface AIGenerateState {
     addImages: boolean;
   };
   questionsPerPage: number;
+  totalQuestions: number;
   questionTypes: {
     singleChoice: number;
     multipleChoice: number;
