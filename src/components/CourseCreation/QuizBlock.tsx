@@ -659,7 +659,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                   <SelectContent>
                     {Array.from({ length: questions.length }, (_, i) => i + 1).map((n) => (
                       <SelectItem key={n} value={String(n)}>
-                        {n} of {questions.length}
+                        {n}
                       </SelectItem>
                     ))}
                   </SelectContent>
