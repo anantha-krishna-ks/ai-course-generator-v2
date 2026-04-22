@@ -636,48 +636,56 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   </Button>
                </TooltipTrigger>
                <TooltipContent>Preview</TooltipContent>
-             </Tooltip>
-            <Button
-              variant="outline"
-              className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-              onClick={() => setShowExportDialog(true)}
-            >
-              <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Export</span>
-            </Button>
+              </Tooltip>
+             {isEditCoursePage && (
+               <DropdownMenu>
+                 <Tooltip>
+                   <TooltipTrigger asChild>
+                     <DropdownMenuTrigger asChild>
+                       <Button
+                         variant="ghost"
+                         size="icon"
+                         className="rounded-full"
+                         aria-label="More course actions"
+                       >
+                         <MoreVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                       </Button>
+                     </DropdownMenuTrigger>
+                   </TooltipTrigger>
+                   <TooltipContent>More</TooltipContent>
+                 </Tooltip>
+                 <DropdownMenuContent align="end" className="w-48">
+                   <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
+                     <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
+                     Clone course
+                   </DropdownMenuItem>
+                   <DropdownMenuItem
+                     onClick={() => setShowDeleteDialog(true)}
+                     className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                   >
+                     <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                     Delete course
+                   </DropdownMenuItem>
+                 </DropdownMenuContent>
+               </DropdownMenu>
+             )}
              <Button
-               variant="ghost"
-               size="icon"
-               className="rounded-full"
-               onClick={() => setShowTour(true)}
-               aria-label="Start guided tour"
+               variant="outline"
+               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
+               onClick={() => setShowExportDialog(true)}
              >
-               <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+               <Download className="w-4 h-4" />
+               <span className="hidden sm:inline">Export</span>
              </Button>
-            {isEditCoursePage && (
-              <DropdownMenu>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full"
-                        aria-label="More course actions"
-                      >
-                        <MoreVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>More</TooltipContent>
-                </Tooltip>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
-                    <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    Clone course
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setShowDeleteDialog(true)}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full"
+                onClick={() => setShowTour(true)}
+                aria-label="Start guided tour"
+              >
+                <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+              </Button>
                     className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                   >
                     <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
