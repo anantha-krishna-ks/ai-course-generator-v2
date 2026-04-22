@@ -688,7 +688,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                          <Button
                            variant="outline"
                            size="icon"
-                           className="rounded-full border-border"
+                           className="rounded-full border-primary text-primary hover:bg-primary/5"
                            aria-label="View token usage"
                          >
                            <Coins className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
