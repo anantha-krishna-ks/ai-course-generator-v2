@@ -411,7 +411,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
           </div>
         )}
       </DialogContent>
-      <ScormPreferencesDialog open={showScormDialog} onOpenChange={setShowScormDialog} />
     </Dialog>
   );
 }
