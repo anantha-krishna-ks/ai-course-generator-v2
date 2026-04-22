@@ -83,7 +83,7 @@ export function ScormPreferencesDialog({ open, onOpenChange }: ScormPreferencesD
           `}</style>
           <div className="divide-y divide-border">
             {/* Page Duration */}
-            <div className="p-5">
+            <div className="px-5 pt-2 pb-5">
               <Label className="text-[16px] font-semibold text-foreground">Page Duration</Label>
               <p className="text-[13.5px] text-muted-foreground mt-1">
                 Minimum time learners must spend on each page before progressing.
