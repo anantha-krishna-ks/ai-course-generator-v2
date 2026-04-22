@@ -738,8 +738,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                      <div className="px-5 py-4 space-y-2.5 border-t border-border/60">
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
-                           <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                             <ArrowDownRight className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" focusable="false" />
+                           <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
+                             <ArrowDownRight className="w-3.5 h-3.5 text-accent-foreground" aria-hidden="true" focusable="false" />
                            </div>
                            <div>
                              <p className="text-xs font-medium text-foreground">Input</p>
