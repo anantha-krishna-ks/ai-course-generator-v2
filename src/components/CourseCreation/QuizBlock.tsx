@@ -72,29 +72,32 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
-  // Parse questions + passCriteria from content (supports legacy array shape)
-  const parseContent = (raw: string): { questions: Question[]; passCriteria: number } => {
+  // Parse questions + passCriteria + navPage from content (supports legacy array shape)
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1 };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
           passCriteria: typeof parsed.passCriteria === "number" ? parsed.passCriteria : 1,
+          failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1 };
+    return { questions: [], passCriteria: 1, failNavigationPage: "" };
   };
 
   const initial = parseContent(content);
   const [questions, setQuestionsState] = useState<Question[]>(initial.questions);
   const [passCriteria, setPassCriteriaState] = useState<number>(initial.passCriteria);
+  const [failNavigationPage, setFailNavigationPageState] = useState<string>(initial.failNavigationPage);
+  const [showPassCriteriaDialog, setShowPassCriteriaDialog] = useState(false);
 
-  const persist = (qs: Question[], pc: number) => {
-    onChange(JSON.stringify({ questions: qs, passCriteria: pc }));
+  const persist = (qs: Question[], pc: number, fnp: string) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp }));
   };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
@@ -103,7 +106,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
       // Clamp passCriteria within new range (min 1, max next.length)
       const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
       if (clamped !== passCriteria) setPassCriteriaState(clamped);
-      persist(next, clamped);
+      persist(next, clamped, failNavigationPage);
       return next;
     });
   };
@@ -111,7 +114,12 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const setPassCriteria = (value: number) => {
     const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
     setPassCriteriaState(clamped);
-    persist(questions, clamped);
+    persist(questions, clamped, failNavigationPage);
+  };
+
+  const setFailNavigationPage = (value: string) => {
+    setFailNavigationPageState(value);
+    persist(questions, passCriteria, value);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -261,62 +269,28 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
               </Badge>
             )}
           </div>
-          {questions.length > 0 && (
-            <button
-              onClick={toggleExpandAll}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
-            >
-              {allExpanded ? "Collapse all" : "Expand all"}
-            </button>
-          )}
-        </div>
-
-        {/* Pass Criteria — minimum correct responses required (applicable to SCORM) */}
-        {isQuizVariant && questions.length > 0 && (
-          <div className="flex items-center justify-between gap-3 px-5 py-2.5 border-b border-border/60 bg-primary/[0.03]">
-            <div className="flex items-center gap-2 min-w-0">
-              <Trophy className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
-              <span className="text-xs font-semibold text-foreground">Pass Criteria</span>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span
-                    className="text-[10px] font-medium text-muted-foreground hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-full bg-muted cursor-help"
-                    tabIndex={0}
-                  >
-                    SCORM
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[260px] text-xs">
-                  Minimum number of correct responses a learner must achieve to pass this quiz when exported as SCORM.
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <div className="flex items-center gap-2">
-              <label htmlFor="quiz-pass-criteria" className="text-xs text-muted-foreground">
-                Min. correct
-              </label>
-              <Select
-                value={String(passCriteria)}
-                onValueChange={(v) => setPassCriteria(Number(v))}
+          <div className="flex items-center gap-2">
+            {isQuizVariant && questions.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPassCriteriaDialog(true)}
+                className="h-7 px-2.5 gap-1.5 text-xs font-medium border-primary/40 text-primary hover:bg-primary/5 rounded-full"
               >
-                <SelectTrigger
-                  id="quiz-pass-criteria"
-                  aria-label="Minimum correct responses required to pass"
-                  className="h-8 w-[88px] text-xs font-semibold"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: questions.length }, (_, i) => i + 1).map((n) => (
-                    <SelectItem key={n} value={String(n)} className="text-xs">
-                      {n} / {questions.length}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <Trophy className="w-3 h-3" aria-hidden="true" focusable="false" />
+                Pass Criteria
+              </Button>
+            )}
+            {questions.length > 0 && (
+              <button
+                onClick={toggleExpandAll}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+              >
+                {allExpanded ? "Collapse all" : "Expand all"}
+              </button>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Questions list or empty state */}
         {questions.length === 0 ? (
@@ -635,6 +609,93 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                   Regenerate
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pass Criteria Dialog */}
+      <Dialog open={showPassCriteriaDialog} onOpenChange={setShowPassCriteriaDialog}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              Pass Criteria
+            </DialogTitle>
+            <DialogDescription>
+              Define the passing rule for this quiz and where learners go if they don't pass.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-2 space-y-5">
+            {/* No. of Questions (min correct) */}
+            <div className="rounded-xl border border-border p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="h-4 w-1 rounded-full bg-primary" aria-hidden="true" />
+                <Label className="text-sm font-semibold text-foreground">Pass Criteria</Label>
+              </div>
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="pc-no-of-questions" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  No. of Questions
+                </Label>
+                <Select
+                  value={String(passCriteria)}
+                  onValueChange={(v) => setPassCriteria(Number(v))}
+                >
+                  <SelectTrigger id="pc-no-of-questions" aria-label="Minimum correct answers required" className="h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: questions.length }, (_, i) => i + 1).map((n) => (
+                      <SelectItem key={n} value={String(n)}>
+                        {n} of {questions.length}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Minimum Correct Responses Required (Applicable to SCORM)
+                </p>
+              </div>
+            </div>
+
+            {/* Page Navigation */}
+            <div className="rounded-xl border border-border p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="h-4 w-1 rounded-full bg-primary" aria-hidden="true" />
+                <Label className="text-sm font-semibold text-foreground">Page Navigation</Label>
+              </div>
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="pc-fail-nav" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  When Pass Criteria Not Achieved
+                </Label>
+                <Select
+                  value={failNavigationPage || "__none__"}
+                  onValueChange={(v) => setFailNavigationPage(v === "__none__" ? "" : v)}
+                >
+                  <SelectTrigger id="pc-fail-nav" aria-label="Page to navigate to when learner fails" className="h-10">
+                    <SelectValue placeholder="Select page" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Select page</SelectItem>
+                    <SelectItem value="chapter-1">Chapter 1</SelectItem>
+                    <SelectItem value="chapter-2">Chapter 2</SelectItem>
+                    <SelectItem value="chapter-3">Chapter 3</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Learner will be redirected to this page if they don't meet the pass criteria.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPassCriteriaDialog(false)}>
+              Close
+            </Button>
+            <Button onClick={() => setShowPassCriteriaDialog(false)}>
+              Save
             </Button>
           </DialogFooter>
         </DialogContent>
