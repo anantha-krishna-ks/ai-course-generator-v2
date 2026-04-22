@@ -776,11 +776,7 @@ const MultipageCoursePreview = () => {
             <Button
               variant="outline"
               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-              onClick={handleBack}
-            >
-              <Download className="w-4 h-4" aria-hidden="true" focusable="false" />
-              <span className="hidden sm:inline">Export</span>
-            </Button>
+              onClick={() => setShowExportDialog(true)}
           </div>
         </div>
 
