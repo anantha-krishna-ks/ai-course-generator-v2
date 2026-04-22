@@ -282,12 +282,15 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
               </Button>
             )}
             {questions.length > 0 && (
-              <button
-                onClick={toggleExpandAll}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
-              >
-                {allExpanded ? "Collapse all" : "Expand all"}
-              </button>
+              <>
+                <span className="h-4 w-px bg-border" aria-hidden="true" />
+                <button
+                  onClick={toggleExpandAll}
+                  className="h-7 inline-flex items-center px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full"
+                >
+                  {allExpanded ? "Collapse all" : "Expand all"}
+                </button>
+              </>
             )}
           </div>
         </div>
