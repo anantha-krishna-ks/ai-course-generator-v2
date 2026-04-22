@@ -613,6 +613,93 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Pass Criteria Dialog */}
+      <Dialog open={showPassCriteriaDialog} onOpenChange={setShowPassCriteriaDialog}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              Pass Criteria
+            </DialogTitle>
+            <DialogDescription>
+              Define the passing rule for this quiz and where learners go if they don't pass.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-2 space-y-5">
+            {/* No. of Questions (min correct) */}
+            <div className="rounded-xl border border-border p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="h-4 w-1 rounded-full bg-primary" aria-hidden="true" />
+                <Label className="text-sm font-semibold text-foreground">Pass Criteria</Label>
+              </div>
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="pc-no-of-questions" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  No. of Questions
+                </Label>
+                <Select
+                  value={String(passCriteria)}
+                  onValueChange={(v) => setPassCriteria(Number(v))}
+                >
+                  <SelectTrigger id="pc-no-of-questions" aria-label="Minimum correct answers required" className="h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: questions.length }, (_, i) => i + 1).map((n) => (
+                      <SelectItem key={n} value={String(n)}>
+                        {n} of {questions.length}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Minimum Correct Responses Required (Applicable to SCORM)
+                </p>
+              </div>
+            </div>
+
+            {/* Page Navigation */}
+            <div className="rounded-xl border border-border p-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="h-4 w-1 rounded-full bg-primary" aria-hidden="true" />
+                <Label className="text-sm font-semibold text-foreground">Page Navigation</Label>
+              </div>
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="pc-fail-nav" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  When Pass Criteria Not Achieved
+                </Label>
+                <Select
+                  value={failNavigationPage || "__none__"}
+                  onValueChange={(v) => setFailNavigationPage(v === "__none__" ? "" : v)}
+                >
+                  <SelectTrigger id="pc-fail-nav" aria-label="Page to navigate to when learner fails" className="h-10">
+                    <SelectValue placeholder="Select page" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">Select page</SelectItem>
+                    <SelectItem value="chapter-1">Chapter 1</SelectItem>
+                    <SelectItem value="chapter-2">Chapter 2</SelectItem>
+                    <SelectItem value="chapter-3">Chapter 3</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Learner will be redirected to this page if they don't meet the pass criteria.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPassCriteriaDialog(false)}>
+              Close
+            </Button>
+            <Button onClick={() => setShowPassCriteriaDialog(false)}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
