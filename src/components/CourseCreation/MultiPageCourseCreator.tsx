@@ -774,7 +774,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                          variant="ghost"
                          size="sm"
                          className="h-7 px-2.5 text-[11px] font-medium text-primary hover:bg-primary/10 rounded-full"
-                         onClick={() => setShowTour(true)}
+                         onClick={() => setShowTokenDialog(true)}
                        >
                          View details
                        </Button>
