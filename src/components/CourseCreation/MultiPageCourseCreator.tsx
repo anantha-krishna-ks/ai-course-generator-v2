@@ -55,6 +55,7 @@ import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
+import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 
 interface CourseItem {
   id: string;
@@ -1451,6 +1452,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         open={showTokenDialog}
         onClose={() => setShowTokenDialog(false)}
         imageVersionHistory={[]}
+      />
+
+      <ScormPreferencesDialog
+        open={showScormDialog}
+        onOpenChange={setShowScormDialog}
       />
 
       {isEditCoursePage && (
