@@ -1440,6 +1440,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         courseTitle={title}
       />
 
+      <TokenConsumptionDialog
+        open={showTokenDialog}
+        onClose={() => setShowTokenDialog(false)}
+        imageVersionHistory={[]}
+      />
+
       {isEditCoursePage && (
         <>
           <CloneCourseDialog
