@@ -622,19 +622,13 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         >
           {/* Header */}
           <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white space-y-0">
-            <div className="flex items-center justify-between pr-8">
-              <div>
-                <DialogTitle className="text-base font-semibold tracking-tight">
-                  Pass Criteria
-                </DialogTitle>
-                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                  Define the passing rule and where learners go if they don't pass.
-                </DialogDescription>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/[0.06] px-2.5 py-1.5 rounded-lg border border-primary/15">
-                <Trophy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                SCORM
-              </div>
+            <div className="pr-8">
+              <DialogTitle className="text-base font-semibold tracking-tight">
+                Pass Criteria
+              </DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Define the passing rule and where learners go if they don't pass.
+              </DialogDescription>
             </div>
           </DialogHeader>
 
