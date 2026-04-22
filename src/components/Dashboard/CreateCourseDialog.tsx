@@ -366,51 +366,30 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 />
               </div>
 
-              {/* SCORM Preferences Toggle */}
+              {/* SCORM Preferences */}
               <div className="mb-4 sm:mb-5">
-                <div
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-3 rounded-lg border transition-all",
-                    scormEnabled
-                      ? "border-border bg-card shadow-sm"
-                      : "border-border bg-background"
-                  )}
-                >
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-background transition-all">
                   <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
-                    <Package
-                      className={cn(
-                        "w-4 h-4 transition-colors duration-300",
-                        scormEnabled ? "text-foreground" : "text-muted-foreground"
-                      )}
-                    />
+                    <Package className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-semibold text-foreground block">
                       SCORM Preferences
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {scormEnabled
-                        ? "Click configure to set up SCORM options"
-                        : "Configure SCORM packaging & completion rules"}
+                      Configure SCORM packaging & completion rules
                     </span>
                   </div>
-                  {scormEnabled && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowScormDialog(true)}
-                      className="shrink-0 gap-1.5 text-xs h-8 rounded-full"
-                    >
-                      <Settings2 className="w-3.5 h-3.5" />
-                      Configure
-                    </Button>
-                  )}
-                  <Switch
-                    checked={scormEnabled}
-                    onCheckedChange={setScormEnabled}
-                    aria-label="Enable SCORM Preferences"
-                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowScormConfig(true)}
+                    className="shrink-0 gap-1.5 text-xs h-8 rounded-full"
+                  >
+                    <Settings2 className="w-3.5 h-3.5" />
+                    Configure
+                  </Button>
                 </div>
               </div>
 
