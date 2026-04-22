@@ -714,10 +714,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                              <p className="text-sm font-semibold text-foreground leading-tight">This course</p>
                            </div>
                          </div>
-                         <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                           <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
-                           Live
-                         </span>
                        </div>
 
                        {/* Total */}
