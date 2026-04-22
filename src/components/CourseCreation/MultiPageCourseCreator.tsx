@@ -849,7 +849,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           </div>
 
           {/* Content */}
-          <ScrollArea className="relative z-10 flex-1 min-h-[300px]">
+          <ScrollArea className="relative z-10 flex-1 min-h-[300px] [&_[data-radix-scroll-area-thumb]]:!bg-muted-foreground/50 [&_[data-radix-scroll-area-thumb]:hover]:!bg-muted-foreground/70">
             <div className="p-6 sm:p-8 lg:py-10 lg:pr-10 lg:pl-16">
               {/* Course Title */}
               <div className="relative group" data-tour="course-heading">
