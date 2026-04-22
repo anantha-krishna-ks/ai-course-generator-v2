@@ -651,6 +651,38 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
              >
                <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
              </Button>
+            {isEditCoursePage && (
+              <DropdownMenu>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full"
+                        aria-label="More course actions"
+                      >
+                        <MoreVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>More</TooltipContent>
+                </Tooltip>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
+                    <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Clone course
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Delete course
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </header>
