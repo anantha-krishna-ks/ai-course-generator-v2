@@ -648,7 +648,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                           className="rounded-full border-border"
                           aria-label="More course actions"
                         >
-                          <MoreVertical className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                          <MoreVertical className="w-4 h-4" aria-hidden="true" focusable="false" />
                         </Button>
                      </DropdownMenuTrigger>
                    </TooltipTrigger>
