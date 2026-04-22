@@ -9,6 +9,7 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
+import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 
 interface CourseItem {
   id: string;
@@ -51,6 +52,7 @@ const MultipageCoursePreview = () => {
   const [foldDirection, setFoldDirection] = useState<'in' | 'out' | null>(null);
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile'>('desktop');
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
