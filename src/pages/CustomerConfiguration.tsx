@@ -652,98 +652,44 @@ const CustomerConfiguration = () => {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
           {/* Desktop vertical rail */}
           <aside className="hidden lg:block">
             <div className="sticky top-[220px]">
-              <div className="rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm overflow-hidden">
-                <div className="px-4 pt-4 pb-3 border-b border-border/60">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Settings
+              <nav aria-label="Configuration groups" className="space-y-1">
+                {filteredGroups.length === 0 && (
+                  <p className="text-sm text-muted-foreground px-3 py-4">
+                    No matching groups.
                   </p>
-                  <p className="text-sm font-medium text-foreground mt-0.5">
-                    {filteredGroups.length} of {configGroups.length} groups
-                  </p>
-                </div>
-                <nav
-                  aria-label="Configuration groups"
-                  className="p-2 space-y-0.5 max-h-[calc(100vh-360px)] overflow-y-auto"
-                >
-                  {filteredGroups.length === 0 && (
-                    <p className="text-sm text-muted-foreground px-3 py-6 text-center">
-                      No matching groups.
-                    </p>
-                  )}
-                  {filteredGroups.map((g) => {
-                    const Icon = g.icon;
-                    const isActive = g.id === activeGroup.id;
-                    const dirty = dirtyGroupsLive.has(g.id);
-                    return (
-                      <button
-                        key={g.id}
-                        onClick={() => setActiveTab(g.id)}
-                        className={`group/item relative w-full flex items-center gap-3 pl-3 pr-2.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
-                          isActive
-                            ? "bg-gradient-to-r from-primary/15 via-primary/10 to-transparent text-primary shadow-sm"
-                            : "text-foreground hover:bg-muted/70 hover:translate-x-0.5"
-                        }`}
-                        aria-current={isActive ? "page" : undefined}
-                        aria-label={`${g.label}${dirty ? " (edited)" : ""}`}
-                      >
+                )}
+                {filteredGroups.map((g) => {
+                  const Icon = g.icon;
+                  const isActive = g.id === activeGroup.id;
+                  const dirty = dirtyGroupsLive.has(g.id);
+                  return (
+                    <button
+                      key={g.id}
+                      onClick={() => setActiveTab(g.id)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left border-l-2 ${
+                        isActive
+                          ? "bg-primary/10 text-primary border-primary"
+                          : "border-transparent text-foreground hover:bg-muted"
+                      }`}
+                      aria-current={isActive ? "page" : undefined}
+                      aria-label={`${g.label}${dirty ? " (edited)" : ""}`}
+                    >
+                      <Icon className="w-4 h-4 shrink-0" aria-hidden="true" focusable="false" />
+                      <span className="flex-1 truncate">{highlight(g.label, search)}</span>
+                      {dirty && (
                         <span
-                          className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full transition-all ${
-                            isActive ? "h-7 bg-primary" : "h-0 bg-transparent"
-                          }`}
+                          className="w-2 h-2 rounded-full bg-primary shrink-0"
                           aria-hidden="true"
                         />
-                        <span
-                          className={`flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-colors ${
-                            isActive
-                              ? "bg-primary text-primary-foreground shadow-sm"
-                              : "bg-muted text-muted-foreground group-hover/item:bg-primary/10 group-hover/item:text-primary"
-                          }`}
-                        >
-                          <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                        </span>
-                        <span className="flex-1 truncate">{highlight(g.label, search)}</span>
-                        {dirty ? (
-                          <span
-                            className="w-2 h-2 rounded-full bg-primary shrink-0 ring-2 ring-primary/20"
-                            aria-hidden="true"
-                            title="Unsaved changes"
-                          />
-                        ) : (
-                          <span
-                            className={`text-[11px] tabular-nums shrink-0 px-1.5 py-0.5 rounded-md ${
-                              isActive
-                                ? "bg-primary/15 text-primary"
-                                : "bg-muted text-muted-foreground group-hover/item:bg-background"
-                            }`}
-                            aria-hidden="true"
-                          >
-                            {g.fields.length}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </nav>
-                <div className="px-4 py-3 border-t border-border/60 bg-muted/30">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Total fields</span>
-                    <span className="font-semibold text-foreground tabular-nums">{totalFields}</span>
-                  </div>
-                  {isDirty && (
-                    <div className="flex items-center justify-between text-xs mt-1.5">
-                      <span className="text-muted-foreground">Unsaved</span>
-                      <span className="font-semibold text-primary tabular-nums inline-flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                        {dirtyGroupsLive.size}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
           </aside>
 
