@@ -498,6 +498,8 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                               )}
                             </div>
                           )}
+                          </>
+                          )}
                         </div>
                       )}
                     </SortableQuestionCard>
