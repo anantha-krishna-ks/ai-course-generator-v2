@@ -1289,6 +1289,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     )}
                                   </div>
                                 );
+                              } else if (deletingIds.has(block.id)) {
+                                elements.push(
+                                  <BlockSkeleton
+                                    key={`deleting-${block.id}`}
+                                    variant={(deletingIds.get(block.id) ?? block.type) as BlockSkeletonVariant}
+                                    action="deleting"
+                                  />
+                                );
                               } else {
                                 elements.push(
                                   <ContentBlock
@@ -1302,6 +1310,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     autoFocus={block.id === lastAddedBlockId}
                                     aiEnabled={aiEnabled}
                                     variant={block.variant}
+                                  />
+                                );
+                              }
+                              // Duplicate skeleton placeholder right after the source block
+                              if (duplicatingId === block.id) {
+                                elements.push(
+                                  <BlockSkeleton
+                                    key={`duplicating-${block.id}`}
+                                    variant={block.type as BlockSkeletonVariant}
+                                    action="duplicating"
                                   />
                                 );
                               }
@@ -1338,10 +1356,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               }
                               blockIdx++;
                               position++;
+                              tryInsertPendingAdd();
                             } else {
                               break;
                             }
                           }
+                          // If pendingAdd targets the very end (after last position), insert it now.
+                          tryInsertPendingAdd();
 
                           while (deletedIdx < deletedArr.length) {
                             const [deletedId] = deletedArr[deletedIdx];
