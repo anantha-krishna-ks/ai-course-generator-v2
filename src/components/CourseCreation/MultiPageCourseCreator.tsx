@@ -1507,6 +1507,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 ));
               }}
               onPreview={handlePreview}
+              outlineDeletingIds={deletingIds}
+              outlineDuplicatingIds={duplicatingIds}
+              outlinePendingTopAdds={pendingTopAdds}
+              outlinePendingChildAdds={pendingChildAdds}
             />
            );
         }
@@ -1554,6 +1558,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   onBlocksChange={(blocks) => updatePageBlocks(child.id, blocks)}
                   onAddItem={(type) => handleAddItem(type)}
                   onPreview={handlePreview}
+                  outlineDeletingIds={deletingIds}
+                  outlineDuplicatingIds={duplicatingIds}
+                  outlinePendingTopAdds={pendingTopAdds}
+                  outlinePendingChildAdds={pendingChildAdds}
                 />
               );
             }
