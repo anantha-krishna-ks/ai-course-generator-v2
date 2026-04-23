@@ -579,40 +579,46 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
             </Button>
             <Button
               onClick={() => {
-                setIsRegenerating(true);
-                // Mock regeneration
+                const targetId = regeneratingQuestionId;
+                if (targetId === null) return;
+                const promptText = regeneratePrompt;
+                // Close dialog immediately, show inline skeleton on the question card
+                setRegeneratingQuestionId(null);
+                setRegeneratePrompt("");
+                setRegeneratingIds((prev) => {
+                  const next = new Set(prev);
+                  next.add(targetId);
+                  return next;
+                });
+                // Auto-expand so the user sees the loader inline
+                setExpandedQuestions((prev) => {
+                  const next = new Set(prev);
+                  next.add(targetId);
+                  return next;
+                });
+                // Mock regeneration (replace with real API call)
                 setTimeout(() => {
-                  if (regeneratingQuestionId !== null) {
-                    setQuestions((prev) => prev.map((q) => {
-                      if (q.id === regeneratingQuestionId) {
-                        return {
-                          ...q,
-                          question: `Regenerated: ${regeneratePrompt || q.question}`,
-                          explanation: "This question was regenerated with AI.",
-                        };
-                      }
-                      return q;
-                    }));
-                  }
-                  setIsRegenerating(false);
-                  setRegeneratingQuestionId(null);
-                  setRegeneratePrompt("");
+                  setQuestions((prev) => prev.map((q) => {
+                    if (q.id === targetId) {
+                      return {
+                        ...q,
+                        question: `Regenerated: ${promptText || q.question}`,
+                        explanation: "This question was regenerated with AI.",
+                      };
+                    }
+                    return q;
+                  }));
+                  setRegeneratingIds((prev) => {
+                    const next = new Set(prev);
+                    next.delete(targetId);
+                    return next;
+                  });
                 }, 1500);
               }}
-              disabled={isRegenerating}
               className="gap-1.5"
             >
-              {isRegenerating ? (
-                <>
-                  <RefreshCcw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" focusable="false" />
-                  Regenerating…
-                </>
-              ) : (
-                <>
-                  <RefreshCcw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  Regenerate
-                </>
-              )}
+              <RefreshCcw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              Regenerate
             </Button>
           </DialogFooter>
         </DialogContent>
