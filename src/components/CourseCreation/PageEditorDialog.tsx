@@ -112,6 +112,20 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [flashBlocks, setFlashBlocks] = useState(false);
+  const flashTimerRef = useRef<number | null>(null);
+  const triggerBlocksFlash = useCallback(() => {
+    setSidebarCollapsed(false);
+    setActiveTab("blocks");
+    setFlashBlocks(false);
+    // Re-trigger animation on next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setFlashBlocks(true));
+    });
+    if (flashTimerRef.current) window.clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = window.setTimeout(() => setFlashBlocks(false), 2600);
+  }, []);
+  useEffect(() => () => { if (flashTimerRef.current) window.clearTimeout(flashTimerRef.current); }, []);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [renameTarget, setRenameTarget] = useState<{ id: string; title: string } | null>(null);
