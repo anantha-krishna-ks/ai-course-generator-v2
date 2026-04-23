@@ -439,16 +439,34 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   const deleteBlock = useCallback((id: string) => {
     setBlocks((prev) => {
-      const idx = prev.findIndex((b) => b.id === id);
-      if (idx === -1) return prev;
-      const block = prev[idx];
-      setDeletedBlocks((dm) => {
-        const next = new Map(dm);
-        next.set(id, { block, index: idx });
+      const block = prev.find((b) => b.id === id);
+      if (!block) return prev;
+      // Show a deleting skeleton in place briefly before removing.
+      setDeletingIds((m) => {
+        const next = new Map(m);
+        next.set(id, block.type as BlockSkeletonVariant);
         return next;
       });
-      return prev.filter((b) => b.id !== id);
+      return prev;
     });
+    window.setTimeout(() => {
+      setBlocks((prev) => {
+        const idx = prev.findIndex((b) => b.id === id);
+        if (idx === -1) return prev;
+        const block = prev[idx];
+        setDeletedBlocks((dm) => {
+          const next = new Map(dm);
+          next.set(id, { block, index: idx });
+          return next;
+        });
+        return prev.filter((b) => b.id !== id);
+      });
+      setDeletingIds((m) => {
+        const next = new Map(m);
+        next.delete(id);
+        return next;
+      });
+    }, 450);
   }, []);
 
   const undoDeleteBlock = useCallback((id: string) => {
@@ -476,15 +494,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   }, []);
 
   const duplicateBlock = useCallback((id: string) => {
-    setBlocks((prev) => {
-      const idx = prev.findIndex((b) => b.id === id);
-      if (idx === -1) return prev;
-      const newId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      const copy = { ...prev[idx], id: newId };
-      const next = [...prev];
-      next.splice(idx + 1, 0, copy);
-      return next;
-    });
+    setDuplicatingId(id);
+    window.setTimeout(() => {
+      setBlocks((prev) => {
+        const idx = prev.findIndex((b) => b.id === id);
+        if (idx === -1) return prev;
+        const newId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const copy = { ...prev[idx], id: newId };
+        const next = [...prev];
+        next.splice(idx + 1, 0, copy);
+        return next;
+      });
+      setDuplicatingId(null);
+    }, 500);
   }, []);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
