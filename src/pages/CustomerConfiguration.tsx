@@ -519,7 +519,7 @@ const CustomerConfiguration = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-8">
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Button
           variant="outline"
           onClick={() => navigate("/customers")}
