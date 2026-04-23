@@ -538,7 +538,7 @@ const CustomerConfiguration = () => {
               </h1>
               {isDirty && (
                 <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm px-2.5 py-1 rounded-full bg-primary/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" focusable="false" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
                   {dirtyGroupsLive.size} unsaved
                 </span>
               )}
