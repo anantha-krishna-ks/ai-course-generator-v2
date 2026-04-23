@@ -351,38 +351,16 @@ const CustomerConfiguration = () => {
   };
 
   const handleSave = () => {
-    if (dirtyGroups.size === 0) {
+    if (dirtyGroupsLive.size === 0) {
       toast({ title: "No changes to save" });
       return;
     }
     toast({
       title: "Configuration saved",
-      description: `${dirtyGroups.size} group(s) updated successfully.`,
+      description: `${dirtyGroupsLive.size} group(s) updated successfully.`,
     });
-    // Reset baseline to current values
-    setValues((v) => {
-      // Re-seed initial via reload-like approach: mutate initialState would require state — keep simple
-      return v;
-    });
-    // Force dirty recompute by replacing initialState reference is tricky with useState init.
-    // Simplest: reload values into initial via a hack — set initial via state setter:
-    setInitial(values);
+    setInitial(structuredClone(values));
   };
-
-  const [initial, setInitial] = useState<FormState>(initialState);
-  // override dirty calc using `initial`
-  const dirtyGroupsLive = useMemo(() => {
-    const set = new Set<string>();
-    for (const group of configGroups) {
-      for (const field of group.fields) {
-        if (values[group.id][field.id] !== initial[group.id][field.id]) {
-          set.add(group.id);
-          break;
-        }
-      }
-    }
-    return set;
-  }, [values, initial]);
 
   const handleDiscard = () => {
     setValues(structuredClone(initial));
