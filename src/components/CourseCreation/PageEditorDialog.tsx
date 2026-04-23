@@ -1069,7 +1069,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
               {/* Content blocks with inline undo banners */}
               <div className="min-h-[60px]">
-              {(blocks.length > 0 || deletedBlocks.size > 0) ? (
+              {(blocks.length > 0 || deletedBlocks.size > 0 || pendingAdd) ? (
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
