@@ -58,6 +58,9 @@ const Customers = () => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [currentBrandingId, setCurrentBrandingId] = useState<number | null>(null);
+  const [userSizeFilter, setUserSizeFilter] = useState<string>("all");
+  const [brandingFilter, setBrandingFilter] = useState<string>("all");
+  const [sortPreset, setSortPreset] = useState<string>("default");
 
   useEffect(() => {
     const branding = brandingService.getCurrentBranding();
@@ -68,15 +71,37 @@ const Customers = () => {
     return unsubscribe;
   }, []);
 
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.contactNo.includes(searchQuery) ||
-    customer.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCustomers = customers.filter((customer) => {
+    const matchesSearch =
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.contactNo.includes(searchQuery) ||
+      customer.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesSize =
+      userSizeFilter === "all" ||
+      (userSizeFilter === "small" && customer.users < 100) ||
+      (userSizeFilter === "medium" && customer.users >= 100 && customer.users < 1000) ||
+      (userSizeFilter === "large" && customer.users >= 1000);
+
+    const matchesBranding =
+      brandingFilter === "all" ||
+      (brandingFilter === "active" && currentBrandingId === customer.id) ||
+      (brandingFilter === "inactive" && currentBrandingId !== customer.id);
+
+    return matchesSearch && matchesSize && matchesBranding;
+  });
 
   const sortedCustomers = [...filteredCustomers].sort((a, b) => {
+    if (sortPreset !== "default") {
+      switch (sortPreset) {
+        case "name-asc": return a.name.localeCompare(b.name);
+        case "name-desc": return b.name.localeCompare(a.name);
+        case "users-desc": return b.users - a.users;
+        case "users-asc": return a.users - b.users;
+      }
+    }
     if (!sortColumn) return 0;
     let aValue: any = a[sortColumn as keyof typeof a];
     let bValue: any = b[sortColumn as keyof typeof b];
@@ -86,6 +111,15 @@ const Customers = () => {
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
     return 0;
   });
+
+  const hasActiveFilters = searchQuery !== "" || userSizeFilter !== "all" || brandingFilter !== "all" || sortPreset !== "default";
+  const clearFilters = () => {
+    setSearchQuery("");
+    setUserSizeFilter("all");
+    setBrandingFilter("all");
+    setSortPreset("default");
+    setCurrentPage(1);
+  };
 
   const totalCustomers = sortedCustomers.length;
   const totalPages = Math.max(1, Math.ceil(totalCustomers / recordsPerPage));
@@ -193,36 +227,102 @@ const Customers = () => {
           </div>
         </motion.div>
 
-        {/* Toolbar: search + add */}
+        {/* Toolbar: search + filters + add */}
         <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6"
+          className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6"
         >
-          <div className="relative w-full sm:max-w-md">
-            <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <Input
-              type="search"
-              placeholder="Search by name, email, contact..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              aria-label="Search customers"
-              className="pl-10 h-10 rounded-full border border-border bg-card focus:border-primary/50 focus-visible:ring-primary/20"
-            />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <div className="relative w-full sm:max-w-xs">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none"
+                aria-hidden="true"
+                focusable="false"
+              />
+              <Input
+                type="search"
+                placeholder="Search by name, email, contact..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                aria-label="Search customers"
+                className="pl-10 h-10 rounded-full border border-border bg-card focus:border-primary/50 focus-visible:ring-primary/20"
+              />
+            </div>
+
+            <Select
+              value={userSizeFilter}
+              onValueChange={(v) => { setUserSizeFilter(v); setCurrentPage(1); }}
+            >
+              <SelectTrigger
+                aria-label="Filter by team size"
+                className="h-10 w-full sm:w-[160px] rounded-full border border-border bg-card"
+              >
+                <SelectValue placeholder="Team size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All sizes</SelectItem>
+                <SelectItem value="small">Small (&lt; 100)</SelectItem>
+                <SelectItem value="medium">Medium (100–999)</SelectItem>
+                <SelectItem value="large">Large (1000+)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={brandingFilter}
+              onValueChange={(v) => { setBrandingFilter(v); setCurrentPage(1); }}
+            >
+              <SelectTrigger
+                aria-label="Filter by branding status"
+                className="h-10 w-full sm:w-[170px] rounded-full border border-border bg-card"
+              >
+                <SelectValue placeholder="Branding" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All branding</SelectItem>
+                <SelectItem value="active">Active branding</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={sortPreset}
+              onValueChange={(v) => setSortPreset(v)}
+            >
+              <SelectTrigger
+                aria-label="Sort customers"
+                className="h-10 w-full sm:w-[180px] rounded-full border border-border bg-card"
+              >
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Default order</SelectItem>
+                <SelectItem value="name-asc">Name (A–Z)</SelectItem>
+                <SelectItem value="name-desc">Name (Z–A)</SelectItem>
+                <SelectItem value="users-desc">Users (high to low)</SelectItem>
+                <SelectItem value="users-asc">Users (low to high)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                onClick={clearFilters}
+                className="h-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60"
+              >
+                Clear filters
+              </Button>
+            )}
           </div>
 
           <Button
             onClick={() => setIsAddDialogOpen(true)}
-            className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all"
+            className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all shrink-0"
           >
             <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
             Add Customer
