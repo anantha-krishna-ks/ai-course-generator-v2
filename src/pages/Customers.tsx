@@ -290,7 +290,7 @@ const Customers = () => {
               <div className="min-w-[1000px]">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/60 hover:bg-muted/60 border-b border-border/60">
+                    <TableRow className="bg-muted hover:bg-muted border-b-2 border-border">
                       {[
                         { key: "name", label: "Name" },
                         { key: "contactName", label: "Contact Name" },
