@@ -138,13 +138,6 @@ const Customers = () => {
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
-      {/* Ambient gradient background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -right-32 w-[600px] h-[600px] rounded-full bg-primary/[0.07] blur-[140px]" />
-        <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full bg-accent/[0.06] blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[700px] h-[700px] rounded-full bg-primary/[0.05] blur-[160px]" />
-      </div>
-
       <Header />
 
       <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -162,23 +155,18 @@ const Customers = () => {
 
         {/* Hero / Welcome banner */}
         <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible" className="mb-8">
-          <div className="relative overflow-hidden rounded-2xl bg-card/70 backdrop-blur-sm border border-border/60 px-7 py-6">
-            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/[0.08] blur-[80px]" aria-hidden="true" />
-            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-accent/[0.08] blur-[60px]" aria-hidden="true" />
-
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 px-7 py-6">
             <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-5">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                   <Building2 className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                 </div>
                 <div>
                   <h1
-                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight"
+                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight text-foreground"
                     style={{ fontFamily: "'Geist', sans-serif" }}
                   >
-                    <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent">
-                      Customers
-                    </span>
+                    Customers
                   </h1>
                   <p className="text-sm text-muted-foreground mt-1">
                     Manage customer records, contacts and team allocations
@@ -186,7 +174,7 @@ const Customers = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 bg-background/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/40 self-start lg:self-auto">
+              <div className="flex items-center gap-3 bg-background rounded-full px-4 py-2 border border-border/60 self-start lg:self-auto">
                 <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
                   <Building2 className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
                   <span>
@@ -233,7 +221,7 @@ const Customers = () => {
                 setCurrentPage(1);
               }}
               aria-label="Search customers"
-              className="pl-10 h-10 rounded-full border border-border bg-card/80 backdrop-blur-sm focus:border-primary/50 focus-visible:ring-primary/20"
+              className="pl-10 h-10 rounded-full border border-border bg-card focus:border-primary/50 focus-visible:ring-primary/20"
             />
           </div>
 
@@ -248,7 +236,7 @@ const Customers = () => {
 
         {/* Table card */}
         <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
-          <Card className="overflow-hidden rounded-2xl border border-border/80 bg-card/70 backdrop-blur-sm shadow-sm hover:shadow-md transition-shadow duration-300">
+          <Card className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="overflow-x-auto">
               <div className="min-w-[1000px]">
                 <Table>
@@ -300,7 +288,7 @@ const Customers = () => {
                           >
                             <TableCell className="font-medium py-3">
                               <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/15 to-accent/15 border border-primary/15 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/15 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
                                   {customer.name.charAt(0).toUpperCase()}
                                 </div>
                                 <span>{customer.name}</span>
@@ -360,7 +348,7 @@ const Customers = () => {
             </div>
 
             {/* Pagination */}
-            <div className="border-t border-border/60 p-4 bg-card/40">
+            <div className="border-t border-border/60 p-4 bg-muted/20">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                   <span className="text-sm text-muted-foreground">
