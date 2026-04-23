@@ -30,9 +30,9 @@ interface ErrorConfig {
 const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
   "404": {
     code: "404",
-    title: "Page Not Found",
+    title: "Oops! Page Not Found",
     description:
-      "The page you’re looking for doesn’t exist or may have been moved. Check the URL or head back home.",
+      "The page you’re looking for doesn’t exist or may have been moved. Let’s get you back on track.",
     Icon: FileQuestion,
     iconClass: "text-primary",
     primary: { label: "Go to Home", action: "home", icon: Home },
@@ -40,19 +40,19 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
   },
   "500": {
     code: "500",
-    title: "Internal Server Error",
+    title: "Oops! Internal Server Error",
     description:
-      "Our server hit an unexpected snag. We’ve been notified — please try again in a moment.",
+      "Internal Server Boo-Boo: Our bad! The server hiccuped. We’re dusting off the code and will have it sorted soon. Please be patient.",
     Icon: ServerCrash,
     iconClass: "text-destructive",
-    primary: { label: "Try Again", action: "retry", icon: RefreshCw },
+    primary: { label: "Be Patient, Try Again", action: "retry", icon: RefreshCw },
     secondary: { label: "Go to Home", action: "home", icon: Home },
   },
   "403": {
     code: "403",
     title: "Access Forbidden",
     description:
-      "You don’t have permission to view this page. If you believe this is a mistake, contact your administrator.",
+      "You don’t have permission to view this page. If you believe this is a mistake, please contact your administrator.",
     Icon: ShieldAlert,
     iconClass: "text-warning",
     primary: { label: "Go to Home", action: "home", icon: Home },
@@ -62,7 +62,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     code: "401",
     title: "Authentication Required",
     description:
-      "You need to be signed in to access this page. Please log in to continue.",
+      "You need to be signed in to access this page. Please log in to continue your journey.",
     Icon: Lock,
     iconClass: "text-info",
     primary: { label: "Sign In", action: "home", icon: Lock },
@@ -70,7 +70,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
   },
   maintenance: {
     code: "503",
-    title: "Under Maintenance",
+    title: "We’ll Be Right Back",
     description:
       "We’re performing scheduled maintenance to improve your experience. Please check back shortly.",
     Icon: Wrench,
@@ -81,7 +81,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     code: "Offline",
     title: "Connection Lost",
     description:
-      "We can’t reach the server. Check your internet connection and try again.",
+      "We can’t reach the server right now. Check your internet connection and try again.",
     Icon: WifiOff,
     iconClass: "text-muted-foreground",
     primary: { label: "Retry", action: "retry", icon: RefreshCw },
@@ -131,72 +131,68 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
   const SecondaryIcon = secondary?.icon;
 
   return (
-    <main
-      className="relative min-h-screen flex items-center justify-center bg-muted/40 px-4 py-12"
-    >
+    <main className="relative min-h-screen flex items-center justify-center bg-background px-4 py-12">
       <section
-        className="relative w-full max-w-3xl mx-auto animate-fade-in"
+        className="relative w-full max-w-xl mx-auto text-center animate-fade-in"
         aria-labelledby="error-title"
       >
-        {/* Browser window card */}
-        <div className="rounded-2xl bg-card shadow-xl border border-border overflow-hidden">
-          {/* Browser top bar */}
-          <div className="bg-primary px-4 py-3 flex items-center gap-2">
-            <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full bg-primary-foreground/70" />
-            <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full bg-primary-foreground/70" />
-            <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full bg-primary-foreground/70" />
-          </div>
-
-          {/* Card body */}
-          <div className="relative px-6 sm:px-12 py-12 sm:py-16 text-center">
-            <div
+        {/* Illustration */}
+        <div className="flex justify-center mb-10">
+          <div className="relative inline-flex flex-col items-center">
+            <Icon
+              className={cn("w-28 h-28 sm:w-32 sm:h-32", config.iconClass)}
+              strokeWidth={1.25}
               aria-hidden="true"
-              className="absolute bottom-4 right-4 sm:bottom-6 sm:right-8 opacity-90"
-            >
-              <Icon
-                className={cn("w-20 h-20 sm:w-28 sm:h-28", config.iconClass)}
-                strokeWidth={1.5}
-              />
-            </div>
-
-            <h1
-              id="error-title"
-              className="text-6xl sm:text-7xl md:text-8xl font-extrabold text-foreground tracking-tight leading-none"
-            >
-              {config.code}
-            </h1>
-
-            <p className="mt-6 text-xl sm:text-2xl font-semibold text-foreground">
-              {config.title}
-            </p>
-
-            <p className="mt-3 text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
-              {config.description}
-            </p>
-
-            {/* Actions */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button
-                size="lg"
-                onClick={() => runAction(primary.action)}
-                className="w-full sm:w-auto gap-2"
-              >
-                <PrimaryIcon className="w-4 h-4" aria-hidden="true" />
-                {primary.label}
-              </Button>
-              {secondary && SecondaryIcon && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => runAction(secondary.action)}
-                  className="w-full sm:w-auto gap-2"
-                >
-                  <SecondaryIcon className="w-4 h-4" aria-hidden="true" />
-                  {secondary.label}
-                </Button>
-              )}
-            </div>
+              focusable="false"
+            />
+            {/* Soft ground shadow */}
+            <span
+              aria-hidden="true"
+              className="mt-3 block h-2 w-24 sm:w-28 rounded-full bg-muted"
+            />
           </div>
+        </div>
+
+        {/* Code */}
+        <h1
+          id="error-title"
+          className="text-7xl sm:text-8xl md:text-9xl font-extrabold text-foreground tracking-tight leading-none"
+        >
+          {config.code}
+        </h1>
+
+        {/* Title */}
+        <p className="mt-8 text-xl sm:text-2xl font-bold text-foreground">
+          {config.title}
+        </p>
+
+        {/* Description */}
+        <p className="mt-4 text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+          {config.description}
+        </p>
+
+        {/* Actions */}
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => runAction(primary.action)}
+            className="w-full sm:w-auto gap-2 px-8"
+          >
+            <PrimaryIcon className="w-4 h-4" aria-hidden="true" />
+            {primary.label}
+          </Button>
+          {secondary && SecondaryIcon && (
+            <Button
+              size="lg"
+              variant="ghost"
+              onClick={() => runAction(secondary.action)}
+              className="w-full sm:w-auto gap-2 px-8"
+            >
+              <SecondaryIcon className="w-4 h-4" aria-hidden="true" />
+              {secondary.label}
+            </Button>
+          )}
         </div>
       </section>
     </main>
