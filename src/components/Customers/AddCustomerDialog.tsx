@@ -35,6 +35,7 @@ import {
   Network,
   ImageIcon,
   Sparkles,
+  UserPlus,
   X,
 } from "lucide-react";
 
@@ -150,7 +151,7 @@ export const AddCustomerDialog = ({ open, onOpenChange }: AddCustomerDialogProps
         <DialogHeader className="px-7 py-5 border-b border-border/60 bg-card">
           <div className="flex items-start gap-4">
             <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+              <UserPlus className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
             </div>
             <div className="flex-1 text-left">
               <DialogTitle
