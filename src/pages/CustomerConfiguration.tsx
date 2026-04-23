@@ -516,32 +516,91 @@ const CustomerConfiguration = () => {
 
   const isDirty = dirtyGroupsLive.size > 0;
 
+  const totalFields = useMemo(
+    () => configGroups.reduce((acc, g) => acc + g.fields.length, 0),
+    [],
+  );
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Header />
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        {/* Sticky header */}
-        <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-background/85 backdrop-blur-md border-b border-border mb-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div className="min-w-0 flex items-center gap-3 flex-wrap">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/customers")}
-                className="shrink-0 -ml-2"
-                aria-label="Back to Customers"
-              >
-                <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
-              </Button>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
-                Customer configuration {customer ? `– ${customer.name}` : ""}
-              </h1>
-              {isDirty && (
-                <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm px-2.5 py-1 rounded-full bg-primary/10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                  {dirtyGroupsLive.size} unsaved
-                </span>
-              )}
+      <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back button */}
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/customers")}
+          className="mb-6 rounded-full hover:bg-primary/5 hover:text-primary"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+          Back to Customers
+        </Button>
+
+        {/* Hero / Welcome banner */}
+        <div className="mb-6">
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 px-7 py-6">
+            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <Settings2 className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                </div>
+                <div className="min-w-0">
+                  <h1
+                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight text-foreground truncate"
+                    style={{ fontFamily: "'Geist', sans-serif" }}
+                  >
+                    Customer configuration {customer ? `– ${customer.name}` : ""}
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Manage connection, security, AI and integration settings for this customer
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-background rounded-full px-4 py-2 border border-border/60 self-start lg:self-auto">
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <Layers className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{configGroups.length}</span> groups
+                  </span>
+                </div>
+                <span className="w-px h-3.5 bg-border" aria-hidden="true" />
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <Settings2 className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{totalFields}</span> fields
+                  </span>
+                </div>
+                {isDirty && (
+                  <>
+                    <span className="w-px h-3.5 bg-border" aria-hidden="true" />
+                    <div className="flex items-center gap-1.5 text-[13px] text-primary font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                      <span>{dirtyGroupsLive.size} unsaved</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky toolbar: search + save */}
+        <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-background/85 backdrop-blur-md border-b border-border mb-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-3">
+            <div className="relative flex-1 min-w-0">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                aria-hidden="true"
+                focusable="false"
+              />
+              <Input
+                type="search"
+                placeholder="Search any setting…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 h-9 rounded-full"
+                aria-label="Search settings"
+              />
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {isDirty && (
@@ -555,23 +614,6 @@ const CustomerConfiguration = () => {
                 Save configuration
               </Button>
             </div>
-          </div>
-
-          {/* Search */}
-          <div className="relative mt-3">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <Input
-              type="search"
-              placeholder="Search any setting…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 h-9 rounded-full"
-              aria-label="Search settings"
-            />
           </div>
         </div>
 
