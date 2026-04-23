@@ -519,21 +519,21 @@ const CustomerConfiguration = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/customers")}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
-          Back to Customers
-        </Button>
-
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* Sticky header */}
-        <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 bg-background/85 backdrop-blur-md border-b border-border mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-background/85 backdrop-blur-md border-b border-border mb-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div className="min-w-0 flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground truncate">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/customers")}
+                className="shrink-0 -ml-2"
+                aria-label="Back to Customers"
+              >
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </Button>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground truncate">
                 Customer configuration {customer ? `– ${customer.name}` : ""}
               </h1>
               {isDirty && (
