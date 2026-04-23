@@ -1,234 +1,321 @@
 import type { SVGProps } from "react";
 
+/**
+ * Premium error illustrations.
+ *
+ * Style notes:
+ * - Isometric line-art with subtle multi-tone fills for depth
+ * - Soft radial ground shadow via gradient
+ * - Refined facial expressions (rounded eyes, blush, highlights)
+ * - Graceful dashed motion lines and decorative accents
+ * - Uses semantic tokens (primary/warning/info/destructive/muted-foreground)
+ *   so illustrations adapt to theme.
+ */
+
 const baseProps = {
   xmlns: "http://www.w3.org/2000/svg",
-  viewBox: "0 0 240 200",
+  viewBox: "0 0 260 220",
   fill: "none",
   "aria-hidden": true,
   focusable: false,
 } as const;
 
-/** Soft ground shadow shared across illustrations */
-const Shadow = ({ cx = 120, cy = 178, rx = 70, ry = 8 }) => (
-  <ellipse cx={cx} cy={cy} rx={rx} ry={ry} className="fill-primary/10" />
+/** Shared defs: soft radial shadow + subtle face highlight */
+const Defs = ({ id, tone = "primary" }: { id: string; tone?: "primary" | "warning" | "info" | "muted" | "destructive" }) => (
+  <defs>
+    <radialGradient id={`${id}-shadow`} cx="50%" cy="50%" r="50%">
+      <stop offset="0%" className={`[stop-color:hsl(var(--${tone === "muted" ? "muted-foreground" : tone}))]`} stopOpacity="0.22" />
+      <stop offset="70%" className={`[stop-color:hsl(var(--${tone === "muted" ? "muted-foreground" : tone}))]`} stopOpacity="0.05" />
+      <stop offset="100%" className={`[stop-color:hsl(var(--${tone === "muted" ? "muted-foreground" : tone}))]`} stopOpacity="0" />
+    </radialGradient>
+  </defs>
 );
 
-/** Subtle blush cheeks shared by character faces */
-const Cheeks = ({ left, right, y }: { left: number; right: number; y: number }) => (
+const Shadow = ({ id, cx = 130, cy = 198, rx = 80, ry = 10 }: { id: string; cx?: number; cy?: number; rx?: number; ry?: number }) => (
+  <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={`url(#${id}-shadow)`} />
+);
+
+const Cheeks = ({ left, right, y, tone = "primary" }: { left: number; right: number; y: number; tone?: string }) => (
   <>
-    <circle cx={left} cy={y} r="2.4" className="fill-primary/25" />
-    <circle cx={right} cy={y} r="2.4" className="fill-primary/25" />
+    <circle cx={left} cy={y} r="2.6" className={`fill-${tone}/30`} />
+    <circle cx={right} cy={y} r="2.6" className={`fill-${tone}/30`} />
   </>
 );
 
-/* ---------------- 500 — Sad open box with bug escaping ---------------- */
+/* Eye with subtle highlight */
+const Eye = ({ cx, cy, r = 2.4, tone = "primary" }: { cx: number; cy: number; r?: number; tone?: string }) => (
+  <g>
+    <circle cx={cx} cy={cy} r={r} className={`fill-${tone}`} />
+    <circle cx={cx - r * 0.35} cy={cy - r * 0.45} r={r * 0.32} className="fill-background" />
+  </g>
+);
+
+/* ─────────── 500 — Sad open box, bug escapes ─────────── */
 export const ServerErrorIllustration = (props: SVGProps<SVGSVGElement>) => (
   <svg {...baseProps} {...props}>
-    <Shadow />
+    <Defs id="err500" tone="primary" />
+    <Shadow id="err500" />
+
     {/* dashed bug trail */}
     <path
-      d="M165 28 C 150 40, 175 60, 152 78"
+      d="M188 30 C 168 46, 198 70, 168 92"
       className="stroke-primary/70"
       strokeWidth="1.6"
-      strokeDasharray="3 4"
+      strokeDasharray="3 5"
       strokeLinecap="round"
       fill="none"
     />
-    {/* tiny bug */}
-    <ellipse cx="168" cy="24" rx="5.5" ry="4.5" className="stroke-primary fill-background" strokeWidth="1.6" />
-    <line x1="164" y1="20" x2="160" y2="16" className="stroke-primary" strokeWidth="1.3" strokeLinecap="round" />
-    <line x1="172" y1="20" x2="176" y2="16" className="stroke-primary" strokeWidth="1.3" strokeLinecap="round" />
-    {/* Isometric open box */}
-    <g className="stroke-primary fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      {/* back-top edge */}
-      <path d="M70 92 L120 78 L170 92 L120 106 Z" />
-      {/* front face */}
-      <path d="M70 92 L70 158 L120 172 L120 106 Z" />
-      {/* right face */}
-      <path d="M170 92 L170 158 L120 172 L120 106 Z" />
-      {/* inner rim shadow line */}
-      <path d="M82 96 L120 107 L158 96" className="stroke-primary/40" strokeWidth="1.4" fill="none" />
-    </g>
-    {/* Sad face on front */}
+    {/* bug */}
     <g>
-      <path d="M84 122 q3 -3 6 0" className="stroke-primary" strokeWidth="2" strokeLinecap="round" fill="none" />
-      <path d="M104 122 q3 -3 6 0" className="stroke-primary" strokeWidth="2" strokeLinecap="round" fill="none" />
-      <path d="M92 142 Q100 134 110 142" className="stroke-primary" strokeWidth="2" strokeLinecap="round" fill="none" />
-      <Cheeks left={84} right={114} y={134} />
+      <ellipse cx="192" cy="26" rx="6" ry="5" className="fill-primary/15 stroke-primary" strokeWidth="1.8" />
+      <line x1="192" y1="21" x2="192" y2="26" className="stroke-primary" strokeWidth="1.4" />
+      <line x1="187" y1="22" x2="183" y2="18" className="stroke-primary" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="197" y1="22" x2="201" y2="18" className="stroke-primary" strokeWidth="1.4" strokeLinecap="round" />
+    </g>
+
+    {/* Box — isometric with depth */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      {/* bottom interior shadow */}
+      <path d="M82 110 L130 122 L178 110 L130 124 Z" className="fill-primary/10" />
+      {/* back inner wall */}
+      <path d="M82 110 L130 96 L178 110 L130 124 Z" className="fill-primary/5 stroke-primary" strokeWidth="2" />
+      {/* front face */}
+      <path d="M82 110 L82 174 L130 188 L130 124 Z" className="fill-background stroke-primary" strokeWidth="2.2" />
+      {/* right face — slightly darker */}
+      <path d="M178 110 L178 174 L130 188 L130 124 Z" className="fill-primary/8 stroke-primary" strokeWidth="2.2" />
+      {/* top rim accents */}
+      <path d="M82 110 L130 96 L178 110" className="stroke-primary" strokeWidth="2.2" fill="none" />
+      {/* fold lines for craft */}
+      <path d="M88 116 L88 172" className="stroke-primary/30" strokeWidth="1" fill="none" />
+      <path d="M172 116 L172 172" className="stroke-primary/30" strokeWidth="1" fill="none" />
+    </g>
+
+    {/* Sad face */}
+    <g>
+      <Eye cx={98} cy={140} r={2.6} tone="primary" />
+      <Eye cx={118} cy={140} r={2.6} tone="primary" />
+      {/* eyebrows */}
+      <path d="M93 132 q5 -2 10 1" className="stroke-primary" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      <path d="M113 133 q5 -3 10 -1" className="stroke-primary" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      {/* mouth */}
+      <path d="M100 158 Q108 150 116 158" className="stroke-primary" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <Cheeks left={92} right={122} y={150} />
       {/* tear */}
-      <path d="M88 128 q-1 4 1 5 q2 -1 1 -5 z" className="fill-primary/50" />
+      <path d="M96 146 q-1 5 1 6 q3 -1 1 -6 z" className="fill-primary/60" />
     </g>
   </svg>
 );
 
-/* ---------------- 404 — Lost map / signpost character ---------------- */
+/* ─────────── 404 — Folded map with pin ─────────── */
 export const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => (
   <svg {...baseProps} {...props}>
-    <Shadow />
-    {/* dashed search swirl above */}
-    <path
-      d="M150 30 q14 6 8 22 q-6 16 -22 8"
-      className="stroke-primary/60"
-      strokeWidth="1.6"
-      strokeDasharray="3 4"
-      strokeLinecap="round"
-      fill="none"
-    />
-    <text x="155" y="34" className="fill-primary" fontSize="14" fontFamily="serif" fontWeight="700">?</text>
-    {/* Isometric folded map */}
-    <g className="stroke-primary fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      <path d="M60 90 L120 74 L180 90 L180 156 L120 172 L60 156 Z" />
-      {/* fold creases */}
-      <path d="M100 80 L100 166" />
-      <path d="M140 80 L140 166" />
+    <Defs id="err404" tone="primary" />
+    <Shadow id="err404" />
+
+    {/* search swirl with question */}
+    <path d="M180 32 q16 8 9 26 q-7 18 -26 9" className="stroke-primary/55" strokeWidth="1.6" strokeDasharray="3 5" strokeLinecap="round" fill="none" />
+    <circle cx="190" cy="38" r="9" className="fill-primary/10 stroke-primary" strokeWidth="1.8" />
+    <text x="186.5" y="42" className="fill-primary" fontSize="11" fontFamily="ui-serif, Georgia, serif" fontWeight="700">?</text>
+
+    {/* Map — folded isometric */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      {/* base */}
+      <path d="M58 100 L130 84 L202 100 L202 174 L130 192 L58 174 Z" className="fill-background stroke-primary" strokeWidth="2.2" />
+      {/* fold crease shading */}
+      <path d="M106 90 L106 187" className="stroke-primary/30" strokeWidth="1.2" />
+      <path d="M154 90 L154 187" className="stroke-primary/30" strokeWidth="1.2" />
+      {/* fold gusset hints */}
+      <path d="M106 90 L98 96 M106 187 L98 181" className="stroke-primary/40" strokeWidth="1" />
+      <path d="M154 90 L162 96 M154 187 L162 181" className="stroke-primary/40" strokeWidth="1" />
       {/* roads */}
-      <path d="M70 110 Q120 128 170 100" className="stroke-primary/45" strokeWidth="1.4" strokeDasharray="3 3" fill="none" />
-      <path d="M70 140 Q120 124 170 148" className="stroke-primary/45" strokeWidth="1.4" strokeDasharray="3 3" fill="none" />
+      <path d="M70 120 Q130 142 192 110" className="stroke-primary/45" strokeWidth="1.4" strokeDasharray="3 4" fill="none" />
+      <path d="M70 154 Q130 138 192 162" className="stroke-primary/45" strokeWidth="1.4" strokeDasharray="3 4" fill="none" />
+      {/* tiny landmarks */}
+      <circle cx="80" cy="140" r="1.6" className="fill-primary/50" />
+      <circle cx="180" cy="138" r="1.6" className="fill-primary/50" />
       {/* pin */}
-      <path d="M120 116 q-7 0 -7 8 q0 8 7 14 q7 -6 7 -14 q0 -8 -7 -8 z" className="fill-primary/15 stroke-primary" />
-      <circle cx="120" cy="124" r="2.4" className="fill-primary stroke-primary" />
-    </g>
-    {/* Sad face bottom-left of map */}
-    <g>
-      <path d="M76 132 q3 -3 6 0" className="stroke-primary" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <path d="M88 132 q3 -3 6 0" className="stroke-primary" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <path d="M80 148 Q86 142 92 148" className="stroke-primary" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <path d="M130 122 q-9 0 -9 10 q0 10 9 18 q9 -8 9 -18 q0 -10 -9 -10 z" className="fill-primary/15 stroke-primary" strokeWidth="2" />
+      <circle cx="130" cy="132" r="3" className="fill-primary" />
+      <circle cx="129" cy="131" r="0.9" className="fill-background" />
     </g>
   </svg>
 );
 
-/* ---------------- 403 — Cute padlock character ---------------- */
+/* ─────────── 403 — Padlock character ─────────── */
 export const ForbiddenIllustration = (props: SVGProps<SVGSVGElement>) => (
   <svg {...baseProps} {...props}>
-    <Shadow />
-    {/* No-entry mark above */}
+    <Defs id="err403" tone="warning" />
+    <Shadow id="err403" />
+
+    {/* No-entry mark */}
     <g>
-      <circle cx="170" cy="40" r="10" className="stroke-warning fill-background" strokeWidth="2" />
-      <line x1="163" y1="40" x2="177" y2="40" className="stroke-warning" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="196" cy="44" r="11" className="fill-warning/10 stroke-warning" strokeWidth="2" />
+      <line x1="188" y1="44" x2="204" y2="44" className="stroke-warning" strokeWidth="2.4" strokeLinecap="round" />
     </g>
-    {/* Padlock character (isometric body) */}
-    <g className="stroke-warning fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      {/* shackle */}
-      <path d="M92 96 L92 78 Q92 50 120 50 Q148 50 148 78 L148 96" fill="none" />
-      {/* body top face */}
-      <path d="M70 100 L120 86 L170 100 L120 114 Z" />
-      {/* body front */}
-      <path d="M70 100 L70 158 L120 172 L120 114 Z" />
-      {/* body side */}
-      <path d="M170 100 L170 158 L120 172 L120 114 Z" />
+
+    {/* Shackle (with thickness illusion) */}
+    <g strokeLinejoin="round" strokeLinecap="round" fill="none">
+      <path d="M100 110 L100 88 Q100 56 130 56 Q160 56 160 88 L160 110" className="stroke-warning" strokeWidth="3" />
+      <path d="M105 110 L105 88 Q105 61 130 61 Q155 61 155 88 L155 110" className="stroke-warning/40" strokeWidth="1.2" />
+    </g>
+
+    {/* Body — isometric */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      {/* top */}
+      <path d="M76 116 L130 102 L184 116 L130 130 Z" className="fill-warning/10 stroke-warning" strokeWidth="2.2" />
+      {/* front */}
+      <path d="M76 116 L76 178 L130 192 L130 130 Z" className="fill-background stroke-warning" strokeWidth="2.2" />
+      {/* side */}
+      <path d="M184 116 L184 178 L130 192 L130 130 Z" className="fill-warning/10 stroke-warning" strokeWidth="2.2" />
       {/* keyhole */}
-      <circle cx="93" cy="135" r="4.5" className="fill-warning/20 stroke-warning" />
-      <path d="M93 139 L91 150 L95 150 Z" className="fill-warning stroke-warning" strokeWidth="1.4" />
+      <circle cx="103" cy="153" r="5" className="fill-warning/15 stroke-warning" strokeWidth="1.6" />
+      <path d="M103 157 L100 168 L106 168 Z" className="fill-warning" />
     </g>
-    {/* Stern face */}
+
+    {/* Stern but cute face */}
     <g>
-      <path d="M82 122 l5 3 M92 125 l-5 -3" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M104 122 l5 3 M114 125 l-5 -3" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M88 148 q8 -3 16 0" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <Cheeks left={84} right={114} y={138} />
+      <Eye cx={92} cy={140} r={2.4} tone="warning" />
+      <Eye cx={114} cy={140} r={2.4} tone="warning" />
+      {/* furrowed brows */}
+      <path d="M86 132 l8 3" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M120 132 l-8 3" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" />
+      {/* flat mouth */}
+      <path d="M97 168 q6 -2 12 0" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <Cheeks left={88} right={118} y={156} tone="warning" />
     </g>
   </svg>
 );
 
-/* ---------------- 401 — Door with peeking key ---------------- */
+/* ─────────── 401 — Door with key ─────────── */
 export const UnauthorizedIllustration = (props: SVGProps<SVGSVGElement>) => (
   <svg {...baseProps} {...props}>
-    <Shadow />
-    {/* dashed key motion */}
-    <path
-      d="M192 60 q-18 4 -22 24"
-      className="stroke-info/60"
-      strokeWidth="1.6"
-      strokeDasharray="3 4"
-      strokeLinecap="round"
-      fill="none"
-    />
-    {/* Door (isometric) */}
-    <g className="stroke-info fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      <path d="M60 60 L130 50 L130 168 L60 178 Z" />
-      <path d="M60 60 L60 178" />
-      {/* panel */}
-      <path d="M74 80 L120 73 L120 156 L74 164 Z" className="fill-info/5" />
+    <Defs id="err401" tone="info" />
+    <Shadow id="err401" />
+
+    {/* Key motion path */}
+    <path d="M214 64 q-18 6 -22 28" className="stroke-info/55" strokeWidth="1.6" strokeDasharray="3 5" strokeLinecap="round" fill="none" />
+
+    {/* Door frame */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      {/* outer */}
+      <path d="M58 64 L138 52 L138 188 L58 200 Z" className="fill-info/10 stroke-info" strokeWidth="2.2" />
+      {/* inner panel */}
+      <path d="M72 84 L126 76 L126 174 L72 184 Z" className="fill-background stroke-info" strokeWidth="2" />
+      {/* small panel divisions */}
+      <path d="M72 130 L126 124" className="stroke-info/30" strokeWidth="1" />
       {/* handle */}
-      <circle cx="112" cy="120" r="3.2" className="fill-info" />
+      <circle cx="116" cy="138" r="3.2" className="fill-info" />
+      <circle cx="115" cy="137" r="1" className="fill-background" />
     </g>
-    {/* Door face */}
+
+    {/* Door face — peeking */}
     <g>
-      <circle cx="88" cy="106" r="2" className="fill-info" />
-      <circle cx="104" cy="103" r="2" className="fill-info" />
-      <path d="M88 124 Q96 118 104 122" className="stroke-info" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <Eye cx={88} cy={118} r={2.2} tone="info" />
+      <Eye cx={104} cy={115} r={2.2} tone="info" />
+      <path d="M88 134 Q96 128 104 132" className="stroke-info" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <Cheeks left={84} right={108} y={126} tone="info" />
     </g>
+
     {/* Key character */}
-    <g className="stroke-info fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      <circle cx="170" cy="100" r="14" />
-      <line x1="184" y1="100" x2="216" y2="100" strokeLinecap="round" />
-      <line x1="206" y1="100" x2="206" y2="110" strokeLinecap="round" />
-      <line x1="214" y1="100" x2="214" y2="108" strokeLinecap="round" />
-      {/* key face */}
-      <circle cx="166" cy="98" r="1.4" className="fill-info" />
-      <circle cx="174" cy="98" r="1.4" className="fill-info" />
-      <path d="M166 106 q4 3 8 0" className="stroke-info" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <circle cx="184" cy="108" r="16" className="fill-background stroke-info" strokeWidth="2.2" />
+      <line x1="200" y1="108" x2="236" y2="108" className="stroke-info" strokeWidth="2.4" />
+      <line x1="224" y1="108" x2="224" y2="120" className="stroke-info" strokeWidth="2.4" />
+      <line x1="232" y1="108" x2="232" y2="118" className="stroke-info" strokeWidth="2.4" />
+      {/* face */}
+      <Eye cx={179} cy={106} r={1.6} tone="info" />
+      <Eye cx={189} cy={106} r={1.6} tone="info" />
+      <path d="M179 114 q5 3 10 0" className="stroke-info" strokeWidth="1.4" strokeLinecap="round" fill="none" />
     </g>
   </svg>
 );
 
-/* ---------------- 503 — Toolbox with wrench (maintenance) ---------------- */
+/* ─────────── 503 — Toolbox & wrench ─────────── */
 export const MaintenanceIllustration = (props: SVGProps<SVGSVGElement>) => (
   <svg {...baseProps} {...props}>
-    <Shadow />
-    {/* sparkles above */}
+    <Defs id="err503" tone="warning" />
+    <Shadow id="err503" />
+
+    {/* sparkle accents */}
     <g className="stroke-warning" strokeWidth="1.6" strokeLinecap="round">
-      <path d="M168 40 l0 8 M164 44 l8 0" />
-      <path d="M188 60 l0 6 M185 63 l6 0" />
+      <path d="M188 38 v8 M184 42 h8" />
+      <path d="M210 64 v6 M207 67 h6" />
+      <circle cx="200" cy="50" r="1.4" className="fill-warning stroke-none" />
     </g>
-    {/* Toolbox (isometric) */}
-    <g className="stroke-warning fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      {/* handle */}
-      <path d="M96 80 q24 -22 48 0" fill="none" />
-      {/* lid */}
-      <path d="M64 96 L120 82 L176 96 L120 110 Z" />
-      {/* body front */}
-      <path d="M64 96 L64 160 L120 174 L120 110 Z" />
-      {/* body side */}
-      <path d="M176 96 L176 160 L120 174 L120 110 Z" />
+
+    {/* Handle */}
+    <path d="M104 88 q26 -26 52 0" className="stroke-warning fill-none" strokeWidth="2.4" strokeLinecap="round" />
+    <path d="M110 90 q22 -22 44 0" className="stroke-warning/40 fill-none" strokeWidth="1" />
+
+    {/* Toolbox body */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      {/* top lid */}
+      <path d="M68 108 L130 92 L192 108 L130 122 Z" className="fill-warning/10 stroke-warning" strokeWidth="2.2" />
+      {/* front */}
+      <path d="M68 108 L68 174 L130 190 L130 122 Z" className="fill-background stroke-warning" strokeWidth="2.2" />
+      {/* side */}
+      <path d="M192 108 L192 174 L130 190 L130 122 Z" className="fill-warning/10 stroke-warning" strokeWidth="2.2" />
       {/* latch */}
-      <rect x="114" y="100" width="12" height="8" rx="1.5" className="fill-warning/20 stroke-warning" />
+      <rect x="122" y="112" width="16" height="9" rx="2" className="fill-warning/25 stroke-warning" strokeWidth="1.6" />
+      <circle cx="130" cy="116.5" r="1.2" className="fill-warning" />
     </g>
-    {/* Toolbox face */}
+
+    {/* Face */}
     <g>
-      <circle cx="86" cy="126" r="2" className="fill-warning" />
-      <circle cx="100" cy="129" r="2" className="fill-warning" />
-      <path d="M86 144 q7 4 14 2" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <Cheeks left={80} right={106} y={138} />
+      <Eye cx={88} cy={140} r={2.4} tone="warning" />
+      <Eye cx={104} cy={143} r={2.4} tone="warning" />
+      <path d="M86 160 q9 5 18 2" className="stroke-warning" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <Cheeks left={82} right={110} y={152} tone="warning" />
     </g>
-    {/* Wrench peeking out */}
-    <g className="stroke-primary fill-background" strokeWidth="2" strokeLinejoin="round">
-      <path d="M150 70 l18 18 a4 4 0 0 1 -6 6 l-18 -18 a8 8 0 1 1 6 -6 z" />
+
+    {/* Wrench peeking */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <path d="M158 78 l24 24 a4.5 4.5 0 0 1 -6.5 6.5 l-24 -24 a9 9 0 1 1 6.5 -6.5 z"
+        className="fill-background stroke-primary" strokeWidth="2.2" />
+      <circle cx="148" cy="84" r="2.4" className="fill-primary/20 stroke-primary" strokeWidth="1.4" />
     </g>
   </svg>
 );
 
-/* ---------------- Network — Sad cloud with broken signal ---------------- */
+/* ─────────── Network — Sad cloud, broken signal ─────────── */
 export const NetworkIllustration = (props: SVGProps<SVGSVGElement>) => (
   <svg {...baseProps} {...props}>
-    <Shadow />
-    {/* Cloud character */}
-    <g className="stroke-muted-foreground fill-background" strokeWidth="2.2" strokeLinejoin="round">
-      <path d="M70 140 a26 26 0 0 1 26 -26 a34 34 0 0 1 64 6 a22 22 0 0 1 -2 44 L82 164 a22 22 0 0 1 -12 -24 z" />
+    <Defs id="errNet" tone="muted" />
+    <Shadow id="errNet" />
+
+    {/* Cloud body with subtle inner highlight */}
+    <g strokeLinejoin="round" strokeLinecap="round">
+      <path
+        d="M70 154 a28 28 0 0 1 28 -28 a36 36 0 0 1 70 6 a24 24 0 0 1 -2 48 L84 180 a24 24 0 0 1 -14 -26 z"
+        className="fill-background stroke-muted-foreground"
+        strokeWidth="2.2"
+      />
+      {/* inner shading */}
+      <path
+        d="M82 158 a18 18 0 0 1 18 -18"
+        className="stroke-muted-foreground/25"
+        strokeWidth="1.4"
+        fill="none"
+      />
     </g>
-    {/* face */}
+
+    {/* Face */}
     <g>
-      <path d="M100 138 l5 4 M110 142 l-5 -4" className="stroke-muted-foreground" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M130 138 l5 4 M140 142 l-5 -4" className="stroke-muted-foreground" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M112 156 Q120 150 128 156" className="stroke-muted-foreground" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <Cheeks left={98} right={142} y={150} />
+      <Eye cx={106} cy={150} r={2.6} tone="muted-foreground" />
+      <Eye cx={142} cy={150} r={2.6} tone="muted-foreground" />
+      {/* sad brows */}
+      <path d="M100 142 q6 -3 12 0" className="stroke-muted-foreground" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      <path d="M136 142 q6 -3 12 0" className="stroke-muted-foreground" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      {/* frown */}
+      <path d="M116 170 Q124 162 132 170" className="stroke-muted-foreground" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <Cheeks left={100} right={148} y={162} tone="muted-foreground" />
     </g>
-    {/* broken signal arcs above */}
-    <g className="stroke-destructive" strokeWidth="2" strokeLinecap="round" fill="none">
-      <path d="M96 86 q24 -22 48 0" strokeDasharray="3 5" />
-      <path d="M108 70 q12 -10 24 0" strokeDasharray="3 5" />
-      {/* slash */}
-      <line x1="86" y1="58" x2="154" y2="100" strokeWidth="2.6" />
+
+    {/* Broken signal arcs */}
+    <g strokeLinecap="round" fill="none">
+      <path d="M96 92 q28 -26 56 0" className="stroke-destructive/80" strokeWidth="2" strokeDasharray="3 5" />
+      <path d="M110 76 q14 -12 28 0" className="stroke-destructive/80" strokeWidth="2" strokeDasharray="3 5" />
+      <path d="M88 60 L162 108" className="stroke-destructive" strokeWidth="2.6" />
     </g>
   </svg>
 );
