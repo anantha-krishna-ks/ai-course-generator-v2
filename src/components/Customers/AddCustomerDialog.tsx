@@ -65,7 +65,7 @@ interface AddCustomerDialogProps {
 const sectionCardClass =
   "rounded-2xl border border-border/70 bg-card p-6 space-y-5 transition-shadow hover:shadow-sm";
 const fieldHeadingClass =
-  "text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground";
+  "text-base font-semibold text-foreground mb-2 block";
 const inputBaseClass =
   "h-10 rounded-full border-2 border-border/80 bg-background focus:border-primary/50 focus-visible:ring-primary/20 px-4";
 
