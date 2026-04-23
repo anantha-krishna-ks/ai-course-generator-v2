@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ImageIcon, Video, Mic, FileText, Type, HelpCircle, Loader2 } from "lucide-react";
+import { ImageIcon, Video, Mic, FileText, Type, HelpCircle, Loader2, Sparkles } from "lucide-react";
 
 export type BlockSkeletonVariant =
   | "text"
@@ -184,7 +184,11 @@ export function BlockSkeleton({
 
         {/* Footer label */}
         <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground/80">
-          <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+          {action === "ai-processing" ? (
+            <Sparkles className="w-3 h-3 animate-pulse" aria-hidden="true" focusable="false" />
+          ) : (
+            <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+          )}
           <span>{computedLabel}</span>
         </div>
       </div>
