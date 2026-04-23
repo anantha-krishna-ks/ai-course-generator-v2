@@ -1,15 +1,41 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Pencil, Trash2, Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, Eye } from "lucide-react";
+import {
+  ArrowLeft,
+  Pencil,
+  Trash2,
+  Plus,
+  Search,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  Coins,
+  ListFilter,
+  TrendingUp,
+  Users as UsersIcon,
+} from "lucide-react";
 import { ViewTokensDialog } from "@/components/TokenManagement/ViewTokensDialog";
 import { EditTokenDialog } from "@/components/TokenManagement/EditTokenDialog";
 import { DeleteTokenDialog } from "@/components/TokenManagement/DeleteTokenDialog";
 import { AddTokenDialog } from "@/components/TokenManagement/AddTokenDialog";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  }),
+};
 
 // Mock customers data
 const mockCustomers = [
@@ -102,12 +128,19 @@ const TokenManagement = () => {
 
   const getSortIcon = (column: string) => {
     if (sortColumn !== column) {
-      return <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />;
+      return <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" aria-hidden="true" focusable="false" />;
     }
-    return sortDirection === "asc" ? 
-      <ArrowUp className="w-3 h-3" /> : 
-      <ArrowDown className="w-3 h-3" />;
+    return sortDirection === "asc" ? (
+      <ArrowUp className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+    ) : (
+      <ArrowDown className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+    );
   };
+
+  const totalActiveTokens = tokens
+    .filter((t) => t.state === "Active")
+    .reduce((sum, t) => sum + t.balance, 0);
+  const totalConsumed = tokens.reduce((sum, t) => sum + t.consumedTokens, 0);
 
   const handleEdit = (id: number) => {
     const token = tokens.find(t => t.id === id);
@@ -137,272 +170,317 @@ const TokenManagement = () => {
     setTokens(prevTokens => prevTokens.filter(t => t.id !== id));
   };
 
+  const selectedCustomerName =
+    selectedCustomer === "all"
+      ? "All Customers"
+      : mockCustomers.find((c) => c.id.toString() === selectedCustomer)?.name ?? "All Customers";
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Header />
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/admin-module")}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Admin Module
-        </Button>
 
-        <div className="flex items-start justify-between gap-8 mb-8 flex-wrap">
-          {/* Left side - Heading */}
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Token Management</h1>
-            <p className="text-muted-foreground">View and manage token allocations</p>
-          </div>
+      <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back button */}
+        <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/admin-module")}
+            className="mb-6 rounded-full hover:bg-primary/5 hover:text-primary"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+            Back to Admin Module
+          </Button>
+        </motion.div>
 
-          {/* Right side - Customer Filter, Search and Buttons */}
-          <div className="flex items-center gap-4 flex-wrap flex-1 justify-end">
-            <Select value={selectedCustomer} onValueChange={(value) => {
-              setSelectedCustomer(value);
-              setCurrentPage(1);
-            }}>
-              <SelectTrigger className="w-[200px] h-12 border-2 border-border hover:border-primary/50 focus:border-primary transition-colors bg-white">
-                <SelectValue placeholder="Select Customer" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border z-50">
-                <SelectItem value="all" className="cursor-pointer hover:bg-accent">All Customers</SelectItem>
-                {mockCustomers.map((customer) => (
-                  <SelectItem 
-                    key={customer.id} 
-                    value={customer.id.toString()}
-                    className="cursor-pointer hover:bg-accent"
+        {/* Hero / Welcome banner */}
+        <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible" className="mb-8">
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 px-7 py-6">
+            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <Coins className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                </div>
+                <div>
+                  <h1
+                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight text-foreground"
+                    style={{ fontFamily: "'Geist', sans-serif" }}
                   >
-                    {customer.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <div className="relative flex-1 max-w-md min-w-[280px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    Token Management
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    View and manage token allocations across customers
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-background rounded-full px-4 py-2 border border-border/60 self-start lg:self-auto">
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <TrendingUp className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{totalActiveTokens.toLocaleString()}</span> active balance
+                  </span>
+                </div>
+                <span className="w-px h-3.5 bg-border" aria-hidden="true" />
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <Coins className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{totalConsumed.toLocaleString()}</span> consumed
+                  </span>
+                </div>
+                <span className="w-px h-3.5 bg-border" aria-hidden="true" />
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <UsersIcon className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{mockCustomers.length}</span> customers
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Toolbar: search + filter + actions */}
+        <motion.div
+          custom={2}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6"
+        >
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <div className="relative w-full sm:max-w-xs">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none"
+                aria-hidden="true"
+                focusable="false"
+              />
               <Input
-                type="text"
+                type="search"
                 placeholder="Search tokens..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-11 h-12 text-base border-2 border-border hover:border-primary/50 focus-visible:border-primary transition-colors"
+                aria-label="Search tokens"
+                className="pl-10 h-10 rounded-full border-2 border-border/80 bg-card focus:border-primary/50 focus-visible:ring-primary/20"
               />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
-              )}
             </div>
-            
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="gap-2 h-12 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
-              onClick={() => setViewTokensDialogOpen(true)}
+
+            <span className="hidden sm:block w-px h-6 bg-border/80" aria-hidden="true" />
+
+            <Select
+              value={selectedCustomer}
+              onValueChange={(value) => {
+                setSelectedCustomer(value);
+                setCurrentPage(1);
+              }}
             >
-              <Eye className="w-5 h-5" />
+              <SelectTrigger
+                aria-label="Filter by customer"
+                className="h-10 w-full sm:w-[220px] rounded-full border-2 border-border/80 bg-card pl-3.5"
+              >
+                <div className="flex items-center gap-2">
+                  <ListFilter className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <SelectValue placeholder="All Customers" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Customers</SelectItem>
+                {mockCustomers.map((customer) => (
+                  <SelectItem key={customer.id} value={customer.id.toString()}>
+                    {customer.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="outline"
+              onClick={() => setViewTokensDialogOpen(true)}
+              className="gap-2 rounded-full border-border bg-card hover:bg-muted/60"
+            >
+              <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
               View Tokens
             </Button>
-            
-            <Button 
-              size="lg" 
-              className="gap-2 h-12"
+
+            <Button
               onClick={() => setAddTokenDialogOpen(true)}
+              className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
               Add Tokens
             </Button>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Active filter chip */}
+        {selectedCustomer !== "all" && (
+          <motion.div custom={2.5} variants={fadeUp} initial="hidden" animate="visible" className="mb-4">
+            <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/20 gap-1.5">
+              Customer: {selectedCustomerName}
+            </Badge>
+          </motion.div>
+        )}
 
         {/* Tokens Table */}
-        <div className="bg-card rounded-lg border overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <div className="min-w-[1200px]">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/80 hover:bg-muted/80 border-b-2">
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("date")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Date
-                      {getSortIcon("date")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("openingBalance")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Opening Balance
-                      {getSortIcon("openingBalance")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("tokensCount")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Tokens Count
-                      {getSortIcon("tokensCount")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("consumedTokens")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Consumed Tokens
-                      {getSortIcon("consumedTokens")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("balance")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Balance
-                      {getSortIcon("balance")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("state")}
-                  >
-                    <div className="flex items-center gap-2">
-                      State
-                      {getSortIcon("state")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("expiryDate")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Expiry Date
-                      {getSortIcon("expiryDate")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("user")}
-                  >
-                    <div className="flex items-center gap-2">
-                      User
-                      {getSortIcon("user")}
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-center font-semibold text-foreground">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedTokens.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage).map((token) => (
-                  <TableRow key={token.id}>
-                    <TableCell className="font-medium py-3">{token.date}</TableCell>
-                    <TableCell className="py-3">{token.openingBalance.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.tokensCount.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.consumedTokens.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.balance.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.state}</TableCell>
-                    <TableCell className="py-3">{token.expiryDate}</TableCell>
-                    <TableCell className="py-3">{token.user}</TableCell>
-                    <TableCell className="py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(token.id)}
-                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+        <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
+          <Card className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="overflow-x-auto">
+              <div className="min-w-[1200px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/60 hover:bg-muted/60 border-b border-border/60">
+                      {[
+                        { key: "date", label: "Date" },
+                        { key: "openingBalance", label: "Opening Balance" },
+                        { key: "tokensCount", label: "Tokens Count" },
+                        { key: "consumedTokens", label: "Consumed Tokens" },
+                        { key: "balance", label: "Balance" },
+                        { key: "state", label: "State" },
+                        { key: "expiryDate", label: "Expiry Date" },
+                        { key: "user", label: "User" },
+                      ].map((col) => (
+                        <TableHead
+                          key={col.key}
+                          className="font-semibold text-foreground cursor-pointer group select-none"
+                          onClick={() => handleSort(col.key)}
                         >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(token.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            </div>
-          </div>
-
-          {/* Pagination */}
-          <div className="border-t p-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                <span className="text-sm text-muted-foreground">
-                  Total Courses: <span className="font-semibold text-foreground">{totalTokens}</span>
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">Records Per Page:</span>
-                  <Select value={recordsPerPage.toString()} onValueChange={(value) => setRecordsPerPage(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-center overflow-x-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="shrink-0"
-                >
-                  Previous
-                </Button>
-                <div className="flex items-center gap-2 overflow-x-auto">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className="w-10 shrink-0"
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="shrink-0"
-                >
-                  Next
-                </Button>
+                          <div className="flex items-center gap-2">
+                            {col.label}
+                            {getSortIcon(col.key)}
+                          </div>
+                        </TableHead>
+                      ))}
+                      <TableHead className="text-center font-semibold text-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedTokens.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
+                          No tokens match your filters.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      sortedTokens
+                        .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+                        .map((token) => (
+                          <TableRow key={token.id} className="hover:bg-muted/40 transition-colors">
+                            <TableCell className="font-medium py-3">{token.date}</TableCell>
+                            <TableCell className="py-3 text-muted-foreground">{token.openingBalance.toLocaleString()}</TableCell>
+                            <TableCell className="py-3">{token.tokensCount.toLocaleString()}</TableCell>
+                            <TableCell className="py-3 text-muted-foreground">{token.consumedTokens.toLocaleString()}</TableCell>
+                            <TableCell className={`py-3 font-medium ${token.balance < 0 ? "text-destructive" : "text-foreground"}`}>
+                              {token.balance.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="py-3">
+                              <Badge
+                                variant="outline"
+                                className={`rounded-full font-medium ${
+                                  token.state === "Active"
+                                    ? "bg-primary/10 text-primary border-primary/20"
+                                    : "bg-muted/40 text-muted-foreground border-border"
+                                }`}
+                              >
+                                {token.state}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="py-3 text-muted-foreground">{token.expiryDate}</TableCell>
+                            <TableCell className="py-3">{token.user}</TableCell>
+                            <TableCell className="py-3">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleEdit(token.id)}
+                                  aria-label="Edit token"
+                                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                >
+                                  <Pencil className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleDelete(token.id)}
+                                  aria-label="Delete token"
+                                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    )}
+                  </TableBody>
+                </Table>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+
+            {/* Pagination */}
+            <div className="border-t border-border/60 p-4 bg-muted/20">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+                  <span className="text-sm text-muted-foreground">
+                    Total Tokens: <span className="font-semibold text-foreground">{totalTokens}</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">Records Per Page:</span>
+                    <Select value={recordsPerPage.toString()} onValueChange={(value) => setRecordsPerPage(Number(value))}>
+                      <SelectTrigger aria-label="Records per page" className="w-20 rounded-full h-9 border-border bg-card">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-center overflow-x-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="shrink-0 rounded-full"
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1.5 overflow-x-auto">
+                    {Array.from({ length: Math.max(1, totalPages) }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-9 h-9 shrink-0 rounded-full ${currentPage === page ? "" : "border-border bg-card"}`}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="shrink-0 rounded-full"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      </main>
 
       <ViewTokensDialog 
         open={viewTokensDialogOpen} 
