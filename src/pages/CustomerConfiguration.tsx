@@ -308,22 +308,22 @@ const CustomerConfiguration = () => {
 
   const [activeTab, setActiveTab] = useState<string>(configGroups[0].id);
   const [search, setSearch] = useState("");
-  const [initialState] = useState<FormState>(() => buildInitialState());
+  const [initial, setInitial] = useState<FormState>(() => buildInitialState());
   const [values, setValues] = useState<FormState>(() => buildInitialState());
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
 
-  const dirtyGroups = useMemo(() => {
+  const dirtyGroupsLive = useMemo(() => {
     const set = new Set<string>();
     for (const group of configGroups) {
       for (const field of group.fields) {
-        if (values[group.id][field.id] !== initialState[group.id][field.id]) {
+        if (values[group.id][field.id] !== initial[group.id][field.id]) {
           set.add(group.id);
           break;
         }
       }
     }
     return set;
-  }, [values, initialState]);
+  }, [values, initial]);
 
   const totalFields = useMemo(
     () => configGroups.reduce((sum, g) => sum + g.fields.length, 0),
