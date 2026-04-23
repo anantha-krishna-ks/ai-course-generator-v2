@@ -155,23 +155,18 @@ const Customers = () => {
 
         {/* Hero / Welcome banner */}
         <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible" className="mb-8">
-          <div className="relative overflow-hidden rounded-2xl bg-card/70 backdrop-blur-sm border border-border/60 px-7 py-6">
-            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/[0.08] blur-[80px]" aria-hidden="true" />
-            <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-accent/[0.08] blur-[60px]" aria-hidden="true" />
-
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 px-7 py-6">
             <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-5">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/20 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                   <Building2 className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                 </div>
                 <div>
                   <h1
-                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight"
+                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight text-foreground"
                     style={{ fontFamily: "'Geist', sans-serif" }}
                   >
-                    <span className="bg-gradient-to-r from-primary via-[hsl(240,70%,55%)] to-[hsl(280,80%,55%)] bg-clip-text text-transparent">
-                      Customers
-                    </span>
+                    Customers
                   </h1>
                   <p className="text-sm text-muted-foreground mt-1">
                     Manage customer records, contacts and team allocations
