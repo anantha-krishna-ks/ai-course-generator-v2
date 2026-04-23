@@ -313,6 +313,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
               <div className="p-3 space-y-2.5 bg-muted/30">
                 {questions.map((question, index) => {
                   const isExpanded = expandedQuestions.has(question.id);
+                  const isQuestionRegenerating = regeneratingIds.has(question.id);
                   return (
                     <SortableQuestionCard key={question.id} question={question}>
                       {(dragHandleProps) => (
