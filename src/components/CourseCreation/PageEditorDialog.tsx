@@ -194,7 +194,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
   const [showAIIntroDialog, setShowAIIntroDialog] = useState(false);
   const [aiIntroPrompt, setAiIntroPrompt] = useState("");
-  
+
+  // Lazy-loader transition states (visual feedback while block CRUD runs)
+  const [pendingAdd, setPendingAdd] = useState<{
+    index: number;
+    variant: BlockSkeletonVariant;
+    action: "adding" | "drop";
+  } | null>(null);
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [deletingIds, setDeletingIds] = useState<Map<string, BlockSkeletonVariant>>(new Map());
+
   // AI review state
   const [aiReviewBlockId, setAiReviewBlockId] = useState<string | null>(null);
   const [aiReviewMode, setAiReviewMode] = useState<"review" | "modify">("review");
