@@ -48,19 +48,29 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
   const [fileName, setFileName] = useState<string | null>(null);
   const [localDescription, setLocalDescription] = useState(description);
   const [fileType, setFileType] = useState<string>("");
+  const [loadingAction, setLoadingAction] = useState<"uploading" | "replacing" | "removing" | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const changeFileInputRef = useRef<HTMLInputElement>(null);
   const config = mediaConfig[type];
   const Icon = config.icon;
 
+  const skeletonVariant: BlockSkeletonVariant = type;
+
   const handleFile = useCallback(
     (file: File) => {
-      const url = URL.createObjectURL(file);
-      setFileName(file.name);
-      setFileType(file.type);
-      onChange(url);
+      const isReplacing = !!fileUrl;
+      setLoadingAction(isReplacing ? "replacing" : "uploading");
+      // Simulate processing time so the skeleton is visible.
+      // For real uploads this would wrap an async upload call.
+      window.setTimeout(() => {
+        const url = URL.createObjectURL(file);
+        setFileName(file.name);
+        setFileType(file.type);
+        onChange(url);
+        setLoadingAction(null);
+      }, 700);
     },
-    [onChange]
+    [onChange, fileUrl]
   );
 
   const handleDrop = useCallback(
@@ -74,15 +84,23 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
   );
 
   const handleRemove = () => {
-    setFileName(null);
-    onChange("");
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    setLoadingAction("removing");
+    window.setTimeout(() => {
+      setFileName(null);
+      onChange("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setLoadingAction(null);
+    }, 450);
   };
 
   const handleDescriptionChange = (val: string) => {
     setLocalDescription(val);
     onDescriptionChange?.(val);
   };
+
+  if (loadingAction) {
+    return <BlockSkeleton variant={skeletonVariant} action={loadingAction} />;
+  }
 
   if (fileUrl) {
     // Document type - rich preview matching the course preview viewer
