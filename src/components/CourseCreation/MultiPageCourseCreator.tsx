@@ -414,10 +414,25 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   };
 
   const handleAddItem = (type: "section" | "page" | "question") => {
+    // Show a placeholder skeleton at the bottom of the outline before the real item commits.
+    if (type === "section" || type === "page") {
+      const placeholderId = `pending-${type}-${Date.now()}`;
+      setPendingTopAdds((prev) => [...prev, { id: placeholderId, kind: type }]);
+      window.setTimeout(() => {
+        const newItem: CourseItem = {
+          id: `${type}-${Date.now()}`,
+          type,
+          title: type === "section" ? "Untitled section" : "",
+        };
+        setItems((prev) => [...prev, newItem]);
+        setPendingTopAdds((prev) => prev.filter((p) => p.id !== placeholderId));
+      }, SKELETON_DELAY);
+      return;
+    }
     const newItem: CourseItem = {
       id: `${type}-${Date.now()}`,
       type,
-      title: type === "section" ? "Untitled section" : type === "page" ? "" : "New Question",
+      title: "New Question",
     };
     setItems([...items, newItem]);
   };
