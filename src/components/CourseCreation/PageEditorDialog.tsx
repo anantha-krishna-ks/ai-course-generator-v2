@@ -748,8 +748,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             }
                             if (item.type === "section") {
                               sectionIndex++;
+                              if (outlineDeletingIds?.has(item.id)) {
+                                return (
+                                  <OutlineItemSkeleton
+                                    key={`del-${item.id}`}
+                                    variant="section"
+                                    action="deleting"
+                                  />
+                                );
+                              }
                               return (
-                                <SortableOutlineWrapper key={item.id} id={item.id}>
+                                <React.Fragment key={item.id}>
+                                <SortableOutlineWrapper id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
                                     className={cn(
