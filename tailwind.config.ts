@@ -152,12 +152,12 @@ export default {
         },
         "flash-highlight": {
           "0%, 100%": {
-            boxShadow: "0 0 0 0 hsl(var(--primary) / 0)",
+            boxShadow: "0 0 0 0 hsl(var(--primary) / 0), 0 0 0 0 hsl(var(--primary) / 0)",
             backgroundColor: "hsl(var(--primary) / 0)",
           },
-          "30%, 60%": {
-            boxShadow: "0 0 0 4px hsl(var(--primary) / 0.35), 0 0 24px 4px hsl(var(--primary) / 0.25)",
-            backgroundColor: "hsl(var(--primary) / 0.08)",
+          "50%": {
+            boxShadow: "0 0 0 1px hsl(var(--primary) / 0.35), 0 0 18px 2px hsl(var(--primary) / 0.18)",
+            backgroundColor: "hsl(var(--primary) / 0.04)",
           },
         },
       },
@@ -167,7 +167,7 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "slide-in": "slide-in 0.4s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
-        "flash-highlight": "flash-highlight 1.2s ease-in-out 2",
+        "flash-highlight": "flash-highlight 1.6s cubic-bezier(0.4, 0, 0.2, 1) 2",
       },
     },
   },
