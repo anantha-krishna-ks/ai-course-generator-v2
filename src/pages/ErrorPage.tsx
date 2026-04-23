@@ -1,28 +1,31 @@
 import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-  FileQuestion,
-  ServerCrash,
-  ShieldAlert,
-  Lock,
-  Wrench,
-  WifiOff,
   ArrowLeft,
   Home,
+  Lock,
   RefreshCw,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {
+  ForbiddenIllustration,
+  MaintenanceIllustration,
+  NetworkIllustration,
+  NotFoundIllustration,
+  ServerErrorIllustration,
+  UnauthorizedIllustration,
+} from "@/components/ErrorIllustrations";
 
 export type ErrorType = "404" | "500" | "403" | "401" | "maintenance" | "network";
+
+type IllustrationComponent = (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 
 interface ErrorConfig {
   code: string;
   title: string;
   description: string;
-  Icon: LucideIcon;
-  iconClass: string;
+  Illustration: IllustrationComponent;
   primary: { label: string; action: "home" | "back" | "retry"; icon: LucideIcon };
   secondary?: { label: string; action: "home" | "back" | "retry"; icon: LucideIcon };
 }
@@ -33,8 +36,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Oops! Page Not Found",
     description:
       "The page you’re looking for doesn’t exist or may have been moved. Let’s get you back on track.",
-    Icon: FileQuestion,
-    iconClass: "text-primary",
+    Illustration: NotFoundIllustration,
     primary: { label: "Go to Home", action: "home", icon: Home },
     secondary: { label: "Go Back", action: "back", icon: ArrowLeft },
   },
@@ -43,8 +45,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Oops! Internal Server Error",
     description:
       "Internal Server Boo-Boo: Our bad! The server hiccuped. We’re dusting off the code and will have it sorted soon. Please be patient.",
-    Icon: ServerCrash,
-    iconClass: "text-destructive",
+    Illustration: ServerErrorIllustration,
     primary: { label: "Be Patient, Try Again", action: "retry", icon: RefreshCw },
     secondary: { label: "Go to Home", action: "home", icon: Home },
   },
@@ -53,8 +54,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Access Forbidden",
     description:
       "You don’t have permission to view this page. If you believe this is a mistake, please contact your administrator.",
-    Icon: ShieldAlert,
-    iconClass: "text-warning",
+    Illustration: ForbiddenIllustration,
     primary: { label: "Go to Home", action: "home", icon: Home },
     secondary: { label: "Go Back", action: "back", icon: ArrowLeft },
   },
@@ -63,8 +63,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Authentication Required",
     description:
       "You need to be signed in to access this page. Please log in to continue your journey.",
-    Icon: Lock,
-    iconClass: "text-info",
+    Illustration: UnauthorizedIllustration,
     primary: { label: "Sign In", action: "home", icon: Lock },
     secondary: { label: "Go Back", action: "back", icon: ArrowLeft },
   },
@@ -73,8 +72,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "We’ll Be Right Back",
     description:
       "We’re performing scheduled maintenance to improve your experience. Please check back shortly.",
-    Icon: Wrench,
-    iconClass: "text-warning",
+    Illustration: MaintenanceIllustration,
     primary: { label: "Refresh", action: "retry", icon: RefreshCw },
   },
   network: {
@@ -82,8 +80,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Connection Lost",
     description:
       "We can’t reach the server right now. Check your internet connection and try again.",
-    Icon: WifiOff,
-    iconClass: "text-muted-foreground",
+    Illustration: NetworkIllustration,
     primary: { label: "Retry", action: "retry", icon: RefreshCw },
     secondary: { label: "Go to Home", action: "home", icon: Home },
   },
@@ -126,7 +123,7 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
     }
   };
 
-  const { Icon, primary, secondary } = config;
+  const { Illustration, primary, secondary } = config;
   const PrimaryIcon = primary.icon;
   const SecondaryIcon = secondary?.icon;
 
@@ -137,42 +134,30 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
         aria-labelledby="error-title"
       >
         {/* Illustration */}
-        <div className="flex justify-center mb-10">
-          <div className="relative inline-flex flex-col items-center">
-            <Icon
-              className={cn("w-28 h-28 sm:w-32 sm:h-32", config.iconClass)}
-              strokeWidth={1.25}
-              aria-hidden="true"
-              focusable="false"
-            />
-            {/* Soft ground shadow */}
-            <span
-              aria-hidden="true"
-              className="mt-3 block h-2 w-24 sm:w-28 rounded-full bg-muted"
-            />
-          </div>
+        <div className="flex justify-center mb-8">
+          <Illustration className="w-48 h-44 sm:w-56 sm:h-52" />
         </div>
 
-        {/* Code */}
+        {/* Code — elegant, refined size */}
         <h1
           id="error-title"
-          className="text-7xl sm:text-8xl md:text-9xl font-extrabold text-foreground tracking-tight leading-none"
+          className="text-5xl sm:text-6xl font-bold text-foreground tracking-tight leading-none"
         >
           {config.code}
         </h1>
 
         {/* Title */}
-        <p className="mt-8 text-xl sm:text-2xl font-bold text-foreground">
+        <p className="mt-5 text-lg sm:text-xl font-semibold text-foreground">
           {config.title}
         </p>
 
         {/* Description */}
-        <p className="mt-4 text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
           {config.description}
         </p>
 
         {/* Actions */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button
             size="lg"
             variant="outline"
