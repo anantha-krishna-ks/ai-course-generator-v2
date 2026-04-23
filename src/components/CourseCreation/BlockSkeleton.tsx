@@ -102,7 +102,7 @@ export function BlockSkeleton({
       {/* Shimmer sweep */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-primary/[0.08] to-transparent"
+        className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent"
       />
 
       <div className="relative h-full w-full flex flex-col gap-3 p-4">
