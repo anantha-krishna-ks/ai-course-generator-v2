@@ -148,6 +148,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [sectionObjectivesMap, setSectionObjectivesMap] = useState<Record<string, string>>(initialRestoreState?.sectionObjectivesMap ?? {});
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
+  // Outline-item lazy-loader transitions (visual feedback for page/section CRUD).
+  // - pendingTopAdds:  IDs marking placeholder rows appended at the bottom of the top-level outline
+  //                    while a fresh page/section is being created.
+  // - pendingChildAdds: per-section list of placeholder IDs for nested page additions.
+  // - duplicatingIds:  IDs that should render a duplicate-skeleton directly under the source.
+  // - deletingIds:     IDs whose card should be replaced by a "removing" skeleton during the brief
+  //                    delay before the actual removal commits.
+  const [pendingTopAdds, setPendingTopAdds] = useState<{ id: string; kind: "section" | "page" }[]>([]);
+  const [pendingChildAdds, setPendingChildAdds] = useState<Record<string, string[]>>({});
+  const [duplicatingIds, setDuplicatingIds] = useState<Map<string, "section" | "page">>(new Map());
+  const [deletingIds, setDeletingIds] = useState<Map<string, "section" | "page">>(new Map());
+  const SKELETON_DELAY = 500;
+
   const tourSteps: TourStep[] = [
     {
       target: "layout-selector",
