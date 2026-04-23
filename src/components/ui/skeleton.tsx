@@ -9,7 +9,7 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
         "before:-translate-x-full",
         "before:animate-[shimmer_2s_infinite]",
         "before:bg-gradient-to-r",
-        "before:from-transparent before:via-primary/10 before:to-transparent",
+        "before:from-transparent before:via-foreground/10 before:to-transparent",
         className
       )} 
       {...props} 
