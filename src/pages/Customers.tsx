@@ -58,9 +58,7 @@ const Customers = () => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [currentBrandingId, setCurrentBrandingId] = useState<number | null>(null);
-  const [userSizeFilter, setUserSizeFilter] = useState<string>("all");
   const [brandingFilter, setBrandingFilter] = useState<string>("all");
-  const [sortPreset, setSortPreset] = useState<string>("default");
 
   useEffect(() => {
     const branding = brandingService.getCurrentBranding();
@@ -79,29 +77,15 @@ const Customers = () => {
       customer.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesSize =
-      userSizeFilter === "all" ||
-      (userSizeFilter === "small" && customer.users < 100) ||
-      (userSizeFilter === "medium" && customer.users >= 100 && customer.users < 1000) ||
-      (userSizeFilter === "large" && customer.users >= 1000);
-
     const matchesBranding =
       brandingFilter === "all" ||
       (brandingFilter === "active" && currentBrandingId === customer.id) ||
       (brandingFilter === "inactive" && currentBrandingId !== customer.id);
 
-    return matchesSearch && matchesSize && matchesBranding;
+    return matchesSearch && matchesBranding;
   });
 
   const sortedCustomers = [...filteredCustomers].sort((a, b) => {
-    if (sortPreset !== "default") {
-      switch (sortPreset) {
-        case "name-asc": return a.name.localeCompare(b.name);
-        case "name-desc": return b.name.localeCompare(a.name);
-        case "users-desc": return b.users - a.users;
-        case "users-asc": return a.users - b.users;
-      }
-    }
     if (!sortColumn) return 0;
     let aValue: any = a[sortColumn as keyof typeof a];
     let bValue: any = b[sortColumn as keyof typeof b];
@@ -112,12 +96,10 @@ const Customers = () => {
     return 0;
   });
 
-  const hasActiveFilters = searchQuery !== "" || userSizeFilter !== "all" || brandingFilter !== "all" || sortPreset !== "default";
+  const hasActiveFilters = searchQuery !== "" || brandingFilter !== "all";
   const clearFilters = () => {
     setSearchQuery("");
-    setUserSizeFilter("all");
     setBrandingFilter("all");
-    setSortPreset("default");
     setCurrentPage(1);
   };
 
@@ -256,56 +238,19 @@ const Customers = () => {
             </div>
 
             <Select
-              value={userSizeFilter}
-              onValueChange={(v) => { setUserSizeFilter(v); setCurrentPage(1); }}
-            >
-              <SelectTrigger
-                aria-label="Filter by team size"
-                className="h-10 w-full sm:w-[160px] rounded-full border border-border bg-card"
-              >
-                <SelectValue placeholder="Team size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All sizes</SelectItem>
-                <SelectItem value="small">Small (&lt; 100)</SelectItem>
-                <SelectItem value="medium">Medium (100–999)</SelectItem>
-                <SelectItem value="large">Large (1000+)</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
               value={brandingFilter}
               onValueChange={(v) => { setBrandingFilter(v); setCurrentPage(1); }}
             >
               <SelectTrigger
-                aria-label="Filter by branding status"
-                className="h-10 w-full sm:w-[170px] rounded-full border border-border bg-card"
+                aria-label="Filter customers"
+                className="h-10 w-full sm:w-[200px] rounded-full border border-border bg-card"
               >
-                <SelectValue placeholder="Branding" />
+                <SelectValue placeholder="All Customers" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All branding</SelectItem>
-                <SelectItem value="active">Active branding</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={sortPreset}
-              onValueChange={(v) => setSortPreset(v)}
-            >
-              <SelectTrigger
-                aria-label="Sort customers"
-                className="h-10 w-full sm:w-[180px] rounded-full border border-border bg-card"
-              >
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Default order</SelectItem>
-                <SelectItem value="name-asc">Name (A–Z)</SelectItem>
-                <SelectItem value="name-desc">Name (Z–A)</SelectItem>
-                <SelectItem value="users-desc">Users (high to low)</SelectItem>
-                <SelectItem value="users-asc">Users (low to high)</SelectItem>
+                <SelectItem value="all">All Customers</SelectItem>
+                <SelectItem value="active">Active Customers</SelectItem>
+                <SelectItem value="inactive">Inactive Customers</SelectItem>
               </SelectContent>
             </Select>
 
