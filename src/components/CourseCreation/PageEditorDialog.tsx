@@ -51,6 +51,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { DropIndicator } from "./DropIndicator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
+import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 
 interface PageContentBlock {
   id: string;
@@ -193,7 +194,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [isQuizGenerating, setIsQuizGenerating] = useState(false);
   const [showAIIntroDialog, setShowAIIntroDialog] = useState(false);
   const [aiIntroPrompt, setAiIntroPrompt] = useState("");
-  
+
+  // Lazy-loader transition states (visual feedback while block CRUD runs)
+  const [pendingAdd, setPendingAdd] = useState<{
+    index: number;
+    variant: BlockSkeletonVariant;
+    action: "adding" | "drop";
+  } | null>(null);
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [deletingIds, setDeletingIds] = useState<Map<string, BlockSkeletonVariant>>(new Map());
+
   // AI review state
   const [aiReviewBlockId, setAiReviewBlockId] = useState<string | null>(null);
   const [aiReviewMode, setAiReviewMode] = useState<"review" | "modify">("review");
@@ -334,6 +344,32 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     setLastAddedBlockId(id);
   }, []);
 
+  /**
+   * Wraps addBlock with a brief skeleton placeholder so users see a lazy
+   * loader at the destination index while a new block materialises (whether
+   * via toolbar click or drag-and-drop).
+   */
+  const addBlockWithSkeleton = useCallback(
+    (
+      type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description",
+      atIndex: number | undefined,
+      variant: string | undefined,
+      action: "adding" | "drop",
+    ) => {
+      // We use the current blocks length as the placeholder index when atIndex is not provided.
+      setBlocks((prev) => {
+        const targetIndex = atIndex ?? prev.length;
+        setPendingAdd({ index: targetIndex, variant: type as BlockSkeletonVariant, action });
+        return prev;
+      });
+      window.setTimeout(() => {
+        addBlock(type, atIndex, variant);
+        setPendingAdd(null);
+      }, 450);
+    },
+    [addBlock],
+  );
+
   // Drop handler for blocks dragged from ContentBlocksPanel
   const [isDragOver, setIsDragOver] = useState(false);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
@@ -354,16 +390,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         return;
       }
       // If no specific drop target, append to end
-      addBlock(resolved.type, undefined, resolved.variant);
+      addBlockWithSkeleton(resolved.type as any, undefined, resolved.variant, "drop");
     } catch {}
-  }, [addBlock]);
+  }, [addBlockWithSkeleton]);
 
   const handlePositionalDrop = useCallback((index: number, type: string, variant?: string) => {
     setDropTargetIndex(null);
     setIsSidebarDragging(false);
     setIsDragOver(false);
-    addBlock(type as any, index, variant);
-  }, [addBlock]);
+    addBlockWithSkeleton(type as any, index, variant, "drop");
+  }, [addBlockWithSkeleton]);
 
   const hasContentBlockType = useCallback((types: DOMStringList | readonly string[]) => {
     return Array.from(types).indexOf("application/content-block") >= 0;
@@ -403,16 +439,34 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   const deleteBlock = useCallback((id: string) => {
     setBlocks((prev) => {
-      const idx = prev.findIndex((b) => b.id === id);
-      if (idx === -1) return prev;
-      const block = prev[idx];
-      setDeletedBlocks((dm) => {
-        const next = new Map(dm);
-        next.set(id, { block, index: idx });
+      const block = prev.find((b) => b.id === id);
+      if (!block) return prev;
+      // Show a deleting skeleton in place briefly before removing.
+      setDeletingIds((m) => {
+        const next = new Map(m);
+        next.set(id, block.type as BlockSkeletonVariant);
         return next;
       });
-      return prev.filter((b) => b.id !== id);
+      return prev;
     });
+    window.setTimeout(() => {
+      setBlocks((prev) => {
+        const idx = prev.findIndex((b) => b.id === id);
+        if (idx === -1) return prev;
+        const block = prev[idx];
+        setDeletedBlocks((dm) => {
+          const next = new Map(dm);
+          next.set(id, { block, index: idx });
+          return next;
+        });
+        return prev.filter((b) => b.id !== id);
+      });
+      setDeletingIds((m) => {
+        const next = new Map(m);
+        next.delete(id);
+        return next;
+      });
+    }, 450);
   }, []);
 
   const undoDeleteBlock = useCallback((id: string) => {
@@ -440,15 +494,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   }, []);
 
   const duplicateBlock = useCallback((id: string) => {
-    setBlocks((prev) => {
-      const idx = prev.findIndex((b) => b.id === id);
-      if (idx === -1) return prev;
-      const newId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      const copy = { ...prev[idx], id: newId };
-      const next = [...prev];
-      next.splice(idx + 1, 0, copy);
-      return next;
-    });
+    setDuplicatingId(id);
+    window.setTimeout(() => {
+      setBlocks((prev) => {
+        const idx = prev.findIndex((b) => b.id === id);
+        if (idx === -1) return prev;
+        const newId = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const copy = { ...prev[idx], id: newId };
+        const next = [...prev];
+        next.splice(idx + 1, 0, copy);
+        return next;
+      });
+      setDuplicatingId(null);
+    }, 500);
   }, []);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
@@ -1011,7 +1069,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
               {/* Content blocks with inline undo banners */}
               <div className="min-h-[60px]">
-              {(blocks.length > 0 || deletedBlocks.size > 0) ? (
+              {(blocks.length > 0 || deletedBlocks.size > 0 || pendingAdd) ? (
                 <TooltipProvider delayDuration={300}>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
@@ -1022,8 +1080,24 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           let blockIdx = 0;
                           let deletedIdx = 0;
                           let position = 0;
+                          let pendingAddInserted = false;
+
+                          const tryInsertPendingAdd = () => {
+                            if (!pendingAdd || pendingAddInserted) return;
+                            if (pendingAdd.index === position) {
+                              elements.push(
+                                <BlockSkeleton
+                                  key={`pending-add-${position}`}
+                                  variant={pendingAdd.variant}
+                                  action={pendingAdd.action}
+                                />
+                              );
+                              pendingAddInserted = true;
+                            }
+                          };
 
                           while (blockIdx < blocks.length || deletedIdx < deletedArr.length) {
+                            tryInsertPendingAdd();
                             if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
                               const [deletedId] = deletedArr[deletedIdx];
                               elements.push(
@@ -1215,6 +1289,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     )}
                                   </div>
                                 );
+                              } else if (deletingIds.has(block.id)) {
+                                elements.push(
+                                  <BlockSkeleton
+                                    key={`deleting-${block.id}`}
+                                    variant={(deletingIds.get(block.id) ?? block.type) as BlockSkeletonVariant}
+                                    action="deleting"
+                                  />
+                                );
                               } else {
                                 elements.push(
                                   <ContentBlock
@@ -1228,6 +1310,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     autoFocus={block.id === lastAddedBlockId}
                                     aiEnabled={aiEnabled}
                                     variant={block.variant}
+                                  />
+                                );
+                              }
+                              // Duplicate skeleton placeholder right after the source block
+                              if (duplicatingId === block.id) {
+                                elements.push(
+                                  <BlockSkeleton
+                                    key={`duplicating-${block.id}`}
+                                    variant={block.type as BlockSkeletonVariant}
+                                    action="duplicating"
                                   />
                                 );
                               }
@@ -1264,10 +1356,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               }
                               blockIdx++;
                               position++;
+                              tryInsertPendingAdd();
                             } else {
                               break;
                             }
                           }
+                          // If pendingAdd targets the very end (after last position), insert it now.
+                          tryInsertPendingAdd();
 
                           while (deletedIdx < deletedArr.length) {
                             const [deletedId] = deletedArr[deletedIdx];
@@ -1309,19 +1404,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {/* Content type toolbar - below blocks */}
               <div className={cn("flex items-center gap-2", blocks.length > 0 && "mt-6")}>
                 <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
-                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("text")}>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlockWithSkeleton("text", undefined, undefined, "adding")}>
                     <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Text</span>
                   </Button>
-                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("image")}>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlockWithSkeleton("image", undefined, undefined, "adding")}>
                     <ImageIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Image</span>
                   </Button>
-                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("video")}>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlockWithSkeleton("video", undefined, undefined, "adding")}>
                     <Video className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Video</span>
                   </Button>
-                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlock("doc")}>
+                  <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlockWithSkeleton("doc", undefined, undefined, "adding")}>
                     <DocIcon className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
                     <span className="hidden sm:inline">Doc</span>
                   </Button>
