@@ -189,7 +189,6 @@ const Customers = () => {
                   </span>
                 </div>
               </div>
-              </div>
             </div>
           </div>
         </motion.div>
