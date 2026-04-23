@@ -12,7 +12,7 @@ export type BlockSkeletonVariant =
   | "video-description"
   | "generic";
 
-export type BlockSkeletonAction = "adding" | "duplicating" | "deleting" | "drop" | "uploading" | "replacing" | "removing";
+export type BlockSkeletonAction = "adding" | "duplicating" | "deleting" | "drop" | "uploading" | "replacing" | "removing" | "ai-processing";
 
 interface BlockSkeletonProps {
   variant?: BlockSkeletonVariant;
@@ -56,6 +56,7 @@ const actionVerb: Record<BlockSkeletonAction, string> = {
   uploading: "Uploading",
   replacing: "Replacing",
   removing: "Removing",
+  "ai-processing": "AI is generating",
 };
 
 const variantMinHeight: Record<BlockSkeletonVariant, string> = {
