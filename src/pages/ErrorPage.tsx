@@ -8,24 +8,15 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  ForbiddenIllustration,
-  MaintenanceIllustration,
-  NetworkIllustration,
-  NotFoundIllustration,
-  ServerErrorIllustration,
-  UnauthorizedIllustration,
-} from "@/components/ErrorIllustrations";
+import ErrorIllustration from "@/components/ErrorIllustration";
 
 export type ErrorType = "404" | "500" | "403" | "401" | "maintenance" | "network";
-
-type IllustrationComponent = (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 
 interface ErrorConfig {
   code: string;
   title: string;
   description: string;
-  Illustration: IllustrationComponent;
+  alt: string;
   primary: { label: string; action: "home" | "back" | "retry"; icon: LucideIcon };
   secondary?: { label: string; action: "home" | "back" | "retry"; icon: LucideIcon };
 }
@@ -36,7 +27,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Oops! Page Not Found",
     description:
       "The page you’re looking for doesn’t exist or may have been moved. Let’s get you back on track.",
-    Illustration: NotFoundIllustration,
+    alt: "Person falling — page not found",
     primary: { label: "Go to Home", action: "home", icon: Home },
     secondary: { label: "Go Back", action: "back", icon: ArrowLeft },
   },
@@ -45,7 +36,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Oops! Internal Server Error",
     description:
       "Internal Server Boo-Boo: Our bad! The server hiccuped. We’re dusting off the code and will have it sorted soon. Please be patient.",
-    Illustration: ServerErrorIllustration,
+    alt: "Crashed robot illustrating a server error",
     primary: { label: "Be Patient, Try Again", action: "retry", icon: RefreshCw },
     secondary: { label: "Go to Home", action: "home", icon: Home },
   },
@@ -54,7 +45,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Access Forbidden",
     description:
       "You don’t have permission to view this page. If you believe this is a mistake, please contact your administrator.",
-    Illustration: ForbiddenIllustration,
+    alt: "Shield representing protected access",
     primary: { label: "Go to Home", action: "home", icon: Home },
     secondary: { label: "Go Back", action: "back", icon: ArrowLeft },
   },
@@ -63,7 +54,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Authentication Required",
     description:
       "You need to be signed in to access this page. Please log in to continue your journey.",
-    Illustration: UnauthorizedIllustration,
+    alt: "Person logging in",
     primary: { label: "Sign In", action: "home", icon: Lock },
     secondary: { label: "Go Back", action: "back", icon: ArrowLeft },
   },
@@ -72,7 +63,7 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "We’ll Be Right Back",
     description:
       "We’re performing scheduled maintenance to improve your experience. Please check back shortly.",
-    Illustration: MaintenanceIllustration,
+    alt: "Person working — maintenance in progress",
     primary: { label: "Refresh", action: "retry", icon: RefreshCw },
   },
   network: {
@@ -80,14 +71,13 @@ const ERROR_CONFIGS: Record<ErrorType, ErrorConfig> = {
     title: "Connection Lost",
     description:
       "We can’t reach the server right now. Check your internet connection and try again.",
-    Illustration: NetworkIllustration,
+    alt: "Connection lost illustration",
     primary: { label: "Retry", action: "retry", icon: RefreshCw },
     secondary: { label: "Go to Home", action: "home", icon: Home },
   },
 };
 
 interface ErrorPageProps {
-  /** Override the error type detected from the route. */
   type?: ErrorType;
 }
 
@@ -123,7 +113,7 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
     }
   };
 
-  const { Illustration, primary, secondary } = config;
+  const { primary, secondary } = config;
   const PrimaryIcon = primary.icon;
   const SecondaryIcon = secondary?.icon;
 
@@ -135,10 +125,14 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
       >
         {/* Illustration */}
         <div className="flex justify-center mb-8">
-          <Illustration className="w-60 h-52 sm:w-72 sm:h-60" />
+          <ErrorIllustration
+            type={type}
+            alt={config.alt}
+            className="w-64 h-56 sm:w-80 sm:h-72 [&_svg]:w-full [&_svg]:h-full"
+          />
         </div>
 
-        {/* Code — elegant, refined size */}
+        {/* Code */}
         <h1
           id="error-title"
           className="text-5xl sm:text-6xl font-bold text-foreground tracking-tight leading-none"
