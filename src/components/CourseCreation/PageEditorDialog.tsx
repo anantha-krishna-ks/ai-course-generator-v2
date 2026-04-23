@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
@@ -52,6 +52,7 @@ import { DropIndicator } from "./DropIndicator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
+import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 
 interface PageContentBlock {
   id: string;
@@ -92,6 +93,11 @@ interface PageEditorDialogProps {
   sectionThumbnailUrl?: string | null;
   onSectionThumbnailChange?: (url: string | null) => void;
   onPreview?: (pageId?: string | null) => void;
+  /** Optional outline lazy-loader transitions controlled by the parent. */
+  outlineDeletingIds?: Map<string, "section" | "page">;
+  outlineDuplicatingIds?: Map<string, "section" | "page">;
+  outlinePendingTopAdds?: { id: string; kind: "section" | "page" }[];
+  outlinePendingChildAdds?: Record<string, string[]>;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -110,7 +116,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
@@ -199,7 +205,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [pendingAdd, setPendingAdd] = useState<{
     index: number;
     variant: BlockSkeletonVariant;
-    action: "adding" | "drop";
+    action: "adding" | "drop" | "ai-processing";
   } | null>(null);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
   const [deletingIds, setDeletingIds] = useState<Map<string, BlockSkeletonVariant>>(new Map());
@@ -212,6 +218,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   const handleQuizGenerate = useCallback((config: GenerateQuizConfig) => {
     setIsQuizGenerating(true);
+    // Show an AI-processing skeleton at the end of the page while the quiz is generated.
+    setBlocks((prev) => {
+      setPendingAdd({ index: prev.length, variant: "quiz", action: "ai-processing" });
+      return prev;
+    });
     setTimeout(() => {
       // Add a quiz block with generated questions
       const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -231,6 +242,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       }
       setBlocks((prev) => [...prev, { id, type: "quiz", content: JSON.stringify(questions) }]);
       setLastAddedBlockId(id);
+      setPendingAdd(null);
       setIsQuizGenerating(false);
       setShowQuizGenerateDialog(false);
     }, 1500);
@@ -239,6 +251,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | "quiz" | null) => {
     setAiGenerating(true);
     const type = blockType || "text";
+    // Surface an AI-processing skeleton at the end of the page while generation runs.
+    setBlocks((prev) => {
+      setPendingAdd({ index: prev.length, variant: type as BlockSkeletonVariant, action: "ai-processing" });
+      return prev;
+    });
     setTimeout(() => {
       const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
       const content = type === "text"
@@ -246,6 +263,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         : "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop";
       setBlocks((prev) => [...prev, { id, type, content }]);
       setLastAddedBlockId(id);
+      setPendingAdd(null);
       setAiGenerating(false);
       setShowAiBlock(false);
       setAiBlockType(null);
@@ -657,7 +675,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           return courseItems.map((item) => {
                             if (item.type === "page") {
                               const isCurrentPage = item.id === currentPageId;
+                              // Lazy-loader swap: replace the row entirely while it's being deleted.
+                              if (outlineDeletingIds?.has(item.id)) {
+                                return (
+                                  <OutlineItemSkeleton
+                                    key={`del-${item.id}`}
+                                    variant="sidebar-page"
+                                    action="deleting"
+                                  />
+                                );
+                              }
                               return (
+                                <React.Fragment key={item.id}>
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
@@ -711,12 +740,26 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
+                                {outlineDuplicatingIds?.has(item.id) && (
+                                  <OutlineItemSkeleton variant="sidebar-page" action="duplicating" />
+                                )}
+                              </React.Fragment>
                               );
                             }
                             if (item.type === "section") {
                               sectionIndex++;
+                              if (outlineDeletingIds?.has(item.id)) {
+                                return (
+                                  <OutlineItemSkeleton
+                                    key={`del-${item.id}`}
+                                    variant="section"
+                                    action="deleting"
+                                  />
+                                );
+                              }
                               return (
-                                <SortableOutlineWrapper key={item.id} id={item.id}>
+                                <React.Fragment key={item.id}>
+                                <SortableOutlineWrapper id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
                                     className={cn(
@@ -805,7 +848,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             <div className="space-y-1 pt-2 ml-1">
                                               {item.children.map((child) => {
                                                 const isCurrentChild = child.id === currentPageId;
+                                                if (outlineDeletingIds?.has(child.id)) {
+                                                  return (
+                                                    <OutlineItemSkeleton
+                                                      key={`del-${child.id}`}
+                                                      variant="sidebar-child-page"
+                                                      action="deleting"
+                                                    />
+                                                  );
+                                                }
                                                 return (
+                                                  <React.Fragment key={child.id}>
                                                   <SortableOutlineWrapper key={child.id} id={child.id}>
                                                     {(childListeners: Record<string, unknown>) => (
                                                       <div
@@ -865,6 +918,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                       </div>
                                                     )}
                                                   </SortableOutlineWrapper>
+                                                  {outlineDuplicatingIds?.has(child.id) && (
+                                                    <OutlineItemSkeleton variant="sidebar-child-page" action="duplicating" />
+                                                  )}
+                                                </React.Fragment>
                                                 );
                                               })}
                                             </div>
@@ -884,11 +941,29 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
+                                {/* Pending page additions in this section */}
+                                {(outlinePendingChildAdds?.[item.id] || []).map((pid) => (
+                                  <div key={pid} className="ml-3 mt-1">
+                                    <OutlineItemSkeleton variant="sidebar-child-page" action="adding" />
+                                  </div>
+                                ))}
+                                {outlineDuplicatingIds?.has(item.id) && (
+                                  <OutlineItemSkeleton variant="section" action="duplicating" />
+                                )}
+                              </React.Fragment>
                               );
                             }
                             return null;
                           });
                         })()}
+                        {/* Pending top-level additions appended to the sidebar */}
+                        {(outlinePendingTopAdds || []).map((p) => (
+                          <OutlineItemSkeleton
+                            key={p.id}
+                            variant={p.kind === "section" ? "section" : "sidebar-page"}
+                            action="adding"
+                          />
+                        ))}
                       </SortableContext>
                     </DndContext>
                   ) : (

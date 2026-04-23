@@ -56,6 +56,7 @@ import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelect
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 
 interface CourseItem {
   id: string;
@@ -147,6 +148,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>(initialRestoreState?.pageBlocksMap ?? {});
   const [sectionObjectivesMap, setSectionObjectivesMap] = useState<Record<string, string>>(initialRestoreState?.sectionObjectivesMap ?? {});
   const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  // Outline-item lazy-loader transitions (visual feedback for page/section CRUD).
+  // - pendingTopAdds:  IDs marking placeholder rows appended at the bottom of the top-level outline
+  //                    while a fresh page/section is being created.
+  // - pendingChildAdds: per-section list of placeholder IDs for nested page additions.
+  // - duplicatingIds:  IDs that should render a duplicate-skeleton directly under the source.
+  // - deletingIds:     IDs whose card should be replaced by a "removing" skeleton during the brief
+  //                    delay before the actual removal commits.
+  const [pendingTopAdds, setPendingTopAdds] = useState<{ id: string; kind: "section" | "page" }[]>([]);
+  const [pendingChildAdds, setPendingChildAdds] = useState<Record<string, string[]>>({});
+  const [duplicatingIds, setDuplicatingIds] = useState<Map<string, "section" | "page">>(new Map());
+  const [deletingIds, setDeletingIds] = useState<Map<string, "section" | "page">>(new Map());
+  const SKELETON_DELAY = 500;
 
   const tourSteps: TourStep[] = [
     {
@@ -400,10 +414,25 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   };
 
   const handleAddItem = (type: "section" | "page" | "question") => {
+    // Show a placeholder skeleton at the bottom of the outline before the real item commits.
+    if (type === "section" || type === "page") {
+      const placeholderId = `pending-${type}-${Date.now()}`;
+      setPendingTopAdds((prev) => [...prev, { id: placeholderId, kind: type }]);
+      window.setTimeout(() => {
+        const newItem: CourseItem = {
+          id: `${type}-${Date.now()}`,
+          type,
+          title: type === "section" ? "Untitled section" : "",
+        };
+        setItems((prev) => [...prev, newItem]);
+        setPendingTopAdds((prev) => prev.filter((p) => p.id !== placeholderId));
+      }, SKELETON_DELAY);
+      return;
+    }
     const newItem: CourseItem = {
       id: `${type}-${Date.now()}`,
       type,
-      title: type === "section" ? "Untitled section" : type === "page" ? "" : "New Question",
+      title: "New Question",
     };
     setItems([...items, newItem]);
   };
@@ -433,13 +462,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     );
   };
 
-  const deleteItem = (id: string) => {
+  // Internal helper that performs the actual removal of an item by id (top-level or nested).
+  const removeItemById = useCallback((id: string) => {
     setItems((prev) => {
-      // Try top-level first
       if (prev.some((item) => item.id === id)) {
         return prev.filter((item) => item.id !== id);
       }
-      // Try inside section children
       return prev.map((item) => {
         if (!item.children) return item;
         const filtered = item.children.filter((c) => c.id !== id);
@@ -447,9 +475,36 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         return item;
       });
     });
+  }, []);
+
+  const deleteItem = (id: string) => {
+    // Determine type for the skeleton variant.
+    let kind: "section" | "page" = "page";
+    const top = items.find((i) => i.id === id);
+    if (top) kind = top.type === "section" ? "section" : "page";
+    else {
+      for (const it of items) {
+        if (it.children?.some((c) => c.id === id)) { kind = "page"; break; }
+      }
+    }
+    setDeletingIds((m) => {
+      const next = new Map(m);
+      next.set(id, kind);
+      return next;
+    });
+    window.setTimeout(() => {
+      removeItemById(id);
+      setDeletingIds((m) => {
+        const next = new Map(m);
+        next.delete(id);
+        return next;
+      });
+    }, SKELETON_DELAY);
   };
 
-  const duplicateItem = (id: string) => {
+  // Internal: actually clones the item. The public `duplicateItem` wraps this with
+  // a brief skeleton placeholder so users see lazy-loader feedback at the destination.
+  const performDuplicate = useCallback((id: string) => {
     setItems((prev) => {
       // Search top-level
       let idx = prev.findIndex((item) => item.id === id);
@@ -458,7 +513,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
         const clonedChildren = original.children?.map((child) => {
           const childCloneId = `${child.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-          // Clone child page blocks
           if (pageBlocksMap[child.id]) {
             setPageBlocksMap((prev) => ({
               ...prev,
@@ -470,7 +524,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           }
           return { ...child, id: childCloneId };
         });
-        // Clone the item's own blocks
         if (pageBlocksMap[id]) {
           setPageBlocksMap((prev) => ({
             ...prev,
@@ -489,14 +542,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         });
         return next;
       }
-      // Search inside section children
       return prev.map((item) => {
         if (!item.children) return item;
         const childIdx = item.children.findIndex((c) => c.id === id);
         if (childIdx === -1) return item;
         const original = item.children[childIdx];
         const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-        // Clone the child page's blocks
         if (pageBlocksMap[id]) {
           setPageBlocksMap((prev) => ({
             ...prev,
@@ -516,6 +567,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         return { ...item, children: newChildren };
       });
     });
+  }, [pageBlocksMap, toast]);
+
+  const duplicateItem = (id: string) => {
+    // Determine type for skeleton variant.
+    let kind: "section" | "page" = "page";
+    const top = items.find((i) => i.id === id);
+    if (top) kind = top.type === "section" ? "section" : "page";
+    setDuplicatingIds((m) => {
+      const next = new Map(m);
+      next.set(id, kind);
+      return next;
+    });
+    window.setTimeout(() => {
+      performDuplicate(id);
+      setDuplicatingIds((m) => {
+        const next = new Map(m);
+        next.delete(id);
+        return next;
+      });
+    }, SKELETON_DELAY);
   };
 
   const updatePageBlocks = useCallback((pageId: string, blocks: PageContentBlockData[]) => {
@@ -523,17 +594,30 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, []);
 
   const addPageToSection = (sectionId: string) => {
-    const newPage: CourseItem = {
-      id: `page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      type: "page",
-      title: "",
-    };
-    setItems((prev) => prev.map((item) => {
-      if (item.id === sectionId && item.type === "section") {
-        return { ...item, children: [...(item.children || []), newPage] };
-      }
-      return item;
+    const placeholderId = `pending-page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    setPendingChildAdds((prev) => ({
+      ...prev,
+      [sectionId]: [...(prev[sectionId] || []), placeholderId],
     }));
+    window.setTimeout(() => {
+      const newPage: CourseItem = {
+        id: `page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: "page",
+        title: "",
+      };
+      setItems((prev) => prev.map((item) => {
+        if (item.id === sectionId && item.type === "section") {
+          return { ...item, children: [...(item.children || []), newPage] };
+        }
+        return item;
+      }));
+      setPendingChildAdds((prev) => {
+        const next = { ...prev };
+        next[sectionId] = (next[sectionId] || []).filter((p) => p !== placeholderId);
+        if (next[sectionId].length === 0) delete next[sectionId];
+        return next;
+      });
+    }, SKELETON_DELAY);
   };
 
   // Find a page item by id (top-level or nested in sections)
@@ -1185,7 +1269,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </div>
 
               {/* Outline Items */}
-              {items.length > 0 && (
+              {(items.length > 0 || pendingTopAdds.length > 0) && (
                 <DndContext
                   sensors={outlineSensors}
                   collisionDetection={closestCenter}
@@ -1195,11 +1279,24 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     <div className="space-y-6">
                       {(() => {
                         let sectionIndex = 0;
-                        return items.map((item) => {
+                        const rendered: React.ReactNode[] = [];
+                        items.forEach((item) => {
+                          // Deleting -> swap card for skeleton
+                          if (deletingIds.has(item.id)) {
+                            rendered.push(
+                              <OutlineItemSkeleton
+                                key={`del-${item.id}`}
+                                variant={deletingIds.get(item.id) === "section" ? "section" : "page"}
+                                action="deleting"
+                              />,
+                            );
+                            return;
+                          }
+
                           if (item.type === "section") {
                             sectionIndex++;
                             const currentSectionNumber = sectionIndex;
-                            return (
+                            rendered.push(
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <SectionCard
                                   sectionNumber={currentSectionNumber}
@@ -1243,11 +1340,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     }));
                                   }}
                                 />
-                              </SortableOutlineItem>
+                              </SortableOutlineItem>,
                             );
-                          }
-                          if (item.type === "page") {
-                            return (
+                            // Pending child page additions for this section -> show skeleton placeholders
+                            const pending = pendingChildAdds[item.id] || [];
+                            pending.forEach((pid) => {
+                              rendered.push(
+                                <div key={pid} className="ml-4">
+                                  <OutlineItemSkeleton variant="section-child-page" action="adding" />
+                                </div>,
+                              );
+                            });
+                          } else if (item.type === "page") {
+                            rendered.push(
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <PageItemCard
                                   id={item.id}
@@ -1294,11 +1399,34 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                    onAddItem={(type) => handleAddItem(type)}
                                    onPreview={handlePreview}
                                  />
-                              </SortableOutlineItem>
+                              </SortableOutlineItem>,
                             );
                           }
-                          return null;
+
+                          // Duplicating -> show clone skeleton directly under the source
+                          if (duplicatingIds.has(item.id)) {
+                            rendered.push(
+                              <OutlineItemSkeleton
+                                key={`dup-${item.id}`}
+                                variant={duplicatingIds.get(item.id) === "section" ? "section" : "page"}
+                                action="duplicating"
+                              />,
+                            );
+                          }
                         });
+
+                        // Pending top-level additions -> placeholder at bottom
+                        pendingTopAdds.forEach((p) => {
+                          rendered.push(
+                            <OutlineItemSkeleton
+                              key={p.id}
+                              variant={p.kind}
+                              action="adding"
+                            />,
+                          );
+                        });
+
+                        return rendered;
                       })()}
                     </div>
                   </SortableContext>
@@ -1306,7 +1434,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               )}
 
               {/* Empty State */}
-              {items.length === 0 && (
+              {items.length === 0 && pendingTopAdds.length === 0 && (
                 <div className="mt-12 flex flex-col items-center justify-center gap-4">
                   <div className="w-48 h-48">
                     <Lottie animationData={emptyOutlineAnimation} loop autoplay />
@@ -1379,6 +1507,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 ));
               }}
               onPreview={handlePreview}
+              outlineDeletingIds={deletingIds}
+              outlineDuplicatingIds={duplicatingIds}
+              outlinePendingTopAdds={pendingTopAdds}
+              outlinePendingChildAdds={pendingChildAdds}
             />
            );
         }
@@ -1426,6 +1558,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   onBlocksChange={(blocks) => updatePageBlocks(child.id, blocks)}
                   onAddItem={(type) => handleAddItem(type)}
                   onPreview={handlePreview}
+                  outlineDeletingIds={deletingIds}
+                  outlineDuplicatingIds={duplicatingIds}
+                  outlinePendingTopAdds={pendingTopAdds}
+                  outlinePendingChildAdds={pendingChildAdds}
                 />
               );
             }
