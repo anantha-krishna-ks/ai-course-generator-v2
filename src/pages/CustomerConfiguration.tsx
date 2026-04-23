@@ -529,30 +529,6 @@ const CustomerConfiguration = () => {
           Back to Customers
         </Button>
 
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
-          <ol className="flex items-center gap-2 flex-wrap">
-            <li>
-              <button
-                onClick={() => navigate("/admin-module")}
-                className="hover:text-primary transition-colors"
-              >
-                Admin Module
-              </button>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li>
-              <button
-                onClick={() => navigate("/customers")}
-                className="hover:text-primary transition-colors"
-              >
-                Customers
-              </button>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li className="text-foreground font-medium">Configuration</li>
-          </ol>
-        </nav>
-
         <h1 className="sr-only">
           Customer configuration {customer ? `– ${customer.name}` : ""}
         </h1>
