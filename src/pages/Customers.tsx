@@ -238,56 +238,19 @@ const Customers = () => {
             </div>
 
             <Select
-              value={userSizeFilter}
-              onValueChange={(v) => { setUserSizeFilter(v); setCurrentPage(1); }}
-            >
-              <SelectTrigger
-                aria-label="Filter by team size"
-                className="h-10 w-full sm:w-[160px] rounded-full border border-border bg-card"
-              >
-                <SelectValue placeholder="Team size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All sizes</SelectItem>
-                <SelectItem value="small">Small (&lt; 100)</SelectItem>
-                <SelectItem value="medium">Medium (100–999)</SelectItem>
-                <SelectItem value="large">Large (1000+)</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
               value={brandingFilter}
               onValueChange={(v) => { setBrandingFilter(v); setCurrentPage(1); }}
             >
               <SelectTrigger
-                aria-label="Filter by branding status"
-                className="h-10 w-full sm:w-[170px] rounded-full border border-border bg-card"
+                aria-label="Filter customers"
+                className="h-10 w-full sm:w-[200px] rounded-full border border-border bg-card"
               >
-                <SelectValue placeholder="Branding" />
+                <SelectValue placeholder="All Customers" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All branding</SelectItem>
-                <SelectItem value="active">Active branding</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={sortPreset}
-              onValueChange={(v) => setSortPreset(v)}
-            >
-              <SelectTrigger
-                aria-label="Sort customers"
-                className="h-10 w-full sm:w-[180px] rounded-full border border-border bg-card"
-              >
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Default order</SelectItem>
-                <SelectItem value="name-asc">Name (A–Z)</SelectItem>
-                <SelectItem value="name-desc">Name (Z–A)</SelectItem>
-                <SelectItem value="users-desc">Users (high to low)</SelectItem>
-                <SelectItem value="users-asc">Users (low to high)</SelectItem>
+                <SelectItem value="all">All Customers</SelectItem>
+                <SelectItem value="active">Active Customers</SelectItem>
+                <SelectItem value="inactive">Inactive Customers</SelectItem>
               </SelectContent>
             </Select>
 
