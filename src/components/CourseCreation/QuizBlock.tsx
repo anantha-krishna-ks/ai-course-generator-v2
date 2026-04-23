@@ -130,6 +130,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const [regeneratingQuestionId, setRegeneratingQuestionId] = useState<number | null>(null);
   const [regeneratePrompt, setRegeneratePrompt] = useState("");
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [regeneratingIds, setRegeneratingIds] = useState<Set<number>>(new Set());
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
 
   const toggleExpanded = useCallback((id: number) => {
