@@ -840,7 +840,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   )}
                 </div>
               ) : (
-                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} />
+                <div className={cn("rounded-2xl transition-shadow", flashBlocks && "animate-flash-highlight")}>
+                  <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} />
+                </div>
               )}
             </div>
           </div>
