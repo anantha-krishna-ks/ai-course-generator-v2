@@ -848,7 +848,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                             <div className="space-y-1 pt-2 ml-1">
                                               {item.children.map((child) => {
                                                 const isCurrentChild = child.id === currentPageId;
+                                                if (outlineDeletingIds?.has(child.id)) {
+                                                  return (
+                                                    <OutlineItemSkeleton
+                                                      key={`del-${child.id}`}
+                                                      variant="sidebar-child-page"
+                                                      action="deleting"
+                                                    />
+                                                  );
+                                                }
                                                 return (
+                                                  <React.Fragment key={child.id}>
                                                   <SortableOutlineWrapper key={child.id} id={child.id}>
                                                     {(childListeners: Record<string, unknown>) => (
                                                       <div
