@@ -83,7 +83,8 @@ interface ErrorPageProps {
 
 const resolveType = (raw?: string): ErrorType => {
   if (!raw) return "404";
-  const v = raw.toLowerCase();
+  // Tolerate accidental ":404" style param values from the URL bar.
+  const v = raw.replace(/^:/, "").toLowerCase();
   if (v in ERROR_CONFIGS) return v as ErrorType;
   return "404";
 };
