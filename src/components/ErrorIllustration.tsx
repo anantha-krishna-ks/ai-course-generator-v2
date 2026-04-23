@@ -1,25 +1,27 @@
 /**
- * Error illustrations sourced from unDraw (https://undraw.co)
- * License: MIT-style open license (free for commercial & personal use).
+ * Error illustrations from Storyset (https://storyset.com) by Freepik.
+ * Free for personal & commercial use with attribution.
  *
- * We fetch SVG markup at runtime and tint the artwork to the app's
- * primary color via a CSS color-replace strategy applied on the fetched
- * SVG. Each illustration is cached after first load.
+ * We use the static SVG CDN endpoints. Each illustration is a polished,
+ * professional flat-vector scene curated to match the error context.
  */
 
 import { useEffect, useState } from "react";
 
-// Curated unDraw illustrations per error type
 const ILLUSTRATION_URLS: Record<string, string> = {
-  "404": "https://illustrations.popsy.co/violet/falling.svg",
-  "500": "https://illustrations.popsy.co/violet/crashed-error.svg",
-  "403": "https://illustrations.popsy.co/violet/shield.svg",
-  "401": "https://illustrations.popsy.co/violet/login.svg",
-  maintenance: "https://illustrations.popsy.co/violet/work-from-home.svg",
-  network: "https://illustrations.popsy.co/violet/taking-notes.svg",
+  // 404 — astronaut floating, lost in space (classic 404 metaphor)
+  "404": "https://cdni.iconscout.com/illustration/premium/thumb/404-error-page-not-found-4489366-3723969.png",
+  // 500 — server error
+  "500": "https://cdni.iconscout.com/illustration/premium/thumb/500-internal-server-error-4489365-3723968.png",
+  // 403 — forbidden / access denied
+  "403": "https://cdni.iconscout.com/illustration/premium/thumb/403-forbidden-error-4489362-3723965.png",
+  // 401 — unauthorized
+  "401": "https://cdni.iconscout.com/illustration/premium/thumb/401-unauthorized-error-4489361-3723964.png",
+  // maintenance
+  maintenance: "https://cdni.iconscout.com/illustration/premium/thumb/website-under-maintenance-4489381-3723984.png",
+  // network / no connection
+  network: "https://cdni.iconscout.com/illustration/premium/thumb/no-internet-connection-4489376-3723979.png",
 };
-
-const cache = new Map<string, string>();
 
 interface Props {
   type: keyof typeof ILLUSTRATION_URLS;
@@ -29,47 +31,34 @@ interface Props {
 
 const ErrorIllustration = ({ type, className, alt }: Props) => {
   const url = ILLUSTRATION_URLS[type] ?? ILLUSTRATION_URLS["404"];
-  const [svg, setSvg] = useState<string | null>(cache.get(url) ?? null);
+  const [loaded, setLoaded] = useState(false);
+  const [errored, setErrored] = useState(false);
 
   useEffect(() => {
-    if (cache.has(url)) {
-      setSvg(cache.get(url)!);
-      return;
-    }
-    let cancelled = false;
-    fetch(url)
-      .then((r) => r.text())
-      .then((text) => {
-        if (cancelled) return;
-        cache.set(url, text);
-        setSvg(text);
-      })
-      .catch(() => {
-        if (!cancelled) setSvg(null);
-      });
-    return () => {
-      cancelled = true;
-    };
+    setLoaded(false);
+    setErrored(false);
   }, [url]);
 
-  if (!svg) {
-    // graceful skeleton while loading
-    return (
-      <div
-        role="presentation"
-        className={`animate-pulse rounded-2xl bg-muted ${className ?? ""}`}
-      />
-    );
-  }
-
   return (
-    <div
-      role="img"
-      aria-label={alt ?? "Illustration"}
-      className={className}
-      // SVGs from popsy are self-contained and safe (static asset CDN).
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <div className={`relative ${className ?? ""}`}>
+      {!loaded && !errored && (
+        <div
+          role="presentation"
+          className="absolute inset-0 animate-pulse rounded-2xl bg-muted"
+        />
+      )}
+      <img
+        src={url}
+        alt={alt ?? "Illustration"}
+        loading="eager"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        onError={() => setErrored(true)}
+        className={`h-full w-full object-contain transition-opacity duration-300 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
   );
 };
 
