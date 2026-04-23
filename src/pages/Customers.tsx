@@ -138,13 +138,6 @@ const Customers = () => {
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
-      {/* Ambient gradient background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -right-32 w-[600px] h-[600px] rounded-full bg-primary/[0.07] blur-[140px]" />
-        <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full bg-accent/[0.06] blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/3 w-[700px] h-[700px] rounded-full bg-primary/[0.05] blur-[160px]" />
-      </div>
-
       <Header />
 
       <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
