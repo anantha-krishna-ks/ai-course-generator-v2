@@ -127,8 +127,8 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
         <div className="flex justify-center mb-8">
           <ErrorIllustration
             type={type}
-            alt={config.alt}
-            className="w-64 h-56 sm:w-80 sm:h-72 [&_svg]:w-full [&_svg]:h-full"
+            className="w-72 sm:w-96 flex items-center justify-center"
+            height="220px"
           />
         </div>
 
