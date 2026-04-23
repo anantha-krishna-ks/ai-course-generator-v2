@@ -1,15 +1,17 @@
 /**
  * Professional unDraw illustrations (MIT licensed) via react-undraw-illustrations.
- * https://undraw.co — used by Stripe, GitHub docs, and many SaaS products.
+ * https://undraw.co
+ *
+ * Object/abstract-only selection — no people, no characters.
  */
 
 import {
-  UndrawLost,
-  UndrawServer,
-  UndrawSecurityOn,
-  UndrawLogin,
-  UndrawMaintenance,
-  UndrawConnected,
+  UndrawEmpty,
+  UndrawServerStatus,
+  UndrawSafe,
+  UndrawVault,
+  UndrawSetup,
+  UndrawNoData,
 } from "react-undraw-illustrations";
 
 type ErrorTypeKey = "404" | "500" | "403" | "401" | "maintenance" | "network";
@@ -18,27 +20,22 @@ const ILLUSTRATIONS: Record<
   ErrorTypeKey,
   React.ComponentType<{ height?: string; primaryColor?: string; class?: string }>
 > = {
-  "404": UndrawLost,
-  "500": UndrawServer,
-  "403": UndrawSecurityOn,
-  "401": UndrawLogin,
-  maintenance: UndrawMaintenance,
-  network: UndrawConnected,
+  "404": UndrawEmpty,         // empty plate / nothing here → page not found
+  "500": UndrawServerStatus,  // server stack with status indicator
+  "403": UndrawSafe,          // closed safe → access protected
+  "401": UndrawVault,         // bank vault → authentication required
+  maintenance: UndrawSetup,   // tools & gears → maintenance
+  network: UndrawNoData,      // abstract empty chart → no connection / data
 };
 
 interface Props {
   type: ErrorTypeKey;
   className?: string;
-  /** Pixel height passed to the unDraw component (string with units). */
   height?: string;
-  /** Hex color used to tint the illustration. Should match the app primary. */
   primaryColor?: string;
 }
 
-/**
- * Brand primary in hex (mirrors hsl(211 100% 44%) ≈ #006FE0).
- * Kept as a constant because unDraw components require a hex string.
- */
+/** Brand primary in hex, mirrors hsl(211 100% 44%). */
 const PRIMARY_HEX = "#006FE0";
 
 const ErrorIllustration = ({
