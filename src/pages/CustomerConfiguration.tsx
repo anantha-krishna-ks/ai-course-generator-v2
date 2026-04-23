@@ -71,7 +71,7 @@ const initialMockCustomers = [
 ];
 
 const fieldHeadingClass =
-  "text-xs font-semibold text-foreground mb-2 block uppercase tracking-wide";
+  "text-base font-semibold text-foreground mb-2 block";
 
 const configGroups: ConfigGroup[] = [
   {
