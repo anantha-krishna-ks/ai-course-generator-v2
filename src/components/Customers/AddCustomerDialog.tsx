@@ -35,6 +35,7 @@ import {
   Network,
   ImageIcon,
   Sparkles,
+  UserPlus,
   X,
 } from "lucide-react";
 
