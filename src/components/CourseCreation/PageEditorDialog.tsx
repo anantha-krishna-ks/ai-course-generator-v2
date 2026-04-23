@@ -199,7 +199,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [pendingAdd, setPendingAdd] = useState<{
     index: number;
     variant: BlockSkeletonVariant;
-    action: "adding" | "drop";
+    action: "adding" | "drop" | "ai-processing";
   } | null>(null);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
   const [deletingIds, setDeletingIds] = useState<Map<string, BlockSkeletonVariant>>(new Map());
