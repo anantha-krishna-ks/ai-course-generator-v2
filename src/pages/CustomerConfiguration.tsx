@@ -856,7 +856,6 @@ const CustomerConfiguration = () => {
                       onClick={() => {
                         if (prevGroup) {
                           setActiveTab(prevGroup.id);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
                         }
                       }}
                       disabled={!prevGroup}
@@ -883,7 +882,6 @@ const CustomerConfiguration = () => {
                       onClick={() => {
                         if (nextGroup) {
                           setActiveTab(nextGroup.id);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
                         }
                       }}
                       disabled={!nextGroup}
