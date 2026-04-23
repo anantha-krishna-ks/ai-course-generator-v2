@@ -628,7 +628,7 @@ const CustomerConfiguration = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
           {/* Desktop vertical rail */}
           <aside className="hidden lg:block">
-            <div className="sticky top-[220px]">
+            <div className="sticky top-[180px]">
               <nav aria-label="Configuration groups" className="space-y-1">
                 {filteredGroups.length === 0 && (
                   <p className="text-sm text-muted-foreground px-3 py-4">
