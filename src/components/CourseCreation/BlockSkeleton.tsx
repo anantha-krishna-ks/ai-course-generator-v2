@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { ImageIcon, Video, Mic, FileText, Type, HelpCircle, Loader2 } from "lucide-react";
 
 export type BlockSkeletonVariant =
   | "text"
@@ -11,64 +12,69 @@ export type BlockSkeletonVariant =
   | "video-description"
   | "generic";
 
-export type BlockSkeletonAction =
-  | "adding"
-  | "duplicating"
-  | "deleting"
-  | "drop"
-  | "uploading"
-  | "replacing"
-  | "removing";
+export type BlockSkeletonAction = "adding" | "duplicating" | "deleting" | "drop" | "uploading" | "replacing" | "removing";
 
 interface BlockSkeletonProps {
   variant?: BlockSkeletonVariant;
   action?: BlockSkeletonAction;
-  /** Optional explicit min-height override. */
+  /** Optional explicit min-height override. By default each variant picks a sensible height. */
   minHeight?: number | string;
   className?: string;
-  /** Optional accessible label. */
+  /** Optional caption override. */
   label?: string;
 }
 
-const variantMinHeight: Record<BlockSkeletonVariant, string> = {
-  text: "8rem",
-  image: "14rem",
-  video: "16rem",
-  audio: "4.5rem",
-  doc: "20rem",
-  quiz: "11rem",
-  "image-description": "14rem",
-  "video-description": "14rem",
-  generic: "6rem",
+const variantIcon: Record<BlockSkeletonVariant, React.ComponentType<React.SVGAttributes<SVGElement>>> = {
+  text: Type,
+  image: ImageIcon,
+  video: Video,
+  audio: Mic,
+  doc: FileText,
+  quiz: HelpCircle,
+  "image-description": ImageIcon,
+  "video-description": Video,
+  generic: Loader2,
 };
 
 const variantLabel: Record<BlockSkeletonVariant, string> = {
-  text: "text",
+  text: "text block",
   image: "image",
   video: "video",
   audio: "audio",
   doc: "document",
   quiz: "quiz",
-  "image-description": "image and description",
-  "video-description": "video and description",
+  "image-description": "image + description",
+  "video-description": "video + description",
   generic: "block",
 };
 
 const actionVerb: Record<BlockSkeletonAction, string> = {
-  adding: "Loading",
+  adding: "Adding",
   duplicating: "Duplicating",
   deleting: "Removing",
-  drop: "Loading",
+  drop: "Placing",
   uploading: "Uploading",
   replacing: "Replacing",
   removing: "Removing",
 };
 
+const variantMinHeight: Record<BlockSkeletonVariant, string> = {
+  text: "9rem",
+  image: "14rem",
+  video: "16rem",
+  audio: "6rem",
+  doc: "20rem",
+  quiz: "11rem",
+  "image-description": "16rem",
+  "video-description": "16rem",
+  generic: "8rem",
+};
+
 /**
- * Instagram-style shimmer placeholder.
- * Clean grayscale surfaces with a soft, continuous gradient sweep — no
- * captions, no spinners, no icons. Adapts to its container's height while
- * providing a sensible per-variant minimum so it never collapses.
+ * Adaptive shimmer placeholder for any block area.
+ * Fills the height of its container (or a sensible default for the variant)
+ * while content is being uploaded, replaced, deleted, duplicated, dragged in
+ * or otherwise transitioning.
  */
 export function BlockSkeleton({
   variant = "generic",
@@ -77,7 +83,8 @@ export function BlockSkeleton({
   className,
   label,
 }: BlockSkeletonProps) {
-  const computedLabel = label ?? `${actionVerb[action]} ${variantLabel[variant]}`;
+  const Icon = variantIcon[variant];
+  const computedLabel = label ?? `${actionVerb[action]} ${variantLabel[variant]}…`;
   const resolvedMin = minHeight ?? variantMinHeight[variant];
 
   return (
@@ -86,90 +93,100 @@ export function BlockSkeleton({
       aria-live="polite"
       aria-label={computedLabel}
       style={{ minHeight: resolvedMin }}
-      className={cn("w-full h-full animate-fade-in", className)}
-    >
-      <span className="sr-only">{computedLabel}</span>
-
-      {variant === "text" && (
-        <div className="h-full w-full flex flex-col gap-2.5 py-1">
-          <Shimmer className="h-3.5 w-[55%] rounded-md" />
-          <Shimmer className="h-3 w-full rounded-md" />
-          <Shimmer className="h-3 w-[94%] rounded-md" />
-          <Shimmer className="h-3 w-[88%] rounded-md" />
-          <Shimmer className="h-3 w-[72%] rounded-md" />
-        </div>
-      )}
-
-      {(variant === "image" || variant === "video") && (
-        <Shimmer className="h-full w-full rounded-xl" style={{ minHeight: resolvedMin }} />
-      )}
-
-      {variant === "audio" && (
-        <div className="h-full w-full flex items-center gap-3">
-          <Shimmer className="w-11 h-11 rounded-full shrink-0" />
-          <div className="flex-1 flex flex-col gap-2">
-            <Shimmer className="h-2.5 w-1/3 rounded-md" />
-            <Shimmer className="h-2.5 w-2/3 rounded-md" />
-          </div>
-        </div>
-      )}
-
-      {variant === "doc" && (
-        <Shimmer className="h-full w-full rounded-xl" style={{ minHeight: resolvedMin }} />
-      )}
-
-      {variant === "quiz" && (
-        <div className="h-full w-full flex flex-col gap-3">
-          <Shimmer className="h-3.5 w-1/2 rounded-md" />
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            <Shimmer className="h-9 rounded-lg" />
-            <Shimmer className="h-9 rounded-lg" />
-            <Shimmer className="h-9 rounded-lg" />
-            <Shimmer className="h-9 rounded-lg" />
-          </div>
-        </div>
-      )}
-
-      {(variant === "image-description" || variant === "video-description") && (
-        <div className="h-full w-full flex gap-3" style={{ minHeight: resolvedMin }}>
-          <Shimmer className="flex-1 rounded-xl" />
-          <div className="flex-1 flex flex-col gap-2 py-1">
-            <Shimmer className="h-3.5 w-1/2 rounded-md" />
-            <Shimmer className="h-2.5 w-full rounded-md" />
-            <Shimmer className="h-2.5 w-[92%] rounded-md" />
-            <Shimmer className="h-2.5 w-[80%] rounded-md" />
-            <Shimmer className="h-2.5 w-[64%] rounded-md" />
-          </div>
-        </div>
-      )}
-
-      {variant === "generic" && <Shimmer className="h-full w-full rounded-xl" />}
-    </div>
-  );
-}
-
-/**
- * Instagram-style shimmer surface.
- * A flat muted base with a slow, smooth gradient sweep moving across.
- */
-function Shimmer({
-  className,
-  style,
-}: {
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <div
-      aria-hidden="true"
-      style={style}
       className={cn(
-        "relative overflow-hidden bg-muted/60",
-        "before:absolute before:inset-0 before:-translate-x-full",
-        "before:animate-[shimmer_1.6s_ease-in-out_infinite]",
-        "before:bg-gradient-to-r before:from-transparent before:via-foreground/[0.06] before:to-transparent",
+        "relative w-full h-full overflow-hidden rounded-xl border border-border/60 bg-muted/30",
+        "animate-fade-in",
         className,
       )}
-    />
+    >
+      {/* Shimmer sweep */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-primary/[0.08] to-transparent"
+      />
+
+      <div className="relative h-full w-full flex flex-col gap-3 p-4">
+        {/* Variant-specific shimmer body */}
+        {variant === "text" && (
+          <div className="flex-1 space-y-2.5">
+            <div className="h-3.5 w-2/3 rounded-full bg-muted-foreground/15" />
+            <div className="h-3 w-full rounded-full bg-muted-foreground/10" />
+            <div className="h-3 w-[92%] rounded-full bg-muted-foreground/10" />
+            <div className="h-3 w-[78%] rounded-full bg-muted-foreground/10" />
+          </div>
+        )}
+
+        {(variant === "image" || variant === "video") && (
+          <div className="flex-1 rounded-lg bg-muted-foreground/10 flex items-center justify-center">
+            <Icon className="w-8 h-8 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+          </div>
+        )}
+
+        {variant === "audio" && (
+          <div className="flex-1 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-muted-foreground/15 flex items-center justify-center">
+              <Icon className="w-4 h-4 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="h-2.5 w-1/3 rounded-full bg-muted-foreground/15" />
+              <div className="h-2 w-2/3 rounded-full bg-muted-foreground/10" />
+            </div>
+          </div>
+        )}
+
+        {variant === "doc" && (
+          <div className="flex-1 rounded-lg bg-muted-foreground/10 flex flex-col">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-border/40">
+              <Icon className="w-4 h-4 text-muted-foreground/50" aria-hidden="true" focusable="false" />
+              <div className="h-2.5 w-32 rounded-full bg-muted-foreground/20" />
+            </div>
+            <div className="flex-1 p-4 space-y-2">
+              <div className="h-2.5 w-full rounded-full bg-muted-foreground/15" />
+              <div className="h-2.5 w-[90%] rounded-full bg-muted-foreground/15" />
+              <div className="h-2.5 w-[80%] rounded-full bg-muted-foreground/15" />
+              <div className="h-2.5 w-[60%] rounded-full bg-muted-foreground/15" />
+            </div>
+          </div>
+        )}
+
+        {variant === "quiz" && (
+          <div className="flex-1 space-y-2.5">
+            <div className="h-3.5 w-1/2 rounded-full bg-muted-foreground/15" />
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <div className="h-8 rounded-md bg-muted-foreground/10" />
+              <div className="h-8 rounded-md bg-muted-foreground/10" />
+              <div className="h-8 rounded-md bg-muted-foreground/10" />
+              <div className="h-8 rounded-md bg-muted-foreground/10" />
+            </div>
+          </div>
+        )}
+
+        {(variant === "image-description" || variant === "video-description") && (
+          <div className="flex-1 flex gap-3">
+            <div className="flex-1 rounded-lg bg-muted-foreground/10 flex items-center justify-center">
+              <Icon className="w-7 h-7 text-muted-foreground/40" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="h-3 w-1/2 rounded-full bg-muted-foreground/15" />
+              <div className="h-2.5 w-full rounded-full bg-muted-foreground/10" />
+              <div className="h-2.5 w-[88%] rounded-full bg-muted-foreground/10" />
+              <div className="h-2.5 w-[70%] rounded-full bg-muted-foreground/10" />
+            </div>
+          </div>
+        )}
+
+        {variant === "generic" && (
+          <div className="flex-1 flex items-center justify-center">
+            <Icon className="w-5 h-5 text-muted-foreground/50 animate-spin" aria-hidden="true" focusable="false" />
+          </div>
+        )}
+
+        {/* Footer label */}
+        <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground/80">
+          <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+          <span>{computedLabel}</span>
+        </div>
+      </div>
+    </div>
   );
 }
