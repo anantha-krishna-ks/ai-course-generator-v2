@@ -462,13 +462,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     );
   };
 
-  const deleteItem = (id: string) => {
+  // Internal helper that performs the actual removal of an item by id (top-level or nested).
+  const removeItemById = useCallback((id: string) => {
     setItems((prev) => {
-      // Try top-level first
       if (prev.some((item) => item.id === id)) {
         return prev.filter((item) => item.id !== id);
       }
-      // Try inside section children
       return prev.map((item) => {
         if (!item.children) return item;
         const filtered = item.children.filter((c) => c.id !== id);
@@ -476,6 +475,31 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         return item;
       });
     });
+  }, []);
+
+  const deleteItem = (id: string) => {
+    // Determine type for the skeleton variant.
+    let kind: "section" | "page" = "page";
+    const top = items.find((i) => i.id === id);
+    if (top) kind = top.type === "section" ? "section" : "page";
+    else {
+      for (const it of items) {
+        if (it.children?.some((c) => c.id === id)) { kind = "page"; break; }
+      }
+    }
+    setDeletingIds((m) => {
+      const next = new Map(m);
+      next.set(id, kind);
+      return next;
+    });
+    window.setTimeout(() => {
+      removeItemById(id);
+      setDeletingIds((m) => {
+        const next = new Map(m);
+        next.delete(id);
+        return next;
+      });
+    }, SKELETON_DELAY);
   };
 
   const duplicateItem = (id: string) => {
