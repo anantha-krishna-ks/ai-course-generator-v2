@@ -58,9 +58,7 @@ const Customers = () => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [currentBrandingId, setCurrentBrandingId] = useState<number | null>(null);
-  const [userSizeFilter, setUserSizeFilter] = useState<string>("all");
   const [brandingFilter, setBrandingFilter] = useState<string>("all");
-  const [sortPreset, setSortPreset] = useState<string>("default");
 
   useEffect(() => {
     const branding = brandingService.getCurrentBranding();
