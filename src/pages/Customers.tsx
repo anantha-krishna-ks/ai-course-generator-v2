@@ -188,11 +188,7 @@ const Customers = () => {
                     <span className="font-semibold text-foreground">{totalUsers.toLocaleString()}</span> users
                   </span>
                 </div>
-                <span className="w-px h-3.5 bg-border" aria-hidden="true" />
-                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-                  <TrendingUp className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                  <span className="font-semibold text-primary">Active</span>
-                </div>
+              </div>
               </div>
             </div>
           </div>
