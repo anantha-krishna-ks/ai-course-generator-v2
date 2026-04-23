@@ -167,7 +167,7 @@ export const AddCustomerDialog = ({ open, onOpenChange }: AddCustomerDialogProps
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto px-7 py-6 space-y-6 bg-muted/20">
+          <div className="flex-1 overflow-y-auto px-7 py-6 space-y-6 bg-muted/60">
             {/* Basic Information */}
             <div className={sectionCardClass}>
               <div className="flex items-center gap-2.5">
