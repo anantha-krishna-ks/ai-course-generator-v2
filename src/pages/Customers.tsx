@@ -20,6 +20,7 @@ import {
   Users as UsersIcon,
   Building2,
   TrendingUp,
+  ListFilter,
 } from "lucide-react";
 import { AddCustomerDialog } from "@/components/Customers/AddCustomerDialog";
 import { EditCustomerDialog } from "@/components/Customers/EditCustomerDialog";
@@ -233,9 +234,14 @@ const Customers = () => {
                   setCurrentPage(1);
                 }}
                 aria-label="Search customers"
-                className="pl-10 h-10 rounded-full border border-border bg-card focus:border-primary/50 focus-visible:ring-primary/20"
+                className="pl-10 h-10 rounded-full border-2 border-border/80 bg-card focus:border-primary/50 focus-visible:ring-primary/20"
               />
             </div>
+
+            <span
+              className="hidden sm:block w-px h-6 bg-border/80"
+              aria-hidden="true"
+            />
 
             <Select
               value={brandingFilter}
@@ -243,9 +249,12 @@ const Customers = () => {
             >
               <SelectTrigger
                 aria-label="Filter customers"
-                className="h-10 w-full sm:w-[200px] rounded-full border border-border bg-card"
+                className="h-10 w-full sm:w-[210px] rounded-full border-2 border-border/80 bg-card pl-3.5"
               >
-                <SelectValue placeholder="All Customers" />
+                <div className="flex items-center gap-2">
+                  <ListFilter className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <SelectValue placeholder="All Customers" />
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Customers</SelectItem>
