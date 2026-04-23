@@ -927,11 +927,29 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
+                                {/* Pending page additions in this section */}
+                                {(outlinePendingChildAdds?.[item.id] || []).map((pid) => (
+                                  <div key={pid} className="ml-3 mt-1">
+                                    <OutlineItemSkeleton variant="sidebar-child-page" action="adding" />
+                                  </div>
+                                ))}
+                                {outlineDuplicatingIds?.has(item.id) && (
+                                  <OutlineItemSkeleton variant="section" action="duplicating" />
+                                )}
+                              </React.Fragment>
                               );
                             }
                             return null;
                           });
                         })()}
+                        {/* Pending top-level additions appended to the sidebar */}
+                        {(outlinePendingTopAdds || []).map((p) => (
+                          <OutlineItemSkeleton
+                            key={p.id}
+                            variant={p.kind === "section" ? "section" : "sidebar-page"}
+                            action="adding"
+                          />
+                        ))}
                       </SortableContext>
                     </DndContext>
                   ) : (
