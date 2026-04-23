@@ -332,7 +332,7 @@ const TokenManagement = () => {
               <div className="min-w-[1200px]">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/60 hover:bg-muted/60 border-b border-border/60">
+                    <TableRow className="bg-muted hover:bg-muted border-b-2 border-border">
                       {[
                         { key: "date", label: "Date" },
                         { key: "openingBalance", label: "Opening Balance" },
