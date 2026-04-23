@@ -532,19 +532,16 @@ const CustomerConfiguration = () => {
         {/* Sticky header */}
         <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 bg-background/85 backdrop-blur-md border-b border-border mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="min-w-0">
+            <div className="min-w-0 flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-bold text-foreground truncate">
                 Customer configuration {customer ? `– ${customer.name}` : ""}
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {configGroups.length} groups · {totalFields} fields
-                {isDirty && (
-                  <span className="ml-2 inline-flex items-center gap-1.5 text-primary font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                    {dirtyGroupsLive.size} unsaved
-                  </span>
-                )}
-              </p>
+              {isDirty && (
+                <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm px-2.5 py-1 rounded-full bg-primary/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                  {dirtyGroupsLive.size} unsaved
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {isDirty && (
