@@ -40,6 +40,8 @@ import {
   Sparkles,
   Layers,
   Clock,
+  ChevronLeft,
+  ChevronRight,
   type LucideIcon,
 } from "lucide-react";
 
@@ -836,6 +838,69 @@ const CustomerConfiguration = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                 {activeGroup.fields.map((field) => renderField(activeGroup.id, field))}
               </div>
+
+              {/* Back / Next navigation */}
+              {(() => {
+                const navList = filteredGroups.length > 0 ? filteredGroups : configGroups;
+                const currentIdx = navList.findIndex((g) => g.id === activeGroup.id);
+                const prevGroup = currentIdx > 0 ? navList[currentIdx - 1] : null;
+                const nextGroup =
+                  currentIdx >= 0 && currentIdx < navList.length - 1
+                    ? navList[currentIdx + 1]
+                    : null;
+                return (
+                  <div className="mt-8 pt-6 border-t border-border flex items-center justify-between gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        if (prevGroup) {
+                          setActiveTab(prevGroup.id);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      }}
+                      disabled={!prevGroup}
+                      aria-label={
+                        prevGroup ? `Back to ${prevGroup.label}` : "No previous section"
+                      }
+                      className="gap-2"
+                    >
+                      <ChevronLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      <span className="hidden sm:inline">Back</span>
+                      {prevGroup && (
+                        <span className="hidden md:inline text-muted-foreground font-normal">
+                          · {prevGroup.label}
+                        </span>
+                      )}
+                    </Button>
+
+                    <span className="text-xs text-muted-foreground" aria-live="polite">
+                      {currentIdx + 1} of {navList.length}
+                    </span>
+
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (nextGroup) {
+                          setActiveTab(nextGroup.id);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      }}
+                      disabled={!nextGroup}
+                      aria-label={nextGroup ? `Next: ${nextGroup.label}` : "No next section"}
+                      className="gap-2"
+                    >
+                      {nextGroup && (
+                        <span className="hidden md:inline font-normal opacity-90">
+                          {nextGroup.label} ·
+                        </span>
+                      )}
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </Button>
+                  </div>
+                );
+              })()}
             </div>
           </section>
         </div>
