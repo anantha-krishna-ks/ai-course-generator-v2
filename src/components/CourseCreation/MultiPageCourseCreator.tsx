@@ -1269,7 +1269,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </div>
 
               {/* Outline Items */}
-              {items.length > 0 && (
+              {(items.length > 0 || pendingTopAdds.length > 0) && (
                 <DndContext
                   sensors={outlineSensors}
                   collisionDetection={closestCenter}
@@ -1279,11 +1279,24 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     <div className="space-y-6">
                       {(() => {
                         let sectionIndex = 0;
-                        return items.map((item) => {
+                        const rendered: React.ReactNode[] = [];
+                        items.forEach((item) => {
+                          // Deleting -> swap card for skeleton
+                          if (deletingIds.has(item.id)) {
+                            rendered.push(
+                              <OutlineItemSkeleton
+                                key={`del-${item.id}`}
+                                variant={deletingIds.get(item.id) === "section" ? "section" : "page"}
+                                action="deleting"
+                              />,
+                            );
+                            return;
+                          }
+
                           if (item.type === "section") {
                             sectionIndex++;
                             const currentSectionNumber = sectionIndex;
-                            return (
+                            rendered.push(
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <SectionCard
                                   sectionNumber={currentSectionNumber}
@@ -1327,11 +1340,19 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     }));
                                   }}
                                 />
-                              </SortableOutlineItem>
+                              </SortableOutlineItem>,
                             );
-                          }
-                          if (item.type === "page") {
-                            return (
+                            // Pending child page additions for this section -> show skeleton placeholders
+                            const pending = pendingChildAdds[item.id] || [];
+                            pending.forEach((pid) => {
+                              rendered.push(
+                                <div key={pid} className="ml-4">
+                                  <OutlineItemSkeleton variant="section-child-page" action="adding" />
+                                </div>,
+                              );
+                            });
+                          } else if (item.type === "page") {
+                            rendered.push(
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <PageItemCard
                                   id={item.id}
@@ -1378,11 +1399,34 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                    onAddItem={(type) => handleAddItem(type)}
                                    onPreview={handlePreview}
                                  />
-                              </SortableOutlineItem>
+                              </SortableOutlineItem>,
                             );
                           }
-                          return null;
+
+                          // Duplicating -> show clone skeleton directly under the source
+                          if (duplicatingIds.has(item.id)) {
+                            rendered.push(
+                              <OutlineItemSkeleton
+                                key={`dup-${item.id}`}
+                                variant={duplicatingIds.get(item.id) === "section" ? "section" : "page"}
+                                action="duplicating"
+                              />,
+                            );
+                          }
                         });
+
+                        // Pending top-level additions -> placeholder at bottom
+                        pendingTopAdds.forEach((p) => {
+                          rendered.push(
+                            <OutlineItemSkeleton
+                              key={p.id}
+                              variant={p.kind}
+                              action="adding"
+                            />,
+                          );
+                        });
+
+                        return rendered;
                       })()}
                     </div>
                   </SortableContext>
@@ -1390,7 +1434,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               )}
 
               {/* Empty State */}
-              {items.length === 0 && (
+              {items.length === 0 && pendingTopAdds.length === 0 && (
                 <div className="mt-12 flex flex-col items-center justify-center gap-4">
                   <div className="w-48 h-48">
                     <Lottie animationData={emptyOutlineAnimation} loop autoplay />
