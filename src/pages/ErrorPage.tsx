@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Home,
   RefreshCw,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,11 +21,11 @@ interface ErrorConfig {
   code: string;
   title: string;
   description: string;
-  Icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean | "true" | "false"; focusable?: "false" }>;
+  Icon: LucideIcon;
   iconWrapClass: string;
   iconClass: string;
-  primary: { label: string; action: "home" | "back" | "retry"; icon: React.ComponentType<{ className?: string }> };
-  secondary?: { label: string; action: "home" | "back" | "retry"; icon: React.ComponentType<{ className?: string }> };
+  primary: { label: string; action: "home" | "back" | "retry"; icon: LucideIcon };
+  secondary?: { label: string; action: "home" | "back" | "retry"; icon: LucideIcon };
   /** tailwind animation utility for the illustration */
   animation: string;
 }

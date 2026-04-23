@@ -22,7 +22,7 @@ import Customers from "./pages/Customers";
 import Users from "./pages/Users";
 import AIGenerateCourse from "./pages/AIGenerateCourse";
 import AIGeneratedCourse from "./pages/AIGeneratedCourse";
-import NotFound from "./pages/NotFound";
+import ErrorPage from "./pages/ErrorPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -53,8 +53,10 @@ const App = () => (
           <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
           <Route path="/ai-generate-course" element={<ProtectedRoute><AIGenerateCourse /></ProtectedRoute>} />
           <Route path="/ai-generated-course" element={<ProtectedRoute><AIGeneratedCourse /></ProtectedRoute>} />
+          <Route path="/error/:type" element={<ErrorPage />} />
+          <Route path="/error" element={<ErrorPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<ErrorPage type="404" />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
