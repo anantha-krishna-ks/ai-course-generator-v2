@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 
 type MediaType = "video" | "audio" | "doc";
 
