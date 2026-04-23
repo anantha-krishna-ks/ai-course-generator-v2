@@ -344,6 +344,32 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     setLastAddedBlockId(id);
   }, []);
 
+  /**
+   * Wraps addBlock with a brief skeleton placeholder so users see a lazy
+   * loader at the destination index while a new block materialises (whether
+   * via toolbar click or drag-and-drop).
+   */
+  const addBlockWithSkeleton = useCallback(
+    (
+      type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description",
+      atIndex: number | undefined,
+      variant: string | undefined,
+      action: "adding" | "drop",
+    ) => {
+      // We use the current blocks length as the placeholder index when atIndex is not provided.
+      setBlocks((prev) => {
+        const targetIndex = atIndex ?? prev.length;
+        setPendingAdd({ index: targetIndex, variant: type as BlockSkeletonVariant, action });
+        return prev;
+      });
+      window.setTimeout(() => {
+        addBlock(type, atIndex, variant);
+        setPendingAdd(null);
+      }, 450);
+    },
+    [addBlock],
+  );
+
   // Drop handler for blocks dragged from ContentBlocksPanel
   const [isDragOver, setIsDragOver] = useState(false);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
@@ -364,16 +390,16 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         return;
       }
       // If no specific drop target, append to end
-      addBlock(resolved.type, undefined, resolved.variant);
+      addBlockWithSkeleton(resolved.type as any, undefined, resolved.variant, "drop");
     } catch {}
-  }, [addBlock]);
+  }, [addBlockWithSkeleton]);
 
   const handlePositionalDrop = useCallback((index: number, type: string, variant?: string) => {
     setDropTargetIndex(null);
     setIsSidebarDragging(false);
     setIsDragOver(false);
-    addBlock(type as any, index, variant);
-  }, [addBlock]);
+    addBlockWithSkeleton(type as any, index, variant, "drop");
+  }, [addBlockWithSkeleton]);
 
   const hasContentBlockType = useCallback((types: DOMStringList | readonly string[]) => {
     return Array.from(types).indexOf("application/content-block") >= 0;
