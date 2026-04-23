@@ -594,17 +594,30 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, []);
 
   const addPageToSection = (sectionId: string) => {
-    const newPage: CourseItem = {
-      id: `page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      type: "page",
-      title: "",
-    };
-    setItems((prev) => prev.map((item) => {
-      if (item.id === sectionId && item.type === "section") {
-        return { ...item, children: [...(item.children || []), newPage] };
-      }
-      return item;
+    const placeholderId = `pending-page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    setPendingChildAdds((prev) => ({
+      ...prev,
+      [sectionId]: [...(prev[sectionId] || []), placeholderId],
     }));
+    window.setTimeout(() => {
+      const newPage: CourseItem = {
+        id: `page-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: "page",
+        title: "",
+      };
+      setItems((prev) => prev.map((item) => {
+        if (item.id === sectionId && item.type === "section") {
+          return { ...item, children: [...(item.children || []), newPage] };
+        }
+        return item;
+      }));
+      setPendingChildAdds((prev) => {
+        const next = { ...prev };
+        next[sectionId] = (next[sectionId] || []).filter((p) => p !== placeholderId);
+        if (next[sectionId].length === 0) delete next[sectionId];
+        return next;
+      });
+    }, SKELETON_DELAY);
   };
 
   // Find a page item by id (top-level or nested in sections)
