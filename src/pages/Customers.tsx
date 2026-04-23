@@ -175,11 +175,12 @@ const Customers = () => {
         </div>
 
         {/* Customer Table */}
-        <div className="bg-card rounded-lg border overflow-hidden">
+        <div className="bg-card rounded-lg border overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
+            <div className="min-w-[1000px]">
             <Table>
               <TableHeader>
-                <TableRow className="bg-muted hover:bg-muted">
+                <TableRow className="bg-muted/80 hover:bg-muted/80 border-b-2">
                   <TableHead 
                     className="font-semibold text-foreground cursor-pointer group"
                     onClick={() => handleSort("name")}
@@ -285,17 +286,18 @@ const Customers = () => {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </div>
 
           {/* Pagination */}
           <div className="border-t p-4">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                 <span className="text-sm text-muted-foreground">
                   Total Customers: <span className="font-semibold text-foreground">{totalCustomers}</span>
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Records Per Page:</span>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">Records Per Page:</span>
                   <Select value={recordsPerPage.toString()} onValueChange={(value) => setRecordsPerPage(Number(value))}>
                     <SelectTrigger className="w-20">
                       <SelectValue />
@@ -310,31 +312,35 @@ const Customers = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-center overflow-x-auto">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
+                  className="shrink-0"
                 >
                   Previous
                 </Button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-10"
-                  >
-                    {page}
-                  </Button>
-                ))}
+                <div className="flex items-center gap-2 overflow-x-auto">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                      className="w-10 shrink-0"
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
+                  className="shrink-0"
                 >
                   Next
                 </Button>
