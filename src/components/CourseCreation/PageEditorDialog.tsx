@@ -675,7 +675,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           return courseItems.map((item) => {
                             if (item.type === "page") {
                               const isCurrentPage = item.id === currentPageId;
+                              // Lazy-loader swap: replace the row entirely while it's being deleted.
+                              if (outlineDeletingIds?.has(item.id)) {
+                                return (
+                                  <OutlineItemSkeleton
+                                    key={`del-${item.id}`}
+                                    variant="sidebar-page"
+                                    action="deleting"
+                                  />
+                                );
+                              }
                               return (
+                                <React.Fragment key={item.id}>
                                 <SortableOutlineWrapper key={item.id} id={item.id}>
                                   {(listeners: Record<string, unknown>) => (
                                     <div
