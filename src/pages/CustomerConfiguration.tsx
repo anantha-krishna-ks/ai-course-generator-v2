@@ -582,7 +582,7 @@ const CustomerConfiguration = () => {
         {/* Sticky toolbar: search + save */}
         <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-background/85 backdrop-blur-md border-b border-border mb-6">
           <div className="flex flex-col md:flex-row md:items-center gap-3">
-            <div className="relative flex-1 min-w-0">
+            <div className="relative w-full md:w-72 shrink-0">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
                 aria-hidden="true"
@@ -593,10 +593,11 @@ const CustomerConfiguration = () => {
                 placeholder="Search any setting…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-9 rounded-full"
+                className="pl-9 h-9 rounded-full bg-card"
                 aria-label="Search settings"
               />
             </div>
+            <div className="flex-1" aria-hidden="true" />
             <div className="flex items-center gap-2 shrink-0">
               {isDirty && (
                 <Button variant="outline" onClick={handleDiscard}>
