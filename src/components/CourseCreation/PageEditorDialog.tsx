@@ -918,6 +918,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                       </div>
                                                     )}
                                                   </SortableOutlineWrapper>
+                                                  {outlineDuplicatingIds?.has(child.id) && (
+                                                    <OutlineItemSkeleton variant="sidebar-child-page" action="duplicating" />
+                                                  )}
+                                                </React.Fragment>
                                                 );
                                               })}
                                             </div>
