@@ -58,6 +58,9 @@ const Customers = () => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [currentBrandingId, setCurrentBrandingId] = useState<number | null>(null);
+  const [userSizeFilter, setUserSizeFilter] = useState<string>("all");
+  const [brandingFilter, setBrandingFilter] = useState<string>("all");
+  const [sortPreset, setSortPreset] = useState<string>("default");
 
   useEffect(() => {
     const branding = brandingService.getCurrentBranding();
@@ -68,15 +71,37 @@ const Customers = () => {
     return unsubscribe;
   }, []);
 
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.contactNo.includes(searchQuery) ||
-    customer.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCustomers = customers.filter((customer) => {
+    const matchesSearch =
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.contactNo.includes(searchQuery) ||
+      customer.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesSize =
+      userSizeFilter === "all" ||
+      (userSizeFilter === "small" && customer.users < 100) ||
+      (userSizeFilter === "medium" && customer.users >= 100 && customer.users < 1000) ||
+      (userSizeFilter === "large" && customer.users >= 1000);
+
+    const matchesBranding =
+      brandingFilter === "all" ||
+      (brandingFilter === "active" && currentBrandingId === customer.id) ||
+      (brandingFilter === "inactive" && currentBrandingId !== customer.id);
+
+    return matchesSearch && matchesSize && matchesBranding;
+  });
 
   const sortedCustomers = [...filteredCustomers].sort((a, b) => {
+    if (sortPreset !== "default") {
+      switch (sortPreset) {
+        case "name-asc": return a.name.localeCompare(b.name);
+        case "name-desc": return b.name.localeCompare(a.name);
+        case "users-desc": return b.users - a.users;
+        case "users-asc": return a.users - b.users;
+      }
+    }
     if (!sortColumn) return 0;
     let aValue: any = a[sortColumn as keyof typeof a];
     let bValue: any = b[sortColumn as keyof typeof b];
@@ -86,6 +111,15 @@ const Customers = () => {
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
     return 0;
   });
+
+  const hasActiveFilters = searchQuery !== "" || userSizeFilter !== "all" || brandingFilter !== "all" || sortPreset !== "default";
+  const clearFilters = () => {
+    setSearchQuery("");
+    setUserSizeFilter("all");
+    setBrandingFilter("all");
+    setSortPreset("default");
+    setCurrentPage(1);
+  };
 
   const totalCustomers = sortedCustomers.length;
   const totalPages = Math.max(1, Math.ceil(totalCustomers / recordsPerPage));
