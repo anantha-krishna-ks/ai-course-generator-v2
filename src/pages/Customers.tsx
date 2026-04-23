@@ -283,9 +283,6 @@ const Customers = () => {
                           >
                             <TableCell className="font-medium py-3">
                               <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/15 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
-                                  {customer.name.charAt(0).toUpperCase()}
-                                </div>
                                 <span>{customer.name}</span>
                                 {currentBrandingId === customer.id && (
                                   <Badge variant="secondary" className="text-xs rounded-full bg-primary/10 text-primary border-primary/20">
