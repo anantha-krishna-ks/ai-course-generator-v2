@@ -135,7 +135,7 @@ const ErrorPage = ({ type: typeProp }: ErrorPageProps) => {
       >
         {/* Illustration */}
         <div className="flex justify-center mb-8">
-          <Illustration className="w-48 h-44 sm:w-56 sm:h-52" />
+          <Illustration className="w-60 h-52 sm:w-72 sm:h-60" />
         </div>
 
         {/* Code — elegant, refined size */}
