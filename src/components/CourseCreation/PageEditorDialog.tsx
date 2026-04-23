@@ -112,6 +112,20 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [flashBlocks, setFlashBlocks] = useState(false);
+  const flashTimerRef = useRef<number | null>(null);
+  const triggerBlocksFlash = useCallback(() => {
+    setSidebarCollapsed(false);
+    setActiveTab("blocks");
+    setFlashBlocks(false);
+    // Re-trigger animation on next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setFlashBlocks(true));
+    });
+    if (flashTimerRef.current) window.clearTimeout(flashTimerRef.current);
+    flashTimerRef.current = window.setTimeout(() => setFlashBlocks(false), 2600);
+  }, []);
+  useEffect(() => () => { if (flashTimerRef.current) window.clearTimeout(flashTimerRef.current); }, []);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [renameTarget, setRenameTarget] = useState<{ id: string; title: string } | null>(null);
@@ -826,7 +840,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   )}
                 </div>
               ) : (
-                <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} />
+                <div className={cn("rounded-2xl transition-shadow", flashBlocks && "animate-flash-highlight")}>
+                  <ContentBlocksPanel onAddBlock={(type, variant) => addBlock(type, undefined, variant)} onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)} aiEnabled={aiEnabled} />
+                </div>
               )}
             </div>
           </div>
@@ -1240,7 +1256,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onAddAudio={() => addBlock("audio", currentBlockIdx + 1)}
                                     onAddDoc={() => addBlock("doc", currentBlockIdx + 1)}
                                     onAddQuiz={() => addBlock("quiz", currentBlockIdx + 1)}
-                                    onMore={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
+                                    onMore={triggerBlocksFlash}
                                     onDropBlock={(type, variant) => addBlock(type as any, currentBlockIdx + 1, variant)}
                                     onOpenQuizGenerator={() => setShowQuizGenerateDialog(true)}
                                   />
@@ -1311,7 +1327,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   </Button>
                 </div>
                 <button
-                  onClick={() => { setSidebarCollapsed(false); setActiveTab("blocks"); }}
+                  onClick={triggerBlocksFlash}
                   className="rounded-2xl border border-dashed border-border/60 bg-muted/10 backdrop-blur-sm self-stretch px-3 sm:px-4 shadow-sm shrink-0 flex items-center gap-1.5 text-muted-foreground text-xs sm:text-[13px] hover:text-foreground hover:border-primary/30 hover:bg-muted/30 transition-all duration-200 cursor-pointer"
                 >
                   <MoreHorizontal className="w-3.5 sm:w-4 h-3.5 sm:h-4" aria-hidden="true" focusable="false" />
