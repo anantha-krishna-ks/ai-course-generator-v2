@@ -1,15 +1,41 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Pencil, Trash2, Plus, Search, ArrowUpDown, ArrowUp, ArrowDown, Eye } from "lucide-react";
+import {
+  ArrowLeft,
+  Pencil,
+  Trash2,
+  Plus,
+  Search,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Eye,
+  Coins,
+  ListFilter,
+  TrendingUp,
+  Users as UsersIcon,
+} from "lucide-react";
 import { ViewTokensDialog } from "@/components/TokenManagement/ViewTokensDialog";
 import { EditTokenDialog } from "@/components/TokenManagement/EditTokenDialog";
 import { DeleteTokenDialog } from "@/components/TokenManagement/DeleteTokenDialog";
 import { AddTokenDialog } from "@/components/TokenManagement/AddTokenDialog";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  }),
+};
 
 // Mock customers data
 const mockCustomers = [
