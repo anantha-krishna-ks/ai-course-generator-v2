@@ -19,6 +19,7 @@ import BlueprintEditor from "./pages/BlueprintEditor";
 import TokenManagement from "./pages/TokenManagement";
 import AdminModule from "./pages/AdminModule";
 import Customers from "./pages/Customers";
+import CustomerConfiguration from "./pages/CustomerConfiguration";
 import Users from "./pages/Users";
 import AIGenerateCourse from "./pages/AIGenerateCourse";
 import AIGeneratedCourse from "./pages/AIGeneratedCourse";
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/token-management" element={<ProtectedRoute><TokenManagement /></ProtectedRoute>} />
           <Route path="/admin-module" element={<ProtectedRoute><AdminModule /></ProtectedRoute>} />
           <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+          <Route path="/customers/:customerId/configuration" element={<ProtectedRoute><CustomerConfiguration /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
           <Route path="/ai-generate-course" element={<ProtectedRoute><AIGenerateCourse /></ProtectedRoute>} />
           <Route path="/ai-generated-course" element={<ProtectedRoute><AIGeneratedCourse /></ProtectedRoute>} />
