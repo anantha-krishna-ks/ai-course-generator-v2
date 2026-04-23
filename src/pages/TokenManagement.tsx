@@ -170,91 +170,160 @@ const TokenManagement = () => {
     setTokens(prevTokens => prevTokens.filter(t => t.id !== id));
   };
 
+  const selectedCustomerName =
+    selectedCustomer === "all"
+      ? "All Customers"
+      : mockCustomers.find((c) => c.id.toString() === selectedCustomer)?.name ?? "All Customers";
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-hidden">
       <Header />
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/admin-module")}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Admin Module
-        </Button>
 
-        <div className="flex items-start justify-between gap-8 mb-8 flex-wrap">
-          {/* Left side - Heading */}
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Token Management</h1>
-            <p className="text-muted-foreground">View and manage token allocations</p>
-          </div>
+      <main className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back button */}
+        <motion.div custom={0} variants={fadeUp} initial="hidden" animate="visible">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/admin-module")}
+            className="mb-6 rounded-full hover:bg-primary/5 hover:text-primary"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+            Back to Admin Module
+          </Button>
+        </motion.div>
 
-          {/* Right side - Customer Filter, Search and Buttons */}
-          <div className="flex items-center gap-4 flex-wrap flex-1 justify-end">
-            <Select value={selectedCustomer} onValueChange={(value) => {
-              setSelectedCustomer(value);
-              setCurrentPage(1);
-            }}>
-              <SelectTrigger className="w-[200px] h-12 border-2 border-border hover:border-primary/50 focus:border-primary transition-colors bg-white">
-                <SelectValue placeholder="Select Customer" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border z-50">
-                <SelectItem value="all" className="cursor-pointer hover:bg-accent">All Customers</SelectItem>
-                {mockCustomers.map((customer) => (
-                  <SelectItem 
-                    key={customer.id} 
-                    value={customer.id.toString()}
-                    className="cursor-pointer hover:bg-accent"
+        {/* Hero / Welcome banner */}
+        <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible" className="mb-8">
+          <div className="relative overflow-hidden rounded-2xl bg-card border border-border/60 px-7 py-6">
+            <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <Coins className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                </div>
+                <div>
+                  <h1
+                    className="text-[26px] font-semibold tracking-[-0.03em] leading-tight text-foreground"
+                    style={{ fontFamily: "'Geist', sans-serif" }}
                   >
-                    {customer.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <div className="relative flex-1 max-w-md min-w-[280px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    Token Management
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    View and manage token allocations across customers
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-background rounded-full px-4 py-2 border border-border/60 self-start lg:self-auto">
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <TrendingUp className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{totalActiveTokens.toLocaleString()}</span> active balance
+                  </span>
+                </div>
+                <span className="w-px h-3.5 bg-border" aria-hidden="true" />
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <Coins className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{totalConsumed.toLocaleString()}</span> consumed
+                  </span>
+                </div>
+                <span className="w-px h-3.5 bg-border" aria-hidden="true" />
+                <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                  <UsersIcon className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  <span>
+                    <span className="font-semibold text-foreground">{mockCustomers.length}</span> customers
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Toolbar: search + filter + actions */}
+        <motion.div
+          custom={2}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6"
+        >
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <div className="relative w-full sm:max-w-xs">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none"
+                aria-hidden="true"
+                focusable="false"
+              />
               <Input
-                type="text"
+                type="search"
                 placeholder="Search tokens..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-11 h-12 text-base border-2 border-border hover:border-primary/50 focus-visible:border-primary transition-colors"
+                aria-label="Search tokens"
+                className="pl-10 h-10 rounded-full border-2 border-border/80 bg-card focus:border-primary/50 focus-visible:ring-primary/20"
               />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
-              )}
             </div>
-            
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="gap-2 h-12 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
-              onClick={() => setViewTokensDialogOpen(true)}
+
+            <span className="hidden sm:block w-px h-6 bg-border/80" aria-hidden="true" />
+
+            <Select
+              value={selectedCustomer}
+              onValueChange={(value) => {
+                setSelectedCustomer(value);
+                setCurrentPage(1);
+              }}
             >
-              <Eye className="w-5 h-5" />
+              <SelectTrigger
+                aria-label="Filter by customer"
+                className="h-10 w-full sm:w-[220px] rounded-full border-2 border-border/80 bg-card pl-3.5"
+              >
+                <div className="flex items-center gap-2">
+                  <ListFilter className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <SelectValue placeholder="All Customers" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Customers</SelectItem>
+                {mockCustomers.map((customer) => (
+                  <SelectItem key={customer.id} value={customer.id.toString()}>
+                    {customer.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="outline"
+              onClick={() => setViewTokensDialogOpen(true)}
+              className="gap-2 rounded-full border-border bg-card hover:bg-muted/60"
+            >
+              <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
               View Tokens
             </Button>
-            
-            <Button 
-              size="lg" 
-              className="gap-2 h-12"
+
+            <Button
               onClick={() => setAddTokenDialogOpen(true)}
+              className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
               Add Tokens
             </Button>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Active filter chip */}
+        {selectedCustomer !== "all" && (
+          <motion.div custom={2.5} variants={fadeUp} initial="hidden" animate="visible" className="mb-4">
+            <Badge variant="secondary" className="rounded-full bg-primary/10 text-primary border-primary/20 gap-1.5">
+              Customer: {selectedCustomerName}
+            </Badge>
+          </motion.div>
+        )}
 
         {/* Tokens Table */}
         <div className="bg-card rounded-lg border overflow-hidden shadow-sm">
