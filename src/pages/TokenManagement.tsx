@@ -128,12 +128,19 @@ const TokenManagement = () => {
 
   const getSortIcon = (column: string) => {
     if (sortColumn !== column) {
-      return <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />;
+      return <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" aria-hidden="true" focusable="false" />;
     }
-    return sortDirection === "asc" ? 
-      <ArrowUp className="w-3 h-3" /> : 
-      <ArrowDown className="w-3 h-3" />;
+    return sortDirection === "asc" ? (
+      <ArrowUp className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+    ) : (
+      <ArrowDown className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+    );
   };
+
+  const totalActiveTokens = tokens
+    .filter((t) => t.state === "Active")
+    .reduce((sum, t) => sum + t.balance, 0);
+  const totalConsumed = tokens.reduce((sum, t) => sum + t.consumedTokens, 0);
 
   const handleEdit = (id: number) => {
     const token = tokens.find(t => t.id === id);
