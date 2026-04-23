@@ -269,27 +269,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }, 3000);
   }, []);
 
-  const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | "quiz" | null) => {
-    setAiGenerating(true);
-    const type = blockType || "text";
-    setTimeout(() => {
-      const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-      const content = type === "text"
-        ? `<h3>${prompt}</h3><p>Based on your prompt, here is an AI-generated overview of the topic. This section covers the key concepts and practical applications that learners need to understand. The content has been structured to facilitate progressive learning and knowledge retention.</p><p>Key takeaways include understanding the fundamental principles, recognizing common patterns, and applying best practices in real-world scenarios. Each concept builds upon the previous one to create a comprehensive learning experience.</p>`
-        : "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop";
-      setBlocks((prev) => [...prev, { id, type, content }]);
-      setLastAddedBlockId(id);
-      setAiGenerating(false);
-      setShowAiBlock(false);
-      setAiBlockType(null);
-      // Enter review mode for text blocks
-      if (type === "text") {
-        setAiReviewBlockId(id);
-        setAiReviewMode("review");
-      }
-    }, 3000);
-  }, []);
-
   const handleAiReviewAdd = useCallback(() => {
     setAiReviewBlockId(null);
     setAiReviewMode("review");
