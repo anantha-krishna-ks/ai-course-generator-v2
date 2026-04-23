@@ -20,6 +20,7 @@ import {
   Users as UsersIcon,
   Building2,
   TrendingUp,
+  ListFilter,
 } from "lucide-react";
 import { AddCustomerDialog } from "@/components/Customers/AddCustomerDialog";
 import { EditCustomerDialog } from "@/components/Customers/EditCustomerDialog";
