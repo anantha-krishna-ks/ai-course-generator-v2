@@ -326,185 +326,161 @@ const TokenManagement = () => {
         )}
 
         {/* Tokens Table */}
-        <div className="bg-card rounded-lg border overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <div className="min-w-[1200px]">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/80 hover:bg-muted/80 border-b-2">
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("date")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Date
-                      {getSortIcon("date")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("openingBalance")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Opening Balance
-                      {getSortIcon("openingBalance")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("tokensCount")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Tokens Count
-                      {getSortIcon("tokensCount")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("consumedTokens")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Consumed Tokens
-                      {getSortIcon("consumedTokens")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("balance")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Balance
-                      {getSortIcon("balance")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("state")}
-                  >
-                    <div className="flex items-center gap-2">
-                      State
-                      {getSortIcon("state")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("expiryDate")}
-                  >
-                    <div className="flex items-center gap-2">
-                      Expiry Date
-                      {getSortIcon("expiryDate")}
-                    </div>
-                  </TableHead>
-                  <TableHead 
-                    className="font-semibold text-foreground cursor-pointer group"
-                    onClick={() => handleSort("user")}
-                  >
-                    <div className="flex items-center gap-2">
-                      User
-                      {getSortIcon("user")}
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-center font-semibold text-foreground">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sortedTokens.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage).map((token) => (
-                  <TableRow key={token.id}>
-                    <TableCell className="font-medium py-3">{token.date}</TableCell>
-                    <TableCell className="py-3">{token.openingBalance.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.tokensCount.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.consumedTokens.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.balance.toLocaleString()}</TableCell>
-                    <TableCell className="py-3">{token.state}</TableCell>
-                    <TableCell className="py-3">{token.expiryDate}</TableCell>
-                    <TableCell className="py-3">{token.user}</TableCell>
-                    <TableCell className="py-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(token.id)}
-                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+        <motion.div custom={3} variants={fadeUp} initial="hidden" animate="visible">
+          <Card className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="overflow-x-auto">
+              <div className="min-w-[1200px]">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/60 hover:bg-muted/60 border-b border-border/60">
+                      {[
+                        { key: "date", label: "Date" },
+                        { key: "openingBalance", label: "Opening Balance" },
+                        { key: "tokensCount", label: "Tokens Count" },
+                        { key: "consumedTokens", label: "Consumed Tokens" },
+                        { key: "balance", label: "Balance" },
+                        { key: "state", label: "State" },
+                        { key: "expiryDate", label: "Expiry Date" },
+                        { key: "user", label: "User" },
+                      ].map((col) => (
+                        <TableHead
+                          key={col.key}
+                          className="font-semibold text-foreground cursor-pointer group select-none"
+                          onClick={() => handleSort(col.key)}
                         >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(token.id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            </div>
-          </div>
-
-          {/* Pagination */}
-          <div className="border-t p-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                <span className="text-sm text-muted-foreground">
-                  Total Courses: <span className="font-semibold text-foreground">{totalTokens}</span>
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">Records Per Page:</span>
-                  <Select value={recordsPerPage.toString()} onValueChange={(value) => setRecordsPerPage(Number(value))}>
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-center overflow-x-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="shrink-0"
-                >
-                  Previous
-                </Button>
-                <div className="flex items-center gap-2 overflow-x-auto">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className="w-10 shrink-0"
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="shrink-0"
-                >
-                  Next
-                </Button>
+                          <div className="flex items-center gap-2">
+                            {col.label}
+                            {getSortIcon(col.key)}
+                          </div>
+                        </TableHead>
+                      ))}
+                      <TableHead className="text-center font-semibold text-foreground">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedTokens.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
+                          No tokens match your filters.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      sortedTokens
+                        .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+                        .map((token) => (
+                          <TableRow key={token.id} className="hover:bg-muted/40 transition-colors">
+                            <TableCell className="font-medium py-3">{token.date}</TableCell>
+                            <TableCell className="py-3 text-muted-foreground">{token.openingBalance.toLocaleString()}</TableCell>
+                            <TableCell className="py-3">{token.tokensCount.toLocaleString()}</TableCell>
+                            <TableCell className="py-3 text-muted-foreground">{token.consumedTokens.toLocaleString()}</TableCell>
+                            <TableCell className={`py-3 font-medium ${token.balance < 0 ? "text-destructive" : "text-foreground"}`}>
+                              {token.balance.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="py-3">
+                              <Badge
+                                variant="outline"
+                                className={`rounded-full font-medium ${
+                                  token.state === "Active"
+                                    ? "bg-primary/10 text-primary border-primary/20"
+                                    : "bg-muted/40 text-muted-foreground border-border"
+                                }`}
+                              >
+                                {token.state}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="py-3 text-muted-foreground">{token.expiryDate}</TableCell>
+                            <TableCell className="py-3">{token.user}</TableCell>
+                            <TableCell className="py-3">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleEdit(token.id)}
+                                  aria-label="Edit token"
+                                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                >
+                                  <Pencil className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleDelete(token.id)}
+                                  aria-label="Delete token"
+                                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    )}
+                  </TableBody>
+                </Table>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+
+            {/* Pagination */}
+            <div className="border-t border-border/60 p-4 bg-muted/20">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+                  <span className="text-sm text-muted-foreground">
+                    Total Tokens: <span className="font-semibold text-foreground">{totalTokens}</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">Records Per Page:</span>
+                    <Select value={recordsPerPage.toString()} onValueChange={(value) => setRecordsPerPage(Number(value))}>
+                      <SelectTrigger aria-label="Records per page" className="w-20 rounded-full h-9 border-border bg-card">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-center overflow-x-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="shrink-0 rounded-full"
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex items-center gap-1.5 overflow-x-auto">
+                    {Array.from({ length: Math.max(1, totalPages) }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-9 h-9 shrink-0 rounded-full ${currentPage === page ? "" : "border-border bg-card"}`}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="shrink-0 rounded-full"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+      </main>
 
       <ViewTokensDialog 
         open={viewTokensDialogOpen} 
