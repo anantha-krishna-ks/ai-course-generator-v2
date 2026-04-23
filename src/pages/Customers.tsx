@@ -12,6 +12,7 @@ import {
   Pencil,
   Trash2,
   FileText,
+  Settings,
   Plus,
   Search,
   ArrowUpDown,
@@ -382,6 +383,15 @@ const Customers = () => {
                                   aria-label={`View tokens for ${customer.name}`}
                                 >
                                   <FileText className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => navigate(`/customers/${customer.id}/configuration`)}
+                                  className="rounded-full text-foreground hover:text-primary hover:bg-primary/10 h-9 w-9"
+                                  aria-label={`Configure ${customer.name}`}
+                                >
+                                  <Settings className="w-4 h-4" aria-hidden="true" focusable="false" />
                                 </Button>
                               </div>
                             </TableCell>
