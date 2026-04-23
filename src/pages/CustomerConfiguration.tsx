@@ -529,30 +529,6 @@ const CustomerConfiguration = () => {
           Back to Customers
         </Button>
 
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
-          <ol className="flex items-center gap-2 flex-wrap">
-            <li>
-              <button
-                onClick={() => navigate("/admin-module")}
-                className="hover:text-primary transition-colors"
-              >
-                Admin Module
-              </button>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li>
-              <button
-                onClick={() => navigate("/customers")}
-                className="hover:text-primary transition-colors"
-              >
-                Customers
-              </button>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li className="text-foreground font-medium">Configuration</li>
-          </ol>
-        </nav>
-
         {/* Sticky header */}
         <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 bg-background/85 backdrop-blur-md border-b border-border mb-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
