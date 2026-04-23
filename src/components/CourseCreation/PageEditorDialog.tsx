@@ -212,6 +212,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   const handleQuizGenerate = useCallback((config: GenerateQuizConfig) => {
     setIsQuizGenerating(true);
+    // Show an AI-processing skeleton at the end of the page while the quiz is generated.
+    setBlocks((prev) => {
+      setPendingAdd({ index: prev.length, variant: "quiz", action: "ai-processing" });
+      return prev;
+    });
     setTimeout(() => {
       // Add a quiz block with generated questions
       const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -231,9 +236,37 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       }
       setBlocks((prev) => [...prev, { id, type: "quiz", content: JSON.stringify(questions) }]);
       setLastAddedBlockId(id);
+      setPendingAdd(null);
       setIsQuizGenerating(false);
       setShowQuizGenerateDialog(false);
     }, 1500);
+  }, []);
+
+  const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | "quiz" | null) => {
+    setAiGenerating(true);
+    const type = blockType || "text";
+    // Surface an AI-processing skeleton at the end of the page while generation runs.
+    setBlocks((prev) => {
+      setPendingAdd({ index: prev.length, variant: type as BlockSkeletonVariant, action: "ai-processing" });
+      return prev;
+    });
+    setTimeout(() => {
+      const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const content = type === "text"
+        ? `<h3>${prompt}</h3><p>Based on your prompt, here is an AI-generated overview of the topic. This section covers the key concepts and practical applications that learners need to understand. The content has been structured to facilitate progressive learning and knowledge retention.</p><p>Key takeaways include understanding the fundamental principles, recognizing common patterns, and applying best practices in real-world scenarios. Each concept builds upon the previous one to create a comprehensive learning experience.</p>`
+        : "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=400&fit=crop";
+      setBlocks((prev) => [...prev, { id, type, content }]);
+      setLastAddedBlockId(id);
+      setPendingAdd(null);
+      setAiGenerating(false);
+      setShowAiBlock(false);
+      setAiBlockType(null);
+      // Enter review mode for text blocks
+      if (type === "text") {
+        setAiReviewBlockId(id);
+        setAiReviewMode("review");
+      }
+    }, 3000);
   }, []);
 
   const handleAiGenerate = useCallback((prompt: string, blockType: "text" | "image" | "quiz" | null) => {
