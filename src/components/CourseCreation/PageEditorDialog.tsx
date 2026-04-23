@@ -1082,6 +1082,19 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                           let position = 0;
 
                           while (blockIdx < blocks.length || deletedIdx < deletedArr.length) {
+                            // Lazy-loader: insert pending-add skeleton at its destination index
+                            if (pendingAdd && pendingAdd.index === position) {
+                              elements.push(
+                                <BlockSkeleton
+                                  key={`pending-add-${position}`}
+                                  variant={pendingAdd.variant}
+                                  action={pendingAdd.action}
+                                />
+                              );
+                              // mark as inserted by bumping position only via the natural flow below;
+                              // we set pendingAdd.index to -1-equivalent by not re-checking — guard via a flag:
+                              pendingAdd.index = -1;
+                            }
                             if (deletedIdx < deletedArr.length && deletedArr[deletedIdx][1].index <= position) {
                               const [deletedId] = deletedArr[deletedIdx];
                               elements.push(
