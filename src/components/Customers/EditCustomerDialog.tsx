@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +23,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Upload } from "lucide-react";
+import {
+  Upload,
+  Building2,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Settings,
+  Shield,
+  Network,
+  ImageIcon,
+  Pencil,
+  X,
+} from "lucide-react";
 import { brandingService } from "@/services/brandingService";
 
 const customerSchema = z.object({
@@ -60,6 +74,13 @@ interface EditCustomerDialogProps {
   customer: Customer | null;
 }
 
+const sectionCardClass =
+  "rounded-2xl border border-border/70 bg-card p-6 space-y-5 transition-shadow hover:shadow-sm";
+const fieldHeadingClass =
+  "text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground";
+const inputBaseClass =
+  "h-10 rounded-full border-2 border-border/80 bg-background focus:border-primary/50 focus-visible:ring-primary/20 px-4";
+
 export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustomerDialogProps) => {
   const { toast } = useToast();
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -84,7 +105,6 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
   const brandingLogo = watch("brandingLogo");
   const enableBlueprint = watch("enableBlueprint");
 
-  // Populate form with customer data when dialog opens
   useEffect(() => {
     if (customer && open) {
       setValue("customerName", customer.name);
@@ -93,8 +113,7 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
       setValue("address", customer.address);
       setValue("email", customer.email);
       setValue("numberOfUsers", customer.users.toString());
-      
-      // Check if there are existing branding settings for this customer
+
       const currentBranding = brandingService.getCurrentBranding();
       if (currentBranding && currentBranding.customerId === customer.id) {
         setValue("brandingLogo", currentBranding.brandingOption);
@@ -102,11 +121,10 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
           setLogoPreview(currentBranding.customerLogo);
         }
       } else {
-        // Set default values for other fields
         setValue("brandingLogo", "both");
         setLogoPreview("");
       }
-      
+
       setValue("tokenAllotmentBy", "user");
       setValue("enableBlueprint", true);
       setValue("level1", "Region");
@@ -130,18 +148,12 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
       }
       setLogoFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
+      reader.onloadend = () => setLogoPreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
   const onSubmit = (data: CustomerFormData) => {
-    console.log("Updated form data:", data);
-    console.log("Logo file:", logoFile);
-    
-    // Update branding settings in localStorage
     if (customer) {
       brandingService.setBranding({
         customerId: customer.id,
@@ -150,12 +162,12 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
         brandingOption: data.brandingLogo,
       });
     }
-    
+
     toast({
       title: "Customer updated successfully",
       description: `${data.customerName} branding has been applied.`,
     });
-    
+
     reset();
     setLogoFile(null);
     setLogoPreview("");
@@ -169,34 +181,65 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
     onOpenChange(false);
   };
 
+  const brandingOptions: { value: "customer" | "excelsoft" | "both"; title: string; desc: string }[] = [
+    { value: "customer", title: "Customer Logo Only", desc: "Show only customer branding" },
+    { value: "excelsoft", title: "Excelsoft Logo Only", desc: "Show only Excelsoft branding" },
+    { value: "both", title: "Both Logos", desc: "Display customer and Excelsoft logos" },
+  ];
+
+  const levels: { key: "level1" | "level2" | "level3" | "level4" | "level5"; label: string; placeholder: string }[] = [
+    { key: "level1", label: "Level 1", placeholder: "e.g., Region" },
+    { key: "level2", label: "Level 2", placeholder: "e.g., Division" },
+    { key: "level3", label: "Level 3", placeholder: "e.g., Department" },
+    { key: "level4", label: "Level 4", placeholder: "e.g., Team" },
+    { key: "level5", label: "Level 5", placeholder: "e.g., Sub-team" },
+  ];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader className="border-b pb-4">
-          <DialogTitle className="text-2xl font-bold">Edit Customer</DialogTitle>
+      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] sm:h-[85vh] p-0 overflow-hidden flex flex-col rounded-2xl border border-border/70 bg-background gap-0">
+        {/* Header */}
+        <DialogHeader className="px-7 py-5 border-b border-border/60 bg-card">
+          <div className="flex items-start gap-4">
+            <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+              <Pencil className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="flex-1 text-left">
+              <DialogTitle
+                className="text-xl font-semibold tracking-[-0.02em] text-foreground"
+                style={{ fontFamily: "'Geist', sans-serif" }}
+              >
+                Edit Customer
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground mt-1">
+                Update {customer?.name ?? "this customer"}'s details, branding and hierarchy.
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 overflow-y-auto px-1">
-          <div className="space-y-6 py-4">
-            {/* Basic Information Section */}
-            <div className="bg-card border rounded-lg p-6 shadow-sm space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-1 bg-primary rounded-full"></div>
-                <h3 className="text-lg font-bold text-foreground">
-                  Basic Information
-                </h3>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-7 py-6 space-y-6 bg-muted/20">
+            {/* Basic Information */}
+            <div className={sectionCardClass}>
+              <div className="flex items-center gap-2.5">
+                <Building2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                <h3 className="text-[15px] font-semibold text-foreground">Basic Information</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="customerName" className="text-sm font-medium">
-                    Customer Name <span className="text-destructive">*</span>
+                  <Label htmlFor="customerName" className={fieldHeadingClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Building2 className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Customer Name <span className="text-destructive">*</span>
+                    </span>
                   </Label>
                   <Input
                     id="customerName"
                     placeholder="Enter customer name"
                     {...register("customerName")}
-                    className={errors.customerName ? "border-destructive" : ""}
+                    className={`${inputBaseClass} ${errors.customerName ? "border-destructive" : ""}`}
                   />
                   {errors.customerName && (
                     <p className="text-xs text-destructive">{errors.customerName.message}</p>
@@ -204,14 +247,17 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="contactName" className="text-sm font-medium">
-                    Contact Name <span className="text-destructive">*</span>
+                  <Label htmlFor="contactName" className={fieldHeadingClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <User className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Contact Name <span className="text-destructive">*</span>
+                    </span>
                   </Label>
                   <Input
                     id="contactName"
                     placeholder="Enter contact person name"
                     {...register("contactName")}
-                    className={errors.contactName ? "border-destructive" : ""}
+                    className={`${inputBaseClass} ${errors.contactName ? "border-destructive" : ""}`}
                   />
                   {errors.contactName && (
                     <p className="text-xs text-destructive">{errors.contactName.message}</p>
@@ -219,14 +265,17 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="contactNo" className="text-sm font-medium">
-                    Contact Number <span className="text-destructive">*</span>
+                  <Label htmlFor="contactNo" className={fieldHeadingClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Phone className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Contact Number <span className="text-destructive">*</span>
+                    </span>
                   </Label>
                   <Input
                     id="contactNo"
                     placeholder="Enter phone number"
                     {...register("contactNo")}
-                    className={errors.contactNo ? "border-destructive" : ""}
+                    className={`${inputBaseClass} ${errors.contactNo ? "border-destructive" : ""}`}
                   />
                   {errors.contactNo && (
                     <p className="text-xs text-destructive">{errors.contactNo.message}</p>
@@ -234,15 +283,18 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email Address <span className="text-destructive">*</span>
+                  <Label htmlFor="email" className={fieldHeadingClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Mail className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Email Address <span className="text-destructive">*</span>
+                    </span>
                   </Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="Enter email address"
                     {...register("email")}
-                    className={errors.email ? "border-destructive" : ""}
+                    className={`${inputBaseClass} ${errors.email ? "border-destructive" : ""}`}
                   />
                   {errors.email && (
                     <p className="text-xs text-destructive">{errors.email.message}</p>
@@ -251,15 +303,18 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address" className="text-sm font-medium">
-                  Address <span className="text-destructive">*</span>
+                <Label htmlFor="address" className={fieldHeadingClass}>
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                    Address <span className="text-destructive">*</span>
+                  </span>
                 </Label>
                 <Textarea
                   id="address"
                   placeholder="Enter complete address"
                   {...register("address")}
                   rows={3}
-                  className={errors.address ? "border-destructive" : ""}
+                  className={`rounded-2xl border-2 border-border/80 bg-background focus:border-primary/50 focus-visible:ring-primary/20 px-4 py-3 ${errors.address ? "border-destructive" : ""}`}
                 />
                 {errors.address && (
                   <p className="text-xs text-destructive">{errors.address.message}</p>
@@ -267,25 +322,22 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
               </div>
             </div>
 
-            {/* Configuration Section */}
-            <div className="bg-card border rounded-lg p-6 shadow-sm space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-1 bg-primary rounded-full"></div>
-                <h3 className="text-lg font-bold text-foreground">
-                  Configuration
-                </h3>
+            {/* Branding & Logo */}
+            <div className={sectionCardClass}>
+              <div className="flex items-center gap-2.5">
+                <ImageIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                <h3 className="text-[15px] font-semibold text-foreground">Branding & Logo</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Logo Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">
+                  <Label className={fieldHeadingClass}>
                     Company Logo <span className="text-destructive">*</span>
                   </Label>
-                  <div className="border-2 border-dashed rounded-lg p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors">
+                  <div className="rounded-2xl border-2 border-dashed border-border/80 p-6 text-center bg-muted/20 hover:bg-muted/30 transition-colors">
                     {logoPreview ? (
                       <div className="space-y-3">
-                        <div className="flex items-center justify-center h-24">
+                        <div className="flex items-center justify-center h-24 rounded-xl bg-background border border-border/60 p-3">
                           <img
                             src={logoPreview}
                             alt="Logo preview"
@@ -300,212 +352,204 @@ export const EditCustomerDialog = ({ open, onOpenChange, customer }: EditCustome
                             setLogoFile(null);
                             setLogoPreview("");
                           }}
+                          className="rounded-full gap-1.5"
                         >
+                          <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                           Remove
                         </Button>
                       </div>
                     ) : (
                       <>
-                        <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                        <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
+                          <Upload className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                        </div>
                         <Input
                           id="logo"
                           type="file"
                           accept="image/*"
                           onChange={handleLogoChange}
                           className="hidden"
+                          aria-label="Upload company logo"
                         />
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => document.getElementById("logo")?.click()}
+                          className="rounded-full"
                         >
                           Choose File
                         </Button>
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-xs text-muted-foreground mt-2.5">
                           PNG, JPG up to 5MB
                         </p>
                       </>
                     )}
                   </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Branding Logo</Label>
-                    <RadioGroup
-                      value={brandingLogo}
-                      onValueChange={(value) => setValue("brandingLogo", value as any)}
-                      className="space-y-2"
-                    >
-                      <div className="flex items-center space-x-2 p-2 rounded border hover:bg-muted/50 transition-colors">
-                        <RadioGroupItem value="customer" id="customer" />
-                        <Label htmlFor="customer" className="font-normal cursor-pointer flex-1">
-                          Customer Logo Only
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 p-2 rounded border hover:bg-muted/50 transition-colors">
-                        <RadioGroupItem value="excelsoft" id="excelsoft" />
-                        <Label htmlFor="excelsoft" className="font-normal cursor-pointer flex-1">
-                          Excelsoft Logo Only
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 p-2 rounded border hover:bg-muted/50 transition-colors">
-                        <RadioGroupItem value="both" id="both" />
-                        <Label htmlFor="both" className="font-normal cursor-pointer flex-1">
-                          Both Logos
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
                 </div>
 
-                {/* Users & Tokens */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="numberOfUsers" className="text-sm font-medium">
-                      Number of Users <span className="text-destructive">*</span>
+                <div className="space-y-3">
+                  <div>
+                    <Label className={fieldHeadingClass}>
+                      Logo Display Options <span className="text-destructive">*</span>
                     </Label>
-                    <Input
-                      id="numberOfUsers"
-                      type="number"
-                      placeholder="Enter number of users"
-                      {...register("numberOfUsers")}
-                      className={errors.numberOfUsers ? "border-destructive" : ""}
-                    />
-                    {errors.numberOfUsers && (
-                      <p className="text-xs text-destructive">{errors.numberOfUsers.message}</p>
-                    )}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Choose how logos will be displayed in the application
+                    </p>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="tokenAllotmentBy" className="text-sm font-medium">
-                      Token Allotment By <span className="text-destructive">*</span>
-                    </Label>
-                    <Select
-                      value={watch("tokenAllotmentBy")}
-                      onValueChange={(value) => setValue("tokenAllotmentBy", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select allotment method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="customer">Customer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center space-x-2 p-3 rounded-lg border bg-muted/20">
-                    <Checkbox
-                      id="enableBlueprint"
-                      checked={enableBlueprint}
-                      onCheckedChange={(checked) => setValue("enableBlueprint", !!checked)}
-                    />
-                    <Label htmlFor="enableBlueprint" className="font-normal cursor-pointer flex-1">
-                      Enable Blueprint Feature
-                    </Label>
-                  </div>
+                  <RadioGroup
+                    value={brandingLogo}
+                    onValueChange={(value) => setValue("brandingLogo", value as "customer" | "excelsoft" | "both")}
+                    className="space-y-2"
+                  >
+                    {brandingOptions.map((opt) => {
+                      const selected = brandingLogo === opt.value;
+                      return (
+                        <Label
+                          key={opt.value}
+                          htmlFor={`branding-${opt.value}`}
+                          className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                            selected
+                              ? "border-primary/50 bg-primary/5"
+                              : "border-border/70 hover:border-border bg-background"
+                          }`}
+                        >
+                          <RadioGroupItem value={opt.value} id={`branding-${opt.value}`} />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-foreground">{opt.title}</div>
+                            <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                          </div>
+                        </Label>
+                      );
+                    })}
+                  </RadioGroup>
                 </div>
               </div>
             </div>
 
-            {/* Hierarchy Levels Section */}
-            <div className="bg-card border rounded-lg p-6 shadow-sm space-y-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="h-8 w-1 bg-primary rounded-full"></div>
+            {/* User & Token Settings */}
+            <div className={sectionCardClass}>
+              <div className="flex items-center gap-2.5">
+                <Settings className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                <h3 className="text-[15px] font-semibold text-foreground">User & Token Settings</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="numberOfUsers" className={fieldHeadingClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <User className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Number of Users <span className="text-destructive">*</span>
+                    </span>
+                  </Label>
+                  <Input
+                    id="numberOfUsers"
+                    type="number"
+                    placeholder="Enter number of users"
+                    {...register("numberOfUsers")}
+                    className={`${inputBaseClass} ${errors.numberOfUsers ? "border-destructive" : ""}`}
+                  />
+                  {errors.numberOfUsers && (
+                    <p className="text-xs text-destructive">{errors.numberOfUsers.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="tokenAllotmentBy" className={fieldHeadingClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Shield className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Token Allotment By <span className="text-destructive">*</span>
+                    </span>
+                  </Label>
+                  <Select
+                    value={watch("tokenAllotmentBy")}
+                    onValueChange={(value) => setValue("tokenAllotmentBy", value)}
+                  >
+                    <SelectTrigger
+                      aria-label="Token allotment method"
+                      className="h-10 rounded-full border-2 border-border/80 bg-background px-4"
+                    >
+                      <SelectValue placeholder="Select allotment method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">Per User</SelectItem>
+                      <SelectItem value="customer">Per Customer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Label
+                htmlFor="enableBlueprint"
+                className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                  enableBlueprint
+                    ? "border-primary/50 bg-primary/5"
+                    : "border-border/70 hover:border-border bg-background"
+                }`}
+              >
+                <Checkbox
+                  id="enableBlueprint"
+                  checked={enableBlueprint}
+                  onCheckedChange={(checked) => setValue("enableBlueprint", !!checked)}
+                  className="mt-0.5"
+                />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-foreground">Enable Blueprint Feature</div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Allow this customer to access blueprint functionality for course creation
+                  </p>
+                </div>
+              </Label>
+            </div>
+
+            {/* Hierarchy Levels */}
+            <div className={sectionCardClass}>
+              <div className="flex items-center gap-2.5">
+                <Network className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                 <div>
-                  <h3 className="text-lg font-bold text-foreground">
-                    Organizational Hierarchy
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
+                  <h3 className="text-[15px] font-semibold text-foreground">Organizational Hierarchy</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     Define the organizational structure levels
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="level1" className="text-sm font-medium">
-                    Level 1 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="level1"
-                    placeholder="e.g., Region"
-                    {...register("level1")}
-                    className={errors.level1 ? "border-destructive" : ""}
-                  />
-                  {errors.level1 && (
-                    <p className="text-xs text-destructive">{errors.level1.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="level2" className="text-sm font-medium">
-                    Level 2 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="level2"
-                    placeholder="e.g., Division"
-                    {...register("level2")}
-                    className={errors.level2 ? "border-destructive" : ""}
-                  />
-                  {errors.level2 && (
-                    <p className="text-xs text-destructive">{errors.level2.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="level3" className="text-sm font-medium">
-                    Level 3 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="level3"
-                    placeholder="e.g., Department"
-                    {...register("level3")}
-                    className={errors.level3 ? "border-destructive" : ""}
-                  />
-                  {errors.level3 && (
-                    <p className="text-xs text-destructive">{errors.level3.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="level4" className="text-sm font-medium">
-                    Level 4 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="level4"
-                    placeholder="e.g., Team"
-                    {...register("level4")}
-                    className={errors.level4 ? "border-destructive" : ""}
-                  />
-                  {errors.level4 && (
-                    <p className="text-xs text-destructive">{errors.level4.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="level5" className="text-sm font-medium">
-                    Level 5 <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="level5"
-                    placeholder="e.g., Sub-team"
-                    {...register("level5")}
-                    className={errors.level5 ? "border-destructive" : ""}
-                  />
-                  {errors.level5 && (
-                    <p className="text-xs text-destructive">{errors.level5.message}</p>
-                  )}
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
+                {levels.map((lvl) => (
+                  <div key={lvl.key} className="space-y-2">
+                    <Label htmlFor={lvl.key} className={fieldHeadingClass}>
+                      {lvl.label} <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id={lvl.key}
+                      placeholder={lvl.placeholder}
+                      {...register(lvl.key)}
+                      className={`${inputBaseClass} ${errors[lvl.key] ? "border-destructive" : ""}`}
+                    />
+                    {errors[lvl.key] && (
+                      <p className="text-xs text-destructive">{errors[lvl.key]?.message}</p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Action Buttons - Sticky Footer */}
-          <div className="sticky bottom-0 bg-background border-t pt-4 pb-2 flex justify-end gap-3 mt-8">
-            <Button type="button" variant="outline" onClick={handleCancel} size="lg">
+          {/* Sticky Footer */}
+          <div className="px-7 py-4 border-t border-border/60 bg-card flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              className="rounded-full"
+            >
               Cancel
             </Button>
-            <Button type="submit" size="lg">Update Customer</Button>
+            <Button
+              type="submit"
+              className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all"
+            >
+              Update Customer
+            </Button>
           </div>
         </form>
       </DialogContent>
