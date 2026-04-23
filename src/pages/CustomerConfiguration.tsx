@@ -529,77 +529,48 @@ const CustomerConfiguration = () => {
           Back to Customers
         </Button>
 
-        <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
-          <ol className="flex items-center gap-2 flex-wrap">
-            <li>
-              <button
-                onClick={() => navigate("/admin-module")}
-                className="hover:text-primary transition-colors"
-              >
-                Admin Module
-              </button>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li>
-              <button
-                onClick={() => navigate("/customers")}
-                className="hover:text-primary transition-colors"
-              >
-                Customers
-              </button>
-            </li>
-            <li aria-hidden="true">/</li>
-            <li className="text-foreground font-medium">Configuration</li>
-          </ol>
-        </nav>
+        <h1 className="sr-only">
+          Customer configuration {customer ? `– ${customer.name}` : ""}
+        </h1>
 
-        {/* Sticky header */}
-        <div className="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 bg-background/85 backdrop-blur-md border-b border-border mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="min-w-0">
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground truncate">
-                Customer configuration {customer ? `– ${customer.name}` : ""}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {configGroups.length} groups · {totalFields} fields
-                {isDirty && (
-                  <span className="ml-2 inline-flex items-center gap-1.5 text-primary font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                    {dirtyGroupsLive.size} unsaved
-                  </span>
-                )}
-              </p>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {isDirty && (
-                <Button variant="outline" onClick={handleDiscard}>
-                  <RotateCcw className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
-                  Discard
-                </Button>
-              )}
-              <Button onClick={handleSave} disabled={!isDirty}>
-                <Save className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
-                Save configuration
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+          <p className="text-sm text-muted-foreground">
+            {configGroups.length} groups · {totalFields} fields
+            {isDirty && (
+              <span className="ml-2 inline-flex items-center gap-1.5 text-primary font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                {dirtyGroupsLive.size} unsaved
+              </span>
+            )}
+          </p>
+          <div className="flex items-center gap-2 shrink-0">
+            {isDirty && (
+              <Button variant="outline" onClick={handleDiscard}>
+                <RotateCcw className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+                Discard
               </Button>
-            </div>
+            )}
+            <Button onClick={handleSave} disabled={!isDirty}>
+              <Save className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+              Save configuration
+            </Button>
           </div>
+        </div>
 
-          {/* Search */}
-          <div className="relative mt-4">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <Input
-              type="search"
-              placeholder="Search any setting…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 rounded-full"
-              aria-label="Search settings"
-            />
-          </div>
+        <div className="relative mb-6">
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+            aria-hidden="true"
+            focusable="false"
+          />
+          <Input
+            type="search"
+            placeholder="Search any setting…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 rounded-full"
+            aria-label="Search settings"
+          />
         </div>
 
         {/* Mobile group selector */}
@@ -655,7 +626,7 @@ const CustomerConfiguration = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
           {/* Desktop vertical rail */}
           <aside className="hidden lg:block">
-            <div className="sticky top-[220px]">
+            <div className="sticky top-24">
               <nav aria-label="Configuration groups" className="space-y-1">
                 {filteredGroups.length === 0 && (
                   <p className="text-sm text-muted-foreground px-3 py-4">
