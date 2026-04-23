@@ -56,6 +56,7 @@ import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelect
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 
 interface CourseItem {
   id: string;
