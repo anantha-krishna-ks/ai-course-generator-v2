@@ -516,11 +516,6 @@ const CustomerConfiguration = () => {
 
   const isDirty = dirtyGroupsLive.size > 0;
 
-  const totalFields = useMemo(
-    () => configGroups.reduce((acc, g) => acc + g.fields.length, 0),
-    [],
-  );
-
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
       <Header />
