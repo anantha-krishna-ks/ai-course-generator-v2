@@ -92,6 +92,11 @@ interface PageEditorDialogProps {
   sectionThumbnailUrl?: string | null;
   onSectionThumbnailChange?: (url: string | null) => void;
   onPreview?: (pageId?: string | null) => void;
+  /** Optional outline lazy-loader transitions controlled by the parent. */
+  outlineDeletingIds?: Map<string, "section" | "page">;
+  outlineDuplicatingIds?: Map<string, "section" | "page">;
+  outlinePendingTopAdds?: { id: string; kind: "section" | "page" }[];
+  outlinePendingChildAdds?: Record<string, string[]>;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -110,7 +115,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds }: PageEditorDialogProps) {
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
