@@ -317,7 +317,34 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                   return (
                     <SortableQuestionCard key={question.id} question={question}>
                       {(dragHandleProps) => (
-                        <div className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all overflow-hidden">
+                        <div className={cn(
+                          "rounded-xl border bg-card shadow-sm hover:shadow-md transition-all overflow-hidden relative",
+                          isQuestionRegenerating
+                            ? "border-primary/40 ring-1 ring-primary/20"
+                            : "border-border"
+                        )}>
+                          {isQuestionRegenerating ? (
+                            <div className="p-3.5 space-y-3" aria-busy="true" aria-live="polite">
+                              <div className="flex items-center gap-2.5">
+                                <Skeleton className="w-3.5 h-3.5 rounded" />
+                                <Skeleton className="w-7 h-7 rounded-full" />
+                                <Skeleton className="h-4 flex-1 max-w-[60%]" />
+                                <Skeleton className="h-5 w-12 rounded-full" />
+                                <div className="flex items-center gap-1.5 ml-1 text-[11px] font-medium text-primary">
+                                  <RefreshCcw className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+                                  Regenerating…
+                                </div>
+                              </div>
+                              <div className="space-y-2 pt-1">
+                                <Skeleton className="h-9 w-full rounded-lg" />
+                                <Skeleton className="h-9 w-full rounded-lg" />
+                                <Skeleton className="h-9 w-[85%] rounded-lg" />
+                              </div>
+                              <Skeleton className="h-8 w-1/2 rounded-lg" />
+                              <Skeleton className="h-14 w-full rounded-lg" />
+                            </div>
+                          ) : (
+                          <>
                           {/* Collapsed header row */}
                           <div
                             className="flex items-center gap-2.5 px-3 py-3 cursor-pointer select-none"
