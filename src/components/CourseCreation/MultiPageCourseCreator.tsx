@@ -502,7 +502,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     }, SKELETON_DELAY);
   };
 
-  const duplicateItem = (id: string) => {
+  // Internal: actually clones the item. The public `duplicateItem` wraps this with
+  // a brief skeleton placeholder so users see lazy-loader feedback at the destination.
+  const performDuplicate = useCallback((id: string) => {
     setItems((prev) => {
       // Search top-level
       let idx = prev.findIndex((item) => item.id === id);
@@ -511,7 +513,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
         const clonedChildren = original.children?.map((child) => {
           const childCloneId = `${child.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-          // Clone child page blocks
           if (pageBlocksMap[child.id]) {
             setPageBlocksMap((prev) => ({
               ...prev,
@@ -523,7 +524,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           }
           return { ...child, id: childCloneId };
         });
-        // Clone the item's own blocks
         if (pageBlocksMap[id]) {
           setPageBlocksMap((prev) => ({
             ...prev,
@@ -542,14 +542,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         });
         return next;
       }
-      // Search inside section children
       return prev.map((item) => {
         if (!item.children) return item;
         const childIdx = item.children.findIndex((c) => c.id === id);
         if (childIdx === -1) return item;
         const original = item.children[childIdx];
         const cloneId = `${original.type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-        // Clone the child page's blocks
         if (pageBlocksMap[id]) {
           setPageBlocksMap((prev) => ({
             ...prev,
@@ -569,6 +567,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         return { ...item, children: newChildren };
       });
     });
+  }, [pageBlocksMap, toast]);
+
+  const duplicateItem = (id: string) => {
+    // Determine type for skeleton variant.
+    let kind: "section" | "page" = "page";
+    const top = items.find((i) => i.id === id);
+    if (top) kind = top.type === "section" ? "section" : "page";
+    setDuplicatingIds((m) => {
+      const next = new Map(m);
+      next.set(id, kind);
+      return next;
+    });
+    window.setTimeout(() => {
+      performDuplicate(id);
+      setDuplicatingIds((m) => {
+        const next = new Map(m);
+        next.delete(id);
+        return next;
+      });
+    }, SKELETON_DELAY);
   };
 
   const updatePageBlocks = useCallback((pageId: string, blocks: PageContentBlockData[]) => {
