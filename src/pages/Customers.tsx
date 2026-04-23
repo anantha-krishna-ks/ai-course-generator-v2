@@ -227,36 +227,102 @@ const Customers = () => {
           </div>
         </motion.div>
 
-        {/* Toolbar: search + add */}
+        {/* Toolbar: search + filters + add */}
         <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6"
+          className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 mb-6"
         >
-          <div className="relative w-full sm:max-w-md">
-            <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <Input
-              type="search"
-              placeholder="Search by name, email, contact..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              aria-label="Search customers"
-              className="pl-10 h-10 rounded-full border border-border bg-card focus:border-primary/50 focus-visible:ring-primary/20"
-            />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <div className="relative w-full sm:max-w-xs">
+              <Search
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none"
+                aria-hidden="true"
+                focusable="false"
+              />
+              <Input
+                type="search"
+                placeholder="Search by name, email, contact..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                aria-label="Search customers"
+                className="pl-10 h-10 rounded-full border border-border bg-card focus:border-primary/50 focus-visible:ring-primary/20"
+              />
+            </div>
+
+            <Select
+              value={userSizeFilter}
+              onValueChange={(v) => { setUserSizeFilter(v); setCurrentPage(1); }}
+            >
+              <SelectTrigger
+                aria-label="Filter by team size"
+                className="h-10 w-full sm:w-[160px] rounded-full border border-border bg-card"
+              >
+                <SelectValue placeholder="Team size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All sizes</SelectItem>
+                <SelectItem value="small">Small (&lt; 100)</SelectItem>
+                <SelectItem value="medium">Medium (100–999)</SelectItem>
+                <SelectItem value="large">Large (1000+)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={brandingFilter}
+              onValueChange={(v) => { setBrandingFilter(v); setCurrentPage(1); }}
+            >
+              <SelectTrigger
+                aria-label="Filter by branding status"
+                className="h-10 w-full sm:w-[170px] rounded-full border border-border bg-card"
+              >
+                <SelectValue placeholder="Branding" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All branding</SelectItem>
+                <SelectItem value="active">Active branding</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={sortPreset}
+              onValueChange={(v) => setSortPreset(v)}
+            >
+              <SelectTrigger
+                aria-label="Sort customers"
+                className="h-10 w-full sm:w-[180px] rounded-full border border-border bg-card"
+              >
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Default order</SelectItem>
+                <SelectItem value="name-asc">Name (A–Z)</SelectItem>
+                <SelectItem value="name-desc">Name (Z–A)</SelectItem>
+                <SelectItem value="users-desc">Users (high to low)</SelectItem>
+                <SelectItem value="users-asc">Users (low to high)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                onClick={clearFilters}
+                className="h-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60"
+              >
+                Clear filters
+              </Button>
+            )}
           </div>
 
           <Button
             onClick={() => setIsAddDialogOpen(true)}
-            className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all"
+            className="gap-2 bg-primary hover:bg-primary/90 rounded-full shadow-[0px_4px_20px_2px_rgba(0,90,200,0.15)] hover:shadow-[0px_6px_24px_4px_rgba(0,90,200,0.2)] transition-all shrink-0"
           >
             <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
             Add Customer
