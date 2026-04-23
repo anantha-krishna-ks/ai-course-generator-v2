@@ -24,7 +24,7 @@ interface BlockSkeletonProps {
   label?: string;
 }
 
-const variantIcon: Record<BlockSkeletonVariant, React.ComponentType<{ className?: string }>> = {
+const variantIcon: Record<BlockSkeletonVariant, React.ComponentType<React.SVGAttributes<SVGElement>>> = {
   text: Type,
   image: ImageIcon,
   video: Video,
