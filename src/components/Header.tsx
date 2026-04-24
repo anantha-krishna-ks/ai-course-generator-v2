@@ -20,7 +20,7 @@ interface HeaderProps {
   tokenCount?: string;
 }
 
-const Header = ({ showTokens = false, onTokenClick, tokenCount = "932,679" }: HeaderProps) => {
+const Header = ({ showTokens = true, onTokenClick, tokenCount = "932,679" }: HeaderProps) => {
   const navigate = useNavigate();
   const [branding, setBranding] = useState<BrandingSettings | null>(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
