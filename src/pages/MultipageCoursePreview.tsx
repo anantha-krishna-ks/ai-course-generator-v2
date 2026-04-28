@@ -654,7 +654,7 @@ const MultipageCoursePreview = () => {
                       aria-label={`Navigate to ${child.title || "Untitled page"}`}
                       aria-current={child.id === selectedId ? "page" : undefined}
                       className={cn(
-                        "w-full flex items-center gap-2 pl-8 pr-5 py-2.5 text-left text-[13px] transition-colors border-l-[3px]",
+                        "w-full flex items-start gap-2 pl-8 pr-5 py-2.5 text-left text-[13px] transition-colors border-l-[3px]",
                         child.id === selectedId
                           ? "border-primary bg-primary/[0.06] text-foreground font-medium"
                           : "border-transparent text-muted-foreground hover:bg-muted/30 hover:text-foreground"
