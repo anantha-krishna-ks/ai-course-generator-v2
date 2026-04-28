@@ -506,16 +506,16 @@ const SinglepageCoursePreview = () => {
             return (
               <div key={item.id}>
                 <button
-                  className="w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors hover:bg-muted/40 text-muted-foreground hover:text-foreground"
+                  className="w-full flex items-start justify-between gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-muted/40 text-muted-foreground hover:text-foreground"
                   onClick={() => toggleOutlineSection(item.id)}
                   aria-expanded={isExpanded}
                   aria-label={`${item.title || "Untitled section"}, ${isExpanded ? "collapse" : "expand"}`}
                 >
-                  <span className="truncate pr-2 font-medium">{item.title || "Untitled section"}</span>
+                  <span className="pr-2 font-medium break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled section"}</span>
                   {isExpanded ? (
-                    <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" aria-hidden="true" />
                   ) : (
-                    <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" aria-hidden="true" />
                   )}
                 </button>
                 {isExpanded && item.children && item.children.length > 0 && (
