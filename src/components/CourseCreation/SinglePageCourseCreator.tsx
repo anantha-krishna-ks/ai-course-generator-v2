@@ -1051,7 +1051,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       {block.type === "description" ? (
                         <DescriptionBlock id={block.id} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
                       ) : (
-                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} />
+                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} variant={block.variant} onTypeChange={(t, c, v) => updateIntroBlockType(block.id, t, c, v)} />
                       )}
                       {block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
