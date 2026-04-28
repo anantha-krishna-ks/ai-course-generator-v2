@@ -629,7 +629,7 @@ const MultipageCoursePreview = () => {
             <div key={item.id}>
               <button
                 className={cn(
-                  "w-full flex items-center justify-between px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
+                  "w-full flex items-start justify-between gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
                   hasActiveChild
                     ? "border-primary bg-primary/[0.04] text-foreground font-medium"
                     : "border-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
