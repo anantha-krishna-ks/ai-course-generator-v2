@@ -405,6 +405,54 @@ export function ContentBlock({
               </PopoverContent>
             </Popover>
           )}
+          {(isImageBlock || isVideoBlock) && onTypeChange && (
+            <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label={isImageBlock ? "Change image layout" : "Change video layout"}
+                >
+                  <LayoutGrid className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-52 p-0">
+                <div className="px-3 pt-3 pb-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">Change layout</p>
+                </div>
+                <div className="px-1.5 pb-1.5">
+                  {(isImageBlock ? imageLayoutOptions : videoLayoutOptions).map((opt) => {
+                    const Icon = opt.icon;
+                    const isActive = isImageBlock
+                      ? currentImageLayout === opt.id
+                      : currentVideoLayout === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isImageBlock) {
+                            handleImageLayoutChange(opt.id as ImageLayoutId);
+                          } else {
+                            handleVideoLayoutChange(opt.id as VideoLayoutId);
+                          }
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
           <SidebarButton icon={Copy} label="Duplicate" onClick={onDuplicate} />
           <SidebarButton
             icon={Trash2}
