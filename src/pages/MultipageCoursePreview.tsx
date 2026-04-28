@@ -638,7 +638,7 @@ const MultipageCoursePreview = () => {
                 aria-expanded={isExpanded}
                 aria-label={`${item.title || "Untitled section"} section, ${isExpanded ? "collapse" : "expand"}`}
               >
-                <span className="truncate pr-2">{item.title || "Untitled section"}</span>
+                <span className="pr-2 break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled section"}</span>
                 {isExpanded ? (
                   <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
                 ) : (
