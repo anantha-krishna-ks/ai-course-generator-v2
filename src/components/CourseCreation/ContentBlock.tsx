@@ -194,6 +194,35 @@ export function ContentBlock({
     setIsEditing(true);
   };
 
+  const isImageBlock = type === "image" || type === "image-description";
+  const isVideoBlock = type === "video" || type === "video-description";
+  const currentImageLayout = isImageBlock ? detectImageLayout(type, content, variant) : null;
+  const currentVideoLayout = isVideoBlock ? detectVideoLayout(type, content, variant) : null;
+
+  const handleImageLayoutChange = (newLayout: ImageLayoutId) => {
+    if (!onTypeChange) return;
+    const url = extractImageUrl(type, content);
+    if (newLayout === "image-only") {
+      onTypeChange("image", url, undefined);
+    } else {
+      const desc = type === "image-description" ? extractDescription(content, "<p>Add a description here...</p>") : "<p>Add a description here...</p>";
+      onTypeChange("image-description", JSON.stringify({ layout: newLayout, imageUrl: url, description: desc }), newLayout);
+    }
+    setIsLayoutOpen(false);
+  };
+
+  const handleVideoLayoutChange = (newLayout: VideoLayoutId) => {
+    if (!onTypeChange) return;
+    const url = extractVideoUrl(type, content);
+    if (newLayout === "video-only") {
+      onTypeChange("video", url, undefined);
+    } else {
+      const desc = type === "video-description" ? extractDescription(content, "") : "";
+      onTypeChange("video-description", JSON.stringify({ layout: newLayout, videoUrl: url, description: desc }), newLayout);
+    }
+    setIsLayoutOpen(false);
+  };
+
   const getMockVersionsForColumn = (colIndex: number) => [
     {
       id: 1,
