@@ -73,6 +73,7 @@ interface ContentBlockData {
   id: string;
   type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
+  variant?: string;
 }
 
 interface DeletedBlock {
