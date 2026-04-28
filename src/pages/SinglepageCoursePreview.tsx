@@ -544,11 +544,11 @@ const SinglepageCoursePreview = () => {
             <button
               key={item.id}
               onClick={() => scrollToSection(item.id)}
-              className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+              className="w-full flex items-start gap-2 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
               aria-label={`Navigate to ${item.title || "Untitled"}`}
             >
-              <FileText className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-              <span className="truncate">{item.title || "Untitled"}</span>
+              <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled"}</span>
             </button>
           );
         })}
