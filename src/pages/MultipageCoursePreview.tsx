@@ -640,9 +640,9 @@ const MultipageCoursePreview = () => {
               >
                 <span className="pr-2 break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled section"}</span>
                 {isExpanded ? (
-                  <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
+                  <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" />
                 ) : (
-                  <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
+                  <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" />
                 )}
               </button>
               {isExpanded && item.children && item.children.length > 0 && (
