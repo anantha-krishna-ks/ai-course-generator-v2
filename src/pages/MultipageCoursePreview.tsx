@@ -681,16 +681,16 @@ const MultipageCoursePreview = () => {
             aria-label={`Navigate to ${item.title || "Untitled page"}`}
             aria-current={item.id === selectedId ? "page" : undefined}
             className={cn(
-              "w-full flex items-center gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
+              "w-full flex items-start gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
               item.id === selectedId
                 ? "border-primary bg-primary/[0.06] text-foreground font-medium"
                 : "border-transparent text-muted-foreground hover:bg-muted/30 hover:text-foreground"
             )}
           >
             {item.type === "question" ? (
-              <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
             ) : (
-              <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+              <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
             )}
             <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled page"}</span>
           </button>
