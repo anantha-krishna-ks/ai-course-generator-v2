@@ -1278,6 +1278,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         aiEnabled={aiEnabled}
                                         readOnly
                                         variant={block.variant}
+                                        onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
