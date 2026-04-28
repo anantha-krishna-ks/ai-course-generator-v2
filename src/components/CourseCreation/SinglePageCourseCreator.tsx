@@ -200,7 +200,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content } : b)));
   };
 
-  const updateIntroBlockType = (id: string, newType: PageContentBlock["type"], newContent: string, newVariant?: string) => {
+  const updateIntroBlockType = (id: string, newType: ContentBlockData["type"], newContent: string, newVariant?: string) => {
     setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
   };
 
