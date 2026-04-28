@@ -50,6 +50,76 @@ const contentLayoutDefaults: Record<ContentLayoutType, string[]> = {
   "three-columns": ["<h2>Column 1</h2><p>Start writing here...</p>", "<h2>Column 2</h2><p>Start writing here...</p>", "<h2>Column 3</h2><p>Start writing here...</p>"],
 };
 
+// Image layout options: switches between standalone image block and image+description variants
+type ImageLayoutId = "image-only" | "image-top" | "image-bottom" | "image-left" | "image-right";
+const imageLayoutOptions: { id: ImageLayoutId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: "image-only", label: "Single image", icon: ImageLucide },
+  { id: "image-top", label: "Image on top", icon: ImageUp },
+  { id: "image-bottom", label: "Image on bottom", icon: ImageDown },
+  { id: "image-left", label: "Image on left", icon: PanelLeft },
+  { id: "image-right", label: "Image on right", icon: PanelRight },
+];
+
+// Video layout options
+type VideoLayoutId = "video-only" | "video-left" | "video-right";
+const videoLayoutOptions: { id: VideoLayoutId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: "video-only", label: "Video", icon: Video },
+  { id: "video-left", label: "Video on left", icon: PanelLeft },
+  { id: "video-right", label: "Video on right", icon: PanelRight },
+];
+
+function detectImageLayout(type: string, content: string, variant?: string): ImageLayoutId {
+  if (type === "image") return "image-only";
+  if (type === "image-description") {
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.layout === "image-top" || parsed.layout === "image-bottom" || parsed.layout === "image-left" || parsed.layout === "image-right") {
+        return parsed.layout;
+      }
+    } catch { /* noop */ }
+    if (variant === "image-top" || variant === "image-bottom" || variant === "image-left" || variant === "image-right") return variant;
+    return "image-top";
+  }
+  return "image-only";
+}
+
+function detectVideoLayout(type: string, content: string, variant?: string): VideoLayoutId {
+  if (type === "video") return "video-only";
+  if (type === "video-description") {
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.layout === "video-left" || parsed.layout === "video-right") return parsed.layout;
+    } catch { /* noop */ }
+    if (variant === "video-left" || variant === "video-right") return variant;
+    return "video-left";
+  }
+  return "video-only";
+}
+
+// Extract existing media URL when switching layouts so user doesn't lose their upload
+function extractImageUrl(type: string, content: string): string {
+  if (type === "image") return content || "";
+  if (type === "image-description") {
+    try { return JSON.parse(content).imageUrl || ""; } catch { return ""; }
+  }
+  return "";
+}
+
+function extractVideoUrl(type: string, content: string): string {
+  if (type === "video") return content || "";
+  if (type === "video-description") {
+    try { return JSON.parse(content).videoUrl || ""; } catch { return ""; }
+  }
+  return "";
+}
+
+function extractDescription(content: string, fallback: string): string {
+  try {
+    const parsed = JSON.parse(content);
+    return parsed.description || fallback;
+  } catch { return fallback; }
+}
+
 function detectContentLayout(content: string): ContentLayoutType {
   if (content.startsWith("<!--layout:")) {
     const match = content.match(/<!--layout:(\w[\w-]*)-->/);
