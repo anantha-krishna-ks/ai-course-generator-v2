@@ -506,16 +506,16 @@ const SinglepageCoursePreview = () => {
             return (
               <div key={item.id}>
                 <button
-                  className="w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors hover:bg-muted/40 text-muted-foreground hover:text-foreground"
+                  className="w-full flex items-start justify-between gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-muted/40 text-muted-foreground hover:text-foreground"
                   onClick={() => toggleOutlineSection(item.id)}
                   aria-expanded={isExpanded}
                   aria-label={`${item.title || "Untitled section"}, ${isExpanded ? "collapse" : "expand"}`}
                 >
-                  <span className="truncate pr-2 font-medium">{item.title || "Untitled section"}</span>
+                  <span className="pr-2 font-medium break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled section"}</span>
                   {isExpanded ? (
-                    <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" aria-hidden="true" />
                   ) : (
-                    <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+                    <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" aria-hidden="true" />
                   )}
                 </button>
                 {isExpanded && item.children && item.children.length > 0 && (
@@ -524,15 +524,15 @@ const SinglepageCoursePreview = () => {
                       <button
                         key={child.id}
                         onClick={() => scrollToSection(item.id)}
-                        className="w-full flex items-center gap-2 pl-8 pr-4 py-2 text-left text-[13px] text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+                        className="w-full flex items-start gap-2 pl-8 pr-4 py-2 text-left text-[13px] text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
                         aria-label={`Navigate to ${child.title || "Untitled"}`}
                       >
                         {child.type === "page" ? (
-                          <FileText className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         ) : (
-                          <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         )}
-                        <span className="truncate">{child.title || "Untitled"}</span>
+                        <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{child.title || "Untitled"}</span>
                       </button>
                     ))}
                   </div>
@@ -544,11 +544,11 @@ const SinglepageCoursePreview = () => {
             <button
               key={item.id}
               onClick={() => scrollToSection(item.id)}
-              className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+              className="w-full flex items-start gap-2 px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
               aria-label={`Navigate to ${item.title || "Untitled"}`}
             >
-              <FileText className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-              <span className="truncate">{item.title || "Untitled"}</span>
+              <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled"}</span>
             </button>
           );
         })}
