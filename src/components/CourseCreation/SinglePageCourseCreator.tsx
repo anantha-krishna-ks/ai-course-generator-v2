@@ -66,12 +66,14 @@ interface PageContentBlock {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
+  variant?: string;
 }
 
 interface ContentBlockData {
   id: string;
   type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
+  variant?: string;
 }
 
 interface DeletedBlock {
@@ -196,6 +198,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
   const updateIntroBlockContent = (id: string, content: string) => {
     setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content } : b)));
+  };
+
+  const updateIntroBlockType = (id: string, newType: ContentBlockData["type"], newContent: string, newVariant?: string) => {
+    setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
   };
 
   const deleteIntroBlock = (id: string) => {
@@ -1046,7 +1052,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       {block.type === "description" ? (
                         <DescriptionBlock id={block.id} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
                       ) : (
-                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} />
+                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} variant={block.variant} onTypeChange={(t, c, v) => updateIntroBlockType(block.id, t, c, v)} />
                       )}
                       {block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">

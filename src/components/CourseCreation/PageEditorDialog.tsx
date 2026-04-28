@@ -455,6 +455,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content } : b)));
   }, []);
 
+  const updateBlockType = useCallback((id: string, newType: PageContentBlock["type"], newContent: string, newVariant?: string) => {
+    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
+  }, []);
+
   const deleteBlock = useCallback((id: string) => {
     setBlocks((prev) => {
       const block = prev.find((b) => b.id === id);
@@ -1274,6 +1278,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         aiEnabled={aiEnabled}
                                         readOnly
                                         variant={block.variant}
+                                        onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
@@ -1385,6 +1390,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     autoFocus={block.id === lastAddedBlockId}
                                     aiEnabled={aiEnabled}
                                     variant={block.variant}
+                                    onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                   />
                                 );
                               }

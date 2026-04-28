@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3 } from "lucide-react";
+import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -50,6 +50,76 @@ const contentLayoutDefaults: Record<ContentLayoutType, string[]> = {
   "three-columns": ["<h2>Column 1</h2><p>Start writing here...</p>", "<h2>Column 2</h2><p>Start writing here...</p>", "<h2>Column 3</h2><p>Start writing here...</p>"],
 };
 
+// Image layout options: switches between standalone image block and image+description variants
+type ImageLayoutId = "image-only" | "image-top" | "image-bottom" | "image-left" | "image-right";
+const imageLayoutOptions: { id: ImageLayoutId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: "image-only", label: "Single image", icon: ImageLucide },
+  { id: "image-top", label: "Image on top", icon: ImageUp },
+  { id: "image-bottom", label: "Image on bottom", icon: ImageDown },
+  { id: "image-left", label: "Image on left", icon: PanelLeft },
+  { id: "image-right", label: "Image on right", icon: PanelRight },
+];
+
+// Video layout options
+type VideoLayoutId = "video-only" | "video-left" | "video-right";
+const videoLayoutOptions: { id: VideoLayoutId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: "video-only", label: "Video", icon: Video },
+  { id: "video-left", label: "Video on left", icon: PanelLeft },
+  { id: "video-right", label: "Video on right", icon: PanelRight },
+];
+
+function detectImageLayout(type: string, content: string, variant?: string): ImageLayoutId {
+  if (type === "image") return "image-only";
+  if (type === "image-description") {
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.layout === "image-top" || parsed.layout === "image-bottom" || parsed.layout === "image-left" || parsed.layout === "image-right") {
+        return parsed.layout;
+      }
+    } catch { /* noop */ }
+    if (variant === "image-top" || variant === "image-bottom" || variant === "image-left" || variant === "image-right") return variant;
+    return "image-top";
+  }
+  return "image-only";
+}
+
+function detectVideoLayout(type: string, content: string, variant?: string): VideoLayoutId {
+  if (type === "video") return "video-only";
+  if (type === "video-description") {
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.layout === "video-left" || parsed.layout === "video-right") return parsed.layout;
+    } catch { /* noop */ }
+    if (variant === "video-left" || variant === "video-right") return variant;
+    return "video-left";
+  }
+  return "video-only";
+}
+
+// Extract existing media URL when switching layouts so user doesn't lose their upload
+function extractImageUrl(type: string, content: string): string {
+  if (type === "image") return content || "";
+  if (type === "image-description") {
+    try { return JSON.parse(content).imageUrl || ""; } catch { return ""; }
+  }
+  return "";
+}
+
+function extractVideoUrl(type: string, content: string): string {
+  if (type === "video") return content || "";
+  if (type === "video-description") {
+    try { return JSON.parse(content).videoUrl || ""; } catch { return ""; }
+  }
+  return "";
+}
+
+function extractDescription(content: string, fallback: string): string {
+  try {
+    const parsed = JSON.parse(content);
+    return parsed.description || fallback;
+  } catch { return fallback; }
+}
+
 function detectContentLayout(content: string): ContentLayoutType {
   if (content.startsWith("<!--layout:")) {
     const match = content.match(/<!--layout:(\w[\w-]*)-->/);
@@ -83,6 +153,7 @@ interface ContentBlockProps {
   aiEnabled?: boolean;
   readOnly?: boolean;
   variant?: string;
+  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", newContent: string, newVariant?: string) => void;
 }
 
 export function ContentBlock({
@@ -96,6 +167,7 @@ export function ContentBlock({
   aiEnabled = false,
   readOnly = false,
   variant,
+  onTypeChange,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -120,6 +192,35 @@ export function ContentBlock({
     const newCols = contentLayoutDefaults[newLayout];
     onChange(encodeContentColumns(newLayout, newCols));
     setIsEditing(true);
+  };
+
+  const isImageBlock = type === "image" || type === "image-description";
+  const isVideoBlock = type === "video" || type === "video-description";
+  const currentImageLayout = isImageBlock ? detectImageLayout(type, content, variant) : null;
+  const currentVideoLayout = isVideoBlock ? detectVideoLayout(type, content, variant) : null;
+
+  const handleImageLayoutChange = (newLayout: ImageLayoutId) => {
+    if (!onTypeChange) return;
+    const url = extractImageUrl(type, content);
+    if (newLayout === "image-only") {
+      onTypeChange("image", url, undefined);
+    } else {
+      const desc = type === "image-description" ? extractDescription(content, "<p>Add a description here...</p>") : "<p>Add a description here...</p>";
+      onTypeChange("image-description", JSON.stringify({ layout: newLayout, imageUrl: url, description: desc }), newLayout);
+    }
+    setIsLayoutOpen(false);
+  };
+
+  const handleVideoLayoutChange = (newLayout: VideoLayoutId) => {
+    if (!onTypeChange) return;
+    const url = extractVideoUrl(type, content);
+    if (newLayout === "video-only") {
+      onTypeChange("video", url, undefined);
+    } else {
+      const desc = type === "video-description" ? extractDescription(content, "") : "";
+      onTypeChange("video-description", JSON.stringify({ layout: newLayout, videoUrl: url, description: desc }), newLayout);
+    }
+    setIsLayoutOpen(false);
   };
 
   const getMockVersionsForColumn = (colIndex: number) => [
@@ -287,6 +388,54 @@ export function ContentBlock({
                           e.stopPropagation();
                           handleLayoutChange(opt.id);
                           setIsLayoutOpen(false);
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+          {(isImageBlock || isVideoBlock) && onTypeChange && (
+            <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label={isImageBlock ? "Change image layout" : "Change video layout"}
+                >
+                  <LayoutGrid className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-52 p-0">
+                <div className="px-3 pt-3 pb-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">Change layout</p>
+                </div>
+                <div className="px-1.5 pb-1.5">
+                  {(isImageBlock ? imageLayoutOptions : videoLayoutOptions).map((opt) => {
+                    const Icon = opt.icon;
+                    const isActive = isImageBlock
+                      ? currentImageLayout === opt.id
+                      : currentVideoLayout === opt.id;
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isImageBlock) {
+                            handleImageLayoutChange(opt.id as ImageLayoutId);
+                          } else {
+                            handleVideoLayoutChange(opt.id as VideoLayoutId);
+                          }
                         }}
                         className={cn(
                           "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
