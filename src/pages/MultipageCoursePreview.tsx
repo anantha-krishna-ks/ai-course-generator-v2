@@ -661,9 +661,9 @@ const MultipageCoursePreview = () => {
                       )}
                     >
                       {child.type === "question" ? (
-                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                       ) : (
-                        <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+                        <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                       )}
                       <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{child.title || "Untitled page"}</span>
                     </button>
