@@ -524,15 +524,15 @@ const SinglepageCoursePreview = () => {
                       <button
                         key={child.id}
                         onClick={() => scrollToSection(item.id)}
-                        className="w-full flex items-center gap-2 pl-8 pr-4 py-2 text-left text-[13px] text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
+                        className="w-full flex items-start gap-2 pl-8 pr-4 py-2 text-left text-[13px] text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-colors"
                         aria-label={`Navigate to ${child.title || "Untitled"}`}
                       >
                         {child.type === "page" ? (
-                          <FileText className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         ) : (
-                          <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                          <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         )}
-                        <span className="truncate">{child.title || "Untitled"}</span>
+                        <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{child.title || "Untitled"}</span>
                       </button>
                     ))}
                   </div>
