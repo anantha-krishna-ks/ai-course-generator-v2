@@ -153,6 +153,7 @@ interface ContentBlockProps {
   aiEnabled?: boolean;
   readOnly?: boolean;
   variant?: string;
+  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", newContent: string, newVariant?: string) => void;
 }
 
 export function ContentBlock({
@@ -166,6 +167,7 @@ export function ContentBlock({
   aiEnabled = false,
   readOnly = false,
   variant,
+  onTypeChange,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
