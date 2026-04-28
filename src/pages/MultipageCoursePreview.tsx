@@ -629,7 +629,7 @@ const MultipageCoursePreview = () => {
             <div key={item.id}>
               <button
                 className={cn(
-                  "w-full flex items-center justify-between px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
+                  "w-full flex items-start justify-between gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
                   hasActiveChild
                     ? "border-primary bg-primary/[0.04] text-foreground font-medium"
                     : "border-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
@@ -638,11 +638,11 @@ const MultipageCoursePreview = () => {
                 aria-expanded={isExpanded}
                 aria-label={`${item.title || "Untitled section"} section, ${isExpanded ? "collapse" : "expand"}`}
               >
-                <span className="truncate pr-2">{item.title || "Untitled section"}</span>
+                <span className="pr-2 break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled section"}</span>
                 {isExpanded ? (
-                  <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
+                  <ChevronDown className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" />
                 ) : (
-                  <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground" />
+                  <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 text-muted-foreground mt-0.5" />
                 )}
               </button>
               {isExpanded && item.children && item.children.length > 0 && (
@@ -654,18 +654,18 @@ const MultipageCoursePreview = () => {
                       aria-label={`Navigate to ${child.title || "Untitled page"}`}
                       aria-current={child.id === selectedId ? "page" : undefined}
                       className={cn(
-                        "w-full flex items-center gap-2 pl-8 pr-5 py-2.5 text-left text-[13px] transition-colors border-l-[3px]",
+                        "w-full flex items-start gap-2 pl-8 pr-5 py-2.5 text-left text-[13px] transition-colors border-l-[3px]",
                         child.id === selectedId
                           ? "border-primary bg-primary/[0.06] text-foreground font-medium"
                           : "border-transparent text-muted-foreground hover:bg-muted/30 hover:text-foreground"
                       )}
                     >
                       {child.type === "question" ? (
-                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                       ) : (
-                        <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+                        <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                       )}
-                      <span className="truncate">{child.title || "Untitled page"}</span>
+                      <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{child.title || "Untitled page"}</span>
                     </button>
                   ))}
                 </div>
@@ -681,18 +681,18 @@ const MultipageCoursePreview = () => {
             aria-label={`Navigate to ${item.title || "Untitled page"}`}
             aria-current={item.id === selectedId ? "page" : undefined}
             className={cn(
-              "w-full flex items-center gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
+              "w-full flex items-start gap-2 px-5 py-3 text-left text-sm transition-colors border-l-[3px]",
               item.id === selectedId
                 ? "border-primary bg-primary/[0.06] text-foreground font-medium"
                 : "border-transparent text-muted-foreground hover:bg-muted/30 hover:text-foreground"
             )}
           >
             {item.type === "question" ? (
-              <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
             ) : (
-              <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+              <FileText className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
             )}
-            <span className="truncate">{item.title || "Untitled page"}</span>
+            <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{item.title || "Untitled page"}</span>
           </button>
         );
       })}
