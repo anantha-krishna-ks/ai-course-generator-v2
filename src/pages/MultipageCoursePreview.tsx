@@ -665,7 +665,7 @@ const MultipageCoursePreview = () => {
                       ) : (
                         <FileText className="w-3.5 h-3.5 flex-shrink-0" />
                       )}
-                      <span className="truncate">{child.title || "Untitled page"}</span>
+                      <span className="break-words [overflow-wrap:anywhere] text-left flex-1 min-w-0">{child.title || "Untitled page"}</span>
                     </button>
                   ))}
                 </div>
