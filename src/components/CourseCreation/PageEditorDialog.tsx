@@ -1390,6 +1390,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     autoFocus={block.id === lastAddedBlockId}
                                     aiEnabled={aiEnabled}
                                     variant={block.variant}
+                                    onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                   />
                                 );
                               }
