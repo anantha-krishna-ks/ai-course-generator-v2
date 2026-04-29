@@ -184,6 +184,7 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+  const [isFontOpen, setIsFontOpen] = useState(false);
   const layout = detectContentLayout(content);
 
   const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
