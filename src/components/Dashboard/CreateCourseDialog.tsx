@@ -74,100 +74,64 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
 }
 
 
-/** Compact font picker shown floating on the live preview panel (dark gradient context). */
-function PreviewFontPicker({
+/**
+ * Visual "Aa" font swatch row.
+ * Each option is rendered IN its own font, so the picker IS the preview.
+ * Pattern inspired by Notion's page-style picker and Apple Keynote's template chooser.
+ */
+function FontSwatchRow({
   value,
   onChange,
 }: {
   value: string;
   onChange: (id: string) => void;
 }) {
-  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
   return (
-    <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label={`Change course font (current: ${current.label})`}
-              className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 hover:bg-primary-foreground/25 backdrop-blur-md border border-primary-foreground/20 px-2.5 py-1 text-[11px] font-medium text-primary-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
+    <div
+      role="radiogroup"
+      aria-label="Course font"
+      className="flex gap-2 overflow-x-auto thin-scrollbar pb-1.5 -mx-1 px-1 snap-x"
+    >
+      {FONT_OPTIONS.map((font) => {
+        const isActive = font.id === value;
+        const isDefault = font.id === DEFAULT_FONT_ID;
+        return (
+          <button
+            key={font.id}
+            type="button"
+            role="radio"
+            aria-checked={isActive}
+            aria-label={`Use ${font.label}`}
+            onClick={() => onChange(font.id)}
+            className={cn(
+              "group shrink-0 snap-start flex flex-col items-center justify-center w-[68px] h-[58px] rounded-lg border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+              isActive
+                ? "border-primary bg-primary/5 shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]"
+                : "border-border bg-background hover:border-primary/50 hover:bg-muted/50"
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className={cn(
+                "text-lg font-semibold leading-none transition-colors",
+                isActive ? "text-primary" : "text-foreground"
+              )}
+              style={{ fontFamily: font.stack || undefined }}
             >
-              <CaseSensitive className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              <span className="max-w-[90px] truncate" style={{ fontFamily: getFontStack(value) }}>
-                {current.label}
-              </span>
-              <ChevronDown className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
-            </button>
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent>Change course font</TooltipContent>
-      </Tooltip>
-      <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuLabel>Course font</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {FONT_OPTIONS.map((font) => {
-          const isActive = font.id === value;
-          return (
-            <DropdownMenuItem
-              key={font.id}
-              onClick={() => onChange(font.id)}
-              className="cursor-pointer flex items-center justify-between gap-2"
-              style={{ fontFamily: font.stack }}
+              {isDefault ? "Aa" : "Aa"}
+            </span>
+            <span
+              className={cn(
+                "mt-1 text-[9px] font-medium uppercase tracking-wide leading-none truncate max-w-full px-1",
+                isActive ? "text-primary" : "text-muted-foreground"
+              )}
             >
-              <span className="text-sm">{font.label}</span>
-              {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-/** Compact font picker for mobile/tablet (light context — sits next to the title label). */
-function MobileFontPicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (id: string) => void;
-}) {
-  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label={`Change course font (current: ${current.label})`}
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background hover:bg-muted px-2.5 py-1 text-[11px] font-medium text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-        >
-          <CaseSensitive className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          <span className="max-w-[110px] truncate" style={{ fontFamily: getFontStack(value) }}>
-            {current.label}
-          </span>
-          <ChevronDown className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
-        <DropdownMenuLabel>Course font</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {FONT_OPTIONS.map((font) => {
-          const isActive = font.id === value;
-          return (
-            <DropdownMenuItem
-              key={font.id}
-              onClick={() => onChange(font.id)}
-              className="cursor-pointer flex items-center justify-between gap-2"
-              style={{ fontFamily: font.stack }}
-            >
-              <span className="text-sm">{font.label}</span>
-              {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+              {isDefault ? "Default" : font.label.split(" ")[0]}
+            </span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
