@@ -65,67 +65,6 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
 }
 
 
-/**
- * Visual "Aa" font swatch row.
- * Each option is rendered IN its own font, so the picker IS the preview.
- * Pattern inspired by Notion's page-style picker and Apple Keynote's template chooser.
- */
-function FontSwatchRow({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (id: string) => void;
-}) {
-  return (
-    <div
-      role="radiogroup"
-      aria-label="Course font"
-      className="flex gap-2 overflow-x-auto thin-scrollbar pb-1.5 -mx-1 px-1 snap-x"
-    >
-      {FONT_OPTIONS.map((font) => {
-        const isActive = font.id === value;
-        const isDefault = font.id === DEFAULT_FONT_ID;
-        return (
-          <button
-            key={font.id}
-            type="button"
-            role="radio"
-            aria-checked={isActive}
-            aria-label={`Use ${font.label}`}
-            onClick={() => onChange(font.id)}
-            className={cn(
-              "group shrink-0 snap-start flex flex-col items-center justify-center w-[68px] h-[58px] rounded-lg border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-              isActive
-                ? "border-primary bg-primary/5 shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]"
-                : "border-border bg-background hover:border-primary/50 hover:bg-muted/50"
-            )}
-          >
-            <span
-              aria-hidden="true"
-              className={cn(
-                "text-lg font-semibold leading-none transition-colors",
-                isActive ? "text-primary" : "text-foreground"
-              )}
-              style={{ fontFamily: font.stack || undefined }}
-            >
-              {isDefault ? "Aa" : "Aa"}
-            </span>
-            <span
-              className={cn(
-                "mt-1 text-[9px] font-medium uppercase tracking-wide leading-none truncate max-w-full px-1",
-                isActive ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              {isDefault ? "Default" : font.label.split(" ")[0]}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 /** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
   courseTitle,
