@@ -141,13 +141,11 @@ function LivePreviewPanel({
   selectedLayout,
   aiEnabled,
   fontId,
-  onFontChange,
 }: {
   courseTitle: string;
   selectedLayout: LayoutType;
   aiEnabled: boolean;
   fontId: string;
-  onFontChange: (id: string) => void;
 }) {
   const fontStack = getFontStack(fontId);
   return (
