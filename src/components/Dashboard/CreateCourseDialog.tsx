@@ -409,8 +409,53 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               {/* Spacer */}
               <div className="flex-1 min-h-0" />
 
-              {/* Create button */}
-              <div className="flex justify-end pt-2 sm:pt-3">
+              {/* Footer: secondary action (font) on the left, primary CTA on the right */}
+              <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
+                <DropdownMenu>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Course font (current: ${FONT_OPTIONS.find(f => f.id === fontId)?.label ?? "Default font"})`}
+                          className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="text-base font-semibold leading-none"
+                            style={{ fontFamily: getFontStack(fontId) }}
+                          >
+                            Aa
+                          </span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      Course font · {FONT_OPTIONS.find(f => f.id === fontId)?.label ?? "Default font"}
+                    </TooltipContent>
+                  </Tooltip>
+                  <DropdownMenuContent align="start" side="top" className="w-52">
+                    <DropdownMenuLabel>Course font</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {FONT_OPTIONS.map((font) => {
+                      const isActive = font.id === fontId;
+                      return (
+                        <DropdownMenuItem
+                          key={font.id}
+                          onClick={() => setFontId(font.id)}
+                          className="cursor-pointer flex items-center justify-between gap-2"
+                          style={{ fontFamily: font.stack }}
+                        >
+                          <span className="text-sm">{font.label}</span>
+                          {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <Button
                   onClick={handleStartCreating}
                   disabled={!courseTitle.trim()}
