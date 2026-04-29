@@ -660,9 +660,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         pageBlocksMap,
         returnState,
         initialPageId: initialPageId || null,
+        fontId,
       },
     });
-  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions]);
+  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions, fontId]);
 
   return (
     <div className="min-h-screen bg-background">

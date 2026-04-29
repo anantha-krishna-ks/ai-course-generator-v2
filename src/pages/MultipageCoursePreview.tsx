@@ -10,6 +10,7 @@ import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCrea
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
+import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface CourseItem {
   id: string;
@@ -38,6 +39,7 @@ interface PreviewState {
   pageBlocksMap: Record<string, PageContentBlock[]>;
   returnState?: MultiPageCourseCreatorRestoreState;
   initialPageId?: string | null;
+  fontId?: string;
 }
 
 const MultipageCoursePreview = () => {
@@ -761,7 +763,7 @@ const MultipageCoursePreview = () => {
   // Hero / Landing view
   if (!started) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-3">
@@ -988,7 +990,7 @@ const MultipageCoursePreview = () => {
 
   // Content view with sidebar (desktop) / bottom bar + sheet (mobile)
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-3">

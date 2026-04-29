@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 import type { SinglePageRestoreState } from "@/components/CourseCreation/SinglePageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
+import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface CourseItem {
   id: string;
@@ -34,6 +35,7 @@ interface PreviewState {
   pageBlocksMap: Record<string, PageContentBlock[]>;
   sectionImages?: Record<string, string | null>;
   returnState?: SinglePageRestoreState;
+  fontId?: string;
 }
 
 const DEMO_VIDEO_URL = "/demo/Motion_Video.mp4";
@@ -679,7 +681,7 @@ const SinglepageCoursePreview = () => {
   );
 
   return (
-    <div className="h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2 sm:gap-3">
