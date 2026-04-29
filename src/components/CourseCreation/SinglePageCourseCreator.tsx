@@ -396,6 +396,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     }));
   }, []);
 
+  const updateItemBlockFont = useCallback((itemId: string, blockId: string, fontIdValue: string | undefined) => {
+    setPageBlocksMap((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || []).map((b) => (b.id === blockId ? { ...b, font: fontIdValue } : b)),
+    }));
+  }, []);
+
   const deleteItemBlock = useCallback((itemId: string, blockId: string) => {
     setPageBlocksMap((prev) => {
       const blocks = prev[itemId] || [];
