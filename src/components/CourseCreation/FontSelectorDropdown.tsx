@@ -1,4 +1,4 @@
-import { Type, Check } from "lucide-react";
+import { CaseSensitive, Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
