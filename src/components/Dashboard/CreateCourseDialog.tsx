@@ -205,6 +205,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         title: courseTitle.trim(),
         layout: selectedLayout,
         aiOptions: aiOptions.enabled ? aiOptions : null,
+        fontId,
       }
     });
     setIsLoading(false);
@@ -213,6 +214,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     setSelectedLayout("multi-page");
     setAIOptions(defaultAIOptions);
     setShowAIConfig(false);
+    setFontId(DEFAULT_FONT_ID);
   };
 
   const handleClose = (isOpen: boolean) => {
