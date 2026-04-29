@@ -53,7 +53,7 @@ import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
-import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, getStoredFontId, setStoredFontId } from "./FontSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -144,8 +144,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   );
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
-  const [fontId, setFontIdState] = useState<string>(() => getStoredFontId());
-  const setFontId = (id: string) => { setFontIdState(id); setStoredFontId(id); };
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(initialRestoreState?.activeEditorPageId ?? null);
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>(initialRestoreState?.pageBlocksMap ?? {});

@@ -23,7 +23,6 @@ import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
-import { FontSelectorDropdown, getStoredFontId, setStoredFontId, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 const STEPS = [
   { id: 1, label: "Course Intent" },
@@ -120,11 +119,6 @@ export default function AIGenerateCourse() {
   const [highestVisitedStep, setHighestVisitedStep] = useState(1);
   const [suppressBackWarning, setSuppressBackWarning] = useState(false);
   const [dontShowAgainChecked, setDontShowAgainChecked] = useState(false);
-  const [fontId, setFontId] = useState<string>(() => getStoredFontId());
-  const handleFontChange = useCallback((id: string) => {
-    setFontId(id);
-    setStoredFontId(id);
-  }, []);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
@@ -398,17 +392,13 @@ export default function AIGenerateCourse() {
                   </motion.div>
                 </AnimatePresence>
 
-                <div className="ml-auto flex items-center gap-2">
-                  <FontSelectorDropdown value={fontId} onChange={handleFontChange} />
+                <div className="ml-auto">
                   <AISparkles className="w-4 h-4 opacity-60" />
                 </div>
               </div>
 
               {/* Card body */}
-              <div
-                className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5"
-                style={{ fontFamily: getFontStack(fontId) }}
-              >
+              <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5">
                 <AnimatePresence mode="wait" custom={direction} initial={false}>
                   <motion.div
                     key={currentStep}
