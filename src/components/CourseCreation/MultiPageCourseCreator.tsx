@@ -713,6 +713,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
+            <FontSelectorDropdown value={fontId} onChange={setFontId} />
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
              <Tooltip>
                <TooltipTrigger asChild>
