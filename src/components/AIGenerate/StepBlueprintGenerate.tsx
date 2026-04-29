@@ -29,6 +29,7 @@ import {
 import { useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
+import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -426,7 +427,36 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
       </PrefCard>
 
-      {/* Guidelines */}
+      {/* Course Font */}
+      <PrefCard>
+        <SectionHeader title="Course Font" desc="Default font applied across all pages" />
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course font">
+          {FONT_OPTIONS.map((opt) => {
+            const selected = (state.font ?? "default") === opt.id;
+            const stack = getFontStack(opt.id);
+            return (
+              <Chip
+                key={opt.id}
+                selected={selected}
+                onClick={() => onChange({ font: opt.id })}
+                ariaLabel={opt.label}
+              >
+                <span
+                  className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-foreground text-[11px] font-bold leading-none"
+                  style={stack ? { fontFamily: stack } : undefined}
+                  aria-hidden="true"
+                >
+                  Aa
+                </span>
+                <span style={stack ? { fontFamily: stack } : undefined}>{opt.label}</span>
+              </Chip>
+            );
+          })}
+        </div>
+        <p className="mt-2 text-[11.5px] text-muted-foreground">
+          You can override the font on individual blocks while authoring.
+        </p>
+      </PrefCard>
       <PrefCard>
         <SectionHeader title="Guidelines" />
         <div className="space-y-3">
