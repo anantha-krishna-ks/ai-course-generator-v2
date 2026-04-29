@@ -69,11 +69,14 @@ function LivePreviewPanel({
   courseTitle,
   selectedLayout,
   aiEnabled,
+  fontId,
 }: {
   courseTitle: string;
   selectedLayout: LayoutType;
   aiEnabled: boolean;
+  fontId: string;
 }) {
+  const fontStack = getFontStack(fontId);
   return (
     <div className="hidden lg:flex flex-col w-[320px] shrink-0 rounded-l-lg bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary-glow))] p-6 relative overflow-hidden select-none">
       {/* Decorative elements */}
