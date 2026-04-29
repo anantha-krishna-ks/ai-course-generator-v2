@@ -10,6 +10,7 @@ import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCrea
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
+import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface CourseItem {
   id: string;
