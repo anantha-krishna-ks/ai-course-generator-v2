@@ -40,7 +40,7 @@ interface FontSelectorDropdownProps {
 }
 
 export const FontSelectorDropdown = ({ value, onChange }: FontSelectorDropdownProps) => {
-  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[2];
+  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
 
   return (
     <DropdownMenu>
