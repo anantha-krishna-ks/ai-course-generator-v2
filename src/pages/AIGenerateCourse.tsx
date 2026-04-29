@@ -23,6 +23,7 @@ import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
+import { FontSelectorDropdown, getStoredFontId, setStoredFontId } from "@/components/CourseCreation/FontSelectorDropdown";
 
 const STEPS = [
   { id: 1, label: "Course Intent" },
