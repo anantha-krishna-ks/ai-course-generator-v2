@@ -564,7 +564,10 @@ export function ContentBlock({
           aria-label="Drag to reorder content block"
         />
         {/* Content area - full width */}
-        <div className="w-full">
+        <div
+          className="w-full"
+          style={type === "text" && font ? { fontFamily: getFontStack(font) } : undefined}
+        >
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "image-description" ? (
