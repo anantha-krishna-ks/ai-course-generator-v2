@@ -38,7 +38,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { ImageBlock } from "./ImageBlock";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
-import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, getStoredFontId, setStoredFontId } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
 export interface SinglePageRestoreState {
