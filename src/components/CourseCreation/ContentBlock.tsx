@@ -155,6 +155,10 @@ interface ContentBlockProps {
   readOnly?: boolean;
   variant?: string;
   onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", newContent: string, newVariant?: string) => void;
+  /** Per-block font override id. When undefined, the block inherits the course-level font. */
+  font?: string;
+  /** Update the per-block font override. Pass undefined to revert to course default. */
+  onFontChange?: (fontId: string | undefined) => void;
 }
 
 export function ContentBlock({
@@ -169,6 +173,8 @@ export function ContentBlock({
   readOnly = false,
   variant,
   onTypeChange,
+  font,
+  onFontChange,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
