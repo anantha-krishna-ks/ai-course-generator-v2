@@ -279,17 +279,11 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
                   className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
-                  style={{ fontFamily: getFontStack(fontId) }}
                   autoFocus
                 />
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
                   💡 Used as the primary prompt for AI content generation
                 </p>
-
-                {/* Font swatches — pick a typography style for the entire course */}
-                <div className="mt-3 sm:mt-3.5">
-                  <FontSwatchRow value={fontId} onChange={setFontId} />
-                </div>
               </div>
 
               {/* Layout Options — kept as-is */}
