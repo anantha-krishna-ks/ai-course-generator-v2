@@ -1,4 +1,4 @@
-import { Type, Check } from "lucide-react";
+import { CaseSensitive, Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,7 +53,7 @@ export const FontSelectorDropdown = ({ value, onChange }: FontSelectorDropdownPr
               className="rounded-full border-border"
               aria-label={`Change font (current: ${current.label})`}
             >
-              <Type className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <CaseSensitive className="w-4 h-4" aria-hidden="true" focusable="false" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
