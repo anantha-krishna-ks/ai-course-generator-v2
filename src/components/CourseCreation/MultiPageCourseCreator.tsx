@@ -892,7 +892,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
          </header>
 
       {/* Main Content */}
-      <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
+      <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]" style={{ fontFamily: getFontStack(fontId) }}>
         {/* Left Panel - Course Overview */}
         <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
