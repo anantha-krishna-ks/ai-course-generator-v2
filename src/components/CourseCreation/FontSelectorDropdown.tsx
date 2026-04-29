@@ -53,7 +53,7 @@ export const FontSelectorDropdown = ({ value, onChange }: FontSelectorDropdownPr
               className="rounded-full border-border"
               aria-label={`Change font (current: ${current.label})`}
             >
-              <CaseSensitive className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <CaseSensitive className="!w-5 !h-5" aria-hidden="true" focusable="false" />
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
