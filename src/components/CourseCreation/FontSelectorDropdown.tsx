@@ -17,6 +17,7 @@ export interface FontOption {
 }
 
 export const FONT_OPTIONS: FontOption[] = [
+  { id: "default", label: "Default font", stack: "" },
   { id: "arial", label: "Arial", stack: "Arial, Helvetica, sans-serif" },
   { id: "proximanova", label: "Proxima Nova", stack: "'Proxima Nova', 'Nunito Sans', system-ui, sans-serif" },
   { id: "inter", label: "Inter", stack: "'Inter', system-ui, sans-serif" },
@@ -25,10 +26,13 @@ export const FONT_OPTIONS: FontOption[] = [
   { id: "lato", label: "Lato", stack: "'Lato', system-ui, sans-serif" },
 ];
 
-export const DEFAULT_FONT_ID = "inter";
+export const DEFAULT_FONT_ID = "default";
 
-export const getFontStack = (id: string): string =>
-  FONT_OPTIONS.find((f) => f.id === id)?.stack ?? FONT_OPTIONS[2].stack;
+export const getFontStack = (id: string): string | undefined => {
+  const found = FONT_OPTIONS.find((f) => f.id === id);
+  if (!found || !found.stack) return undefined;
+  return found.stack;
+};
 
 interface FontSelectorDropdownProps {
   value: string;
