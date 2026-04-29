@@ -144,6 +144,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   );
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(initialRestoreState?.activeEditorPageId ?? null);
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>(initialRestoreState?.pageBlocksMap ?? {});
