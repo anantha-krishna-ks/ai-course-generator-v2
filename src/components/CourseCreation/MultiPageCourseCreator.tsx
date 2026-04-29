@@ -73,12 +73,14 @@ interface ContentBlockData {
   id: string;
   type: "text" | "image" | "description";
   content: string;
+  font?: string;
 }
 
 interface PageContentBlockData {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
+  font?: string;
 }
 
 export interface MultiPageCourseCreatorRestoreState {
