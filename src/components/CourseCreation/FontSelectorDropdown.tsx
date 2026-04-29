@@ -1,4 +1,4 @@
-import { CaseSensitive, Check } from "lucide-react";
+import { ALargeSmall, Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
