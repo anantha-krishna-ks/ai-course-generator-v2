@@ -642,6 +642,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                         onDuplicate={() => duplicateItemBlock(itemId, block.id)}
                         autoFocus={block.id === lastAddedBlockId}
                         aiEnabled={aiEnabled}
+                        font={block.font}
+                        onFontChange={(fid) => updateItemBlockFont(itemId, block.id, fid)}
                       />
                     );
                     if (blockIdx < blocks.length - 1) {
