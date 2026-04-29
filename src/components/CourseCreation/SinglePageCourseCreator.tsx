@@ -68,6 +68,7 @@ interface PageContentBlock {
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   variant?: string;
+  font?: string;
 }
 
 interface ContentBlockData {
@@ -75,6 +76,7 @@ interface ContentBlockData {
   type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   variant?: string;
+  font?: string;
 }
 
 interface DeletedBlock {
@@ -204,6 +206,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
   const updateIntroBlockType = (id: string, newType: ContentBlockData["type"], newContent: string, newVariant?: string) => {
     setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
+  };
+
+  const updateIntroBlockFont = (id: string, fontIdValue: string | undefined) => {
+    setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, font: fontIdValue } : b)));
   };
 
   const deleteIntroBlock = (id: string) => {
@@ -387,6 +393,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     setPageBlocksMap((prev) => ({
       ...prev,
       [itemId]: (prev[itemId] || []).map((b) => (b.id === blockId ? { ...b, content } : b)),
+    }));
+  }, []);
+
+  const updateItemBlockFont = useCallback((itemId: string, blockId: string, fontIdValue: string | undefined) => {
+    setPageBlocksMap((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || []).map((b) => (b.id === blockId ? { ...b, font: fontIdValue } : b)),
     }));
   }, []);
 
@@ -629,6 +642,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                         onDuplicate={() => duplicateItemBlock(itemId, block.id)}
                         autoFocus={block.id === lastAddedBlockId}
                         aiEnabled={aiEnabled}
+                        font={block.font}
+                        onFontChange={(fid) => updateItemBlockFont(itemId, block.id, fid)}
                       />
                     );
                     if (blockIdx < blocks.length - 1) {
@@ -1056,7 +1071,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       {block.type === "description" ? (
                         <DescriptionBlock id={block.id} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onClear={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} />
                       ) : (
-                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} variant={block.variant} onTypeChange={(t, c, v) => updateIntroBlockType(block.id, t, c, v)} />
+                        <ContentBlock id={block.id} type={block.type as any} content={block.content} onChange={(content) => updateIntroBlockContent(block.id, content)} onDelete={() => deleteIntroBlock(block.id)} onDuplicate={() => duplicateIntroBlock(block.id)} autoFocus={block.id === lastAddedBlockId} aiEnabled={aiEnabled} variant={block.variant} onTypeChange={(t, c, v) => updateIntroBlockType(block.id, t, c, v)} font={block.font} onFontChange={(fid) => updateIntroBlockFont(block.id, fid)} />
                       )}
                       {block.type !== "description" && (
                         <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">

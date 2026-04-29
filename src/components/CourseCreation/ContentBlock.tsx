@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight } from "lucide-react";
+import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight, CaseSensitive, Check, RotateCw } from "lucide-react";
+import { FONT_OPTIONS, getFontStack } from "./FontSelectorDropdown";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -154,6 +155,10 @@ interface ContentBlockProps {
   readOnly?: boolean;
   variant?: string;
   onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", newContent: string, newVariant?: string) => void;
+  /** Per-block font override id. When undefined, the block inherits the course-level font. */
+  font?: string;
+  /** Update the per-block font override. Pass undefined to revert to course default. */
+  onFontChange?: (fontId: string | undefined) => void;
 }
 
 export function ContentBlock({
@@ -168,6 +173,8 @@ export function ContentBlock({
   readOnly = false,
   variant,
   onTypeChange,
+  font,
+  onFontChange,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -177,6 +184,7 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+  const [isFontOpen, setIsFontOpen] = useState(false);
   const layout = detectContentLayout(content);
 
   const colCount = contentLayoutOptions.find((o) => o.id === layout)?.columns ?? 1;
@@ -405,6 +413,67 @@ export function ContentBlock({
               </PopoverContent>
             </Popover>
           )}
+          {type === "text" && onFontChange && (
+            <Popover open={isFontOpen} onOpenChange={setIsFontOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label={`Change font for this block${font ? ` (current: ${FONT_OPTIONS.find(f => f.id === font)?.label ?? "default"})` : ""}`}
+                >
+                  <CaseSensitive className="w-4 h-4" aria-hidden="true" focusable="false" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-56 p-0">
+                <div className="px-3 pt-3 pb-1.5 flex items-center justify-between gap-2">
+                  <p className="text-xs font-medium text-muted-foreground">Font for this block</p>
+                  {font && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onFontChange(undefined);
+                        setIsFontOpen(false);
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+                      aria-label="Reset to course default font"
+                    >
+                      <RotateCw className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <div className="px-1.5 pb-1.5 max-h-72 overflow-y-auto thin-scrollbar">
+                  {FONT_OPTIONS.map((opt) => {
+                    const isActive = (font ?? "") === opt.id || (!font && opt.id === "default");
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onFontChange(opt.id === "default" ? undefined : opt.id);
+                          setIsFontOpen(false);
+                        }}
+                        style={{ fontFamily: opt.stack || undefined }}
+                        className={cn(
+                          "w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <span className="truncate">{opt.label}</span>
+                        {isActive && <Check className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" focusable="false" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="px-3 py-2 border-t border-border/60 text-[10px] text-muted-foreground">
+                  Overrides the course-level font for this block only.
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
           {(isImageBlock || isVideoBlock) && onTypeChange && (
             <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
               <PopoverTrigger asChild>
@@ -495,7 +564,10 @@ export function ContentBlock({
           aria-label="Drag to reorder content block"
         />
         {/* Content area - full width */}
-        <div className="w-full">
+        <div
+          className="w-full"
+          style={type === "text" && font ? { fontFamily: getFontStack(font) } : undefined}
+        >
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "image-description" ? (

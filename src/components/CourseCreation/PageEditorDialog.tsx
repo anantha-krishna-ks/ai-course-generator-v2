@@ -59,6 +59,7 @@ interface PageContentBlock {
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   variant?: string;
+  font?: string;
 }
 
 interface CourseOutlineItem {
@@ -457,6 +458,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
   const updateBlockType = useCallback((id: string, newType: PageContentBlock["type"], newContent: string, newVariant?: string) => {
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
+  }, []);
+
+  const updateBlockFont = useCallback((id: string, fontId: string | undefined) => {
+    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, font: fontId } : b)));
   }, []);
 
   const deleteBlock = useCallback((id: string) => {
@@ -1279,6 +1284,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         readOnly
                                         variant={block.variant}
                                         onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                        font={block.font}
+                                        onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
@@ -1391,6 +1398,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     aiEnabled={aiEnabled}
                                     variant={block.variant}
                                     onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                    font={block.font}
+                                    onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                   />
                                 );
                               }

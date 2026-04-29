@@ -73,12 +73,14 @@ interface ContentBlockData {
   id: string;
   type: "text" | "image" | "description";
   content: string;
+  font?: string;
 }
 
 interface PageContentBlockData {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
+  font?: string;
 }
 
 export interface MultiPageCourseCreatorRestoreState {
@@ -330,6 +332,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const updateBlockContent = (id: string, content: string) => {
     setContentBlocks((prev) =>
       prev.map((b) => (b.id === id ? { ...b, content } : b))
+    );
+  };
+
+  const updateBlockFont = (id: string, fontIdValue: string | undefined) => {
+    setContentBlocks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, font: fontIdValue } : b))
     );
   };
 
@@ -1135,6 +1143,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     onDuplicate={() => duplicateBlock(block.id)}
                                     autoFocus={false}
                                     aiEnabled={!!aiOptions?.enabled}
+                                    font={block.font}
+                                    onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                   />
                                 )}
 
