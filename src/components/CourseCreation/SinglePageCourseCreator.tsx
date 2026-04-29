@@ -38,7 +38,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { ImageBlock } from "./ImageBlock";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
-import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, getStoredFontId, setStoredFontId } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
 export interface SinglePageRestoreState {
@@ -105,7 +105,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [showTour, setShowTour] = useState(!initialRestoreState);
   const [tourStep, setTourStep] = useState(0);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
-  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
+  const [fontId, setFontIdState] = useState<string>(() => getStoredFontId());
+  const setFontId = (id: string) => { setFontIdState(id); setStoredFontId(id); };
 
   // Course outline items
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);

@@ -28,6 +28,26 @@ export const FONT_OPTIONS: FontOption[] = [
 
 export const DEFAULT_FONT_ID = "default";
 
+const FONT_STORAGE_KEY = "course_font_id";
+
+export const getStoredFontId = (): string => {
+  try {
+    const v = localStorage.getItem(FONT_STORAGE_KEY);
+    if (v && FONT_OPTIONS.some((f) => f.id === v)) return v;
+  } catch {
+    /* ignore */
+  }
+  return DEFAULT_FONT_ID;
+};
+
+export const setStoredFontId = (id: string): void => {
+  try {
+    localStorage.setItem(FONT_STORAGE_KEY, id);
+  } catch {
+    /* ignore */
+  }
+};
+
 export const getFontStack = (id: string): string | undefined => {
   const found = FONT_OPTIONS.find((f) => f.id === id);
   if (!found || !found.stack) return undefined;
