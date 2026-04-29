@@ -34,6 +34,7 @@ interface PreviewState {
   pageBlocksMap: Record<string, PageContentBlock[]>;
   sectionImages?: Record<string, string | null>;
   returnState?: SinglePageRestoreState;
+  fontId?: string;
 }
 
 const DEMO_VIDEO_URL = "/demo/Motion_Video.mp4";
