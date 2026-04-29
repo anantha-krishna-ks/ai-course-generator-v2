@@ -120,6 +120,11 @@ export default function AIGenerateCourse() {
   const [highestVisitedStep, setHighestVisitedStep] = useState(1);
   const [suppressBackWarning, setSuppressBackWarning] = useState(false);
   const [dontShowAgainChecked, setDontShowAgainChecked] = useState(false);
+  const [fontId, setFontId] = useState<string>(() => getStoredFontId());
+  const handleFontChange = useCallback((id: string) => {
+    setFontId(id);
+    setStoredFontId(id);
+  }, []);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => ({ ...prev, ...partial }));
