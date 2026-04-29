@@ -68,7 +68,15 @@ export const FontSelectorDropdown = ({ value, onChange }: FontSelectorDropdownPr
           return (
             <DropdownMenuItem
               key={font.id}
-              onClick={() => onChange(font.id)}
+              onClick={() => {
+                if (font.id !== value) {
+                  onChange(font.id);
+                  toast({
+                    title: "Course font updated",
+                    description: "Your course-level font style has been updated. Text blocks with custom font styles were not modified.",
+                  });
+                }
+              }}
               className="cursor-pointer flex items-center justify-between gap-2"
               style={{ fontFamily: font.stack }}
             >
