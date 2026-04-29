@@ -1143,6 +1143,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     onDuplicate={() => duplicateBlock(block.id)}
                                     autoFocus={false}
                                     aiEnabled={!!aiOptions?.enabled}
+                                    font={block.font}
+                                    onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                   />
                                 )}
 
