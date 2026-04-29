@@ -125,6 +125,52 @@ function PreviewFontPicker({
   );
 }
 
+/** Compact font picker for mobile/tablet (light context — sits next to the title label). */
+function MobileFontPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Change course font (current: ${current.label})`}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background hover:bg-muted px-2.5 py-1 text-[11px] font-medium text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          <CaseSensitive className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          <span className="max-w-[110px] truncate" style={{ fontFamily: getFontStack(value) }}>
+            {current.label}
+          </span>
+          <ChevronDown className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Course font</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {FONT_OPTIONS.map((font) => {
+          const isActive = font.id === value;
+          return (
+            <DropdownMenuItem
+              key={font.id}
+              onClick={() => onChange(font.id)}
+              className="cursor-pointer flex items-center justify-between gap-2"
+              style={{ fontFamily: font.stack }}
+            >
+              <span className="text-sm">{font.label}</span>
+              {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 /** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
   courseTitle,
