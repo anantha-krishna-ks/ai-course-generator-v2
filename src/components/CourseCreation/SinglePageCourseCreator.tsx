@@ -68,6 +68,7 @@ interface PageContentBlock {
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   variant?: string;
+  font?: string;
 }
 
 interface ContentBlockData {
@@ -75,6 +76,7 @@ interface ContentBlockData {
   type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   variant?: string;
+  font?: string;
 }
 
 interface DeletedBlock {
