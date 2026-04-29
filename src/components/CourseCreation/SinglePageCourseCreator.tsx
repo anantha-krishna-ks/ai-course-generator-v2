@@ -729,7 +729,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         fontId,
       },
     });
-  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionImages, aiOptions]);
+  }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionImages, aiOptions, fontId]);
 
   const flatItems = getAllFlatItems();
 
