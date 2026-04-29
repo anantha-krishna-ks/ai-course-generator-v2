@@ -158,11 +158,6 @@ function LivePreviewPanel({
       <div className="absolute top-1/3 -right-4 w-24 h-24 rounded-full bg-primary-foreground/[0.04]" />
       <div className="absolute bottom-1/3 left-1/2 w-16 h-16 rounded-full bg-primary-foreground/[0.03]" />
 
-      {/* Floating font picker — direct manipulation of the title typography */}
-      <div className="absolute top-4 right-4 z-20">
-        <PreviewFontPicker value={fontId} onChange={onFontChange} />
-      </div>
-
 
       {/* Top branding */}
       <div className="relative z-10 mb-5">
