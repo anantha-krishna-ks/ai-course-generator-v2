@@ -19,11 +19,20 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2 } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -64,67 +73,6 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
   );
 }
 
-
-/**
- * Visual "Aa" font swatch row.
- * Each option is rendered IN its own font, so the picker IS the preview.
- * Pattern inspired by Notion's page-style picker and Apple Keynote's template chooser.
- */
-function FontSwatchRow({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (id: string) => void;
-}) {
-  return (
-    <div
-      role="radiogroup"
-      aria-label="Course font"
-      className="flex gap-2 overflow-x-auto thin-scrollbar pb-1.5 -mx-1 px-1 snap-x"
-    >
-      {FONT_OPTIONS.map((font) => {
-        const isActive = font.id === value;
-        const isDefault = font.id === DEFAULT_FONT_ID;
-        return (
-          <button
-            key={font.id}
-            type="button"
-            role="radio"
-            aria-checked={isActive}
-            aria-label={`Use ${font.label}`}
-            onClick={() => onChange(font.id)}
-            className={cn(
-              "group shrink-0 snap-start flex flex-col items-center justify-center w-[68px] h-[58px] rounded-lg border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-              isActive
-                ? "border-primary bg-primary/5 shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]"
-                : "border-border bg-background hover:border-primary/50 hover:bg-muted/50"
-            )}
-          >
-            <span
-              aria-hidden="true"
-              className={cn(
-                "text-lg font-semibold leading-none transition-colors",
-                isActive ? "text-primary" : "text-foreground"
-              )}
-              style={{ fontFamily: font.stack || undefined }}
-            >
-              {isDefault ? "Aa" : "Aa"}
-            </span>
-            <span
-              className={cn(
-                "mt-1 text-[9px] font-medium uppercase tracking-wide leading-none truncate max-w-full px-1",
-                isActive ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              {isDefault ? "Default" : font.label.split(" ")[0]}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 /** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
@@ -340,17 +288,11 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
                   className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
-                  style={{ fontFamily: getFontStack(fontId) }}
                   autoFocus
                 />
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
                   💡 Used as the primary prompt for AI content generation
                 </p>
-
-                {/* Font swatches — pick a typography style for the entire course */}
-                <div className="mt-3 sm:mt-3.5">
-                  <FontSwatchRow value={fontId} onChange={setFontId} />
-                </div>
               </div>
 
               {/* Layout Options — kept as-is */}
@@ -476,8 +418,53 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               {/* Spacer */}
               <div className="flex-1 min-h-0" />
 
-              {/* Create button */}
-              <div className="flex justify-end pt-2 sm:pt-3">
+              {/* Footer: secondary action (font) on the left, primary CTA on the right */}
+              <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
+                <DropdownMenu>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Course font (current: ${FONT_OPTIONS.find(f => f.id === fontId)?.label ?? "Default font"})`}
+                          className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="text-base font-semibold leading-none"
+                            style={{ fontFamily: getFontStack(fontId) }}
+                          >
+                            Aa
+                          </span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      Course font · {FONT_OPTIONS.find(f => f.id === fontId)?.label ?? "Default font"}
+                    </TooltipContent>
+                  </Tooltip>
+                  <DropdownMenuContent align="start" side="top" className="w-52">
+                    <DropdownMenuLabel>Course font</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {FONT_OPTIONS.map((font) => {
+                      const isActive = font.id === fontId;
+                      return (
+                        <DropdownMenuItem
+                          key={font.id}
+                          onClick={() => setFontId(font.id)}
+                          className="cursor-pointer flex items-center justify-between gap-2"
+                          style={{ fontFamily: font.stack }}
+                        >
+                          <span className="text-sm">{font.label}</span>
+                          {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <Button
                   onClick={handleStartCreating}
                   disabled={!courseTitle.trim()}
