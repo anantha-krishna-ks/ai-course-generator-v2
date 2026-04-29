@@ -429,14 +429,14 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
       {/* Course Font */}
       <PrefCard>
-        <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center justify-between gap-3 mb-2.5">
           <SectionHeader title="Course Font" />
-          <span className="hidden sm:inline-flex items-center gap-1 text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="hidden sm:inline text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground">
             Override per block while authoring
           </span>
         </div>
         <div
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5"
           role="radiogroup"
           aria-label="Course font"
         >
@@ -452,24 +452,16 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 aria-label={`${opt.label} font`}
                 onClick={() => onChange({ font: opt.id })}
                 className={cn(
-                  "group relative flex flex-col items-center justify-center gap-1.5 h-[72px] rounded-xl border bg-background px-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  "relative flex items-center gap-2 h-10 pl-2.5 pr-3 rounded-lg border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                   selected
-                    ? "border-primary bg-primary/[0.06] shadow-[0_0_0_1px_hsl(var(--primary))] ring-0"
+                    ? "border-primary bg-primary/[0.06] shadow-[0_0_0_1px_hsl(var(--primary))]"
                     : "border-border hover:border-primary/40 hover:bg-accent/40"
                 )}
               >
-                {selected && (
-                  <span
-                    className="absolute top-1.5 right-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground"
-                    aria-hidden="true"
-                  >
-                    <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                  </span>
-                )}
                 <span
                   className={cn(
-                    "text-[22px] leading-none font-semibold tracking-tight transition-colors",
-                    selected ? "text-primary" : "text-foreground"
+                    "inline-flex items-center justify-center w-7 h-7 rounded-md text-[14px] font-semibold leading-none shrink-0 transition-colors",
+                    selected ? "bg-primary/10 text-primary" : "bg-muted text-foreground"
                   )}
                   style={stack ? { fontFamily: stack } : undefined}
                   aria-hidden="true"
@@ -478,13 +470,16 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                 </span>
                 <span
                   className={cn(
-                    "text-[11.5px] font-medium leading-none truncate max-w-full",
+                    "text-[12.5px] font-medium leading-none truncate text-left flex-1",
                     selected ? "text-foreground" : "text-muted-foreground"
                   )}
                   style={stack ? { fontFamily: stack } : undefined}
                 >
                   {opt.label}
                 </span>
+                {selected && (
+                  <Check className="w-3.5 h-3.5 text-primary shrink-0" strokeWidth={3} aria-hidden="true" />
+                )}
               </button>
             );
           })}
