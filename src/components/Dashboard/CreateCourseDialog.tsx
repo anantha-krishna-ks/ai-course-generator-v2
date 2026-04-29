@@ -19,10 +19,11 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2 } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, CaseSensitive } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -68,11 +69,14 @@ function LivePreviewPanel({
   courseTitle,
   selectedLayout,
   aiEnabled,
+  fontId,
 }: {
   courseTitle: string;
   selectedLayout: LayoutType;
   aiEnabled: boolean;
+  fontId: string;
 }) {
+  const fontStack = getFontStack(fontId);
   return (
     <div className="hidden lg:flex flex-col w-[320px] shrink-0 rounded-l-lg bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary-glow))] p-6 relative overflow-hidden select-none">
       {/* Decorative elements */}
@@ -93,7 +97,7 @@ function LivePreviewPanel({
 
       {/* Live title */}
       <div className="relative z-10 mb-5">
-        <h2 className="text-primary-foreground text-xl font-bold leading-snug break-words" style={{ overflowWrap: "anywhere" }}>
+        <h2 className="text-primary-foreground text-xl font-bold leading-snug break-words" style={{ overflowWrap: "anywhere", fontFamily: fontStack }}>
           {courseTitle || (
             <span className="text-primary-foreground/25 italic font-normal text-lg">
               Your title appears here...
@@ -179,6 +183,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [aiOptions, setAIOptions] = useState<AIOptions>(defaultAIOptions);
   const [showAIConfig, setShowAIConfig] = useState(false);
   const [showScormConfig, setShowScormConfig] = useState(false);
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
@@ -200,6 +205,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         title: courseTitle.trim(),
         layout: selectedLayout,
         aiOptions: aiOptions.enabled ? aiOptions : null,
+        fontId,
       }
     });
     setIsLoading(false);
@@ -208,6 +214,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     setSelectedLayout("multi-page");
     setAIOptions(defaultAIOptions);
     setShowAIConfig(false);
+    setFontId(DEFAULT_FONT_ID);
   };
 
   const handleClose = (isOpen: boolean) => {
@@ -254,6 +261,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               courseTitle={courseTitle}
               selectedLayout={selectedLayout}
               aiEnabled={aiOptions.enabled}
+              fontId={fontId}
             />
 
             {/* Right: Form area */}
@@ -364,6 +372,29 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                   onChange={setAIOptions}
                   onConfigure={() => setShowAIConfig(true)}
                 />
+              </div>
+
+              {/* Course Font */}
+              <div className="mb-3 sm:mb-4">
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-background transition-all">
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
+                    <CaseSensitive className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-semibold text-foreground block">
+                      Course Font
+                    </span>
+                    <span
+                      className="text-xs text-muted-foreground truncate block"
+                      style={{ fontFamily: getFontStack(fontId) }}
+                    >
+                      {FONT_OPTIONS.find((f) => f.id === fontId)?.label ?? "Default font"} — applied across the course
+                    </span>
+                  </div>
+                  <div className="shrink-0">
+                    <FontSelectorDropdown value={fontId} onChange={setFontId} />
+                  </div>
+                </div>
               </div>
 
               {/* SCORM Preferences */}
