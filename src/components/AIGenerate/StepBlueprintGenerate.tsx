@@ -433,13 +433,11 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         <div className="flex items-center justify-between gap-3 mb-2.5">
           <SectionHeader title="Course Font" />
           <span
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/[0.06] pl-1.5 pr-2.5 py-1 text-[11px] font-medium text-foreground"
+            className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-muted-foreground"
             role="note"
           >
-            <span className="flex items-center justify-center w-4 h-4 rounded-full bg-primary/15 text-primary">
-              <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
-            </span>
-            Text block–level font styles can be customized independently
+            <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
+            Text block–level fonts can be customized independently
           </span>
         </div>
         <div
