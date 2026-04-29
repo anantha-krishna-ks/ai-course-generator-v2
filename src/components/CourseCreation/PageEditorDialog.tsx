@@ -460,6 +460,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
   }, []);
 
+  const updateBlockFont = useCallback((id: string, fontId: string | undefined) => {
+    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, font: fontId } : b)));
+  }, []);
+
   const deleteBlock = useCallback((id: string) => {
     setBlocks((prev) => {
       const block = prev.find((b) => b.id === id);
