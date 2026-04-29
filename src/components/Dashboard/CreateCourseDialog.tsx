@@ -19,11 +19,20 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, CaseSensitive } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, CaseSensitive, Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
-import { FontSelectorDropdown, DEFAULT_FONT_ID, FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -64,17 +73,117 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
   );
 }
 
+
+/** Compact font picker shown floating on the live preview panel (dark gradient context). */
+function PreviewFontPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
+  return (
+    <DropdownMenu>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label={`Change course font (current: ${current.label})`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 hover:bg-primary-foreground/25 backdrop-blur-md border border-primary-foreground/20 px-2.5 py-1 text-[11px] font-medium text-primary-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
+            >
+              <CaseSensitive className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              <span className="max-w-[90px] truncate" style={{ fontFamily: getFontStack(value) }}>
+                {current.label}
+              </span>
+              <ChevronDown className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
+            </button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Change course font</TooltipContent>
+      </Tooltip>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Course font</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {FONT_OPTIONS.map((font) => {
+          const isActive = font.id === value;
+          return (
+            <DropdownMenuItem
+              key={font.id}
+              onClick={() => onChange(font.id)}
+              className="cursor-pointer flex items-center justify-between gap-2"
+              style={{ fontFamily: font.stack }}
+            >
+              <span className="text-sm">{font.label}</span>
+              {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/** Compact font picker for mobile/tablet (light context — sits next to the title label). */
+function MobileFontPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Change course font (current: ${current.label})`}
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background hover:bg-muted px-2.5 py-1 text-[11px] font-medium text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          <CaseSensitive className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          <span className="max-w-[110px] truncate" style={{ fontFamily: getFontStack(value) }}>
+            {current.label}
+          </span>
+          <ChevronDown className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Course font</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {FONT_OPTIONS.map((font) => {
+          const isActive = font.id === value;
+          return (
+            <DropdownMenuItem
+              key={font.id}
+              onClick={() => onChange(font.id)}
+              className="cursor-pointer flex items-center justify-between gap-2"
+              style={{ fontFamily: font.stack }}
+            >
+              <span className="text-sm">{font.label}</span>
+              {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 /** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
   courseTitle,
   selectedLayout,
   aiEnabled,
   fontId,
+  onFontChange,
 }: {
   courseTitle: string;
   selectedLayout: LayoutType;
   aiEnabled: boolean;
   fontId: string;
+  onFontChange: (id: string) => void;
 }) {
   const fontStack = getFontStack(fontId);
   return (
@@ -84,6 +193,12 @@ function LivePreviewPanel({
       <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-primary-foreground/[0.06]" />
       <div className="absolute top-1/3 -right-4 w-24 h-24 rounded-full bg-primary-foreground/[0.04]" />
       <div className="absolute bottom-1/3 left-1/2 w-16 h-16 rounded-full bg-primary-foreground/[0.03]" />
+
+      {/* Floating font picker — direct manipulation of the title typography */}
+      <div className="absolute top-4 right-4 z-20">
+        <PreviewFontPicker value={fontId} onChange={onFontChange} />
+      </div>
+
 
       {/* Top branding */}
       <div className="relative z-10 mb-5">
@@ -262,16 +377,24 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               selectedLayout={selectedLayout}
               aiEnabled={aiOptions.enabled}
               fontId={fontId}
+              onFontChange={setFontId}
             />
 
             {/* Right: Form area */}
             <div className="flex-1 overflow-y-auto thin-scrollbar p-4 sm:p-6 md:p-8 flex flex-col min-h-0">
               {/* Hero title input */}
               <div className="mb-5 sm:mb-6">
-                <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
-                  Course Title
-                </label>
+                <div className="flex items-center justify-between mb-2 gap-2">
+                  <label htmlFor="cc-title-input" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Course Title
+                  </label>
+                  {/* Mobile/tablet font picker — preview panel is hidden below lg, so expose it here */}
+                  <div className="lg:hidden">
+                    <MobileFontPicker value={fontId} onChange={setFontId} />
+                  </div>
+                </div>
                 <input
+                  id="cc-title-input"
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
@@ -374,28 +497,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 />
               </div>
 
-              {/* Course Font */}
-              <div className="mb-3 sm:mb-4">
-                <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-background transition-all">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
-                    <CaseSensitive className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-foreground block">
-                      Course Font
-                    </span>
-                    <span
-                      className="text-xs text-muted-foreground truncate block"
-                      style={{ fontFamily: getFontStack(fontId) }}
-                    >
-                      {FONT_OPTIONS.find((f) => f.id === fontId)?.label ?? "Default font"} — applied across the course
-                    </span>
-                  </div>
-                  <div className="shrink-0">
-                    <FontSelectorDropdown value={fontId} onChange={setFontId} />
-                  </div>
-                </div>
-              </div>
+
 
               {/* SCORM Preferences */}
               <div className="mb-4 sm:mb-5">
