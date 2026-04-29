@@ -451,28 +451,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 />
               </div>
 
-              {/* Course Font */}
-              <div className="mb-3 sm:mb-4">
-                <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-background transition-all">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
-                    <CaseSensitive className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-foreground block">
-                      Course Font
-                    </span>
-                    <span
-                      className="text-xs text-muted-foreground truncate block"
-                      style={{ fontFamily: getFontStack(fontId) }}
-                    >
-                      {FONT_OPTIONS.find((f) => f.id === fontId)?.label ?? "Default font"} — applied across the course
-                    </span>
-                  </div>
-                  <div className="shrink-0">
-                    <FontSelectorDropdown value={fontId} onChange={setFontId} />
-                  </div>
-                </div>
-              </div>
+
 
               {/* SCORM Preferences */}
               <div className="mb-4 sm:mb-5">
