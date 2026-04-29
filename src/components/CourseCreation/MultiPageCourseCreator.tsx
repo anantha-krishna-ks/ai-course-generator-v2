@@ -335,6 +335,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     );
   };
 
+  const updateBlockFont = (id: string, fontIdValue: string | undefined) => {
+    setContentBlocks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, font: fontIdValue } : b))
+    );
+  };
+
   const deleteBlock = (id: string) => {
     // Description block can't be removed, only cleared
     if (id === "description-block") {
