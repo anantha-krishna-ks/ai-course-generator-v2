@@ -1284,6 +1284,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         readOnly
                                         variant={block.variant}
                                         onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                        font={block.font}
+                                        onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                       />
                                     </div>
                                     <div className="border-t border-primary/10 bg-muted/20">
