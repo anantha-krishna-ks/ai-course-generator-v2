@@ -19,20 +19,12 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -73,6 +65,111 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
   );
 }
 
+
+/**
+ * Font picker — labeled pill trigger + popover with a 2-column grid of "Aa" swatches.
+ * The trigger shows the current font's name rendered in that font (self-indicating).
+ * The popover is visual-first: each swatch IS its own preview, side-by-side for comparison.
+ * Pattern inspired by Notion's page-style picker and Linear's theme picker.
+ */
+function FontPopover({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Course font: ${current.label}. Click to change.`}
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-background hover:bg-muted h-10 sm:h-11 md:h-12 pl-3 pr-3.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          <span
+            aria-hidden="true"
+            className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-muted text-foreground text-sm font-bold leading-none"
+            style={{ fontFamily: getFontStack(value) }}
+          >
+            Aa
+          </span>
+          <span className="flex flex-col items-start leading-tight">
+            <span className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">
+              Font
+            </span>
+            <span
+              className="text-xs sm:text-sm font-semibold text-foreground max-w-[110px] truncate"
+              style={{ fontFamily: getFontStack(value) }}
+            >
+              {current.label}
+            </span>
+          </span>
+          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-0.5" aria-hidden="true" focusable="false" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" side="top" sideOffset={8} className="w-[280px] p-3">
+        <div className="mb-2 px-1">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            Course font
+          </p>
+          <p className="text-[11px] text-muted-foreground/80 mt-0.5">
+            Applied across the entire course
+          </p>
+        </div>
+        <div role="radiogroup" aria-label="Course font" className="grid grid-cols-2 gap-2">
+          {FONT_OPTIONS.map((font) => {
+            const isActive = font.id === value;
+            const isDefault = font.id === DEFAULT_FONT_ID;
+            return (
+              <button
+                key={font.id}
+                type="button"
+                role="radio"
+                aria-checked={isActive}
+                aria-label={`Use ${font.label}`}
+                onClick={() => onChange(font.id)}
+                className={cn(
+                  "group relative flex flex-col items-center justify-center h-[64px] rounded-lg border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  isActive
+                    ? "border-primary bg-primary/5"
+                    : "border-border bg-background hover:border-primary/50 hover:bg-muted/50"
+                )}
+              >
+                {isActive && (
+                  <Check
+                    className="absolute top-1 right-1 w-3 h-3 text-primary"
+                    aria-hidden="true"
+                    focusable="false"
+                  />
+                )}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "text-xl font-semibold leading-none",
+                    isActive ? "text-primary" : "text-foreground"
+                  )}
+                  style={{ fontFamily: font.stack || undefined }}
+                >
+                  Aa
+                </span>
+                <span
+                  className={cn(
+                    "mt-1.5 text-[10px] font-medium leading-none truncate max-w-full px-2",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {isDefault ? "Default" : font.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 /** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
@@ -420,50 +517,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
               {/* Footer: secondary action (font) on the left, primary CTA on the right */}
               <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
-                <DropdownMenu>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          aria-label={`Course font (current: ${FONT_OPTIONS.find(f => f.id === fontId)?.label ?? "Default font"})`}
-                          className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground"
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="text-base font-semibold leading-none"
-                            style={{ fontFamily: getFontStack(fontId) }}
-                          >
-                            Aa
-                          </span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">
-                      Course font · {FONT_OPTIONS.find(f => f.id === fontId)?.label ?? "Default font"}
-                    </TooltipContent>
-                  </Tooltip>
-                  <DropdownMenuContent align="start" side="top" className="w-52">
-                    <DropdownMenuLabel>Course font</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {FONT_OPTIONS.map((font) => {
-                      const isActive = font.id === fontId;
-                      return (
-                        <DropdownMenuItem
-                          key={font.id}
-                          onClick={() => setFontId(font.id)}
-                          className="cursor-pointer flex items-center justify-between gap-2"
-                          style={{ fontFamily: font.stack }}
-                        >
-                          <span className="text-sm">{font.label}</span>
-                          {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <FontPopover value={fontId} onChange={setFontId} />
 
                 <Button
                   onClick={handleStartCreating}
