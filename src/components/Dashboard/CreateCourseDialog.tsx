@@ -73,17 +73,71 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
   );
 }
 
+
+/** Compact font picker shown floating on the live preview panel (dark gradient context). */
+function PreviewFontPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const current = FONT_OPTIONS.find((f) => f.id === value) ?? FONT_OPTIONS[0];
+  return (
+    <DropdownMenu>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label={`Change course font (current: ${current.label})`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 hover:bg-primary-foreground/25 backdrop-blur-md border border-primary-foreground/20 px-2.5 py-1 text-[11px] font-medium text-primary-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground/40"
+            >
+              <CaseSensitive className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              <span className="max-w-[90px] truncate" style={{ fontFamily: getFontStack(value) }}>
+                {current.label}
+              </span>
+              <ChevronDown className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
+            </button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>Change course font</TooltipContent>
+      </Tooltip>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Course font</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {FONT_OPTIONS.map((font) => {
+          const isActive = font.id === value;
+          return (
+            <DropdownMenuItem
+              key={font.id}
+              onClick={() => onChange(font.id)}
+              className="cursor-pointer flex items-center justify-between gap-2"
+              style={{ fontFamily: font.stack }}
+            >
+              <span className="text-sm">{font.label}</span>
+              {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 /** Live preview panel — rich branded panel with dynamic course card */
 function LivePreviewPanel({
   courseTitle,
   selectedLayout,
   aiEnabled,
   fontId,
+  onFontChange,
 }: {
   courseTitle: string;
   selectedLayout: LayoutType;
   aiEnabled: boolean;
   fontId: string;
+  onFontChange: (id: string) => void;
 }) {
   const fontStack = getFontStack(fontId);
   return (
