@@ -334,33 +334,32 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               selectedLayout={selectedLayout}
               aiEnabled={aiOptions.enabled}
               fontId={fontId}
-              onFontChange={setFontId}
             />
 
             {/* Right: Form area */}
             <div className="flex-1 overflow-y-auto thin-scrollbar p-4 sm:p-6 md:p-8 flex flex-col min-h-0">
               {/* Hero title input */}
               <div className="mb-5 sm:mb-6">
-                <div className="flex items-center justify-between mb-2 gap-2">
-                  <label htmlFor="cc-title-input" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Course Title
-                  </label>
-                  {/* Mobile/tablet font picker — preview panel is hidden below lg, so expose it here */}
-                  <div className="lg:hidden">
-                    <MobileFontPicker value={fontId} onChange={setFontId} />
-                  </div>
-                </div>
+                <label htmlFor="cc-title-input" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
+                  Course Title
+                </label>
                 <input
                   id="cc-title-input"
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
                   className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
+                  style={{ fontFamily: getFontStack(fontId) }}
                   autoFocus
                 />
                 <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
                   💡 Used as the primary prompt for AI content generation
                 </p>
+
+                {/* Font swatches — pick a typography style for the entire course */}
+                <div className="mt-3 sm:mt-3.5">
+                  <FontSwatchRow value={fontId} onChange={setFontId} />
+                </div>
               </div>
 
               {/* Layout Options — kept as-is */}
