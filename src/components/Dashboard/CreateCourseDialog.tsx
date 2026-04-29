@@ -331,16 +331,24 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               selectedLayout={selectedLayout}
               aiEnabled={aiOptions.enabled}
               fontId={fontId}
+              onFontChange={setFontId}
             />
 
             {/* Right: Form area */}
             <div className="flex-1 overflow-y-auto thin-scrollbar p-4 sm:p-6 md:p-8 flex flex-col min-h-0">
               {/* Hero title input */}
               <div className="mb-5 sm:mb-6">
-                <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
-                  Course Title
-                </label>
+                <div className="flex items-center justify-between mb-2 gap-2">
+                  <label htmlFor="cc-title-input" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Course Title
+                  </label>
+                  {/* Mobile/tablet font picker — preview panel is hidden below lg, so expose it here */}
+                  <div className="lg:hidden">
+                    <MobileFontPicker value={fontId} onChange={setFontId} />
+                  </div>
+                </div>
                 <input
+                  id="cc-title-input"
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
