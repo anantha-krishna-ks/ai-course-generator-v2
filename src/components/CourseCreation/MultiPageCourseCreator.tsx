@@ -53,6 +53,7 @@ import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
