@@ -38,6 +38,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { ImageBlock } from "./ImageBlock";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
 export interface SinglePageRestoreState {
@@ -104,6 +105,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [showTour, setShowTour] = useState(!initialRestoreState);
   const [tourStep, setTourStep] = useState(0);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
 
   // Course outline items
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
@@ -766,6 +768,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
+            <FontSelectorDropdown value={fontId} onChange={setFontId} />
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Tooltip>
               <TooltipTrigger asChild>
@@ -996,7 +999,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 min-w-0 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto" style={{ fontFamily: getFontStack(fontId) }}>
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">

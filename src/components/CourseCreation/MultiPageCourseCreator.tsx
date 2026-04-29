@@ -53,6 +53,7 @@ import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -143,6 +144,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   );
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
   const [deletedBlocks, setDeletedBlocks] = useState<Map<string, DeletedBlock>>(new Map());
   const [activeEditorPageId, setActiveEditorPageId] = useState<string | null>(initialRestoreState?.activeEditorPageId ?? null);
   const [pageBlocksMap, setPageBlocksMap] = useState<Record<string, PageContentBlockData[]>>(initialRestoreState?.pageBlocksMap ?? {});
@@ -711,6 +713,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
+            <FontSelectorDropdown value={fontId} onChange={setFontId} />
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
              <Tooltip>
                <TooltipTrigger asChild>
@@ -889,7 +892,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
          </header>
 
       {/* Main Content */}
-      <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]">
+      <main id="course-main-content" className="flex flex-col lg:flex-row h-[calc(100vh-4rem)]" style={{ fontFamily: getFontStack(fontId) }}>
         {/* Left Panel - Course Overview */}
         <div className="lg:w-[40%] relative overflow-hidden flex flex-col">
           {/* Blue gradient background with decorative shapes */}
