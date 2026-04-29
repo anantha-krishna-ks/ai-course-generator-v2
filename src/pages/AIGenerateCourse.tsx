@@ -405,7 +405,10 @@ export default function AIGenerateCourse() {
               </div>
 
               {/* Card body */}
-              <div className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5">
+              <div
+                className="px-5 sm:px-8 md:px-10 pt-3 sm:pt-4 pb-4 sm:pb-5"
+                style={{ fontFamily: getFontStack(fontId) }}
+              >
                 <AnimatePresence mode="wait" custom={direction} initial={false}>
                   <motion.div
                     key={currentStep}
