@@ -392,7 +392,8 @@ export default function AIGenerateCourse() {
                   </motion.div>
                 </AnimatePresence>
 
-                <div className="ml-auto">
+                <div className="ml-auto flex items-center gap-2">
+                  <FontSelectorDropdown value={fontId} onChange={handleFontChange} />
                   <AISparkles className="w-4 h-4 opacity-60" />
                 </div>
               </div>
