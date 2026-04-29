@@ -97,7 +97,7 @@ function LivePreviewPanel({
 
       {/* Live title */}
       <div className="relative z-10 mb-5">
-        <h2 className="text-primary-foreground text-xl font-bold leading-snug break-words" style={{ overflowWrap: "anywhere" }}>
+        <h2 className="text-primary-foreground text-xl font-bold leading-snug break-words" style={{ overflowWrap: "anywhere", fontFamily: fontStack }}>
           {courseTitle || (
             <span className="text-primary-foreground/25 italic font-normal text-lg">
               Your title appears here...
