@@ -50,6 +50,7 @@ export interface AIGenerateState {
   layoutType: "multi-page" | "single-page";
   duration: "brief" | "standard" | "extended";
   tone: "professional" | "conversational" | "coaching" | "ai-determined";
+  font: string;
   contentPreferences: {
     includeQuestions: boolean;
     interactiveBlocks: boolean;
@@ -88,6 +89,7 @@ const initialState: AIGenerateState = {
   layoutType: "multi-page",
   duration: "standard",
   tone: "ai-determined",
+  font: "default",
   contentPreferences: {
     includeQuestions: true,
     interactiveBlocks: true,
