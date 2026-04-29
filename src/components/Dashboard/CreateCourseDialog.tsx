@@ -261,6 +261,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               courseTitle={courseTitle}
               selectedLayout={selectedLayout}
               aiEnabled={aiOptions.enabled}
+              fontId={fontId}
             />
 
             {/* Right: Form area */}
