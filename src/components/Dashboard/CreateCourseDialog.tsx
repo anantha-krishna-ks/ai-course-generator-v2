@@ -183,6 +183,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [aiOptions, setAIOptions] = useState<AIOptions>(defaultAIOptions);
   const [showAIConfig, setShowAIConfig] = useState(false);
   const [showScormConfig, setShowScormConfig] = useState(false);
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
