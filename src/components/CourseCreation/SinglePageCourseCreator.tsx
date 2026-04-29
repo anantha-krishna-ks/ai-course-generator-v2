@@ -105,6 +105,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [showTour, setShowTour] = useState(!initialRestoreState);
   const [tourStep, setTourStep] = useState(0);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
+  const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
 
   // Course outline items
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
