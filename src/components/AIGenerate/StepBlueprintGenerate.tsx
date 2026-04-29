@@ -429,33 +429,66 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
       {/* Course Font */}
       <PrefCard>
-        <SectionHeader title="Course Font" desc="Default font applied across all pages" />
-        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course font">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <SectionHeader title="Course Font" />
+          <span className="hidden sm:inline-flex items-center gap-1 text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground">
+            Override per block while authoring
+          </span>
+        </div>
+        <div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5"
+          role="radiogroup"
+          aria-label="Course font"
+        >
           {FONT_OPTIONS.map((opt) => {
             const selected = (state.font ?? "default") === opt.id;
             const stack = getFontStack(opt.id);
             return (
-              <Chip
+              <button
                 key={opt.id}
-                selected={selected}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-label={`${opt.label} font`}
                 onClick={() => onChange({ font: opt.id })}
-                ariaLabel={opt.label}
+                className={cn(
+                  "group relative flex flex-col items-center justify-center gap-1.5 h-[72px] rounded-xl border bg-background px-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  selected
+                    ? "border-primary bg-primary/[0.06] shadow-[0_0_0_1px_hsl(var(--primary))] ring-0"
+                    : "border-border hover:border-primary/40 hover:bg-accent/40"
+                )}
               >
+                {selected && (
+                  <span
+                    className="absolute top-1.5 right-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground"
+                    aria-hidden="true"
+                  >
+                    <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                  </span>
+                )}
                 <span
-                  className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-muted text-foreground text-[11px] font-bold leading-none"
+                  className={cn(
+                    "text-[22px] leading-none font-semibold tracking-tight transition-colors",
+                    selected ? "text-primary" : "text-foreground"
+                  )}
                   style={stack ? { fontFamily: stack } : undefined}
                   aria-hidden="true"
                 >
                   Aa
                 </span>
-                <span style={stack ? { fontFamily: stack } : undefined}>{opt.label}</span>
-              </Chip>
+                <span
+                  className={cn(
+                    "text-[11.5px] font-medium leading-none truncate max-w-full",
+                    selected ? "text-foreground" : "text-muted-foreground"
+                  )}
+                  style={stack ? { fontFamily: stack } : undefined}
+                >
+                  {opt.label}
+                </span>
+              </button>
             );
           })}
         </div>
-        <p className="mt-2 text-[11.5px] text-muted-foreground">
-          You can override the font on individual blocks while authoring.
-        </p>
       </PrefCard>
       <PrefCard>
         <SectionHeader title="Guidelines" />
