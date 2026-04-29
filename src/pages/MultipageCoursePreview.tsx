@@ -38,6 +38,7 @@ interface PreviewState {
   pageBlocksMap: Record<string, PageContentBlock[]>;
   returnState?: MultiPageCourseCreatorRestoreState;
   initialPageId?: string | null;
+  fontId?: string;
 }
 
 const MultipageCoursePreview = () => {
