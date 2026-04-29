@@ -208,6 +208,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b)));
   };
 
+  const updateIntroBlockFont = (id: string, fontIdValue: string | undefined) => {
+    setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, font: fontIdValue } : b)));
+  };
+
   const deleteIntroBlock = (id: string) => {
     if (id === "description-block") {
       setContentBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, content: "" } : b)));
