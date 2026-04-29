@@ -413,6 +413,67 @@ export function ContentBlock({
               </PopoverContent>
             </Popover>
           )}
+          {type === "text" && onFontChange && (
+            <Popover open={isFontOpen} onOpenChange={setIsFontOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  aria-label={`Change font for this block${font ? ` (current: ${FONT_OPTIONS.find(f => f.id === font)?.label ?? "default"})` : ""}`}
+                >
+                  <CaseSensitive className="w-4 h-4" aria-hidden="true" focusable="false" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="start" className="w-56 p-0">
+                <div className="px-3 pt-3 pb-1.5 flex items-center justify-between gap-2">
+                  <p className="text-xs font-medium text-muted-foreground">Font for this block</p>
+                  {font && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onFontChange(undefined);
+                        setIsFontOpen(false);
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+                      aria-label="Reset to course default font"
+                    >
+                      <RotateCw className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <div className="px-1.5 pb-1.5 max-h-72 overflow-y-auto thin-scrollbar">
+                  {FONT_OPTIONS.map((opt) => {
+                    const isActive = (font ?? "") === opt.id || (!font && opt.id === "default");
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onFontChange(opt.id === "default" ? undefined : opt.id);
+                          setIsFontOpen(false);
+                        }}
+                        style={{ fontFamily: opt.stack || undefined }}
+                        className={cn(
+                          "w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors",
+                          isActive
+                            ? "bg-primary/10 text-primary font-medium"
+                            : "text-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <span className="truncate">{opt.label}</span>
+                        {isActive && <Check className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" focusable="false" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="px-3 py-2 border-t border-border/60 text-[10px] text-muted-foreground">
+                  Overrides the course-level font for this block only.
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
           {(isImageBlock || isVideoBlock) && onTypeChange && (
             <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
               <PopoverTrigger asChild>
