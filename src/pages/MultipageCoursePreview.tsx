@@ -1167,22 +1167,25 @@ const MultipageCoursePreview = () => {
 
                   {/* Completion banner */}
                   {completed && (
-                    <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 sm:p-10 mt-4 animate-fade-in">
+                    <div
+                      ref={completionRef}
+                      className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-10 sm:p-14 mt-4 animate-fade-in"
+                    >
                       {/* Decorative sparkles */}
                       <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary/20 blur-3xl" aria-hidden="true" />
                       <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
                       <Sparkles className="absolute top-4 right-4 w-5 h-5 text-primary/60" aria-hidden="true" focusable="false" />
                       <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
 
-                      <div className="relative flex flex-col items-center text-center space-y-4">
-                        <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center ring-4 ring-primary/10">
-                          <Trophy className="w-8 h-8 text-primary" aria-hidden="true" focusable="false" />
+                      <div className="relative flex flex-col items-center text-center space-y-6">
+                        <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center ring-4 ring-primary/10">
+                          <Trophy className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
                         </div>
-                        <div className="space-y-2">
-                          <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
+                        <div className="space-y-3">
+                          <h3 className="text-3xl sm:text-4xl font-bold text-foreground">
                             Congratulations! 🎉
                           </h3>
-                          <p className="text-muted-foreground max-w-md mx-auto">
+                          <p className="text-muted-foreground max-w-lg mx-auto text-base sm:text-lg leading-relaxed">
                             You've successfully completed{" "}
                             <span className="font-semibold text-foreground">
                               {data?.title || "the course"}
@@ -1190,12 +1193,9 @@ const MultipageCoursePreview = () => {
                             . Great job on reaching the end!
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground pt-1">
-                          <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                          <span>{totalPages} of {totalPages} pages completed</span>
-                        </div>
                         <Button
                           onClick={() => navigate("/dashboard")}
+                          size="lg"
                           className="mt-2 gap-2 shadow-md"
                           aria-label="Back to homepage"
                         >
