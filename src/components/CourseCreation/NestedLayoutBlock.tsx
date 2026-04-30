@@ -51,11 +51,11 @@ interface NestedLayoutData {
 
 const DEFAULT_DATA: NestedLayoutData = {
   kind: "any-block-layout",
-  columns: [[], []],
+  columns: [[]],
 };
 
 function parseLayoutContent(raw: string): NestedLayoutData {
-  if (!raw) return { kind: "any-block-layout", columns: [[], []] };
+  if (!raw) return { kind: "any-block-layout", columns: [[]] };
   try {
     const parsed = JSON.parse(raw);
     if (
@@ -64,17 +64,17 @@ function parseLayoutContent(raw: string): NestedLayoutData {
       Array.isArray(parsed.columns) &&
       parsed.columns.length >= 1
     ) {
-      // Ensure exactly 2 columns
-      const cols: NestedChild[][] = [
-        Array.isArray(parsed.columns[0]) ? parsed.columns[0] : [],
-        Array.isArray(parsed.columns[1]) ? parsed.columns[1] : [],
-      ];
-      return { kind: "any-block-layout", columns: cols };
+      // Flatten any prior multi-column data into a single column for backward compat.
+      const merged: NestedChild[] = [];
+      for (const c of parsed.columns) {
+        if (Array.isArray(c)) merged.push(...c);
+      }
+      return { kind: "any-block-layout", columns: [merged] };
     }
   } catch {
     /* fallthrough */
   }
-  return { kind: "any-block-layout", columns: [[], []] };
+  return { kind: "any-block-layout", columns: [[]] };
 }
 
 function getVariantContent(type: NestedChildType, variant?: string): string {
@@ -268,13 +268,13 @@ export function NestedLayoutBlock({
   return (
     <div
       className="group/layout relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.02] to-primary/[0.05] p-3 my-2"
-      aria-label="Two-column layout container"
+      aria-label="Single-column layout container"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-          <span>2-Column Layout</span>
+          <span>1-Column Layout</span>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/layout:opacity-100 transition-opacity">
           <Tooltip>
@@ -307,7 +307,7 @@ export function NestedLayoutBlock({
       </div>
 
       {/* Two columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {data.columns.map((col, colIdx) => (
           <div
             key={`col-${colIdx}`}
