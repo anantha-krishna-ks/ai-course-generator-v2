@@ -268,13 +268,13 @@ export function NestedLayoutBlock({
   return (
     <div
       className="group/layout relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.02] to-primary/[0.05] p-3 my-2"
-      aria-label="Two-column layout container"
+      aria-label="Single-column layout container"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-          <span>2-Column Layout</span>
+          <span>1-Column Layout</span>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/layout:opacity-100 transition-opacity">
           <Tooltip>
