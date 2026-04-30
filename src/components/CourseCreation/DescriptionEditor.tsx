@@ -37,6 +37,7 @@ import {
   Type,
   ChevronDown,
   MoreHorizontal,
+  Eraser,
   Trash2,
   Plus,
   Minus,
@@ -359,6 +360,7 @@ function TableMenu({ editor }: { editor: Editor }) {
 }
 
 export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBlockFontChange }: DescriptionEditorProps) {
+  const [moreOpen, setMoreOpen] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
@@ -423,7 +425,72 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
 
   return (
     <div className="space-y-2 animate-fade-in w-full">
-      {/* Modern compact toolbar */}
+      {/* Secondary toolbar row — appears ABOVE main toolbar when "More" is toggled */}
+      {moreOpen && (
+        <div
+          id="rte-more-row"
+          role="toolbar"
+          aria-label="Additional formatting options"
+          className="flex flex-wrap items-center gap-0.5 p-1.5 border border-primary/20 rounded-xl bg-primary/[0.04] backdrop-blur-md shadow-sm w-full animate-fade-in"
+        >
+          <span className="text-[11px] font-medium text-muted-foreground px-2 shrink-0">
+            More tools
+          </span>
+          <Divider />
+          <LinkPopover editor={editor} />
+          <TableMenu editor={editor} />
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            isActive={editor.isActive('blockquote')}
+            label="Quote"
+          >
+            <Quote className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleSubscript().run()}
+            isActive={editor.isActive('subscript')}
+            label="Subscript"
+          >
+            <SubscriptIcon className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+            isActive={editor.isActive('superscript')}
+            label="Superscript"
+          >
+            <SuperscriptIcon className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+          <Divider />
+          {/* Lists also surfaced here for very small screens where they're hidden in primary row */}
+          <div className="flex sm:hidden items-center gap-0.5">
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              isActive={editor.isActive('bulletList')}
+              label="Bullet list"
+            >
+              <List className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              isActive={editor.isActive('orderedList')}
+              label="Numbered list"
+            >
+              <ListOrdered className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <Divider />
+          </div>
+          <ToolbarButton
+            onClick={() =>
+              editor.chain().focus().clearNodes().unsetAllMarks().run()
+            }
+            label="Clear formatting"
+          >
+            <Eraser className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+        </div>
+      )}
+
+      {/* Primary toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm w-full">
         {/* Paragraph style dropdown */}
         <StyleDropdown editor={editor} />
@@ -600,7 +667,7 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Lists - hide on very small screens, available in More */}
+        {/* Lists - kept primary on small+ screens; available in More row otherwise */}
         <div className="hidden sm:flex items-center gap-0.5">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -618,90 +685,31 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
           </ToolbarButton>
         </div>
 
-        <div className="hidden md:flex items-center gap-0.5">
-          <Divider />
-          <LinkPopover editor={editor} />
-          <TableMenu editor={editor} />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
-            label="Quote"
-          >
-            <Quote className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleSubscript().run()}
-            isActive={editor.isActive('subscript')}
-            label="Subscript"
-          >
-            <SubscriptIcon className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleSuperscript().run()}
-            isActive={editor.isActive('superscript')}
-            label="Superscript"
-          >
-            <SuperscriptIcon className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-        </div>
+        <Divider />
 
-        {/* Mobile "More" menu - houses what's hidden */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label="More formatting options"
-              title="More"
-              className="md:hidden inline-flex items-center justify-center h-8 w-8 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
-            >
-              <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="bg-background w-48"
-            onCloseAutoFocus={(event) => event.preventDefault()}
-          >
-            <DropdownMenuItem
-              onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleBulletList().run(); }}
-              className="sm:hidden"
-            >
-              <List className="w-4 h-4 mr-2" aria-hidden="true" /> Bullet list
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleOrderedList().run(); }}
-              className="sm:hidden"
-            >
-              <ListOrdered className="w-4 h-4 mr-2" aria-hidden="true" /> Numbered list
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                const url = window.prompt('Enter URL');
-                if (url) {
-                  const href = url.match(/^https?:\/\//) ? url : `https://${url}`;
-                  editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
-                }
-              }}
-            >
-              <LinkIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Insert link
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={(e) => { e.preventDefault(); editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(); }}
-            >
-              <TableIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Insert table
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleBlockquote().run(); }}>
-              <Quote className="w-4 h-4 mr-2" aria-hidden="true" /> Quote
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleSubscript().run(); }}>
-              <SubscriptIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Subscript
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().toggleSuperscript().run(); }}>
-              <SuperscriptIcon className="w-4 h-4 mr-2" aria-hidden="true" /> Superscript
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* "More" toggle — opens a secondary row above with secondary/occasional tools */}
+        <button
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => setMoreOpen((v) => !v)}
+          aria-label={moreOpen ? 'Hide more formatting options' : 'Show more formatting options'}
+          aria-expanded={moreOpen}
+          aria-controls="rte-more-row"
+          title="More"
+          className={cn(
+            'inline-flex items-center gap-1 h-8 px-2 rounded-md transition-all shrink-0 text-xs font-medium',
+            moreOpen
+              ? 'bg-primary/10 text-primary'
+              : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground',
+          )}
+        >
+          <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
+          <span className="hidden sm:inline">More</span>
+          <ChevronDown
+            className={cn('w-3 h-3 transition-transform', moreOpen && 'rotate-180')}
+            aria-hidden="true"
+          />
+        </button>
 
         {/* Spacer pushes block-font chip + undo/redo to the right on wider screens */}
         <div className="flex-1 min-w-0" />
