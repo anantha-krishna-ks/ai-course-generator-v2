@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import emptyPageIllustration from "@/assets/empty-page-illustration.png";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Menu, X, Video, Music, Download, ExternalLink, Maximize2 } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Menu, X, Video, Music, Download, ExternalLink, Maximize2, CheckCircle2, Trophy, Home, Sparkles, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -55,6 +55,7 @@ const MultipageCoursePreview = () => {
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet-landscape' | 'tablet' | 'mobile'>('desktop');
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
@@ -399,13 +400,27 @@ const MultipageCoursePreview = () => {
   const currentIndex = selectedId ? allPages.findIndex((p) => p.id === selectedId) : -1;
   const progress = totalPages > 0 && currentIndex >= 0 ? Math.round(((currentIndex + 1) / totalPages) * 100) : 0;
 
+  const isLastPage = currentIndex >= 0 && currentIndex === allPages.length - 1;
+
+  const handleFinish = () => {
+    setCompleted(true);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const goToNext = () => {
+    if (isLastPage) {
+      handleFinish();
+      return;
+    }
     if (currentIndex < allPages.length - 1) {
       setSelectedId(allPages[currentIndex + 1].id);
     }
   };
 
   const goToPrev = () => {
+    if (completed) setCompleted(false);
     if (currentIndex > 0) {
       setSelectedId(allPages[currentIndex - 1].id);
     }
@@ -1121,15 +1136,70 @@ const MultipageCoursePreview = () => {
                         Previous
                       </Button>
                       <Button
-                        variant="ghost"
+                        variant={isLastPage ? "default" : "ghost"}
                         onClick={goToNext}
-                        disabled={currentIndex >= allPages.length - 1}
-                        className="gap-2 text-muted-foreground"
-                        aria-label="Go to next page"
+                        disabled={currentIndex < 0}
+                        className={cn(
+                          "gap-2",
+                          isLastPage
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
+                            : "text-muted-foreground"
+                        )}
+                        aria-label={isLastPage ? "Finish course" : "Go to next page"}
                       >
-                        Next
-                        <ChevronRight className="w-4 h-4" />
+                        {isLastPage ? (
+                          <>
+                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                            Finish
+                          </>
+                        ) : (
+                          <>
+                            Next
+                            <ChevronRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          </>
+                        )}
                       </Button>
+                    </div>
+                  )}
+
+                  {/* Completion banner */}
+                  {completed && (
+                    <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 sm:p-10 mt-4 animate-fade-in">
+                      {/* Decorative sparkles */}
+                      <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary/20 blur-3xl" aria-hidden="true" />
+                      <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+                      <Sparkles className="absolute top-4 right-4 w-5 h-5 text-primary/60" aria-hidden="true" focusable="false" />
+                      <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
+
+                      <div className="relative flex flex-col items-center text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center ring-4 ring-primary/10">
+                          <Trophy className="w-8 h-8 text-primary" aria-hidden="true" focusable="false" />
+                        </div>
+                        <div className="space-y-2">
+                          <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
+                            Congratulations! 🎉
+                          </h3>
+                          <p className="text-muted-foreground max-w-md mx-auto">
+                            You've successfully completed{" "}
+                            <span className="font-semibold text-foreground">
+                              {data?.title || "the course"}
+                            </span>
+                            . Great job on reaching the end!
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground pt-1">
+                          <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                          <span>{totalPages} of {totalPages} pages completed</span>
+                        </div>
+                        <Button
+                          onClick={() => navigate("/dashboard")}
+                          className="mt-2 gap-2 shadow-md"
+                          aria-label="Back to homepage"
+                        >
+                          <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          Back to Homepage
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </>
@@ -1180,11 +1250,20 @@ const MultipageCoursePreview = () => {
                 </button>
                 <button
                   onClick={goToNext}
-                  disabled={currentIndex >= allPages.length - 1}
-                  className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
-                  aria-label="Next page"
+                  disabled={currentIndex < 0}
+                  className={cn(
+                    "p-2 rounded-full transition-colors disabled:opacity-30",
+                    isLastPage
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "hover:bg-muted"
+                  )}
+                  aria-label={isLastPage ? "Finish course" : "Next page"}
                 >
-                  <ChevronRight className="w-4 h-4 text-foreground" />
+                  {isLastPage ? (
+                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-foreground" aria-hidden="true" focusable="false" />
+                  )}
                 </button>
               </div>
             </div>
