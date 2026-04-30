@@ -242,30 +242,28 @@ export function NestedLayoutBlock({
 
   const handleColumnDrop = useCallback(
     (colIdx: number) => (e: React.DragEvent) => {
-      // Only handle drop here when not landing on a DropIndicator (which stops propagation).
+      // Only handles drops that didn't land on a DropIndicator (which stops propagation).
       e.preventDefault();
       setHoveredCol(null);
       setActiveDrop(null);
-      const data = e.dataTransfer.getData("application/content-block");
-      if (!data) return;
+      const raw = e.dataTransfer.getData("application/content-block");
+      if (!raw) return;
       try {
-        // Late-import-style — inline parse to avoid importing resolveTemplateDropData here would still work, but reusing it keeps semantics aligned.
-        const parsed = JSON.parse(data) as { templateId: string; categoryId: string };
-        // Inline minimal resolver: read the catalog reference dynamically.
-        // We keep this self-contained by re-using the dynamic import pattern.
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const { resolveTemplateDropData } = require("./ContentBlocksPanel") as typeof import("./ContentBlocksPanel");
+        const parsed = JSON.parse(raw) as { templateId: string; categoryId: string };
         const resolved = resolveTemplateDropData(parsed.templateId, parsed.categoryId);
         if (!resolved) return;
         // Append to end of column.
-        insertChild(colIdx, getColumnLength(colIdx), resolved.type as NestedChildType, resolved.variant);
+        const appendIndex = data.columns[colIdx]?.length ?? 0;
+        insertChild(colIdx, appendIndex, resolved.type as NestedChildType, resolved.variant);
       } catch {
         /* ignore */
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [insertChild],
+    [data.columns, insertChild],
   );
+
+  const getColumnLength = (colIdx: number) => data.columns[colIdx]?.length ?? 0;
+  void getColumnLength;
 
   const getColumnLength = (colIdx: number) => data.columns[colIdx]?.length ?? 0;
 
