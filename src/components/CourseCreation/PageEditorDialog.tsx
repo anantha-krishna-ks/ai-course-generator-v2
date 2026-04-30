@@ -1388,6 +1388,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     action="deleting"
                                   />
                                 );
+                              } else if (block.type === "text" && block.variant === "any-block-layout") {
+                                elements.push(
+                                  <NestedLayoutBlock
+                                    key={block.id}
+                                    id={block.id}
+                                    content={block.content}
+                                    onChange={(content) => updateBlock(block.id, content)}
+                                    onDelete={() => deleteBlock(block.id)}
+                                    onDuplicate={() => duplicateBlock(block.id)}
+                                    aiEnabled={aiEnabled}
+                                  />
+                                );
                               } else {
                                 elements.push(
                                   <ContentBlock
