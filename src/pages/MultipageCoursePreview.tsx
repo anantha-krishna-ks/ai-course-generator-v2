@@ -1249,11 +1249,20 @@ const MultipageCoursePreview = () => {
                 </button>
                 <button
                   onClick={goToNext}
-                  disabled={currentIndex >= allPages.length - 1}
-                  className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
-                  aria-label="Next page"
+                  disabled={currentIndex < 0}
+                  className={cn(
+                    "p-2 rounded-full transition-colors disabled:opacity-30",
+                    isLastPage
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "hover:bg-muted"
+                  )}
+                  aria-label={isLastPage ? "Finish course" : "Next page"}
                 >
-                  <ChevronRight className="w-4 h-4 text-foreground" />
+                  {isLastPage ? (
+                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-foreground" aria-hidden="true" focusable="false" />
+                  )}
                 </button>
               </div>
             </div>
