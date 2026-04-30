@@ -95,6 +95,29 @@ function BlockPreview({ id }: { id: string }) {
   const card = "bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-[hsl(220,13%,91%)] overflow-hidden";
 
   switch (id) {
+    case "layout-one-column":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "layout-two-columns":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-2")}>
+            <div className="flex-1 rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)]">Column 1</span>
+            </div>
+            <div className="flex-1 rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)]">Column 2</span>
+            </div>
+          </div>
+        </div>
+      );
     case "heading-text":
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
