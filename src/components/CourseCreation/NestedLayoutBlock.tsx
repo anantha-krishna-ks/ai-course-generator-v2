@@ -311,7 +311,7 @@ export function NestedLayoutBlock({
       style={sortableStyle}
       {...attributes}
       className="group/layout relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.02] to-primary/[0.05] p-3 my-2"
-      aria-label={columnCount === 2 ? "Two-column layout container" : "Single-column layout container"}
+      aria-label={columnCount === 2 ? "Dual Block container" : "Single Block container"}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2 px-1">
