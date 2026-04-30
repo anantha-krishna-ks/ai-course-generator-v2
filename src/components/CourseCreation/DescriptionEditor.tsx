@@ -360,6 +360,7 @@ function TableMenu({ editor }: { editor: Editor }) {
 }
 
 export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBlockFontChange }: DescriptionEditorProps) {
+  const [moreOpen, setMoreOpen] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
