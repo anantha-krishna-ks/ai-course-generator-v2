@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import emptyPageIllustration from "@/assets/empty-page-illustration.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Menu, X, Video, Music, Download, ExternalLink, Maximize2, CheckCircle2, Trophy, Home, Sparkles, Check } from "lucide-react";
+import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -409,6 +410,19 @@ const MultipageCoursePreview = () => {
       requestAnimationFrame(() => {
         completionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       });
+      // Fire confetti bursts
+      const fire = (originX: number) => {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          startVelocity: 45,
+          origin: { x: originX, y: 0.6 },
+          colors: ["#22c55e", "#16a34a", "#3B82F6", "#fbbf24", "#f472b6"],
+        });
+      };
+      setTimeout(() => fire(0.25), 200);
+      setTimeout(() => fire(0.75), 350);
+      setTimeout(() => fire(0.5), 550);
     }
   };
 
@@ -1178,8 +1192,8 @@ const MultipageCoursePreview = () => {
                       <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
 
                       <div className="relative flex flex-col items-center text-center space-y-6">
-                        <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center ring-4 ring-primary/10">
-                          <Trophy className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
+                        <div className="w-20 h-20 rounded-full bg-green-500/15 flex items-center justify-center ring-4 ring-green-500/20 animate-scale-in">
+                          <CheckCircle2 className="w-12 h-12 text-green-500" strokeWidth={2.5} aria-hidden="true" focusable="false" />
                         </div>
                         <div className="space-y-3">
                           <h3 className="text-3xl sm:text-4xl font-bold text-foreground">
