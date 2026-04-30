@@ -291,14 +291,30 @@ export function NestedLayoutBlock({
 
   return (
     <div
+      ref={setNodeRef}
+      style={sortableStyle}
+      {...attributes}
       className="group/layout relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.02] to-primary/[0.05] p-3 my-2"
-      aria-label="Single-column layout container"
+      aria-label={columnCount === 2 ? "Two-column layout container" : "Single-column layout container"}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                {...listeners}
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-grab active:cursor-grabbing touch-none"
+                aria-label="Drag to reorder layout"
+              >
+                <GripVertical className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">Drag to reorder</TooltipContent>
+          </Tooltip>
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-          <span>1-Column Layout</span>
+          <span>{columnCount === 2 ? "2-Column Layout" : "1-Column Layout"}</span>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/layout:opacity-100 transition-opacity">
           <Tooltip>
@@ -330,8 +346,8 @@ export function NestedLayoutBlock({
         </div>
       </div>
 
-      {/* Two columns */}
-      <div className="grid grid-cols-1 gap-3">
+      {/* Columns */}
+      <div className={cn("grid gap-3", columnCount === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1")}>
         {data.columns.map((col, colIdx) => (
           <div
             key={`col-${colIdx}`}
