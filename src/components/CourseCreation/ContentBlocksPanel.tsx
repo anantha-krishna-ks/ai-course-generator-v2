@@ -512,6 +512,14 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "heading-text":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2.5")}>
+            <p className="text-[5px] font-bold text-[hsl(220,15%,15%)] leading-[1.3] mb-[4px]">Getting Started Guide</p>
+            <p className="text-[3.5px] text-[hsl(220,8%,50%)] leading-[1.7]">Learn the fundamentals of building your first project with our comprehensive step-by-step guide.</p>
+            <p className="text-[3.5px] text-[hsl(220,8%,62%)] leading-[1.7] mt-[2px]">Follow along to set up everything you need.</p>
+          </div>
         </div>
       );
     case "text-only":
