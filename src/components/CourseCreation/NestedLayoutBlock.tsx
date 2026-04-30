@@ -51,13 +51,10 @@ interface NestedLayoutData {
   columns: NestedChild[][];
 }
 
-const DEFAULT_DATA: NestedLayoutData = {
-  kind: "any-block-layout",
-  columns: [[]],
-};
-
-function parseLayoutContent(raw: string): NestedLayoutData {
-  if (!raw) return { kind: "any-block-layout", columns: [[]] };
+function parseLayoutContent(raw: string, columnCount: 1 | 2): NestedLayoutData {
+  const empty = (): NestedChild[][] =>
+    columnCount === 2 ? [[], []] : [[]];
+  if (!raw) return { kind: "any-block-layout", columns: empty() };
   try {
     const parsed = JSON.parse(raw);
     if (
@@ -66,17 +63,21 @@ function parseLayoutContent(raw: string): NestedLayoutData {
       Array.isArray(parsed.columns) &&
       parsed.columns.length >= 1
     ) {
-      // Flatten any prior multi-column data into a single column for backward compat.
-      const merged: NestedChild[] = [];
-      for (const c of parsed.columns) {
-        if (Array.isArray(c)) merged.push(...c);
+      const incoming: NestedChild[][] = parsed.columns.map((c: unknown) =>
+        Array.isArray(c) ? (c as NestedChild[]) : [],
+      );
+      if (columnCount === 1) {
+        const merged: NestedChild[] = [];
+        for (const c of incoming) merged.push(...c);
+        return { kind: "any-block-layout", columns: [merged] };
       }
-      return { kind: "any-block-layout", columns: [merged] };
+      const cols: NestedChild[][] = [incoming[0] ?? [], incoming[1] ?? []];
+      return { kind: "any-block-layout", columns: cols };
     }
   } catch {
     /* fallthrough */
   }
-  return { kind: "any-block-layout", columns: [[]] };
+  return { kind: "any-block-layout", columns: empty() };
 }
 
 function getVariantContent(type: NestedChildType, variant?: string): string {
