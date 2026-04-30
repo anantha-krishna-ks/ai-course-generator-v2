@@ -152,34 +152,24 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <div className="flex gap-2">
-              <div className="relative flex-1 rounded-md border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-28 overflow-hidden">
-                <div className="absolute inset-0 p-2 flex flex-col gap-1.5">
-                  {/* heading */}
-                  <div className="h-[6px] rounded-full bg-primary/30 w-3/4" />
-                  {/* video */}
-                  <div className="w-full h-8 rounded bg-[hsl(225,15%,18%)] relative overflow-hidden flex items-center justify-center">
-                    <div className="w-3.5 h-3.5 rounded-full bg-white/25 flex items-center justify-center">
-                      <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-white ml-[1px]" />
-                    </div>
-                  </div>
-                  <div className="h-[5px] rounded-full bg-primary/15 w-full" />
+            <div className="relative rounded-md border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] p-2.5 flex flex-col gap-1.5">
+              {/* heading */}
+              <div className="h-[6px] rounded-full bg-primary/30 w-2/3" />
+              {/* image */}
+              <div className="w-full h-10 rounded bg-primary/15 flex items-center justify-center">
+                <ImageIcon className="w-3.5 h-3.5 text-primary/55" aria-hidden="true" focusable="false" />
+              </div>
+              {/* video */}
+              <div className="w-full h-8 rounded bg-[hsl(225,15%,18%)] relative overflow-hidden flex items-center justify-center">
+                <div className="w-3.5 h-3.5 rounded-full bg-white/25 flex items-center justify-center">
+                  <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[5px] border-transparent border-l-white ml-[1px]" />
                 </div>
               </div>
-              <div className="relative flex-1 rounded-md border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-28 overflow-hidden">
-                <div className="absolute inset-0 p-2 flex flex-col gap-1.5">
-                  {/* image */}
-                  <div className="w-full h-10 rounded bg-primary/15 flex items-center justify-center">
-                    <ImageIcon className="w-3.5 h-3.5 text-primary/55" aria-hidden="true" focusable="false" />
-                  </div>
-                  {/* quiz pill */}
-                  <div className="h-[7px] rounded-full bg-primary/20 w-full" />
-                  <div className="h-[5px] rounded-full bg-primary/15 w-5/6" />
-                  <div className="h-[5px] rounded-full bg-primary/15 w-2/3" />
-                </div>
-              </div>
+              {/* text lines */}
+              <div className="h-[5px] rounded-full bg-primary/15 w-full" />
+              <div className="h-[5px] rounded-full bg-primary/15 w-5/6" />
             </div>
-            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Mix any blocks — text, image, video, quiz, audio…</p>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Stack any blocks — text, image, video, quiz, audio…</p>
           </div>
         </div>
       );
