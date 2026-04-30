@@ -817,3 +817,98 @@ function StyleDropdown({ editor }: { editor: Editor }) {
     </DropdownMenu>
   );
 }
+
+/**
+ * BlockFontChip — distinct, label-led chip placed on the toolbar's right side.
+ * Intentionally does NOT match the icon-button row layout: it shows
+ * "Aa · <Current font name>" as a pill, opening a rich preview popover.
+ */
+function BlockFontChip({
+  value,
+  onChange,
+}: {
+  value: string | undefined;
+  onChange: (id: string | undefined) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const current = FONT_OPTIONS.find((f) => f.id === (value ?? 'default')) ?? FONT_OPTIONS[0];
+  const isOverridden = !!value && value !== 'default';
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          aria-label={`Block font (current: ${current.label})`}
+          title="Block font"
+          className={cn(
+            'inline-flex items-center gap-1.5 h-8 pl-2 pr-2.5 rounded-full border text-xs font-medium transition-all shrink-0 max-w-[180px]',
+            isOverridden
+              ? 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/15'
+              : 'border-foreground/15 bg-background/60 text-foreground/80 hover:bg-foreground/5 hover:text-foreground',
+          )}
+        >
+          <CaseSensitive className="w-4 h-4 shrink-0" aria-hidden="true" focusable="false" />
+          <span className="truncate" style={{ fontFamily: current.stack || undefined }}>
+            {current.label}
+          </span>
+          <ChevronDown className="w-3 h-3 opacity-70 shrink-0" aria-hidden="true" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        className="w-60 p-0 bg-background"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <div className="px-3 pt-3 pb-1.5 flex items-center justify-between gap-2">
+          <p className="text-xs font-medium text-muted-foreground">Font for this block</p>
+          {isOverridden && (
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onChange(undefined);
+                setOpen(false);
+              }}
+              className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+              aria-label="Reset to course default font"
+            >
+              <RotateCw className="w-3 h-3" aria-hidden="true" focusable="false" />
+              Reset
+            </button>
+          )}
+        </div>
+        <div className="px-1.5 pb-1.5 max-h-72 overflow-y-auto thin-scrollbar">
+          {FONT_OPTIONS.map((opt) => {
+            const isActive = (value ?? 'default') === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onChange(opt.id === 'default' ? undefined : opt.id);
+                  setOpen(false);
+                }}
+                style={{ fontFamily: opt.stack || undefined }}
+                className={cn(
+                  'w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors',
+                  isActive
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-foreground hover:bg-muted hover:text-foreground',
+                )}
+              >
+                <span className="truncate">{opt.label}</span>
+                {isActive && <CheckIcon className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" focusable="false" />}
+              </button>
+            );
+          })}
+        </div>
+        <div className="px-3 py-2 border-t border-foreground/10 text-[11px] text-muted-foreground leading-snug">
+          Overrides the course-level font for this block only.
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
