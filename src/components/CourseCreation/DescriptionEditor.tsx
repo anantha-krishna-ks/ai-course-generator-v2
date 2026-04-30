@@ -668,18 +668,13 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
           aria-controls="rte-more-row"
           title="More"
           className={cn(
-            'inline-flex items-center gap-1 h-8 px-2 rounded-md transition-all shrink-0 text-xs font-medium',
+            'inline-flex items-center justify-center h-8 w-8 rounded-md transition-all shrink-0',
             moreOpen
               ? 'bg-primary/10 text-primary'
               : 'text-foreground/70 hover:bg-foreground/10 hover:text-foreground',
           )}
         >
           <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
-          <span className="hidden sm:inline">More</span>
-          <ChevronDown
-            className={cn('w-3 h-3 transition-transform', moreOpen && 'rotate-180')}
-            aria-hidden="true"
-          />
         </button>
 
         {/* Spacer pushes block-font chip + undo/redo to the right on wider screens */}
