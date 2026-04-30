@@ -1160,6 +1160,47 @@ const MultipageCoursePreview = () => {
                       </Button>
                     </div>
                   )}
+
+                  {/* Completion banner */}
+                  {completed && (
+                    <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-8 sm:p-10 mt-4 animate-fade-in">
+                      {/* Decorative sparkles */}
+                      <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary/20 blur-3xl" aria-hidden="true" />
+                      <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+                      <Sparkles className="absolute top-4 right-4 w-5 h-5 text-primary/60" aria-hidden="true" focusable="false" />
+                      <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
+
+                      <div className="relative flex flex-col items-center text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center ring-4 ring-primary/10">
+                          <Trophy className="w-8 h-8 text-primary" aria-hidden="true" focusable="false" />
+                        </div>
+                        <div className="space-y-2">
+                          <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
+                            Congratulations! 🎉
+                          </h3>
+                          <p className="text-muted-foreground max-w-md mx-auto">
+                            You've successfully completed{" "}
+                            <span className="font-semibold text-foreground">
+                              {data?.title || "the course"}
+                            </span>
+                            . Great job on reaching the end!
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground pt-1">
+                          <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                          <span>{totalPages} of {totalPages} pages completed</span>
+                        </div>
+                        <Button
+                          onClick={() => navigate("/dashboard")}
+                          className="mt-2 gap-2 shadow-md"
+                          aria-label="Back to homepage"
+                        >
+                          <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          Back to Homepage
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="py-20 text-center text-muted-foreground/50">
