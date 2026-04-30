@@ -330,7 +330,7 @@ export function NestedLayoutBlock({
             <TooltipContent side="top" className="text-xs">Drag to reorder</TooltipContent>
           </Tooltip>
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-          <span>{columnCount === 2 ? "2-Column Layout" : "1-Column Layout"}</span>
+          <span>{columnCount === 2 ? "Dual Block" : "Single Block"}</span>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
