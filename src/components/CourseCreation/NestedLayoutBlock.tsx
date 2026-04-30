@@ -127,16 +127,37 @@ interface NestedLayoutBlockProps {
   onDelete: () => void;
   onDuplicate: () => void;
   aiEnabled?: boolean;
+  /** Number of side-by-side columns to render. Defaults to 1. */
+  columnCount?: 1 | 2;
 }
 
 export function NestedLayoutBlock({
+  id,
   content,
   onChange,
   onDelete,
   onDuplicate,
   aiEnabled = false,
+  columnCount = 1,
 }: NestedLayoutBlockProps) {
-  const data = useMemo(() => parseLayoutContent(content), [content]);
+  const data = useMemo(() => parseLayoutContent(content, columnCount), [content, columnCount]);
+
+  // Sortable wiring so the container participates in the page-level reorder DnD,
+  // matching the behavior of regular ContentBlocks.
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const sortableStyle: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   // Per-column drop-target index (for showing drop indicators between nested blocks).
   const [activeDrop, setActiveDrop] = useState<{ col: number; idx: number } | null>(null);
