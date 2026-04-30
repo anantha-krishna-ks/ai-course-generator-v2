@@ -468,6 +468,36 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  aria-label="Font size"
+                  title="Font size"
+                  className="inline-flex items-center gap-1 h-8 px-2 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0 text-xs font-medium"
+                >
+                  <Type className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span className="max-w-[60px] truncate">{currentSize}</span>
+                  <ChevronDown className="w-3 h-3" aria-hidden="true" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-background" onCloseAutoFocus={(e) => e.preventDefault()}>
+                {FONT_SIZES.map((s) => (
+                  <DropdownMenuItem
+                    key={s.value}
+                    onSelect={(e) => { e.preventDefault(); editor.chain().focus().setFontSize(s.value).run(); }}
+                    style={{ fontSize: s.value }}
+                  >
+                    {s.label}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().unsetFontSize().run(); }}>
+                  Reset
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
               isActive={editor.isActive('blockquote')}
