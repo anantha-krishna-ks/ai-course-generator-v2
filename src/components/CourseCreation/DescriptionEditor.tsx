@@ -425,7 +425,72 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
 
   return (
     <div className="space-y-2 animate-fade-in w-full">
-      {/* Modern compact toolbar */}
+      {/* Secondary toolbar row — appears ABOVE main toolbar when "More" is toggled */}
+      {moreOpen && (
+        <div
+          id="rte-more-row"
+          role="toolbar"
+          aria-label="Additional formatting options"
+          className="flex flex-wrap items-center gap-0.5 p-1.5 border border-primary/20 rounded-xl bg-primary/[0.04] backdrop-blur-md shadow-sm w-full animate-fade-in"
+        >
+          <span className="text-[11px] font-medium text-muted-foreground px-2 shrink-0">
+            More tools
+          </span>
+          <Divider />
+          <LinkPopover editor={editor} />
+          <TableMenu editor={editor} />
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            isActive={editor.isActive('blockquote')}
+            label="Quote"
+          >
+            <Quote className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleSubscript().run()}
+            isActive={editor.isActive('subscript')}
+            label="Subscript"
+          >
+            <SubscriptIcon className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+            isActive={editor.isActive('superscript')}
+            label="Superscript"
+          >
+            <SuperscriptIcon className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+          <Divider />
+          {/* Lists also surfaced here for very small screens where they're hidden in primary row */}
+          <div className="flex sm:hidden items-center gap-0.5">
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              isActive={editor.isActive('bulletList')}
+              label="Bullet list"
+            >
+              <List className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              isActive={editor.isActive('orderedList')}
+              label="Numbered list"
+            >
+              <ListOrdered className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <Divider />
+          </div>
+          <ToolbarButton
+            onClick={() =>
+              editor.chain().focus().clearNodes().unsetAllMarks().run()
+            }
+            label="Clear formatting"
+          >
+            <Eraser className="w-4 h-4" aria-hidden="true" />
+          </ToolbarButton>
+        </div>
+      )}
+
+      {/* Primary toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm w-full">
         {/* Paragraph style dropdown */}
         <StyleDropdown editor={editor} />
