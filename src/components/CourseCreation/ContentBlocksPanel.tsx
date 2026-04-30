@@ -53,8 +53,9 @@ interface ContentBlocksPanelProps {
 }
 
 const ALL_BLOCKS: BlockItem[] = [
-  // LAYOUT — flexible container that accepts any block type
+  // LAYOUT — flexible containers that accept any block type
   { id: "layout-any-block", label: "1 Col Container", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout", description: "A flexible container that accepts any block — text, image, video, quiz, and more" },
+  { id: "layout-any-block-2", label: "2 Col Container", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout-2", description: "A two-column container — drop any block into either side" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
@@ -170,6 +171,32 @@ function BlockPreview({ id }: { id: string }) {
               <div className="h-[5px] rounded-full bg-primary/15 w-5/6" />
             </div>
             <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Stack any blocks — text, image, video, quiz, audio…</p>
+          </div>
+        </div>
+      );
+    case "layout-any-block-2":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="flex gap-2">
+              <div className="relative flex-1 rounded-md border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] p-2 flex flex-col gap-1.5 h-28">
+                <div className="h-[6px] rounded-full bg-primary/30 w-3/4" />
+                <div className="w-full h-8 rounded bg-[hsl(225,15%,18%)] relative overflow-hidden flex items-center justify-center">
+                  <div className="w-3 h-3 rounded-full bg-white/25 flex items-center justify-center">
+                    <div className="w-0 h-0 border-t-[2.5px] border-b-[2.5px] border-l-[4px] border-transparent border-l-white ml-[1px]" />
+                  </div>
+                </div>
+                <div className="h-[5px] rounded-full bg-primary/15 w-full" />
+              </div>
+              <div className="relative flex-1 rounded-md border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] p-2 flex flex-col gap-1.5 h-28">
+                <div className="w-full h-10 rounded bg-primary/15 flex items-center justify-center">
+                  <ImageIcon className="w-3.5 h-3.5 text-primary/55" aria-hidden="true" focusable="false" />
+                </div>
+                <div className="h-[5px] rounded-full bg-primary/15 w-5/6" />
+                <div className="h-[5px] rounded-full bg-primary/15 w-2/3" />
+              </div>
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Mix any blocks across two side-by-side drop zones</p>
           </div>
         </div>
       );

@@ -1,5 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Trash2, Copy, GripVertical, LayoutGrid } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DropIndicator } from "./DropIndicator";
@@ -49,13 +51,10 @@ interface NestedLayoutData {
   columns: NestedChild[][];
 }
 
-const DEFAULT_DATA: NestedLayoutData = {
-  kind: "any-block-layout",
-  columns: [[]],
-};
-
-function parseLayoutContent(raw: string): NestedLayoutData {
-  if (!raw) return { kind: "any-block-layout", columns: [[]] };
+function parseLayoutContent(raw: string, columnCount: 1 | 2): NestedLayoutData {
+  const empty = (): NestedChild[][] =>
+    columnCount === 2 ? [[], []] : [[]];
+  if (!raw) return { kind: "any-block-layout", columns: empty() };
   try {
     const parsed = JSON.parse(raw);
     if (
@@ -64,17 +63,21 @@ function parseLayoutContent(raw: string): NestedLayoutData {
       Array.isArray(parsed.columns) &&
       parsed.columns.length >= 1
     ) {
-      // Flatten any prior multi-column data into a single column for backward compat.
-      const merged: NestedChild[] = [];
-      for (const c of parsed.columns) {
-        if (Array.isArray(c)) merged.push(...c);
+      const incoming: NestedChild[][] = parsed.columns.map((c: unknown) =>
+        Array.isArray(c) ? (c as NestedChild[]) : [],
+      );
+      if (columnCount === 1) {
+        const merged: NestedChild[] = [];
+        for (const c of incoming) merged.push(...c);
+        return { kind: "any-block-layout", columns: [merged] };
       }
-      return { kind: "any-block-layout", columns: [merged] };
+      const cols: NestedChild[][] = [incoming[0] ?? [], incoming[1] ?? []];
+      return { kind: "any-block-layout", columns: cols };
     }
   } catch {
     /* fallthrough */
   }
-  return { kind: "any-block-layout", columns: [[]] };
+  return { kind: "any-block-layout", columns: empty() };
 }
 
 function getVariantContent(type: NestedChildType, variant?: string): string {
@@ -124,16 +127,37 @@ interface NestedLayoutBlockProps {
   onDelete: () => void;
   onDuplicate: () => void;
   aiEnabled?: boolean;
+  /** Number of side-by-side columns to render. Defaults to 1. */
+  columnCount?: 1 | 2;
 }
 
 export function NestedLayoutBlock({
+  id,
   content,
   onChange,
   onDelete,
   onDuplicate,
   aiEnabled = false,
+  columnCount = 1,
 }: NestedLayoutBlockProps) {
-  const data = useMemo(() => parseLayoutContent(content), [content]);
+  const data = useMemo(() => parseLayoutContent(content, columnCount), [content, columnCount]);
+
+  // Sortable wiring so the container participates in the page-level reorder DnD,
+  // matching the behavior of regular ContentBlocks.
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const sortableStyle: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   // Per-column drop-target index (for showing drop indicators between nested blocks).
   const [activeDrop, setActiveDrop] = useState<{ col: number; idx: number } | null>(null);
@@ -158,8 +182,8 @@ export function NestedLayoutBlock({
 
   const insertChild = useCallback(
     (colIdx: number, atIndex: number, type: NestedChildType, variant?: string) => {
-      // Prevent nesting another any-block-layout inside a column.
-      if (type === "text" && variant === "any-block-layout") {
+      // Prevent nesting another any-block-layout container inside a column.
+      if (type === "text" && (variant === "any-block-layout" || variant === "any-block-layout-2")) {
         return;
       }
       const id = `nested-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -267,14 +291,30 @@ export function NestedLayoutBlock({
 
   return (
     <div
+      ref={setNodeRef}
+      style={sortableStyle}
+      {...attributes}
       className="group/layout relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.02] to-primary/[0.05] p-3 my-2"
-      aria-label="Single-column layout container"
+      aria-label={columnCount === 2 ? "Two-column layout container" : "Single-column layout container"}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                {...listeners}
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-grab active:cursor-grabbing touch-none"
+                aria-label="Drag to reorder layout"
+              >
+                <GripVertical className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">Drag to reorder</TooltipContent>
+          </Tooltip>
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-          <span>1-Column Layout</span>
+          <span>{columnCount === 2 ? "2-Column Layout" : "1-Column Layout"}</span>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/layout:opacity-100 transition-opacity">
           <Tooltip>
@@ -306,8 +346,8 @@ export function NestedLayoutBlock({
         </div>
       </div>
 
-      {/* Two columns */}
-      <div className="grid grid-cols-1 gap-3">
+      {/* Columns */}
+      <div className={cn("grid gap-3", columnCount === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1")}>
         {data.columns.map((col, colIdx) => (
           <div
             key={`col-${colIdx}`}
