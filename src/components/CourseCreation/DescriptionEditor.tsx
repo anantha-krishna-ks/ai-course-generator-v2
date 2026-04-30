@@ -427,74 +427,125 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
   );
 
   return (
-    <div className="space-y-2 animate-fade-in w-full">
-      {/* Secondary toolbar row — appears ABOVE main toolbar when "More" is toggled */}
-      {moreOpen && (
-        <div
-          id="rte-more-row"
-          role="toolbar"
-          aria-label="Additional formatting options"
-          className="flex flex-wrap items-center gap-0.5 p-1.5 border border-primary/20 rounded-xl bg-primary/[0.04] backdrop-blur-md shadow-sm w-full animate-fade-in"
-        >
-          <span className="text-[11px] font-medium text-muted-foreground px-2 shrink-0">
-            More tools
-          </span>
-          <Divider />
-          <LinkPopover editor={editor} />
-          <TableMenu editor={editor} />
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            isActive={editor.isActive('blockquote')}
-            label="Quote"
+    <div className="animate-fade-in w-full">
+      {/* Toolbar group — More row + Primary row visually merge into one connected unit */}
+      <div className={cn('w-full', moreOpen ? 'space-y-0' : 'space-y-2')}>
+        {/* Secondary "More" row — appears ABOVE primary toolbar, styled as an extension */}
+        {moreOpen && (
+          <div
+            id="rte-more-row"
+            role="toolbar"
+            aria-label="Additional formatting options"
+            className="flex flex-wrap items-center gap-0.5 px-1.5 pt-1.5 pb-2 border border-foreground/15 border-b-0 rounded-t-xl bg-background/80 backdrop-blur-md shadow-sm w-full animate-accordion-down"
           >
-            <Quote className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleSubscript().run()}
-            isActive={editor.isActive('subscript')}
-            label="Subscript"
-          >
-            <SubscriptIcon className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleSuperscript().run()}
-            isActive={editor.isActive('superscript')}
-            label="Superscript"
-          >
-            <SuperscriptIcon className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-          <Divider />
-          {/* Lists also surfaced here for very small screens where they're hidden in primary row */}
-          <div className="flex sm:hidden items-center gap-0.5">
+            {/* Block tools */}
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80 px-1.5 shrink-0">
+              Block
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  aria-label="Text alignment"
+                  title="Alignment"
+                  className="inline-flex items-center gap-1 h-8 px-1.5 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
+                >
+                  {currentAlignIcon}
+                  <ChevronDown className="w-3 h-3" aria-hidden="true" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="bg-background" onCloseAutoFocus={(e) => e.preventDefault()}>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('left').run(); }}>
+                  <AlignLeft className="w-4 h-4 mr-2" aria-hidden="true" /> Left
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('center').run(); }}>
+                  <AlignCenter className="w-4 h-4 mr-2" aria-hidden="true" /> Center
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('right').run(); }}>
+                  <AlignRight className="w-4 h-4 mr-2" aria-hidden="true" /> Right
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); editor.chain().focus().setTextAlign('justify').run(); }}>
+                  <AlignJustify className="w-4 h-4 mr-2" aria-hidden="true" /> Justify
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <ToolbarButton
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-              isActive={editor.isActive('bulletList')}
-              label="Bullet list"
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              isActive={editor.isActive('blockquote')}
+              label="Quote"
             >
-              <List className="w-4 h-4" aria-hidden="true" />
+              <Quote className="w-4 h-4" aria-hidden="true" />
             </ToolbarButton>
             <ToolbarButton
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              isActive={editor.isActive('orderedList')}
-              label="Numbered list"
+              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              label="Horizontal rule"
             >
-              <ListOrdered className="w-4 h-4" aria-hidden="true" />
+              <SeparatorHorizontal className="w-4 h-4" aria-hidden="true" />
             </ToolbarButton>
+
             <Divider />
+
+            {/* Insert */}
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80 px-1.5 shrink-0">
+              Insert
+            </span>
+            <LinkPopover editor={editor} />
+            <TableMenu editor={editor} />
+
+            <Divider />
+
+            {/* Code & script */}
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80 px-1.5 shrink-0">
+              Code
+            </span>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleCode().run()}
+              isActive={editor.isActive('code')}
+              label="Inline code"
+            >
+              <Code className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+              isActive={editor.isActive('codeBlock')}
+              label="Code block"
+            >
+              <Code2 className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleSubscript().run()}
+              isActive={editor.isActive('subscript')}
+              label="Subscript"
+            >
+              <SubscriptIcon className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton
+              onClick={() => editor.chain().focus().toggleSuperscript().run()}
+              isActive={editor.isActive('superscript')}
+              label="Superscript"
+            >
+              <SuperscriptIcon className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
+
+            <div className="flex-1 min-w-0" />
+
+            <ToolbarButton
+              onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+              label="Clear formatting"
+            >
+              <Eraser className="w-4 h-4" aria-hidden="true" />
+            </ToolbarButton>
           </div>
-          <ToolbarButton
-            onClick={() =>
-              editor.chain().focus().clearNodes().unsetAllMarks().run()
-            }
-            label="Clear formatting"
-          >
-            <Eraser className="w-4 h-4" aria-hidden="true" />
-          </ToolbarButton>
-        </div>
-      )}
+        )}
 
       {/* Primary toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 rounded-xl bg-background/80 backdrop-blur-md shadow-sm w-full">
+      <div
+        className={cn(
+          'flex flex-wrap items-center gap-0.5 p-1.5 border border-foreground/15 bg-background/80 backdrop-blur-md shadow-sm w-full',
+          moreOpen ? 'rounded-b-xl border-t-0' : 'rounded-xl',
+        )}
+      >
         {/* Paragraph style dropdown */}
         <StyleDropdown editor={editor} />
 
