@@ -3,6 +3,7 @@ import { Trash2, Copy, GripVertical, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DropIndicator } from "./DropIndicator";
+import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import {
   Tooltip,
   TooltipContent,
