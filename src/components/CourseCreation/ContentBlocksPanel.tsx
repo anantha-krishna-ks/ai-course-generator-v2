@@ -19,6 +19,8 @@ import {
   Mountain,
   PanelLeft,
   PanelRight,
+  LayoutGrid,
+  Rows,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -56,6 +58,9 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
   { id: "two-columns", label: "Two Columns", icon: Columns2, category: "text", categoryLabel: "TEXT", type: "text", variant: "two-columns", description: "Side-by-side text columns for comparisons or dense content" },
   { id: "three-columns", label: "Three Columns", icon: Columns3, category: "text", categoryLabel: "TEXT", type: "text", variant: "three-columns", description: "Three text columns for structured content" },
+  // LAYOUT — column containers (currently use text-column rendering under the hood)
+  { id: "layout-one-column", label: "Single Column", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "text-only", description: "A single full-width column to hold your content" },
+  { id: "layout-two-columns", label: "Two Columns", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "two-columns", description: "A two-column layout for side-by-side content" },
   // IMAGES
   { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full", description: "A full-width image block" },
   { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top", description: "Image above with descriptive text below" },
@@ -90,6 +95,29 @@ function BlockPreview({ id }: { id: string }) {
   const card = "bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-[hsl(220,13%,91%)] overflow-hidden";
 
   switch (id) {
+    case "layout-one-column":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "layout-two-columns":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 flex gap-2")}>
+            <div className="flex-1 rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)]">Column 1</span>
+            </div>
+            <div className="flex-1 rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)]">Column 2</span>
+            </div>
+          </div>
+        </div>
+      );
     case "heading-text":
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
@@ -344,6 +372,29 @@ function BlockThumbnail({ id }: { id: string }) {
   const miniCard = "bg-white rounded-[4px] shadow-[0_0.5px_2px_rgba(0,0,0,0.07)] border border-[hsl(220,13%,91%)]";
 
   switch (id) {
+    case "layout-one-column":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
+              <span className="text-[3.5px] font-semibold text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "layout-two-columns":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[3px]")}>
+            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
+              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 1</span>
+            </div>
+            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
+              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 2</span>
+            </div>
+          </div>
+        </div>
+      );
     case "heading-text":
       return (
         <div className={wrapper}>
