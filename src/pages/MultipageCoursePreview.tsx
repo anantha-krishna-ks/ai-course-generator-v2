@@ -1186,11 +1186,11 @@ const MultipageCoursePreview = () => {
                             Congratulations! 🎉
                           </h3>
                           <p className="text-muted-foreground max-w-lg mx-auto text-base sm:text-lg leading-relaxed">
-                            You've successfully completed{" "}
+                            Congratulations! You've successfully completed{" "}
                             <span className="font-semibold text-foreground">
                               {data?.title || "the course"}
                             </span>
-                            . Great job on reaching the end!
+                            . Great job! 🎉
                           </p>
                         </div>
                         <Button
