@@ -1135,14 +1135,28 @@ const MultipageCoursePreview = () => {
                         Previous
                       </Button>
                       <Button
-                        variant="ghost"
+                        variant={isLastPage ? "default" : "ghost"}
                         onClick={goToNext}
-                        disabled={currentIndex >= allPages.length - 1}
-                        className="gap-2 text-muted-foreground"
-                        aria-label="Go to next page"
+                        disabled={currentIndex < 0}
+                        className={cn(
+                          "gap-2",
+                          isLastPage
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
+                            : "text-muted-foreground"
+                        )}
+                        aria-label={isLastPage ? "Finish course" : "Go to next page"}
                       >
-                        Next
-                        <ChevronRight className="w-4 h-4" />
+                        {isLastPage ? (
+                          <>
+                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                            Finish
+                          </>
+                        ) : (
+                          <>
+                            Next
+                            <ChevronRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          </>
+                        )}
                       </Button>
                     </div>
                   )}
