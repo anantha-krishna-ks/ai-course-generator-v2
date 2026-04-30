@@ -307,7 +307,7 @@ export function NestedLayoutBlock({
       </div>
 
       {/* Two columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {data.columns.map((col, colIdx) => (
           <div
             key={`col-${colIdx}`}
