@@ -358,7 +358,7 @@ function TableMenu({ editor }: { editor: Editor }) {
   );
 }
 
-export function DescriptionEditor({ content, onChange, onBlur }: DescriptionEditorProps) {
+export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBlockFontChange }: DescriptionEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
