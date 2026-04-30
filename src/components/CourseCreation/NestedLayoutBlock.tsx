@@ -5,7 +5,22 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DropIndicator } from "./DropIndicator";
+import { AddContentButton } from "./AddContentButton";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
+
+// Variants that don't make sense inside a nested column (multi-column text
+// layouts and side-by-side image/video descriptions). These are filtered out
+// to avoid confusing nested layouts within layouts.
+const DISALLOWED_NESTED_VARIANTS = new Set([
+  "any-block-layout",
+  "any-block-layout-2",
+  "two-columns",
+  "three-columns",
+  "image-left",
+  "image-right",
+  "video-left",
+  "video-right",
+]);
 import {
   Tooltip,
   TooltipContent,
@@ -182,8 +197,9 @@ export function NestedLayoutBlock({
 
   const insertChild = useCallback(
     (colIdx: number, atIndex: number, type: NestedChildType, variant?: string) => {
-      // Prevent nesting another any-block-layout container inside a column.
-      if (type === "text" && (variant === "any-block-layout" || variant === "any-block-layout-2")) {
+      // Block disallowed variants (nested layouts and side-by-side variants
+      // that don't fit within a column).
+      if (variant && DISALLOWED_NESTED_VARIANTS.has(variant)) {
         return;
       }
       const id = `nested-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -385,11 +401,23 @@ export function NestedLayoutBlock({
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <Plus className="w-3 h-3 text-primary/70" aria-hidden="true" focusable="false" />
-                  <p className="text-xs font-medium text-foreground/75">Drop any block here</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Drag a block here, or</p>
+                {/* Add content button (compact, opens block picker popover) */}
+                <div className="w-full max-w-[260px] mt-0.5" onPointerDown={(e) => e.stopPropagation()}>
+                  <AddContentButton
+                    variant="simple"
+                    aiEnabled={aiEnabled}
+                    onAddText={() => insertChild(colIdx, 0, "text")}
+                    onAddImage={() => insertChild(colIdx, 0, "image")}
+                    onAddVideo={() => insertChild(colIdx, 0, "video")}
+                    onAddAudio={() => insertChild(colIdx, 0, "audio")}
+                    onAddDoc={() => insertChild(colIdx, 0, "doc")}
+                    onAddQuiz={() => insertChild(colIdx, 0, "quiz")}
+                    onDropBlock={(type, variant) =>
+                      insertChild(colIdx, 0, type as NestedChildType, variant)
+                    }
+                  />
                 </div>
-                <p className="text-[11px] text-muted-foreground -mt-1">Text, image, video, quiz, audio…</p>
               </div>
             ) : (
               <div className="flex flex-col">
@@ -427,6 +455,22 @@ export function NestedLayoutBlock({
                     />
                   </div>
                 ))}
+                {/* Add another block at the end of the column */}
+                <div className="mt-1" onPointerDown={(e) => e.stopPropagation()}>
+                  <AddContentButton
+                    variant="simple"
+                    aiEnabled={aiEnabled}
+                    onAddText={() => insertChild(colIdx, col.length, "text")}
+                    onAddImage={() => insertChild(colIdx, col.length, "image")}
+                    onAddVideo={() => insertChild(colIdx, col.length, "video")}
+                    onAddAudio={() => insertChild(colIdx, col.length, "audio")}
+                    onAddDoc={() => insertChild(colIdx, col.length, "doc")}
+                    onAddQuiz={() => insertChild(colIdx, col.length, "quiz")}
+                    onDropBlock={(type, variant) =>
+                      insertChild(colIdx, col.length, type as NestedChildType, variant)
+                    }
+                  />
+                </div>
               </div>
             )}
           </div>
