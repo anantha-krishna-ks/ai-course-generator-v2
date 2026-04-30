@@ -406,7 +406,9 @@ const MultipageCoursePreview = () => {
   const handleFinish = () => {
     setCompleted(true);
     if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      requestAnimationFrame(() => {
+        completionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
     }
   };
 
