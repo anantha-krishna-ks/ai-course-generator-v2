@@ -45,6 +45,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ContentBlock } from "./ContentBlock";
+import { NestedLayoutBlock } from "./NestedLayoutBlock";
 import { ImageBlock } from "./ImageBlock";
 import { AddContentButton } from "./AddContentButton";
 import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPanel";
@@ -332,6 +333,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         videoUrl: "",
         description: "",
       });
+    }
+    if (type === "text" && variant === "any-block-layout") {
+      return JSON.stringify({ kind: "any-block-layout", columns: [[], []] });
     }
     if (type !== "text") return "";
     switch (variant) {
@@ -1382,6 +1386,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     key={`deleting-${block.id}`}
                                     variant={(deletingIds.get(block.id) ?? block.type) as BlockSkeletonVariant}
                                     action="deleting"
+                                  />
+                                );
+                              } else if (block.type === "text" && block.variant === "any-block-layout") {
+                                elements.push(
+                                  <NestedLayoutBlock
+                                    key={block.id}
+                                    id={block.id}
+                                    content={block.content}
+                                    onChange={(content) => updateBlock(block.id, content)}
+                                    onDelete={() => deleteBlock(block.id)}
+                                    onDuplicate={() => duplicateBlock(block.id)}
+                                    aiEnabled={aiEnabled}
                                   />
                                 );
                               } else {
