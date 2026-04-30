@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import emptyPageIllustration from "@/assets/empty-page-illustration.png";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Play, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Menu, X, Video, Music, Download, ExternalLink, Maximize2, CheckCircle2, Trophy, Home, Sparkles, Check } from "lucide-react";
