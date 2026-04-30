@@ -488,14 +488,30 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
-    case "heading-text":
+    case "layout-any-block":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2.5")}>
-            <p className="text-[5px] font-bold text-[hsl(220,15%,15%)] leading-[1.3] mb-[4px]">Getting Started Guide</p>
-            <p className="text-[3.5px] text-[hsl(220,8%,50%)] leading-[1.7]">Learn the fundamentals of building your first project with our comprehensive step-by-step guide.</p>
-            <p className="text-[3.5px] text-[hsl(220,8%,62%)] leading-[1.7] mt-[2px]">Follow along to set up everything you need.</p>
+          <div className={cn(miniCard, "p-[4px] flex gap-[3px]")}>
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[36px] overflow-hidden p-[2.5px] flex flex-col gap-[1.5px]">
+              <div className="h-[2px] rounded-full bg-primary/30 w-3/4" />
+              <div className="w-full h-[10px] rounded-[1px] bg-[hsl(225,15%,18%)] flex items-center justify-center">
+                <div className="w-[5px] h-[5px] rounded-full bg-white/30 flex items-center justify-center">
+                  <div className="w-0 h-0 border-t-[1px] border-b-[1px] border-l-[2px] border-transparent border-l-white" />
+                </div>
+              </div>
+              <div className="h-[1.5px] rounded-full bg-primary/20 w-full" />
+            </div>
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[36px] overflow-hidden p-[2.5px] flex flex-col gap-[1.5px]">
+              <div className="w-full h-[12px] rounded-[1px] bg-primary/20 flex items-center justify-center">
+                <ImageIcon className="w-[5px] h-[5px] text-primary/60" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="h-[2px] rounded-full bg-primary/25 w-full" />
+              <div className="h-[1.5px] rounded-full bg-primary/20 w-5/6" />
+              <div className="h-[1.5px] rounded-full bg-primary/20 w-2/3" />
+            </div>
           </div>
+        </div>
+      );
         </div>
       );
     case "text-only":
