@@ -506,8 +506,32 @@ function BlockThumbnail({ id }: { id: string }) {
     case "layout-any-block":
       return (
         <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="relative w-full rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[40px] overflow-hidden p-[3px] flex flex-col gap-[1.5px]">
+              {/* heading */}
+              <div className="h-[2px] rounded-full bg-primary/30 w-2/3" />
+              {/* image */}
+              <div className="w-full h-[10px] rounded-[1px] bg-primary/20 flex items-center justify-center">
+                <ImageIcon className="w-[5px] h-[5px] text-primary/60" aria-hidden="true" focusable="false" />
+              </div>
+              {/* video */}
+              <div className="w-full h-[8px] rounded-[1px] bg-[hsl(225,15%,18%)] flex items-center justify-center">
+                <div className="w-[5px] h-[5px] rounded-full bg-white/30 flex items-center justify-center">
+                  <div className="w-0 h-0 border-t-[1px] border-b-[1px] border-l-[2px] border-transparent border-l-white" />
+                </div>
+              </div>
+              {/* text */}
+              <div className="h-[1.5px] rounded-full bg-primary/20 w-full" />
+              <div className="h-[1.5px] rounded-full bg-primary/20 w-5/6" />
+            </div>
+          </div>
+        </div>
+      );
+    case "layout-any-block-2":
+      return (
+        <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px] flex gap-[3px]")}>
-            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[36px] overflow-hidden p-[2.5px] flex flex-col gap-[1.5px]">
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[40px] overflow-hidden p-[2.5px] flex flex-col gap-[1.5px]">
               <div className="h-[2px] rounded-full bg-primary/30 w-3/4" />
               <div className="w-full h-[10px] rounded-[1px] bg-[hsl(225,15%,18%)] flex items-center justify-center">
                 <div className="w-[5px] h-[5px] rounded-full bg-white/30 flex items-center justify-center">
@@ -515,8 +539,9 @@ function BlockThumbnail({ id }: { id: string }) {
                 </div>
               </div>
               <div className="h-[1.5px] rounded-full bg-primary/20 w-full" />
+              <div className="h-[1.5px] rounded-full bg-primary/20 w-2/3" />
             </div>
-            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[36px] overflow-hidden p-[2.5px] flex flex-col gap-[1.5px]">
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[40px] overflow-hidden p-[2.5px] flex flex-col gap-[1.5px]">
               <div className="w-full h-[12px] rounded-[1px] bg-primary/20 flex items-center justify-center">
                 <ImageIcon className="w-[5px] h-[5px] text-primary/60" aria-hidden="true" focusable="false" />
               </div>
