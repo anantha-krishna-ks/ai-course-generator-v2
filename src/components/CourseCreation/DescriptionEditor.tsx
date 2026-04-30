@@ -427,17 +427,15 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
   );
 
   return (
-    <div className="animate-fade-in w-full">
-      {/* Toolbar group — More row + Primary row visually merge into one connected unit */}
-      <div className={cn('w-full', moreOpen ? 'space-y-0' : 'space-y-2')}>
-        {/* Secondary "More" row — appears ABOVE primary toolbar, styled as an extension */}
-        {moreOpen && (
-          <div
-            id="rte-more-row"
-            role="toolbar"
-            aria-label="Additional formatting options"
-            className="flex flex-wrap items-center gap-0.5 px-1.5 pt-1.5 pb-2 border border-foreground/15 border-b-0 rounded-t-xl bg-background/80 backdrop-blur-md shadow-sm w-full animate-accordion-down"
-          >
+    <div className={cn('animate-fade-in w-full', moreOpen ? 'space-y-0' : 'space-y-2')}>
+      {/* Secondary "More" row — appears ABOVE primary toolbar, styled as a seamless extension */}
+      {moreOpen && (
+        <div
+          id="rte-more-row"
+          role="toolbar"
+          aria-label="Additional formatting options"
+          className="flex flex-wrap items-center gap-0.5 px-1.5 pt-1.5 pb-2 border border-foreground/15 border-b-0 rounded-t-xl bg-background/80 backdrop-blur-md shadow-sm w-full animate-accordion-down"
+        >
             {/* Block tools */}
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80 px-1.5 shrink-0">
               Block
