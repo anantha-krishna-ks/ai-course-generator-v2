@@ -262,10 +262,8 @@ export function NestedLayoutBlock({
     [data.columns, insertChild],
   );
 
-  const getColumnLength = (colIdx: number) => data.columns[colIdx]?.length ?? 0;
-  void getColumnLength;
 
-  const getColumnLength = (colIdx: number) => data.columns[colIdx]?.length ?? 0;
+
 
   return (
     <div
