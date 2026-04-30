@@ -53,14 +53,14 @@ interface ContentBlocksPanelProps {
 }
 
 const ALL_BLOCKS: BlockItem[] = [
+  // LAYOUT — column containers (currently use text-column rendering under the hood)
+  { id: "layout-one-column", label: "Single Column", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "text-only", description: "A single full-width column to hold your content" },
+  { id: "layout-two-columns", label: "Two Columns", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "two-columns", description: "A two-column layout for side-by-side content" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
   { id: "two-columns", label: "Two Columns", icon: Columns2, category: "text", categoryLabel: "TEXT", type: "text", variant: "two-columns", description: "Side-by-side text columns for comparisons or dense content" },
   { id: "three-columns", label: "Three Columns", icon: Columns3, category: "text", categoryLabel: "TEXT", type: "text", variant: "three-columns", description: "Three text columns for structured content" },
-  // LAYOUT — column containers (currently use text-column rendering under the hood)
-  { id: "layout-one-column", label: "Single Column", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "text-only", description: "A single full-width column to hold your content" },
-  { id: "layout-two-columns", label: "Two Columns", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "two-columns", description: "A two-column layout for side-by-side content" },
   // IMAGES
   { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full", description: "A full-width image block" },
   { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top", description: "Image above with descriptive text below" },
@@ -99,22 +99,53 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <div className="rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
-              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            <div className="relative rounded-md border-2 border-dashed border-primary/25 bg-gradient-to-br from-primary/[0.04] to-primary/[0.10] h-24 overflow-hidden">
+              {/* Faux content lines suggesting "any block goes here" */}
+              <div className="absolute inset-0 p-3 flex flex-col justify-center gap-1.5">
+                <div className="h-1.5 rounded-full bg-primary/20 w-3/4" />
+                <div className="h-1.5 rounded-full bg-primary/15 w-full" />
+                <div className="h-1.5 rounded-full bg-primary/15 w-5/6" />
+                <div className="h-1.5 rounded-full bg-primary/10 w-2/3" />
+              </div>
+              <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center">
+                <div className="w-2 h-[1.5px] bg-primary/60 rounded-full" />
+                <div className="absolute w-[1.5px] h-2 bg-primary/60 rounded-full" />
+              </div>
             </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Drop any block — text, image, video, quiz…</p>
           </div>
         </div>
       );
     case "layout-two-columns":
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
-          <div className={cn(card, "p-3 flex gap-2")}>
-            <div className="flex-1 rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
-              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)]">Column 1</span>
+          <div className={cn(card, "p-3")}>
+            <div className="flex gap-2">
+              <div className="relative flex-1 rounded-md border-2 border-dashed border-primary/25 bg-gradient-to-br from-primary/[0.04] to-primary/[0.10] h-24 overflow-hidden">
+                <div className="absolute inset-0 p-2 flex flex-col justify-center gap-1.5">
+                  <div className="h-[5px] rounded-full bg-primary/25 w-2/3" />
+                  <div className="h-1.5 rounded-full bg-primary/15 w-full" />
+                  <div className="h-1.5 rounded-full bg-primary/15 w-4/5" />
+                </div>
+                <div className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center">
+                  <div className="w-1.5 h-[1px] bg-primary/60" />
+                  <div className="absolute w-[1px] h-1.5 bg-primary/60" />
+                </div>
+              </div>
+              <div className="relative flex-1 rounded-md border-2 border-dashed border-primary/25 bg-gradient-to-br from-primary/[0.04] to-primary/[0.10] h-24 overflow-hidden">
+                <div className="absolute inset-0 p-2 flex flex-col justify-center items-center gap-1.5">
+                  <div className="w-full aspect-[16/9] rounded-sm bg-primary/15 flex items-center justify-center">
+                    <ImageIcon className="w-3 h-3 text-primary/50" aria-hidden="true" focusable="false" />
+                  </div>
+                  <div className="h-1.5 rounded-full bg-primary/15 w-4/5" />
+                </div>
+                <div className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full bg-primary/15 border border-primary/25 flex items-center justify-center">
+                  <div className="w-1.5 h-[1px] bg-primary/60" />
+                  <div className="absolute w-[1px] h-1.5 bg-primary/60" />
+                </div>
+              </div>
             </div>
-            <div className="flex-1 rounded-md border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-24 flex items-center justify-center">
-              <span className="text-[9px] font-medium text-[hsl(220,8%,52%)]">Column 2</span>
-            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Two side-by-side drop zones for any blocks</p>
           </div>
         </div>
       );
@@ -376,8 +407,17 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px]")}>
-            <div className="rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
-              <span className="text-[3.5px] font-semibold text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            <div className="relative rounded-[3px] border border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.05] to-primary/[0.12] h-[34px] overflow-hidden">
+              <div className="absolute inset-0 px-[5px] flex flex-col justify-center gap-[2px]">
+                <div className="h-[2px] rounded-full bg-primary/25 w-3/4" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-full" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-5/6" />
+                <div className="h-[2px] rounded-full bg-primary/15 w-2/3" />
+              </div>
+              <div className="absolute top-[1.5px] right-[1.5px] w-[6px] h-[6px] rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <div className="w-[3px] h-[0.75px] bg-primary/70" />
+                <div className="absolute w-[0.75px] h-[3px] bg-primary/70" />
+              </div>
             </div>
           </div>
         </div>
@@ -386,11 +426,28 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px] flex gap-[3px]")}>
-            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
-              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 1</span>
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.05] to-primary/[0.12] h-[34px] overflow-hidden">
+              <div className="absolute inset-0 p-[3px] flex flex-col justify-center gap-[2px]">
+                <div className="h-[1.5px] rounded-full bg-primary/30 w-2/3" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-full" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-4/5" />
+              </div>
+              <div className="absolute top-[1px] right-[1px] w-[5px] h-[5px] rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <div className="w-[2px] h-[0.75px] bg-primary/70" />
+                <div className="absolute w-[0.75px] h-[2px] bg-primary/70" />
+              </div>
             </div>
-            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
-              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 2</span>
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.05] to-primary/[0.12] h-[34px] overflow-hidden">
+              <div className="absolute inset-0 p-[3px] flex flex-col justify-center items-center gap-[2px]">
+                <div className="w-full h-[14px] rounded-[1px] bg-primary/15 flex items-center justify-center">
+                  <ImageIcon className="w-[5px] h-[5px] text-primary/55" aria-hidden="true" focusable="false" />
+                </div>
+                <div className="h-[1.5px] rounded-full bg-primary/20 w-3/4" />
+              </div>
+              <div className="absolute top-[1px] right-[1px] w-[5px] h-[5px] rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <div className="w-[2px] h-[0.75px] bg-primary/70" />
+                <div className="absolute w-[0.75px] h-[2px] bg-primary/70" />
+              </div>
             </div>
           </div>
         </div>
