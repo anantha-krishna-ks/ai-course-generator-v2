@@ -1,5 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Trash2, Copy, GripVertical, LayoutGrid } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DropIndicator } from "./DropIndicator";
