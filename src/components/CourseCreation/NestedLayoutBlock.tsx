@@ -182,8 +182,8 @@ export function NestedLayoutBlock({
 
   const insertChild = useCallback(
     (colIdx: number, atIndex: number, type: NestedChildType, variant?: string) => {
-      // Prevent nesting another any-block-layout inside a column.
-      if (type === "text" && variant === "any-block-layout") {
+      // Prevent nesting another any-block-layout container inside a column.
+      if (type === "text" && (variant === "any-block-layout" || variant === "any-block-layout-2")) {
         return;
       }
       const id = `nested-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
