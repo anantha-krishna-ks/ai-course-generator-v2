@@ -400,7 +400,20 @@ const MultipageCoursePreview = () => {
   const currentIndex = selectedId ? allPages.findIndex((p) => p.id === selectedId) : -1;
   const progress = totalPages > 0 && currentIndex >= 0 ? Math.round(((currentIndex + 1) / totalPages) * 100) : 0;
 
+  const isLastPage = currentIndex >= 0 && currentIndex === allPages.length - 1;
+
+  const handleFinish = () => {
+    setCompleted(true);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const goToNext = () => {
+    if (isLastPage) {
+      handleFinish();
+      return;
+    }
     if (currentIndex < allPages.length - 1) {
       setSelectedId(allPages[currentIndex + 1].id);
     }
