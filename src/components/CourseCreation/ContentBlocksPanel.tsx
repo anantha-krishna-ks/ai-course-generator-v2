@@ -53,14 +53,14 @@ interface ContentBlocksPanelProps {
 }
 
 const ALL_BLOCKS: BlockItem[] = [
+  // LAYOUT — column containers (currently use text-column rendering under the hood)
+  { id: "layout-one-column", label: "Single Column", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "text-only", description: "A single full-width column to hold your content" },
+  { id: "layout-two-columns", label: "Two Columns", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "two-columns", description: "A two-column layout for side-by-side content" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
   { id: "two-columns", label: "Two Columns", icon: Columns2, category: "text", categoryLabel: "TEXT", type: "text", variant: "two-columns", description: "Side-by-side text columns for comparisons or dense content" },
   { id: "three-columns", label: "Three Columns", icon: Columns3, category: "text", categoryLabel: "TEXT", type: "text", variant: "three-columns", description: "Three text columns for structured content" },
-  // LAYOUT — column containers (currently use text-column rendering under the hood)
-  { id: "layout-one-column", label: "Single Column", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "text-only", description: "A single full-width column to hold your content" },
-  { id: "layout-two-columns", label: "Two Columns", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "two-columns", description: "A two-column layout for side-by-side content" },
   // IMAGES
   { id: "image-full", label: "Single Image", icon: ImageIcon, category: "image", categoryLabel: "IMAGES", type: "image", variant: "image-full", description: "A full-width image block" },
   { id: "image-top", label: "Image on Top", icon: ImageUp, category: "image", categoryLabel: "IMAGES", type: "image-description", variant: "image-top", description: "Image above with descriptive text below" },
