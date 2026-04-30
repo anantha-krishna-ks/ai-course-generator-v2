@@ -53,10 +53,8 @@ interface ContentBlocksPanelProps {
 }
 
 const ALL_BLOCKS: BlockItem[] = [
-  // LAYOUT — column containers (currently use text-column rendering under the hood)
-  { id: "layout-one-column", label: "Single Column", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "text-only", description: "A single full-width column to hold your content" },
-  { id: "layout-two-columns", label: "Two Columns", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "two-columns", description: "A two-column layout for side-by-side content" },
-  { id: "layout-any-block", label: "2-Col Container", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout", description: "A two-column container that accepts any block — text, image, video, quiz, and more" },
+  // LAYOUT — flexible container that accepts any block type
+  { id: "layout-any-block", label: "1 Col Container", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout", description: "A flexible container that accepts any block — text, image, video, quiz, and more" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
