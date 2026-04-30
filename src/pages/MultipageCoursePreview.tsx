@@ -1192,8 +1192,8 @@ const MultipageCoursePreview = () => {
                       <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
 
                       <div className="relative flex flex-col items-center text-center space-y-6">
-                        <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center ring-4 ring-primary/10">
-                          <Trophy className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
+                        <div className="w-20 h-20 rounded-full bg-green-500/15 flex items-center justify-center ring-4 ring-green-500/20 animate-scale-in">
+                          <CheckCircle2 className="w-12 h-12 text-green-500" strokeWidth={2.5} aria-hidden="true" focusable="false" />
                         </div>
                         <div className="space-y-3">
                           <h3 className="text-3xl sm:text-4xl font-bold text-foreground">
