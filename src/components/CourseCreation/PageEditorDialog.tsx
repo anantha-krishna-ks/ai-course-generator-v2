@@ -335,6 +335,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
       });
     }
     if (type === "text" && variant === "any-block-layout") {
+      return JSON.stringify({ kind: "any-block-layout", columns: [[]] });
+    }
+    if (type === "text" && variant === "any-block-layout-2") {
       return JSON.stringify({ kind: "any-block-layout", columns: [[], []] });
     }
     if (type !== "text") return "";
