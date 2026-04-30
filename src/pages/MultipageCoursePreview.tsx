@@ -56,6 +56,7 @@ const MultipageCoursePreview = () => {
   const [mobileOutlineOpen, setMobileOutlineOpen] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const completionRef = useRef<HTMLDivElement | null>(null);
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
