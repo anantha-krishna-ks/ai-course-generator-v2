@@ -364,12 +364,32 @@ export function NestedLayoutBlock({
             )}
           >
             {col.length === 0 ? (
-              <div className="h-full min-h-[120px] flex flex-col items-center justify-center gap-1.5 text-center px-3 py-6 select-none">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <GripVertical className="w-4 h-4 text-primary/60" aria-hidden="true" focusable="false" />
+              <div className="h-full min-h-[140px] flex flex-col items-center justify-center gap-2.5 text-center px-4 py-6 select-none">
+                {/* Faux block stack preview */}
+                <div className="w-full max-w-[180px] flex flex-col gap-1.5 mb-1" aria-hidden="true">
+                  <div className="h-2 rounded-full bg-primary/25 w-2/3 mx-auto" />
+                  <div className="w-full h-9 rounded-md bg-primary/10 border border-primary/15 flex items-center justify-center">
+                    <ImageIcon className="w-3.5 h-3.5 text-primary/55" focusable="false" />
+                  </div>
+                  <div className="h-1.5 rounded-full bg-primary/15 w-full" />
+                  <div className="h-1.5 rounded-full bg-primary/15 w-5/6 mx-auto" />
                 </div>
-                <p className="text-xs font-medium text-foreground/70">Drop a block here</p>
-                <p className="text-[11px] text-muted-foreground">Text, image, video, quiz, audio…</p>
+                {/* Accepted block-type pills */}
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  {[Type, ImageIcon, Video, Mic, HelpCircle].map((Icon, i) => (
+                    <span
+                      key={i}
+                      className="w-6 h-6 rounded-full bg-background border border-primary/20 flex items-center justify-center text-primary/70"
+                    >
+                      <Icon className="w-3 h-3" focusable="false" />
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <Plus className="w-3 h-3 text-primary/70" aria-hidden="true" focusable="false" />
+                  <p className="text-xs font-medium text-foreground/75">Drop any block here</p>
+                </div>
+                <p className="text-[11px] text-muted-foreground -mt-1">Text, image, video, quiz, audio…</p>
               </div>
             ) : (
               <div className="flex flex-col">
