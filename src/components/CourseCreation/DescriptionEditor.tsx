@@ -703,8 +703,15 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Spacer pushes undo/redo to the right on wider screens */}
+        {/* Spacer pushes block-font chip + undo/redo to the right on wider screens */}
         <div className="flex-1 min-w-0" />
+
+        {onBlockFontChange && (
+          <>
+            <Divider />
+            <BlockFontChip value={blockFont} onChange={onBlockFontChange} />
+          </>
+        )}
 
         <Divider />
 
