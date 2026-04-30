@@ -420,6 +420,7 @@ const MultipageCoursePreview = () => {
   };
 
   const goToPrev = () => {
+    if (completed) setCompleted(false);
     if (currentIndex > 0) {
       setSelectedId(allPages[currentIndex - 1].id);
     }
