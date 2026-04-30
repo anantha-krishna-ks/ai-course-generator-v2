@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { Trash2, Copy, GripVertical, LayoutGrid, Type, ImageIcon, Video, Mic, HelpCircle, Plus } from "lucide-react";
+import { Trash2, Copy, GripVertical, LayoutGrid, Type, ImageIcon, Video, Mic, HelpCircle, Plus, Info } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
@@ -331,6 +331,24 @@ export function NestedLayoutBlock({
           </Tooltip>
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
           <span>{columnCount === 2 ? "2-Column Layout" : "1-Column Layout"}</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label="About this container"
+              >
+                <Info className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs max-w-[260px] leading-relaxed">
+              <p className="font-medium text-foreground mb-1">Allowed inside columns</p>
+              <p className="text-muted-foreground">Text, Image, Video, Audio, Doc, and Quiz blocks.</p>
+              <p className="text-muted-foreground mt-1.5">
+                Side-by-side variants (image-left/right, video-left/right) and nested layouts are disabled here.
+              </p>
+            </TooltipContent>
+          </Tooltip>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/layout:opacity-100 transition-opacity">
           <Tooltip>
@@ -380,43 +398,47 @@ export function NestedLayoutBlock({
             )}
           >
             {col.length === 0 ? (
-              <div className="h-full min-h-[140px] flex flex-col items-center justify-center gap-2.5 text-center px-4 py-6 select-none">
+              <div className="h-full min-h-[140px] flex flex-col items-center justify-center gap-2 text-center px-4 py-5 select-none">
                 {/* Faux block stack preview */}
-                <div className="w-full max-w-[180px] flex flex-col gap-1.5 mb-1" aria-hidden="true">
-                  <div className="h-2 rounded-full bg-primary/25 w-2/3 mx-auto" />
-                  <div className="w-full h-9 rounded-md bg-primary/10 border border-primary/15 flex items-center justify-center">
+                <div className="w-full max-w-[160px] flex flex-col gap-1.5" aria-hidden="true">
+                  <div className="h-1.5 rounded-full bg-primary/25 w-2/3 mx-auto" />
+                  <div className="w-full h-8 rounded-md bg-primary/10 border border-primary/15 flex items-center justify-center">
                     <ImageIcon className="w-3.5 h-3.5 text-primary/55" focusable="false" />
                   </div>
                   <div className="h-1.5 rounded-full bg-primary/15 w-full" />
                   <div className="h-1.5 rounded-full bg-primary/15 w-5/6 mx-auto" />
                 </div>
-                {/* Accepted block-type pills */}
-                <div className="flex items-center gap-1.5" aria-hidden="true">
-                  {[Type, ImageIcon, Video, Mic, HelpCircle].map((Icon, i) => (
-                    <span
-                      key={i}
-                      className="w-6 h-6 rounded-full bg-background border border-primary/20 flex items-center justify-center text-primary/70"
-                    >
-                      <Icon className="w-3 h-3" focusable="false" />
-                    </span>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Drag a block here, or pick one
+                </p>
+                {/* Minimal block-type quick-pick row */}
+                <div
+                  className="flex items-center gap-1 mt-0.5"
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  {[
+                    { Icon: Type, label: "Add text", type: "text" as const },
+                    { Icon: ImageIcon, label: "Add image", type: "image" as const },
+                    { Icon: Video, label: "Add video", type: "video" as const },
+                    { Icon: Mic, label: "Add audio", type: "audio" as const },
+                    { Icon: HelpCircle, label: "Add quiz", type: "quiz" as const },
+                  ].map(({ Icon, label, type }) => (
+                    <Tooltip key={type}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          onClick={() => insertChild(colIdx, 0, type)}
+                          className="w-7 h-7 rounded-full bg-background border border-border/60 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/5 transition-colors"
+                          aria-label={label}
+                        >
+                          <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-xs">
+                        {label}
+                      </TooltipContent>
+                    </Tooltip>
                   ))}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Drag a block here, or</p>
-                {/* Add content button (compact, opens block picker popover) */}
-                <div className="w-full max-w-[260px] mt-0.5" onPointerDown={(e) => e.stopPropagation()}>
-                  <AddContentButton
-                    variant="simple"
-                    aiEnabled={aiEnabled}
-                    onAddText={() => insertChild(colIdx, 0, "text")}
-                    onAddImage={() => insertChild(colIdx, 0, "image")}
-                    onAddVideo={() => insertChild(colIdx, 0, "video")}
-                    onAddAudio={() => insertChild(colIdx, 0, "audio")}
-                    onAddDoc={() => insertChild(colIdx, 0, "doc")}
-                    onAddQuiz={() => insertChild(colIdx, 0, "quiz")}
-                    onDropBlock={(type, variant) =>
-                      insertChild(colIdx, 0, type as NestedChildType, variant)
-                    }
-                  />
                 </div>
               </div>
             ) : (
