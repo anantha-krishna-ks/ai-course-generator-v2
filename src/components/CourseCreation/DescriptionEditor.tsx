@@ -37,6 +37,7 @@ import {
   Type,
   ChevronDown,
   MoreHorizontal,
+  Eraser,
   Trash2,
   Plus,
   Minus,
