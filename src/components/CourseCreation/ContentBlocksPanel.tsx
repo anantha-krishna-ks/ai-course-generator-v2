@@ -54,8 +54,8 @@ interface ContentBlocksPanelProps {
 
 const ALL_BLOCKS: BlockItem[] = [
   // LAYOUT — flexible containers that accept any block type
-  { id: "layout-any-block", label: "1 Col Container", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout", description: "A flexible container that accepts any block — text, image, video, quiz, and more" },
-  { id: "layout-any-block-2", label: "2 Col Container", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout-2", description: "A two-column container — drop any block into either side" },
+  { id: "layout-any-block", label: "Single Block", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout", description: "A flexible container that accepts any block — text, image, video, quiz, and more" },
+  { id: "layout-any-block-2", label: "Dual Block", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout-2", description: "A two-column container — drop any block into either side" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },

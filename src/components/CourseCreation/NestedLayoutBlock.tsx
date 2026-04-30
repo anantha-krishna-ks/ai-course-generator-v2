@@ -311,7 +311,7 @@ export function NestedLayoutBlock({
       style={sortableStyle}
       {...attributes}
       className="group/layout relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.02] to-primary/[0.05] p-3 my-2"
-      aria-label={columnCount === 2 ? "Two-column layout container" : "Single-column layout container"}
+      aria-label={columnCount === 2 ? "Dual Block container" : "Single Block container"}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2 px-1">
@@ -330,7 +330,7 @@ export function NestedLayoutBlock({
             <TooltipContent side="top" className="text-xs">Drag to reorder</TooltipContent>
           </Tooltip>
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-          <span>{columnCount === 2 ? "2-Column Layout" : "1-Column Layout"}</span>
+          <span>{columnCount === 2 ? "Dual Block" : "Single Block"}</span>
           <Tooltip>
             <TooltipTrigger asChild>
               <button
