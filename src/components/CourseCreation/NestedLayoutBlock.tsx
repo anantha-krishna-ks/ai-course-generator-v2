@@ -331,6 +331,24 @@ export function NestedLayoutBlock({
           </Tooltip>
           <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
           <span>{columnCount === 2 ? "2-Column Layout" : "1-Column Layout"}</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label="About this container"
+              >
+                <Info className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs max-w-[260px] leading-relaxed">
+              <p className="font-medium text-foreground mb-1">Allowed inside columns</p>
+              <p className="text-muted-foreground">Text, Image, Video, Audio, Doc, and Quiz blocks.</p>
+              <p className="text-muted-foreground mt-1.5">
+                Side-by-side variants (image-left/right, video-left/right) and nested layouts are disabled here.
+              </p>
+            </TooltipContent>
+          </Tooltip>
         </div>
         <div className="flex items-center gap-1 opacity-0 group-hover/layout:opacity-100 transition-opacity">
           <Tooltip>
