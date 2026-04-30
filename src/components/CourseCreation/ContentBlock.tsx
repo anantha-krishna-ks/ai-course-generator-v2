@@ -563,7 +563,12 @@ export function ContentBlock({
                 </div>
               ) : (
                 <>
-                  <DescriptionEditor content={content} onChange={onChange} />
+                  <DescriptionEditor
+                    content={content}
+                    onChange={onChange}
+                    blockFont={font}
+                    onBlockFontChange={type === "text" ? onFontChange : undefined}
+                  />
                   {aiEnabled && (
                     <div className="flex items-center gap-2 mt-2 px-1">
                       <Button
