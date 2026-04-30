@@ -333,6 +333,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         description: "",
       });
     }
+    if (type === "text" && variant === "any-block-layout") {
+      return JSON.stringify({ kind: "any-block-layout", columns: [[], []] });
+    }
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text":
