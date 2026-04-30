@@ -1391,7 +1391,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     action="deleting"
                                   />
                                 );
-                              } else if (block.type === "text" && block.variant === "any-block-layout") {
+                              } else if (block.type === "text" && (block.variant === "any-block-layout" || block.variant === "any-block-layout-2")) {
                                 elements.push(
                                   <NestedLayoutBlock
                                     key={block.id}
@@ -1401,6 +1401,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     onDelete={() => deleteBlock(block.id)}
                                     onDuplicate={() => duplicateBlock(block.id)}
                                     aiEnabled={aiEnabled}
+                                    columnCount={block.variant === "any-block-layout-2" ? 2 : 1}
                                   />
                                 );
                               } else {
