@@ -410,6 +410,19 @@ const MultipageCoursePreview = () => {
       requestAnimationFrame(() => {
         completionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       });
+      // Fire confetti bursts
+      const fire = (originX: number) => {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          startVelocity: 45,
+          origin: { x: originX, y: 0.6 },
+          colors: ["#22c55e", "#16a34a", "#3B82F6", "#fbbf24", "#f472b6"],
+        });
+      };
+      setTimeout(() => fire(0.25), 200);
+      setTimeout(() => fire(0.75), 350);
+      setTimeout(() => fire(0.5), 550);
     }
   };
 
