@@ -53,11 +53,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { FONT_OPTIONS } from './FontSelectorDropdown';
+import { Check as CheckIcon, RotateCw, CaseSensitive } from 'lucide-react';
 
 interface DescriptionEditorProps {
   content: string;
   onChange: (content: string) => void;
   onBlur?: () => void;
+  /** Per-block font override id. When undefined, the block inherits the course-level font. */
+  blockFont?: string;
+  /** Update the per-block font override. Pass undefined to revert to course default. */
+  onBlockFontChange?: (fontId: string | undefined) => void;
 }
 
 const FONT_SIZES = [
