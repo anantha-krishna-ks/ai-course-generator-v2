@@ -5,7 +5,22 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DropIndicator } from "./DropIndicator";
+import { AddContentButton } from "./AddContentButton";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
+
+// Variants that don't make sense inside a nested column (multi-column text
+// layouts and side-by-side image/video descriptions). These are filtered out
+// to avoid confusing nested layouts within layouts.
+const DISALLOWED_NESTED_VARIANTS = new Set([
+  "any-block-layout",
+  "any-block-layout-2",
+  "two-columns",
+  "three-columns",
+  "image-left",
+  "image-right",
+  "video-left",
+  "video-right",
+]);
 import {
   Tooltip,
   TooltipContent,
