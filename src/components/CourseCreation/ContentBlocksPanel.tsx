@@ -407,8 +407,17 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px]")}>
-            <div className="rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
-              <span className="text-[3.5px] font-semibold text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            <div className="relative rounded-[3px] border border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.05] to-primary/[0.12] h-[34px] overflow-hidden">
+              <div className="absolute inset-0 px-[5px] flex flex-col justify-center gap-[2px]">
+                <div className="h-[2px] rounded-full bg-primary/25 w-3/4" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-full" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-5/6" />
+                <div className="h-[2px] rounded-full bg-primary/15 w-2/3" />
+              </div>
+              <div className="absolute top-[1.5px] right-[1.5px] w-[6px] h-[6px] rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <div className="w-[3px] h-[0.75px] bg-primary/70" />
+                <div className="absolute w-[0.75px] h-[3px] bg-primary/70" />
+              </div>
             </div>
           </div>
         </div>
@@ -417,11 +426,28 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[4px] flex gap-[3px]")}>
-            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
-              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 1</span>
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.05] to-primary/[0.12] h-[34px] overflow-hidden">
+              <div className="absolute inset-0 p-[3px] flex flex-col justify-center gap-[2px]">
+                <div className="h-[1.5px] rounded-full bg-primary/30 w-2/3" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-full" />
+                <div className="h-[2px] rounded-full bg-primary/20 w-4/5" />
+              </div>
+              <div className="absolute top-[1px] right-[1px] w-[5px] h-[5px] rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <div className="w-[2px] h-[0.75px] bg-primary/70" />
+                <div className="absolute w-[0.75px] h-[2px] bg-primary/70" />
+              </div>
             </div>
-            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
-              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 2</span>
+            <div className="relative flex-1 rounded-[3px] border border-dashed border-primary/30 bg-gradient-to-br from-primary/[0.05] to-primary/[0.12] h-[34px] overflow-hidden">
+              <div className="absolute inset-0 p-[3px] flex flex-col justify-center items-center gap-[2px]">
+                <div className="w-full h-[14px] rounded-[1px] bg-primary/15 flex items-center justify-center">
+                  <ImageIcon className="w-[5px] h-[5px] text-primary/55" aria-hidden="true" focusable="false" />
+                </div>
+                <div className="h-[1.5px] rounded-full bg-primary/20 w-3/4" />
+              </div>
+              <div className="absolute top-[1px] right-[1px] w-[5px] h-[5px] rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <div className="w-[2px] h-[0.75px] bg-primary/70" />
+                <div className="absolute w-[0.75px] h-[2px] bg-primary/70" />
+              </div>
             </div>
           </div>
         </div>
