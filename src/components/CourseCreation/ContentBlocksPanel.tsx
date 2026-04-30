@@ -372,6 +372,29 @@ function BlockThumbnail({ id }: { id: string }) {
   const miniCard = "bg-white rounded-[4px] shadow-[0_0.5px_2px_rgba(0,0,0,0.07)] border border-[hsl(220,13%,91%)]";
 
   switch (id) {
+    case "layout-one-column":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
+              <span className="text-[3.5px] font-semibold text-[hsl(220,8%,52%)] tracking-wide uppercase">1 Column</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "layout-two-columns":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex gap-[3px]")}>
+            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
+              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 1</span>
+            </div>
+            <div className="flex-1 rounded-[3px] border border-dashed border-[hsl(220,13%,82%)] bg-[hsl(220,14%,98%)] h-[34px] flex items-center justify-center">
+              <span className="text-[3.5px] font-medium text-[hsl(220,8%,55%)]">Col 2</span>
+            </div>
+          </div>
+        </div>
+      );
     case "heading-text":
       return (
         <div className={wrapper}>
