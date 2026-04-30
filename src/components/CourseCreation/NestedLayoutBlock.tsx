@@ -401,11 +401,23 @@ export function NestedLayoutBlock({
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <Plus className="w-3 h-3 text-primary/70" aria-hidden="true" focusable="false" />
-                  <p className="text-xs font-medium text-foreground/75">Drop any block here</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Drag a block here, or</p>
+                {/* Add content button (compact, opens block picker popover) */}
+                <div className="w-full max-w-[260px] mt-0.5" onPointerDown={(e) => e.stopPropagation()}>
+                  <AddContentButton
+                    variant="simple"
+                    aiEnabled={aiEnabled}
+                    onAddText={() => insertChild(colIdx, 0, "text")}
+                    onAddImage={() => insertChild(colIdx, 0, "image")}
+                    onAddVideo={() => insertChild(colIdx, 0, "video")}
+                    onAddAudio={() => insertChild(colIdx, 0, "audio")}
+                    onAddDoc={() => insertChild(colIdx, 0, "doc")}
+                    onAddQuiz={() => insertChild(colIdx, 0, "quiz")}
+                    onDropBlock={(type, variant) =>
+                      insertChild(colIdx, 0, type as NestedChildType, variant)
+                    }
+                  />
                 </div>
-                <p className="text-[11px] text-muted-foreground -mt-1">Text, image, video, quiz, audio…</p>
               </div>
             ) : (
               <div className="flex flex-col">
@@ -443,6 +455,22 @@ export function NestedLayoutBlock({
                     />
                   </div>
                 ))}
+                {/* Add another block at the end of the column */}
+                <div className="mt-1" onPointerDown={(e) => e.stopPropagation()}>
+                  <AddContentButton
+                    variant="simple"
+                    aiEnabled={aiEnabled}
+                    onAddText={() => insertChild(colIdx, col.length, "text")}
+                    onAddImage={() => insertChild(colIdx, col.length, "image")}
+                    onAddVideo={() => insertChild(colIdx, col.length, "video")}
+                    onAddAudio={() => insertChild(colIdx, col.length, "audio")}
+                    onAddDoc={() => insertChild(colIdx, col.length, "doc")}
+                    onAddQuiz={() => insertChild(colIdx, col.length, "quiz")}
+                    onDropBlock={(type, variant) =>
+                      insertChild(colIdx, col.length, type as NestedChildType, variant)
+                    }
+                  />
+                </div>
               </div>
             )}
           </div>
