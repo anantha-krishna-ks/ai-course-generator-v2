@@ -799,9 +799,17 @@ const MultipageCoursePreview = () => {
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full" aria-label="Go back">
-              <ArrowLeft className="w-4 h-4" />
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/dashboard")}
+              className="rounded-full gap-2 -ml-2"
+              aria-label="Back to home"
+            >
+              <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <span className="hidden sm:inline text-sm font-medium">Home</span>
             </Button>
+            <span aria-hidden="true" className="hidden sm:block h-7 w-px bg-border mx-1" />
             <span className="text-sm font-medium text-foreground">Course Preview</span>
           </div>
           <div className="flex items-center gap-2">
@@ -815,17 +823,6 @@ const MultipageCoursePreview = () => {
             >
               <Download className="w-4 h-4" aria-hidden="true" focusable="false" />
               <span className="hidden sm:inline">Export</span>
-            </Button>
-            <span aria-hidden="true" className="hidden sm:block h-7 w-px bg-border mx-1" />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/dashboard")}
-              className="rounded-full"
-              aria-label="Back to home"
-              title="Back to home"
-            >
-              <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
             </Button>
           </div>
         </div>
