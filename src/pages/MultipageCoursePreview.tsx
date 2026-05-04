@@ -798,29 +798,31 @@ const MultipageCoursePreview = () => {
       <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={handleBack}
-              className="rounded-full"
+              className="rounded-full shrink-0"
               aria-label="Go back"
               title="Go back"
             >
               <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
             </Button>
-            <span className="text-sm font-medium text-foreground whitespace-nowrap">Course Preview</span>
-            <span aria-hidden="true" className="hidden sm:block h-7 w-px bg-border mx-0.5" />
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/dashboard")}
-              className="rounded-full gap-2 px-3"
-              aria-label="Back to home"
-              title="Back to home"
-            >
-              <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
-              <span className="hidden sm:inline text-sm font-medium">Home</span>
-            </Button>
+            <span aria-hidden="true" className="hidden sm:block h-6 w-px bg-border mx-1" />
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 min-w-0">
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full px-2 py-1 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Go to home"
+              >
+                <Home className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                <span className="hidden sm:inline">Home</span>
+              </button>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+              <span className="text-sm font-medium text-foreground whitespace-nowrap px-1" aria-current="page">Course Preview</span>
+            </nav>
           </div>
           <div className="flex items-center gap-2">
             <DeviceToggle />
