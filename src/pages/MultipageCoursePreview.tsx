@@ -1043,11 +1043,22 @@ const MultipageCoursePreview = () => {
     <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <Button variant="ghost" size="icon" onClick={() => setStarted(false)} className="rounded-full" aria-label="Go back to course landing">
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" focusable="false" />
           </Button>
-          <span className="text-sm font-medium text-foreground">Course Preview</span>
+          <span className="text-sm font-medium text-foreground whitespace-nowrap">Course Preview</span>
+          <span aria-hidden="true" className="hidden sm:block h-7 w-px bg-border mx-0.5" />
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/dashboard")}
+            className="rounded-full gap-2 px-3"
+            aria-label="Back to home"
+            title="Back to home"
+          >
+            <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
+            <span className="hidden sm:inline text-sm font-medium">Home</span>
+          </Button>
         </div>
         <div className="flex items-center gap-2">
           <DeviceToggle />
