@@ -523,12 +523,12 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
       </div>
 
       {/* Learning Objectives with AI suggestions */}
-      <div>
+      <div data-field="learningObjectives">
         <label className="text-base font-semibold text-foreground mb-2 block">
           Learning Objectives
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <div className="rounded-xl border border-border overflow-hidden bg-white">
+        <div className={cn("rounded-xl border overflow-hidden bg-white", errors.learningObjectives ? "border-destructive" : "border-border")}>
           <div className="p-3 space-y-2">
             {state.learningObjectives.length === 0 && (
               <p className="text-xs text-muted-foreground px-1 py-2">
