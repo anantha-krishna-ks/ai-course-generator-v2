@@ -438,7 +438,7 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
       </div>
 
       {/* Intended Learners */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div data-field="intendedLearners" className={cn("rounded-xl border bg-card p-4", errors.intendedLearners ? "border-destructive" : "border-border")}>
         <div className="mb-2.5">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Intended Learners
@@ -455,6 +455,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
           onChange={(v) => onChange({ intendedLearners: v })}
           ariaLabel="Intended learners"
         />
+        {errors.intendedLearners && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.intendedLearners}</p>
+        )}
       </div>
 
       {/* Page Duration */}
