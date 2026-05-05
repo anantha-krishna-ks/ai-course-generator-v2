@@ -81,7 +81,7 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
       </div>
 
       {/* Course Title */}
-      <div>
+      <div data-field="title">
         <label htmlFor="course-title" className="text-base font-semibold text-foreground mb-2 block">
           Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
@@ -91,9 +91,16 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           onChange={(v) => onChange({ title: v })}
           placeholder="What will you teach?"
         />
-        <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
-          💡 Used as the primary prompt for AI content generation
-        </p>
+        {errors.title ? (
+          <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
+            {errors.title}
+          </p>
+        ) : (
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
+            💡 Used as the primary prompt for AI content generation
+          </p>
+        )}
       </div>
 
       {/* Learning Outcome — hidden for now */}
