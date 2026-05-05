@@ -479,7 +479,7 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
       </div>
 
       {/* Bloom's Taxonomy */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div data-field="bloomsTaxonomy" className={cn("rounded-xl border bg-card p-4", errors.bloomsTaxonomy ? "border-destructive" : "border-border")}>
         <div className="mb-2.5">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Bloom's Taxonomy
@@ -514,6 +514,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
             );
           })}
         </div>
+        {errors.bloomsTaxonomy && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.bloomsTaxonomy}</p>
+        )}
       </div>
 
       {/* Learning Objectives with AI suggestions */}
