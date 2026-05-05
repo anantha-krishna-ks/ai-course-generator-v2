@@ -394,7 +394,7 @@ function AISuggestions({
   );
 }
 
-export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
+export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDetailsProps) {
   return (
     <div className="space-y-6">
 
