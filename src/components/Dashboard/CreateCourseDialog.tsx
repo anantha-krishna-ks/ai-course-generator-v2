@@ -513,11 +513,24 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
               {/* AI Support Toggle — kept as-is */}
               <div className="mb-3 sm:mb-4">
-                <AIToggleRow
-                  options={aiOptions}
-                  onChange={setAIOptions}
-                  onConfigure={() => setShowAIConfig(true)}
-                />
+                <div
+                  ref={aiSectionRef}
+                  className={cn(
+                    "rounded-lg transition-all",
+                    aiError && "ring-1 ring-destructive ring-offset-2 ring-offset-background"
+                  )}
+                >
+                  <AIToggleRow
+                    options={aiOptions}
+                    onChange={setAIOptions}
+                    onConfigure={() => setShowAIConfig(true)}
+                  />
+                </div>
+                {aiError && (
+                  <p role="alert" aria-live="polite" className="text-[11px] sm:text-xs text-destructive mt-1.5 font-medium">
+                    {aiError}
+                  </p>
+                )}
               </div>
 
 
