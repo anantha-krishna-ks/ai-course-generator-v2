@@ -401,18 +401,32 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               <div className="mb-5 sm:mb-6">
                 <label htmlFor="cc-title-input" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
                   Course Title
+                  <span aria-hidden="true" className="text-destructive ml-0.5">*</span>
                 </label>
                 <input
+                  ref={titleInputRef}
                   id="cc-title-input"
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
-                  className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
+                  aria-required="true"
+                  aria-invalid={!!titleError}
+                  aria-describedby="cc-title-helper"
+                  className={cn(
+                    "w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground",
+                    titleError ? "border-destructive focus:border-destructive" : "border-border focus:border-primary"
+                  )}
                   autoFocus
                 />
-                <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
-                  💡 Used as the primary prompt for AI content generation
-                </p>
+                {titleError ? (
+                  <p id="cc-title-helper" role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium">
+                    {titleError}
+                  </p>
+                ) : (
+                  <p id="cc-title-helper" className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
+                    💡 Used as the primary prompt for AI content generation
+                  </p>
+                )}
               </div>
 
               {/* Layout Options — kept as-is */}
