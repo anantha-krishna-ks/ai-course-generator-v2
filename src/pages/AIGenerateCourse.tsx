@@ -134,6 +134,8 @@ export default function AIGenerateCourse() {
         if ("intendedLearners" in partial && next.intendedLearners.trim()) delete cleared.intendedLearners;
         if ("pageSpanTime" in partial && next.pageSpanTime) delete cleared.pageSpanTime;
         if ("bloomsTaxonomy" in partial && next.bloomsTaxonomy.length > 0) delete cleared.bloomsTaxonomy;
+        if ("learningOutcome" in partial && next.learningOutcome.trim()) delete cleared.learningOutcome;
+        if ("learningObjectives" in partial && next.learningObjectives.some((o) => o.trim())) delete cleared.learningObjectives;
         return cleared;
       });
       return next;
@@ -152,9 +154,11 @@ export default function AIGenerateCourse() {
         if (!formState.title.trim()) fail("title", "Course title is required");
         break;
       case 2:
+        if (!formState.learningOutcome.trim()) fail("learningOutcome", "Please describe what learners should be able to do");
         if (!formState.intendedLearners.trim()) fail("intendedLearners", "Please select intended learners");
         if (!formState.pageSpanTime) fail("pageSpanTime", "Please set a page duration");
         if (formState.bloomsTaxonomy.length === 0) fail("bloomsTaxonomy", "Select at least one Bloom's Taxonomy level");
+        if (!formState.learningObjectives.some((o) => o.trim())) fail("learningObjectives", "Add at least one learning objective");
         break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };

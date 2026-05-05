@@ -399,12 +399,12 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
     <div className="space-y-6">
 
       {/* Learning Outcome with AI suggestions */}
-      <div>
+      <div data-field="learningOutcome">
         <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground mb-2 block">
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <div className="rounded-xl border border-border overflow-hidden bg-white">
+        <div className={cn("rounded-xl border overflow-hidden bg-white", errors.learningOutcome ? "border-destructive" : "border-border")}>
           <Textarea
             id="learning-outcome"
             value={state.learningOutcome}
@@ -435,6 +435,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
             }}
           />
         </div>
+        {errors.learningOutcome && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningOutcome}</p>
+        )}
       </div>
 
       {/* Intended Learners */}
@@ -520,12 +523,12 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
       </div>
 
       {/* Learning Objectives with AI suggestions */}
-      <div>
+      <div data-field="learningObjectives">
         <label className="text-base font-semibold text-foreground mb-2 block">
           Learning Objectives
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <div className="rounded-xl border border-border overflow-hidden bg-white">
+        <div className={cn("rounded-xl border overflow-hidden bg-white", errors.learningObjectives ? "border-destructive" : "border-border")}>
           <div className="p-3 space-y-2">
             {state.learningObjectives.length === 0 && (
               <p className="text-xs text-muted-foreground px-1 py-2">
@@ -607,6 +610,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
             }}
           />
         </div>
+        {errors.learningObjectives && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningObjectives}</p>
+        )}
       </div>
 
     </div>
