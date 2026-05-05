@@ -134,6 +134,8 @@ export default function AIGenerateCourse() {
         if ("intendedLearners" in partial && next.intendedLearners.trim()) delete cleared.intendedLearners;
         if ("pageSpanTime" in partial && next.pageSpanTime) delete cleared.pageSpanTime;
         if ("bloomsTaxonomy" in partial && next.bloomsTaxonomy.length > 0) delete cleared.bloomsTaxonomy;
+        if ("learningOutcome" in partial && next.learningOutcome.trim()) delete cleared.learningOutcome;
+        if ("learningObjectives" in partial && next.learningObjectives.some((o) => o.trim())) delete cleared.learningObjectives;
         return cleared;
       });
       return next;
