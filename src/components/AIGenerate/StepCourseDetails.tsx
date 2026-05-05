@@ -399,12 +399,12 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
     <div className="space-y-6">
 
       {/* Learning Outcome with AI suggestions */}
-      <div>
+      <div data-field="learningOutcome">
         <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground mb-2 block">
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
-        <div className="rounded-xl border border-border overflow-hidden bg-white">
+        <div className={cn("rounded-xl border overflow-hidden bg-white", errors.learningOutcome ? "border-destructive" : "border-border")}>
           <Textarea
             id="learning-outcome"
             value={state.learningOutcome}
@@ -435,6 +435,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
             }}
           />
         </div>
+        {errors.learningOutcome && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningOutcome}</p>
+        )}
       </div>
 
       {/* Intended Learners */}
