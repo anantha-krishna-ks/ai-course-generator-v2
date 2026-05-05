@@ -10,6 +10,7 @@ import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 interface StepCourseIntentProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
+  errors?: Record<string, string>;
 }
 
 const DUMMY_SUGGESTIONS: Record<string, string> = {
