@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Lottie from "lottie-react";
 import courseCreationAnimation from "@/assets/course-creation-lottie.json";
 import previewMultipage from "@/assets/preview-multipage.jpg";
