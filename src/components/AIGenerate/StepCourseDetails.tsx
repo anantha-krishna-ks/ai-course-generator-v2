@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface StepCourseDetailsProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
+  errors?: Record<string, string>;
 }
 
 const DURATION_OPTIONS = [
