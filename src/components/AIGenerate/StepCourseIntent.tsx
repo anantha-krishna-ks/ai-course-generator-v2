@@ -36,7 +36,7 @@ function pickSuggestion(title: string): string {
   return DUMMY_SUGGESTIONS.default;
 }
 
-export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
+export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseIntentProps) {
   const [aiLoading, setAiLoading] = useState(false);
   const showAskAI = state.title.trim().length >= 2;
   const fileInputRef = useRef<HTMLInputElement>(null);
