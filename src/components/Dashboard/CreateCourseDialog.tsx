@@ -292,17 +292,38 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [showAIConfig, setShowAIConfig] = useState(false);
   const [showScormConfig, setShowScormConfig] = useState(false);
   const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const aiSectionRef = useRef<HTMLDivElement>(null);
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
   );
 
+  useEffect(() => {
+    if (courseTitle.trim()) setTitleError(null);
+  }, [courseTitle]);
+
+  useEffect(() => {
+    if (isAIConfigValid) setAiError(null);
+  }, [isAIConfigValid]);
+
   const handleStartCreating = () => {
-    if (!courseTitle.trim()) return;
-    if (!isAIConfigValid) {
-      setShowAIConfig(true);
+    if (!courseTitle.trim()) {
+      setTitleError("Course title is required");
+      titleInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => titleInputRef.current?.focus({ preventScroll: true }), 300);
       return;
     }
+    if (!isAIConfigValid) {
+      setAiError("Complete AI configuration to continue");
+      aiSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => setShowAIConfig(true), 600);
+      return;
+    }
+    setTitleError(null);
+    setAiError(null);
     setIsLoading(true);
   };
 
