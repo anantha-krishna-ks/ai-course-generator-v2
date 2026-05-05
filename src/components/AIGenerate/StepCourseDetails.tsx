@@ -461,7 +461,7 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
       </div>
 
       {/* Page Duration */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div data-field="pageSpanTime" className={cn("rounded-xl border bg-card p-4", errors.pageSpanTime ? "border-destructive" : "border-border")}>
         <div className="mb-3">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Page Duration
@@ -473,6 +473,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
           value={state.pageSpanTime || 5}
           onChange={(v) => onChange({ pageSpanTime: v })}
         />
+        {errors.pageSpanTime && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.pageSpanTime}</p>
+        )}
       </div>
 
       {/* Bloom's Taxonomy */}
