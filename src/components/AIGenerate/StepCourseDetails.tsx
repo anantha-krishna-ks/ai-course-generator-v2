@@ -610,6 +610,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
             }}
           />
         </div>
+        {errors.learningObjectives && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningObjectives}</p>
+        )}
       </div>
 
     </div>
