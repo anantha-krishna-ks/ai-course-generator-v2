@@ -351,6 +351,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
       setCourseTitle("");
       setSelectedLayout("multi-page");
       setShowAIConfig(false);
+      setTitleError(null);
+      setAiError(null);
     }
     if (!isLoading) {
       onOpenChange(isOpen);
