@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface StepCourseDetailsProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
+  errors?: Record<string, string>;
 }
 
 const DURATION_OPTIONS = [
@@ -393,7 +394,7 @@ function AISuggestions({
   );
 }
 
-export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
+export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDetailsProps) {
   return (
     <div className="space-y-6">
 
@@ -437,7 +438,7 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
       </div>
 
       {/* Intended Learners */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div data-field="intendedLearners" className={cn("rounded-xl border bg-card p-4", errors.intendedLearners ? "border-destructive" : "border-border")}>
         <div className="mb-2.5">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Intended Learners
@@ -454,10 +455,13 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           onChange={(v) => onChange({ intendedLearners: v })}
           ariaLabel="Intended learners"
         />
+        {errors.intendedLearners && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.intendedLearners}</p>
+        )}
       </div>
 
       {/* Page Duration */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div data-field="pageSpanTime" className={cn("rounded-xl border bg-card p-4", errors.pageSpanTime ? "border-destructive" : "border-border")}>
         <div className="mb-3">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Page Duration
@@ -469,10 +473,13 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
           value={state.pageSpanTime || 5}
           onChange={(v) => onChange({ pageSpanTime: v })}
         />
+        {errors.pageSpanTime && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.pageSpanTime}</p>
+        )}
       </div>
 
       {/* Bloom's Taxonomy */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div data-field="bloomsTaxonomy" className={cn("rounded-xl border bg-card p-4", errors.bloomsTaxonomy ? "border-destructive" : "border-border")}>
         <div className="mb-2.5">
           <div className="text-[16px] font-semibold text-foreground leading-tight">
             Bloom's Taxonomy
@@ -507,6 +514,9 @@ export function StepCourseDetails({ state, onChange }: StepCourseDetailsProps) {
             );
           })}
         </div>
+        {errors.bloomsTaxonomy && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.bloomsTaxonomy}</p>
+        )}
       </div>
 
       {/* Learning Objectives with AI suggestions */}

@@ -10,6 +10,7 @@ import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 interface StepCourseIntentProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
+  errors?: Record<string, string>;
 }
 
 const DUMMY_SUGGESTIONS: Record<string, string> = {
@@ -35,7 +36,7 @@ function pickSuggestion(title: string): string {
   return DUMMY_SUGGESTIONS.default;
 }
 
-export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
+export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseIntentProps) {
   const [aiLoading, setAiLoading] = useState(false);
   const showAskAI = state.title.trim().length >= 2;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +81,7 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
       </div>
 
       {/* Course Title */}
-      <div>
+      <div data-field="title">
         <label htmlFor="course-title" className="text-base font-semibold text-foreground mb-2 block">
           Course Title <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </label>
@@ -90,9 +91,16 @@ export function StepCourseIntent({ state, onChange }: StepCourseIntentProps) {
           onChange={(v) => onChange({ title: v })}
           placeholder="What will you teach?"
         />
-        <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
-          💡 Used as the primary prompt for AI content generation
-        </p>
+        {errors.title ? (
+          <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
+            {errors.title}
+          </p>
+        ) : (
+          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
+            💡 Used as the primary prompt for AI content generation
+          </p>
+        )}
       </div>
 
       {/* Learning Outcome — hidden for now */}

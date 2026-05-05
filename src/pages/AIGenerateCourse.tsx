@@ -109,7 +109,7 @@ const initialState: AIGenerateState = {
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
 };
 
-const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
+const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
 
 export default function AIGenerateCourse() {
   const navigate = useNavigate();
@@ -121,30 +121,64 @@ export default function AIGenerateCourse() {
   const [highestVisitedStep, setHighestVisitedStep] = useState(1);
   const [suppressBackWarning, setSuppressBackWarning] = useState(false);
   const [dontShowAgainChecked, setDontShowAgainChecked] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
-    setFormState((prev) => ({ ...prev, ...partial }));
+    setFormState((prev) => {
+      const next = { ...prev, ...partial };
+      // Clear errors for fields being edited
+      setErrors((prevErrors) => {
+        if (Object.keys(prevErrors).length === 0) return prevErrors;
+        const cleared = { ...prevErrors };
+        if ("title" in partial && next.title.trim()) delete cleared.title;
+        if ("intendedLearners" in partial && next.intendedLearners.trim()) delete cleared.intendedLearners;
+        if ("pageSpanTime" in partial && next.pageSpanTime) delete cleared.pageSpanTime;
+        if ("bloomsTaxonomy" in partial && next.bloomsTaxonomy.length > 0) delete cleared.bloomsTaxonomy;
+        return cleared;
+      });
+      return next;
+    });
   }, []);
 
-  const canAdvance = (): boolean => {
+  const validateCurrentStep = (): { ok: boolean; errors: Record<string, string>; firstField?: string } => {
+    const e: Record<string, string> = {};
+    let firstField: string | undefined;
+    const fail = (key: string, msg: string) => {
+      e[key] = msg;
+      if (!firstField) firstField = key;
+    };
     switch (currentStep) {
       case 1:
-        return !!formState.title.trim();
+        if (!formState.title.trim()) fail("title", "Course title is required");
+        break;
       case 2:
-        return (
-          !!formState.intendedLearners.trim() &&
-          !!formState.pageSpanTime &&
-          formState.bloomsTaxonomy.length > 0
-        );
-      case 3:
-      case 4:
-        return true;
-      default:
-        return false;
+        if (!formState.intendedLearners.trim()) fail("intendedLearners", "Please select intended learners");
+        if (!formState.pageSpanTime) fail("pageSpanTime", "Please set a page duration");
+        if (formState.bloomsTaxonomy.length === 0) fail("bloomsTaxonomy", "Select at least one Bloom's Taxonomy level");
+        break;
     }
+    return { ok: Object.keys(e).length === 0, errors: e, firstField };
+  };
+
+  const scrollToField = (field: string) => {
+    requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>(`[data-field="${field}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const focusable = el.querySelector<HTMLElement>("input, textarea, button, [tabindex]");
+        setTimeout(() => focusable?.focus({ preventScroll: true }), 350);
+      }
+    });
   };
 
   const handleNext = () => {
+    const { ok, errors: e, firstField } = validateCurrentStep();
+    if (!ok) {
+      setErrors(e);
+      if (firstField) scrollToField(firstField);
+      return;
+    }
+    setErrors({});
     if (currentStep < 4) {
       setDirection(1);
       setCurrentStep((s) => {
@@ -411,7 +445,7 @@ export default function AIGenerateCourse() {
                     exit="exit"
                     transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
                   >
-                    <StepComponent state={formState} onChange={updateState} />
+                    <StepComponent state={formState} onChange={updateState} errors={errors} />
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -442,7 +476,6 @@ export default function AIGenerateCourse() {
                     <Button
                       size="sm"
                       onClick={handleNext}
-                      disabled={!canAdvance()}
                       className="gap-1.5 rounded-full px-5 h-9"
                     >
                       Continue
