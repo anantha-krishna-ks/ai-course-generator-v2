@@ -476,7 +476,6 @@ export default function AIGenerateCourse() {
                     <Button
                       size="sm"
                       onClick={handleNext}
-                      disabled={!canAdvance()}
                       className="gap-1.5 rounded-full px-5 h-9"
                     >
                       Continue
