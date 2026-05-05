@@ -571,7 +571,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
                 <Button
                   onClick={handleStartCreating}
-                  disabled={!courseTitle.trim()}
                   className="h-10 sm:h-11 md:h-12 px-5 sm:px-7 md:px-9 text-xs sm:text-sm md:text-base font-semibold rounded-full gap-2 shadow-sm"
                 >
                   <Wand2 className="w-4 h-4 sm:w-5 sm:h-5" />
