@@ -109,7 +109,7 @@ const initialState: AIGenerateState = {
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
 };
 
-const STEP_COMPONENTS = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
+const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
 
 export default function AIGenerateCourse() {
   const navigate = useNavigate();
