@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Lottie from "lottie-react";
 import courseCreationAnimation from "@/assets/course-creation-lottie.json";
 import previewMultipage from "@/assets/preview-multipage.jpg";
@@ -292,17 +292,38 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [showAIConfig, setShowAIConfig] = useState(false);
   const [showScormConfig, setShowScormConfig] = useState(false);
   const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const aiSectionRef = useRef<HTMLDivElement>(null);
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
   );
 
+  useEffect(() => {
+    if (courseTitle.trim()) setTitleError(null);
+  }, [courseTitle]);
+
+  useEffect(() => {
+    if (isAIConfigValid) setAiError(null);
+  }, [isAIConfigValid]);
+
   const handleStartCreating = () => {
-    if (!courseTitle.trim()) return;
-    if (!isAIConfigValid) {
-      setShowAIConfig(true);
+    if (!courseTitle.trim()) {
+      setTitleError("Course title is required");
+      titleInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => titleInputRef.current?.focus({ preventScroll: true }), 300);
       return;
     }
+    if (!isAIConfigValid) {
+      setAiError("Complete AI configuration to continue");
+      aiSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => setShowAIConfig(true), 600);
+      return;
+    }
+    setTitleError(null);
+    setAiError(null);
     setIsLoading(true);
   };
 
@@ -330,6 +351,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
       setCourseTitle("");
       setSelectedLayout("multi-page");
       setShowAIConfig(false);
+      setTitleError(null);
+      setAiError(null);
     }
     if (!isLoading) {
       onOpenChange(isOpen);
@@ -378,18 +401,32 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               <div className="mb-5 sm:mb-6">
                 <label htmlFor="cc-title-input" className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 block">
                   Course Title
+                  <span aria-hidden="true" className="text-destructive ml-0.5">*</span>
                 </label>
                 <input
+                  ref={titleInputRef}
                   id="cc-title-input"
                   value={courseTitle}
                   onChange={(e) => setCourseTitle(e.target.value)}
                   placeholder="What will you teach?"
-                  className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
+                  aria-required="true"
+                  aria-invalid={!!titleError}
+                  aria-describedby="cc-title-helper"
+                  className={cn(
+                    "w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground",
+                    titleError ? "border-destructive focus:border-destructive" : "border-border focus:border-primary"
+                  )}
                   autoFocus
                 />
-                <p className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
-                  💡 Used as the primary prompt for AI content generation
-                </p>
+                {titleError ? (
+                  <p id="cc-title-helper" role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium">
+                    {titleError}
+                  </p>
+                ) : (
+                  <p id="cc-title-helper" className="text-[10px] sm:text-[11px] text-muted-foreground/60 mt-1.5 sm:mt-2">
+                    💡 Used as the primary prompt for AI content generation
+                  </p>
+                )}
               </div>
 
               {/* Layout Options — kept as-is */}
@@ -476,11 +513,24 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
               {/* AI Support Toggle — kept as-is */}
               <div className="mb-3 sm:mb-4">
-                <AIToggleRow
-                  options={aiOptions}
-                  onChange={setAIOptions}
-                  onConfigure={() => setShowAIConfig(true)}
-                />
+                <div
+                  ref={aiSectionRef}
+                  className={cn(
+                    "rounded-lg transition-all",
+                    aiError && "ring-1 ring-destructive ring-offset-2 ring-offset-background"
+                  )}
+                >
+                  <AIToggleRow
+                    options={aiOptions}
+                    onChange={setAIOptions}
+                    onConfigure={() => setShowAIConfig(true)}
+                  />
+                </div>
+                {aiError && (
+                  <p role="alert" aria-live="polite" className="text-[11px] sm:text-xs text-destructive mt-1.5 font-medium">
+                    {aiError}
+                  </p>
+                )}
               </div>
 
 
@@ -521,7 +571,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
                 <Button
                   onClick={handleStartCreating}
-                  disabled={!courseTitle.trim()}
                   className="h-10 sm:h-11 md:h-12 px-5 sm:px-7 md:px-9 text-xs sm:text-sm md:text-base font-semibold rounded-full gap-2 shadow-sm"
                 >
                   <Wand2 className="w-4 h-4 sm:w-5 sm:h-5" />

@@ -1,86 +1,43 @@
+## Goal
+Make the "Create Course" button always look enabled, but on click validate the form. If invalid, scroll to the first missing field and show an inline error. Mark Course Title as mandatory.
 
+## Changes — `src/components/Dashboard/CreateCourseDialog.tsx`
 
-## Configuration Page Revamp — Vertical Tabs + Search
+### 1. Remove disabled state from CTA
+- Drop `disabled={!courseTitle.trim()}` on the Create Course `<Button>`.
+- Button stays in primary enabled style at all times.
 
-### Why not accordions
-Accordions stack 12 long sections vertically — users lose orientation, scroll endlessly, and can't compare or jump between groups. With ~50 fields across 12 groups, we need lateral navigation, not vertical collapse.
+### 2. Add error state + refs
+- New state: `titleError: string | null`, `aiError: string | null`.
+- Refs: `titleInputRef` (input) and `aiSectionRef` (AIToggleRow wrapper) for scroll-into-view.
+- Scrollable form container also gets a ref so we can scroll within the dialog (since the form area is the scroll container, not the window).
 
-### Recommended pattern: **Sticky vertical tabs (left rail) + scrollable form panel (right) + global search**
+### 3. Mark Course Title as mandatory
+- Append a red asterisk `<span aria-hidden="true" className="text-destructive ml-0.5">*</span>` to the "Course Title" label.
+- Add `aria-required="true"` and `aria-invalid={!!titleError}` plus `aria-describedby="cc-title-error"` on the input.
+- When `titleError` is set: input bottom border becomes `border-destructive` and replace the helper "💡 Used as the primary prompt..." line with the error message in `text-destructive` (id `cc-title-error`, `role="alert"`). Helper text returns once user starts typing.
 
-This is the same pattern used by Stripe Dashboard, Vercel Project Settings, GitHub repo settings, and Linear workspace settings — proven for dense config UIs.
+### 4. Validate on click in `handleStartCreating`
+Order of checks (first failure wins, so we can scroll to it):
+1. Empty title → set `titleError = "Course title is required"`, focus + scroll `titleInputRef` into view (`block: "center"`), return.
+2. AI enabled but config invalid (`!isAIConfigValid`) → set `aiError = "Complete AI configuration to continue"`, scroll `aiSectionRef` into view, also keep current behavior of opening `setShowAIConfig(true)` (after a short delay so user sees the highlight) — or simply open immediately; recommend: scroll + brief 250ms highlight, then open config view.
+3. Otherwise clear errors and proceed (`setIsLoading(true)`).
 
-```text
-┌──────────────────────────────────────────────────────────────────┐
-│  Header + Breadcrumb + "Customer configuration – 101abc1"        │
-│                                              [Save configuration]│
-├──────────────────────────────────────────────────────────────────┤
-│  🔍 Search any setting…  (filters tabs + highlights matches)     │
-├────────────────┬─────────────────────────────────────────────────┤
-│ ● Connection   │   Connection                          ● Edited  │
-│   Azure        │   ─────────────────────────────────────────────│
-│   Crypto       │   Connection      [ mongodb://10.10.2.39… ]    │
-│   Mail         │   Database        [ CourseEDV6 ]               │
-│   File Config  │                                                │
-│   CourseED     │   ─── Saved 2 mins ago                          │
-│   Video        │                                                │
-│   Azure OpenAI │                                                │
-│   Gemini       │                                                │
-│   AWS          │                                                │
-│   Vector DB    │                                                │
-│   Time Zone    │                                                │
-│ ─────────────  │                                                │
-│ 12 groups · 47 │                                                │
-│ fields         │                                                │
-└────────────────┴─────────────────────────────────────────────────┘
-```
+### 5. Clear errors reactively
+- `useEffect` on `courseTitle`: if non-empty, clear `titleError`.
+- `useEffect` on `aiOptions`: if `isAIConfigValid`, clear `aiError`.
+- `handleClose` resets both errors.
 
-### Why this beats accordion
-| Concern | Accordion | Vertical Tabs |
-|---|---|---|
-| Find a field fast | Scroll + open/close | One click + search |
-| See current group context | Lost when scrolled | Always visible (sticky rail) |
-| Track unsaved edits per group | Hard to spot | Dot indicator on tab |
-| Mobile | Same long scroll | Collapses to top dropdown |
-| Mental model | "Drawer to dig through" | "Settings app" — familiar |
+### 6. AI section error styling
+- Wrap `<AIToggleRow>` in a div with `ref={aiSectionRef}`. When `aiError` is set, add a `ring-1 ring-destructive rounded-lg` around the wrapper and render an `aria-live="polite"` `<p className="text-xs text-destructive mt-1.5" role="alert">{aiError}</p>` underneath. No changes inside `AIToggleRow` itself.
 
-### Workflow
-1. Land on page → first group (Connection) auto-selected, fields visible immediately.
-2. Click a tab in the left rail → right panel swaps instantly (no scroll).
-3. Edit a field → small **● Edited** dot appears on the tab + group header.
-4. **Search bar** at top filters the left rail to only matching groups and highlights matching field labels in the panel.
-5. Single sticky **Save configuration** button (top-right) saves all changed groups in one call. Toast on success.
-6. **Discard changes** appears next to Save when there are unsaved edits.
+### 7. Scrolling implementation detail
+The form scroll container is the `<div className="flex-1 overflow-y-auto thin-scrollbar ...">`. Use `element.scrollIntoView({ behavior: "smooth", block: "center" })` on the target ref — works inside the nearest scrollable ancestor. After scroll, call `titleInputRef.current?.focus({ preventScroll: true })` for the title case.
 
-### Tab grouping (from screenshots)
-Connection · AzureSettings · Crypto · MailSettings · FileConfig · CourseEDSettings · VideoSettings · AzureOpenAI · GeminiSettings · AWSSettings · VectorDB · TimeZone
+## Accessibility
+- Asterisk is decorative (`aria-hidden`); `aria-required` conveys requirement.
+- Errors use `role="alert"` and are linked via `aria-describedby`.
+- Button no longer has `disabled`, so screen readers won't announce it as disabled; validation feedback is announced via the live error region.
 
-Each tab gets a small lucide icon (Database, Cloud, KeyRound, Mail, FolderCog, Settings2, Video, Brain, Sparkles, Cloud, Layers, Clock).
-
-### Field rendering rules
-- **Text** → `Input`
-- **Select** (e.g., Hash Algorithm, Email Provider) → shadcn `Select`
-- **Boolean** (Enable SSL, Enable Vector Search) → `Switch` aligned right
-- **Secret** (Keys, Passwords, Secrets) → masked `Input` with show/hide eye toggle + copy button
-- **URL** → `Input` with `type="url"` + small "Open" icon
-- All fields use existing `fieldHeadingClass` (`text-base font-semibold text-foreground mb-2 block`) for consistency with Add/Edit Customer dialogs
-- Two-column grid (`md:grid-cols-2`) inside each panel so a group like AzureOpenAI (12 fields) fits without endless scroll
-
-### Responsive
-- ≥`lg`: left rail (240px) + right panel
-- `md`: left rail collapses to a horizontal scrolling chip strip above panel
-- `sm`: chip strip → `Select` dropdown above panel
-
-### Technical notes
-- New file `src/pages/CustomerConfiguration.tsx` (replace current placeholder grid)
-- Use shadcn `Tabs` with `orientation="vertical"` for the rail; custom styling so it looks like a settings sidebar (full-width pill items, active state with `bg-primary/10 text-primary border-l-2 border-primary`)
-- Mock config data structured as `ConfigGroup[] = { id, label, icon, fields: ConfigField[] }` — single source of truth for both rail and panel
-- Local `useState` for form values + a `dirtyGroups: Set<string>` to drive the "● Edited" dots
-- Search uses simple `.toLowerCase().includes()` over field labels and group labels; non-matching groups are hidden from rail, matching field labels get a `bg-yellow-100/40` highlight
-- Sticky header (`sticky top-16`) keeps Save button always reachable
-- All a11y: each tab has `aria-label`, secret toggle buttons have `aria-label="Show/Hide value"`, single `<h1>`, form inputs have visible `<Label>`, icons `aria-hidden="true"`
-
-### Out of scope for this pass
-- No backend wiring (data is mocked from screenshots)
-- No validation rules per field — placeholder values only
-- No audit log / change history view
-
+## Out of scope
+- No changes to layout, AI config view internals, SCORM dialog, or routing/navigation behavior after a successful submit.
