@@ -184,35 +184,6 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
           )}
         </div>
 
-        {/* Stage stepper */}
-        <div className="flex items-center gap-1.5 mb-5" aria-hidden="true">
-          {stages.map((_, i) => {
-            const state = i < stageIndex ? "done" : i === stageIndex ? "active" : "todo";
-            return (
-              <div
-                key={i}
-                className={cn(
-                  "h-1 flex-1 rounded-full transition-all duration-500 relative overflow-hidden",
-                  state === "done" && "bg-primary/70",
-                  state === "active" && "bg-primary/25",
-                  state === "todo" && "bg-foreground/[0.06]",
-                )}
-              >
-                {state === "active" && (
-                  <span
-                    className="absolute inset-0 -translate-x-full"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent)",
-                      animation: "shimmer 1.4s ease-in-out infinite",
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-
         {/* Title skeleton */}
         <div className="h-5 w-1/3 rounded-md bg-foreground/[0.10] relative overflow-hidden mb-4">
           <span
