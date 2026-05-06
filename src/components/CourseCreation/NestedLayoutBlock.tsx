@@ -341,7 +341,7 @@ export function NestedLayoutBlock({
       {/* Attached left-side toolbar — visually anchored to the section */}
       <div
         className={cn(
-          "absolute right-full top-3 mr-[-2px] flex flex-col items-stretch rounded-l-xl border border-r-0 overflow-hidden transition-all z-10",
+          "absolute right-full top-3 mr-2 flex flex-col items-stretch rounded-xl border overflow-hidden transition-all z-10",
           isSelected || toolbarActive
             ? "opacity-100 border-primary/60 bg-primary/[0.06] shadow-md"
             : "opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 border-border/60 bg-background shadow-sm",
