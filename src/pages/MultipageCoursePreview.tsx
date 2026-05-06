@@ -1260,9 +1260,6 @@ const MultipageCoursePreview = () => {
                           <h3 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
                             You&apos;ve reached the end of this course
                           </h3>
-                          <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
-                            Take a moment to reflect on what you&apos;ve learned.
-                          </p>
                         </div>
                         <Button
                           onClick={() => navigate("/dashboard")}
