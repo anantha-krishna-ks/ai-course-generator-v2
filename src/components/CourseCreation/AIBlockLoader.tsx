@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 
@@ -17,44 +17,106 @@ const DEFAULT_STAGES = [
 
 const LONG_WAIT_THRESHOLD_MS = 8000;
 
+// Cadence
+const LINE_INTERVAL_MS = 280;        // how fast lines "type"
+const PARAGRAPH_GAP_MS = 600;        // pause between paragraphs
+const MAX_VISIBLE_PARAGRAPHS = 8;    // cap before recycling
+
 /**
- * Premium AI block loader.
+ * AI block loader optimized for long-form generation.
  *
- * Pairs a content-shaped skeleton with a tasteful "AI orb" visual:
- * a focal Sparkles core, soft pulsing halo, orbiting micro-particles,
- * and rotating tick marks on a quiet ring. Fully tonal — no gradients.
+ * Progressive reveal: lines fill in sequentially within a paragraph
+ * (past = solid, current = shimmering, future = faint). When a paragraph
+ * finishes, a new one slides in below. This makes wait time feel like
+ * real generation — content visibly grows the longer the user waits.
  */
 export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoaderProps) {
   const [stageIndex, setStageIndex] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [tick, setTick] = useState(0);
+  const [filledLines, setFilledLines] = useState(0); // total lines "typed" so far
+
+  // Pre-generated paragraph templates (varied line widths, short tail line)
+  const paragraphTemplates = useMemo<number[][]>(
+    () => [
+      [96, 92, 88, 94, 86, 58],
+      [95, 90, 93, 84, 72],
+      [94, 88, 91, 82, 90, 86, 54],
+      [92, 95, 86, 78, 68],
+      [96, 89, 93, 87, 82, 60],
+      [94, 91, 88, 95, 76],
+      [93, 96, 85, 89, 82, 90, 64],
+      [95, 88, 92, 86, 70],
+    ],
+    [],
+  );
 
   useEffect(() => {
     const start = Date.now();
-    const stageTimer = window.setInterval(() => setStageIndex((i) => (i + 1) % stages.length), 1800);
+    const stageTimer = window.setInterval(
+      () => setStageIndex((i) => (i + 1) % stages.length),
+      1800,
+    );
     const elapsedTimer = window.setInterval(() => setElapsedMs(Date.now() - start), 500);
-    const typeTimer = window.setInterval(() => setTick((t) => t + 1), 450);
+
+    // Drive line-by-line reveal
+    let cancelled = false;
+    let pIdx = 0;
+    let totalSoFar = 0;
+
+    const runParagraph = () => {
+      if (cancelled) return;
+      const template = paragraphTemplates[pIdx % paragraphTemplates.length];
+      let i = 0;
+
+      const lineTimer = window.setInterval(() => {
+        if (cancelled) {
+          window.clearInterval(lineTimer);
+          return;
+        }
+        i += 1;
+        totalSoFar += 1;
+        setFilledLines(totalSoFar);
+        if (i >= template.length) {
+          window.clearInterval(lineTimer);
+          pIdx += 1;
+          window.setTimeout(runParagraph, PARAGRAPH_GAP_MS);
+        }
+      }, LINE_INTERVAL_MS);
+    };
+
+    runParagraph();
+
     return () => {
+      cancelled = true;
       window.clearInterval(stageTimer);
       window.clearInterval(elapsedTimer);
-      window.clearInterval(typeTimer);
     };
-  }, [stages.length]);
+  }, [stages.length, paragraphTemplates]);
 
   const isLongWait = elapsedMs >= LONG_WAIT_THRESHOLD_MS;
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
 
-  // Multi-paragraph layout that scales for long-form generation.
-  // Each paragraph has varied line widths and a short ending line,
-  // mimicking real prose so the skeleton reads naturally at any length.
-  const paragraphs: number[][] = [
-    [96, 92, 88, 94, 86, 60],
-    [95, 90, 93, 84, 72],
-    [94, 88, 91, 82, 90, 56],
-    [92, 95, 86, 78, 68],
-  ];
-  const totalLines = paragraphs.reduce((sum, p) => sum + p.length, 0);
-  const activeLine = tick % totalLines;
+  // Build the visible paragraph stack from filledLines.
+  // Each paragraph is fully revealed before the next begins.
+  const visibleParagraphs = useMemo(() => {
+    const result: { template: number[]; revealed: number; pIndex: number }[] = [];
+    let remaining = filledLines + 1; // +1 so we always render the current "in-progress" line
+    let pIdx = 0;
+    while (remaining > 0 && result.length < MAX_VISIBLE_PARAGRAPHS) {
+      const template = paragraphTemplates[pIdx % paragraphTemplates.length];
+      const revealed = Math.min(template.length, remaining);
+      result.push({ template, revealed, pIndex: pIdx });
+      remaining -= template.length;
+      pIdx += 1;
+      if (revealed < template.length) break;
+    }
+    if (result.length === 0) {
+      result.push({ template: paragraphTemplates[0], revealed: 1, pIndex: 0 });
+    }
+    return result;
+  }, [filledLines, paragraphTemplates]);
+
+  const wordsApprox = filledLines * 12; // rough estimate for the badge
 
   return (
     <div
@@ -63,7 +125,7 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
       aria-label={stages[stageIndex]}
       className={cn("relative w-full animate-fade-in", className)}
     >
-      {/* Header: minimal AI mark + status */}
+      {/* Header */}
       <div className="flex items-center gap-2.5 mb-5">
         <div className="relative flex items-center justify-center w-5 h-5 shrink-0" aria-hidden="true">
           <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
@@ -85,65 +147,67 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
         </div>
 
         {isLongWait && (
-          <span className="ml-auto text-[10.5px] font-medium text-muted-foreground tabular-nums px-2 py-0.5 rounded-full bg-muted border border-border/60 animate-fade-in">
-            {elapsedSeconds}s
+          <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-medium text-muted-foreground tabular-nums px-2 py-0.5 rounded-full bg-muted border border-border/60 animate-fade-in">
+            <span>~{wordsApprox} words</span>
+            <span className="w-px h-2.5 bg-border" aria-hidden="true" />
+            <span>{elapsedSeconds}s</span>
           </span>
         )}
       </div>
 
-      {/* Content-shaped skeleton */}
-      <div className="space-y-3">
-        <div className="h-5 w-1/3 rounded-md bg-foreground/[0.10] relative overflow-hidden">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 -translate-x-full bg-foreground/[0.05]"
-            style={{ animation: "shimmer 2s ease-in-out infinite" }}
-          />
-        </div>
+      {/* Title skeleton (always visible) */}
+      <div className="h-5 w-1/3 rounded-md bg-foreground/[0.10] relative overflow-hidden mb-3">
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 -translate-x-full bg-foreground/[0.05]"
+          style={{ animation: "shimmer 2s ease-in-out infinite" }}
+        />
+      </div>
 
-        {paragraphs.map((widths, pIdx) => {
-          const offset = paragraphs.slice(0, pIdx).reduce((s, p) => s + p.length, 0);
-          return (
-            <div key={pIdx} className="space-y-2.5 pt-1">
-              {widths.map((w, i) => {
-                const lineIdx = offset + i;
-                const isActive = lineIdx === activeLine;
-                const isPast = lineIdx < activeLine;
-                return (
-                  <div
-                    key={i}
-                    className={cn(
-                      "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
-                      isActive
-                        ? "bg-foreground/[0.16]"
-                        : isPast
-                          ? "bg-foreground/[0.10]"
-                          : "bg-foreground/[0.05]",
-                    )}
-                    style={{ width: `${w}%` }}
-                  >
-                    {isActive && (
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-0 -translate-x-full"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
-                          animation: "shimmer 1.4s ease-in-out infinite",
-                        }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
+      {/* Progressively revealed paragraphs */}
+      <div className="space-y-4">
+        {visibleParagraphs.map(({ template, revealed, pIndex }) => (
+          <div
+            key={pIndex}
+            className="space-y-2.5 animate-fade-in"
+          >
+            {template.map((w, i) => {
+              const isCurrent = i === revealed - 1 && revealed < template.length;
+              const isFilled = i < revealed - (isCurrent ? 1 : 0);
+              return (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
+                    isCurrent
+                      ? "bg-foreground/[0.16]"
+                      : isFilled
+                        ? "bg-foreground/[0.10]"
+                        : "bg-foreground/[0.04]",
+                  )}
+                  style={{ width: `${w}%` }}
+                >
+                  {isCurrent && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -translate-x-full"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.12), transparent)",
+                        animation: "shimmer 1.2s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       {isLongWait && (
         <p className="mt-4 text-[11px] text-muted-foreground animate-fade-in">
-          Hang tight — complex prompts may take a moment.
+          Hang tight — longer prompts produce richer content.
         </p>
       )}
     </div>
