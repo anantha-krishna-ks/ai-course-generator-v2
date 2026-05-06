@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { Trash2, Copy, GripVertical, LayoutGrid, Type, ImageIcon, Video, Mic, HelpCircle, Plus, Info } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -177,8 +177,22 @@ export function NestedLayoutBlock({
   // Per-column drop-target index (for showing drop indicators between nested blocks).
   const [activeDrop, setActiveDrop] = useState<{ col: number; idx: number } | null>(null);
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  // Highlight the entire container when user hovers a toolbar action
+  // Highlight the entire container when toolbar is hovered or block is selected (clicked)
   const [toolbarActive, setToolbarActive] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+
+  // Click-outside to deselect
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!isSelected) return;
+    const onDown = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsSelected(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [isSelected]);
 
   const persist = useCallback(
     (next: NestedLayoutData) => {
@@ -309,12 +323,16 @@ export function NestedLayoutBlock({
 
   return (
     <div
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        containerRef.current = node;
+      }}
       style={sortableStyle}
       {...attributes}
+      onClick={() => setIsSelected(true)}
       className={cn(
         "group/layout relative rounded-2xl border bg-card/40 p-3 my-2 transition-all",
-        toolbarActive
+        toolbarActive || isSelected
           ? "border-primary/70 ring-2 ring-primary/30 shadow-md"
           : "border-border/60 hover:border-primary/30",
       )}
@@ -322,7 +340,10 @@ export function NestedLayoutBlock({
     >
       {/* Attached left-side toolbar — grouped by category (Move / Edit / Danger) */}
       <div
-        className="absolute right-full top-3 mr-[-1px] flex flex-col items-stretch rounded-l-xl border border-r-0 border-border/60 bg-background shadow-sm overflow-hidden opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 transition-opacity z-10"
+        className={cn(
+          "absolute right-full top-3 mr-[-1px] flex flex-col items-stretch rounded-l-xl border border-r-0 border-border/60 bg-background shadow-sm overflow-hidden transition-opacity z-10",
+          isSelected ? "opacity-100" : "opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100",
+        )}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseEnter={() => setToolbarActive(true)}
         onMouseLeave={() => setToolbarActive(false)}
