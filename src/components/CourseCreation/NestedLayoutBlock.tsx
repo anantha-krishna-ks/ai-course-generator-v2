@@ -320,86 +320,73 @@ export function NestedLayoutBlock({
       )}
       aria-label={columnCount === 2 ? "Dual Block container" : "Single Block container"}
     >
-      {/* Floating left-side toolbar (visible on hover) */}
+      {/* Attached left-side toolbar — grouped by category (Move / Edit / Danger) */}
       <div
-        className="absolute -left-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1.5 opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 transition-opacity z-10"
+        className="absolute right-full top-3 mr-[-1px] flex flex-col items-stretch rounded-l-xl border border-r-0 border-border/60 bg-background shadow-sm overflow-hidden opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 transition-opacity z-10"
         onPointerDown={(e) => e.stopPropagation()}
+        onMouseEnter={() => setToolbarActive(true)}
+        onMouseLeave={() => setToolbarActive(false)}
       >
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              {...listeners}
-              onMouseEnter={() => setToolbarActive(true)}
-              onMouseLeave={() => setToolbarActive(false)}
-              onFocus={() => setToolbarActive(true)}
-              onBlur={() => setToolbarActive(false)}
-              className="w-8 h-8 rounded-lg bg-background border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors cursor-grab active:cursor-grabbing touch-none"
-              aria-label="Drag to reorder layout"
-            >
-              <GripVertical className="w-4 h-4" aria-hidden="true" focusable="false" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="left" className="text-xs">Drag to reorder</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={onDuplicate}
-              onMouseEnter={() => setToolbarActive(true)}
-              onMouseLeave={() => setToolbarActive(false)}
-              onFocus={() => setToolbarActive(true)}
-              onBlur={() => setToolbarActive(false)}
-              className="w-8 h-8 rounded-lg bg-background border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
-              aria-label="Duplicate layout"
-            >
-              <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="left" className="text-xs">Duplicate</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={onDelete}
-              onMouseEnter={() => setToolbarActive(true)}
-              onMouseLeave={() => setToolbarActive(false)}
-              onFocus={() => setToolbarActive(true)}
-              onBlur={() => setToolbarActive(false)}
-              className="w-8 h-8 rounded-lg bg-background border border-border/60 shadow-sm flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/40 hover:bg-destructive/5 transition-colors"
-              aria-label="Delete layout"
-            >
-              <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="left" className="text-xs">Delete</TooltipContent>
-        </Tooltip>
-      </div>
+        {/* Group: Move */}
+        <div className="flex flex-col p-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                {...listeners}
+                onFocus={() => setToolbarActive(true)}
+                onBlur={() => setToolbarActive(false)}
+                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-grab active:cursor-grabbing touch-none"
+                aria-label="Drag to reorder layout"
+              >
+                <GripVertical className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="text-xs">Drag to reorder</TooltipContent>
+          </Tooltip>
+        </div>
 
-      {/* Header label */}
-      <div className="flex items-center gap-2 mb-2 px-1 text-xs font-medium text-muted-foreground">
-        <LayoutGrid className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-        <span>{columnCount === 2 ? "Dual Block" : "Single Block"}</span>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              className="p-0.5 rounded-md text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="About this container"
-            >
-              <Info className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs max-w-[260px] leading-relaxed">
-            <p className="font-medium text-foreground mb-1">Allowed inside columns</p>
-            <p className="text-muted-foreground">Text, Image, Video, Audio, Doc, and Quiz blocks.</p>
-            <p className="text-muted-foreground mt-1.5">
-              Side-by-side variants (image-left/right, video-left/right) and nested layouts are disabled here.
-            </p>
-          </TooltipContent>
-        </Tooltip>
+        <div className="h-px bg-border/60" aria-hidden="true" />
+
+        {/* Group: Edit */}
+        <div className="flex flex-col p-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={onDuplicate}
+                onFocus={() => setToolbarActive(true)}
+                onBlur={() => setToolbarActive(false)}
+                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                aria-label="Duplicate layout"
+              >
+                <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="text-xs">Duplicate</TooltipContent>
+          </Tooltip>
+        </div>
+
+        <div className="h-px bg-border/60" aria-hidden="true" />
+
+        {/* Group: Danger */}
+        <div className="flex flex-col p-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={onDelete}
+                onFocus={() => setToolbarActive(true)}
+                onBlur={() => setToolbarActive(false)}
+                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                aria-label="Delete layout"
+              >
+                <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="text-xs">Delete</TooltipContent>
+          </Tooltip>
+        </div>
       </div>
 
       {/* Columns */}
