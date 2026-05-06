@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DescriptionEditor } from "./DescriptionEditor";
 import { ImageBlock } from "./ImageBlock";
+import { AIBlockLoader } from "./AIBlockLoader";
 import { MediaUploadBlock } from "./MediaUploadBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
