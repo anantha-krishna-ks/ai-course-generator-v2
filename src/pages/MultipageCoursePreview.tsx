@@ -1227,94 +1227,34 @@ const MultipageCoursePreview = () => {
                       <div className="relative flex flex-col items-center text-center space-y-6">
                         {/* Decorative completion illustration */}
                         <svg
-                          viewBox="0 0 240 200"
-                          className="w-48 sm:w-56 h-auto animate-scale-in"
+                          viewBox="0 0 200 140"
+                          className="w-44 sm:w-52 h-auto animate-scale-in"
                           aria-hidden="true"
                           focusable="false"
                         >
                           <defs>
-                            <linearGradient id="trophyGrad" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="1" />
-                              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.7" />
+                            <linearGradient id="bookGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
+                              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.55" />
                             </linearGradient>
-                            <linearGradient id="trophyShine" x1="0" y1="0" x2="1" y2="0">
-                              <stop offset="0%" stopColor="hsl(var(--background))" stopOpacity="0" />
-                              <stop offset="50%" stopColor="hsl(var(--background))" stopOpacity="0.35" />
-                              <stop offset="100%" stopColor="hsl(var(--background))" stopOpacity="0" />
-                            </linearGradient>
-                            <radialGradient id="haloGrad" cx="0.5" cy="0.5" r="0.5">
-                              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
-                              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-                            </radialGradient>
                           </defs>
-
-                          {/* Soft halo */}
-                          <circle cx="120" cy="92" r="80" fill="url(#haloGrad)" />
-
-                          {/* Concentric rings */}
-                          <circle cx="120" cy="92" r="62" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.18" strokeWidth="1" strokeDasharray="2 4" />
-                          <circle cx="120" cy="92" r="46" fill="none" stroke="hsl(var(--primary))" strokeOpacity="0.25" strokeWidth="1" />
-
-                          {/* Confetti */}
-                          <g stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round">
-                            <line x1="46" y1="46" x2="52" y2="40" opacity="0.7" />
-                            <line x1="190" y1="38" x2="196" y2="46" opacity="0.7" />
-                            <line x1="38" y1="100" x2="46" y2="100" opacity="0.5" />
-                            <line x1="196" y1="104" x2="204" y2="104" opacity="0.5" />
+                          <ellipse cx="100" cy="124" rx="60" ry="5" fill="hsl(var(--primary))" opacity="0.12" />
+                          <path d="M30 90 Q100 70 170 90 L170 110 Q100 92 30 110 Z" fill="url(#bookGrad)" />
+                          <path d="M100 78 L100 108" stroke="hsl(var(--background))" strokeWidth="1.5" opacity="0.6" />
+                          <path d="M50 86 Q75 80 98 84" stroke="hsl(var(--background))" strokeWidth="1" fill="none" opacity="0.55" />
+                          <path d="M102 84 Q125 80 150 86" stroke="hsl(var(--background))" strokeWidth="1" fill="none" opacity="0.55" />
+                          <g transform="translate(100 48)">
+                            <path d="M-30 0 L0 -14 L30 0 L0 14 Z" fill="hsl(var(--foreground))" />
+                            <path d="M-18 4 L-18 18 Q0 26 18 18 L18 4 L0 11 Z" fill="hsl(var(--foreground))" opacity="0.85" />
+                            <line x1="22" y1="2" x2="28" y2="20" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" />
+                            <circle cx="29" cy="22" r="2.5" fill="hsl(var(--primary))" />
                           </g>
                           <g fill="hsl(var(--primary))">
-                            <circle cx="64" cy="34" r="2" opacity="0.8" />
-                            <circle cx="178" cy="60" r="1.6" opacity="0.6" />
-                            <circle cx="58" cy="76" r="1.4" opacity="0.55" />
-                            <rect x="200" y="80" width="3" height="3" transform="rotate(20 201 81)" opacity="0.6" />
-                            <rect x="40" y="58" width="3" height="3" transform="rotate(45 41 59)" opacity="0.6" />
+                            <circle cx="40" cy="40" r="1.8" />
+                            <circle cx="160" cy="36" r="2.2" />
+                            <circle cx="170" cy="62" r="1.5" opacity="0.7" />
+                            <circle cx="30" cy="62" r="1.5" opacity="0.7" />
                           </g>
-
-                          {/* Trophy */}
-                          <g>
-                            {/* Handles */}
-                            <path
-                              d="M88 60 Q70 60 70 78 Q70 94 92 96"
-                              fill="none"
-                              stroke="hsl(var(--primary))"
-                              strokeOpacity="0.85"
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                            <path
-                              d="M152 60 Q170 60 170 78 Q170 94 148 96"
-                              fill="none"
-                              stroke="hsl(var(--primary))"
-                              strokeOpacity="0.85"
-                              strokeWidth="4"
-                              strokeLinecap="round"
-                            />
-                            {/* Cup */}
-                            <path
-                              d="M88 50 L152 50 L148 108 Q148 124 120 124 Q92 124 92 108 Z"
-                              fill="url(#trophyGrad)"
-                            />
-                            {/* Shine */}
-                            <path
-                              d="M100 56 L108 56 L104 116 Q100 116 98 110 Z"
-                              fill="url(#trophyShine)"
-                              opacity="0.7"
-                            />
-                            {/* Star */}
-                            <path
-                              d="M120 76 L123.4 84.2 L132 85 L125.4 90.8 L127.4 99.4 L120 94.8 L112.6 99.4 L114.6 90.8 L108 85 L116.6 84.2 Z"
-                              fill="hsl(var(--background))"
-                              opacity="0.95"
-                            />
-                            {/* Stem */}
-                            <rect x="112" y="124" width="16" height="14" fill="hsl(var(--primary))" opacity="0.85" />
-                            {/* Base */}
-                            <rect x="92" y="138" width="56" height="10" rx="2" fill="hsl(var(--primary))" />
-                            <rect x="84" y="148" width="72" height="6" rx="2" fill="hsl(var(--primary))" opacity="0.85" />
-                          </g>
-
-                          {/* Ground shadow */}
-                          <ellipse cx="120" cy="164" rx="58" ry="5" fill="hsl(var(--primary))" opacity="0.15" />
                         </svg>
                         <div className="space-y-3">
                           <h3 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
