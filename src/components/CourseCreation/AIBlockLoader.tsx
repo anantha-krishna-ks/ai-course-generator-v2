@@ -121,10 +121,14 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
                   )}
                 </div>
                 {isActive && (
-                  <span
+                  <Sparkles
+                    className="ml-1.5 w-3.5 h-3.5 text-primary shrink-0"
                     aria-hidden="true"
-                    className="ml-1 inline-block w-2 h-3 bg-foreground rounded-[1px] animate-pulse"
-                    style={{ animationDuration: "0.9s" }}
+                    focusable="false"
+                    style={{
+                      fill: "hsl(var(--primary))",
+                      animation: "fade-in 0.6s ease-in-out infinite alternate",
+                    }}
                   />
                 )}
               </div>
