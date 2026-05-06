@@ -95,19 +95,36 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
         <div className="space-y-2.5 pt-1">
           {lineWidths.map((w, i) => {
             const isActive = i === activeLine;
+            const isPast = i < activeLine;
             return (
-              <div
-                key={i}
-                className={cn(
-                  "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
-                  isActive ? "bg-foreground/[0.13]" : "bg-foreground/[0.07]",
-                )}
-                style={{ width: `${w}%` }}
-              >
+              <div key={i} className="relative flex items-center" style={{ width: `${w}%` }}>
+                <div
+                  className={cn(
+                    "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden flex-1",
+                    isActive
+                      ? "bg-foreground/[0.16]"
+                      : isPast
+                        ? "bg-foreground/[0.10]"
+                        : "bg-foreground/[0.05]",
+                  )}
+                >
+                  {isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -translate-x-full"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
+                        animation: "shimmer 1.4s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+                </div>
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-3 bg-primary animate-pulse"
+                    className="ml-1 inline-block w-2 h-3 bg-foreground rounded-[1px] animate-pulse"
+                    style={{ animationDuration: "0.9s" }}
                   />
                 )}
               </div>
