@@ -532,11 +532,11 @@ export function ContentBlock({
               {colCount > 1 ? (
                 <div className={cn("grid gap-4", colCount === 3 ? "grid-cols-3" : "grid-cols-2")}>
                   {Array.from({ length: colCount }).map((_, i) => (
-                    <AIBlockLoader key={i} lines={3} />
+                    <AIBlockLoader key={i} />
                   ))}
                 </div>
               ) : (
-                <AIBlockLoader lines={4} />
+                <AIBlockLoader />
               )}
             </div>
           ) : readOnly ? (
