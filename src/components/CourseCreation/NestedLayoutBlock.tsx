@@ -341,7 +341,7 @@ export function NestedLayoutBlock({
       {/* Attached left-side toolbar — visually anchored to the section */}
       <div
         className={cn(
-          "absolute right-full top-3 mr-[-2px] flex flex-col items-stretch rounded-l-xl border border-r-0 overflow-hidden transition-all z-10",
+          "absolute right-full top-3 mr-2 flex flex-col items-stretch rounded-xl border overflow-hidden transition-all z-10",
           isSelected || toolbarActive
             ? "opacity-100 border-primary/60 bg-primary/[0.06] shadow-md"
             : "opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 border-border/60 bg-background shadow-sm",
@@ -352,15 +352,6 @@ export function NestedLayoutBlock({
         role="toolbar"
         aria-label={`${columnCount === 2 ? "Dual" : "Single"} Block toolbar`}
       >
-        {/* Section label header */}
-        <div className={cn(
-          "px-2 py-1 text-[10px] font-semibold tracking-wide uppercase text-center border-b transition-colors",
-          isSelected || toolbarActive
-            ? "bg-primary text-primary-foreground border-primary/60"
-            : "bg-muted/50 text-muted-foreground border-border/60",
-        )}>
-          {columnCount === 2 ? "Dual" : "Single"}
-        </div>
 
         {/* Group: Move */}
         <div className="flex flex-col p-1">
@@ -381,7 +372,7 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        <div className="h-px bg-border/60 mx-1" aria-hidden="true" />
+        <div className="h-px bg-border/60 mx-2" aria-hidden="true" />
 
         {/* Group: Edit */}
         <div className="flex flex-col p-1">
@@ -402,7 +393,7 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        <div className="h-px bg-border/60 mx-1" aria-hidden="true" />
+        <div className="h-px bg-border/60 mx-2" aria-hidden="true" />
 
         {/* Group: Danger */}
         <div className="flex flex-col p-1">
@@ -423,14 +414,6 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        {/* Connector tab — visually links toolbar to the section */}
-        <div
-          className={cn(
-            "absolute left-full top-1/2 -translate-y-1/2 w-2 h-8 transition-colors",
-            isSelected || toolbarActive ? "bg-primary/60" : "bg-border/60",
-          )}
-          aria-hidden="true"
-        />
       </div>
 
 
