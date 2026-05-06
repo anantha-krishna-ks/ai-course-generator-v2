@@ -182,6 +182,7 @@ export function ContentBlock({
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [imageGenerating, setImageGenerating] = useState(false);
+  const [textGenerating, setTextGenerating] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
