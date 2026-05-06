@@ -182,8 +182,8 @@ export function NestedLayoutBlock({
   const [isSelected, setIsSelected] = useState(false);
 
   // Click-outside to deselect
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  React.useEffect(() => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
     if (!isSelected) return;
     const onDown = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
