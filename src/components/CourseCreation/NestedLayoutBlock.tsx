@@ -333,7 +333,7 @@ export function NestedLayoutBlock({
       className={cn(
         "group/layout relative rounded-2xl border bg-card/40 p-3 my-2 transition-all",
         toolbarActive || isSelected
-          ? "border-primary/70 ring-2 ring-primary/30 shadow-md"
+          ? "border-transparent ring-2 ring-primary ring-offset-2 ring-offset-background"
           : "border-border/60 hover:border-primary/30",
       )}
       aria-label={columnCount === 2 ? "Dual Block container" : "Single Block container"}
