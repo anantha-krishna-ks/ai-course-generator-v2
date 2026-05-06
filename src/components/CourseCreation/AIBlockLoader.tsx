@@ -110,37 +110,26 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
                 const isActive = lineIdx === activeLine;
                 const isPast = lineIdx < activeLine;
                 return (
-                  <div key={i} className="relative flex items-center" style={{ width: `${w}%` }}>
-                    <div
-                      className={cn(
-                        "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden flex-1",
-                        isActive
-                          ? "bg-foreground/[0.16]"
-                          : isPast
-                            ? "bg-foreground/[0.10]"
-                            : "bg-foreground/[0.05]",
-                      )}
-                    >
-                      {isActive && (
-                        <span
-                          aria-hidden="true"
-                          className="absolute inset-0 -translate-x-full"
-                          style={{
-                            background:
-                              "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
-                            animation: "shimmer 1.4s ease-in-out infinite",
-                          }}
-                        />
-                      )}
-                    </div>
+                  <div
+                    key={i}
+                    className={cn(
+                      "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
+                      isActive
+                        ? "bg-foreground/[0.16]"
+                        : isPast
+                          ? "bg-foreground/[0.10]"
+                          : "bg-foreground/[0.05]",
+                    )}
+                    style={{ width: `${w}%` }}
+                  >
                     {isActive && (
-                      <Sparkles
-                        className="ml-1.5 w-3.5 h-3.5 text-primary shrink-0"
+                      <span
                         aria-hidden="true"
-                        focusable="false"
+                        className="absolute inset-0 -translate-x-full"
                         style={{
-                          fill: "hsl(var(--primary))",
-                          animation: "fade-in 0.6s ease-in-out infinite alternate",
+                          background:
+                            "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
+                          animation: "shimmer 1.4s ease-in-out infinite",
                         }}
                       />
                     )}
