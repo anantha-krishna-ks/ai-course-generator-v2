@@ -4,10 +4,8 @@ import { Sparkles } from "lucide-react";
 
 interface AIBlockLoaderProps {
   stages?: string[];
-  lines?: number;
   className?: string;
   minHeight?: number | string;
-  withHeading?: boolean;
 }
 
 const DEFAULT_STAGES = [
@@ -21,24 +19,21 @@ const DEFAULT_STAGES = [
 const LONG_WAIT_THRESHOLD_MS = 8000;
 
 /**
- * Modern AI generation loader for content blocks (no gradients).
+ * Calm, centered AI generation loader for content blocks.
  *
- * - Solid primary orb with pulsing halo
- * - Cycling short stage labels with bouncing dots
- * - Indeterminate progress rail
- * - Progressively revealed shimmer lines
- * - Calm elapsed pill that surfaces only for long waits
+ * - Pulsing primary orb with concentric rings (focal point)
+ * - Cycling short stage label with crossfade
+ * - Three bouncing dots show liveness without visual noise
+ * - Elapsed pill appears only after a long wait, with reassuring copy
+ * - No shimmer lines, no gradients — purely tonal
  */
 export function AIBlockLoader({
   stages = DEFAULT_STAGES,
-  lines = 4,
   className,
-  minHeight = "10rem",
-  withHeading = true,
+  minHeight = "12rem",
 }: AIBlockLoaderProps) {
   const [stageIndex, setStageIndex] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [revealedLines, setRevealedLines] = useState(1);
 
   useEffect(() => {
     const start = Date.now();
@@ -48,15 +43,11 @@ export function AIBlockLoader({
     const elapsedTimer = window.setInterval(() => {
       setElapsedMs(Date.now() - start);
     }, 500);
-    const lineTimer = window.setInterval(() => {
-      setRevealedLines((n) => (n >= lines ? 1 : n + 1));
-    }, 700);
     return () => {
       window.clearInterval(stageTimer);
       window.clearInterval(elapsedTimer);
-      window.clearInterval(lineTimer);
     };
-  }, [stages.length, lines]);
+  }, [stages.length]);
 
   const isLongWait = elapsedMs >= LONG_WAIT_THRESHOLD_MS;
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
@@ -68,94 +59,57 @@ export function AIBlockLoader({
       aria-label={stages[stageIndex]}
       style={{ minHeight }}
       className={cn(
-        "relative w-full overflow-hidden rounded-2xl border border-primary/30 bg-card animate-fade-in",
+        "relative w-full overflow-hidden rounded-2xl border border-primary/25 bg-card animate-fade-in",
         className,
       )}
     >
-      {/* Animated dashed progress border */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-2xl border border-dashed border-primary/40"
-        style={{ animation: "spin 12s linear infinite" }}
-      />
-
-      <div className="relative flex flex-col gap-3.5 p-4">
-        {/* Header: orb + stage label */}
-        <div className="flex items-center gap-3">
-          <div className="relative shrink-0">
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
-            />
-            <div className="relative w-7 h-7 rounded-full bg-primary flex items-center justify-center shadow-sm">
-              <Sparkles
-                className="w-3.5 h-3.5 text-primary-foreground animate-pulse"
-                aria-hidden="true"
-                focusable="false"
-              />
-            </div>
-          </div>
-
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <div
-              key={stageIndex}
-              className="flex items-baseline gap-1 text-[13px] font-medium text-foreground animate-fade-in"
-            >
-              <span className="truncate">{stages[stageIndex]}</span>
-              <span className="inline-flex gap-0.5 shrink-0">
-                <span className="w-1 h-1 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1 h-1 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-1 h-1 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "300ms" }} />
-              </span>
-            </div>
-            {/* Indeterminate progress rail */}
-            <div className="mt-1.5 h-[2px] w-full rounded-full bg-foreground/[0.06] overflow-hidden relative">
-              <div
-                className="absolute top-0 left-0 h-full w-1/3 rounded-full bg-primary"
-                style={{ animation: "shimmer 1.6s ease-in-out infinite" }}
-              />
-            </div>
-          </div>
-
-          {isLongWait && (
-            <span className="text-[10.5px] font-medium text-muted-foreground tabular-nums shrink-0 px-2 py-0.5 rounded-full bg-muted border border-border/60 animate-fade-in">
-              {elapsedSeconds}s
-            </span>
-          )}
-        </div>
-
-        {/* Progressive shimmer lines */}
-        {withHeading && (
-          <div
-            className={cn(
-              "h-3.5 w-2/5 rounded-full bg-foreground/[0.12] transition-opacity duration-500",
-              revealedLines >= 1 ? "opacity-100" : "opacity-0",
-            )}
+      <div className="relative flex flex-col items-center justify-center gap-4 px-6 py-8 text-center">
+        {/* Focal orb with concentric rings */}
+        <div className="relative flex items-center justify-center w-16 h-16">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full border border-primary/20"
+            style={{ animation: "ping 2.4s cubic-bezier(0,0,0.2,1) infinite" }}
           />
-        )}
-        <div className="space-y-2">
-          {Array.from({ length: lines }).map((_, i) => {
-            const widths = ["w-full", "w-[94%]", "w-[88%]", "w-[72%]", "w-[60%]"];
-            const isRevealed = i < revealedLines;
-            return (
-              <div
-                key={i}
-                className={cn(
-                  "h-2.5 rounded-full transition-all duration-500",
-                  isRevealed
-                    ? "bg-foreground/[0.09] opacity-100 translate-y-0"
-                    : "bg-foreground/[0.04] opacity-40 translate-y-0.5",
-                  widths[i % widths.length],
-                )}
-              />
-            );
-          })}
+          <span
+            aria-hidden="true"
+            className="absolute inset-2 rounded-full border border-primary/30"
+            style={{ animation: "ping 2.4s cubic-bezier(0,0,0.2,1) infinite", animationDelay: "0.6s" }}
+          />
+          <div className="relative w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+            <Sparkles
+              className="w-5 h-5 text-primary-foreground"
+              aria-hidden="true"
+              focusable="false"
+              style={{ animation: "pulse 1.6s ease-in-out infinite" }}
+            />
+          </div>
         </div>
 
-        {isLongWait && (
-          <p className="text-[11px] text-muted-foreground animate-fade-in">
-            Hang tight — complex prompts may take a moment.
+        {/* Stage label with bouncing dots */}
+        <div className="flex flex-col items-center gap-1.5 max-w-full">
+          <div
+            key={stageIndex}
+            className="flex items-baseline justify-center gap-1.5 text-sm font-medium text-foreground animate-fade-in max-w-full"
+          >
+            <span className="truncate">{stages[stageIndex]}</span>
+            <span className="inline-flex gap-0.5 shrink-0" aria-hidden="true">
+              <span className="w-1 h-1 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-1 h-1 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-1 h-1 rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "300ms" }} />
+            </span>
+          </div>
+          <p className="text-[11.5px] text-muted-foreground">
+            AI is crafting your content
           </p>
+        </div>
+
+        {/* Long-wait reassurance pill */}
+        {isLongWait && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted border border-border/60 text-[11px] font-medium text-muted-foreground tabular-nums animate-fade-in">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+            Hang tight · {elapsedSeconds}s
+          </div>
         )}
       </div>
     </div>
