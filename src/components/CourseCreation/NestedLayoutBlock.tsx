@@ -177,8 +177,22 @@ export function NestedLayoutBlock({
   // Per-column drop-target index (for showing drop indicators between nested blocks).
   const [activeDrop, setActiveDrop] = useState<{ col: number; idx: number } | null>(null);
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  // Highlight the entire container when user hovers a toolbar action
+  // Highlight the entire container when toolbar is hovered or block is selected (clicked)
   const [toolbarActive, setToolbarActive] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+
+  // Click-outside to deselect
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  React.useEffect(() => {
+    if (!isSelected) return;
+    const onDown = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsSelected(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [isSelected]);
 
   const persist = useCallback(
     (next: NestedLayoutData) => {
