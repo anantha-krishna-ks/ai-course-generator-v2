@@ -527,6 +527,18 @@ export function ContentBlock({
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
+          ) : textGenerating && type === "text" ? (
+            <div className="w-full px-1">
+              {colCount > 1 ? (
+                <div className={cn("grid gap-4", colCount === 3 ? "grid-cols-3" : "grid-cols-2")}>
+                  {Array.from({ length: colCount }).map((_, i) => (
+                    <AIBlockLoader key={i} lines={3} />
+                  ))}
+                </div>
+              ) : (
+                <AIBlockLoader lines={4} />
+              )}
+            </div>
           ) : readOnly ? (
             <div className="w-full px-4 py-3">
               {hasContent ? (
