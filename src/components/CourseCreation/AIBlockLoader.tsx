@@ -54,71 +54,25 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
       aria-label={stages[stageIndex]}
       className={cn("relative w-full animate-fade-in", className)}
     >
-      {/* Header: AI orb + status */}
-      <div className="flex items-center gap-3 mb-5">
-        {/* Premium AI orb */}
-        <div className="relative w-11 h-11 shrink-0" aria-hidden="true">
-          {/* Outer quiet ring with rotating tick marks */}
-          <svg
-            viewBox="0 0 44 44"
-            className="absolute inset-0 w-full h-full"
-            style={{ animation: "spin 6s linear infinite" }}
-          >
-            <circle cx="22" cy="22" r="20" fill="none" stroke="hsl(var(--primary) / 0.15)" strokeWidth="1" />
-            <circle
-              cx="22"
-              cy="22"
-              r="20"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeDasharray="3 9"
-            />
-          </svg>
-
-          {/* Soft pulsing halo */}
-          <span className="absolute inset-1.5 rounded-full bg-primary/15 animate-ping" />
-          <span
-            className="absolute inset-2.5 rounded-full bg-primary/20 animate-ping"
-            style={{ animationDelay: "0.6s" }}
-          />
-
-          {/* Orbiting particle */}
-          <div
-            className="absolute inset-0"
-            style={{ animation: "spin 2.4s linear infinite" }}
-          >
-            <span className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary))]" />
-          </div>
-          <div
-            className="absolute inset-0"
-            style={{ animation: "spin 3.6s linear infinite reverse" }}
-          >
-            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[3px] h-[3px] rounded-full bg-primary/70" />
-          </div>
-
-          {/* Focal core */}
-          <div className="absolute inset-[10px] rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.45)]">
+      {/* Header: minimal AI mark + status */}
+      <div className="flex items-center gap-2.5 mb-5">
+        <div className="relative flex items-center justify-center w-5 h-5 shrink-0" aria-hidden="true">
+          <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+          <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-primary">
             <Sparkles className="w-3 h-3 text-primary-foreground" aria-hidden="true" focusable="false" />
-          </div>
+          </span>
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-primary">
-            AI · Generating
+        <div
+          key={stageIndex}
+          className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in min-w-0"
+        >
+          <span className="truncate">{stages[stageIndex]}</span>
+          <span className="inline-flex gap-0.5" aria-hidden="true">
+            <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
+            <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
+            <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "300ms" }} />
           </span>
-          <div
-            key={stageIndex}
-            className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in"
-          >
-            <span className="truncate">{stages[stageIndex]}</span>
-            <span className="inline-flex gap-0.5" aria-hidden="true">
-              <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "300ms" }} />
-            </span>
-          </div>
         </div>
 
         {isLongWait && (
