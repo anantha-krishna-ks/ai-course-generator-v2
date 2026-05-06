@@ -323,12 +323,16 @@ export function NestedLayoutBlock({
 
   return (
     <div
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        containerRef.current = node;
+      }}
       style={sortableStyle}
       {...attributes}
+      onClick={() => setIsSelected(true)}
       className={cn(
         "group/layout relative rounded-2xl border bg-card/40 p-3 my-2 transition-all",
-        toolbarActive
+        toolbarActive || isSelected
           ? "border-primary/70 ring-2 ring-primary/30 shadow-md"
           : "border-border/60 hover:border-primary/30",
       )}
