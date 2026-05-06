@@ -44,8 +44,17 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
   const isLongWait = elapsedMs >= LONG_WAIT_THRESHOLD_MS;
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
 
-  const lineWidths = [96, 88, 92, 74, 84, 60];
-  const activeLine = tick % lineWidths.length;
+  // Multi-paragraph layout that scales for long-form generation.
+  // Each paragraph has varied line widths and a short ending line,
+  // mimicking real prose so the skeleton reads naturally at any length.
+  const paragraphs: number[][] = [
+    [96, 92, 88, 94, 86, 60],
+    [95, 90, 93, 84, 72],
+    [94, 88, 91, 82, 90, 56],
+    [92, 95, 86, 78, 68],
+  ];
+  const totalLines = paragraphs.reduce((sum, p) => sum + p.length, 0);
+  const activeLine = tick % totalLines;
 
   return (
     <div
@@ -92,54 +101,55 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
           />
         </div>
 
-        <div className="space-y-2.5 pt-1">
-          {lineWidths.map((w, i) => {
-            const isActive = i === activeLine;
-            const isPast = i < activeLine;
-            return (
-              <div key={i} className="relative flex items-center" style={{ width: `${w}%` }}>
-                <div
-                  className={cn(
-                    "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden flex-1",
-                    isActive
-                      ? "bg-foreground/[0.16]"
-                      : isPast
-                        ? "bg-foreground/[0.10]"
-                        : "bg-foreground/[0.05]",
-                  )}
-                >
-                  {isActive && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 -translate-x-full"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
-                        animation: "shimmer 1.4s ease-in-out infinite",
-                      }}
-                    />
-                  )}
-                </div>
-                {isActive && (
-                  <Sparkles
-                    className="ml-1.5 w-3.5 h-3.5 text-primary shrink-0"
-                    aria-hidden="true"
-                    focusable="false"
-                    style={{
-                      fill: "hsl(var(--primary))",
-                      animation: "fade-in 0.6s ease-in-out infinite alternate",
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="space-y-2.5 pt-3 opacity-60">
-          <div className="h-2.5 w-[70%] rounded-full bg-foreground/[0.05]" />
-          <div className="h-2.5 w-[55%] rounded-full bg-foreground/[0.05]" />
-        </div>
+        {paragraphs.map((widths, pIdx) => {
+          const offset = paragraphs.slice(0, pIdx).reduce((s, p) => s + p.length, 0);
+          return (
+            <div key={pIdx} className="space-y-2.5 pt-1">
+              {widths.map((w, i) => {
+                const lineIdx = offset + i;
+                const isActive = lineIdx === activeLine;
+                const isPast = lineIdx < activeLine;
+                return (
+                  <div key={i} className="relative flex items-center" style={{ width: `${w}%` }}>
+                    <div
+                      className={cn(
+                        "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden flex-1",
+                        isActive
+                          ? "bg-foreground/[0.16]"
+                          : isPast
+                            ? "bg-foreground/[0.10]"
+                            : "bg-foreground/[0.05]",
+                      )}
+                    >
+                      {isActive && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-0 -translate-x-full"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
+                            animation: "shimmer 1.4s ease-in-out infinite",
+                          }}
+                        />
+                      )}
+                    </div>
+                    {isActive && (
+                      <Sparkles
+                        className="ml-1.5 w-3.5 h-3.5 text-primary shrink-0"
+                        aria-hidden="true"
+                        focusable="false"
+                        style={{
+                          fill: "hsl(var(--primary))",
+                          animation: "fade-in 0.6s ease-in-out infinite alternate",
+                        }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
 
       {isLongWait && (
