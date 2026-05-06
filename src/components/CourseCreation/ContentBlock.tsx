@@ -348,6 +348,13 @@ export function ContentBlock({
     setShowGenerateDialog(false);
     if (type === "image") {
       setImageGenerating(true);
+    } else if (type === "text") {
+      setTextGenerating(true);
+      setIsEditing(false);
+      // Simulated generation — replace with real API call wiring.
+      window.setTimeout(() => {
+        setTextGenerating(false);
+      }, 4200);
     }
   };
 
