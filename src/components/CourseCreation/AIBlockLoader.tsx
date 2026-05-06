@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 
@@ -17,35 +17,36 @@ const DEFAULT_STAGES = [
 
 const LONG_WAIT_THRESHOLD_MS = 8000;
 
-// Cadence
-const LINE_INTERVAL_MS = 280;        // how fast lines "type"
-const PARAGRAPH_GAP_MS = 600;        // pause between paragraphs
-const MAX_VISIBLE_PARAGRAPHS = 8;    // cap before recycling
+// Reveal cadence
+const LINE_INTERVAL_MS = 260;
+const PARAGRAPH_GAP_MS = 550;
+const MAX_VISIBLE_PARAGRAPHS = 6;
 
 /**
- * AI block loader optimized for long-form generation.
+ * Premium AI block loader for long-form generation.
  *
- * Progressive reveal: lines fill in sequentially within a paragraph
- * (past = solid, current = shimmering, future = faint). When a paragraph
- * finishes, a new one slides in below. This makes wait time feel like
- * real generation — content visibly grows the longer the user waits.
+ * Layout:
+ *  - Glassmorphic card with a soft primary glow
+ *  - Header: animated AI orb + live stage label + elapsed/word badge
+ *  - Stepper: visual stage progress
+ *  - Body: progressively revealed paragraph skeleton (past = solid,
+ *    current = shimmering with caret, future = faint)
+ *  - Footer: thin progress bar driven by stage cycle
  */
 export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoaderProps) {
   const [stageIndex, setStageIndex] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [filledLines, setFilledLines] = useState(0); // total lines "typed" so far
+  const [filledLines, setFilledLines] = useState(0);
+  const filledRef = useRef(0);
 
-  // Pre-generated paragraph templates (varied line widths, short tail line)
   const paragraphTemplates = useMemo<number[][]>(
     () => [
-      [96, 92, 88, 94, 86, 58],
+      [97, 92, 88, 94, 86, 58],
       [95, 90, 93, 84, 72],
       [94, 88, 91, 82, 90, 86, 54],
       [92, 95, 86, 78, 68],
       [96, 89, 93, 87, 82, 60],
       [94, 91, 88, 95, 76],
-      [93, 96, 85, 89, 82, 90, 64],
-      [95, 88, 92, 86, 70],
     ],
     [],
   );
@@ -58,10 +59,8 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
     );
     const elapsedTimer = window.setInterval(() => setElapsedMs(Date.now() - start), 500);
 
-    // Drive line-by-line reveal
     let cancelled = false;
     let pIdx = 0;
-    let totalSoFar = 0;
 
     const runParagraph = () => {
       if (cancelled) return;
@@ -74,8 +73,8 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
           return;
         }
         i += 1;
-        totalSoFar += 1;
-        setFilledLines(totalSoFar);
+        filledRef.current += 1;
+        setFilledLines(filledRef.current);
         if (i >= template.length) {
           window.clearInterval(lineTimer);
           pIdx += 1;
@@ -96,11 +95,10 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
   const isLongWait = elapsedMs >= LONG_WAIT_THRESHOLD_MS;
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
 
-  // Build the visible paragraph stack from filledLines.
-  // Each paragraph is fully revealed before the next begins.
+  // Build visible paragraph stack from filledLines, recycling templates.
   const visibleParagraphs = useMemo(() => {
     const result: { template: number[]; revealed: number; pIndex: number }[] = [];
-    let remaining = filledLines + 1; // +1 so we always render the current "in-progress" line
+    let remaining = filledLines + 1;
     let pIdx = 0;
     while (remaining > 0 && result.length < MAX_VISIBLE_PARAGRAPHS) {
       const template = paragraphTemplates[pIdx % paragraphTemplates.length];
@@ -113,103 +111,193 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
     if (result.length === 0) {
       result.push({ template: paragraphTemplates[0], revealed: 1, pIndex: 0 });
     }
-    return result;
+    // Only show last MAX_VISIBLE_PARAGRAPHS for long sessions
+    return result.slice(-MAX_VISIBLE_PARAGRAPHS);
   }, [filledLines, paragraphTemplates]);
 
-  const wordsApprox = filledLines * 12; // rough estimate for the badge
+  const wordsApprox = filledLines * 12;
+  const progressPct = ((stageIndex + 1) / stages.length) * 100;
 
   return (
     <div
       role="status"
       aria-live="polite"
       aria-label={stages[stageIndex]}
-      className={cn("relative w-full animate-fade-in", className)}
-    >
-      {/* Header */}
-      <div className="flex items-center gap-2.5 mb-5">
-        <div className="relative flex items-center justify-center w-5 h-5 shrink-0" aria-hidden="true">
-          <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-          <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-primary">
-            <Sparkles className="w-3 h-3 text-primary-foreground" aria-hidden="true" focusable="false" />
-          </span>
-        </div>
-
-        <div
-          key={stageIndex}
-          className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in min-w-0"
-        >
-          <span className="truncate">{stages[stageIndex]}</span>
-          <span className="inline-flex gap-0.5" aria-hidden="true">
-            <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
-            <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
-            <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "300ms" }} />
-          </span>
-        </div>
-
-        {isLongWait && (
-          <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-medium text-muted-foreground tabular-nums px-2 py-0.5 rounded-full bg-muted border border-border/60 animate-fade-in">
-            <span>~{wordsApprox} words</span>
-            <span className="w-px h-2.5 bg-border" aria-hidden="true" />
-            <span>{elapsedSeconds}s</span>
-          </span>
-        )}
-      </div>
-
-      {/* Title skeleton (always visible) */}
-      <div className="h-5 w-1/3 rounded-md bg-foreground/[0.10] relative overflow-hidden mb-3">
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 -translate-x-full bg-foreground/[0.05]"
-          style={{ animation: "shimmer 2s ease-in-out infinite" }}
-        />
-      </div>
-
-      {/* Progressively revealed paragraphs */}
-      <div className="space-y-4">
-        {visibleParagraphs.map(({ template, revealed, pIndex }) => (
-          <div
-            key={pIndex}
-            className="space-y-2.5 animate-fade-in"
-          >
-            {template.map((w, i) => {
-              const isCurrent = i === revealed - 1 && revealed < template.length;
-              const isFilled = i < revealed - (isCurrent ? 1 : 0);
-              return (
-                <div
-                  key={i}
-                  className={cn(
-                    "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
-                    isCurrent
-                      ? "bg-foreground/[0.16]"
-                      : isFilled
-                        ? "bg-foreground/[0.10]"
-                        : "bg-foreground/[0.04]",
-                  )}
-                  style={{ width: `${w}%` }}
-                >
-                  {isCurrent && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 -translate-x-full"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.12), transparent)",
-                        animation: "shimmer 1.2s ease-in-out infinite",
-                      }}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      {isLongWait && (
-        <p className="mt-4 text-[11px] text-muted-foreground animate-fade-in">
-          Hang tight — longer prompts produce richer content.
-        </p>
+      className={cn(
+        "relative w-full animate-fade-in rounded-2xl border border-border/60",
+        "bg-gradient-to-br from-background via-background to-primary/[0.03]",
+        "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_hsl(var(--primary)/0.18)]",
+        "overflow-hidden",
+        className,
       )}
+    >
+      {/* Ambient glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl opacity-60"
+        style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.18), transparent 70%)" }}
+      />
+
+      <div className="relative p-5 sm:p-6">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-4">
+          {/* AI orb */}
+          <div className="relative flex items-center justify-center w-9 h-9 shrink-0" aria-hidden="true">
+            <span className="absolute inset-0 rounded-full bg-primary/15 animate-ping" />
+            <span className="absolute inset-1 rounded-full bg-primary/25" />
+            <span
+              className="relative flex items-center justify-center w-7 h-7 rounded-full shadow-[0_4px_12px_-2px_hsl(var(--primary)/0.5)]"
+              style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)))" }}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-primary-foreground" aria-hidden="true" focusable="false" />
+            </span>
+          </div>
+
+          {/* Stage label */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted-foreground mb-0.5">
+              AI is generating
+            </p>
+            <div
+              key={stageIndex}
+              className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in min-w-0"
+            >
+              <span className="truncate">{stages[stageIndex]}</span>
+              <span className="inline-flex gap-0.5" aria-hidden="true">
+                <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "300ms" }} />
+              </span>
+            </div>
+          </div>
+
+          {/* Live stats */}
+          {isLongWait && (
+            <div
+              className="hidden sm:inline-flex items-center gap-1.5 text-[10.5px] font-medium text-muted-foreground tabular-nums px-2.5 py-1 rounded-full bg-muted/70 border border-border/60 animate-fade-in shrink-0"
+              aria-hidden="true"
+            >
+              <span>~{wordsApprox} words</span>
+              <span className="w-px h-2.5 bg-border" />
+              <span>{elapsedSeconds}s</span>
+            </div>
+          )}
+        </div>
+
+        {/* Stage stepper */}
+        <div className="flex items-center gap-1.5 mb-5" aria-hidden="true">
+          {stages.map((_, i) => {
+            const state = i < stageIndex ? "done" : i === stageIndex ? "active" : "todo";
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "h-1 flex-1 rounded-full transition-all duration-500 relative overflow-hidden",
+                  state === "done" && "bg-primary/70",
+                  state === "active" && "bg-primary/25",
+                  state === "todo" && "bg-foreground/[0.06]",
+                )}
+              >
+                {state === "active" && (
+                  <span
+                    className="absolute inset-0 -translate-x-full"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent)",
+                      animation: "shimmer 1.4s ease-in-out infinite",
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Title skeleton */}
+        <div className="h-5 w-1/3 rounded-md bg-foreground/[0.10] relative overflow-hidden mb-4">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 -translate-x-full"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.08), transparent)",
+              animation: "shimmer 2s ease-in-out infinite",
+            }}
+          />
+        </div>
+
+        {/* Progressive paragraphs */}
+        <div className="space-y-4">
+          {visibleParagraphs.map(({ template, revealed, pIndex }) => (
+            <div key={pIndex} className="space-y-2.5 animate-fade-in">
+              {template.map((w, i) => {
+                const isCurrent = i === revealed - 1 && revealed < template.length;
+                const isFilled = i < revealed - (isCurrent ? 1 : 0);
+                return (
+                  <div
+                    key={i}
+                    className={cn(
+                      "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
+                      isCurrent
+                        ? "bg-foreground/[0.16]"
+                        : isFilled
+                          ? "bg-foreground/[0.10]"
+                          : "bg-foreground/[0.04]",
+                    )}
+                    style={{ width: `${w}%` }}
+                  >
+                    {isCurrent && (
+                      <>
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-0 -translate-x-full"
+                          style={{
+                            background:
+                              "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.18), transparent)",
+                            animation: "shimmer 1.1s ease-in-out infinite",
+                          }}
+                        />
+                        {/* Caret */}
+                        <span
+                          aria-hidden="true"
+                          className="absolute top-1/2 right-0 -translate-y-1/2 w-[2px] h-3 rounded-full bg-primary/70"
+                          style={{ animation: "pulse 1s ease-in-out infinite" }}
+                        />
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-6 pt-4 border-t border-border/50 flex items-center gap-3">
+          <div className="flex-1 h-1 rounded-full bg-foreground/[0.06] overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden"
+              style={{
+                width: `${progressPct}%`,
+                background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary-glow)))",
+              }}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 -translate-x-full"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.4), transparent)",
+                  animation: "shimmer 1.6s ease-in-out infinite",
+                }}
+              />
+            </div>
+          </div>
+          <span className="text-[10.5px] font-medium text-muted-foreground tabular-nums shrink-0">
+            {isLongWait ? `${elapsedSeconds}s elapsed` : "Just a moment…"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
