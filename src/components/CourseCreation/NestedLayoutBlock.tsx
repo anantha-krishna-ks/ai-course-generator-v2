@@ -338,16 +338,30 @@ export function NestedLayoutBlock({
       )}
       aria-label={columnCount === 2 ? "Dual Block container" : "Single Block container"}
     >
-      {/* Attached left-side toolbar — grouped by category (Move / Edit / Danger) */}
+      {/* Attached left-side toolbar — visually anchored to the section */}
       <div
         className={cn(
-          "absolute right-full top-3 mr-[-1px] flex flex-col items-stretch rounded-l-xl border border-r-0 border-border/60 bg-background shadow-sm overflow-hidden transition-opacity z-10",
-          isSelected ? "opacity-100" : "opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100",
+          "absolute right-full top-3 mr-[-2px] flex flex-col items-stretch rounded-l-xl border border-r-0 overflow-hidden transition-all z-10",
+          isSelected || toolbarActive
+            ? "opacity-100 border-primary/60 bg-primary/[0.06] shadow-md"
+            : "opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 border-border/60 bg-background shadow-sm",
         )}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseEnter={() => setToolbarActive(true)}
         onMouseLeave={() => setToolbarActive(false)}
+        role="toolbar"
+        aria-label={`${columnCount === 2 ? "Dual" : "Single"} Block toolbar`}
       >
+        {/* Section label header */}
+        <div className={cn(
+          "px-2 py-1 text-[10px] font-semibold tracking-wide uppercase text-center border-b transition-colors",
+          isSelected || toolbarActive
+            ? "bg-primary text-primary-foreground border-primary/60"
+            : "bg-muted/50 text-muted-foreground border-border/60",
+        )}>
+          {columnCount === 2 ? "Dual" : "Single"}
+        </div>
+
         {/* Group: Move */}
         <div className="flex flex-col p-1">
           <Tooltip>
@@ -357,7 +371,7 @@ export function NestedLayoutBlock({
                 {...listeners}
                 onFocus={() => setToolbarActive(true)}
                 onBlur={() => setToolbarActive(false)}
-                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-grab active:cursor-grabbing touch-none"
+                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-background transition-colors cursor-grab active:cursor-grabbing touch-none"
                 aria-label="Drag to reorder layout"
               >
                 <GripVertical className="w-4 h-4" aria-hidden="true" focusable="false" />
@@ -367,7 +381,7 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        <div className="h-px bg-border/60" aria-hidden="true" />
+        <div className="h-px bg-border/60 mx-1" aria-hidden="true" />
 
         {/* Group: Edit */}
         <div className="flex flex-col p-1">
@@ -378,7 +392,7 @@ export function NestedLayoutBlock({
                 onClick={onDuplicate}
                 onFocus={() => setToolbarActive(true)}
                 onBlur={() => setToolbarActive(false)}
-                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-background transition-colors"
                 aria-label="Duplicate layout"
               >
                 <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
@@ -388,7 +402,7 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        <div className="h-px bg-border/60" aria-hidden="true" />
+        <div className="h-px bg-border/60 mx-1" aria-hidden="true" />
 
         {/* Group: Danger */}
         <div className="flex flex-col p-1">
@@ -399,7 +413,7 @@ export function NestedLayoutBlock({
                 onClick={onDelete}
                 onFocus={() => setToolbarActive(true)}
                 onBlur={() => setToolbarActive(false)}
-                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-background transition-colors"
                 aria-label="Delete layout"
               >
                 <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
@@ -408,7 +422,17 @@ export function NestedLayoutBlock({
             <TooltipContent side="left" className="text-xs">Delete</TooltipContent>
           </Tooltip>
         </div>
+
+        {/* Connector tab — visually links toolbar to the section */}
+        <div
+          className={cn(
+            "absolute left-full top-1/2 -translate-y-1/2 w-2 h-8 transition-colors",
+            isSelected || toolbarActive ? "bg-primary/60" : "bg-border/60",
+          )}
+          aria-hidden="true"
+        />
       </div>
+
 
       {/* Columns */}
       <div className={cn("grid gap-3", columnCount === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1")}>
