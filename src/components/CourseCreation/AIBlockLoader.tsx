@@ -104,7 +104,7 @@ export function AIBlockLoader({ stages: _stages = DEFAULT_STAGES, className }: A
     <div
       role="status"
       aria-live="polite"
-      aria-label={stages[stageIndex]}
+      aria-label="Generating content"
       className={cn("relative w-full animate-fade-in", className)}
     >
       {/* Header: minimal AI mark + status */}
@@ -116,11 +116,8 @@ export function AIBlockLoader({ stages: _stages = DEFAULT_STAGES, className }: A
           </span>
         </div>
 
-        <div
-          key={stageIndex}
-          className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in min-w-0"
-        >
-          <span className="truncate">{stages[stageIndex]}</span>
+        <div className="flex items-baseline gap-1 text-sm font-medium text-foreground min-w-0">
+          <span className="truncate">Generating</span>
           <span className="inline-flex gap-0.5" aria-hidden="true">
             <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
             <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
