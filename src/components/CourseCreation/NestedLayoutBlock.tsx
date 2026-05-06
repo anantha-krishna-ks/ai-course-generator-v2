@@ -352,15 +352,6 @@ export function NestedLayoutBlock({
         role="toolbar"
         aria-label={`${columnCount === 2 ? "Dual" : "Single"} Block toolbar`}
       >
-        {/* Section label header */}
-        <div className={cn(
-          "px-2 py-1 text-[10px] font-semibold tracking-wide uppercase text-center border-b transition-colors",
-          isSelected || toolbarActive
-            ? "bg-primary text-primary-foreground border-primary/60"
-            : "bg-muted/50 text-muted-foreground border-border/60",
-        )}>
-          {columnCount === 2 ? "Dual" : "Single"}
-        </div>
 
         {/* Group: Move */}
         <div className="flex flex-col p-1">
