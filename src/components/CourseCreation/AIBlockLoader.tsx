@@ -45,8 +45,7 @@ function rollLine(lastWasShort: boolean): { width: number; paragraphBreak: boole
  * muted line, and a new active line begins below. Once the buffer fills, the
  * top fades out via a soft mask so the loader scales for any duration.
  */
-export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoaderProps) {
-  const [stageIndex, setStageIndex] = useState(0);
+export function AIBlockLoader({ stages: _stages = DEFAULT_STAGES, className }: AIBlockLoaderProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [committed, setCommitted] = useState<CommittedLine[]>([]);
   const [active, setActive] = useState<{ id: number; targetWidth: number; paragraphBreak: boolean; growing: boolean }>(() => {
@@ -57,16 +56,12 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
   const idRef = useRef(1);
   const lastShortRef = useRef(false);
 
-  // Stage + elapsed timers.
+  // Elapsed timer (used only for the long-wait hint).
   useEffect(() => {
     const start = Date.now();
-    const stageTimer = window.setInterval(() => setStageIndex((i) => (i + 1) % stages.length), 1800);
     const elapsedTimer = window.setInterval(() => setElapsedMs(Date.now() - start), 500);
-    return () => {
-      window.clearInterval(stageTimer);
-      window.clearInterval(elapsedTimer);
-    };
-  }, [stages.length]);
+    return () => window.clearInterval(elapsedTimer);
+  }, []);
 
   // Trigger growth on next frame after each new active line.
   useEffect(() => {
@@ -109,7 +104,7 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
     <div
       role="status"
       aria-live="polite"
-      aria-label={stages[stageIndex]}
+      aria-label="Generating content"
       className={cn("relative w-full animate-fade-in", className)}
     >
       {/* Header: minimal AI mark + status */}
@@ -121,11 +116,8 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
           </span>
         </div>
 
-        <div
-          key={stageIndex}
-          className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in min-w-0"
-        >
-          <span className="truncate">{stages[stageIndex]}</span>
+        <div className="flex items-baseline gap-1 text-sm font-medium text-foreground min-w-0">
+          <span className="truncate">Generating</span>
           <span className="inline-flex gap-0.5" aria-hidden="true">
             <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
             <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
