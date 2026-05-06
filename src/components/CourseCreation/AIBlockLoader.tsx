@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 
@@ -17,94 +17,50 @@ const DEFAULT_STAGES = [
 
 const LONG_WAIT_THRESHOLD_MS = 8000;
 
-// Visible buffer size; older lines fade out via mask.
-const MAX_VISIBLE_LINES = 10;
-// How long each line takes to "type" out.
-const LINE_GROW_MS = 700;
-// Tiny pause between finishing one line and starting the next.
-const LINE_SETTLE_MS = 90;
-
-type CommittedLine = {
-  id: number;
-  width: number;
-  paragraphBreak: boolean;
-};
-
-function rollLine(lastWasShort: boolean): { width: number; paragraphBreak: boolean; isShort: boolean } {
-  const paragraphBreak = lastWasShort && Math.random() < 0.6;
-  const isShort = !lastWasShort && Math.random() < 0.22;
-  const width = isShort ? 35 + Math.random() * 25 : 82 + Math.random() * 16;
-  return { width, paragraphBreak, isShort };
-}
-
 /**
- * Streaming AI block loader.
+ * Premium AI block loader.
  *
- * Mimics live text generation: a single "active" line grows from 0% to its
- * target width left-to-right (the typing motion), then commits into a calm
- * muted line, and a new active line begins below. Once the buffer fills, the
- * top fades out via a soft mask so the loader scales for any duration.
+ * Pairs a content-shaped skeleton with a tasteful "AI orb" visual:
+ * a focal Sparkles core, soft pulsing halo, orbiting micro-particles,
+ * and rotating tick marks on a quiet ring. Fully tonal — no gradients.
  */
-export function AIBlockLoader({ stages: _stages = DEFAULT_STAGES, className }: AIBlockLoaderProps) {
+export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoaderProps) {
+  const [stageIndex, setStageIndex] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [committed, setCommitted] = useState<CommittedLine[]>([]);
-  const [active, setActive] = useState<{ id: number; targetWidth: number; paragraphBreak: boolean; growing: boolean }>(() => {
-    const seed = rollLine(false);
-    return { id: 0, targetWidth: seed.width, paragraphBreak: false, growing: false };
-  });
+  const [tick, setTick] = useState(0);
 
-  const idRef = useRef(1);
-  const lastShortRef = useRef(false);
-
-  // Elapsed timer (used only for the long-wait hint).
   useEffect(() => {
     const start = Date.now();
+    const stageTimer = window.setInterval(() => setStageIndex((i) => (i + 1) % stages.length), 1800);
     const elapsedTimer = window.setInterval(() => setElapsedMs(Date.now() - start), 500);
-    return () => window.clearInterval(elapsedTimer);
-  }, []);
-
-  // Trigger growth on next frame after each new active line.
-  useEffect(() => {
-    if (active.growing) return;
-    const raf = requestAnimationFrame(() => {
-      setActive((a) => ({ ...a, growing: true }));
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [active.id, active.growing]);
-
-  // Commit the current active line once it finishes growing, then start a new one.
-  useEffect(() => {
-    if (!active.growing) return;
-    const commitTimer = window.setTimeout(() => {
-      setCommitted((prev) => {
-        const next: CommittedLine[] = [
-          ...prev,
-          { id: active.id, width: active.targetWidth, paragraphBreak: active.paragraphBreak },
-        ];
-        return next.length > MAX_VISIBLE_LINES ? next.slice(next.length - MAX_VISIBLE_LINES) : next;
-      });
-      lastShortRef.current = active.targetWidth < 65;
-      const seed = rollLine(lastShortRef.current);
-      setActive({
-        id: idRef.current++,
-        targetWidth: seed.width,
-        paragraphBreak: seed.paragraphBreak,
-        growing: false,
-      });
-    }, LINE_GROW_MS + LINE_SETTLE_MS);
-    return () => window.clearTimeout(commitTimer);
-  }, [active.id, active.growing, active.targetWidth, active.paragraphBreak]);
+    const typeTimer = window.setInterval(() => setTick((t) => t + 1), 450);
+    return () => {
+      window.clearInterval(stageTimer);
+      window.clearInterval(elapsedTimer);
+      window.clearInterval(typeTimer);
+    };
+  }, [stages.length]);
 
   const isLongWait = elapsedMs >= LONG_WAIT_THRESHOLD_MS;
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
-  const totalLines = committed.length + 1;
-  const useMask = totalLines >= MAX_VISIBLE_LINES;
+
+  // Multi-paragraph layout that scales for long-form generation.
+  // Each paragraph has varied line widths and a short ending line,
+  // mimicking real prose so the skeleton reads naturally at any length.
+  const paragraphs: number[][] = [
+    [96, 92, 88, 94, 86, 60],
+    [95, 90, 93, 84, 72],
+    [94, 88, 91, 82, 90, 56],
+    [92, 95, 86, 78, 68],
+  ];
+  const totalLines = paragraphs.reduce((sum, p) => sum + p.length, 0);
+  const activeLine = tick % totalLines;
 
   return (
     <div
       role="status"
       aria-live="polite"
-      aria-label="Generating content"
+      aria-label={stages[stageIndex]}
       className={cn("relative w-full animate-fade-in", className)}
     >
       {/* Header: minimal AI mark + status */}
@@ -116,8 +72,11 @@ export function AIBlockLoader({ stages: _stages = DEFAULT_STAGES, className }: A
           </span>
         </div>
 
-        <div className="flex items-baseline gap-1 text-sm font-medium text-foreground min-w-0">
-          <span className="truncate">Generating</span>
+        <div
+          key={stageIndex}
+          className="flex items-baseline gap-1 text-sm font-medium text-foreground animate-fade-in min-w-0"
+        >
+          <span className="truncate">{stages[stageIndex]}</span>
           <span className="inline-flex gap-0.5" aria-hidden="true">
             <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "0ms" }} />
             <span className="w-[3px] h-[3px] rounded-full bg-foreground/70 animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -132,51 +91,54 @@ export function AIBlockLoader({ stages: _stages = DEFAULT_STAGES, className }: A
         )}
       </div>
 
-      {/* Streaming skeleton */}
-      <div
-        className="relative space-y-2.5"
-        style={{
-          maskImage: useMask
-            ? "linear-gradient(to bottom, transparent 0%, black 14%, black 100%)"
-            : undefined,
-          WebkitMaskImage: useMask
-            ? "linear-gradient(to bottom, transparent 0%, black 14%, black 100%)"
-            : undefined,
-        }}
-      >
-        {/* Committed (already "written") lines */}
-        {committed.map((line) => (
-          <div
-            key={line.id}
-            className={cn(
-              "h-2.5 rounded-full bg-foreground/[0.10]",
-              line.paragraphBreak && "mt-4",
-            )}
-            style={{ width: `${line.width}%` }}
-          />
-        ))}
-
-        {/* Active line: grows left-to-right. Inner sheen amplifies the typing feel. */}
-        <div
-          key={active.id}
-          className={cn(
-            "h-2.5 rounded-full bg-foreground/[0.16] relative overflow-hidden",
-            active.paragraphBreak && committed.length > 0 && "mt-4",
-          )}
-          style={{
-            width: active.growing ? `${active.targetWidth}%` : "0%",
-            transition: `width ${LINE_GROW_MS}ms cubic-bezier(0.22, 0.61, 0.36, 1)`,
-          }}
-        >
+      {/* Content-shaped skeleton */}
+      <div className="space-y-3">
+        <div className="h-5 w-1/3 rounded-md bg-foreground/[0.10] relative overflow-hidden">
           <span
             aria-hidden="true"
-            className="absolute inset-y-0 right-0 w-12"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.18))",
-            }}
+            className="absolute inset-0 -translate-x-full bg-foreground/[0.05]"
+            style={{ animation: "shimmer 2s ease-in-out infinite" }}
           />
         </div>
+
+        {paragraphs.map((widths, pIdx) => {
+          const offset = paragraphs.slice(0, pIdx).reduce((s, p) => s + p.length, 0);
+          return (
+            <div key={pIdx} className="space-y-2.5 pt-1">
+              {widths.map((w, i) => {
+                const lineIdx = offset + i;
+                const isActive = lineIdx === activeLine;
+                const isPast = lineIdx < activeLine;
+                return (
+                  <div
+                    key={i}
+                    className={cn(
+                      "h-2.5 rounded-full transition-all duration-500 relative overflow-hidden",
+                      isActive
+                        ? "bg-foreground/[0.16]"
+                        : isPast
+                          ? "bg-foreground/[0.10]"
+                          : "bg-foreground/[0.05]",
+                    )}
+                    style={{ width: `${w}%` }}
+                  >
+                    {isActive && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-0 -translate-x-full"
+                        style={{
+                          background:
+                            "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.10), transparent)",
+                          animation: "shimmer 1.4s ease-in-out infinite",
+                        }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
 
       {isLongWait && (
