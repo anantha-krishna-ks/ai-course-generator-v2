@@ -431,29 +431,8 @@ export function NestedLayoutBlock({
           )}
           aria-hidden="true"
         />
-      </div>
 
-        <div className="h-px bg-border/60" aria-hidden="true" />
 
-        {/* Group: Danger */}
-        <div className="flex flex-col p-1">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={onDelete}
-                onFocus={() => setToolbarActive(true)}
-                onBlur={() => setToolbarActive(false)}
-                className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                aria-label="Delete layout"
-              >
-                <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="text-xs">Delete</TooltipContent>
-          </Tooltip>
-        </div>
-      </div>
 
       {/* Columns */}
       <div className={cn("grid gap-3", columnCount === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1")}>
