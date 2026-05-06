@@ -372,7 +372,7 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        <div className="h-px bg-border/60 mx-1" aria-hidden="true" />
+        <div className="h-px bg-border/60 mx-2" aria-hidden="true" />
 
         {/* Group: Edit */}
         <div className="flex flex-col p-1">
