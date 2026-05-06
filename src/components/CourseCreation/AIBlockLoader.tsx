@@ -44,8 +44,17 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
   const isLongWait = elapsedMs >= LONG_WAIT_THRESHOLD_MS;
   const elapsedSeconds = Math.floor(elapsedMs / 1000);
 
-  const lineWidths = [96, 88, 92, 74, 84, 60];
-  const activeLine = tick % lineWidths.length;
+  // Multi-paragraph layout that scales for long-form generation.
+  // Each paragraph has varied line widths and a short ending line,
+  // mimicking real prose so the skeleton reads naturally at any length.
+  const paragraphs: number[][] = [
+    [96, 92, 88, 94, 86, 60],
+    [95, 90, 93, 84, 72],
+    [94, 88, 91, 82, 90, 56],
+    [92, 95, 86, 78, 68],
+  ];
+  const totalLines = paragraphs.reduce((sum, p) => sum + p.length, 0);
+  const activeLine = tick % totalLines;
 
   return (
     <div
