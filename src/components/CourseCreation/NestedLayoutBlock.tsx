@@ -414,14 +414,6 @@ export function NestedLayoutBlock({
           </Tooltip>
         </div>
 
-        {/* Connector tab — visually links toolbar to the section */}
-        <div
-          className={cn(
-            "absolute left-full top-1/2 -translate-y-1/2 w-2 h-8 transition-colors",
-            isSelected || toolbarActive ? "bg-primary/60" : "bg-border/60",
-          )}
-          aria-hidden="true"
-        />
       </div>
 
 
