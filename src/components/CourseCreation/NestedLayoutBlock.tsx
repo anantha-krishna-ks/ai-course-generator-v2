@@ -177,6 +177,8 @@ export function NestedLayoutBlock({
   // Per-column drop-target index (for showing drop indicators between nested blocks).
   const [activeDrop, setActiveDrop] = useState<{ col: number; idx: number } | null>(null);
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
+  // Highlight the entire container when user hovers a toolbar action
+  const [toolbarActive, setToolbarActive] = useState(false);
 
   const persist = useCallback(
     (next: NestedLayoutData) => {
