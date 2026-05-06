@@ -431,7 +431,7 @@ export function NestedLayoutBlock({
           )}
           aria-hidden="true"
         />
-
+      </div>
 
 
       {/* Columns */}
