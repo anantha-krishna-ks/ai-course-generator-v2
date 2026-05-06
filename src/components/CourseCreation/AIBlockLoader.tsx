@@ -150,7 +150,6 @@ export function AIBlockLoader({ stages = DEFAULT_STAGES, className }: AIBlockLoa
             </div>
           );
         })}
-        </div>
       </div>
 
       {isLongWait && (
