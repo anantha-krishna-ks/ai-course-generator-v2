@@ -1225,10 +1225,44 @@ const MultipageCoursePreview = () => {
                       <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
 
                       <div className="relative flex flex-col items-center text-center space-y-6">
+                        {/* Decorative completion illustration */}
+                        <svg
+                          viewBox="0 0 200 140"
+                          className="w-44 sm:w-52 h-auto animate-scale-in"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <defs>
+                            <linearGradient id="bookGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
+                              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.55" />
+                            </linearGradient>
+                          </defs>
+                          <ellipse cx="100" cy="124" rx="60" ry="5" fill="hsl(var(--primary))" opacity="0.12" />
+                          <path d="M30 90 Q100 70 170 90 L170 110 Q100 92 30 110 Z" fill="url(#bookGrad)" />
+                          <path d="M100 78 L100 108" stroke="hsl(var(--background))" strokeWidth="1.5" opacity="0.6" />
+                          <path d="M50 86 Q75 80 98 84" stroke="hsl(var(--background))" strokeWidth="1" fill="none" opacity="0.55" />
+                          <path d="M102 84 Q125 80 150 86" stroke="hsl(var(--background))" strokeWidth="1" fill="none" opacity="0.55" />
+                          <g transform="translate(100 48)">
+                            <path d="M-30 0 L0 -14 L30 0 L0 14 Z" fill="hsl(var(--foreground))" />
+                            <path d="M-18 4 L-18 18 Q0 26 18 18 L18 4 L0 11 Z" fill="hsl(var(--foreground))" opacity="0.85" />
+                            <line x1="22" y1="2" x2="28" y2="20" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" />
+                            <circle cx="29" cy="22" r="2.5" fill="hsl(var(--primary))" />
+                          </g>
+                          <g fill="hsl(var(--primary))">
+                            <circle cx="40" cy="40" r="1.8" />
+                            <circle cx="160" cy="36" r="2.2" />
+                            <circle cx="170" cy="62" r="1.5" opacity="0.7" />
+                            <circle cx="30" cy="62" r="1.5" opacity="0.7" />
+                          </g>
+                        </svg>
                         <div className="space-y-3">
-                          <h3 className="text-2xl sm:text-3xl font-semibold text-foreground">
-                            You've reached the end of this course.
+                          <h3 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
+                            You&apos;ve reached the end of this course
                           </h3>
+                          <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
+                            Take a moment to reflect on what you&apos;ve learned.
+                          </p>
                         </div>
                         <Button
                           onClick={() => navigate("/dashboard")}
