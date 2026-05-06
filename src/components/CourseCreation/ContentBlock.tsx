@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DescriptionEditor } from "./DescriptionEditor";
 import { ImageBlock } from "./ImageBlock";
+import { AIBlockLoader } from "./AIBlockLoader";
 import { MediaUploadBlock } from "./MediaUploadBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
@@ -181,6 +182,7 @@ export function ContentBlock({
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [imageGenerating, setImageGenerating] = useState(false);
+  const [textGenerating, setTextGenerating] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
@@ -346,6 +348,13 @@ export function ContentBlock({
     setShowGenerateDialog(false);
     if (type === "image") {
       setImageGenerating(true);
+    } else if (type === "text") {
+      setTextGenerating(true);
+      setIsEditing(false);
+      // Simulated generation — replace with real API call wiring.
+      window.setTimeout(() => {
+        setTextGenerating(false);
+      }, 4200);
     }
   };
 
@@ -518,6 +527,18 @@ export function ContentBlock({
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
+          ) : textGenerating && type === "text" ? (
+            <div className="w-full px-1">
+              {colCount > 1 ? (
+                <div className={cn("grid gap-4", colCount === 3 ? "grid-cols-3" : "grid-cols-2")}>
+                  {Array.from({ length: colCount }).map((_, i) => (
+                    <AIBlockLoader key={i} lines={3} />
+                  ))}
+                </div>
+              ) : (
+                <AIBlockLoader lines={4} />
+              )}
+            </div>
           ) : readOnly ? (
             <div className="w-full px-4 py-3">
               {hasContent ? (
