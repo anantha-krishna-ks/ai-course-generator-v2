@@ -340,7 +340,10 @@ export function NestedLayoutBlock({
     >
       {/* Attached left-side toolbar — grouped by category (Move / Edit / Danger) */}
       <div
-        className="absolute right-full top-3 mr-[-1px] flex flex-col items-stretch rounded-l-xl border border-r-0 border-border/60 bg-background shadow-sm overflow-hidden opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100 transition-opacity z-10"
+        className={cn(
+          "absolute right-full top-3 mr-[-1px] flex flex-col items-stretch rounded-l-xl border border-r-0 border-border/60 bg-background shadow-sm overflow-hidden transition-opacity z-10",
+          isSelected ? "opacity-100" : "opacity-0 group-hover/layout:opacity-100 focus-within:opacity-100",
+        )}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseEnter={() => setToolbarActive(true)}
         onMouseLeave={() => setToolbarActive(false)}
