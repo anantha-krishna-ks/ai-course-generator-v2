@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Video, Music, Download, Menu, X } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronDown, ChevronRight, Image as ImageIcon, FileText, HelpCircle, Monitor, Tablet, Smartphone, Video, Music, Download, Menu, X, Check, Home, Sparkles } from "lucide-react";
+import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,29 @@ const SinglepageCoursePreview = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [outlineExpandedSections, setOutlineExpandedSections] = useState<Set<string>>(new Set());
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [completed, setCompleted] = useState(false);
+  const completionRef = useRef<HTMLDivElement | null>(null);
+
+  const handleFinish = () => {
+    setCompleted(true);
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        completionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      const fire = (originX: number) => {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          startVelocity: 45,
+          origin: { x: originX, y: 0.6 },
+          colors: ["#22c55e", "#16a34a", "#3B82F6", "#fbbf24", "#f472b6"],
+        });
+      };
+      setTimeout(() => fire(0.25), 200);
+      setTimeout(() => fire(0.75), 350);
+      setTimeout(() => fire(0.5), 550);
+    }
+  };
 
   const isCompactView = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
   const isDeviceFramed = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
@@ -642,6 +666,83 @@ const SinglepageCoursePreview = () => {
             )}>
               <div className="max-w-3xl mx-auto space-y-6">
                 {renderSinglePageContent()}
+
+                {/* Finish button */}
+                <div className="flex justify-end pt-4">
+                  <Button
+                    variant={completed ? "ghost" : "default"}
+                    onClick={handleFinish}
+                    disabled={completed}
+                    className={cn(
+                      "gap-2",
+                      !completed && "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
+                    )}
+                    aria-label="Finish course"
+                  >
+                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Finish
+                  </Button>
+                </div>
+
+                {/* Completion banner */}
+                {completed && (
+                  <div
+                    ref={completionRef}
+                    className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-10 sm:p-14 mt-4 animate-fade-in"
+                  >
+                    <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary/20 blur-3xl" aria-hidden="true" />
+                    <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+                    <Sparkles className="absolute top-4 right-4 w-5 h-5 text-primary/60" aria-hidden="true" focusable="false" />
+                    <Sparkles className="absolute bottom-6 left-6 w-4 h-4 text-primary/40" aria-hidden="true" focusable="false" />
+
+                    <div className="relative flex flex-col items-center text-center space-y-6">
+                      <svg
+                        viewBox="0 0 200 140"
+                        className="w-44 sm:w-52 h-auto animate-scale-in"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <defs>
+                          <linearGradient id="bookGradSingle" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.9" />
+                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.55" />
+                          </linearGradient>
+                        </defs>
+                        <ellipse cx="100" cy="124" rx="60" ry="5" fill="hsl(var(--primary))" opacity="0.12" />
+                        <path d="M30 90 Q100 70 170 90 L170 110 Q100 92 30 110 Z" fill="url(#bookGradSingle)" />
+                        <path d="M100 78 L100 108" stroke="hsl(var(--background))" strokeWidth="1.5" opacity="0.6" />
+                        <path d="M50 86 Q75 80 98 84" stroke="hsl(var(--background))" strokeWidth="1" fill="none" opacity="0.55" />
+                        <path d="M102 84 Q125 80 150 86" stroke="hsl(var(--background))" strokeWidth="1" fill="none" opacity="0.55" />
+                        <g transform="translate(100 48)">
+                          <path d="M-30 0 L0 -14 L30 0 L0 14 Z" fill="hsl(var(--foreground))" />
+                          <path d="M-18 4 L-18 18 Q0 26 18 18 L18 4 L0 11 Z" fill="hsl(var(--foreground))" opacity="0.85" />
+                          <line x1="22" y1="2" x2="28" y2="20" stroke="hsl(var(--primary))" strokeWidth="2" strokeLinecap="round" />
+                          <circle cx="29" cy="22" r="2.5" fill="hsl(var(--primary))" />
+                        </g>
+                        <g fill="hsl(var(--primary))">
+                          <circle cx="40" cy="40" r="1.8" />
+                          <circle cx="160" cy="36" r="2.2" />
+                          <circle cx="170" cy="62" r="1.5" opacity="0.7" />
+                          <circle cx="30" cy="62" r="1.5" opacity="0.7" />
+                        </g>
+                      </svg>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
+                          You&apos;ve reached the end of this course
+                        </h3>
+                      </div>
+                      <Button
+                        onClick={() => navigate("/dashboard")}
+                        size="lg"
+                        className="mt-2 gap-2 shadow-md"
+                        aria-label="Back to homepage"
+                      >
+                        <Home className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        Back to Homepage
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
