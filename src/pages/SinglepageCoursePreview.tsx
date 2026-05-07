@@ -57,6 +57,29 @@ const SinglepageCoursePreview = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [outlineExpandedSections, setOutlineExpandedSections] = useState<Set<string>>(new Set());
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [completed, setCompleted] = useState(false);
+  const completionRef = useRef<HTMLDivElement | null>(null);
+
+  const handleFinish = () => {
+    setCompleted(true);
+    if (typeof window !== "undefined") {
+      requestAnimationFrame(() => {
+        completionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      const fire = (originX: number) => {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          startVelocity: 45,
+          origin: { x: originX, y: 0.6 },
+          colors: ["#22c55e", "#16a34a", "#3B82F6", "#fbbf24", "#f472b6"],
+        });
+      };
+      setTimeout(() => fire(0.25), 200);
+      setTimeout(() => fire(0.75), 350);
+      setTimeout(() => fire(0.5), 550);
+    }
+  };
 
   const isCompactView = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
   const isDeviceFramed = deviceView === 'mobile' || deviceView === 'tablet' || deviceView === 'tablet-landscape';
