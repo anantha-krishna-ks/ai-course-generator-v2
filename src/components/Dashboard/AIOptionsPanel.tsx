@@ -527,16 +527,30 @@ function SectionLabel({
   icon: Icon,
   label,
   required,
+  onInfoClick,
+  infoLabel,
 }: {
   icon: React.ElementType;
   label: string;
   required?: boolean;
+  onInfoClick?: () => void;
+  infoLabel?: string;
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <Icon className="w-4 h-4 text-primary" />
+      <Icon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
       <span className="text-base font-semibold text-foreground">{label}</span>
       {required && <span className="text-destructive text-sm font-medium">*</span>}
+      {onInfoClick && (
+        <button
+          type="button"
+          onClick={onInfoClick}
+          aria-label={infoLabel ?? "More information"}
+          className="ml-0.5 w-6 h-6 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          <Info className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+      )}
     </div>
   );
 }
