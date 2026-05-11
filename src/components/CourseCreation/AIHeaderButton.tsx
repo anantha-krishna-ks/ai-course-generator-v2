@@ -51,6 +51,22 @@ const BLOOMS_LEVELS = [
 ];
 const LEARNER_LEVELS = ["Beginners", "Intermediate", "Expert"] as const;
 
+const GUIDELINES_EXAMPLES = [
+  "Generate clear learning objectives for each section.",
+  "Ensure to generate actual technical information without any lack of detail.",
+  "Verify all facts, references, and examples to ensure credibility.",
+  "Avoid unnecessary details & filler words that may overwhelm learners.",
+  "Do not generate or include material that promotes or references specific religions, beliefs, or practices.",
+];
+
+const EXCLUSIONS_EXAMPLES = [
+  "Do not include copied or unlicensed content.",
+  "Avoid biased, offensive, or culturally insensitive terms.",
+  "Avoid facts or references that are not credible.",
+  "Do not use copyrighted images, text, or media.",
+  "Exclude material not aligned with course objectives.",
+];
+
 interface AIHeaderButtonProps {
   aiOptions: AIOptions | null;
   onOptionsChange?: (options: AIOptions) => void;
