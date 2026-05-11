@@ -521,7 +521,7 @@ export function AIConfigView({
       </div>
 
       <Dialog open={infoDialog !== null} onOpenChange={(open) => !open && setInfoDialog(null)}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
