@@ -433,7 +433,7 @@ export function AIConfigView({
 
         {/* ── Exclusions ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={ShieldX} label="Exclusions" />
+          <SectionLabel icon={ShieldX} label="Exclusions" onInfoClick={() => setInfoDialog("exclusions")} infoLabel="View exclusion examples" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Topics AI should avoid generating</p>
           <div className="space-y-3">
             <Textarea
