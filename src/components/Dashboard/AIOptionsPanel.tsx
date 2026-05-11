@@ -521,36 +521,54 @@ export function AIConfigView({
       </div>
 
       <Dialog open={infoDialog !== null} onOpenChange={(open) => !open && setInfoDialog(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-foreground">
-              {infoDialog === "guidelines" ? (
-                <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-              ) : (
-                <ShieldX className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-              )}
-              {infoDialog === "guidelines" ? "Guideline examples" : "Exclusion examples"}
-            </DialogTitle>
-            <DialogDescription>
-              {infoDialog === "guidelines"
-                ? "Use these as a starting point when writing your own."
-                : "Common things you might want the AI to avoid."}
-            </DialogDescription>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                {infoDialog === "guidelines" ? (
+                  <BookOpen className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                ) : (
+                  <ShieldX className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <DialogTitle className="text-base font-semibold text-foreground">
+                  {infoDialog === "guidelines" ? "Guideline examples" : "Exclusion examples"}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                  {infoDialog === "guidelines"
+                    ? "Inspiration for writing clear instructions to the AI."
+                    : "Common things you may want the AI to avoid."}
+                </DialogDescription>
+              </div>
+              <Badge variant="secondary" className="rounded-full text-[11px] font-medium h-6 px-2.5 shrink-0">
+                {(infoDialog === "guidelines" ? GUIDELINES_EXAMPLES : EXCLUSIONS_EXAMPLES).length} examples
+              </Badge>
+            </div>
           </DialogHeader>
 
-          <ul className="space-y-2.5 pt-1">
+          <div className="rounded-xl border border-border bg-muted/30 divide-y divide-border/60 overflow-hidden">
             {(infoDialog === "guidelines" ? GUIDELINES_EXAMPLES : EXCLUSIONS_EXAMPLES).map(
               (item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
+                <div key={i} className="flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors">
                   <span
-                    className="mt-[7px] w-1.5 h-1.5 rounded-full bg-primary shrink-0"
+                    className="mt-0.5 w-5 h-5 rounded-full bg-background border border-border flex items-center justify-center text-[11px] font-semibold text-muted-foreground shrink-0 tabular-nums"
                     aria-hidden="true"
-                  />
-                  <span>{item}</span>
-                </li>
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="text-sm text-foreground leading-relaxed" style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}>
+                    {item}
+                  </span>
+                </div>
               )
             )}
-          </ul>
+          </div>
+
+          <p className="text-xs text-muted-foreground flex items-start gap-2 pt-1">
+            <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+            <span>These are reference examples — feel free to adapt them to your course.</span>
+          </p>
 
           <DialogFooter>
             <Button
