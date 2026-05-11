@@ -519,6 +519,49 @@ export function AIConfigView({
           Done
         </Button>
       </div>
+
+      <Dialog open={infoDialog !== null} onOpenChange={(open) => !open && setInfoDialog(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              {infoDialog === "guidelines" ? (
+                <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              ) : (
+                <ShieldX className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              )}
+              {infoDialog === "guidelines" ? "Guidelines" : "Exclusions"}
+            </DialogTitle>
+            <DialogDescription>
+              {infoDialog === "guidelines"
+                ? "Examples of what can be treated as guidelines"
+                : "Examples of what can be treated as exclusions"}
+            </DialogDescription>
+          </DialogHeader>
+          <ul className="space-y-3 py-2">
+            {(infoDialog === "guidelines" ? GUIDELINES_EXAMPLES : EXCLUSIONS_EXAMPLES).map(
+              (item, i) => (
+                <li key={i} className="flex gap-3 text-sm text-foreground leading-relaxed">
+                  <span
+                    className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span>{item}</span>
+                </li>
+              )
+            )}
+          </ul>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setInfoDialog(null)}
+              className="rounded-full px-6"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
