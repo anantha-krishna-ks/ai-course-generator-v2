@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, KeyRound, Shield } from "lucide-react";
+import { LogOut, KeyRound, Shield, HelpCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
 import excelsoftLogo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
@@ -65,6 +65,17 @@ const Header = ({ showTokens = true, onTokenClick, tokenCount = "932,679" }: Hea
                 <span className="text-xs text-muted-foreground">tokens</span>
               </button>
             )}
+
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => navigate("/help")}
+              className="rounded-full gap-1.5 text-foreground hover:bg-primary/10"
+              aria-label="Open Help and documentation"
+            >
+              <HelpCircle className="w-4 h-4" aria-hidden="true" focusable="false" />
+              <span className="hidden sm:inline text-sm font-medium">Help</span>
+            </Button>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
