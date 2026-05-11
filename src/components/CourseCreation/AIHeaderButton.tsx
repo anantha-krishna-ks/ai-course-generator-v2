@@ -547,11 +547,15 @@ function ConfigSection({
   label,
   description,
   children,
+  onInfoClick,
+  infoLabel,
 }: {
   icon: React.ElementType;
   label: string;
   description: string;
   children: React.ReactNode;
+  onInfoClick?: () => void;
+  infoLabel?: string;
 }) {
   return (
     <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-3">
@@ -559,8 +563,20 @@ function ConfigSection({
         <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
         </div>
-        <div>
-          <p className="text-base font-semibold text-foreground">{label}</p>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <p className="text-base font-semibold text-foreground">{label}</p>
+            {onInfoClick && (
+              <button
+                type="button"
+                onClick={onInfoClick}
+                aria-label={infoLabel ?? "More information"}
+                className="w-6 h-6 rounded-full inline-flex items-center justify-center border border-border bg-background text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
+              </button>
+            )}
+          </div>
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>
