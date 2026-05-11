@@ -1,8 +1,16 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import {
   Sparkles,
@@ -23,7 +31,24 @@ import {
   Sprout,
   Gauge,
   Award,
+  Info,
 } from "lucide-react";
+
+const GUIDELINES_EXAMPLES = [
+  "Generate clear learning objectives for each section.",
+  "Ensure to generate actual technical information without any lack of detail.",
+  "Verify all facts, references, and examples to ensure credibility.",
+  "Avoid unnecessary details & filler words that may overwhelm learners.",
+  "Do not generate or include material that promotes or references specific religions, beliefs, or practices.",
+];
+
+const EXCLUSIONS_EXAMPLES = [
+  "Do not include copied or unlicensed content.",
+  "Avoid biased, offensive, or culturally insensitive terms.",
+  "Avoid facts or references that are not credible.",
+  "Do not use copyrighted images, text, or media.",
+  "Exclude material not aligned with course objectives.",
+];
 
 export interface AIOptions {
   enabled: boolean;
@@ -144,6 +169,7 @@ export function AIConfigView({
   const supportingDocsRef = useRef<HTMLInputElement>(null);
   const guidelinesDocsRef = useRef<HTMLInputElement>(null);
   const exclusionsDocsRef = useRef<HTMLInputElement>(null);
+  const [infoDialog, setInfoDialog] = useState<null | "guidelines" | "exclusions">(null);
 
   const update = (patch: Partial<AIOptions>) =>
     onChange({ ...options, ...patch });
@@ -340,7 +366,7 @@ export function AIConfigView({
 
         {/* ── Guidelines ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={BookOpen} label="Guidelines" />
+          <SectionLabel icon={BookOpen} label="Guidelines" onInfoClick={() => setInfoDialog("guidelines")} infoLabel="View guideline examples" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Instructions for AI content generation</p>
           <div className="space-y-3">
             <Textarea
@@ -407,7 +433,7 @@ export function AIConfigView({
 
         {/* ── Exclusions ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={ShieldX} label="Exclusions" />
+          <SectionLabel icon={ShieldX} label="Exclusions" onInfoClick={() => setInfoDialog("exclusions")} infoLabel="View exclusion examples" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Topics AI should avoid generating</p>
           <div className="space-y-3">
             <Textarea
@@ -493,6 +519,49 @@ export function AIConfigView({
           Done
         </Button>
       </div>
+
+      <Dialog open={infoDialog !== null} onOpenChange={(open) => !open && setInfoDialog(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              {infoDialog === "guidelines" ? (
+                <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              ) : (
+                <ShieldX className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+              )}
+              {infoDialog === "guidelines" ? "Guidelines" : "Exclusions"}
+            </DialogTitle>
+            <DialogDescription>
+              {infoDialog === "guidelines"
+                ? "Examples of what can be treated as guidelines"
+                : "Examples of what can be treated as exclusions"}
+            </DialogDescription>
+          </DialogHeader>
+          <ul className="space-y-3 py-2">
+            {(infoDialog === "guidelines" ? GUIDELINES_EXAMPLES : EXCLUSIONS_EXAMPLES).map(
+              (item, i) => (
+                <li key={i} className="flex gap-3 text-sm text-foreground leading-relaxed">
+                  <span
+                    className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span>{item}</span>
+                </li>
+              )
+            )}
+          </ul>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setInfoDialog(null)}
+              className="rounded-full px-6"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -501,16 +570,30 @@ function SectionLabel({
   icon: Icon,
   label,
   required,
+  onInfoClick,
+  infoLabel,
 }: {
   icon: React.ElementType;
   label: string;
   required?: boolean;
+  onInfoClick?: () => void;
+  infoLabel?: string;
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <Icon className="w-4 h-4 text-primary" />
+      <Icon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
       <span className="text-base font-semibold text-foreground">{label}</span>
       {required && <span className="text-destructive text-sm font-medium">*</span>}
+      {onInfoClick && (
+        <button
+          type="button"
+          onClick={onInfoClick}
+          aria-label={infoLabel ?? "More information"}
+          className="ml-0.5 w-6 h-6 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          <Info className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+      )}
     </div>
   );
 }
