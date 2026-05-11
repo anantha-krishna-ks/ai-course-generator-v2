@@ -521,43 +521,84 @@ export function AIConfigView({
       </div>
 
       <Dialog open={infoDialog !== null} onOpenChange={(open) => !open && setInfoDialog(null)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-foreground">
-              {infoDialog === "guidelines" ? (
-                <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-              ) : (
-                <ShieldX className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-              )}
-              {infoDialog === "guidelines" ? "Guidelines" : "Exclusions"}
-            </DialogTitle>
-            <DialogDescription>
-              {infoDialog === "guidelines"
-                ? "Examples of what can be treated as guidelines"
-                : "Examples of what can be treated as exclusions"}
-            </DialogDescription>
-          </DialogHeader>
-          <ul className="space-y-3 py-2">
-            {(infoDialog === "guidelines" ? GUIDELINES_EXAMPLES : EXCLUSIONS_EXAMPLES).map(
-              (item, i) => (
-                <li key={i} className="flex gap-3 text-sm text-foreground leading-relaxed">
-                  <span
-                    className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span>{item}</span>
-                </li>
-              )
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden gap-0">
+          {/* Accent top bar */}
+          <div
+            className={cn(
+              "h-1.5 w-full",
+              infoDialog === "guidelines" ? "bg-primary" : "bg-destructive"
             )}
-          </ul>
-          <DialogFooter>
+            aria-hidden="true"
+          />
+          <div className="p-6 sm:p-8">
+            <DialogHeader className="items-start text-left gap-4">
+              <div
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0",
+                  infoDialog === "guidelines"
+                    ? "bg-primary/10 text-primary"
+                    : "bg-destructive/10 text-destructive"
+                )}
+              >
+                {infoDialog === "guidelines" ? (
+                  <BookOpen className="w-6 h-6" aria-hidden="true" focusable="false" />
+                ) : (
+                  <ShieldX className="w-6 h-6" aria-hidden="true" focusable="false" />
+                )}
+              </div>
+              <div className="space-y-1">
+                <DialogTitle className="text-xl font-bold text-foreground leading-tight">
+                  {infoDialog === "guidelines" ? "Guidelines" : "Exclusions"}
+                </DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
+                  {infoDialog === "guidelines"
+                    ? "Use these examples to craft clear, effective instructions for AI-generated content."
+                    : "Use these examples to specify topics and content the AI should never produce."}
+                </DialogDescription>
+              </div>
+            </DialogHeader>
+
+            <div className="mt-6 space-y-2.5">
+              {(infoDialog === "guidelines" ? GUIDELINES_EXAMPLES : EXCLUSIONS_EXAMPLES).map(
+                (item, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "flex items-start gap-3 rounded-xl border px-4 py-3 transition-colors",
+                      infoDialog === "guidelines"
+                        ? "border-primary/10 bg-primary/[0.03] hover:bg-primary/[0.06]"
+                        : "border-destructive/10 bg-destructive/[0.03] hover:bg-destructive/[0.06]"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0",
+                        infoDialog === "guidelines"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-destructive text-destructive-foreground"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {i + 1}
+                    </span>
+                    <p className="text-sm text-foreground leading-relaxed">{item}</p>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="bg-muted/40 px-6 sm:px-8 py-4 border-t border-border/60">
             <Button
               type="button"
-              variant="outline"
               onClick={() => setInfoDialog(null)}
-              className="rounded-full px-6"
+              className={cn(
+                "rounded-full px-6 gap-2",
+                infoDialog === "exclusions" && "bg-destructive hover:bg-destructive/90"
+              )}
             >
-              Close
+              <Check className="w-4 h-4" />
+              Got it
             </Button>
           </DialogFooter>
         </DialogContent>
