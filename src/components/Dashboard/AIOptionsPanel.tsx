@@ -366,7 +366,7 @@ export function AIConfigView({
 
         {/* ── Guidelines ── */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <SectionLabel icon={BookOpen} label="Guidelines" />
+          <SectionLabel icon={BookOpen} label="Guidelines" onInfoClick={() => setInfoDialog("guidelines")} infoLabel="View guideline examples" />
           <p className="text-xs text-muted-foreground mt-1 mb-3">Instructions for AI content generation</p>
           <div className="space-y-3">
             <Textarea
