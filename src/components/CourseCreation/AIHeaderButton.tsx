@@ -79,6 +79,7 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
   const [internalOpen, setInternalOpen] = useState(false);
   const [savedOnce, setSavedOnce] = useState(false);
   const [highlightGuidelines, setHighlightGuidelines] = useState(false);
+  const [infoDialog, setInfoDialog] = useState<null | "guidelines" | "exclusions">(null);
 
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
   const setOpen = (v: boolean) => {
