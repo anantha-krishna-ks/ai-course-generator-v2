@@ -439,6 +439,8 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               icon={ShieldX}
               label="Exclusions"
               description="Topics the AI should avoid"
+              onInfoClick={() => setInfoDialog("exclusions")}
+              infoLabel="View exclusion examples"
             >
               {isLocked ? (
                 <p className="text-sm text-foreground leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
