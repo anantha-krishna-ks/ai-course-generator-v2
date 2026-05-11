@@ -169,6 +169,7 @@ export function AIConfigView({
   const supportingDocsRef = useRef<HTMLInputElement>(null);
   const guidelinesDocsRef = useRef<HTMLInputElement>(null);
   const exclusionsDocsRef = useRef<HTMLInputElement>(null);
+  const [infoDialog, setInfoDialog] = useState<null | "guidelines" | "exclusions">(null);
 
   const update = (patch: Partial<AIOptions>) =>
     onChange({ ...options, ...patch });
