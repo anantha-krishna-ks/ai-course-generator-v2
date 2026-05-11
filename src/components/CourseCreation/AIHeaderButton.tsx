@@ -402,6 +402,8 @@ export function AIHeaderButton({ aiOptions, onOptionsChange, externalOpen, onExt
               icon={BookOpen}
               label="Course Guidelines"
               description="Instructions for AI content generation"
+              onInfoClick={() => setInfoDialog("guidelines")}
+              infoLabel="View guideline examples"
             >
               {isLocked ? (
                 <p className="text-sm text-foreground leading-relaxed bg-muted/50 rounded-lg px-3 py-2.5">
