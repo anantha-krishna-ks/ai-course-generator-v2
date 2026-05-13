@@ -476,3 +476,151 @@ function RightPane({
     </div>
   );
 }
+
+// ── Mock generated content per page ──────────────────────────────────────
+type Block =
+  | { kind: "heading"; text: string }
+  | { kind: "paragraph"; text: string }
+  | { kind: "list"; items: string[] }
+  | { kind: "callout"; text: string };
+
+const PAGE_CONTENT: Record<string, Block[]> = {
+  "s1-p1": [
+    { kind: "heading", text: "Welcome to the Course" },
+    { kind: "paragraph", text: "This course is designed to give you a structured, hands-on path through the subject. Across the next few sections you'll move from foundational ideas to applied practice, building confidence at each step." },
+    { kind: "callout", text: "Set aside ~60 minutes for the full course. You can pause and resume anytime." },
+    { kind: "list", items: ["Clear, bite-sized lessons", "Real-world examples", "Quick checks for understanding"] },
+  ],
+  "s1-p2": [
+    { kind: "heading", text: "Learning Objectives" },
+    { kind: "paragraph", text: "By the end of this course you will be able to:" },
+    { kind: "list", items: ["Explain the core concepts in your own words", "Apply key frameworks to realistic scenarios", "Identify common pitfalls and how to avoid them", "Decide which approach fits a given situation"] },
+  ],
+  "s2-p1": [
+    { kind: "heading", text: "Fundamental Principles" },
+    { kind: "paragraph", text: "Every discipline rests on a few load-bearing ideas. Here we unpack the principles that the rest of the course will build on, with concrete examples of each in action." },
+    { kind: "callout", text: "Tip: revisit this page whenever a later section feels abstract — the answer is usually a principle from here." },
+  ],
+  "s2-p2": [
+    { kind: "heading", text: "Key Terminology" },
+    { kind: "list", items: ["Term A — a precise, working definition", "Term B — how it differs from Term A", "Term C — when to prefer it in practice"] },
+    { kind: "paragraph", text: "Shared vocabulary makes the rest of the conversation faster. We'll keep these terms consistent throughout the course." },
+  ],
+  "s2-p3": [
+    { kind: "heading", text: "Practical Applications" },
+    { kind: "paragraph", text: "Theory is useful only if it changes what you do. This page walks through three short scenarios where the principles meet day-to-day decisions." },
+    { kind: "list", items: ["Scenario 1 — a typical first encounter", "Scenario 2 — a common edge case", "Scenario 3 — a high-stakes variant"] },
+  ],
+  "s3-p1": [
+    { kind: "heading", text: "Case Studies" },
+    { kind: "paragraph", text: "Two short case studies — one success, one cautionary — show the principles unfolding in real organizations. Pay attention to the decisions made at each branch point." },
+  ],
+  "s3-p2": [
+    { kind: "heading", text: "Best Practices" },
+    { kind: "list", items: ["Define success before you begin", "Make decisions traceable", "Review outcomes on a fixed cadence", "Document what you'd do differently"] },
+  ],
+  "s3-p3": [
+    { kind: "heading", text: "Interactive Workshop" },
+    { kind: "paragraph", text: "A guided exercise that asks you to apply what you've learned to a fresh, slightly messy scenario. There's no single right answer — only better and worse trade-offs." },
+    { kind: "callout", text: "Allow ~15 minutes for the workshop and capture your reasoning as you go." },
+  ],
+  "s4-p1": [
+    { kind: "heading", text: "Course Summary" },
+    { kind: "paragraph", text: "A quick recap of the principles, terminology, and practices we've covered, with pointers back to the sections where each idea was introduced." },
+  ],
+  "s4-p2": [
+    { kind: "heading", text: "Final Assessment" },
+    { kind: "paragraph", text: "A short assessment to confirm the key takeaways have landed. You'll need around 70% to pass and you can retake it as many times as you'd like." },
+  ],
+};
+
+function CompletedPagePreview({
+  page,
+  section,
+  onBack,
+}: {
+  page: OutlineItem;
+  section?: OutlineItem;
+  onBack: () => void;
+}) {
+  const blocks = PAGE_CONTENT[page.id] ?? [
+    { kind: "paragraph", text: "This page has been generated. Detailed preview will appear here." },
+  ];
+
+  return (
+    <div className="flex-1 flex flex-col bg-background min-w-0">
+      {/* Sub-header */}
+      <div className="flex items-center justify-between gap-3 px-6 py-3 border-b border-border bg-card/60 shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md px-2 py-1 -ml-2 hover:bg-muted"
+            aria-label="Back to live progress"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Back to progress
+          </button>
+          <span className="w-px h-4 bg-border" aria-hidden="true" />
+          <div className="min-w-0 flex items-center gap-2 text-[12px] text-muted-foreground truncate">
+            {section && <span className="truncate">{section.title}</span>}
+            <span aria-hidden="true">/</span>
+            <span className="text-foreground font-medium truncate">{page.title}</span>
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold shrink-0">
+          <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true" focusable="false" />
+          Generated
+        </span>
+      </div>
+
+      {/* Page body */}
+      <div className="flex-1 overflow-y-auto thin-scrollbar">
+        <article className="max-w-2xl mx-auto px-8 py-10">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary mb-2">
+            {section?.title ?? "Page preview"}
+          </div>
+          <h1 className="text-[26px] font-semibold tracking-tight text-foreground leading-tight mb-6">
+            {page.title}
+          </h1>
+
+          <div className="space-y-5">
+            {blocks.map((b, i) => {
+              if (b.kind === "heading") {
+                return (
+                  <h2 key={i} className="text-[18px] font-semibold tracking-tight text-foreground mt-2">
+                    {b.text}
+                  </h2>
+                );
+              }
+              if (b.kind === "paragraph") {
+                return (
+                  <p key={i} className="text-[14.5px] leading-relaxed text-foreground/85 [overflow-wrap:anywhere]">
+                    {b.text}
+                  </p>
+                );
+              }
+              if (b.kind === "list") {
+                return (
+                  <ul key={i} className="list-disc pl-5 space-y-1.5 text-[14.5px] leading-relaxed text-foreground/85">
+                    {b.items.map((it, j) => (
+                      <li key={j}>{it}</li>
+                    ))}
+                  </ul>
+                );
+              }
+              return (
+                <div
+                  key={i}
+                  className="flex items-start gap-2.5 rounded-xl border border-primary/15 bg-primary/[0.06] px-4 py-3"
+                >
+                  <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                  <p className="text-[13.5px] leading-relaxed text-foreground">{b.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        </article>
+      </div>
+    </div>
+  );
+}
