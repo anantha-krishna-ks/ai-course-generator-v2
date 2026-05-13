@@ -911,7 +911,7 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
         </div>
 
         <ul className="p-2 space-y-1">
-          {items.map(({ key, label, hint, value, Icon, tone, bg }) => (
+          {items.map(({ key, label, hint, value, total: itemTotal, Icon, tone, bg }) => (
             <li
               key={key}
               className="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted/60 transition-colors"
@@ -926,8 +926,9 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
                 <div className="text-[13px] font-medium text-foreground">{label}</div>
                 <div className="text-[11.5px] text-muted-foreground truncate">{hint}</div>
               </div>
-              <span className="text-[16px] font-semibold text-foreground tabular-nums">
-                {value}
+              <span className="tabular-nums text-foreground" aria-label={`${value} of ${itemTotal} ${label}`}>
+                <span className="text-[16px] font-semibold">{value}</span>
+                <span className="text-[12px] text-muted-foreground font-medium"> / {itemTotal}</span>
               </span>
             </li>
           ))}
