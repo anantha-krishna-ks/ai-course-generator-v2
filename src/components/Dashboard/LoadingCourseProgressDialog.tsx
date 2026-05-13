@@ -478,16 +478,24 @@ function RightPane({
 }
 
 // ── Mock generated content per page ──────────────────────────────────────
+type QuizQ = { q: string; options: string[]; answerIdx: number; explanation?: string };
+
 type Block =
   | { kind: "heading"; text: string }
   | { kind: "paragraph"; text: string }
   | { kind: "list"; items: string[] }
-  | { kind: "callout"; text: string };
+  | { kind: "callout"; text: string }
+  | { kind: "image"; src: string; alt: string; caption?: string }
+  | { kind: "video"; src: string; poster?: string; caption?: string }
+  | { kind: "audio"; src: string; label: string }
+  | { kind: "doc"; name: string; meta?: string }
+  | { kind: "quiz"; questions: QuizQ[] };
 
 const PAGE_CONTENT: Record<string, Block[]> = {
   "s1-p1": [
     { kind: "heading", text: "Welcome to the Course" },
     { kind: "paragraph", text: "This course is designed to give you a structured, hands-on path through the subject. Across the next few sections you'll move from foundational ideas to applied practice, building confidence at each step." },
+    { kind: "image", src: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&auto=format&fit=crop", alt: "Workspace with notes and laptop", caption: "A practical, applied approach throughout the course." },
     { kind: "callout", text: "Set aside ~60 minutes for the full course. You can pause and resume anytime." },
     { kind: "list", items: ["Clear, bite-sized lessons", "Real-world examples", "Quick checks for understanding"] },
   ],
@@ -495,42 +503,73 @@ const PAGE_CONTENT: Record<string, Block[]> = {
     { kind: "heading", text: "Learning Objectives" },
     { kind: "paragraph", text: "By the end of this course you will be able to:" },
     { kind: "list", items: ["Explain the core concepts in your own words", "Apply key frameworks to realistic scenarios", "Identify common pitfalls and how to avoid them", "Decide which approach fits a given situation"] },
+    { kind: "video", src: "/demo/Motion_Video.mp4", poster: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop", caption: "Short intro from the instructor (1:24)" },
   ],
   "s2-p1": [
     { kind: "heading", text: "Fundamental Principles" },
     { kind: "paragraph", text: "Every discipline rests on a few load-bearing ideas. Here we unpack the principles that the rest of the course will build on, with concrete examples of each in action." },
+    { kind: "image", src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop", alt: "Whiteboard with concepts" },
+    { kind: "audio", src: "/demo/actAudio.mp3", label: "Narrated walkthrough · 2:18" },
     { kind: "callout", text: "Tip: revisit this page whenever a later section feels abstract — the answer is usually a principle from here." },
   ],
   "s2-p2": [
     { kind: "heading", text: "Key Terminology" },
     { kind: "list", items: ["Term A — a precise, working definition", "Term B — how it differs from Term A", "Term C — when to prefer it in practice"] },
     { kind: "paragraph", text: "Shared vocabulary makes the rest of the conversation faster. We'll keep these terms consistent throughout the course." },
+    { kind: "doc", name: "Glossary.pdf", meta: "PDF · 240 KB" },
   ],
   "s2-p3": [
     { kind: "heading", text: "Practical Applications" },
     { kind: "paragraph", text: "Theory is useful only if it changes what you do. This page walks through three short scenarios where the principles meet day-to-day decisions." },
+    { kind: "image", src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop", alt: "Analytics dashboard" },
     { kind: "list", items: ["Scenario 1 — a typical first encounter", "Scenario 2 — a common edge case", "Scenario 3 — a high-stakes variant"] },
   ],
   "s3-p1": [
     { kind: "heading", text: "Case Studies" },
     { kind: "paragraph", text: "Two short case studies — one success, one cautionary — show the principles unfolding in real organizations. Pay attention to the decisions made at each branch point." },
+    { kind: "video", src: "/demo/Motion_Video.mp4", caption: "Case study walkthrough" },
   ],
   "s3-p2": [
     { kind: "heading", text: "Best Practices" },
     { kind: "list", items: ["Define success before you begin", "Make decisions traceable", "Review outcomes on a fixed cadence", "Document what you'd do differently"] },
+    { kind: "audio", src: "/demo/actAudio.mp3", label: "Expert commentary · 3:02" },
   ],
   "s3-p3": [
     { kind: "heading", text: "Interactive Workshop" },
     { kind: "paragraph", text: "A guided exercise that asks you to apply what you've learned to a fresh, slightly messy scenario. There's no single right answer — only better and worse trade-offs." },
     { kind: "callout", text: "Allow ~15 minutes for the workshop and capture your reasoning as you go." },
+    { kind: "doc", name: "Workshop_Brief.pdf", meta: "PDF · 180 KB" },
   ],
   "s4-p1": [
     { kind: "heading", text: "Course Summary" },
     { kind: "paragraph", text: "A quick recap of the principles, terminology, and practices we've covered, with pointers back to the sections where each idea was introduced." },
+    { kind: "list", items: ["Principles you can name and apply", "A shared vocabulary across the course", "A short list of best practices to reuse"] },
   ],
   "s4-p2": [
     { kind: "heading", text: "Final Assessment" },
-    { kind: "paragraph", text: "A short assessment to confirm the key takeaways have landed. You'll need around 70% to pass and you can retake it as many times as you'd like." },
+    { kind: "paragraph", text: "A short assessment to confirm the key takeaways have landed. Review the questions and answers below." },
+    {
+      kind: "quiz",
+      questions: [
+        {
+          q: "What is the primary purpose of this course?",
+          options: ["Entertainment", "Building foundational knowledge and practical skills", "Data entry", "Social networking"],
+          answerIdx: 1,
+          explanation: "The course is designed to provide in-depth knowledge and practical skills through structured modules.",
+        },
+        {
+          q: "Case studies help reinforce theoretical concepts with real-world examples.",
+          options: ["True", "False"],
+          answerIdx: 0,
+          explanation: "Case studies bridge the gap between theory and practice by examining real-world scenarios.",
+        },
+        {
+          q: "Which is a best practice we covered?",
+          options: ["Skip planning to move faster", "Make decisions traceable", "Avoid documenting outcomes", "Decide alone for speed"],
+          answerIdx: 1,
+        },
+      ],
+    },
   ],
 };
 
@@ -569,7 +608,7 @@ function CompletedPagePreview({
         </div>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold shrink-0">
           <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true" focusable="false" />
-          Generated
+          Generated · view only
         </span>
       </div>
 
@@ -583,44 +622,163 @@ function CompletedPagePreview({
             {page.title}
           </h1>
 
-          <div className="space-y-5">
-            {blocks.map((b, i) => {
-              if (b.kind === "heading") {
-                return (
-                  <h2 key={i} className="text-[18px] font-semibold tracking-tight text-foreground mt-2">
-                    {b.text}
-                  </h2>
-                );
-              }
-              if (b.kind === "paragraph") {
-                return (
-                  <p key={i} className="text-[14.5px] leading-relaxed text-foreground/85 [overflow-wrap:anywhere]">
-                    {b.text}
-                  </p>
-                );
-              }
-              if (b.kind === "list") {
-                return (
-                  <ul key={i} className="list-disc pl-5 space-y-1.5 text-[14.5px] leading-relaxed text-foreground/85">
-                    {b.items.map((it, j) => (
-                      <li key={j}>{it}</li>
-                    ))}
-                  </ul>
-                );
-              }
-              return (
-                <div
-                  key={i}
-                  className="flex items-start gap-2.5 rounded-xl border border-primary/15 bg-primary/[0.06] px-4 py-3"
-                >
-                  <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-                  <p className="text-[13.5px] leading-relaxed text-foreground">{b.text}</p>
-                </div>
-              );
-            })}
+          <div className="space-y-6">
+            {blocks.map((b, i) => (
+              <PreviewBlock key={i} block={b} />
+            ))}
           </div>
         </article>
       </div>
+    </div>
+  );
+}
+
+function PreviewBlock({ block: b }: { block: Block }) {
+  if (b.kind === "heading") {
+    return (
+      <h2 className="text-[18px] font-semibold tracking-tight text-foreground mt-2">{b.text}</h2>
+    );
+  }
+  if (b.kind === "paragraph") {
+    return (
+      <p className="text-[14.5px] leading-relaxed text-foreground/85 [overflow-wrap:anywhere]">
+        {b.text}
+      </p>
+    );
+  }
+  if (b.kind === "list") {
+    return (
+      <ul className="list-disc pl-5 space-y-1.5 text-[14.5px] leading-relaxed text-foreground/85">
+        {b.items.map((it, j) => (
+          <li key={j}>{it}</li>
+        ))}
+      </ul>
+    );
+  }
+  if (b.kind === "callout") {
+    return (
+      <div className="flex items-start gap-2.5 rounded-xl border border-primary/15 bg-primary/[0.06] px-4 py-3">
+        <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+        <p className="text-[13.5px] leading-relaxed text-foreground">{b.text}</p>
+      </div>
+    );
+  }
+  if (b.kind === "image") {
+    return (
+      <figure className="rounded-xl overflow-hidden border border-border bg-muted">
+        <img src={b.src} alt={b.alt} className="w-full h-auto block" loading="lazy" />
+        {b.caption && (
+          <figcaption className="px-3 py-2 text-[12px] text-muted-foreground bg-card border-t border-border">
+            {b.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+  if (b.kind === "video") {
+    return (
+      <figure className="rounded-xl overflow-hidden border border-border bg-black">
+        <video
+          src={b.src}
+          poster={b.poster}
+          controls
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
+          className="w-full h-auto block bg-black"
+        />
+        {b.caption && (
+          <figcaption className="px-3 py-2 text-[12px] text-muted-foreground bg-card border-t border-border">
+            {b.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+  if (b.kind === "audio") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 text-primary shrink-0">
+          <Zap className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[12.5px] font-medium text-foreground truncate">{b.label}</div>
+          <audio src={b.src} controls className="mt-1.5 w-full h-8" />
+        </div>
+      </div>
+    );
+  }
+  if (b.kind === "doc") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-foreground/[0.06] text-foreground shrink-0">
+          <FileText className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-medium text-foreground truncate">{b.name}</div>
+          {b.meta && <div className="text-[11.5px] text-muted-foreground truncate">{b.meta}</div>}
+        </div>
+      </div>
+    );
+  }
+  // quiz
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
+          <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+        </span>
+        Quiz preview
+      </div>
+      <ol className="space-y-5">
+        {b.questions.map((q, qi) => (
+          <li key={qi} className="space-y-2">
+            <div className="text-[14px] font-medium text-foreground leading-snug">
+              <span className="text-muted-foreground tabular-nums mr-1.5">{qi + 1}.</span>
+              {q.q}
+            </div>
+            <ul className="space-y-1.5">
+              {q.options.map((opt, oi) => {
+                const correct = oi === q.answerIdx;
+                return (
+                  <li
+                    key={oi}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px]",
+                      correct
+                        ? "border-emerald-500/30 bg-emerald-500/[0.06] text-foreground"
+                        : "border-border bg-background text-foreground/80"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center w-4 h-4 rounded-full border shrink-0",
+                        correct
+                          ? "border-emerald-500 bg-emerald-500 text-white"
+                          : "border-border bg-card"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {correct && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
+                    </span>
+                    <span className="flex-1">{opt}</span>
+                    {correct && (
+                      <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                        Correct
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            {q.explanation && (
+              <p className="text-[12.5px] text-muted-foreground leading-relaxed pl-1">
+                <span className="font-semibold text-foreground/80">Why: </span>
+                {q.explanation}
+              </p>
+            )}
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
