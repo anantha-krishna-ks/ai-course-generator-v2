@@ -142,6 +142,15 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
     return { done, inP, todo, total: pages.length };
   })();
 
+  // Per-page progress for the page currently being generated
+  const sliceSize = 100 / pages.length;
+  const currentPageProgress = currentPage
+    ? Math.min(100, Math.max(0, ((pct - summary.done * sliceSize) / sliceSize) * 100))
+    : 0;
+  const currentSection = currentPage
+    ? MOCK_OUTLINE.find((s) => s.children?.some((c) => c.id === currentPage.id))
+    : undefined;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
