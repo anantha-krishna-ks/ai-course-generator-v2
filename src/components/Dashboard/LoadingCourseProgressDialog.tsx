@@ -370,6 +370,17 @@ function RightPane({
   const remainingMs = Math.max(0, course.durationMs - (Date.now() - course.startedAt));
   const remainingMin = Math.ceil(remainingMs / 60000);
 
+  // Selected completed page preview takes over the right pane
+  if (selectedPage) {
+    return (
+      <CompletedPagePreview
+        page={selectedPage}
+        section={selectedSection}
+        onBack={onClearSelection}
+      />
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col bg-gradient-to-b from-background to-primary/[0.015] relative overflow-hidden">
       {/* Single subtle ambient glow */}
