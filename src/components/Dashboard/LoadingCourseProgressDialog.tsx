@@ -126,6 +126,7 @@ interface Props {
 }
 
 export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Props) {
+  const navigate = useNavigate();
   if (!course) return null;
   const pct = getProgress(course);
   const statuses = computeStatuses(MOCK_OUTLINE, pct);
