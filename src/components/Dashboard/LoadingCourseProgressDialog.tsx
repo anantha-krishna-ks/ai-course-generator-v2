@@ -75,38 +75,45 @@ function computeStatuses(items: OutlineItem[], pct: number): Map<string, Status>
   return map;
 }
 
-function StatusDot({ status }: { status: Status }) {
+function StatusNode({ status, kind }: { status: Status; kind: "section" | "page" }) {
+  const size = kind === "section" ? "w-5 h-5" : "w-3.5 h-3.5";
+  const ring = kind === "section" ? "ring-4" : "ring-[3px]";
   if (status === "completed") {
     return (
-      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shrink-0" aria-label="Completed">
-        <Check className="w-3 h-3" aria-hidden="true" focusable="false" strokeWidth={3} />
+      <span
+        className={cn(
+          "relative inline-flex items-center justify-center rounded-full bg-emerald-500 text-white shrink-0 shadow-[0_0_0_2px_hsl(var(--background))]",
+          size
+        )}
+        aria-label="Completed"
+      >
+        <Check className={cn(kind === "section" ? "w-3 h-3" : "w-2.5 h-2.5")} aria-hidden="true" focusable="false" strokeWidth={3.5} />
       </span>
     );
   }
   if (status === "in-progress") {
     return (
-      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/15 text-primary shrink-0" aria-label="In progress">
-        <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+      <span
+        className={cn(
+          "relative inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground shrink-0 shadow-[0_0_0_2px_hsl(var(--background))]",
+          size,
+          ring,
+          "ring-primary/15"
+        )}
+        aria-label="In progress"
+      >
+        <span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-40" aria-hidden="true" />
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-muted-foreground/60 shrink-0" aria-label="Not started">
-      <Circle className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-    </span>
-  );
-}
-
-function StatusPill({ status }: { status: Status }) {
-  const config = {
-    "completed": { label: "Completed", cls: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" },
-    "in-progress": { label: "In progress", cls: "bg-primary/10 text-primary" },
-    "not-started": { label: "Not started", cls: "bg-muted text-muted-foreground" },
-  }[status];
-  return (
-    <span className={cn("text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0", config.cls)}>
-      {config.label}
-    </span>
+    <span
+      className={cn(
+        "relative inline-flex items-center justify-center rounded-full bg-background border-2 border-border shrink-0",
+        size
+      )}
+      aria-label="Not started"
+    />
   );
 }
 
