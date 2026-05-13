@@ -310,13 +310,24 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
           </div>
 
           {/* Right pane — Lottie + live page status */}
-          <RightPane
-            course={course}
-            currentPage={currentPage}
-            currentSection={currentSection}
-            currentPageProgress={currentPageProgress}
-            summary={summary}
-          />
+          {(() => {
+            const selectedPage = selectedPageId ? pages.find((p) => p.id === selectedPageId) : undefined;
+            const selectedSection = selectedPage
+              ? MOCK_OUTLINE.find((s) => s.children?.some((c) => c.id === selectedPage.id))
+              : undefined;
+            return (
+              <RightPane
+                course={course}
+                currentPage={currentPage}
+                currentSection={currentSection}
+                currentPageProgress={currentPageProgress}
+                summary={summary}
+                selectedPage={selectedPage}
+                selectedSection={selectedSection}
+                onClearSelection={() => setSelectedPageId(null)}
+              />
+            );
+          })()}
         </div>
       </DialogContent>
     </Dialog>
@@ -329,12 +340,18 @@ function RightPane({
   currentSection,
   currentPageProgress,
   summary,
+  selectedPage,
+  selectedSection,
+  onClearSelection,
 }: {
   course: LoadingCourse;
   currentPage: OutlineItem | undefined;
   currentSection: OutlineItem | undefined;
   currentPageProgress: number;
   summary: { done: number; inP: number; todo: number; total: number };
+  selectedPage?: OutlineItem;
+  selectedSection?: OutlineItem;
+  onClearSelection: () => void;
 }) {
   // Rotating "thinking" messages for personality
   const messages = [
