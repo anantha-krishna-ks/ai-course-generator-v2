@@ -1,10 +1,9 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowRight } from "lucide-react";
+import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
 import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 type Status = "completed" | "in-progress" | "not-started";
 
