@@ -1,8 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, BookOpen, Layers, FileText, CheckCircle2, Clock, GraduationCap } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useRef } from "react";
+import { LoadingCourseProgressDialog } from "@/components/Dashboard/LoadingCourseProgressDialog";
+import type { LoadingCourse } from "@/lib/loadingCourses";
 
 interface AIGenerationLoadingDialogProps {
   open: boolean;
@@ -10,444 +8,45 @@ interface AIGenerationLoadingDialogProps {
   onComplete: () => void;
 }
 
-const TICKET_SECTIONS = [
-  { title: "Introduction & Overview", pages: 2, icon: BookOpen },
-  { title: "Core Concepts", pages: 3, icon: Layers },
-  { title: "Deep Dive & Analysis", pages: 3, icon: FileText },
-  { title: "Assessment & Wrap-Up", pages: 2, icon: GraduationCap },
-];
+const TOTAL_DURATION_MS = 8000;
 
-const STATUS_MESSAGES = [
-  "Analyzing course intent...",
-  "Building course structure...",
-  "Generating content blocks...",
-  "Finalizing your course...",
-];
+/**
+ * AI generation loading dialog — reuses the dashboard's
+ * LoadingCourseProgressDialog UI for a consistent generation experience.
+ * Auto-completes after TOTAL_DURATION_MS and prevents user-driven close.
+ */
+export function AIGenerationLoadingDialog({
+  open,
+  courseTitle,
+  onComplete,
+}: AIGenerationLoadingDialogProps) {
+  const startedAtRef = useRef<number>(Date.now());
 
-export function AIGenerationLoadingDialog({ open, courseTitle, onComplete }: AIGenerationLoadingDialogProps) {
-  const [progress, setProgress] = useState(0);
-  const [visibleSections, setVisibleSections] = useState(0);
-  const [statusIdx, setStatusIdx] = useState(0);
-  const [completed, setCompleted] = useState(false);
-  const [ticketRevealed, setTicketRevealed] = useState(false);
-
-  const totalDuration = 5200;
-  const stableOnComplete = useCallback(onComplete, [onComplete]);
+  const course = useMemo<LoadingCourse | null>(() => {
+    if (!open) return null;
+    startedAtRef.current = Date.now();
+    return {
+      id: `ai-gen-${startedAtRef.current}`,
+      title: courseTitle || "AI Generated Course",
+      startedAt: startedAtRef.current,
+      durationMs: TOTAL_DURATION_MS,
+    };
+    // Re-create only when the dialog opens or the title changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, courseTitle]);
 
   useEffect(() => {
-    if (!open) {
-      setProgress(0);
-      setVisibleSections(0);
-      setStatusIdx(0);
-      setCompleted(false);
-      setTicketRevealed(false);
-      return;
-    }
-
-    const revealTimer = setTimeout(() => setTicketRevealed(true), 600);
-    const startTime = Date.now();
-
-    const progressInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const pct = Math.min((elapsed / totalDuration) * 100, 100);
-      setProgress(pct);
-
-      const sectionInterval = totalDuration / (TICKET_SECTIONS.length + 1);
-      const revealed = Math.min(Math.floor(elapsed / sectionInterval), TICKET_SECTIONS.length);
-      setVisibleSections(revealed);
-
-      const msgInterval = totalDuration / STATUS_MESSAGES.length;
-      setStatusIdx(Math.min(Math.floor(elapsed / msgInterval), STATUS_MESSAGES.length - 1));
-
-      if (pct >= 100) {
-        clearInterval(progressInterval);
-        setCompleted(true);
-        setTimeout(() => stableOnComplete(), 1200);
-      }
-    }, 50);
-
-    return () => {
-      clearInterval(progressInterval);
-      clearTimeout(revealTimer);
-    };
-  }, [open, stableOnComplete]);
-
-  const totalPages = TICKET_SECTIONS.reduce((s, sec) => s + sec.pages, 0);
-
-  // Perforation dots component
-  const PerforationRow = ({ count = 28, dark = false }: { count?: number; dark?: boolean }) => (
-    <div className="flex justify-center gap-[4px] py-[3px]" aria-hidden="true">
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="w-[4px] h-[4px] rounded-full"
-          style={{ backgroundColor: dark ? "hsl(220 25% 14%)" : "hsl(0 0% 82%)" }}
-        />
-      ))}
-    </div>
-  );
-
-  // Dashed tear line
-  const TearLine = () => (
-    <div className="mx-5 border-t border-dashed" style={{ borderColor: "hsl(0 0% 80%)" }} aria-hidden="true" />
-  );
+    if (!open) return;
+    const timer = setTimeout(() => onComplete(), TOTAL_DURATION_MS + 400);
+    return () => clearTimeout(timer);
+  }, [open, onComplete]);
 
   return (
-    <Dialog open={open}>
-      <DialogContent
-        className="w-[92vw] max-w-[500px] p-0 gap-0 overflow-visible border-0 shadow-none [&>button]:hidden bg-transparent max-h-[95vh]"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
-        <DialogTitle className="sr-only">Generating AI Course</DialogTitle>
-        <DialogDescription className="sr-only">
-          Please wait while your course is being generated by AI.
-        </DialogDescription>
-
-        {/* ── Background Panel ── */}
-        <div className="absolute inset-0 -z-10 rounded-3xl overflow-hidden" aria-hidden="true">
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(155deg, hsl(220 35% 12%) 0%, hsl(230 30% 10%) 40%, hsl(255 25% 13%) 100%)",
-            }}
-          />
-          {/* Ambient glow - top left */}
-          <motion.div
-            className="absolute -top-16 -left-16 w-[280px] h-[280px] rounded-full blur-[80px]"
-            style={{ background: "radial-gradient(circle, hsl(211 100% 55% / 0.25), transparent 70%)" }}
-            animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.35, 0.2] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {/* Ambient glow - bottom right */}
-          <motion.div
-            className="absolute -bottom-12 -right-12 w-[220px] h-[220px] rounded-full blur-[70px]"
-            style={{ background: "radial-gradient(circle, hsl(270 80% 60% / 0.2), transparent 70%)" }}
-            animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {/* Fine grain overlay */}
-          <div className="absolute inset-0 opacity-[0.035]"
-            style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }}
-          />
-          {/* Inner border glow */}
-          <div className="absolute inset-0 rounded-3xl" style={{ boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.06), inset 0 0 0 1px hsl(0 0% 100% / 0.04)" }} />
-        </div>
-
-        <div className="flex flex-col items-center pt-5 pb-6 px-5">
-
-          {/* ── Premium Dispenser ── */}
-          <div className="relative w-[80%] z-10" aria-hidden="true">
-            <div
-              className="relative h-[52px] rounded-t-xl overflow-hidden"
-              style={{
-                background: "linear-gradient(180deg, hsl(220 10% 72%) 0%, hsl(220 8% 56%) 50%, hsl(220 10% 62%) 100%)",
-                boxShadow: "0 4px 12px -2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25)",
-              }}
-            >
-              {/* Brushed metal lines */}
-              <div className="absolute inset-0"
-                style={{
-                  background: "repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 3px)",
-                }}
-              />
-              {/* Top specular highlight */}
-              <div className="absolute top-0 inset-x-4 h-[1px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)" }} />
-
-              {/* Slot aperture */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[14px]">
-                <div className="w-full h-full rounded-t-[3px]"
-                  style={{
-                    background: "linear-gradient(180deg, hsl(220 20% 15%) 0%, hsl(220 15% 22%) 100%)",
-                    boxShadow: "inset 0 4px 8px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.05)",
-                  }}
-                />
-              </div>
-
-              {/* Decorative rivets */}
-              {[16, undefined].map((left, idx) => (
-                <div
-                  key={idx}
-                  className="absolute top-[14px] w-[7px] h-[7px] rounded-full"
-                  style={{
-                    [idx === 0 ? 'left' : 'right']: '14px',
-                    background: "radial-gradient(circle at 30% 30%, hsl(0 0% 82%), hsl(0 0% 52%))",
-                    boxShadow: "inset 0 1px 2px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)",
-                  }}
-                />
-              ))}
-
-              {/* Label */}
-              <div className="absolute top-[10px] left-1/2 -translate-x-1/2">
-                <span className="text-[7px] uppercase tracking-[0.25em] font-bold" style={{ color: "rgba(255,255,255,0.35)" }}>
-                  AI Course Generator
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Ticket Body ── */}
-          <motion.div
-            className="relative w-[74%] -mt-[2px] z-0"
-            initial={{ clipPath: "inset(0 0 100% 0)" }}
-            animate={ticketRevealed ? { clipPath: "inset(0 0 0% 0)" } : {}}
-            transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div
-              className="relative overflow-hidden"
-              style={{
-                backgroundColor: "hsl(45 40% 98%)",
-                boxShadow: "0 12px 40px -10px rgba(0,0,0,0.35), 0 4px 12px -4px rgba(0,0,0,0.15)",
-              }}
-            >
-              {/* Paper texture */}
-              <div className="absolute inset-0 opacity-[0.03]"
-                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }}
-                aria-hidden="true"
-              />
-              {/* Left fold shadow */}
-              <div className="absolute left-0 top-0 bottom-0 w-3"
-                style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.04), transparent)" }}
-                aria-hidden="true"
-              />
-
-              {/* Top perforation */}
-              <PerforationRow dark />
-
-              {/* ── Header ── */}
-              <div className="pt-4 pb-3 text-center relative">
-                {/* Decorative corner flourishes */}
-                <div className="absolute top-3 left-4 w-4 h-4 border-t border-l rounded-tl-sm" style={{ borderColor: "hsl(0 0% 82%)" }} aria-hidden="true" />
-                <div className="absolute top-3 right-4 w-4 h-4 border-t border-r rounded-tr-sm" style={{ borderColor: "hsl(0 0% 82%)" }} aria-hidden="true" />
-
-                {/* AI Orb */}
-                <div className="flex justify-center mb-3">
-                  <div className="relative">
-                    {/* Outer ring */}
-                    <motion.div
-                      className="absolute -inset-2 rounded-full"
-                      style={{ border: "1.5px solid hsl(211 100% 55% / 0.25)" }}
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                    />
-                    {/* Core orb */}
-                    <motion.div
-                      className="w-10 h-10 rounded-full flex items-center justify-center relative"
-                      style={{
-                        background: "linear-gradient(135deg, hsl(211 100% 52%), hsl(260 75% 55%))",
-                        boxShadow: "0 4px 16px -2px hsl(211 100% 50% / 0.4), inset 0 1px 0 rgba(255,255,255,0.2)",
-                      }}
-                      animate={completed ? { scale: [1, 1.12, 1] } : { scale: [1, 1.04, 1] }}
-                      transition={{ duration: completed ? 0.5 : 2.5, repeat: completed ? 0 : Infinity, ease: "easeInOut" }}
-                    >
-                      <AnimatePresence mode="wait">
-                        {completed ? (
-                          <motion.div key="check" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 250, damping: 15 }}>
-                            <CheckCircle2 className="w-5 h-5 text-white" aria-hidden="true" focusable="false" />
-                          </motion.div>
-                        ) : (
-                          <motion.div key="sparkle" animate={{ rotate: [0, 8, -8, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}>
-                            <Sparkles className="w-5 h-5 text-white" aria-hidden="true" focusable="false" />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* Status label */}
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={completed ? "done" : "gen"}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="text-[8px] uppercase tracking-[0.25em] font-bold mb-2"
-                    style={{ color: completed ? "hsl(145 55% 38%)" : "hsl(211 50% 45%)" }}
-                  >
-                    {completed ? "✦  Course Ready  ✦" : "✦  Generating Course  ✦"}
-                  </motion.p>
-                </AnimatePresence>
-
-                {/* Course title */}
-                <h3 className="text-sm font-bold leading-snug line-clamp-2 px-6" style={{ color: "hsl(220 20% 12%)" }}>
-                  {courseTitle}
-                </h3>
-              </div>
-
-              <TearLine />
-
-              {/* ── Stats Strip ── */}
-              <div className="flex items-center justify-center gap-0 px-5 py-3">
-                {[
-                  { icon: Layers, value: `${TICKET_SECTIONS.length}`, label: "Sections" },
-                  { icon: FileText, value: `${totalPages}`, label: "Pages" },
-                  { icon: Clock, value: "~60m", label: "Duration" },
-                ].map((stat, i) => (
-                  <div key={stat.label} className="flex items-center">
-                    {i > 0 && (
-                      <div className="w-px h-8 mx-5" style={{ backgroundColor: "hsl(0 0% 84%)" }} aria-hidden="true" />
-                    )}
-                    <div className="flex flex-col items-center gap-[2px]">
-                      <stat.icon className="w-3.5 h-3.5 mb-0.5" style={{ color: "hsl(211 40% 55%)" }} aria-hidden="true" focusable="false" />
-                      <span className="text-sm font-extrabold tabular-nums" style={{ color: "hsl(220 20% 12%)" }}>{stat.value}</span>
-                      <span className="text-[7px] font-semibold uppercase tracking-[0.15em]" style={{ color: "hsl(0 0% 52%)" }}>{stat.label}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <TearLine />
-
-              {/* ── Section Reveal ── */}
-              <div className="px-5 py-3" role="list" aria-label="Course sections being generated">
-                <p className="text-[8px] uppercase tracking-[0.2em] font-bold mb-2.5" style={{ color: "hsl(0 0% 52%)" }}>
-                  Course Outline
-                </p>
-
-                <div className="space-y-[6px]">
-                  {TICKET_SECTIONS.map((sec, i) => {
-                    const isVisible = i < visibleSections;
-                    const SectionIcon = sec.icon;
-                    return (
-                      <motion.div
-                        key={sec.title}
-                        role="listitem"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                      >
-                        <div
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg"
-                          style={{
-                            backgroundColor: isVisible ? "hsl(211 45% 95%)" : "hsl(0 0% 94%)",
-                            border: isVisible ? "1px solid hsl(211 50% 90%)" : "1px solid transparent",
-                          }}
-                        >
-                          <div
-                            className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
-                            style={{
-                              backgroundColor: isVisible ? "hsl(211 55% 88%)" : "hsl(0 0% 88%)",
-                              boxShadow: isVisible ? "inset 0 -1px 0 hsl(211 40% 82%)" : "none",
-                            }}
-                          >
-                            <SectionIcon className="w-3 h-3" style={{ color: isVisible ? "hsl(211 100% 44%)" : "hsl(0 0% 65%)" }} aria-hidden="true" focusable="false" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[11px] font-semibold truncate" style={{ color: "hsl(220 15% 18%)" }}>{sec.title}</p>
-                            <p className="text-[9px] font-medium" style={{ color: "hsl(0 0% 52%)" }}>{sec.pages} pages</p>
-                          </div>
-                          {isVisible && (
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ delay: 0.15, type: "spring", stiffness: 300, damping: 15 }}
-                            >
-                              <CheckCircle2 className="w-4 h-4" style={{ color: "hsl(145 55% 42%)" }} aria-hidden="true" focusable="false" />
-                            </motion.div>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-
-                  {/* Shimmer placeholders */}
-                  {!completed && visibleSections < TICKET_SECTIONS.length && (
-                    <div className="space-y-[6px]" aria-hidden="true">
-                      {Array.from({ length: TICKET_SECTIONS.length - visibleSections }).map((_, i) => (
-                        <div key={`shimmer-${i}`} className="flex items-center gap-2.5 px-3 py-2 rounded-lg" style={{ backgroundColor: "hsl(0 0% 95%)" }}>
-                          <div className="w-6 h-6 rounded-md animate-pulse" style={{ backgroundColor: "hsl(0 0% 89%)" }} />
-                          <div className="flex-1 space-y-1.5">
-                            <div className="h-[7px] w-[70%] rounded-sm animate-pulse" style={{ backgroundColor: "hsl(0 0% 86%)" }} />
-                            <div className="h-[5px] w-[35%] rounded-sm animate-pulse" style={{ backgroundColor: "hsl(0 0% 90%)" }} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <TearLine />
-
-              {/* ── Footer ── */}
-              <div className="px-5 pt-3 pb-2 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={completed ? "ready" : statusIdx}
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.2 }}
-                      className="text-[10px] font-semibold"
-                      style={{ color: completed ? "hsl(145 55% 35%)" : "hsl(0 0% 48%)" }}
-                    >
-                      {completed ? "✓ Ready to edit!" : STATUS_MESSAGES[statusIdx]}
-                    </motion.span>
-                  </AnimatePresence>
-                  <span className="text-[11px] font-extrabold tabular-nums" style={{ color: "hsl(220 15% 15%)" }}>
-                    {Math.round(progress)}%
-                  </span>
-                </div>
-
-                {/* Premium progress bar */}
-                <div
-                  className="h-[6px] w-full rounded-full overflow-hidden"
-                  style={{ backgroundColor: "hsl(0 0% 89%)", boxShadow: "inset 0 1px 2px rgba(0,0,0,0.08)" }}
-                >
-                  <motion.div
-                    className="h-full rounded-full relative overflow-hidden"
-                    style={{
-                      background: "linear-gradient(90deg, hsl(211 100% 52%), hsl(250 70% 58%), hsl(211 100% 52%))",
-                      backgroundSize: "200% 100%",
-                    }}
-                    animate={{
-                      width: `${progress}%`,
-                      backgroundPosition: ["0% 0%", "100% 0%", "0% 0%"],
-                    }}
-                    transition={{
-                      width: { duration: 0.3, ease: "easeOut" },
-                      backgroundPosition: { duration: 2, repeat: Infinity, ease: "linear" },
-                    }}
-                  >
-                    {/* Shine sweep */}
-                    <motion.div
-                      className="absolute inset-0"
-                      style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)" }}
-                      animate={{ x: ["-100%", "200%"] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.5 }}
-                    />
-                  </motion.div>
-                </div>
-              </div>
-
-              {/* Bottom perforation */}
-              <PerforationRow dark />
-            </div>
-
-            {/* ── Zigzag torn bottom ── */}
-            <svg
-              viewBox="0 0 300 14"
-              preserveAspectRatio="none"
-              className="w-full h-[10px] block"
-              aria-hidden="true"
-            >
-              <path
-                d={
-                  "M0,0 " +
-                  Array.from({ length: 30 }, (_, i) =>
-                    `L${(i + 0.5) * 10},${i % 2 === 0 ? 12 : 2}`
-                  ).join(" ") +
-                  " L300,0 Z"
-                }
-                fill="hsl(45, 40%, 98%)"
-                style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.08))" }}
-              />
-            </svg>
-          </motion.div>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <LoadingCourseProgressDialog
+      open={open}
+      // Prevent user-initiated close — generation must run to completion
+      onOpenChange={() => {}}
+      course={course}
+    />
   );
 }
