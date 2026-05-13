@@ -125,11 +125,6 @@ const Dashboard = () => {
     return () => clearInterval(id);
   }, []);
 
-  const handleDismissLoading = (id: string) => {
-    removeLoadingCourse(id);
-    setLoadingCourses(getLoadingCourses());
-  };
-
   // Load branding settings
   useEffect(() => {
     setBranding(brandingService.getCurrentBranding());
