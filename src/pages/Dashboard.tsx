@@ -227,6 +227,13 @@ const Dashboard = () => {
         onOpenChange={setIsCreateCourseDialogOpen} 
       />
 
+      {/* Loading Course Progress Dialog */}
+      <LoadingCourseProgressDialog
+        open={!!activeLoadingCourse}
+        onOpenChange={(o) => { if (!o) setActiveLoadingCourse(null); }}
+        course={activeLoadingCourse}
+      />
+
       {/* Token Usage Dialog */}
       <Dialog open={isTokenDialogOpen} onOpenChange={setIsTokenDialogOpen}>
         <DialogContent className="sm:max-w-[600px] bg-card">
