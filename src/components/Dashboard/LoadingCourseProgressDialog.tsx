@@ -779,3 +779,136 @@ function PreviewBlock({ block: b }: { block: Block }) {
     </div>
   );
 }
+
+// ── Content insights popover ─────────────────────────────────────────────
+function countContent(statuses: Map<string, Status>) {
+  let text = 0;
+  let images = 0;
+  let quizzes = 0;
+  let quizQuestions = 0;
+  let pagesWithContent = 0;
+
+  for (const [pageId, blocks] of Object.entries(PAGE_CONTENT)) {
+    if (statuses.get(pageId) !== "completed") continue;
+    pagesWithContent += 1;
+    for (const b of blocks) {
+      if (b.kind === "heading" || b.kind === "paragraph" || b.kind === "list" || b.kind === "callout") {
+        text += 1;
+      } else if (b.kind === "image") {
+        images += 1;
+      } else if (b.kind === "quiz") {
+        quizzes += 1;
+        quizQuestions += b.questions.length;
+      }
+    }
+  }
+  return { text, images, quizzes, quizQuestions, pagesWithContent };
+}
+
+function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) {
+  const counts = countContent(statuses);
+  const total = counts.text + counts.images + counts.quizzes;
+
+  const items = [
+    {
+      key: "text",
+      label: "Text blocks",
+      hint: "Headings, paragraphs, lists & callouts",
+      value: counts.text,
+      Icon: Type,
+      tone: "text-primary",
+      bg: "bg-primary/10",
+    },
+    {
+      key: "images",
+      label: "Images",
+      hint: "Visual blocks across all pages",
+      value: counts.images,
+      Icon: ImageIcon,
+      tone: "text-violet-600 dark:text-violet-400",
+      bg: "bg-violet-500/10",
+    },
+    {
+      key: "quizzes",
+      label: "Quizzes",
+      hint: `${counts.quizQuestions} question${counts.quizQuestions === 1 ? "" : "s"} total`,
+      value: counts.quizzes,
+      Icon: ListChecks,
+      tone: "text-emerald-600 dark:text-emerald-400",
+      bg: "bg-emerald-500/10",
+    },
+  ];
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border bg-background hover:bg-muted text-foreground text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          aria-label="View content insights"
+        >
+          <BarChart3 className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+          Content insights
+          {total > 0 && (
+            <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[10.5px] font-semibold tabular-nums">
+              {total}
+            </span>
+          )}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        sideOffset={8}
+        className="w-[320px] p-0 overflow-hidden rounded-xl border-border shadow-lg"
+      >
+        <div className="px-4 pt-3.5 pb-3 border-b border-border bg-muted/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-[13px] font-semibold text-foreground">Content insights</div>
+              <div className="text-[11.5px] text-muted-foreground">
+                Across {counts.pagesWithContent} generated page{counts.pagesWithContent === 1 ? "" : "s"}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-[18px] font-semibold text-foreground tabular-nums leading-none">
+                {total}
+              </div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
+                blocks
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ul className="p-2 space-y-1">
+          {items.map(({ key, label, hint, value, Icon, tone, bg }) => (
+            <li
+              key={key}
+              className="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted/60 transition-colors"
+            >
+              <span
+                className={cn("inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0", bg)}
+                aria-hidden="true"
+              >
+                <Icon className={cn("w-4 h-4", tone)} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-medium text-foreground">{label}</div>
+                <div className="text-[11.5px] text-muted-foreground truncate">{hint}</div>
+              </div>
+              <span className="text-[16px] font-semibold text-foreground tabular-nums">
+                {value}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {counts.pagesWithContent === 0 && (
+          <div className="px-4 py-3 text-[11.5px] text-muted-foreground border-t border-border bg-muted/20">
+            Counts will appear here as pages finish generating.
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
