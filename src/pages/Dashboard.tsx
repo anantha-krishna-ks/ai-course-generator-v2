@@ -497,6 +497,62 @@ const Dashboard = () => {
           animate="visible"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8" role="list" aria-labelledby="courses-heading"
         >
+          {loadingCourses.map((lc) => {
+            const pct = getProgress(lc);
+            return (
+              <motion.div key={lc.id} variants={cardItem} role="listitem">
+                <Card className="group relative overflow-hidden border border-primary/30 bg-card/80 backdrop-blur-sm rounded-2xl shadow-[0_0_0_1px_hsl(var(--primary)/0.05)]">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,hsl(var(--primary)/0.15),transparent_60%)] animate-pulse" aria-hidden="true" />
+                    <div className="relative flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-full bg-background/80 backdrop-blur flex items-center justify-center shadow-sm">
+                        <AISparkles className="w-6 h-6" />
+                      </div>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur text-[10px] font-semibold text-primary uppercase tracking-wider">
+                        <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+                        Generating
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 space-y-3.5">
+                    <h4 className="font-semibold text-base text-foreground line-clamp-2 leading-tight min-h-[2.5rem]">
+                      {lc.title}
+                    </h4>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-medium">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="text-primary tabular-nums font-semibold">{pct}%</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        <span className="font-medium">Started {getMinutesAgoLabel(lc.startedAt)}</span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2.5 text-[11px] text-muted-foreground hover:text-destructive rounded-full"
+                        onClick={(e) => { e.stopPropagation(); handleDismissLoading(lc.id); }}
+                        aria-label={`Dismiss ${lc.title}`}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
           {currentCourses.map((course) => (
             <motion.div key={course.id} variants={cardItem} role="listitem">
               <Card 
