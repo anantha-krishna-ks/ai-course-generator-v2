@@ -2,8 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
-import Lottie from "lottie-react";
-import courseCreationAnimation from "@/assets/course-creation-lottie.json";
+import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
 import { useEffect, useState } from "react";
 
 type Status = "completed" | "in-progress" | "not-started";
@@ -337,15 +336,9 @@ function RightPane({
       />
 
       <div className="relative flex-1 flex flex-col items-center justify-center px-10 py-10 max-w-md mx-auto w-full">
-        {/* Lottie hero */}
-        <div className="relative w-[200px] h-[200px] mb-2">
-          <Lottie
-            animationData={courseCreationAnimation}
-            loop
-            autoplay
-            className="relative w-full h-full"
-            aria-hidden="true"
-          />
+        {/* Hero animation */}
+        <div className="relative w-[220px] h-[220px] mb-2">
+          <CourseGenerationAnimation />
         </div>
 
         {/* Course title */}
