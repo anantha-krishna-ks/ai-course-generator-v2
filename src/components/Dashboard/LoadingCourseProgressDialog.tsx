@@ -329,17 +329,16 @@ function RightPane({
   const remainingMin = Math.ceil(remainingMs / 60000);
 
   return (
-    <div className="flex-1 flex flex-col bg-gradient-to-br from-background via-background to-primary/[0.02] relative overflow-hidden">
-      {/* Ambient glows */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute top-[10%] left-[20%] w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px] animate-pulse" style={{ animationDuration: "7s" }} />
-        <div className="absolute bottom-[5%] right-[10%] w-[400px] h-[400px] rounded-full bg-accent/[0.07] blur-[100px] animate-pulse" style={{ animationDuration: "9s" }} />
-      </div>
+    <div className="flex-1 flex flex-col bg-gradient-to-b from-background to-primary/[0.015] relative overflow-hidden">
+      {/* Single subtle ambient glow */}
+      <div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-primary/[0.05] blur-[120px] pointer-events-none"
+        aria-hidden="true"
+      />
 
-      <div className="relative flex-1 flex flex-col items-center justify-center px-10 py-8 max-w-2xl mx-auto w-full">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-10 py-10 max-w-md mx-auto w-full">
         {/* Lottie hero */}
-        <div className="relative w-[280px] h-[280px] -mb-2">
-          <div className="absolute inset-0 rounded-full bg-primary/[0.04] blur-2xl" aria-hidden="true" />
+        <div className="relative w-[200px] h-[200px] mb-2">
           <Lottie
             animationData={courseCreationAnimation}
             loop
@@ -349,73 +348,69 @@ function RightPane({
           />
         </div>
 
-        {/* Title block */}
-        <div className="text-center space-y-2 mb-6 max-w-md">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/15 text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
-            <span className="relative flex w-1.5 h-1.5">
-              <span className="absolute inline-flex w-full h-full rounded-full bg-primary opacity-70 animate-ping" />
-              <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-primary" />
-            </span>
-            AI is crafting your course
-          </div>
-          <h2 className="text-[22px] font-semibold tracking-[-0.02em] text-foreground leading-tight">
-            {course.title}
-          </h2>
-          <div
-            key={msgIdx}
-            className="text-sm text-muted-foreground animate-fade-in flex items-center justify-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
-            {messages[msgIdx]}
-          </div>
-        </div>
+        {/* Course title */}
+        <h2 className="text-[15px] font-medium text-muted-foreground tracking-tight text-center mb-8">
+          {course.title}
+        </h2>
 
-        {/* Progress strip */}
-        <div className="w-full max-w-md mb-5">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Overall progress
-            </span>
-            <span className="text-sm font-bold text-foreground tabular-nums">{pct}%</span>
-          </div>
-          <div className="h-2 w-full rounded-full bg-muted/70 overflow-hidden relative">
+        {/* Current page card — the focus */}
+        {currentPage ? (
+          <div className="w-full rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-5 shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.15)]">
+            {/* Section breadcrumb */}
+            {currentSection && (
+              <div className="text-[11px] font-medium text-muted-foreground mb-1.5 truncate">
+                {currentSection.title}
+              </div>
+            )}
+
+            {/* Page title */}
+            <div className="flex items-start gap-2.5 mb-1">
+              <h3 className="text-[17px] font-semibold tracking-tight text-foreground leading-snug flex-1 min-w-0">
+                {currentPage.title}
+              </h3>
+            </div>
+
+            {/* Rotating activity message */}
             <div
-              className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-primary/70 transition-all duration-700 relative"
-              style={{ width: `${pct}%` }}
+              key={msgIdx}
+              className="text-[13px] text-muted-foreground animate-fade-in flex items-center gap-1.5 mb-5"
             >
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,hsl(var(--background)/0.4)_50%,transparent_100%)] animate-[shimmer_2s_linear_infinite]" />
+              <Sparkles className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+              <span className="truncate">{messages[msgIdx]}</span>
+            </div>
+
+            {/* Per-page progress */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Generating page
+                </span>
+                <span className="text-[12px] font-semibold text-foreground tabular-nums">
+                  {Math.round(currentPageProgress)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden relative">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-700 relative"
+                  style={{ width: `${currentPageProgress}%` }}
+                >
+                  <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,hsl(var(--background)/0.5)_50%,transparent_100%)] animate-[shimmer_2s_linear_infinite]" />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Currently working on */}
-        {currentPage && (
-          <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card/70 backdrop-blur-md p-4 mb-5 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.08)]">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <Loader2 className="w-4 h-4 text-primary animate-spin" aria-hidden="true" focusable="false" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-primary mb-0.5">
-                  Now generating
-                </div>
-                <div className="text-sm font-semibold text-foreground truncate">
-                  {currentPage.title}
-                </div>
-              </div>
+        ) : (
+          <div className="w-full rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] p-5 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500 text-white mb-2">
+              <Check className="w-5 h-5" strokeWidth={3} aria-hidden="true" focusable="false" />
             </div>
+            <div className="text-[15px] font-semibold text-foreground">All pages generated</div>
+            <div className="text-[12px] text-muted-foreground mt-0.5">Wrapping things up…</div>
           </div>
         )}
 
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-2 w-full max-w-md">
-          <StatTile color="emerald" value={summary.done} label="Done" />
-          <StatTile color="primary" value={summary.inP} label="Working" pulse />
-          <StatTile color="muted" value={summary.todo} label="Pending" />
-        </div>
-
         {/* Footer hint */}
-        <div className="mt-6 flex items-center gap-4 text-[11px] text-muted-foreground">
+        <div className="mt-6 flex items-center gap-3 text-[11px] text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
             Started {getMinutesAgoLabel(course.startedAt)}
@@ -424,6 +419,10 @@ function RightPane({
           <span className="inline-flex items-center gap-1.5">
             <Zap className="w-3 h-3" aria-hidden="true" focusable="false" />
             ~{remainingMin} min remaining
+          </span>
+          <span className="w-px h-3 bg-border" aria-hidden="true" />
+          <span className="tabular-nums">
+            {summary.done}/{summary.total} pages
           </span>
         </div>
       </div>
