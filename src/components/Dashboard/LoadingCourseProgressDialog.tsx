@@ -429,39 +429,3 @@ function RightPane({
     </div>
   );
 }
-
-function StatTile({
-  color,
-  value,
-  label,
-  pulse,
-}: {
-  color: "emerald" | "primary" | "muted";
-  value: number;
-  label: string;
-  pulse?: boolean;
-}) {
-  const styles = {
-    emerald: "border-emerald-500/20 bg-emerald-500/[0.04] text-emerald-700 dark:text-emerald-400",
-    primary: "border-primary/25 bg-primary/[0.05] text-primary",
-    muted: "border-border bg-muted/30 text-muted-foreground",
-  }[color];
-  const dotBg = {
-    emerald: "bg-emerald-500",
-    primary: "bg-primary",
-    muted: "bg-muted-foreground/40",
-  }[color];
-  return (
-    <div className={cn("rounded-xl border px-3 py-2.5 text-center transition-colors", styles)}>
-      <div className="flex items-center justify-center gap-1.5 mb-0.5">
-        <span className="relative flex w-1.5 h-1.5">
-          {pulse && <span className={cn("absolute inline-flex w-full h-full rounded-full opacity-60 animate-ping", dotBg)} />}
-          <span className={cn("relative inline-flex w-1.5 h-1.5 rounded-full", dotBg)} />
-        </span>
-        <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
-      </div>
-      <div className="text-xl font-bold tabular-nums text-foreground">{value}</div>
-    </div>
-  );
-}
-
