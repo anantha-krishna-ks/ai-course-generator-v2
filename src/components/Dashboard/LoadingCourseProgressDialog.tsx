@@ -2,8 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
-import Lottie from "lottie-react";
-import courseCreationAnimation from "@/assets/course-creation-lottie.json";
+import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
 import { useEffect, useState } from "react";
 
 type Status = "completed" | "in-progress" | "not-started";
