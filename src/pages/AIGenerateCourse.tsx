@@ -16,7 +16,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { addLoadingCourse } from "@/lib/loadingCourses";
-import { Sparkles } from "lucide-react";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { SideRibbon } from "@/components/AIGenerate/SideRibbon";
@@ -124,6 +124,8 @@ export default function AIGenerateCourse() {
   const [suppressBackWarning, setSuppressBackWarning] = useState(false);
   const [dontShowAgainChecked, setDontShowAgainChecked] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showFinishConfirm, setShowFinishConfirm] = useState(false);
+  const [makeAsLoading, setMakeAsLoading] = useState(false);
 
   const updateState = useCallback((partial: Partial<AIGenerateState>) => {
     setFormState((prev) => {
@@ -219,6 +221,20 @@ export default function AIGenerateCourse() {
   };
 
   const handleFinish = () => {
+    setMakeAsLoading(false);
+    setShowFinishConfirm(true);
+  };
+
+  const confirmFinish = () => {
+    setShowFinishConfirm(false);
+    if (makeAsLoading) {
+      addLoadingCourse({
+        title: formState.title || "AI Generated Course",
+        durationMs: 5 * 60 * 1000,
+      });
+      navigate("/dashboard");
+      return;
+    }
     setShowGenerating(true);
   };
 
