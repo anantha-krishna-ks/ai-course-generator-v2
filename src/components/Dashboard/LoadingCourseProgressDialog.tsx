@@ -787,22 +787,44 @@ function countContent(statuses: Map<string, Status>) {
   let quizzes = 0;
   let quizQuestions = 0;
   let pagesWithContent = 0;
+  let totalText = 0;
+  let totalImages = 0;
+  let totalQuizzes = 0;
+  let totalQuizQuestions = 0;
 
   for (const [pageId, blocks] of Object.entries(PAGE_CONTENT)) {
-    if (statuses.get(pageId) !== "completed") continue;
-    pagesWithContent += 1;
+    const isCompleted = statuses.get(pageId) === "completed";
+    if (isCompleted) pagesWithContent += 1;
     for (const b of blocks) {
-      if (b.kind === "heading" || b.kind === "paragraph" || b.kind === "list" || b.kind === "callout") {
-        text += 1;
+      const isText =
+        b.kind === "heading" || b.kind === "paragraph" || b.kind === "list" || b.kind === "callout";
+      if (isText) {
+        totalText += 1;
+        if (isCompleted) text += 1;
       } else if (b.kind === "image") {
-        images += 1;
+        totalImages += 1;
+        if (isCompleted) images += 1;
       } else if (b.kind === "quiz") {
-        quizzes += 1;
-        quizQuestions += b.questions.length;
+        totalQuizzes += 1;
+        totalQuizQuestions += b.questions.length;
+        if (isCompleted) {
+          quizzes += 1;
+          quizQuestions += b.questions.length;
+        }
       }
     }
   }
-  return { text, images, quizzes, quizQuestions, pagesWithContent };
+  return {
+    text,
+    images,
+    quizzes,
+    quizQuestions,
+    pagesWithContent,
+    totalText,
+    totalImages,
+    totalQuizzes,
+    totalQuizQuestions,
+  };
 }
 
 function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) {
@@ -817,6 +839,7 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
       label: "Text blocks",
       hint: "Headings, paragraphs, lists & callouts",
       value: counts.text,
+      total: counts.totalText,
       Icon: Type,
       tone: "text-primary",
       bg: "bg-primary/10",
@@ -826,6 +849,7 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
       label: "Images",
       hint: "Visual blocks across all pages",
       value: counts.images,
+      total: counts.totalImages,
       Icon: ImageIcon,
       tone: "text-violet-600 dark:text-violet-400",
       bg: "bg-violet-500/10",
@@ -833,8 +857,9 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
     {
       key: "quizzes",
       label: "Quizzes",
-      hint: `${counts.quizQuestions} question${counts.quizQuestions === 1 ? "" : "s"} total`,
+      hint: `${counts.quizQuestions} / ${counts.totalQuizQuestions} question${counts.totalQuizQuestions === 1 ? "" : "s"}`,
       value: counts.quizzes,
+      total: counts.totalQuizzes,
       Icon: ListChecks,
       tone: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-500/10",
@@ -886,7 +911,7 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
         </div>
 
         <ul className="p-2 space-y-1">
-          {items.map(({ key, label, hint, value, Icon, tone, bg }) => (
+          {items.map(({ key, label, hint, value, total: itemTotal, Icon, tone, bg }) => (
             <li
               key={key}
               className="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted/60 transition-colors"
@@ -901,8 +926,9 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
                 <div className="text-[13px] font-medium text-foreground">{label}</div>
                 <div className="text-[11.5px] text-muted-foreground truncate">{hint}</div>
               </div>
-              <span className="text-[16px] font-semibold text-foreground tabular-nums">
-                {value}
+              <span className="tabular-nums text-foreground" aria-label={`${value} of ${itemTotal} ${label}`}>
+                <span className="text-[16px] font-semibold">{value}</span>
+                <span className="text-[12px] text-muted-foreground font-medium"> / {itemTotal}</span>
               </span>
             </li>
           ))}
