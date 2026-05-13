@@ -1,7 +1,6 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, Loader2, Circle, FileText, LayoutGrid, X, Layers, Sparkles, ChevronRight, Clock, Zap } from "lucide-react";
+import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AISparkles } from "@/components/ui/ai-sparkles";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
 import Lottie from "lottie-react";
 import courseCreationAnimation from "@/assets/course-creation-lottie.json";
