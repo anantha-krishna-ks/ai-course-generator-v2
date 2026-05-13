@@ -44,6 +44,7 @@ import {
 import logo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
 import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
+import { LoadingCourseProgressDialog } from "@/components/Dashboard/LoadingCourseProgressDialog";
 import { getLoadingCourses, getProgress, getMinutesAgoLabel, removeLoadingCourse, type LoadingCourse } from "@/lib/loadingCourses";
 import { Loader2 } from "lucide-react";
 
@@ -112,6 +113,7 @@ const Dashboard = () => {
   const [branding, setBranding] = useState<BrandingSettings | null>(null);
   const [loadingCourses, setLoadingCourses] = useState<LoadingCourse[]>([]);
   const [, setTick] = useState(0);
+  const [activeLoadingCourse, setActiveLoadingCourse] = useState<LoadingCourse | null>(null);
 
   // Poll loading courses + tick UI every 5s
   useEffect(() => {
@@ -501,7 +503,14 @@ const Dashboard = () => {
             const pct = getProgress(lc);
             return (
               <motion.div key={lc.id} variants={cardItem} role="listitem">
-                <Card className="group relative overflow-hidden border border-primary/30 bg-card/80 backdrop-blur-sm rounded-2xl shadow-[0_0_0_1px_hsl(var(--primary)/0.05)]">
+                <Card
+                  onClick={() => setActiveLoadingCourse(lc)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Open progress for ${lc.title}`}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveLoadingCourse(lc); } }}
+                  className="group relative overflow-hidden cursor-pointer border border-primary/30 bg-card/80 backdrop-blur-sm rounded-2xl shadow-[0_0_0_1px_hsl(var(--primary)/0.05)] hover:border-primary/50 hover:shadow-lg transition-all duration-300"
+                >
                   <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 flex items-center justify-center">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,hsl(var(--primary)/0.15),transparent_60%)] animate-pulse" aria-hidden="true" />
                     <div className="relative flex flex-col items-center gap-2">
