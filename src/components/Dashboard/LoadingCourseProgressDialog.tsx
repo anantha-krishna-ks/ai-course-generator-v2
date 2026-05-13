@@ -808,6 +808,8 @@ function countContent(statuses: Map<string, Status>) {
 function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) {
   const counts = countContent(statuses);
   const total = counts.text + counts.images + counts.quizzes;
+  const totalPages = Array.from(statuses.values()).filter((s) => s !== undefined).length;
+  const completedPages = Array.from(statuses.values()).filter((s) => s === "completed").length;
 
   const items = [
     {
