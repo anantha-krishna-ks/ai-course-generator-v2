@@ -284,11 +284,12 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
             </div>
           </div>
 
-          {/* Right pane — Lottie + live status */}
+          {/* Right pane — Lottie + live page status */}
           <RightPane
             course={course}
-            pct={pct}
             currentPage={currentPage}
+            currentSection={currentSection}
+            currentPageProgress={currentPageProgress}
             summary={summary}
           />
         </div>
@@ -299,13 +300,15 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
 
 function RightPane({
   course,
-  pct,
   currentPage,
+  currentSection,
+  currentPageProgress,
   summary,
 }: {
   course: LoadingCourse;
-  pct: number;
   currentPage: OutlineItem | undefined;
+  currentSection: OutlineItem | undefined;
+  currentPageProgress: number;
   summary: { done: number; inP: number; todo: number; total: number };
 }) {
   // Rotating "thinking" messages for personality
