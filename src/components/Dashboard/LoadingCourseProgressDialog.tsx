@@ -1,8 +1,11 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, Loader2, Circle, FileText, LayoutGrid, X, Layers, Sparkles, ChevronRight } from "lucide-react";
+import { Check, Loader2, Circle, FileText, LayoutGrid, X, Layers, Sparkles, ChevronRight, Clock, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
+import Lottie from "lottie-react";
+import courseCreationAnimation from "@/assets/course-creation-lottie.json";
+import { useEffect, useState } from "react";
 
 type Status = "completed" | "in-progress" | "not-started";
 
@@ -273,65 +276,184 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
             </div>
           </div>
 
-          {/* Right pane — empty state with live status */}
-          <div className="flex-1 flex flex-col items-center justify-center p-10 bg-background relative overflow-hidden">
-            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-              <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] rounded-full bg-primary/[0.04] blur-[100px] animate-pulse" style={{ animationDuration: "6s" }} />
-              <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-accent/[0.06] blur-[80px] animate-pulse" style={{ animationDuration: "8s" }} />
-            </div>
+          {/* Right pane — Lottie + live status */}
+          <RightPane
+            course={course}
+            pct={pct}
+            currentPage={currentPage}
+            summary={summary}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
-            <div className="relative max-w-md w-full text-center space-y-5">
-              <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/15 flex items-center justify-center shadow-sm">
-                <AISparkles className="w-8 h-8" />
-              </div>
+function RightPane({
+  course,
+  pct,
+  currentPage,
+  summary,
+}: {
+  course: LoadingCourse;
+  pct: number;
+  currentPage: OutlineItem | undefined;
+  summary: { done: number; inP: number; todo: number; total: number };
+}) {
+  // Rotating "thinking" messages for personality
+  const messages = [
+    "Drafting page content…",
+    "Composing learning blocks…",
+    "Selecting visuals…",
+    "Refining tone of voice…",
+    "Polishing transitions…",
+  ];
+  const [msgIdx, setMsgIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setMsgIdx((i) => (i + 1) % messages.length), 2400);
+    return () => clearInterval(id);
+  }, [messages.length]);
 
-              <div className="space-y-1.5">
-                <h2 className="text-lg font-semibold text-foreground">{course.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  Generating in the background · Started {getMinutesAgoLabel(course.startedAt)}
-                </p>
-              </div>
+  const remainingMs = Math.max(0, course.durationMs - (Date.now() - course.startedAt));
+  const remainingMin = Math.ceil(remainingMs / 60000);
 
-              {currentPage && (
-                <div className="rounded-2xl border border-border/70 bg-card/80 backdrop-blur-sm p-5 text-left shadow-sm">
-                  <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary mb-2">
-                    <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    Currently working on
-                  </div>
-                  <div className="flex items-center gap-2 text-foreground">
-                    <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                    <span className="text-sm font-medium truncate">{currentPage.title}</span>
-                  </div>
-                  <div className="mt-4 h-1 w-full rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-              )}
+  return (
+    <div className="flex-1 flex flex-col bg-gradient-to-br from-background via-background to-primary/[0.02] relative overflow-hidden">
+      {/* Ambient glows */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-[10%] left-[20%] w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px] animate-pulse" style={{ animationDuration: "7s" }} />
+        <div className="absolute bottom-[5%] right-[10%] w-[400px] h-[400px] rounded-full bg-accent/[0.07] blur-[100px] animate-pulse" style={{ animationDuration: "9s" }} />
+      </div>
 
-              <div className="flex items-center justify-center gap-5 pt-1 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="font-semibold text-foreground tabular-nums">{summary.done}</span> done
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  <span className="font-semibold text-foreground tabular-nums">{summary.inP}</span> working
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
-                  <span className="font-semibold text-foreground tabular-nums">{summary.todo}</span> pending
-                </span>
-              </div>
+      <div className="relative flex-1 flex flex-col items-center justify-center px-10 py-8 max-w-2xl mx-auto w-full">
+        {/* Lottie hero */}
+        <div className="relative w-[280px] h-[280px] -mb-2">
+          <div className="absolute inset-0 rounded-full bg-primary/[0.04] blur-2xl" aria-hidden="true" />
+          <Lottie
+            animationData={courseCreationAnimation}
+            loop
+            autoplay
+            className="relative w-full h-full"
+            aria-hidden="true"
+          />
+        </div>
 
-              <p className="text-[11px] text-muted-foreground/80 pt-2 inline-flex items-center gap-1.5">
-                <ChevronRight className="w-3 h-3" aria-hidden="true" focusable="false" />
-                You can close this and keep working — we'll keep generating in the background.
-              </p>
+        {/* Title block */}
+        <div className="text-center space-y-2 mb-6 max-w-md">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/15 text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+            <span className="relative flex w-1.5 h-1.5">
+              <span className="absolute inline-flex w-full h-full rounded-full bg-primary opacity-70 animate-ping" />
+              <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-primary" />
+            </span>
+            AI is crafting your course
+          </div>
+          <h2 className="text-[22px] font-semibold tracking-[-0.02em] text-foreground leading-tight">
+            {course.title}
+          </h2>
+          <div
+            key={msgIdx}
+            className="text-sm text-muted-foreground animate-fade-in flex items-center justify-center gap-1.5"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-primary/70" aria-hidden="true" focusable="false" />
+            {messages[msgIdx]}
+          </div>
+        </div>
+
+        {/* Progress strip */}
+        <div className="w-full max-w-md mb-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Overall progress
+            </span>
+            <span className="text-sm font-bold text-foreground tabular-nums">{pct}%</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted/70 overflow-hidden relative">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-primary/70 transition-all duration-700 relative"
+              style={{ width: `${pct}%` }}
+            >
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,hsl(var(--background)/0.4)_50%,transparent_100%)] animate-[shimmer_2s_linear_infinite]" />
             </div>
           </div>
+        </div>
+
+        {/* Currently working on */}
+        {currentPage && (
+          <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card/70 backdrop-blur-md p-4 mb-5 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.08)]">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <Loader2 className="w-4 h-4 text-primary animate-spin" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-primary mb-0.5">
+                  Now generating
+                </div>
+                <div className="text-sm font-semibold text-foreground truncate">
+                  {currentPage.title}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-2 w-full max-w-md">
+          <StatTile color="emerald" value={summary.done} label="Done" />
+          <StatTile color="primary" value={summary.inP} label="Working" pulse />
+          <StatTile color="muted" value={summary.todo} label="Pending" />
+        </div>
+
+        {/* Footer hint */}
+        <div className="mt-6 flex items-center gap-4 text-[11px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
+            Started {getMinutesAgoLabel(course.startedAt)}
+          </span>
+          <span className="w-px h-3 bg-border" aria-hidden="true" />
+          <span className="inline-flex items-center gap-1.5">
+            <Zap className="w-3 h-3" aria-hidden="true" focusable="false" />
+            ~{remainingMin} min remaining
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatTile({
+  color,
+  value,
+  label,
+  pulse,
+}: {
+  color: "emerald" | "primary" | "muted";
+  value: number;
+  label: string;
+  pulse?: boolean;
+}) {
+  const styles = {
+    emerald: "border-emerald-500/20 bg-emerald-500/[0.04] text-emerald-700 dark:text-emerald-400",
+    primary: "border-primary/25 bg-primary/[0.05] text-primary",
+    muted: "border-border bg-muted/30 text-muted-foreground",
+  }[color];
+  const dotBg = {
+    emerald: "bg-emerald-500",
+    primary: "bg-primary",
+    muted: "bg-muted-foreground/40",
+  }[color];
+  return (
+    <div className={cn("rounded-xl border px-3 py-2.5 text-center transition-colors", styles)}>
+      <div className="flex items-center justify-center gap-1.5 mb-0.5">
+        <span className="relative flex w-1.5 h-1.5">
+          {pulse && <span className={cn("absolute inline-flex w-full h-full rounded-full opacity-60 animate-ping", dotBg)} />}
+          <span className={cn("relative inline-flex w-1.5 h-1.5 rounded-full", dotBg)} />
+        </span>
+        <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+      </div>
+      <div className="text-xl font-bold tabular-nums text-foreground">{value}</div>
+    </div>
+  );
+}
         </div>
       </DialogContent>
     </Dialog>
