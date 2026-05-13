@@ -255,10 +255,8 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                             {section.children.map((page) => {
                               const pStatus = statuses.get(page.id)!;
                               const isCompleted = pStatus === "completed";
-                              const handleOpenPage = () => {
-                                onOpenChange(false);
-                                navigate(`/edit-course/1`);
-                              };
+                              const isSelected = selectedPageId === page.id;
+                              const handleOpenPage = () => setSelectedPageId(page.id);
                               return (
                                 <div
                                   key={page.id}
@@ -275,11 +273,13 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                                         }
                                       : undefined
                                   }
-                                  aria-label={isCompleted ? `Open ${page.title}` : undefined}
+                                  aria-label={isCompleted ? `Preview ${page.title}` : undefined}
+                                  aria-pressed={isCompleted ? isSelected : undefined}
                                   className={cn(
                                     "group flex items-center gap-2.5 py-1 pl-2 pr-2.5 rounded-md transition-colors",
-                                    pStatus === "in-progress" && "bg-primary/[0.05]",
-                                    isCompleted &&
+                                    pStatus === "in-progress" && !isSelected && "bg-primary/[0.05]",
+                                    isSelected && "bg-primary/10 ring-1 ring-primary/30",
+                                    isCompleted && !isSelected &&
                                       "cursor-pointer hover:bg-emerald-500/[0.06] focus-visible:bg-emerald-500/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                                   )}
                                 >
@@ -289,18 +289,12 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                                     pStatus === "completed" && "text-foreground",
                                     pStatus === "in-progress" && "text-foreground font-medium",
                                     pStatus === "not-started" && "text-muted-foreground",
+                                    isSelected && "text-primary font-medium",
                                   )}>
                                     {page.title}
                                   </span>
-                                  {pStatus === "in-progress" && (
+                                  {pStatus === "in-progress" && !isSelected && (
                                     <Loader2 className="w-3 h-3 text-primary animate-spin shrink-0" aria-hidden="true" focusable="false" />
-                                  )}
-                                  {isCompleted && (
-                                    <ArrowRight
-                                      className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0"
-                                      aria-hidden="true"
-                                      focusable="false"
-                                    />
                                   )}
                                 </div>
                               );
