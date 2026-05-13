@@ -520,10 +520,13 @@ const Dashboard = () => {
                       {lc.title}
                     </h4>
 
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] font-medium">
-                        <span className="text-muted-foreground">Progress</span>
-                        <span className="text-primary tabular-nums font-semibold">{pct}%</span>
+                    <div className="pt-3 border-t border-border/50 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          <span className="font-medium">Started {getMinutesAgoLabel(lc.startedAt)}</span>
+                        </div>
+                        <span className="text-xs font-semibold text-primary tabular-nums">{pct}%</span>
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                         <div
@@ -532,23 +535,15 @@ const Dashboard = () => {
                         />
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                        <span className="font-medium">Started {getMinutesAgoLabel(lc.startedAt)}</span>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2.5 text-[11px] text-muted-foreground hover:text-destructive rounded-full"
-                        onClick={(e) => { e.stopPropagation(); handleDismissLoading(lc.id); }}
-                        aria-label={`Dismiss ${lc.title}`}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleDismissLoading(lc.id); }}
+                    aria-label={`Dismiss ${lc.title}`}
+                    className="absolute top-2 right-2 z-10 inline-flex items-center justify-center w-7 h-7 rounded-full bg-background/80 backdrop-blur text-muted-foreground hover:text-destructive hover:bg-background transition-colors"
+                  >
+                    <span className="text-xs font-medium">×</span>
+                  </button>
                 </Card>
               </motion.div>
             );
