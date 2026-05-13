@@ -867,8 +867,11 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
           <div className="flex items-center justify-between">
             <div>
               <div className="text-[13px] font-semibold text-foreground">Content insights</div>
-              <div className="text-[11.5px] text-muted-foreground">
-                Across {counts.pagesWithContent} generated page{counts.pagesWithContent === 1 ? "" : "s"}
+              <div className="text-[11.5px] text-muted-foreground tabular-nums">
+                <span className="font-medium text-foreground">{completedPages}</span>
+                <span className="mx-0.5">/</span>
+                <span>{totalPages}</span>
+                <span className="ml-1">page{totalPages === 1 ? "" : "s"} generated</span>
               </div>
             </div>
             <div className="text-right">
