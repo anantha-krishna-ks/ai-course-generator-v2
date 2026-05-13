@@ -172,6 +172,7 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <ContentInsightsButton statuses={statuses} />
             <button
               onClick={() => onOpenChange(false)}
               className="p-2.5 rounded-md hover:bg-muted transition-colors"
