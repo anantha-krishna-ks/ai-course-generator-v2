@@ -202,55 +202,74 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
               </div>
             </div>
 
-            {/* Outline list */}
-            <div className="flex-1 overflow-y-auto p-3 thin-scrollbar space-y-2">
-              {MOCK_OUTLINE.map((section) => {
-                const sStatus = statuses.get(section.id)!;
-                return (
-                  <div key={section.id} className="rounded-xl border border-border/60 bg-card overflow-hidden">
-                    <div className="flex items-center justify-between gap-2 px-3 py-2.5">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <StatusDot status={sStatus} />
-                        <Layers className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                        <span className="text-[13px] font-semibold text-foreground truncate">
-                          {section.title}
-                        </span>
+            {/* Outline list — timeline rail */}
+            <div className="flex-1 overflow-y-auto px-4 py-5 thin-scrollbar">
+              <div className="relative">
+                {/* Vertical rail */}
+                <div className="absolute left-[9px] top-2 bottom-2 w-px bg-border" aria-hidden="true" />
+
+                <div className="space-y-5">
+                  {MOCK_OUTLINE.map((section) => {
+                    const sStatus = statuses.get(section.id)!;
+                    return (
+                      <div key={section.id} className="relative">
+                        {/* Section row */}
+                        <div className="flex items-center gap-3 relative">
+                          <div className="relative z-10 flex items-center justify-center w-[22px]">
+                            <StatusNode status={sStatus} kind="section" />
+                          </div>
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <span className={cn(
+                              "text-[13px] font-semibold truncate",
+                              sStatus === "completed" && "text-foreground",
+                              sStatus === "in-progress" && "text-foreground",
+                              sStatus === "not-started" && "text-muted-foreground",
+                            )}>
+                              {section.title}
+                            </span>
+                            {sStatus === "in-progress" && (
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                                · Working
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Pages */}
+                        {section.children && (
+                          <div className="mt-2.5 space-y-1.5 pl-[34px]">
+                            {section.children.map((page) => {
+                              const pStatus = statuses.get(page.id)!;
+                              return (
+                                <div
+                                  key={page.id}
+                                  className={cn(
+                                    "group flex items-center gap-2.5 py-1 pl-2 pr-2.5 rounded-md transition-colors",
+                                    pStatus === "in-progress" && "bg-primary/[0.05]"
+                                  )}
+                                >
+                                  <StatusNode status={pStatus} kind="page" />
+                                  <span className={cn(
+                                    "text-[12.5px] truncate flex-1",
+                                    pStatus === "completed" && "text-foreground/80 line-through decoration-emerald-500/40 decoration-[1.5px]",
+                                    pStatus === "in-progress" && "text-foreground font-medium",
+                                    pStatus === "not-started" && "text-muted-foreground",
+                                  )}>
+                                    {page.title}
+                                  </span>
+                                  {pStatus === "in-progress" && (
+                                    <Loader2 className="w-3 h-3 text-primary animate-spin shrink-0" aria-hidden="true" focusable="false" />
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
-                      <StatusPill status={sStatus} />
-                    </div>
-                    {section.children && (
-                      <div className="border-t border-border/40 bg-muted/10 py-1">
-                        {section.children.map((page) => {
-                          const pStatus = statuses.get(page.id)!;
-                          return (
-                            <div
-                              key={page.id}
-                              className={cn(
-                                "flex items-center justify-between gap-2 pl-7 pr-3 py-1.5 rounded-md mx-1 my-0.5",
-                                pStatus === "in-progress" && "bg-primary/[0.06]"
-                              )}
-                            >
-                              <div className="flex items-center gap-2 min-w-0">
-                                <StatusDot status={pStatus} />
-                                <FileText className="w-3 h-3 text-muted-foreground/70 shrink-0" aria-hidden="true" focusable="false" />
-                                <span className={cn(
-                                  "text-[12px] truncate",
-                                  pStatus === "completed" && "text-foreground",
-                                  pStatus === "in-progress" && "text-foreground font-medium",
-                                  pStatus === "not-started" && "text-muted-foreground",
-                                )}>
-                                  {page.title}
-                                </span>
-                              </div>
-                              <StatusPill status={pStatus} />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
 
