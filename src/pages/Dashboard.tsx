@@ -552,14 +552,6 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={(e) => { e.stopPropagation(); handleDismissLoading(lc.id); }}
-                    aria-label={`Dismiss ${lc.title}`}
-                    className="absolute top-2 right-2 z-10 inline-flex items-center justify-center w-7 h-7 rounded-full bg-background/80 backdrop-blur text-muted-foreground hover:text-destructive hover:bg-background transition-colors"
-                  >
-                    <span className="text-xs font-medium">×</span>
-                  </button>
                 </Card>
               </motion.div>
             );
