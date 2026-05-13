@@ -44,6 +44,8 @@ import {
 import logo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
 import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
+import { getLoadingCourses, getProgress, getMinutesAgoLabel, removeLoadingCourse, type LoadingCourse } from "@/lib/loadingCourses";
+import { Loader2 } from "lucide-react";
 
 const mockCourses = [
   { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
@@ -108,6 +110,23 @@ const Dashboard = () => {
   });
   const [isLoadingTokens, setIsLoadingTokens] = useState(true);
   const [branding, setBranding] = useState<BrandingSettings | null>(null);
+  const [loadingCourses, setLoadingCourses] = useState<LoadingCourse[]>([]);
+  const [, setTick] = useState(0);
+
+  // Poll loading courses + tick UI every 5s
+  useEffect(() => {
+    setLoadingCourses(getLoadingCourses());
+    const id = setInterval(() => {
+      setLoadingCourses(getLoadingCourses());
+      setTick((t) => t + 1);
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  const handleDismissLoading = (id: string) => {
+    removeLoadingCourse(id);
+    setLoadingCourses(getLoadingCourses());
+  };
 
   // Load branding settings
   useEffect(() => {
