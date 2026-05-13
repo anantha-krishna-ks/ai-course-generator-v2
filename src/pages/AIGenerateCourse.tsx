@@ -538,6 +538,42 @@ export default function AIGenerateCourse() {
         onComplete={handleGenerationComplete}
       />
 
+      <AlertDialog open={showFinishConfirm} onOpenChange={setShowFinishConfirm}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+              <AISparkles className="w-6 h-6" />
+            </div>
+            <AlertDialogTitle className="text-center">Generate this course?</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Confirm to start generating "{formState.title || "your course"}". You can let it run in the background and keep working from the dashboard.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex items-start gap-2.5 mx-auto max-w-sm rounded-xl border border-border/70 bg-muted/30 px-3.5 py-3">
+            <Checkbox
+              id="make-as-loading"
+              checked={makeAsLoading}
+              onCheckedChange={(checked) => setMakeAsLoading(checked === true)}
+              aria-label="Make this as a course loading"
+              className="mt-0.5"
+            />
+            <label htmlFor="make-as-loading" className="text-sm text-foreground cursor-pointer select-none leading-snug">
+              <span className="font-medium">Make this as a course loading</span>
+              <span className="block text-xs text-muted-foreground mt-0.5">
+                Continue in the background. We'll show progress on the dashboard while the course is being generated.
+              </span>
+            </label>
+          </div>
+          <AlertDialogFooter className="flex-row gap-2 sm:justify-center">
+            <AlertDialogCancel className="mt-0">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmFinish} className="gap-1.5">
+              <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={showBackWarning} onOpenChange={setShowBackWarning}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
