@@ -787,22 +787,44 @@ function countContent(statuses: Map<string, Status>) {
   let quizzes = 0;
   let quizQuestions = 0;
   let pagesWithContent = 0;
+  let totalText = 0;
+  let totalImages = 0;
+  let totalQuizzes = 0;
+  let totalQuizQuestions = 0;
 
   for (const [pageId, blocks] of Object.entries(PAGE_CONTENT)) {
-    if (statuses.get(pageId) !== "completed") continue;
-    pagesWithContent += 1;
+    const isCompleted = statuses.get(pageId) === "completed";
+    if (isCompleted) pagesWithContent += 1;
     for (const b of blocks) {
-      if (b.kind === "heading" || b.kind === "paragraph" || b.kind === "list" || b.kind === "callout") {
-        text += 1;
+      const isText =
+        b.kind === "heading" || b.kind === "paragraph" || b.kind === "list" || b.kind === "callout";
+      if (isText) {
+        totalText += 1;
+        if (isCompleted) text += 1;
       } else if (b.kind === "image") {
-        images += 1;
+        totalImages += 1;
+        if (isCompleted) images += 1;
       } else if (b.kind === "quiz") {
-        quizzes += 1;
-        quizQuestions += b.questions.length;
+        totalQuizzes += 1;
+        totalQuizQuestions += b.questions.length;
+        if (isCompleted) {
+          quizzes += 1;
+          quizQuestions += b.questions.length;
+        }
       }
     }
   }
-  return { text, images, quizzes, quizQuestions, pagesWithContent };
+  return {
+    text,
+    images,
+    quizzes,
+    quizQuestions,
+    pagesWithContent,
+    totalText,
+    totalImages,
+    totalQuizzes,
+    totalQuizQuestions,
+  };
 }
 
 function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) {
