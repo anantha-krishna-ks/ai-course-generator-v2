@@ -1,9 +1,10 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap } from "lucide-react";
+import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
 import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Status = "completed" | "in-progress" | "not-started";
 
@@ -125,6 +126,7 @@ interface Props {
 }
 
 export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Props) {
+  const navigate = useNavigate();
   if (!course) return null;
   const pct = getProgress(course);
   const statuses = computeStatuses(MOCK_OUTLINE, pct);
@@ -250,18 +252,39 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                           <div className="mt-2.5 space-y-1.5 pl-[34px]">
                             {section.children.map((page) => {
                               const pStatus = statuses.get(page.id)!;
+                              const isCompleted = pStatus === "completed";
+                              const handleOpenPage = () => {
+                                onOpenChange(false);
+                                navigate(`/edit-course/1`);
+                              };
                               return (
                                 <div
                                   key={page.id}
+                                  role={isCompleted ? "button" : undefined}
+                                  tabIndex={isCompleted ? 0 : undefined}
+                                  onClick={isCompleted ? handleOpenPage : undefined}
+                                  onKeyDown={
+                                    isCompleted
+                                      ? (e) => {
+                                          if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            handleOpenPage();
+                                          }
+                                        }
+                                      : undefined
+                                  }
+                                  aria-label={isCompleted ? `Open ${page.title}` : undefined}
                                   className={cn(
                                     "group flex items-center gap-2.5 py-1 pl-2 pr-2.5 rounded-md transition-colors",
-                                    pStatus === "in-progress" && "bg-primary/[0.05]"
+                                    pStatus === "in-progress" && "bg-primary/[0.05]",
+                                    isCompleted &&
+                                      "cursor-pointer hover:bg-emerald-500/[0.06] focus-visible:bg-emerald-500/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                                   )}
                                 >
                                   <StatusNode status={pStatus} kind="page" />
                                   <span className={cn(
                                     "text-[12.5px] truncate flex-1",
-                                    pStatus === "completed" && "text-foreground/80 line-through decoration-emerald-500/40 decoration-[1.5px]",
+                                    pStatus === "completed" && "text-foreground",
                                     pStatus === "in-progress" && "text-foreground font-medium",
                                     pStatus === "not-started" && "text-muted-foreground",
                                   )}>
@@ -269,6 +292,13 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                                   </span>
                                   {pStatus === "in-progress" && (
                                     <Loader2 className="w-3 h-3 text-primary animate-spin shrink-0" aria-hidden="true" focusable="false" />
+                                  )}
+                                  {isCompleted && (
+                                    <ArrowRight
+                                      className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0"
+                                      aria-hidden="true"
+                                      focusable="false"
+                                    />
                                   )}
                                 </div>
                               );
