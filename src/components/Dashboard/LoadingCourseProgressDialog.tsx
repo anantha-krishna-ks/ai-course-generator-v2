@@ -503,20 +503,17 @@ const PAGE_CONTENT: Record<string, Block[]> = {
     { kind: "heading", text: "Learning Objectives" },
     { kind: "paragraph", text: "By the end of this course you will be able to:" },
     { kind: "list", items: ["Explain the core concepts in your own words", "Apply key frameworks to realistic scenarios", "Identify common pitfalls and how to avoid them", "Decide which approach fits a given situation"] },
-    { kind: "video", src: "/demo/Motion_Video.mp4", poster: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&auto=format&fit=crop", caption: "Short intro from the instructor (1:24)" },
   ],
   "s2-p1": [
     { kind: "heading", text: "Fundamental Principles" },
     { kind: "paragraph", text: "Every discipline rests on a few load-bearing ideas. Here we unpack the principles that the rest of the course will build on, with concrete examples of each in action." },
     { kind: "image", src: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop", alt: "Whiteboard with concepts" },
-    { kind: "audio", src: "/demo/actAudio.mp3", label: "Narrated walkthrough · 2:18" },
     { kind: "callout", text: "Tip: revisit this page whenever a later section feels abstract — the answer is usually a principle from here." },
   ],
   "s2-p2": [
     { kind: "heading", text: "Key Terminology" },
     { kind: "list", items: ["Term A — a precise, working definition", "Term B — how it differs from Term A", "Term C — when to prefer it in practice"] },
     { kind: "paragraph", text: "Shared vocabulary makes the rest of the conversation faster. We'll keep these terms consistent throughout the course." },
-    { kind: "doc", name: "Glossary.pdf", meta: "PDF · 240 KB" },
   ],
   "s2-p3": [
     { kind: "heading", text: "Practical Applications" },
@@ -527,18 +524,16 @@ const PAGE_CONTENT: Record<string, Block[]> = {
   "s3-p1": [
     { kind: "heading", text: "Case Studies" },
     { kind: "paragraph", text: "Two short case studies — one success, one cautionary — show the principles unfolding in real organizations. Pay attention to the decisions made at each branch point." },
-    { kind: "video", src: "/demo/Motion_Video.mp4", caption: "Case study walkthrough" },
+    { kind: "image", src: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop", alt: "Team reviewing a case study" },
   ],
   "s3-p2": [
     { kind: "heading", text: "Best Practices" },
     { kind: "list", items: ["Define success before you begin", "Make decisions traceable", "Review outcomes on a fixed cadence", "Document what you'd do differently"] },
-    { kind: "audio", src: "/demo/actAudio.mp3", label: "Expert commentary · 3:02" },
   ],
   "s3-p3": [
     { kind: "heading", text: "Interactive Workshop" },
     { kind: "paragraph", text: "A guided exercise that asks you to apply what you've learned to a fresh, slightly messy scenario. There's no single right answer — only better and worse trade-offs." },
     { kind: "callout", text: "Allow ~15 minutes for the workshop and capture your reasoning as you go." },
-    { kind: "doc", name: "Workshop_Brief.pdf", meta: "PDF · 180 KB" },
   ],
   "s4-p1": [
     { kind: "heading", text: "Course Summary" },
