@@ -454,8 +454,4 @@ function StatTile({
     </div>
   );
 }
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
+
