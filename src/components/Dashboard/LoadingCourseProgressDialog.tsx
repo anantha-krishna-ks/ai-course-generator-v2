@@ -176,7 +176,7 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
               <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
               Started {getMinutesAgoLabel(course.startedAt)}
             </span>
-            <ContentInsightsButton statuses={statuses} />
+            <ContentInsightsButton statuses={statuses} pct={pct} />
             <button
               onClick={() => onOpenChange(false)}
               className="p-2.5 rounded-md hover:bg-muted transition-colors"
@@ -815,11 +815,12 @@ function countContent(statuses: Map<string, Status>) {
   };
 }
 
-function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) {
+function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status>; pct: number }) {
   const counts = countContent(statuses);
-  const total = counts.text + counts.images + counts.quizzes;
-  const totalPages = Array.from(statuses.values()).filter((s) => s !== undefined).length;
+  const totalPages = flattenPages(MOCK_OUTLINE).length;
   const completedPages = Array.from(statuses.values()).filter((s) => s === "completed").length;
+  const totalSections = MOCK_OUTLINE.length;
+  const completedSections = MOCK_OUTLINE.filter((s) => statuses.get(s.id) === "completed").length;
 
   const items = [
     {
@@ -871,26 +872,43 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
         sideOffset={8}
         className="w-[320px] p-0 overflow-hidden rounded-xl border-border shadow-lg"
       >
-        <div className="px-4 pt-3.5 pb-3 border-b border-border bg-muted/30">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-[13px] font-semibold text-foreground">Content insights</div>
-              <div className="text-[11.5px] text-muted-foreground tabular-nums">
-                <span className="font-medium text-foreground">{completedPages}</span>
-                <span className="mx-0.5">/</span>
-                <span>{totalPages}</span>
-                <span className="ml-1">page{totalPages === 1 ? "" : "s"} generated</span>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-[18px] font-semibold text-foreground tabular-nums leading-none">
-                {total}
-              </div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
-                blocks
-              </div>
+        <div className="px-4 pt-3.5 pb-3.5 border-b border-border bg-muted/30">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-[13px] font-semibold text-foreground">Content insights</div>
+            <div className="inline-flex items-baseline gap-1 tabular-nums">
+              <span className="text-[18px] font-semibold text-foreground leading-none">{pct}</span>
+              <span className="text-[11px] font-medium text-muted-foreground">%</span>
             </div>
           </div>
+
+          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mb-3">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
+              style={{ width: `${pct}%` }}
+              aria-hidden="true"
+            />
+          </div>
+
+          <dl className="grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-border/60 bg-background px-2.5 py-2">
+              <dt className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Pages
+              </dt>
+              <dd className="mt-0.5 tabular-nums">
+                <span className="text-[15px] font-semibold text-foreground">{completedPages}</span>
+                <span className="text-[12px] text-muted-foreground font-medium"> / {totalPages}</span>
+              </dd>
+            </div>
+            <div className="rounded-lg border border-border/60 bg-background px-2.5 py-2">
+              <dt className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Sections
+              </dt>
+              <dd className="mt-0.5 tabular-nums">
+                <span className="text-[15px] font-semibold text-foreground">{completedSections}</span>
+                <span className="text-[12px] text-muted-foreground font-medium"> / {totalSections}</span>
+              </dd>
+            </div>
+          </dl>
         </div>
 
         <ul className="p-2 space-y-1">
