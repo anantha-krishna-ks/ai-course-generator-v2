@@ -866,10 +866,10 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border bg-background hover:bg-muted text-foreground text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          className="group inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border bg-background hover:bg-muted text-foreground text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 data-[state=open]:bg-primary/10 data-[state=open]:border-primary/40 data-[state=open]:text-primary data-[state=open]:shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]"
           aria-label="View content insights"
         >
-          <BarChart3 className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+          <BarChart3 className="w-3.5 h-3.5 text-muted-foreground transition-colors group-data-[state=open]:text-primary" aria-hidden="true" focusable="false" />
           Content insights
         </button>
       </PopoverTrigger>
