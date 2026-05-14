@@ -873,20 +873,32 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
         className="w-[320px] p-0 overflow-hidden rounded-xl border-border shadow-lg"
       >
         <div className="px-4 pt-3.5 pb-3.5 border-b border-border bg-muted/30">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-[13px] font-semibold text-foreground">Content insights</div>
-            <div className="inline-flex items-baseline gap-1 tabular-nums">
-              <span className="text-[18px] font-semibold text-foreground leading-none">{pct}</span>
-              <span className="text-[11px] font-medium text-muted-foreground">%</span>
-            </div>
-          </div>
+          <div className="text-[13px] font-semibold text-foreground mb-3">Content insights</div>
 
-          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mb-3">
+          <div className="rounded-lg border border-border/60 bg-background px-3 py-2.5 mb-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <Sparkles className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+                Overall progress
+              </div>
+              <div className="inline-flex items-baseline gap-0.5 tabular-nums">
+                <span className="text-[15px] font-semibold text-foreground leading-none">{pct}</span>
+                <span className="text-[10.5px] font-medium text-muted-foreground">%</span>
+              </div>
+            </div>
             <div
-              className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
-              style={{ width: `${pct}%` }}
-              aria-hidden="true"
-            />
+              className="h-1.5 w-full rounded-full bg-muted overflow-hidden"
+              role="progressbar"
+              aria-valuenow={pct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Overall progress"
+            >
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
           </div>
 
           <dl className="grid grid-cols-2 gap-2">
