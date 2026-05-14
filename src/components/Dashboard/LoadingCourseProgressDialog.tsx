@@ -832,6 +832,8 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       Icon: Type,
       tone: "text-primary",
       bg: "bg-primary/10",
+      bar: "bg-primary",
+      track: "bg-primary/15",
     },
     {
       key: "images",
@@ -842,6 +844,8 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       Icon: ImageIcon,
       tone: "text-violet-600 dark:text-violet-400",
       bg: "bg-violet-500/10",
+      bar: "bg-violet-500",
+      track: "bg-violet-500/15",
     },
     {
       key: "quizzes",
@@ -852,6 +856,8 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       Icon: ListChecks,
       tone: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-500/10",
+      bar: "bg-emerald-500",
+      track: "bg-emerald-500/15",
     },
   ];
 
@@ -924,27 +930,48 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
         </div>
 
         <ul className="p-2 space-y-1">
-          {items.map(({ key, label, hint, value, total: itemTotal, Icon, tone, bg }) => (
-            <li
-              key={key}
-              className="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted/60 transition-colors"
-            >
-              <span
-                className={cn("inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0", bg)}
-                aria-hidden="true"
+          {items.map(({ key, label, hint, value, total: itemTotal, Icon, tone, bg, bar, track }) => {
+            const ratio = itemTotal > 0 ? Math.min(100, Math.round((value / itemTotal) * 100)) : 0;
+            return (
+              <li
+                key={key}
+                className="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted/60 transition-colors"
               >
-                <Icon className={cn("w-4 h-4", tone)} />
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-medium text-foreground">{label}</div>
-                <div className="text-[11.5px] text-muted-foreground truncate">{hint}</div>
-              </div>
-              <span className="tabular-nums text-foreground" aria-label={`${value} of ${itemTotal} ${label}`}>
-                <span className="text-[16px] font-semibold">{value}</span>
-                <span className="text-[12px] text-muted-foreground font-medium"> / {itemTotal}</span>
-              </span>
-            </li>
-          ))}
+                <span
+                  className={cn("inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0", bg)}
+                  aria-hidden="true"
+                >
+                  <Icon className={cn("w-4 h-4", tone)} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-[13px] font-medium text-foreground truncate">{label}</div>
+                    <span
+                      className="tabular-nums text-foreground shrink-0"
+                      aria-label={`${value} of ${itemTotal} ${label}`}
+                    >
+                      <span className="text-[14px] font-semibold">{value}</span>
+                      <span className="text-[11.5px] text-muted-foreground font-medium"> / {itemTotal}</span>
+                    </span>
+                  </div>
+                  <div
+                    className={cn("mt-1.5 h-1 w-full rounded-full overflow-hidden", track)}
+                    role="progressbar"
+                    aria-valuenow={ratio}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${label} progress`}
+                  >
+                    <div
+                      className={cn("h-full rounded-full transition-all duration-500", bar)}
+                      style={{ width: `${ratio}%` }}
+                    />
+                  </div>
+                  <div className="mt-1 text-[11px] text-muted-foreground truncate">{hint}</div>
+                </div>
+              </li>
+            );
+          })}
         </ul>
 
         {counts.pagesWithContent === 0 && (
