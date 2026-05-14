@@ -176,7 +176,7 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
               <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
               Started {getMinutesAgoLabel(course.startedAt)}
             </span>
-            <ContentInsightsButton statuses={statuses} />
+            <ContentInsightsButton statuses={statuses} pct={pct} />
             <button
               onClick={() => onOpenChange(false)}
               className="p-2.5 rounded-md hover:bg-muted transition-colors"
