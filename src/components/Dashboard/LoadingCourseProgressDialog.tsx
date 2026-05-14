@@ -1,5 +1,5 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLeft, BarChart3, Type, Image as ImageIcon, ListChecks } from "lucide-react";
+import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLeft, BarChart3, Type, Image as ImageIcon, ListChecks, Gauge } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
@@ -878,7 +878,7 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
           <div className="rounded-lg border border-border/60 bg-background px-3 py-2.5 mb-3">
             <div className="flex items-center justify-between mb-1.5">
               <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                <Sparkles className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+                <Gauge className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
                 Overall progress
               </div>
               <div className="inline-flex items-baseline gap-0.5 tabular-nums">
