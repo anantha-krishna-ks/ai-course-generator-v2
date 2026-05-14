@@ -864,11 +864,6 @@ function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) 
         >
           <BarChart3 className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
           Content insights
-          {total > 0 && (
-            <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-[10.5px] font-semibold tabular-nums">
-              {total}
-            </span>
-          )}
         </button>
       </PopoverTrigger>
       <PopoverContent
