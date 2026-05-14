@@ -1,5 +1,5 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLeft, BarChart3, Type, Image as ImageIcon, ListChecks } from "lucide-react";
+import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLeft, BarChart3, Type, Image as ImageIcon, ListChecks, Gauge } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
