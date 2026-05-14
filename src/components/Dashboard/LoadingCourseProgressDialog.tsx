@@ -930,44 +930,79 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
         </div>
 
         <ul className="p-2 space-y-1">
-          {items.map(({ key, label, hint, value, total: itemTotal, Icon, tone, bg, bar, track }) => {
+          {items.map(({ key, label, hint, value, total: itemTotal, Icon, tone, bg }) => {
             const ratio = itemTotal > 0 ? Math.min(100, Math.round((value / itemTotal) * 100)) : 0;
+            const R = 18;
+            const C = 2 * Math.PI * R; // ≈ 113.1
+            const dash = (ratio / 100) * C;
             return (
               <li
                 key={key}
                 className="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-muted/60 transition-colors"
               >
-                <span
-                  className={cn("inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0", bg)}
-                  aria-hidden="true"
+                {/* Donut ring with icon */}
+                <div
+                  className={cn("relative w-11 h-11 shrink-0", tone)}
+                  role="progressbar"
+                  aria-valuenow={ratio}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${label}: ${value} of ${itemTotal}`}
                 >
-                  <Icon className={cn("w-4 h-4", tone)} />
-                </span>
+                  <svg
+                    viewBox="0 0 44 44"
+                    className="w-full h-full -rotate-90"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <circle
+                      cx="22"
+                      cy="22"
+                      r={R}
+                      fill="none"
+                      strokeWidth="3"
+                      className="stroke-current opacity-15"
+                    />
+                    <circle
+                      cx="22"
+                      cy="22"
+                      r={R}
+                      fill="none"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      className="stroke-current transition-[stroke-dasharray] duration-500"
+                      strokeDasharray={`${dash} ${C - dash}`}
+                    />
+                  </svg>
+                  <span
+                    className={cn(
+                      "absolute inset-0 flex items-center justify-center rounded-full",
+                      bg
+                    )}
+                    style={{ margin: 7 }}
+                    aria-hidden="true"
+                  >
+                    <Icon className={cn("w-3.5 h-3.5", tone)} />
+                  </span>
+                </div>
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-[13px] font-medium text-foreground truncate">{label}</div>
                     <span
                       className="tabular-nums text-foreground shrink-0"
-                      aria-label={`${value} of ${itemTotal} ${label}`}
+                      aria-hidden="true"
                     >
                       <span className="text-[14px] font-semibold">{value}</span>
                       <span className="text-[11.5px] text-muted-foreground font-medium"> / {itemTotal}</span>
                     </span>
                   </div>
-                  <div
-                    className={cn("mt-1.5 h-1 w-full rounded-full overflow-hidden", track)}
-                    role="progressbar"
-                    aria-valuenow={ratio}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label={`${label} progress`}
-                  >
-                    <div
-                      className={cn("h-full rounded-full transition-all duration-500", bar)}
-                      style={{ width: `${ratio}%` }}
-                    />
+                  <div className="mt-0.5 flex items-center justify-between gap-2">
+                    <div className="text-[11px] text-muted-foreground truncate">{hint}</div>
+                    <span className={cn("text-[10.5px] font-semibold tabular-nums shrink-0", tone)}>
+                      {ratio}%
+                    </span>
                   </div>
-                  <div className="mt-1 text-[11px] text-muted-foreground truncate">{hint}</div>
                 </div>
               </li>
             );
