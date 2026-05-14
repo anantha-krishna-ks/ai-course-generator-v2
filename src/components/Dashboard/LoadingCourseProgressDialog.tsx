@@ -291,7 +291,7 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                                 >
                                   <StatusNode status={pStatus} kind="page" />
                                   <span className={cn(
-                                    "text-[12.5px] truncate flex-1",
+                                    "text-[13.5px] truncate flex-1",
                                     pStatus === "completed" && "text-foreground",
                                     pStatus === "in-progress" && "text-foreground font-medium",
                                     pStatus === "not-started" && "text-muted-foreground",
