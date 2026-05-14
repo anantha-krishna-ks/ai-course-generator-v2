@@ -240,7 +240,7 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                           </div>
                           <div className="flex items-center gap-2 min-w-0 flex-1">
                             <span className={cn(
-                              "text-[13px] font-semibold truncate",
+                              "text-[14.5px] font-semibold truncate",
                               sStatus === "completed" && "text-foreground",
                               sStatus === "in-progress" && "text-foreground",
                               sStatus === "not-started" && "text-muted-foreground",
@@ -248,7 +248,7 @@ export function LoadingCourseProgressDialog({ open, onOpenChange, course }: Prop
                               {section.title}
                             </span>
                             {sStatus === "in-progress" && (
-                              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                              <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
                                 · Working
                               </span>
                             )}
