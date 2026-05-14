@@ -434,12 +434,9 @@ function RightPane({
 
             {/* Per-page progress */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center">
                 <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   Generating page
-                </span>
-                <span className="text-[12px] font-semibold text-foreground tabular-nums">
-                  {Math.round(currentPageProgress)}%
                 </span>
               </div>
               <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden relative">
