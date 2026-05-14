@@ -465,11 +465,6 @@ function RightPane({
         {/* Footer hint */}
         <div className="mt-6 flex items-center gap-3 text-[11px] text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
-            <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
-            Started {getMinutesAgoLabel(course.startedAt)}
-          </span>
-          <span className="w-px h-3 bg-border" aria-hidden="true" />
-          <span className="inline-flex items-center gap-1.5">
             <Zap className="w-3 h-3" aria-hidden="true" focusable="false" />
             ~{remainingMin} min remaining
           </span>
