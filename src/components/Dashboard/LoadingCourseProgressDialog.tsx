@@ -832,6 +832,8 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       Icon: Type,
       tone: "text-primary",
       bg: "bg-primary/10",
+      bar: "bg-primary",
+      track: "bg-primary/15",
     },
     {
       key: "images",
@@ -842,6 +844,8 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       Icon: ImageIcon,
       tone: "text-violet-600 dark:text-violet-400",
       bg: "bg-violet-500/10",
+      bar: "bg-violet-500",
+      track: "bg-violet-500/15",
     },
     {
       key: "quizzes",
@@ -852,6 +856,8 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
       Icon: ListChecks,
       tone: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-500/10",
+      bar: "bg-emerald-500",
+      track: "bg-emerald-500/15",
     },
   ];
 
