@@ -815,11 +815,12 @@ function countContent(statuses: Map<string, Status>) {
   };
 }
 
-function ContentInsightsButton({ statuses }: { statuses: Map<string, Status> }) {
+function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status>; pct: number }) {
   const counts = countContent(statuses);
-  const total = counts.text + counts.images + counts.quizzes;
-  const totalPages = Array.from(statuses.values()).filter((s) => s !== undefined).length;
+  const totalPages = flattenPages(MOCK_OUTLINE).length;
   const completedPages = Array.from(statuses.values()).filter((s) => s === "completed").length;
+  const totalSections = MOCK_OUTLINE.length;
+  const completedSections = MOCK_OUTLINE.filter((s) => statuses.get(s.id) === "completed").length;
 
   const items = [
     {
