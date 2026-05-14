@@ -986,23 +986,20 @@ function ContentInsightsButton({ statuses, pct }: { statuses: Map<string, Status
                   </span>
                 </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
+                <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
                     <div className="text-[13px] font-medium text-foreground truncate">{label}</div>
-                    <span
-                      className="tabular-nums text-foreground shrink-0"
-                      aria-hidden="true"
-                    >
-                      <span className="text-[14px] font-semibold">{value}</span>
-                      <span className="text-[11.5px] text-muted-foreground font-medium"> / {itemTotal}</span>
-                    </span>
+                    <div className={cn("text-[10.5px] font-semibold tabular-nums mt-0.5", tone)}>
+                      {ratio}% complete
+                    </div>
                   </div>
-                  <div className="mt-0.5 flex items-center justify-between gap-2">
-                    <div className="text-[11px] text-muted-foreground truncate">{hint}</div>
-                    <span className={cn("text-[10.5px] font-semibold tabular-nums shrink-0", tone)}>
-                      {ratio}%
-                    </span>
-                  </div>
+                  <span
+                    className="tabular-nums text-foreground shrink-0 text-right"
+                    aria-hidden="true"
+                  >
+                    <span className="text-[16px] font-semibold leading-none">{value}</span>
+                    <span className="text-[12px] text-muted-foreground font-medium"> / {itemTotal}</span>
+                  </span>
                 </div>
               </li>
             );
