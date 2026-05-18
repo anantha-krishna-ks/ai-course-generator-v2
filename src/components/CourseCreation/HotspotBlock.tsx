@@ -650,6 +650,18 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                     className="w-[400px] p-0 overflow-hidden rounded-2xl shadow-2xl border-border/60"
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
+                    onInteractOutside={(e) => {
+                      const target = e.target as HTMLElement | null;
+                      if (target?.closest('[data-tiptap-bubble-menu]')) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onFocusOutside={(e) => {
+                      const target = e.target as HTMLElement | null;
+                      if (target?.closest('[data-tiptap-bubble-menu]')) {
+                        e.preventDefault();
+                      }
+                    }}
                   >
                     {editingHotspot && editingHotspot.id === hs.id && (
                       <HotspotEditCard
