@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/apiConfig";
 import type { CourseCreateRequest, CourseCreateResponse } from "@/types/course";
 
 class CourseApiError extends Error {
@@ -24,7 +25,7 @@ export const courseApi = {
     try {
       const token = getAuthToken();
       const response = await fetch(
-        "https://seab-testing.excelindia.com/contentv3api/api/course/create",
+        apiUrl("/api/course/create"),
         {
           method: "POST",
           headers: {
@@ -61,7 +62,7 @@ export const courseApi = {
     try {
       const token = getAuthToken();
       const response = await fetch(
-        "https://seab-testing.excelindia.com/contentv3api/api/course/generatecourse",
+        apiUrl("/api/course/generatecourse"),
         {
           method: "POST",
           headers: {
@@ -98,7 +99,7 @@ export const courseApi = {
     try {
       const token = getAuthToken();
       const response = await fetch(
-        "https://seab-testing.excelindia.com/contentv3api/api/course/update",
+        apiUrl("/api/course/update"),
         {
           method: "POST",
           headers: {
@@ -135,7 +136,7 @@ export const courseApi = {
     try {
       const token = getAuthToken();
       const response = await fetch(
-        `https://seab-testing.excelindia.com/contentv3api/api/course/delete/${courseId}`,
+        apiUrl(`/api/course/delete/${courseId}`),
         {
           method: "DELETE",
           headers: {
@@ -172,7 +173,7 @@ export const courseApi = {
     try {
       const token = getAuthToken();
       const response = await fetch(
-        `https://seab-testing.excelindia.com/contentv3api/api/course/getcourses/${perPage}/${pageNumber}/${searchString}/${custId}`,
+        apiUrl(`/api/course/getcourses/${perPage}/${pageNumber}/${searchString}/${custId}`),
         {
           method: "GET",
           headers: {

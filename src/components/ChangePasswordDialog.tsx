@@ -46,13 +46,15 @@ export const ChangePasswordDialog = ({
       return;
     }
 
-    // TODO: Implement actual password change logic
+    // Password change is not yet wired to the backend. Do not show a fake
+    // success message — clearly inform the user instead so they don't believe
+    // their password was changed.
     toast({
-      title: "Success",
-      description: "Password changed successfully",
+      title: "Not available",
+      description:
+        "Password change is not yet available. Please contact your administrator to reset your password.",
+      variant: "destructive",
     });
-    
-    handleClose();
   };
 
   const handleClose = () => {

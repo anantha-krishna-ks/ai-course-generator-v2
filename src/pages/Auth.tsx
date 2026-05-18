@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LogIn, UserPlus, Mail, Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { apiUrl } from "@/lib/apiConfig";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import authBgVectors from "@/assets/auth-bg-vectors.png";
@@ -56,7 +57,7 @@ const Auth = () => {
       
       try {
         const response = await fetch(
-          "https://seab-testing.excelindia.com/contentv3api/api/user/login",
+          apiUrl("/api/user/login"),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, Layout, Home, ChevronRight, Sparkles, X, Plus, Minus, Trash2, Check, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { apiUrl } from "@/lib/apiConfig";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -413,7 +414,7 @@ const CreateBlueprint = () => {
     setIsLoggingIn(true);
 
     try {
-      const response = await fetch("https://seab-testing.excelindia.com/contentv3api/api/user/login", {
+      const response = await fetch(apiUrl("/api/user/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
