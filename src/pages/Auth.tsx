@@ -56,7 +56,7 @@ const Auth = () => {
       
       try {
         const response = await fetch(
-          "https://seab-testing.excelindia.com/contentv3api/api/user/login",
+          apiUrl("/api/user/login"),
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
