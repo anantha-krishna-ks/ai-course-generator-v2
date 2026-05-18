@@ -785,19 +785,6 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
           className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 space-y-3.5 data-[state=inactive]:hidden"
         >
           <div className="space-y-1.5">
-            <Label htmlFor="hs-title" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
-              Title
-            </Label>
-            <Input
-              id="hs-title"
-              value={value.title}
-              onChange={(e) => onChange({ ...value, title: e.target.value })}
-              placeholder="Hotspot title"
-              className="h-9 rounded-lg text-sm"
-            />
-          </div>
-
-          <div className="space-y-1.5">
             <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
             <MiniRichTextEditor
               content={value.description}
