@@ -29,6 +29,7 @@ import { MediaUploadBlock } from "./MediaUploadBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
 import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
+import { HotspotBlock } from "./HotspotBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
