@@ -957,7 +957,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
         <Button variant="outline" size="sm" className="rounded-full px-4 h-8" onClick={onCancel}>
           Cancel
         </Button>
-        <Button size="sm" className="rounded-full px-4 h-8" onClick={onDone}>
+        <Button size="sm" className="rounded-full px-4 h-8" onClick={handleDone}>
           Done
         </Button>
       </div>
