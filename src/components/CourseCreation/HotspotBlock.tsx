@@ -552,15 +552,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                   key={hs.id}
                   open={isEditingThis}
                   onOpenChange={(open) => {
-                    if (!open) {
-                      // Persist on close
-                      if (editingHotspot) {
-                        persist({
-                          hotspots: hotspots.map((h) => (h.id === editingHotspot.id ? editingHotspot : h)),
-                        });
-                      }
-                      setEditingHotspot(null);
-                    }
+                    if (!open) setEditingHotspot(null);
                   }}
                 >
                   <PopoverAnchor asChild>
@@ -661,14 +653,13 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                   >
                     {editingHotspot && editingHotspot.id === hs.id && (
                       <HotspotEditCard
-                        value={editingHotspot}
-                        onChange={setEditingHotspot}
-                        onDone={() => {
+                        value={hs}
+                        onChange={(next) => {
                           persist({
-                            hotspots: hotspots.map((h) => (h.id === editingHotspot.id ? editingHotspot : h)),
+                            hotspots: hotspots.map((h) => (h.id === hs.id ? next : h)),
                           });
-                          setEditingHotspot(null);
                         }}
+                        onDone={() => setEditingHotspot(null)}
                         onCancel={() => setEditingHotspot(null)}
                       />
                     )}
