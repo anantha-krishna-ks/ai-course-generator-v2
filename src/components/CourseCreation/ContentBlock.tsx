@@ -479,7 +479,7 @@ export function ContentBlock({
             onClick={onDelete}
             className="hover:text-destructive"
           />
-          {aiEnabled && (type === "text" || type === "image") && (
+          {aiEnabled && (type === "text" || type === "image" || type === "hotspot") && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
               <Tooltip>
