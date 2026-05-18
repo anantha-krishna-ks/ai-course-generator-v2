@@ -1,5 +1,28 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { Upload, ImagePlus, Sparkles, Trash2, Settings as SettingsIcon, Plus, Pencil, Link as LinkIcon, ImageIcon } from "lucide-react";
+import {
+  Upload,
+  ImagePlus,
+  Sparkles,
+  Trash2,
+  Settings as SettingsIcon,
+  Plus,
+  Pencil,
+  Link as LinkIcon,
+  ImageIcon,
+  Info,
+  HelpCircle,
+  Star,
+  Heart,
+  Flag,
+  Bookmark,
+  MapPin,
+  Lightbulb,
+  AlertCircle,
+  CheckCircle2,
+  Eye,
+  Zap,
+  type LucideIcon as LucideIconType,
+} from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +39,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverAnchor,
 } from "@/components/ui/popover";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { DescriptionEditor } from "./DescriptionEditor";
@@ -26,6 +51,27 @@ import { cn } from "@/lib/utils";
 const MAX_IMAGE_MB = 10;
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=1200&q=80";
+
+/** Curated icon set users can pick for hotspot markers */
+const HOTSPOT_ICONS: { id: string; label: string; icon: LucideIconType }[] = [
+  { id: "plus", label: "Plus", icon: Plus },
+  { id: "info", label: "Info", icon: Info },
+  { id: "help", label: "Help", icon: HelpCircle },
+  { id: "star", label: "Star", icon: Star },
+  { id: "heart", label: "Heart", icon: Heart },
+  { id: "flag", label: "Flag", icon: Flag },
+  { id: "bookmark", label: "Bookmark", icon: Bookmark },
+  { id: "pin", label: "Pin", icon: MapPin },
+  { id: "lightbulb", label: "Idea", icon: Lightbulb },
+  { id: "alert", label: "Alert", icon: AlertCircle },
+  { id: "check", label: "Check", icon: CheckCircle2 },
+  { id: "eye", label: "Eye", icon: Eye },
+  { id: "zap", label: "Zap", icon: Zap },
+];
+
+export function getHotspotIcon(id?: string): LucideIconType {
+  return HOTSPOT_ICONS.find((i) => i.id === id)?.icon ?? Plus;
+}
 
 export interface HotspotItem {
   id: string;
@@ -39,7 +85,14 @@ export interface HotspotItem {
   description: string;
   imageUrl?: string;
   linkUrl?: string;
+  /** Per-hotspot marker icon id (from HOTSPOT_ICONS). Defaults to "plus". */
+  icon?: string;
+  /** Marker icon pixel size. */
+  iconSize?: number;
+  /** Marker icon color (hex / rgb). */
+  iconColor?: string;
 }
+
 
 interface HotspotData {
   imageUrl: string;
