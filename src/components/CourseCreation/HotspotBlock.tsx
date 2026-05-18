@@ -828,6 +828,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
                 placeholder="Describe this hotspot…"
                 maxHeight={9999}
                 maxLength={300}
+                error={descError}
               />
             </div>
             {descError && (
