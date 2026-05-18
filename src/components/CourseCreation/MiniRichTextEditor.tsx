@@ -85,8 +85,9 @@ export function MiniRichTextEditor({
   return (
     <div
       className={cn(
-        "group rounded-xl border bg-background overflow-hidden transition-all",
-        "border-border/60 focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/15"
+        "group rounded-xl border bg-background overflow-hidden transition-all duration-200",
+        "border-border/70 shadow-sm hover:border-border hover:shadow-md",
+        "focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15 focus-within:shadow-md"
       )}
     >
       <BubbleMenu
