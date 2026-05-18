@@ -241,7 +241,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
           width: 10,
           height: 10,
           title: `Hotspot ${hotspots.length + 1}`,
-          description: "<p>Add your hotspot description here…</p>",
+          description: "",
         };
         persist({ hotspots: [...hotspots, newHs] });
         setSelectedId(newHs.id);
