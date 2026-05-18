@@ -597,11 +597,11 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                       }}
                     >
                       <span
-                        className="relative flex items-center justify-center rounded-full bg-white"
+                        className="relative flex items-center justify-center rounded-full bg-white transition-colors"
                         style={{
                           width: iconSize + 14,
                           height: iconSize + 14,
-                          border: `2px solid ${color}`,
+                          border: `2px solid ${iconColor}`,
                         }}
                         aria-label={`Hotspot ${idx + 1}`}
                       >
@@ -742,11 +742,11 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
       <div className="flex items-center justify-between px-4 pt-3.5 pb-3 border-b border-border/60 bg-gradient-to-b from-muted/40 to-transparent">
         <div className="flex items-center gap-2.5 min-w-0">
           <span
-            className="relative flex items-center justify-center rounded-full bg-white shrink-0"
+            className="relative flex items-center justify-center rounded-full bg-white shrink-0 transition-colors"
             style={{
               width: iconSize + 14,
               height: iconSize + 14,
-              border: "2px solid hsl(var(--primary))",
+              border: `2px solid ${iconColor}`,
             }}
             aria-hidden="true"
           >
