@@ -761,17 +761,17 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
       <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden min-h-0">
         {/* Segmented toggle tabs (Outline/Blocks style) */}
         <div className="px-4 pt-3 pb-2">
-          <TabsList className="grid grid-cols-2 w-full h-9 rounded-full bg-muted p-1">
+          <TabsList className="grid grid-cols-2 w-full h-auto rounded-full bg-foreground/[0.06] border border-border/50 p-[3px]">
             <TabsTrigger
               value="content"
-              className="rounded-full text-xs font-medium h-7 gap-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+              className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-full text-muted-foreground transition-colors duration-300 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)]"
             >
               <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
               Content
             </TabsTrigger>
             <TabsTrigger
               value="settings"
-              className="rounded-full text-xs font-medium h-7 gap-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+              className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-full text-muted-foreground transition-colors duration-300 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)]"
             >
               <SettingsIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
               Settings
