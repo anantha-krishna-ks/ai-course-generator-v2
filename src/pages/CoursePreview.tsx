@@ -1415,13 +1415,14 @@ const CoursePreview = () => {
                         <div
                           className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
                           dangerouslySetInnerHTML={{ 
-                            __html: (() => {
-                              const sanitized = sanitizeHtml(courseData.courseIntroduction);
-                              const doc = new DOMParser().parseFromString(sanitized, 'text/html');
-                              const paragraphs = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol'));
+                            __html: sanitizeHtml((() => {
+                              const tempDiv = document.createElement('div');
+                              tempDiv.innerHTML = courseData.courseIntroduction;
+                              const paragraphs = Array.from(tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol'));
                               const halfPoint = Math.ceil(paragraphs.length / 2);
-                              return paragraphs.slice(0, halfPoint).map(el => el.outerHTML).join('');
-                            })()
+                              const firstHalf = paragraphs.slice(0, halfPoint);
+                              return firstHalf.map(el => el.outerHTML).join('');
+                            })())
                           }}
                         />
                       ) : (
@@ -1437,13 +1438,14 @@ const CoursePreview = () => {
                         <div
                           className="prose prose-sm sm:prose dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-sm sm:text-base"
                           dangerouslySetInnerHTML={{ 
-                            __html: (() => {
-                              const sanitized = sanitizeHtml(courseData.courseIntroduction);
-                              const doc = new DOMParser().parseFromString(sanitized, 'text/html');
-                              const paragraphs = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol'));
+                            __html: sanitizeHtml((() => {
+                              const tempDiv = document.createElement('div');
+                              tempDiv.innerHTML = courseData.courseIntroduction;
+                              const paragraphs = Array.from(tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol'));
                               const halfPoint = Math.ceil(paragraphs.length / 2);
-                              return paragraphs.slice(halfPoint).map(el => el.outerHTML).join('');
-                            })()
+                              const secondHalf = paragraphs.slice(halfPoint);
+                              return secondHalf.map(el => el.outerHTML).join('');
+                            })())
                           }}
                         />
                       ) : (

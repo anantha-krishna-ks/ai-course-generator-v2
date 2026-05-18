@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/lib/apiConfig";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://seab-testing.excelindia.com/contentv3api";
 
 export interface TokenInfo {
   renewedOn: string;
