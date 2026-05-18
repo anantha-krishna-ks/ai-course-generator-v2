@@ -542,90 +542,140 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
             {/* Existing hotspots */}
             {hotspots.map((hs, idx) => {
               const isSelected = selectedId === hs.id;
+              const isEditingThis = editingHotspot?.id === hs.id;
               const isCircle = shape === "circle";
+              const HsIcon = getHotspotIcon(hs.icon);
+              const iconSize = hs.iconSize ?? 16;
+              const iconColor = hs.iconColor ?? "#ffffff";
               return (
-                <div
+                <Popover
                   key={hs.id}
-                  data-hotspot
-                  role="button"
-                  tabIndex={0}
-                  aria-label={hs.title}
-                  onPointerDown={(e) => startMove(e, hs)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedId(hs.id);
-                  }}
-                  onDoubleClick={(e) => {
-                    e.stopPropagation();
-                    setEditingHotspot(hs);
-                  }}
-                  className={cn(
-                    "absolute group/hs flex items-center justify-center transition-all",
-                    isSelected ? "ring-2 ring-offset-1" : "ring-1",
-                    "cursor-move"
-                  )}
-                  style={{
-                    left: `${hs.x}%`,
-                    top: `${hs.y}%`,
-                    width: `${hs.width}%`,
-                    height: `${hs.height}%`,
-                    background: color.replace(")", ` / ${opacity})`).replace("hsl(", "hsla("),
-                    borderColor: color,
-                    borderWidth: 2,
-                    borderStyle: "solid",
-                    borderRadius: isCircle ? "9999px" : 6,
-                    boxShadow: isSelected ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}` : undefined,
+                  open={isEditingThis}
+                  onOpenChange={(open) => {
+                    if (!open) {
+                      // Persist on close
+                      if (editingHotspot) {
+                        persist({
+                          hotspots: hotspots.map((h) => (h.id === editingHotspot.id ? editingHotspot : h)),
+                        });
+                      }
+                      setEditingHotspot(null);
+                    }
                   }}
                 >
-                  <span
-                    className="text-[10px] font-semibold text-white px-1.5 py-0.5 rounded-full"
-                    style={{ background: color }}
-                  >
-                    {idx + 1}
-                  </span>
-
-                  {/* Action buttons when selected */}
-                  {isSelected && (
+                  <PopoverAnchor asChild>
                     <div
-                      className="absolute -top-9 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-background border border-border/60 rounded-full shadow-md px-1 py-0.5 z-10"
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 rounded-full px-2 gap-1 text-xs"
-                        onClick={() => setEditingHotspot(hs)}
-                      >
-                        <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 w-7 rounded-full p-0 text-destructive hover:text-destructive"
-                        aria-label="Delete hotspot"
-                        onClick={() => deleteHotspot(hs.id)}
-                      >
-                        <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Resize handle */}
-                  {isSelected && (
-                    <div
-                      onPointerDown={(e) => startResize(e, hs)}
-                      className="absolute -right-1.5 -bottom-1.5 w-3 h-3 rounded-full border-2 border-background cursor-se-resize"
-                      style={{ background: color }}
-                      aria-label="Resize hotspot"
+                      data-hotspot
                       role="button"
-                      tabIndex={-1}
-                    />
-                  )}
-                </div>
+                      tabIndex={0}
+                      aria-label={hs.title}
+                      onPointerDown={(e) => startMove(e, hs)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedId(hs.id);
+                      }}
+                      onDoubleClick={(e) => {
+                        e.stopPropagation();
+                        setEditingHotspot(hs);
+                      }}
+                      className={cn(
+                        "absolute group/hs flex items-center justify-center transition-all cursor-move",
+                        isSelected ? "ring-2 ring-offset-1" : "ring-1"
+                      )}
+                      style={{
+                        left: `${hs.x}%`,
+                        top: `${hs.y}%`,
+                        width: `${hs.width}%`,
+                        height: `${hs.height}%`,
+                        background: color.replace(")", ` / ${opacity})`).replace("hsl(", "hsla("),
+                        borderColor: color,
+                        borderWidth: 2,
+                        borderStyle: "solid",
+                        borderRadius: isCircle ? "9999px" : 6,
+                        boxShadow: isSelected ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}` : undefined,
+                      }}
+                    >
+                      <span
+                        className="flex items-center justify-center rounded-full shadow-sm"
+                        style={{
+                          background: color,
+                          width: iconSize + 8,
+                          height: iconSize + 8,
+                          color: iconColor,
+                        }}
+                        aria-label={`Hotspot ${idx + 1}`}
+                      >
+                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} aria-hidden="true" focusable="false" />
+                      </span>
+
+                      {/* Action buttons when selected (only when popover closed) */}
+                      {isSelected && !isEditingThis && (
+                        <div
+                          className="absolute -top-9 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-background border border-border/60 rounded-full shadow-md px-1 py-0.5 z-10"
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 rounded-full px-2 gap-1 text-xs"
+                            onClick={() => setEditingHotspot(hs)}
+                          >
+                            <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 w-7 rounded-full p-0 text-destructive hover:text-destructive"
+                            aria-label="Delete hotspot"
+                            onClick={() => deleteHotspot(hs.id)}
+                          >
+                            <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Resize handle */}
+                      {isSelected && (
+                        <div
+                          onPointerDown={(e) => startResize(e, hs)}
+                          className="absolute -right-1.5 -bottom-1.5 w-3 h-3 rounded-full border-2 border-background cursor-se-resize"
+                          style={{ background: color }}
+                          aria-label="Resize hotspot"
+                          role="button"
+                          tabIndex={-1}
+                        />
+                      )}
+                    </div>
+                  </PopoverAnchor>
+
+                  <PopoverContent
+                    side="right"
+                    align="start"
+                    sideOffset={12}
+                    className="w-[360px] p-0 overflow-hidden rounded-xl shadow-lg"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {editingHotspot && editingHotspot.id === hs.id && (
+                      <HotspotEditCard
+                        value={editingHotspot}
+                        onChange={setEditingHotspot}
+                        onDone={() => {
+                          persist({
+                            hotspots: hotspots.map((h) => (h.id === editingHotspot.id ? editingHotspot : h)),
+                          });
+                          setEditingHotspot(null);
+                        }}
+                        onCancel={() => setEditingHotspot(null)}
+                      />
+                    )}
+                  </PopoverContent>
+                </Popover>
               );
             })}
+
 
             {/* Draft selection during drag */}
             {draftRect && draftRect.w > 0 && draftRect.h > 0 && (
