@@ -552,15 +552,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                   key={hs.id}
                   open={isEditingThis}
                   onOpenChange={(open) => {
-                    if (!open) {
-                      // Persist on close
-                      if (editingHotspot) {
-                        persist({
-                          hotspots: hotspots.map((h) => (h.id === editingHotspot.id ? editingHotspot : h)),
-                        });
-                      }
-                      setEditingHotspot(null);
-                    }
+                    if (!open) setEditingHotspot(null);
                   }}
                 >
                   <PopoverAnchor asChild>
