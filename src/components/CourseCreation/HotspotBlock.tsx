@@ -241,7 +241,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
           width: 10,
           height: 10,
           title: `Hotspot ${hotspots.length + 1}`,
-          description: "<p>Add your hotspot description here…</p>",
+          description: "",
         };
         persist({ hotspots: [...hotspots, newHs] });
         setSelectedId(newHs.id);
@@ -256,7 +256,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
       width: d.w,
       height: d.h,
       title: `Hotspot ${hotspots.length + 1}`,
-      description: "<p>Add your hotspot description here…</p>",
+      description: "",
     };
     persist({ hotspots: [...hotspots, newHs] });
     setSelectedId(newHs.id);
@@ -739,6 +739,18 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
   const iconColor = value.iconColor ?? "#ffffff";
   const PreviewIcon = getHotspotIcon(iconId);
 
+  const [descError, setDescError] = useState(false);
+  const descIsEmpty = !value.description || value.description.replace(/<[^>]*>/g, "").trim() === "";
+
+  const handleDone = () => {
+    if (descIsEmpty) {
+      setDescError(true);
+      return;
+    }
+    setDescError(false);
+    onDone();
+  };
+
   return (
     <div className="flex flex-col h-[520px] max-h-[80vh] bg-background">
       {/* Header with live marker preview */}
@@ -797,16 +809,26 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
           className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 data-[state=inactive]:hidden"
         >
           <div className="flex flex-col h-full space-y-1.5">
-            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
+            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+              Description <span className="text-destructive">*</span>
+            </Label>
             <div className="flex-1 min-h-0">
               <MiniRichTextEditor
                 content={value.description}
-                onChange={(val) => onChange({ ...value, description: val })}
+                onChange={(val) => {
+                  if (descError) setDescError(false);
+                  onChange({ ...value, description: val });
+                }}
                 placeholder="Describe this hotspot…"
                 maxHeight={9999}
                 maxLength={300}
               />
             </div>
+            {descError && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                Description is required.
+              </p>
+            )}
           </div>
         </TabsContent>
 
@@ -935,7 +957,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
         <Button variant="outline" size="sm" className="rounded-full px-4 h-8" onClick={onCancel}>
           Cancel
         </Button>
-        <Button size="sm" className="rounded-full px-4 h-8" onClick={onDone}>
+        <Button size="sm" className="rounded-full px-4 h-8" onClick={handleDone}>
           Done
         </Button>
       </div>
