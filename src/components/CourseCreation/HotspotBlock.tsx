@@ -578,22 +578,19 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         top: `${hs.y}%`,
                         width: `${hs.width}%`,
                         height: `${hs.height}%`,
-                        background: color.replace(")", ` / ${opacity})`).replace("hsl(", "hsla("),
-                        borderColor: isSelected ? color : `${color.replace(")", " / 0.7)").replace("hsl(", "hsla(")}`,
-                        borderWidth: isSelected ? 2 : 1.5,
-                        borderStyle: "solid",
+                        background: "transparent",
                         borderRadius: isCircle ? "9999px" : 8,
-                        boxShadow: isSelected
-                          ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}, 0 8px 24px -8px ${color}`
-                          : `0 4px 12px -4px ${color}`,
                       }}
                     >
                       <span
-                        className="relative flex items-center justify-center rounded-full bg-white transition-colors"
+                        className="relative flex items-center justify-center rounded-full bg-white transition-all"
                         style={{
                           width: iconSize + 14,
                           height: iconSize + 14,
-                          border: `2px solid ${iconColor}`,
+                          border: `1.5px solid ${iconColor}`,
+                          boxShadow: isSelected
+                            ? `0 0 0 3px hsl(var(--background)), 0 0 0 4.5px ${iconColor}, 0 6px 18px -6px ${iconColor}`
+                            : `0 2px 8px -2px ${iconColor.replace(")", " / 0.45)").replace("hsl(", "hsla(")}`,
                         }}
                         aria-label={`Hotspot ${idx + 1}`}
                       >
