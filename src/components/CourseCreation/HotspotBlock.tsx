@@ -796,155 +796,182 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
           </TabsList>
         </div>
 
-        <TabsContent value="content" className="flex-1 m-0 min-h-0 overflow-hidden data-[state=inactive]:hidden">
-          <ScrollArea className="h-full">
-            <div className="px-4 pb-4 space-y-3.5">
-              <div className="space-y-1.5">
-                <Label htmlFor="hs-title" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
-                  Title
-                </Label>
-                <Input
-                  id="hs-title"
-                  value={value.title}
-                  onChange={(e) => onChange({ ...value, title: e.target.value })}
-                  placeholder="Hotspot title"
-                  className="h-9 rounded-lg text-sm"
-                />
-              </div>
+        <TabsContent
+          value="content"
+          forceMount
+          className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 space-y-3.5 data-[state=inactive]:hidden"
+        >
+          <div className="space-y-1.5">
+            <Label htmlFor="hs-title" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+              Title
+            </Label>
+            <Input
+              id="hs-title"
+              value={value.title}
+              onChange={(e) => onChange({ ...value, title: e.target.value })}
+              placeholder="Hotspot title"
+              className="h-9 rounded-lg text-sm"
+            />
+          </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
-                <div className="rounded-lg border border-border/60 overflow-hidden bg-background">
-                  <DescriptionEditor
-                    content={value.description}
-                    onChange={(val) => onChange({ ...value, description: val })}
-                  />
-                </div>
-              </div>
+          <div className="space-y-1.5">
+            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
+            <MiniRichTextEditor
+              content={value.description}
+              onChange={(val) => onChange({ ...value, description: val })}
+              placeholder="Describe this hotspot…"
+              maxHeight={140}
+            />
+            <p className="text-[10px] text-muted-foreground/80">Select text to format</p>
+          </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="hs-image" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                  <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                  Image URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
-                </Label>
-                <Input
-                  id="hs-image"
-                  value={value.imageUrl || ""}
-                  onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
-                  placeholder="https://…"
-                  className="h-9 rounded-lg text-sm"
-                />
-              </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="hs-image" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+              Image URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
+            </Label>
+            <Input
+              id="hs-image"
+              value={value.imageUrl || ""}
+              onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
+              placeholder="https://…"
+              className="h-9 rounded-lg text-sm"
+            />
+          </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="hs-link" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                  <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                  Link URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
-                </Label>
-                <Input
-                  id="hs-link"
-                  value={value.linkUrl || ""}
-                  onChange={(e) => onChange({ ...value, linkUrl: e.target.value })}
-                  placeholder="https://…"
-                  className="h-9 rounded-lg text-sm"
-                />
-              </div>
-            </div>
-          </ScrollArea>
+          <div className="space-y-1.5">
+            <Label htmlFor="hs-link" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+              Link URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
+            </Label>
+            <Input
+              id="hs-link"
+              value={value.linkUrl || ""}
+              onChange={(e) => onChange({ ...value, linkUrl: e.target.value })}
+              placeholder="https://…"
+              className="h-9 rounded-lg text-sm"
+            />
+          </div>
         </TabsContent>
 
-        <TabsContent value="settings" className="flex-1 m-0 min-h-0 overflow-hidden data-[state=inactive]:hidden">
-          <ScrollArea className="h-full">
-            <div className="px-4 pb-4 space-y-4">
-              {/* Icon picker */}
-              <div className="space-y-2">
-                <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Marker icon</Label>
-                <div className="grid grid-cols-7 gap-1.5">
-                  {HOTSPOT_ICONS.map(({ id, label, icon: Icon }) => {
-                    const active = iconId === id;
-                    return (
-                      <Tooltip key={id}>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            aria-label={label}
-                            aria-pressed={active}
-                            onClick={() => onChange({ ...value, icon: id })}
-                            className={cn(
-                              "h-9 w-9 rounded-lg flex items-center justify-center transition-all border",
-                              active
-                                ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
-                                : "bg-background text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:bg-muted/40"
-                            )}
-                          >
-                            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xs">{label}</TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Icon size */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon size</Label>
-                  <span className="text-[11px] tabular-nums text-foreground font-medium px-1.5 py-0.5 rounded bg-muted">{iconSize}px</span>
-                </div>
-                <Slider
-                  value={[iconSize]}
-                  min={10}
-                  max={36}
-                  step={1}
-                  onValueChange={(v) => onChange({ ...value, iconSize: v[0] ?? 16 })}
-                />
-              </div>
-
-              {/* Icon color */}
-              <div className="space-y-2">
-                <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon color</Label>
-                <div className="flex items-center gap-2">
-                  <label
-                    className="relative h-9 w-9 rounded-lg border border-border/60 cursor-pointer overflow-hidden shrink-0 shadow-inner"
-                    style={{ background: iconColor }}
-                    aria-label="Pick icon color"
-                  >
-                    <input
-                      type="color"
-                      value={/^#([0-9a-f]{6})$/i.test(iconColor) ? iconColor : "#ffffff"}
-                      onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                      aria-label="Icon color picker"
-                    />
-                  </label>
-                  <Input
-                    value={iconColor}
-                    onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
-                    placeholder="#ffffff"
-                    className="h-9 rounded-lg text-sm font-mono"
-                    aria-label="Icon color value"
-                  />
-                </div>
-                <div className="flex items-center gap-1.5 pt-1">
-                  {["#ffffff", "#000000", "#ef4444", "#22c55e", "#3b82f6", "#f59e0b", "#a855f7"].map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => onChange({ ...value, iconColor: c })}
-                      aria-label={`Use color ${c}`}
-                      className={cn(
-                        "w-6 h-6 rounded-full border-2 transition-all",
-                        iconColor.toLowerCase() === c ? "border-foreground scale-110 shadow-sm" : "border-border/40 hover:scale-105"
-                      )}
-                      style={{ background: c }}
-                    />
-                  ))}
-                </div>
-              </div>
+        <TabsContent
+          value="settings"
+          forceMount
+          className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 space-y-4 data-[state=inactive]:hidden"
+        >
+          {/* Icon picker */}
+          <div className="space-y-2">
+            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Marker icon</Label>
+            <div className="grid grid-cols-7 gap-1.5">
+              {HOTSPOT_ICONS.map(({ id, label, icon: Icon }) => {
+                const active = iconId === id;
+                return (
+                  <Tooltip key={id}>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label={label}
+                        aria-pressed={active}
+                        onClick={() => onChange({ ...value, icon: id })}
+                        className={cn(
+                          "h-9 w-9 rounded-lg flex items-center justify-center transition-all border",
+                          active
+                            ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
+                            : "bg-background text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:bg-muted/40"
+                        )}
+                      >
+                        <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs">{label}</TooltipContent>
+                  </Tooltip>
+                );
+              })}
             </div>
-          </ScrollArea>
+          </div>
+
+          {/* Icon size — modern chip selector */}
+          <div className="space-y-2">
+            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon size</Label>
+            <div className="grid grid-cols-4 gap-1.5 rounded-xl bg-muted p-1">
+              {[
+                { id: "sm", label: "S", size: 12, dot: 10 },
+                { id: "md", label: "M", size: 16, dot: 14 },
+                { id: "lg", label: "L", size: 22, dot: 18 },
+                { id: "xl", label: "XL", size: 30, dot: 24 },
+              ].map((opt) => {
+                const active = iconSize === opt.size;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    aria-label={`Size ${opt.label}`}
+                    aria-pressed={active}
+                    onClick={() => onChange({ ...value, iconSize: opt.size })}
+                    className={cn(
+                      "h-12 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all",
+                      active
+                        ? "bg-background text-foreground shadow-sm ring-1 ring-primary/30"
+                        : "text-muted-foreground hover:bg-background/60"
+                    )}
+                  >
+                    <span
+                      className="rounded-full"
+                      style={{
+                        width: opt.dot,
+                        height: opt.dot,
+                        background: active ? "hsl(var(--primary))" : "hsl(var(--muted-foreground) / 0.5)",
+                      }}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[10px] font-semibold tracking-wide">{opt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Icon color */}
+          <div className="space-y-2">
+            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon color</Label>
+            <div className="flex items-center gap-2">
+              <label
+                className="relative h-9 w-9 rounded-lg border border-border/60 cursor-pointer overflow-hidden shrink-0 shadow-inner"
+                style={{ background: iconColor }}
+                aria-label="Pick icon color"
+              >
+                <input
+                  type="color"
+                  value={/^#([0-9a-f]{6})$/i.test(iconColor) ? iconColor : "#ffffff"}
+                  onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  aria-label="Icon color picker"
+                />
+              </label>
+              <Input
+                value={iconColor}
+                onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
+                placeholder="#ffffff"
+                className="h-9 rounded-lg text-sm font-mono"
+                aria-label="Icon color value"
+              />
+            </div>
+            <div className="flex items-center gap-1.5 pt-1">
+              {["#ffffff", "#000000", "#ef4444", "#22c55e", "#3b82f6", "#f59e0b", "#a855f7"].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => onChange({ ...value, iconColor: c })}
+                  aria-label={`Use color ${c}`}
+                  className={cn(
+                    "w-6 h-6 rounded-full border-2 transition-all",
+                    iconColor.toLowerCase() === c ? "border-foreground scale-110 shadow-sm" : "border-border/40 hover:scale-105"
+                  )}
+                  style={{ background: c }}
+                />
+              ))}
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
 
