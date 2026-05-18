@@ -95,6 +95,8 @@ export function MiniRichTextEditor({
       <BubbleMenu
         editor={editor}
         options={{ placement: "top" }}
+        data-tiptap-bubble-menu="true"
+        onMouseDown={(e) => e.preventDefault()}
         className="flex items-center gap-0.5 rounded-full border border-border/60 bg-popover/95 backdrop-blur-sm px-1 py-1 shadow-lg"
       >
         <button type="button" aria-label="Bold" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}>
