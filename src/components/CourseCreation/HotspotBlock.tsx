@@ -578,8 +578,16 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         top: `${hs.y}%`,
                         width: `${hs.width}%`,
                         height: `${hs.height}%`,
-                        background: "transparent",
-                        borderRadius: isCircle ? "9999px" : 8,
+                        background: isCircle
+                          ? "transparent"
+                          : `${iconColor.replace(")", " / 0.06)").replace("hsl(", "hsla(")}`,
+                        border: isCircle ? "none" : `1.5px solid ${iconColor}`,
+                        borderRadius: isCircle ? "9999px" : 10,
+                        boxShadow: isCircle
+                          ? "none"
+                          : isSelected
+                          ? `0 0 0 3px ${iconColor.replace(")", " / 0.18)").replace("hsl(", "hsla(")}, 0 8px 24px -10px ${iconColor}`
+                          : `0 2px 10px -4px ${iconColor.replace(")", " / 0.35)").replace("hsl(", "hsla(")}`,
                       }}
                     >
                       <span
