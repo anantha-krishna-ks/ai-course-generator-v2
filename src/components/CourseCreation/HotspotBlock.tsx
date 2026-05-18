@@ -439,6 +439,22 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
           <div className="flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 rounded-full px-3 gap-1.5 text-xs bg-primary/5 hover:bg-primary/10 border border-primary/15"
+                  aria-label="Ask AI about hotspots"
+                >
+                  <AISparkles className="w-3.5 h-3.5" />
+                  <span className="bg-gradient-to-r from-[hsl(211,100%,50%)] to-[hsl(270,80%,55%)] bg-clip-text text-transparent font-medium">
+                    Ask AI
+                  </span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Ask AI for hotspot suggestions</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 rounded-full px-3 gap-1.5 text-xs" onClick={replaceImage}>
                   <ImageIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                   Replace
