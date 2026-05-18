@@ -45,7 +45,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { DescriptionEditor } from "./DescriptionEditor";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { MiniRichTextEditor } from "./MiniRichTextEditor";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { cn } from "@/lib/utils";
 
