@@ -742,12 +742,11 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
       <div className="flex items-center justify-between px-4 pt-3.5 pb-3 border-b border-border/60 bg-gradient-to-b from-muted/40 to-transparent">
         <div className="flex items-center gap-2.5 min-w-0">
           <span
-            className="relative flex items-center justify-center rounded-full ring-2 ring-white shrink-0"
+            className="relative flex items-center justify-center rounded-full bg-white shrink-0"
             style={{
-              width: iconSize + 12,
-              height: iconSize + 12,
-              background: "hsl(var(--primary))",
-              boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.5), inset 0 1px 0 0 rgba(255,255,255,0.25)",
+              width: iconSize + 14,
+              height: iconSize + 14,
+              border: "2px solid hsl(var(--primary))",
             }}
             aria-hidden="true"
           >
