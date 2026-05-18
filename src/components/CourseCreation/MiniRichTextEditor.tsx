@@ -106,9 +106,24 @@ export function MiniRichTextEditor({
         <button type="button" aria-label="Underline" className={btn(editor.isActive("underline"))} onClick={() => editor.chain().focus().toggleUnderline().run()}>
           <UnderlineIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
         </button>
+        <span className="mx-0.5 h-4 w-px bg-border/70" aria-hidden="true" />
         <button type="button" aria-label="Bullet list" className={btn(editor.isActive("bulletList"))} onClick={() => editor.chain().focus().toggleBulletList().run()}>
           <List className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
         </button>
+        <button type="button" aria-label="Numbered list" className={btn(editor.isActive("orderedList"))} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+          <ListOrdered className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+        <span className="mx-0.5 h-4 w-px bg-border/70" aria-hidden="true" />
+        <button type="button" aria-label="Align left" className={btn(editor.isActive({ textAlign: "left" }))} onClick={() => editor.chain().focus().setTextAlign("left").run()}>
+          <AlignLeft className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+        <button type="button" aria-label="Align center" className={btn(editor.isActive({ textAlign: "center" }))} onClick={() => editor.chain().focus().setTextAlign("center").run()}>
+          <AlignCenter className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+        <button type="button" aria-label="Align right" className={btn(editor.isActive({ textAlign: "right" }))} onClick={() => editor.chain().focus().setTextAlign("right").run()}>
+          <AlignRight className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+        <span className="mx-0.5 h-4 w-px bg-border/70" aria-hidden="true" />
         <button type="button" aria-label="Link" className={btn(editor.isActive("link"))} onClick={promptLink}>
           <LinkIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
         </button>
