@@ -597,11 +597,11 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                       }}
                     >
                       <span
-                        className="relative flex items-center justify-center rounded-full bg-white"
+                        className="relative flex items-center justify-center rounded-full bg-white transition-colors"
                         style={{
                           width: iconSize + 14,
                           height: iconSize + 14,
-                          border: `2px solid ${color}`,
+                          border: `2px solid ${iconColor}`,
                         }}
                         aria-label={`Hotspot ${idx + 1}`}
                       >
