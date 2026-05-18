@@ -809,16 +809,26 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
           className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 data-[state=inactive]:hidden"
         >
           <div className="flex flex-col h-full space-y-1.5">
-            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
+            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+              Description <span className="text-destructive">*</span>
+            </Label>
             <div className="flex-1 min-h-0">
               <MiniRichTextEditor
                 content={value.description}
-                onChange={(val) => onChange({ ...value, description: val })}
+                onChange={(val) => {
+                  if (descError) setDescError(false);
+                  onChange({ ...value, description: val });
+                }}
                 placeholder="Describe this hotspot…"
                 maxHeight={9999}
                 maxLength={300}
               />
             </div>
+            {descError && (
+              <p className="text-xs text-destructive mt-1" role="alert">
+                Description is required.
+              </p>
+            )}
           </div>
         </TabsContent>
 
