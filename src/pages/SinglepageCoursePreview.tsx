@@ -372,8 +372,8 @@ const SinglepageCoursePreview = () => {
           const isCircle = shape === "circle";
           if (!img) return null;
           return (
-            <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
-              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
+            <div className="relative rounded-xl border border-border/40 bg-muted/20" style={{ zIndex: 50 }}>
+              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto rounded-xl" />
               {list.map((hs, idx) => {
                 const HsIcon = getHotspotIcon(hs.icon);
                 const iconSize: number = hs.iconSize ?? 16;
