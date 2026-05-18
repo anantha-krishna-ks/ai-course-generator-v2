@@ -57,7 +57,7 @@ import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
   content: string;
   variant?: string;
   font?: string;
@@ -355,7 +355,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
   };
 
-  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", atIndex?: number, variant?: string) => {
+  const addBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", atIndex?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setBlocks((prev) => {
@@ -377,7 +377,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
    */
   const addBlockWithSkeleton = useCallback(
     (
-      type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description",
+      type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot",
       atIndex: number | undefined,
       variant: string | undefined,
       action: "adding" | "drop",

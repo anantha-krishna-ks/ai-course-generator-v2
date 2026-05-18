@@ -23,7 +23,7 @@ interface CourseItem {
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
   content: string;
 }
 

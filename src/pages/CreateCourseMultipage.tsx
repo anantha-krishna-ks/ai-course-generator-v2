@@ -51,7 +51,7 @@ const CreateCourseMultipage = () => {
         k,
         v.map(b => ({
           id: b.id,
-          type: b.type as "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description",
+          type: b.type as "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot",
           content: b.content,
         })),
       ])
