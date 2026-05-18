@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Loader2, BookOpen, Sparkles } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CourseGenerationAnimation } from "@/components/Dashboard/CourseGenerationAnimation";
 
 interface CreationLoaderProps {
   courseTitle: string;
