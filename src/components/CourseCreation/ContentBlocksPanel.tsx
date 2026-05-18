@@ -791,6 +791,28 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "hotspot-block":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className="relative w-full h-[32px] rounded-[3px] overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              {/* hotspot markers */}
+              <div className="absolute" style={{ left: "22%", top: "30%" }}>
+                <div className="w-[6px] h-[6px] rounded-full bg-primary border-[1px] border-white shadow-sm" />
+              </div>
+              <div className="absolute" style={{ left: "58%", top: "55%" }}>
+                <div className="w-[6px] h-[6px] rounded-full bg-primary border-[1px] border-white shadow-sm" />
+              </div>
+              <div className="absolute" style={{ left: "75%", top: "25%" }}>
+                <div className="w-[6px] h-[6px] rounded-full bg-primary border-[1px] border-white shadow-sm" />
+              </div>
+              {/* faux selection rect */}
+              <div className="absolute border-[1px] border-primary/80 bg-primary/15 rounded-[1px]" style={{ left: "40%", top: "40%", width: "20%", height: "30%" }} />
+            </div>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
