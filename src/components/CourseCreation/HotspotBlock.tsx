@@ -580,7 +580,6 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                       }}
                       className={cn(
                         "absolute group/hs flex items-center justify-center transition-all cursor-move",
-                        isSelected ? "ring-2 ring-offset-1" : "ring-1"
                       )}
                       style={{
                         left: `${hs.x}%`,
@@ -588,24 +587,37 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         width: `${hs.width}%`,
                         height: `${hs.height}%`,
                         background: color.replace(")", ` / ${opacity})`).replace("hsl(", "hsla("),
-                        borderColor: color,
-                        borderWidth: 2,
+                        borderColor: isSelected ? color : `${color.replace(")", " / 0.7)").replace("hsl(", "hsla(")}`,
+                        borderWidth: isSelected ? 2 : 1.5,
                         borderStyle: "solid",
-                        borderRadius: isCircle ? "9999px" : 6,
-                        boxShadow: isSelected ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}` : undefined,
+                        borderRadius: isCircle ? "9999px" : 8,
+                        boxShadow: isSelected
+                          ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}, 0 8px 24px -8px ${color}`
+                          : `0 4px 12px -4px ${color}`,
                       }}
                     >
+                      {/* Pulse ring */}
                       <span
-                        className="flex items-center justify-center rounded-full shadow-sm"
+                        className="absolute rounded-full opacity-60 animate-ping pointer-events-none"
+                        style={{
+                          width: iconSize + 16,
+                          height: iconSize + 16,
+                          background: color,
+                          animationDuration: "2.4s",
+                        }}
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="relative flex items-center justify-center rounded-full ring-2 ring-white/90"
                         style={{
                           background: color,
-                          width: iconSize + 8,
-                          height: iconSize + 8,
-                          color: iconColor,
+                          width: iconSize + 12,
+                          height: iconSize + 12,
+                          boxShadow: `0 4px 14px -2px ${color}, inset 0 1px 0 0 rgba(255,255,255,0.25)`,
                         }}
                         aria-label={`Hotspot ${idx + 1}`}
                       >
-                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} aria-hidden="true" focusable="false" />
+                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} aria-hidden="true" focusable="false" />
                       </span>
 
                       {/* Action buttons when selected (only when popover closed) */}
