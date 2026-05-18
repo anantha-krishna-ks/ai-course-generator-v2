@@ -79,6 +79,8 @@ const ALL_BLOCKS: BlockItem[] = [
   // ASSESSMENT
   { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
+  // INTERACTIVITY
+  { id: "hotspot-block", label: "Hotspot on Image", icon: MousePointerClick, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "hotspot", variant: "hotspot", description: "Make an image clickable — add labels, tooltips, links, and reveals on hotspots" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
