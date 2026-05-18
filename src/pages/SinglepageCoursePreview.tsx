@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { getHotspotIcon } from "@/components/CourseCreation/HotspotBlock";
 import type { SinglePageRestoreState } from "@/components/CourseCreation/SinglePageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
