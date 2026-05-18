@@ -39,6 +39,7 @@ export function MiniRichTextEditor({
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
       Placeholder.configure({ placeholder }),
       CharacterCount.configure({ limit: maxLength }),
+      TextAlign.configure({ types: ["paragraph"], alignments: ["left", "center", "right"], defaultAlignment: "left" }),
     ],
     content: content || "",
     onUpdate: ({ editor }) => onChange(sanitizeHtml(editor.getHTML())),
