@@ -446,6 +446,31 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "hotspot-block":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="relative w-full h-28 rounded-md overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              {/* hotspot markers */}
+              {[
+                { l: "20%", t: "32%", n: 1 },
+                { l: "55%", t: "55%", n: 2 },
+                { l: "78%", t: "28%", n: 3 },
+              ].map((p) => (
+                <div key={p.n} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: p.l, top: p.t }}>
+                  <div className="w-4 h-4 rounded-full bg-primary text-white text-[8px] font-bold flex items-center justify-center border-2 border-white shadow-md">
+                    {p.n}
+                  </div>
+                </div>
+              ))}
+              {/* faux selection */}
+              <div className="absolute border-2 border-primary/80 bg-primary/15 rounded-md" style={{ left: "42%", top: "42%", width: "22%", height: "32%" }} />
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Click to reveal info — labels, links, images</p>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
