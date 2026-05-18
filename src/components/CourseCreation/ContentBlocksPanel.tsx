@@ -21,6 +21,7 @@ import {
   PanelRight,
   LayoutGrid,
   Rows,
+  MousePointerClick,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -39,7 +40,7 @@ interface BlockItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   categoryLabel: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
   variant?: string;
   locked?: boolean;
   isQuizGenerator?: boolean;
@@ -47,7 +48,7 @@ interface BlockItem {
 }
 
 interface ContentBlocksPanelProps {
-  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", variant?: string) => void;
+  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
 }
@@ -78,13 +79,15 @@ const ALL_BLOCKS: BlockItem[] = [
   // ASSESSMENT
   { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
+  // INTERACTIVITY
+  { id: "hotspot-block", label: "Hotspot on Image", icon: MousePointerClick, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "hotspot", variant: "hotspot", description: "Make an image clickable — add labels, tooltips, links, and reveals on hotspots" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
 export function resolveTemplateDropData(
   templateId: string,
   categoryId: string
-): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description"; variant?: string } | null {
+): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot"; variant?: string } | null {
   const block = ALL_BLOCKS.find((b) => b.id === templateId);
   if (!block || block.isQuizGenerator) return null;
   return { type: block.type, variant: block.variant };
@@ -443,6 +446,31 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "hotspot-block":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="relative w-full h-28 rounded-md overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              {/* hotspot markers */}
+              {[
+                { l: "20%", t: "32%", n: 1 },
+                { l: "55%", t: "55%", n: 2 },
+                { l: "78%", t: "28%", n: 3 },
+              ].map((p) => (
+                <div key={p.n} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: p.l, top: p.t }}>
+                  <div className="w-4 h-4 rounded-full bg-primary text-white text-[8px] font-bold flex items-center justify-center border-2 border-white shadow-md">
+                    {p.n}
+                  </div>
+                </div>
+              ))}
+              {/* faux selection */}
+              <div className="absolute border-2 border-primary/80 bg-primary/15 rounded-md" style={{ left: "42%", top: "42%", width: "22%", height: "32%" }} />
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Click to reveal info — labels, links, images</p>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
@@ -784,6 +812,28 @@ function BlockThumbnail({ id }: { id: string }) {
             </div>
             <div className="mt-[3px] h-[2px] w-full rounded-full bg-[hsl(220,13%,93%)] overflow-hidden">
               <div className="h-full w-2/3 rounded-full bg-primary/35" />
+            </div>
+          </div>
+        </div>
+      );
+    case "hotspot-block":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className="relative w-full h-[32px] rounded-[3px] overflow-hidden">
+              <img src={landscapeImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              {/* hotspot markers */}
+              <div className="absolute" style={{ left: "22%", top: "30%" }}>
+                <div className="w-[6px] h-[6px] rounded-full bg-primary border-[1px] border-white shadow-sm" />
+              </div>
+              <div className="absolute" style={{ left: "58%", top: "55%" }}>
+                <div className="w-[6px] h-[6px] rounded-full bg-primary border-[1px] border-white shadow-sm" />
+              </div>
+              <div className="absolute" style={{ left: "75%", top: "25%" }}>
+                <div className="w-[6px] h-[6px] rounded-full bg-primary border-[1px] border-white shadow-sm" />
+              </div>
+              {/* faux selection rect */}
+              <div className="absolute border-[1px] border-primary/80 bg-primary/15 rounded-[1px]" style={{ left: "40%", top: "40%", width: "20%", height: "30%" }} />
             </div>
           </div>
         </div>
