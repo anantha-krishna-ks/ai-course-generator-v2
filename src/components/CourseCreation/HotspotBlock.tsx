@@ -578,7 +578,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         top: `${hs.y}%`,
                         width: `${hs.width}%`,
                         height: `${hs.height}%`,
-                        background: `linear-gradient(135deg, ${color.replace(")", ` / ${Math.min(opacity + 0.08, 1)})`).replace("hsl(", "hsla(")} 0%, ${color.replace(")", ` / ${Math.max(opacity - 0.06, 0.05)})`).replace("hsl(", "hsla(")} 100%)`,
+                        background: `linear-gradient(135deg, hsla(0,0%,100%,0.28) 0%, hsla(0,0%,100%,0.10) 45%, hsla(0,0%,100%,0.04) 100%), linear-gradient(135deg, ${color.replace(")", ` / ${Math.min(opacity + 0.10, 1)})`).replace("hsl(", "hsla(")} 0%, ${color.replace(")", ` / ${Math.max(opacity - 0.04, 0.08)})`).replace("hsl(", "hsla(")} 100%)`,
                         borderColor: color,
                         borderWidth: isSelected ? 2 : 1.5,
                         borderStyle: "solid",
