@@ -18,6 +18,8 @@ interface MiniRichTextEditorProps {
   maxHeight?: number;
   /** Hard character limit on plain text. Default 300. */
   maxLength?: number;
+  /** When true, show destructive border/ring to indicate a validation error. */
+  error?: boolean;
 }
 
 /**
@@ -31,6 +33,7 @@ export function MiniRichTextEditor({
   placeholder = "Write a short description…",
   maxHeight = 180,
   maxLength = 300,
+  error = false,
 }: MiniRichTextEditorProps) {
   const editor = useEditor({
     extensions: [
