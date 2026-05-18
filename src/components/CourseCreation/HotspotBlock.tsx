@@ -741,11 +741,16 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
   const PreviewIcon = getHotspotIcon(iconId);
 
   const [descError, setDescError] = useState(false);
+  const [activeTab, setActiveTab] = useState<"content" | "settings">("content");
   const descIsEmpty = !value.description || value.description.replace(/<[^>]*>/g, "").trim() === "";
 
   const handleDone = () => {
     if (descIsEmpty) {
       setDescError(true);
+      if (activeTab !== "content") setActiveTab("content");
+      toast.error("Description is required", {
+        description: "Please add a description for this hotspot before saving.",
+      });
       return;
     }
     setDescError(false);
