@@ -53,14 +53,9 @@ export function CreationLoader({ courseTitle, onComplete }: CreationLoaderProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <div className="flex flex-col items-center space-y-8 px-4">
-        {/* Animated Icon */}
-        <div className="relative">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
-            <BookOpen className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
-          </div>
-          <div className="absolute -top-1 -right-1">
-            <AISparkles className="w-6 h-6" />
-          </div>
+        {/* Animated illustration */}
+        <div className="w-56 h-56">
+          <CourseGenerationAnimation />
         </div>
 
         {/* Course Title */}
