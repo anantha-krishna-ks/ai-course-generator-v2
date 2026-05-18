@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LogIn, UserPlus, Mail, Eye, EyeOff, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { apiUrl } from "@/lib/apiConfig";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import authBgVectors from "@/assets/auth-bg-vectors.png";
