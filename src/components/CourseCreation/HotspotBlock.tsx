@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
+import { toast } from "sonner";
 import {
   Upload,
   ImagePlus,
@@ -740,11 +741,16 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
   const PreviewIcon = getHotspotIcon(iconId);
 
   const [descError, setDescError] = useState(false);
+  const [activeTab, setActiveTab] = useState<"content" | "settings">("content");
   const descIsEmpty = !value.description || value.description.replace(/<[^>]*>/g, "").trim() === "";
 
   const handleDone = () => {
     if (descIsEmpty) {
       setDescError(true);
+      if (activeTab !== "content") setActiveTab("content");
+      toast.error("Description is required", {
+        description: "Please add a description for this hotspot before saving.",
+      });
       return;
     }
     setDescError(false);
@@ -782,7 +788,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
         </Button>
       </div>
 
-      <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "content" | "settings")} className="flex-1 flex flex-col overflow-hidden min-h-0">
         {/* Segmented toggle tabs (Outline/Blocks style) */}
         <div className="px-4 pt-3 pb-2">
           <TabsList className="grid grid-cols-2 w-full h-auto rounded-full bg-foreground/[0.06] border border-border/50 p-[3px]">
@@ -822,6 +828,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
                 placeholder="Describe this hotspot…"
                 maxHeight={9999}
                 maxLength={300}
+                error={descError}
               />
             </div>
             {descError && (

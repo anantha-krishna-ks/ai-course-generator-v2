@@ -18,6 +18,8 @@ interface MiniRichTextEditorProps {
   maxHeight?: number;
   /** Hard character limit on plain text. Default 300. */
   maxLength?: number;
+  /** When true, show destructive border/ring to indicate a validation error. */
+  error?: boolean;
 }
 
 /**
@@ -31,6 +33,7 @@ export function MiniRichTextEditor({
   placeholder = "Write a short description…",
   maxHeight = 180,
   maxLength = 300,
+  error = false,
 }: MiniRichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -88,8 +91,9 @@ export function MiniRichTextEditor({
     <div
       className={cn(
         "group rounded-xl border bg-background overflow-hidden transition-all duration-200",
-        "border-border/70 shadow-sm hover:border-border hover:shadow-md",
-        "focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15 focus-within:shadow-md"
+        error
+          ? "border-destructive ring-4 ring-destructive/20 shadow-md animate-fade-in"
+          : "border-border/70 shadow-sm hover:border-border hover:shadow-md focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15 focus-within:shadow-md"
       )}
     >
       <BubbleMenu
