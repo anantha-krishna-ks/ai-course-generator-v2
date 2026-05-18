@@ -954,7 +954,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
               />
             </div>
             <div className="flex items-center gap-1.5 pt-1">
-              {["#ffffff", "#000000", "#ef4444", "#22c55e", "#3b82f6", "#f59e0b", "#a855f7"].map((c) => (
+              {["#3b82f6", "#000000", "#ef4444", "#22c55e", "#f59e0b", "#a855f7", "#0ea5e9"].map((c) => (
                 <button
                   key={c}
                   type="button"
