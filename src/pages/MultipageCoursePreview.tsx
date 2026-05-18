@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { getHotspotIcon } from "@/components/CourseCreation/HotspotBlock";
 import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
@@ -592,28 +594,78 @@ const MultipageCoursePreview = () => {
           const parsed = JSON.parse(block.content || "{}");
           const img: string = parsed.imageUrl || "";
           const list: any[] = Array.isArray(parsed.hotspots) ? parsed.hotspots : [];
-          const color: string = parsed.settings?.color || "hsl(211, 100%, 50%)";
+          const settings = parsed.settings || {};
+          const defaultColor: string = settings.color || "hsl(211, 100%, 50%)";
+          const shape: "rect" | "circle" = settings.shape || "rect";
+          const isCircle = shape === "circle";
           if (!img) return null;
           return (
-            <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
-              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
-              {list.map((hs, idx) => (
-                <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
-                  <summary className="list-none cursor-pointer w-full h-full flex items-center justify-center rounded-md transition-all" style={{ background: `${color.replace("hsl(", "hsla(").replace(")", " / 0.25)")}`, border: `2px solid ${color}` }} aria-label={hs.title || `Hotspot ${idx + 1}`}>
-                    <span className="text-[11px] font-semibold text-white px-2 py-0.5 rounded-full shadow" style={{ background: color }}>{idx + 1}</span>
-                  </summary>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-lg p-3 z-20">
-                    {hs.title && <p className="text-sm font-semibold mb-1">{hs.title}</p>}
-                    {hs.imageUrl && <img src={hs.imageUrl} alt="" className="w-full rounded-lg mb-2" />}
-                    <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(hs.description || "") }} />
-                    {hs.linkUrl && (
-                      <a href={hs.linkUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-xs text-primary hover:underline">
-                        Open link →
-                      </a>
-                    )}
-                  </div>
-                </details>
-              ))}
+            <div className="relative rounded-xl border border-border/40 bg-muted/20">
+              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto rounded-xl" />
+              {list.map((hs, idx) => {
+                const iconColor: string = hs.iconColor || defaultColor;
+                const iconSize: number = hs.iconSize || 14;
+                const HsIcon = getHotspotIcon(hs.icon);
+                const tintBg = `${iconColor.replace(")", " / 0.015)").replace("hsl(", "hsla(")}`;
+                const glow = `${iconColor.replace(")", " / 0.35)").replace("hsl(", "hsla(")}`;
+                return (
+                  <Popover key={hs.id || idx}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="absolute flex items-center justify-center transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        style={{
+                          left: `${hs.x}%`,
+                          top: `${hs.y}%`,
+                          width: `${hs.width}%`,
+                          height: `${hs.height}%`,
+                          background: isCircle ? "transparent" : tintBg,
+                          border: isCircle ? "none" : `1.5px solid ${iconColor}`,
+                          borderRadius: isCircle ? "9999px" : 10,
+                          boxShadow: isCircle ? "none" : `0 2px 10px -4px ${glow}`,
+                        }}
+                        aria-label={hs.title || `Hotspot ${idx + 1}`}
+                      >
+                        <span
+                          className="relative flex items-center justify-center rounded-full bg-white"
+                          style={{
+                            width: iconSize + 14,
+                            height: iconSize + 14,
+                            border: `1.5px solid ${iconColor}`,
+                            boxShadow: `0 2px 8px -2px ${glow}`,
+                          }}
+                        >
+                          <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} aria-hidden="true" focusable="false" />
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side="top"
+                      align="center"
+                      sideOffset={10}
+                      collisionPadding={16}
+                      className="w-72 z-[60] rounded-xl shadow-xl border-border/60"
+                    >
+                      {hs.title && <p className="text-sm font-semibold mb-1.5 text-foreground">{hs.title}</p>}
+                      {hs.imageUrl && <img src={hs.imageUrl} alt="" className="w-full rounded-lg mb-2" />}
+                      <div
+                        className="prose prose-sm max-w-none text-foreground [overflow-wrap:anywhere] [word-break:break-word]"
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(hs.description || "") }}
+                      />
+                      {hs.linkUrl && (
+                        <a
+                          href={hs.linkUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block mt-2 text-xs font-medium text-primary hover:underline"
+                        >
+                          Open link →
+                        </a>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                );
+              })}
             </div>
           );
         } catch {

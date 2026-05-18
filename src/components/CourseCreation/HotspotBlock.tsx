@@ -580,7 +580,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         height: `${hs.height}%`,
                         background: isCircle
                           ? "transparent"
-                          : `${iconColor.replace(")", " / 0.06)").replace("hsl(", "hsla(")}`,
+                          : `${iconColor.replace(")", " / 0.015)").replace("hsl(", "hsla(")}`,
                         border: isCircle ? "none" : `1.5px solid ${iconColor}`,
                         borderRadius: isCircle ? "9999px" : 10,
                         boxShadow: isCircle
