@@ -739,6 +739,18 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
   const iconColor = value.iconColor ?? "#ffffff";
   const PreviewIcon = getHotspotIcon(iconId);
 
+  const [descError, setDescError] = useState(false);
+  const descIsEmpty = !value.description || value.description.replace(/<[^>]*>/g, "").trim() === "";
+
+  const handleDone = () => {
+    if (descIsEmpty) {
+      setDescError(true);
+      return;
+    }
+    setDescError(false);
+    onDone();
+  };
+
   return (
     <div className="flex flex-col h-[520px] max-h-[80vh] bg-background">
       {/* Header with live marker preview */}
