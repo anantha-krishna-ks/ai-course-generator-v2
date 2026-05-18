@@ -578,14 +578,14 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         top: `${hs.y}%`,
                         width: `${hs.width}%`,
                         height: `${hs.height}%`,
-                        background: `linear-gradient(135deg, hsla(0,0%,100%,0.28) 0%, hsla(0,0%,100%,0.10) 45%, hsla(0,0%,100%,0.04) 100%), linear-gradient(135deg, ${color.replace(")", ` / ${Math.min(opacity + 0.10, 1)})`).replace("hsl(", "hsla(")} 0%, ${color.replace(")", ` / ${Math.max(opacity - 0.04, 0.08)})`).replace("hsl(", "hsla(")} 100%)`,
+                        background: `linear-gradient(135deg, hsla(211, 100%, 75%, 0.28) 0%, hsla(211, 100%, 80%, 0.16) 50%, hsla(211, 100%, 90%, 0.08) 100%)`,
                         borderColor: color,
                         borderWidth: isSelected ? 2 : 1.5,
                         borderStyle: "solid",
                         borderRadius: isCircle ? "9999px" : 8,
                         boxShadow: isSelected
-                          ? `0 10px 28px -10px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.18)`
-                          : `0 4px 14px -6px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.12)`,
+                          ? `0 2px 6px -2px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.20)`
+                          : `0 1px 3px -1px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.14)`,
                       }}
                     >
                       <span
