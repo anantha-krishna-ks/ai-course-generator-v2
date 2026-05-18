@@ -546,7 +546,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
               const isCircle = shape === "circle";
               const HsIcon = getHotspotIcon(hs.icon);
               const iconSize = hs.iconSize ?? 16;
-              const iconColor = hs.iconColor ?? "#ffffff";
+              const iconColor = hs.iconColor ?? color;
               return (
                 <Popover
                   key={hs.id}
