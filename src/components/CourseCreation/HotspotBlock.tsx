@@ -790,9 +790,9 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
               content={value.description}
               onChange={(val) => onChange({ ...value, description: val })}
               placeholder="Describe this hotspot…"
-              maxHeight={140}
+              maxHeight={160}
+              maxLength={300}
             />
-            <p className="text-[10px] text-muted-foreground/80">Select text to format</p>
           </div>
 
           <div className="space-y-1.5">

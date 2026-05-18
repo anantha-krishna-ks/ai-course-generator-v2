@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
+import CharacterCount from "@tiptap/extension-character-count";
 import { Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
@@ -14,18 +15,21 @@ interface MiniRichTextEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   maxHeight?: number;
+  /** Hard character limit on plain text. Default 300. */
+  maxLength?: number;
 }
 
 /**
  * MiniRichTextEditor — compact Tiptap editor with a floating bubble menu.
  * Used inside tight spaces (popovers) where a full toolbar would not fit.
- * Toolbar appears only on text selection. Content area scrolls internally.
+ * Toolbar appears only on text selection. Character counter shown at bottom-right.
  */
 export function MiniRichTextEditor({
   content,
   onChange,
   placeholder = "Write a short description…",
-  maxHeight = 160,
+  maxHeight = 180,
+  maxLength = 300,
 }: MiniRichTextEditorProps) {
   const editor = useEditor({
     extensions: [
@@ -33,13 +37,14 @@ export function MiniRichTextEditor({
       Underline,
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
       Placeholder.configure({ placeholder }),
+      CharacterCount.configure({ limit: maxLength }),
     ],
     content: content || "",
     onUpdate: ({ editor }) => onChange(sanitizeHtml(editor.getHTML())),
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm max-w-none focus:outline-none text-sm leading-relaxed px-3 py-2.5 [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1",
+          "prose prose-sm max-w-none focus:outline-none text-sm leading-relaxed px-3.5 py-3 [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)] [&_p.is-editor-empty:first-child]:before:text-muted-foreground [&_p.is-editor-empty:first-child]:before:float-left [&_p.is-editor-empty:first-child]:before:pointer-events-none [&_p.is-editor-empty:first-child]:before:h-0",
       },
     },
   });
@@ -54,6 +59,11 @@ export function MiniRichTextEditor({
   }, [content, editor]);
 
   if (!editor) return null;
+
+  const used = editor.storage.characterCount?.characters?.() ?? 0;
+  const pct = Math.min(100, (used / maxLength) * 100);
+  const nearLimit = used >= maxLength * 0.9;
+  const atLimit = used >= maxLength;
 
   const promptLink = () => {
     const previous = editor.getAttributes("link").href as string | undefined;
@@ -73,7 +83,12 @@ export function MiniRichTextEditor({
     );
 
   return (
-    <div className="rounded-lg border border-border/60 bg-background overflow-hidden">
+    <div
+      className={cn(
+        "group rounded-xl border bg-background overflow-hidden transition-all",
+        "border-border/60 focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/15"
+      )}
+    >
       <BubbleMenu
         editor={editor}
         options={{ placement: "top" }}
@@ -98,6 +113,39 @@ export function MiniRichTextEditor({
 
       <div className="overflow-y-auto" style={{ maxHeight }}>
         <EditorContent editor={editor} />
+      </div>
+
+      {/* Footer: hint + character counter with progress ring */}
+      <div className="flex items-center justify-between gap-2 px-3 py-1.5 border-t border-border/60 bg-muted/30">
+        <p className="text-[10.5px] text-muted-foreground leading-none">
+          Select text to format
+        </p>
+        <div className="flex items-center gap-1.5">
+          <div
+            className="h-1.5 w-16 rounded-full bg-muted overflow-hidden"
+            role="progressbar"
+            aria-valuenow={used}
+            aria-valuemin={0}
+            aria-valuemax={maxLength}
+            aria-label="Character usage"
+          >
+            <div
+              className={cn(
+                "h-full rounded-full transition-all",
+                atLimit ? "bg-destructive" : nearLimit ? "bg-amber-500" : "bg-primary"
+              )}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span
+            className={cn(
+              "text-[10.5px] tabular-nums font-medium leading-none",
+              atLimit ? "text-destructive" : nearLimit ? "text-amber-600" : "text-muted-foreground"
+            )}
+          >
+            {used}/{maxLength}
+          </span>
+        </div>
       </div>
     </div>
   );
