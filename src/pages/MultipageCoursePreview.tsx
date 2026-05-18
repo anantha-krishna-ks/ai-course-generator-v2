@@ -594,27 +594,42 @@ const MultipageCoursePreview = () => {
           const img: string = parsed.imageUrl || "";
           const list: any[] = Array.isArray(parsed.hotspots) ? parsed.hotspots : [];
           const color: string = parsed.settings?.color || "hsl(211, 100%, 50%)";
+          const shape: "rect" | "circle" = parsed.settings?.shape ?? "rect";
+          const isCircle = shape === "circle";
           if (!img) return null;
           return (
             <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
               <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
-              {list.map((hs, idx) => (
-                <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
-                  <summary className="list-none cursor-pointer w-full h-full flex items-center justify-center rounded-md transition-all" style={{ background: `${color.replace("hsl(", "hsla(").replace(")", " / 0.25)")}`, border: `2px solid ${color}` }} aria-label={hs.title || `Hotspot ${idx + 1}`}>
-                    <span className="text-[11px] font-semibold text-white px-2 py-0.5 rounded-full shadow" style={{ background: color }}>{idx + 1}</span>
-                  </summary>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-lg p-3 z-20">
-                    {hs.title && <p className="text-sm font-semibold mb-1">{hs.title}</p>}
-                    {hs.imageUrl && <img src={hs.imageUrl} alt="" className="w-full rounded-lg mb-2" />}
-                    <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(hs.description || "") }} />
-                    {hs.linkUrl && (
-                      <a href={hs.linkUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-xs text-primary hover:underline">
-                        Open link →
-                      </a>
-                    )}
-                  </div>
-                </details>
-              ))}
+              {list.map((hs, idx) => {
+                const HsIcon = getHotspotIcon(hs.icon);
+                const iconSize: number = hs.iconSize ?? 16;
+                const iconColor: string = hs.iconColor ?? "#ffffff";
+                return (
+                  <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
+                    <summary
+                      className="list-none cursor-pointer w-full h-full flex items-center justify-center transition-all"
+                      style={{
+                        background: `linear-gradient(135deg, hsla(211, 100%, 75%, 0.28) 0%, hsla(211, 100%, 80%, 0.16) 50%, hsla(211, 100%, 90%, 0.08) 100%)`,
+                        border: `1.5px solid ${color}`,
+                        borderRadius: isCircle ? "9999px" : 8,
+                        boxShadow: `0 1px 3px -1px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.14)`,
+                      }}
+                      aria-label={hs.title || `Hotspot ${idx + 1}`}
+                    >
+                      <span
+                        className="relative flex items-center justify-center rounded-full bg-white"
+                        style={{ width: iconSize + 14, height: iconSize + 14, border: `2px solid ${iconColor}` }}
+                      >
+                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} aria-hidden="true" focusable="false" />
+                      </span>
+                    </summary>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-lg p-3 z-20">
+                      {hs.title && <p className="text-sm font-semibold mb-1">{hs.title}</p>}
+                      <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(hs.description || "") }} />
+                    </div>
+                  </details>
+                );
+              })}
             </div>
           );
         } catch {
