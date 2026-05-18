@@ -665,8 +665,9 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                   <PopoverContent
                     side="right"
                     align="start"
-                    sideOffset={12}
-                    className="w-[360px] p-0 overflow-hidden rounded-xl shadow-lg"
+                    sideOffset={14}
+                    collisionPadding={16}
+                    className="w-[400px] p-0 overflow-hidden rounded-2xl shadow-2xl border-border/60"
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
                   >
