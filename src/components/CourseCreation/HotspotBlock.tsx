@@ -45,6 +45,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { DescriptionEditor } from "./DescriptionEditor";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { cn } from "@/lib/utils";
 
@@ -580,7 +581,6 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                       }}
                       className={cn(
                         "absolute group/hs flex items-center justify-center transition-all cursor-move",
-                        isSelected ? "ring-2 ring-offset-1" : "ring-1"
                       )}
                       style={{
                         left: `${hs.x}%`,
@@ -588,24 +588,37 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                         width: `${hs.width}%`,
                         height: `${hs.height}%`,
                         background: color.replace(")", ` / ${opacity})`).replace("hsl(", "hsla("),
-                        borderColor: color,
-                        borderWidth: 2,
+                        borderColor: isSelected ? color : `${color.replace(")", " / 0.7)").replace("hsl(", "hsla(")}`,
+                        borderWidth: isSelected ? 2 : 1.5,
                         borderStyle: "solid",
-                        borderRadius: isCircle ? "9999px" : 6,
-                        boxShadow: isSelected ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}` : undefined,
+                        borderRadius: isCircle ? "9999px" : 8,
+                        boxShadow: isSelected
+                          ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}, 0 8px 24px -8px ${color}`
+                          : `0 4px 12px -4px ${color}`,
                       }}
                     >
+                      {/* Pulse ring */}
                       <span
-                        className="flex items-center justify-center rounded-full shadow-sm"
+                        className="absolute rounded-full opacity-60 animate-ping pointer-events-none"
+                        style={{
+                          width: iconSize + 16,
+                          height: iconSize + 16,
+                          background: color,
+                          animationDuration: "2.4s",
+                        }}
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="relative flex items-center justify-center rounded-full ring-2 ring-white/90"
                         style={{
                           background: color,
-                          width: iconSize + 8,
-                          height: iconSize + 8,
-                          color: iconColor,
+                          width: iconSize + 12,
+                          height: iconSize + 12,
+                          boxShadow: `0 4px 14px -2px ${color}, inset 0 1px 0 0 rgba(255,255,255,0.25)`,
                         }}
                         aria-label={`Hotspot ${idx + 1}`}
                       >
-                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} aria-hidden="true" focusable="false" />
+                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} aria-hidden="true" focusable="false" />
                       </span>
 
                       {/* Action buttons when selected (only when popover closed) */}
@@ -653,8 +666,9 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                   <PopoverContent
                     side="right"
                     align="start"
-                    sideOffset={12}
-                    className="w-[360px] p-0 overflow-hidden rounded-xl shadow-lg"
+                    sideOffset={14}
+                    collisionPadding={16}
+                    className="w-[400px] p-0 overflow-hidden rounded-2xl shadow-2xl border-border/60"
                     onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -736,207 +750,216 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
   const PreviewIcon = getHotspotIcon(iconId);
 
   return (
-    <div className="flex flex-col max-h-[480px]">
-      <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-border/60">
-        <div className="flex items-center gap-2">
+    <div className="flex flex-col h-[520px] max-h-[80vh] bg-background">
+      {/* Header with live marker preview */}
+      <div className="flex items-center justify-between px-4 pt-3.5 pb-3 border-b border-border/60 bg-gradient-to-b from-muted/40 to-transparent">
+        <div className="flex items-center gap-2.5 min-w-0">
           <span
-            className="flex items-center justify-center rounded-full"
-            style={{ width: 26, height: 26, background: "hsl(var(--primary))", color: iconColor }}
+            className="relative flex items-center justify-center rounded-full ring-2 ring-white shrink-0"
+            style={{
+              width: iconSize + 12,
+              height: iconSize + 12,
+              background: "hsl(var(--primary))",
+              boxShadow: "0 4px 14px -2px hsl(var(--primary) / 0.5), inset 0 1px 0 0 rgba(255,255,255,0.25)",
+            }}
             aria-hidden="true"
           >
-            <PreviewIcon style={{ width: 14, height: 14, color: iconColor }} />
+            <PreviewIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} />
           </span>
-          <p className="text-sm font-semibold text-foreground">Edit hotspot</p>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground leading-tight truncate">
+              {value.title || "Edit hotspot"}
+            </p>
+            <p className="text-[11px] text-muted-foreground leading-tight">Configure content and marker style</p>
+          </div>
         </div>
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 w-7 p-0 rounded-full text-muted-foreground hover:text-foreground"
+          className="h-7 w-7 p-0 rounded-full text-muted-foreground hover:text-foreground shrink-0"
           aria-label="Close"
           onClick={onCancel}
         >
-          <Trash2 className="hidden" />
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
             <path d="M6 6l12 12M6 18L18 6" />
           </svg>
         </Button>
       </div>
 
-      <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="mx-4 mt-3 grid grid-cols-2 h-9 rounded-full bg-muted/60 p-1">
-          <TabsTrigger value="content" className="rounded-full text-xs h-7 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            Content
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="rounded-full text-xs h-7 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-            <SettingsIcon className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
-            Settings
-          </TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden min-h-0">
+        {/* Segmented toggle tabs (Outline/Blocks style) */}
+        <div className="px-4 pt-3 pb-2">
+          <TabsList className="grid grid-cols-2 w-full h-9 rounded-full bg-muted p-1">
+            <TabsTrigger
+              value="content"
+              className="rounded-full text-xs font-medium h-7 gap-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+            >
+              <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
+              Content
+            </TabsTrigger>
+            <TabsTrigger
+              value="settings"
+              className="rounded-full text-xs font-medium h-7 gap-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+            >
+              <SettingsIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+              Settings
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        <TabsContent value="content" className="flex-1 overflow-y-auto px-4 py-3 space-y-3 m-0">
-          <div className="space-y-1.5">
-            <Label htmlFor="hs-title" className="text-[11px] font-medium text-muted-foreground">
-              Title
-            </Label>
-            <Input
-              id="hs-title"
-              value={value.title}
-              onChange={(e) => onChange({ ...value, title: e.target.value })}
-              placeholder="Hotspot title"
-              className="h-9 rounded-lg text-sm"
-            />
-          </div>
+        <TabsContent value="content" className="flex-1 m-0 min-h-0 overflow-hidden data-[state=inactive]:hidden">
+          <ScrollArea className="h-full">
+            <div className="px-4 pb-4 space-y-3.5">
+              <div className="space-y-1.5">
+                <Label htmlFor="hs-title" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                  Title
+                </Label>
+                <Input
+                  id="hs-title"
+                  value={value.title}
+                  onChange={(e) => onChange({ ...value, title: e.target.value })}
+                  placeholder="Hotspot title"
+                  className="h-9 rounded-lg text-sm"
+                />
+              </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[11px] font-medium text-muted-foreground">Description</Label>
-            <div className="rounded-lg border border-border/60 overflow-hidden">
-              <DescriptionEditor
-                content={value.description}
-                onChange={(val) => onChange({ ...value, description: val })}
-              />
-            </div>
-          </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
+                <div className="rounded-lg border border-border/60 overflow-hidden bg-background">
+                  <DescriptionEditor
+                    content={value.description}
+                    onChange={(val) => onChange({ ...value, description: val })}
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 gap-2.5">
-            <div className="space-y-1.5">
-              <Label htmlFor="hs-image" className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-                <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                Image URL (optional)
-              </Label>
-              <Input
-                id="hs-image"
-                value={value.imageUrl || ""}
-                onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
-                placeholder="https://…"
-                className="h-9 rounded-lg text-sm"
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="hs-image" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                  <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  Image URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
+                </Label>
+                <Input
+                  id="hs-image"
+                  value={value.imageUrl || ""}
+                  onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
+                  placeholder="https://…"
+                  className="h-9 rounded-lg text-sm"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="hs-link" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                  <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  Link URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
+                </Label>
+                <Input
+                  id="hs-link"
+                  value={value.linkUrl || ""}
+                  onChange={(e) => onChange({ ...value, linkUrl: e.target.value })}
+                  placeholder="https://…"
+                  className="h-9 rounded-lg text-sm"
+                />
+              </div>
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="hs-link" className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-                <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                Link URL (optional)
-              </Label>
-              <Input
-                id="hs-link"
-                value={value.linkUrl || ""}
-                onChange={(e) => onChange({ ...value, linkUrl: e.target.value })}
-                placeholder="https://…"
-                className="h-9 rounded-lg text-sm"
-              />
-            </div>
-          </div>
+          </ScrollArea>
         </TabsContent>
 
-        <TabsContent value="settings" className="flex-1 overflow-y-auto px-4 py-3 space-y-4 m-0">
-          {/* Icon picker */}
-          <div className="space-y-2">
-            <Label className="text-[11px] font-medium text-muted-foreground">Marker icon</Label>
-            <div className="grid grid-cols-7 gap-1.5">
-              {HOTSPOT_ICONS.map(({ id, label, icon: Icon }) => {
-                const active = iconId === id;
-                return (
-                  <Tooltip key={id}>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        aria-label={label}
-                        aria-pressed={active}
-                        onClick={() => onChange({ ...value, icon: id })}
-                        className={cn(
-                          "h-8 w-8 rounded-lg flex items-center justify-center transition-all border",
-                          active
-                            ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                            : "bg-background text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground"
-                        )}
-                      >
-                        <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="text-xs">{label}</TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </div>
-          </div>
+        <TabsContent value="settings" className="flex-1 m-0 min-h-0 overflow-hidden data-[state=inactive]:hidden">
+          <ScrollArea className="h-full">
+            <div className="px-4 pb-4 space-y-4">
+              {/* Icon picker */}
+              <div className="space-y-2">
+                <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Marker icon</Label>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {HOTSPOT_ICONS.map(({ id, label, icon: Icon }) => {
+                    const active = iconId === id;
+                    return (
+                      <Tooltip key={id}>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            aria-label={label}
+                            aria-pressed={active}
+                            onClick={() => onChange({ ...value, icon: id })}
+                            className={cn(
+                              "h-9 w-9 rounded-lg flex items-center justify-center transition-all border",
+                              active
+                                ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
+                                : "bg-background text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:bg-muted/40"
+                            )}
+                          >
+                            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="text-xs">{label}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </div>
 
-          {/* Icon size */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-[11px] font-medium text-muted-foreground">Icon size</Label>
-              <span className="text-[11px] tabular-nums text-muted-foreground">{iconSize}px</span>
-            </div>
-            <Slider
-              value={[iconSize]}
-              min={10}
-              max={36}
-              step={1}
-              onValueChange={(v) => onChange({ ...value, iconSize: v[0] ?? 16 })}
-            />
-          </div>
-
-          {/* Icon color */}
-          <div className="space-y-2">
-            <Label className="text-[11px] font-medium text-muted-foreground">Icon color</Label>
-            <div className="flex items-center gap-2">
-              <label
-                className="relative h-9 w-9 rounded-lg border border-border/60 cursor-pointer overflow-hidden shrink-0"
-                style={{ background: iconColor }}
-                aria-label="Pick icon color"
-              >
-                <input
-                  type="color"
-                  value={/^#([0-9a-f]{6})$/i.test(iconColor) ? iconColor : "#ffffff"}
-                  onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  aria-label="Icon color picker"
+              {/* Icon size */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon size</Label>
+                  <span className="text-[11px] tabular-nums text-foreground font-medium px-1.5 py-0.5 rounded bg-muted">{iconSize}px</span>
+                </div>
+                <Slider
+                  value={[iconSize]}
+                  min={10}
+                  max={36}
+                  step={1}
+                  onValueChange={(v) => onChange({ ...value, iconSize: v[0] ?? 16 })}
                 />
-              </label>
-              <Input
-                value={iconColor}
-                onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
-                placeholder="#ffffff or rgb(255,255,255)"
-                className="h-9 rounded-lg text-sm font-mono"
-                aria-label="Icon color value"
-              />
-            </div>
-            <div className="flex items-center gap-1.5 pt-1">
-              {["#ffffff", "#000000", "#ef4444", "#22c55e", "#3b82f6", "#f59e0b", "#a855f7"].map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => onChange({ ...value, iconColor: c })}
-                  aria-label={`Use color ${c}`}
-                  className={cn(
-                    "w-5 h-5 rounded-full border-2 transition-all",
-                    iconColor.toLowerCase() === c ? "border-foreground scale-110" : "border-border/40"
-                  )}
-                  style={{ background: c }}
-                />
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Preview */}
-          <div className="rounded-lg border border-border/60 bg-muted/30 p-3 flex items-center gap-3">
-            <span
-              className="flex items-center justify-center rounded-full shadow-sm"
-              style={{
-                background: "hsl(var(--primary))",
-                width: iconSize + 8,
-                height: iconSize + 8,
-              }}
-              aria-hidden="true"
-            >
-              <PreviewIcon style={{ width: iconSize, height: iconSize, color: iconColor }} />
-            </span>
-            <p className="text-[11px] text-muted-foreground leading-tight">
-              Live preview of how this hotspot's marker will appear.
-            </p>
-          </div>
+              {/* Icon color */}
+              <div className="space-y-2">
+                <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon color</Label>
+                <div className="flex items-center gap-2">
+                  <label
+                    className="relative h-9 w-9 rounded-lg border border-border/60 cursor-pointer overflow-hidden shrink-0 shadow-inner"
+                    style={{ background: iconColor }}
+                    aria-label="Pick icon color"
+                  >
+                    <input
+                      type="color"
+                      value={/^#([0-9a-f]{6})$/i.test(iconColor) ? iconColor : "#ffffff"}
+                      onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      aria-label="Icon color picker"
+                    />
+                  </label>
+                  <Input
+                    value={iconColor}
+                    onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
+                    placeholder="#ffffff"
+                    className="h-9 rounded-lg text-sm font-mono"
+                    aria-label="Icon color value"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 pt-1">
+                  {["#ffffff", "#000000", "#ef4444", "#22c55e", "#3b82f6", "#f59e0b", "#a855f7"].map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => onChange({ ...value, iconColor: c })}
+                      aria-label={`Use color ${c}`}
+                      className={cn(
+                        "w-6 h-6 rounded-full border-2 transition-all",
+                        iconColor.toLowerCase() === c ? "border-foreground scale-110 shadow-sm" : "border-border/40 hover:scale-105"
+                      )}
+                      style={{ background: c }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
         </TabsContent>
       </Tabs>
 
-      <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border/60 bg-muted/20">
+      <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border/60 bg-muted/30">
         <Button variant="outline" size="sm" className="rounded-full px-4 h-8" onClick={onCancel}>
           Cancel
         </Button>
