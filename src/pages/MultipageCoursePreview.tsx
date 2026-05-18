@@ -598,8 +598,8 @@ const MultipageCoursePreview = () => {
           const isCircle = shape === "circle";
           if (!img) return null;
           return (
-            <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
-              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
+            <div className="relative rounded-xl border border-border/40 bg-muted/20" style={{ zIndex: 50 }}>
+              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto rounded-xl" />
               {list.map((hs, idx) => {
                 const HsIcon = getHotspotIcon(hs.icon);
                 const iconSize: number = hs.iconSize ?? 16;
@@ -623,7 +623,7 @@ const MultipageCoursePreview = () => {
                         <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} aria-hidden="true" focusable="false" />
                       </span>
                     </summary>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-lg p-3 z-20">
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-lg p-3" style={{ zIndex: 100 }}>
                       {hs.title && <p className="text-sm font-semibold mb-1">{hs.title}</p>}
                       <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(hs.description || "") }} />
                     </div>
