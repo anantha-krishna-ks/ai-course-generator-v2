@@ -9,6 +9,7 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import type { SinglePageRestoreState } from "@/components/CourseCreation/SinglePageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { getHotspotIcon } from "@/components/CourseCreation/HotspotBlock";
 
 interface CourseItem {
   id: string;
