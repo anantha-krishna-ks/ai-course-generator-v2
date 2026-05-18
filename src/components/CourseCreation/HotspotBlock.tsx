@@ -733,15 +733,10 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
       <div className="flex items-center justify-between px-4 pt-3.5 pb-3 border-b border-border/60 bg-gradient-to-b from-muted/40 to-transparent">
         <div className="flex items-center gap-2.5 min-w-0">
           <span
-            className="relative flex items-center justify-center rounded-full bg-white shrink-0 transition-colors"
-            style={{
-              width: iconSize + 14,
-              height: iconSize + 14,
-              border: `2px solid ${iconColor}`,
-            }}
+            className="relative flex items-center justify-center rounded-full bg-white shrink-0 h-8 w-8 border-2 border-primary"
             aria-hidden="true"
           >
-            <PreviewIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} />
+            <Pencil className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
           </span>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-foreground leading-tight truncate">
