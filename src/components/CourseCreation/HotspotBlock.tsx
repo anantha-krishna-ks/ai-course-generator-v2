@@ -788,7 +788,7 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
         </Button>
       </div>
 
-      <Tabs defaultValue="content" className="flex-1 flex flex-col overflow-hidden min-h-0">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "content" | "settings")} className="flex-1 flex flex-col overflow-hidden min-h-0">
         {/* Segmented toggle tabs (Outline/Blocks style) */}
         <div className="px-4 pt-3 pb-2">
           <TabsList className="grid grid-cols-2 w-full h-auto rounded-full bg-foreground/[0.06] border border-border/50 p-[3px]">
