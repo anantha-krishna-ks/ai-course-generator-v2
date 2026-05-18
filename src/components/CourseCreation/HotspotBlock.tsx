@@ -597,17 +597,6 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                           : `0 4px 12px -4px ${color}`,
                       }}
                     >
-                      {/* Pulse ring */}
-                      <span
-                        className="absolute rounded-full opacity-60 animate-ping pointer-events-none"
-                        style={{
-                          width: iconSize + 16,
-                          height: iconSize + 16,
-                          background: color,
-                          animationDuration: "2.4s",
-                        }}
-                        aria-hidden="true"
-                      />
                       <span
                         className="relative flex items-center justify-center rounded-full ring-2 ring-white/90"
                         style={{
