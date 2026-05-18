@@ -12,6 +12,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { getHotspotIcon } from "@/components/CourseCreation/HotspotBlock";
 
 interface CourseItem {
   id: string;
