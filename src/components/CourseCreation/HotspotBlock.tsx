@@ -782,45 +782,19 @@ function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardP
         <TabsContent
           value="content"
           forceMount
-          className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 space-y-3.5 data-[state=inactive]:hidden"
+          className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 data-[state=inactive]:hidden"
         >
-          <div className="space-y-1.5">
+          <div className="flex flex-col h-full space-y-1.5">
             <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Description</Label>
-            <MiniRichTextEditor
-              content={value.description}
-              onChange={(val) => onChange({ ...value, description: val })}
-              placeholder="Describe this hotspot…"
-              maxHeight={160}
-              maxLength={300}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="hs-image" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-              <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-              Image URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
-            </Label>
-            <Input
-              id="hs-image"
-              value={value.imageUrl || ""}
-              onChange={(e) => onChange({ ...value, imageUrl: e.target.value })}
-              placeholder="https://…"
-              className="h-9 rounded-lg text-sm"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="hs-link" className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-              <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-              Link URL <span className="normal-case text-muted-foreground/70 tracking-normal">(optional)</span>
-            </Label>
-            <Input
-              id="hs-link"
-              value={value.linkUrl || ""}
-              onChange={(e) => onChange({ ...value, linkUrl: e.target.value })}
-              placeholder="https://…"
-              className="h-9 rounded-lg text-sm"
-            />
+            <div className="flex-1 min-h-0">
+              <MiniRichTextEditor
+                content={value.description}
+                onChange={(val) => onChange({ ...value, description: val })}
+                placeholder="Describe this hotspot…"
+                maxHeight={9999}
+                maxLength={300}
+              />
+            </div>
           </div>
         </TabsContent>
 
