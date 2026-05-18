@@ -413,7 +413,7 @@ const CreateBlueprint = () => {
     setIsLoggingIn(true);
 
     try {
-      const response = await fetch("https://seab-testing.excelindia.com/contentv3api/api/user/login", {
+      const response = await fetch(apiUrl("/api/user/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
