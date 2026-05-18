@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { getHotspotIcon } from "@/components/CourseCreation/HotspotBlock";
 import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
