@@ -96,38 +96,41 @@ export function HotspotImage({ content }: HotspotImageProps) {
                   e.stopPropagation();
                   setOpenIdx(isOpen ? null : idx);
                 }}
-                className="w-full h-full flex items-center justify-center transition-all cursor-pointer"
-                style={{
-                  background: `linear-gradient(135deg, hsla(211, 100%, 75%, 0.28) 0%, hsla(211, 100%, 80%, 0.16) 50%, hsla(211, 100%, 90%, 0.08) 100%)`,
-                  border: `1.5px solid ${color}`,
-                  borderRadius: isCircle ? "9999px" : 8,
-                  boxShadow: `0 1px 3px -1px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.14)`,
-                }}
+                className="group w-full h-full flex items-center justify-center cursor-pointer bg-transparent border-0 p-0 focus:outline-none focus-visible:outline-none"
                 aria-label={hs.title || `Hotspot ${idx + 1}`}
                 aria-expanded={isOpen}
               >
                 <span
-                  className="relative flex items-center justify-center rounded-full"
+                  className="relative flex items-center justify-center rounded-full transition-all duration-300 ease-out group-hover:scale-110 group-focus-visible:scale-110"
                   style={{
                     width: iconSize + 14,
                     height: iconSize + 14,
                     background: needsContrastBacking ? color : "hsl(var(--background))",
                     border: `2px solid ${needsContrastBacking ? "hsl(var(--background))" : iconColor}`,
-                    boxShadow: "0 1px 4px hsl(var(--foreground) / 0.18)",
+                    boxShadow: isOpen
+                      ? `0 0 0 4px ${color}33, 0 6px 18px hsl(var(--foreground) / 0.22)`
+                      : "0 2px 8px hsl(var(--foreground) / 0.22)",
+                    transform: isOpen ? "scale(1.12)" : undefined,
                   }}
                 >
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-full opacity-70 animate-ping"
+                    style={{ background: `${color}55`, animationDuration: "2.4s" }}
+                  />
                   <HsIcon
                     size={iconSize}
                     color={iconColor}
                     strokeWidth={2.5}
                     aria-hidden="true"
                     focusable="false"
+                    style={{ position: "relative", zIndex: 1 }}
                   />
                 </span>
               </button>
               {isOpen && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-lg p-3"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-xl p-3 animate-fade-in"
                   style={{ zIndex: 100 }}
                   onClick={(e) => e.stopPropagation()}
                 >
