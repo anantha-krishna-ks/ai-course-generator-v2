@@ -6,6 +6,19 @@ interface HotspotImageProps {
   content: string;
 }
 
+interface PreviewHotspot {
+  id?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  title?: string;
+  description?: string;
+  icon?: string;
+  iconSize?: number;
+  iconColor?: string;
+}
+
 function isLightColor(value: string) {
   const color = value.trim().toLowerCase();
   if (color === "white" || color === "#fff" || color === "#ffffff") return true;
@@ -47,7 +60,7 @@ export function HotspotImage({ content }: HotspotImageProps) {
   try {
     const parsed = JSON.parse(content || "{}");
     const img: string = parsed.imageUrl || "";
-    const list: any[] = Array.isArray(parsed.hotspots) ? parsed.hotspots : [];
+    const list: PreviewHotspot[] = Array.isArray(parsed.hotspots) ? parsed.hotspots : [];
     const color: string = parsed.settings?.color || "hsl(211, 100%, 50%)";
     const shape: "rect" | "circle" = parsed.settings?.shape ?? "rect";
     const isCircle = shape === "circle";
