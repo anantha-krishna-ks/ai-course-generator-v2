@@ -486,7 +486,13 @@ export function ContentBlock({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => setShowGenerateDialog(true)}
+                    onClick={() => {
+                      if (type === "hotspot") {
+                        setHotspotGenerateNonce((n) => n + 1);
+                      } else {
+                        setShowGenerateDialog(true);
+                      }
+                    }}
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
                     aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
