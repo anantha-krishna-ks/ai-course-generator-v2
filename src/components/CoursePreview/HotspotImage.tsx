@@ -37,6 +37,7 @@ function isLightColor(value: string) {
 
 export function HotspotImage({ content }: HotspotImageProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
