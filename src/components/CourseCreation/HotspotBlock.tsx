@@ -201,9 +201,12 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
   };
 
   const handleGenerateSubmit = () => {
+    if (!imagePrompt.trim()) return;
     setShowGenerateDialog(false);
-    persist({ imageUrl: PLACEHOLDER_IMAGE, hotspots: [] });
+    // Preserve existing hotspots when replacing image via AI; only reset if there was no image
+    persist(imageUrl ? { imageUrl: PLACEHOLDER_IMAGE } : { imageUrl: PLACEHOLDER_IMAGE, hotspots: [] });
     setImagePrompt("");
+    toast.success("Image generated", { description: "Background image replaced with AI generation." });
   };
 
   // === Drag on image to create hotspot ===
@@ -729,6 +732,36 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
         onChange={handleInputChange}
       />
 
+      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <AISparkles className="w-4 h-4" />
+              </div>
+              Generate background image
+            </DialogTitle>
+            <DialogDescription>
+              Describe the new image. The current background will be replaced; existing hotspots are kept.
+            </DialogDescription>
+          </DialogHeader>
+          <textarea
+            value={imagePrompt}
+            onChange={(e) => setImagePrompt(e.target.value)}
+            placeholder="e.g., A labeled diagram of the human heart…"
+            className="w-full rounded-xl border border-border/60 bg-muted/10 p-4 text-sm min-h-[120px] focus:outline-none focus:border-foreground/20"
+            aria-label="Image generation prompt"
+          />
+          <DialogFooter>
+            <Button variant="outline" size="sm" className="rounded-full px-4" onClick={() => setShowGenerateDialog(false)}>
+              Cancel
+            </Button>
+            <Button size="sm" className="rounded-full px-4" onClick={handleGenerateSubmit} disabled={!imagePrompt.trim()}>
+              Generate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
