@@ -201,9 +201,12 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
   };
 
   const handleGenerateSubmit = () => {
+    if (!imagePrompt.trim()) return;
     setShowGenerateDialog(false);
-    persist({ imageUrl: PLACEHOLDER_IMAGE, hotspots: [] });
+    // Preserve existing hotspots when replacing image via AI; only reset if there was no image
+    persist(imageUrl ? { imageUrl: PLACEHOLDER_IMAGE } : { imageUrl: PLACEHOLDER_IMAGE, hotspots: [] });
     setImagePrompt("");
+    toast.success("Image generated", { description: "Background image replaced with AI generation." });
   };
 
   // === Drag on image to create hotspot ===
