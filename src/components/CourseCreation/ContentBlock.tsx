@@ -187,6 +187,7 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+  const [hotspotGenerateNonce, setHotspotGenerateNonce] = useState(0);
   
   const layout = detectContentLayout(content);
 
@@ -485,7 +486,13 @@ export function ContentBlock({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => setShowGenerateDialog(true)}
+                    onClick={() => {
+                      if (type === "hotspot") {
+                        setHotspotGenerateNonce((n) => n + 1);
+                      } else {
+                        setShowGenerateDialog(true);
+                      }
+                    }}
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
                     aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
@@ -521,7 +528,7 @@ export function ContentBlock({
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "hotspot" ? (
-            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
+            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerateRequest={hotspotGenerateNonce} />
           ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (

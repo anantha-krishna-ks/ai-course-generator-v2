@@ -110,6 +110,8 @@ interface HotspotBlockProps {
   content: string;
   onChange: (content: string) => void;
   aiEnabled?: boolean;
+  /** Increment to externally trigger the AI image generation dialog. */
+  externalGenerateRequest?: number;
 }
 
 function parseContent(content: string): HotspotData {
@@ -132,7 +134,7 @@ function uid() {
   return `hs-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps) {
+export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateRequest }: HotspotBlockProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const { imageUrl, hotspots, settings } = data;
   const color = settings?.color ?? "hsl(211, 100%, 50%)";
@@ -145,6 +147,12 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
   const [isDragOver, setIsDragOver] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
+
+  useEffect(() => {
+    if (externalGenerateRequest && externalGenerateRequest > 0) {
+      setShowGenerateDialog(true);
+    }
+  }, [externalGenerateRequest]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingHotspot, setEditingHotspot] = useState<HotspotItem | null>(null);
