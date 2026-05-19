@@ -163,8 +163,11 @@ export function HotspotImage({ content }: HotspotImageProps) {
               </button>
               {isOpen && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-xl p-3 animate-fade-in"
-                  style={{ zIndex: 100 }}
+                  className="absolute left-1/2 -translate-x-1/2 w-64 rounded-xl border border-border bg-popover text-popover-foreground shadow-xl p-3 animate-fade-in"
+                  style={{
+                    zIndex: 100,
+                    top: `calc(50% + ${(iconSize + 14) / 2 + 6}px)`,
+                  }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {hs.title && <p className="text-sm font-semibold mb-1">{hs.title}</p>}
