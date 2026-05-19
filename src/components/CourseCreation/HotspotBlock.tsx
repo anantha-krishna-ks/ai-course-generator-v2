@@ -148,6 +148,12 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
 
+  useEffect(() => {
+    if (externalGenerateRequest && externalGenerateRequest > 0) {
+      setShowGenerateDialog(true);
+    }
+  }, [externalGenerateRequest]);
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingHotspot, setEditingHotspot] = useState<HotspotItem | null>(null);
 
