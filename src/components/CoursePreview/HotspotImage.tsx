@@ -6,6 +6,35 @@ interface HotspotImageProps {
   content: string;
 }
 
+interface PreviewHotspot {
+  id?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  title?: string;
+  description?: string;
+  icon?: string;
+  iconSize?: number;
+  iconColor?: string;
+}
+
+function isLightColor(value: string) {
+  const color = value.trim().toLowerCase();
+  if (color === "white" || color === "#fff" || color === "#ffffff") return true;
+
+  const hex = color.match(/^#([0-9a-f]{6})$/i);
+  if (hex) {
+    const r = parseInt(hex[1].slice(0, 2), 16);
+    const g = parseInt(hex[1].slice(2, 4), 16);
+    const b = parseInt(hex[1].slice(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 210;
+  }
+
+  const hsl = color.match(/hsla?\([^,]+,[^,]+,\s*([\d.]+)%/i);
+  return hsl ? Number(hsl[1]) > 72 : false;
+}
+
 export function HotspotImage({ content }: HotspotImageProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -31,7 +60,7 @@ export function HotspotImage({ content }: HotspotImageProps) {
   try {
     const parsed = JSON.parse(content || "{}");
     const img: string = parsed.imageUrl || "";
-    const list: any[] = Array.isArray(parsed.hotspots) ? parsed.hotspots : [];
+    const list: PreviewHotspot[] = Array.isArray(parsed.hotspots) ? parsed.hotspots : [];
     const color: string = parsed.settings?.color || "hsl(211, 100%, 50%)";
     const shape: "rect" | "circle" = parsed.settings?.shape ?? "rect";
     const isCircle = shape === "circle";
@@ -47,7 +76,8 @@ export function HotspotImage({ content }: HotspotImageProps) {
         {list.map((hs, idx) => {
           const HsIcon = getHotspotIcon(hs.icon);
           const iconSize: number = hs.iconSize ?? 16;
-          const iconColor: string = hs.iconColor ?? "#ffffff";
+          const iconColor: string = hs.iconColor ?? color;
+          const needsContrastBacking = isLightColor(iconColor);
           const isOpen = openIdx === idx;
           return (
             <div
@@ -77,11 +107,13 @@ export function HotspotImage({ content }: HotspotImageProps) {
                 aria-expanded={isOpen}
               >
                 <span
-                  className="relative flex items-center justify-center rounded-full bg-white"
+                  className="relative flex items-center justify-center rounded-full"
                   style={{
                     width: iconSize + 14,
                     height: iconSize + 14,
-                    border: `2px solid ${iconColor}`,
+                    background: needsContrastBacking ? color : "hsl(var(--background))",
+                    border: `2px solid ${needsContrastBacking ? "hsl(var(--background))" : iconColor}`,
+                    boxShadow: "0 1px 4px hsl(var(--foreground) / 0.18)",
                   }}
                 >
                   <HsIcon
