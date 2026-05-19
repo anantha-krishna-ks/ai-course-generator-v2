@@ -528,7 +528,7 @@ export function ContentBlock({
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "hotspot" ? (
-            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
+            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerateRequest={hotspotGenerateNonce} />
           ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (
