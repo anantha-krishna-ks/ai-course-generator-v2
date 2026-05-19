@@ -97,37 +97,69 @@ export function HotspotImage({ content }: HotspotImageProps) {
                   e.stopPropagation();
                   setOpenIdx(isOpen ? null : idx);
                 }}
+                onMouseEnter={() => setHoverIdx(idx)}
+                onMouseLeave={() => setHoverIdx((h) => (h === idx ? null : h))}
+                onFocus={() => setHoverIdx(idx)}
+                onBlur={() => setHoverIdx((h) => (h === idx ? null : h))}
                 className="group w-full h-full flex items-center justify-center cursor-pointer bg-transparent border-0 p-0 focus:outline-none focus-visible:outline-none"
                 aria-label={hs.title || `Hotspot ${idx + 1}`}
                 aria-expanded={isOpen}
               >
-                <span
-                  className="relative flex items-center justify-center rounded-full transition-all duration-300 ease-out group-hover:scale-110 group-focus-visible:scale-110"
-                  style={{
-                    width: iconSize + 14,
-                    height: iconSize + 14,
-                    background: needsContrastBacking ? color : "hsl(var(--background))",
-                    border: `2px solid ${needsContrastBacking ? "hsl(var(--background))" : iconColor}`,
-                    boxShadow: isOpen
-                      ? `0 0 0 4px ${color}33, 0 6px 18px hsl(var(--foreground) / 0.22)`
-                      : "0 2px 8px hsl(var(--foreground) / 0.22)",
-                    transform: isOpen ? "scale(1.12)" : undefined,
-                  }}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0 rounded-full opacity-70 animate-ping"
-                    style={{ background: `${color}55`, animationDuration: "2.4s" }}
-                  />
-                  <HsIcon
-                    size={iconSize}
-                    color={iconColor}
-                    strokeWidth={2.5}
-                    aria-hidden="true"
-                    focusable="false"
-                    style={{ position: "relative", zIndex: 1 }}
-                  />
-                </span>
+                {(() => {
+                  const isHover = hoverIdx === idx;
+                  const isActive = isHover || isOpen;
+                  const filled = isActive; // filled UI on hover/open
+                  const bg = filled
+                    ? iconColor
+                    : needsContrastBacking
+                    ? color
+                    : "hsl(var(--background))";
+                  const borderCol = filled
+                    ? iconColor
+                    : needsContrastBacking
+                    ? "hsl(var(--background))"
+                    : iconColor;
+                  const iconRenderColor = filled
+                    ? needsContrastBacking
+                      ? iconColor === color
+                        ? "hsl(var(--background))"
+                        : "hsl(var(--background))"
+                      : "hsl(var(--background))"
+                    : iconColor;
+                  return (
+                    <span
+                      className="relative flex items-center justify-center rounded-full transition-all duration-300 ease-out"
+                      style={{
+                        width: iconSize + 14,
+                        height: iconSize + 14,
+                        background: bg,
+                        border: `2px solid ${borderCol}`,
+                        boxShadow: isOpen
+                          ? `0 0 0 4px ${color}33, 0 6px 18px hsl(var(--foreground) / 0.22)`
+                          : isHover
+                          ? `0 0 0 3px ${color}26, 0 4px 14px hsl(var(--foreground) / 0.22)`
+                          : "0 2px 8px hsl(var(--foreground) / 0.22)",
+                        transform: isActive ? "scale(1.12)" : undefined,
+                      }}
+                    >
+                      {!isActive && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute inset-0 rounded-full opacity-70 animate-ping"
+                          style={{ background: `${color}55`, animationDuration: "2.4s" }}
+                        />
+                      )}
+                      <HsIcon
+                        size={iconSize}
+                        color={iconRenderColor}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        focusable="false"
+                        style={{ position: "relative", zIndex: 1, transition: "color 200ms ease" }}
+                      />
+                    </span>
+                  );
+                })()}
               </button>
               {isOpen && (
                 <div
