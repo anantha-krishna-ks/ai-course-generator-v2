@@ -398,7 +398,7 @@ function RightPane({
       <div className="relative flex-1 flex flex-col items-center justify-center px-10 py-10 max-w-md mx-auto w-full">
         {/* Hero animation */}
         <div className="relative w-[220px] h-[220px] mb-2">
-          <CourseGenerationAnimation />
+          <PageEditorGenerationAnimation />
         </div>
 
         {/* Course title */}
