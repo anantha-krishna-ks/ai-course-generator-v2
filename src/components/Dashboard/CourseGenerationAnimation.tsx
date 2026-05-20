@@ -1,159 +1,188 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Custom on-brand SVG loader:
- *  - Floating page with lines being progressively "written"
- *  - Pulsing cursor at the active line
- *  - Orbiting sparkles around the page
- * Uses primary/border semantic tokens. Lightweight, infinite loop.
+ * Animated stack of books with a tea cup on top — inspired by the
+ * reference illustration. Gentle bob + steam + tea-bag swing.
+ * Pure SVG, no extra deps, fully themable via brand tokens.
  */
 export function CourseGenerationAnimation({ className }: { className?: string }) {
+  // Brand palette (kept literal to match the illustrated reference)
+  const navy = "#1B2A6B";
+  const navyDark = "#152155";
+  const orange = "#F26B1F";
+  const orangeDark = "#D95A12";
+  const cream = "#F7F1E3";
+  const creamEdge = "#E7DFC9";
+  const ink = "#1B2A6B";
+  const tea = "#C9651D";
+
   return (
     <div
-      className={cn("relative w-full h-full flex items-center justify-center", className)}
+      className={cn("relative w-full h-full", className)}
       role="img"
       aria-label="Generating course content"
     >
       <svg
-        viewBox="0 0 240 240"
-        className="w-full h-full max-w-[280px] max-h-[280px]"
+        viewBox="0 0 240 220"
+        className="w-full h-full overflow-visible"
         aria-hidden="true"
         focusable="false"
       >
         <defs>
-          <linearGradient id="cga-page" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--background))" />
-            <stop offset="100%" stopColor="hsl(var(--muted))" />
+          <linearGradient id="cga-floor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary) / 0.08)" />
+            <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
           </linearGradient>
-          <filter id="cga-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="hsl(var(--primary))" floodOpacity="0.18" />
-          </filter>
         </defs>
 
-        {/* Floating page group */}
-        <g style={{ transformOrigin: "120px 120px", animation: "cga-float 3.6s ease-in-out infinite" }}>
-          {/* Page */}
-          <rect
-            x="60"
-            y="46"
-            width="120"
-            height="150"
-            rx="10"
-            fill="url(#cga-page)"
-            stroke="hsl(var(--border))"
-            strokeWidth="1.5"
-            filter="url(#cga-shadow)"
+        {/* Soft ground shadow */}
+        <ellipse cx="120" cy="198" rx="78" ry="6" fill="hsl(var(--foreground) / 0.08)">
+          <animate attributeName="rx" values="78;72;78" dur="3.6s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0.55;0.35" dur="3.6s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* Whole stack — gentle vertical bob */}
+        <g>
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 0; 0 -3; 0 0"
+            dur="3.6s"
+            repeatCount="indefinite"
+            calcMode="spline"
+            keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"
+            keyTimes="0;0.5;1"
           />
 
-          {/* Header bar */}
-          <rect x="74" y="62" width="56" height="8" rx="3" fill="hsl(var(--primary))" opacity="0.85" />
-          <rect x="74" y="76" width="32" height="5" rx="2.5" fill="hsl(var(--border))" />
+          {/* Book 1 — bottom navy with orange band */}
+          <g>
+            <rect x="48" y="170" width="144" height="26" rx="3" fill={navy} stroke={navyDark} strokeWidth="2" />
+            <rect x="48" y="178" width="144" height="10" fill={orange} />
+            <rect x="48" y="178" width="144" height="2" fill={orangeDark} opacity="0.6" />
+            <rect x="56" y="174" width="6" height="18" fill={navyDark} opacity="0.5" />
+          </g>
 
-          {/* Writing lines — each clipped via animated width */}
+          {/* Book 2 — orange, slight offset */}
+          <g>
+            <rect x="56" y="146" width="132" height="22" rx="3" fill={orange} stroke={orangeDark} strokeWidth="2" />
+            <rect x="64" y="152" width="40" height="3" rx="1.5" fill={cream} opacity="0.85" />
+            <rect x="64" y="158" width="28" height="2.5" rx="1.25" fill={cream} opacity="0.7" />
+          </g>
+
+          {/* Book 3 — cream/white with bookmark */}
+          <g>
+            <rect x="62" y="124" width="124" height="20" rx="3" fill={cream} stroke={creamEdge} strokeWidth="2" />
+            <rect x="62" y="124" width="124" height="3" fill={creamEdge} />
+            <rect x="148" y="120" width="6" height="14" fill={orange} />
+            <polygon points="148,134 151,130 154,134" fill={orange} />
+            <rect x="70" y="132" width="50" height="2" rx="1" fill={ink} opacity="0.35" />
+            <rect x="70" y="137" width="36" height="2" rx="1" fill={ink} opacity="0.25" />
+          </g>
+
+          {/* Book 4 — navy thin */}
+          <g>
+            <rect x="70" y="106" width="108" height="16" rx="3" fill={navy} stroke={navyDark} strokeWidth="2" />
+            <rect x="70" y="106" width="108" height="3" fill={navyDark} />
+            <circle cx="124" cy="114" r="3" fill={orange} />
+          </g>
+
+          {/* Book 5 — orange small top */}
+          <g>
+            <rect x="80" y="90" width="88" height="14" rx="3" fill={orange} stroke={orangeDark} strokeWidth="2" />
+            <rect x="86" y="95" width="30" height="2" rx="1" fill={cream} opacity="0.9" />
+            <rect x="86" y="99" width="20" height="2" rx="1" fill={cream} opacity="0.7" />
+          </g>
+
+          {/* Tea cup on top */}
+          <g style={{ transformOrigin: "120px 80px" }}>
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0 0; 0 -1.5; 0 0"
+              dur="3.6s"
+              repeatCount="indefinite"
+              calcMode="spline"
+              keySplines="0.4 0 0.2 1; 0.4 0 0.2 1"
+              keyTimes="0;0.5;1"
+            />
+
+            {/* Cup body */}
+            <path
+              d="M 100 60 L 140 60 L 137 86 Q 137 90 132 90 L 108 90 Q 103 90 103 86 Z"
+              fill={cream}
+              stroke={ink}
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            {/* Cup rim */}
+            <ellipse cx="120" cy="60" rx="20" ry="3.2" fill={cream} stroke={ink} strokeWidth="2" />
+            {/* Tea surface */}
+            <ellipse cx="120" cy="60" rx="16" ry="2.2" fill={tea} opacity="0.85" />
+            {/* Handle */}
+            <path
+              d="M 140 66 Q 152 66 152 75 Q 152 84 140 82"
+              fill="none"
+              stroke={ink}
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+
+            {/* Tea bag string + tag */}
+            <g style={{ transformOrigin: "125px 60px" }}>
+              <animateTransform
+                attributeName="transform"
+                type="rotate"
+                values="-4 125 60; 4 125 60; -4 125 60"
+                dur="2.8s"
+                repeatCount="indefinite"
+                calcMode="spline"
+                keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"
+                keyTimes="0;0.5;1"
+              />
+              <line x1="125" y1="60" x2="131" y2="78" stroke={ink} strokeWidth="1.2" />
+              <rect x="128" y="78" width="8" height="6" rx="1" fill={orange} stroke={ink} strokeWidth="1" />
+            </g>
+          </g>
+
+          {/* Steam — three wisps rising and fading */}
           {[
-            { y: 96, w: 92, delay: "0s" },
-            { y: 110, w: 80, delay: "0.6s" },
-            { y: 124, w: 96, delay: "1.2s" },
-            { y: 138, w: 70, delay: "1.8s" },
-            { y: 152, w: 88, delay: "2.4s" },
-            { y: 166, w: 60, delay: "3.0s" },
-          ].map((l, i) => (
+            { x: 112, delay: 0 },
+            { x: 120, delay: 0.6 },
+            { x: 128, delay: 1.2 },
+          ].map((s, i) => (
             <g key={i}>
-              {/* Faint placeholder line */}
-              <rect x="74" y={l.y} width={l.w} height="4" rx="2" fill="hsl(var(--border))" opacity="0.5" />
-              {/* Written-in line */}
-              <rect
-                x="74"
-                y={l.y}
-                width={l.w}
-                height="4"
-                rx="2"
-                fill="hsl(var(--primary))"
-                style={{
-                  transformOrigin: `74px ${l.y}px`,
-                  animation: `cga-write 3.6s ease-out ${l.delay} infinite`,
-                }}
-              />
-              {/* Cursor at end of line, pulsing during its write window */}
-              <rect
-                x="74"
-                y={l.y - 2}
-                width="2"
-                height="8"
-                rx="1"
-                fill="hsl(var(--primary))"
-                style={{
-                  animation: `cga-cursor 3.6s linear ${l.delay} infinite`,
-                  transformOrigin: `74px ${l.y}px`,
-                }}
-              />
+              <path
+                d={`M ${s.x} 56 q -4 -6 0 -12 q 4 -6 0 -12`}
+                fill="none"
+                stroke="hsl(var(--muted-foreground))"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0"
+              >
+                <animate
+                  attributeName="opacity"
+                  values="0; 0.55; 0"
+                  keyTimes="0; 0.5; 1"
+                  dur="2.4s"
+                  begin={`${s.delay}s`}
+                  repeatCount="indefinite"
+                />
+                <animateTransform
+                  attributeName="transform"
+                  type="translate"
+                  values="0 0; 0 -10"
+                  dur="2.4s"
+                  begin={`${s.delay}s`}
+                  repeatCount="indefinite"
+                />
+              </path>
             </g>
           ))}
         </g>
 
-        {/* Orbiting sparkles */}
-        <g style={{ transformOrigin: "120px 120px", animation: "cga-orbit 7s linear infinite" }}>
-          <g transform="translate(120 30)">
-            <Sparkle />
-          </g>
-        </g>
-        <g style={{ transformOrigin: "120px 120px", animation: "cga-orbit 9s linear infinite reverse" }}>
-          <g transform="translate(210 120)">
-            <Sparkle scale={0.75} />
-          </g>
-        </g>
-        <g style={{ transformOrigin: "120px 120px", animation: "cga-orbit 11s linear infinite" }}>
-          <g transform="translate(30 140)">
-            <Sparkle scale={0.6} />
-          </g>
-        </g>
+        {/* Floor wash */}
+        <rect x="0" y="196" width="240" height="20" fill="url(#cga-floor)" />
       </svg>
-
-      <style>{`
-        @keyframes cga-float {
-          0%, 100% { transform: translateY(0) rotate(-0.5deg); }
-          50%      { transform: translateY(-6px) rotate(0.5deg); }
-        }
-        @keyframes cga-write {
-          0%      { transform: scaleX(0); }
-          60%     { transform: scaleX(1); }
-          90%     { transform: scaleX(1); opacity: 1; }
-          100%    { transform: scaleX(1); opacity: 0; }
-        }
-        @keyframes cga-cursor {
-          0%      { opacity: 0; transform: translateX(0); }
-          5%      { opacity: 1; }
-          60%     { opacity: 1; transform: translateX(var(--cga-end, 0px)); }
-          70%     { opacity: 0; }
-          100%    { opacity: 0; }
-        }
-        @keyframes cga-orbit {
-          0%   { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes cga-sparkle-pulse {
-          0%, 100% { transform: scale(1); opacity: 0.9; }
-          50%      { transform: scale(1.25); opacity: 1; }
-        }
-      `}</style>
     </div>
-  );
-}
-
-function Sparkle({ scale = 1 }: { scale?: number }) {
-  return (
-    <g
-      style={{
-        transformOrigin: "0px 0px",
-        animation: "cga-sparkle-pulse 2.2s ease-in-out infinite",
-      }}
-      transform={`scale(${scale})`}
-    >
-      <path
-        d="M0 -8 L2 -2 L8 0 L2 2 L0 8 L-2 2 L-8 0 L-2 -2 Z"
-        fill="hsl(var(--primary))"
-      />
-      <circle r="1.5" fill="hsl(var(--background))" stroke="hsl(var(--primary))" strokeWidth="0.5" />
-    </g>
   );
 }
