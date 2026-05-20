@@ -12,6 +12,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { HotspotImage } from "@/components/CoursePreview/HotspotImage";
 
 interface CourseItem {
   id: string;
@@ -23,7 +24,7 @@ interface CourseItem {
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
   content: string;
 }
 
@@ -586,6 +587,9 @@ const MultipageCoursePreview = () => {
         } catch {
           return null;
         }
+      }
+      case "hotspot": {
+        return <HotspotImage content={block.content} />;
       }
       case "audio": {
         const audioSrc = block.content || DEMO_AUDIO_URL;

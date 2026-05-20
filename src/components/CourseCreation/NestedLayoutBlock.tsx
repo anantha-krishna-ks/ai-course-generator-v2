@@ -51,7 +51,8 @@ type NestedChildType =
   | "doc"
   | "quiz"
   | "image-description"
-  | "video-description";
+  | "video-description"
+  | "hotspot";
 
 interface NestedChild {
   id: string;
