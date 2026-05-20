@@ -187,7 +187,6 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
-  const [hotspotGenerateNonce, setHotspotGenerateNonce] = useState(0);
   
   const layout = detectContentLayout(content);
 
@@ -480,19 +479,13 @@ export function ContentBlock({
             onClick={onDelete}
             className="hover:text-destructive"
           />
-          {aiEnabled && (type === "text" || type === "image" || type === "hotspot") && (
+          {aiEnabled && (type === "text" || type === "image") && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => {
-                      if (type === "hotspot") {
-                        setHotspotGenerateNonce((n) => n + 1);
-                      } else {
-                        setShowGenerateDialog(true);
-                      }
-                    }}
+                    onClick={() => setShowGenerateDialog(true)}
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
                     aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
@@ -528,7 +521,7 @@ export function ContentBlock({
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "hotspot" ? (
-            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerateRequest={hotspotGenerateNonce} />
+            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (

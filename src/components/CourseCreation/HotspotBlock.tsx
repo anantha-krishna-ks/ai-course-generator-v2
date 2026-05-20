@@ -1,29 +1,5 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { toast } from "sonner";
-import {
-  Upload,
-  ImagePlus,
-  Sparkles,
-  Trash2,
-  Settings as SettingsIcon,
-  Plus,
-  Pencil,
-  Link as LinkIcon,
-  ImageIcon,
-  Info,
-  HelpCircle,
-  Star,
-  Heart,
-  Flag,
-  Bookmark,
-  MapPin,
-  Lightbulb,
-  AlertCircle,
-  CheckCircle2,
-  Eye,
-  Zap,
-  type LucideIcon as LucideIconType,
-} from "lucide-react";
+import { Upload, ImagePlus, Sparkles, Trash2, Settings as SettingsIcon, Plus, Pencil, Link as LinkIcon, ImageIcon } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,39 +16,16 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  PopoverAnchor,
 } from "@/components/ui/popover";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
-import { MiniRichTextEditor } from "./MiniRichTextEditor";
+import { DescriptionEditor } from "./DescriptionEditor";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { cn } from "@/lib/utils";
 
 const MAX_IMAGE_MB = 10;
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=1200&q=80";
-
-/** Curated icon set users can pick for hotspot markers */
-const HOTSPOT_ICONS: { id: string; label: string; icon: LucideIconType }[] = [
-  { id: "plus", label: "Plus", icon: Plus },
-  { id: "info", label: "Info", icon: Info },
-  { id: "help", label: "Help", icon: HelpCircle },
-  { id: "star", label: "Star", icon: Star },
-  { id: "heart", label: "Heart", icon: Heart },
-  { id: "flag", label: "Flag", icon: Flag },
-  { id: "bookmark", label: "Bookmark", icon: Bookmark },
-  { id: "pin", label: "Pin", icon: MapPin },
-  { id: "lightbulb", label: "Idea", icon: Lightbulb },
-  { id: "alert", label: "Alert", icon: AlertCircle },
-  { id: "check", label: "Check", icon: CheckCircle2 },
-  { id: "eye", label: "Eye", icon: Eye },
-  { id: "zap", label: "Zap", icon: Zap },
-];
-
-export function getHotspotIcon(id?: string): LucideIconType {
-  return HOTSPOT_ICONS.find((i) => i.id === id)?.icon ?? Plus;
-}
 
 export interface HotspotItem {
   id: string;
@@ -86,14 +39,7 @@ export interface HotspotItem {
   description: string;
   imageUrl?: string;
   linkUrl?: string;
-  /** Per-hotspot marker icon id (from HOTSPOT_ICONS). Defaults to "plus". */
-  icon?: string;
-  /** Marker icon pixel size. */
-  iconSize?: number;
-  /** Marker icon color (hex / rgb). */
-  iconColor?: string;
 }
-
 
 interface HotspotData {
   imageUrl: string;
@@ -110,8 +56,6 @@ interface HotspotBlockProps {
   content: string;
   onChange: (content: string) => void;
   aiEnabled?: boolean;
-  /** Increment to externally trigger the AI image generation dialog. */
-  externalGenerateRequest?: number;
 }
 
 function parseContent(content: string): HotspotData {
@@ -134,7 +78,7 @@ function uid() {
   return `hs-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateRequest }: HotspotBlockProps) {
+export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const { imageUrl, hotspots, settings } = data;
   const color = settings?.color ?? "hsl(211, 100%, 50%)";
@@ -147,12 +91,6 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
   const [isDragOver, setIsDragOver] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
-
-  useEffect(() => {
-    if (externalGenerateRequest && externalGenerateRequest > 0) {
-      setShowGenerateDialog(true);
-    }
-  }, [externalGenerateRequest]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingHotspot, setEditingHotspot] = useState<HotspotItem | null>(null);
@@ -201,12 +139,9 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
   };
 
   const handleGenerateSubmit = () => {
-    if (!imagePrompt.trim()) return;
     setShowGenerateDialog(false);
-    // Preserve existing hotspots when replacing image via AI; only reset if there was no image
-    persist(imageUrl ? { imageUrl: PLACEHOLDER_IMAGE } : { imageUrl: PLACEHOLDER_IMAGE, hotspots: [] });
+    persist({ imageUrl: PLACEHOLDER_IMAGE, hotspots: [] });
     setImagePrompt("");
-    toast.success("Image generated", { description: "Background image replaced with AI generation." });
   };
 
   // === Drag on image to create hotspot ===
@@ -253,7 +188,7 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
           width: 10,
           height: 10,
           title: `Hotspot ${hotspots.length + 1}`,
-          description: "",
+          description: "<p>Add your hotspot description here…</p>",
         };
         persist({ hotspots: [...hotspots, newHs] });
         setSelectedId(newHs.id);
@@ -268,7 +203,7 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
       width: d.w,
       height: d.h,
       title: `Hotspot ${hotspots.length + 1}`,
-      description: "",
+      description: "<p>Add your hotspot description here…</p>",
     };
     persist({ hotspots: [...hotspots, newHs] });
     setSelectedId(newHs.id);
@@ -554,144 +489,90 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
             {/* Existing hotspots */}
             {hotspots.map((hs, idx) => {
               const isSelected = selectedId === hs.id;
-              const isEditingThis = editingHotspot?.id === hs.id;
               const isCircle = shape === "circle";
-              const HsIcon = getHotspotIcon(hs.icon);
-              const iconSize = hs.iconSize ?? 16;
-              const iconColor = hs.iconColor ?? color;
               return (
-                <Popover
+                <div
                   key={hs.id}
-                  open={isEditingThis}
-                  onOpenChange={(open) => {
-                    if (!open) setEditingHotspot(null);
+                  data-hotspot
+                  role="button"
+                  tabIndex={0}
+                  aria-label={hs.title}
+                  onPointerDown={(e) => startMove(e, hs)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedId(hs.id);
+                  }}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    setEditingHotspot(hs);
+                  }}
+                  className={cn(
+                    "absolute group/hs flex items-center justify-center transition-all",
+                    isSelected ? "ring-2 ring-offset-1" : "ring-1",
+                    "cursor-move"
+                  )}
+                  style={{
+                    left: `${hs.x}%`,
+                    top: `${hs.y}%`,
+                    width: `${hs.width}%`,
+                    height: `${hs.height}%`,
+                    background: color.replace(")", ` / ${opacity})`).replace("hsl(", "hsla("),
+                    borderColor: color,
+                    borderWidth: 2,
+                    borderStyle: "solid",
+                    borderRadius: isCircle ? "9999px" : 6,
+                    boxShadow: isSelected ? `0 0 0 2px hsl(var(--background)), 0 0 0 4px ${color}` : undefined,
                   }}
                 >
-                  <PopoverAnchor asChild>
-                    <div
-                      data-hotspot
-                      role="button"
-                      tabIndex={0}
-                      aria-label={hs.title}
-                      onPointerDown={(e) => startMove(e, hs)}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedId(hs.id);
-                      }}
-                      onDoubleClick={(e) => {
-                        e.stopPropagation();
-                        setEditingHotspot(hs);
-                      }}
-                      className={cn(
-                        "absolute group/hs flex items-center justify-center transition-all cursor-move",
-                      )}
-                      style={{
-                        left: `${hs.x}%`,
-                        top: `${hs.y}%`,
-                        width: `${hs.width}%`,
-                        height: `${hs.height}%`,
-                        background: `linear-gradient(135deg, hsla(211, 100%, 75%, 0.28) 0%, hsla(211, 100%, 80%, 0.16) 50%, hsla(211, 100%, 90%, 0.08) 100%)`,
-                        borderColor: color,
-                        borderWidth: isSelected ? 2 : 1.5,
-                        borderStyle: "solid",
-                        borderRadius: isCircle ? "9999px" : 8,
-                        boxShadow: isSelected
-                          ? `0 2px 6px -2px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.20)`
-                          : `0 1px 3px -1px ${color}, inset 0 1px 0 0 hsla(0,0%,100%,0.14)`,
-                      }}
-                    >
-                      <span
-                        className="relative flex items-center justify-center rounded-full bg-white transition-colors"
-                        style={{
-                          width: iconSize + 14,
-                          height: iconSize + 14,
-                          border: `2px solid ${iconColor}`,
-                        }}
-                        aria-label={`Hotspot ${idx + 1}`}
-                      >
-                        <HsIcon style={{ width: iconSize, height: iconSize, color: iconColor }} strokeWidth={2.5} aria-hidden="true" focusable="false" />
-                      </span>
-
-                      {/* Action buttons when selected (only when popover closed) */}
-                      {isSelected && !isEditingThis && (
-                        <div
-                          className="absolute -top-9 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-background border border-border/60 rounded-full shadow-md px-1 py-0.5 z-10"
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 rounded-full px-2 gap-1 text-xs"
-                            onClick={() => setEditingHotspot(hs)}
-                          >
-                            <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-7 w-7 rounded-full p-0 text-destructive hover:text-destructive"
-                            aria-label="Delete hotspot"
-                            onClick={() => deleteHotspot(hs.id)}
-                          >
-                            <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          </Button>
-                        </div>
-                      )}
-
-                      {/* Resize handle */}
-                      {isSelected && (
-                        <div
-                          onPointerDown={(e) => startResize(e, hs)}
-                          className="absolute -right-1.5 -bottom-1.5 w-3 h-3 rounded-full border-2 border-background cursor-se-resize"
-                          style={{ background: color }}
-                          aria-label="Resize hotspot"
-                          role="button"
-                          tabIndex={-1}
-                        />
-                      )}
-                    </div>
-                  </PopoverAnchor>
-
-                  <PopoverContent
-                    side="right"
-                    align="start"
-                    sideOffset={14}
-                    collisionPadding={16}
-                    className="w-[400px] p-0 overflow-hidden rounded-2xl shadow-2xl border-border/60"
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => e.stopPropagation()}
-                    onInteractOutside={(e) => {
-                      const target = e.target as HTMLElement | null;
-                      if (target?.closest('[data-tiptap-bubble-menu]')) {
-                        e.preventDefault();
-                      }
-                    }}
-                    onFocusOutside={(e) => {
-                      const target = e.target as HTMLElement | null;
-                      if (target?.closest('[data-tiptap-bubble-menu]')) {
-                        e.preventDefault();
-                      }
-                    }}
+                  <span
+                    className="text-[10px] font-semibold text-white px-1.5 py-0.5 rounded-full"
+                    style={{ background: color }}
                   >
-                    {editingHotspot && editingHotspot.id === hs.id && (
-                      <HotspotEditCard
-                        value={hs}
-                        onChange={(next) => {
-                          persist({
-                            hotspots: hotspots.map((h) => (h.id === hs.id ? next : h)),
-                          });
-                        }}
-                        onDone={() => setEditingHotspot(null)}
-                        onCancel={() => setEditingHotspot(null)}
-                      />
-                    )}
-                  </PopoverContent>
-                </Popover>
+                    {idx + 1}
+                  </span>
+
+                  {/* Action buttons when selected */}
+                  {isSelected && (
+                    <div
+                      className="absolute -top-9 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-background border border-border/60 rounded-full shadow-md px-1 py-0.5 z-10"
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 rounded-full px-2 gap-1 text-xs"
+                        onClick={() => setEditingHotspot(hs)}
+                      >
+                        <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 rounded-full p-0 text-destructive hover:text-destructive"
+                        aria-label="Delete hotspot"
+                        onClick={() => deleteHotspot(hs.id)}
+                      >
+                        <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Resize handle */}
+                  {isSelected && (
+                    <div
+                      onPointerDown={(e) => startResize(e, hs)}
+                      className="absolute -right-1.5 -bottom-1.5 w-3 h-3 rounded-full border-2 border-background cursor-se-resize"
+                      style={{ background: color }}
+                      aria-label="Resize hotspot"
+                      role="button"
+                      tabIndex={-1}
+                    />
+                  )}
+                </div>
               );
             })}
-
 
             {/* Draft selection during drag */}
             {draftRect && draftRect.w > 0 && draftRect.h > 0 && (
@@ -732,32 +613,98 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
         onChange={handleInputChange}
       />
 
-      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="sm:max-w-[520px]">
+      {/* Edit hotspot dialog */}
+      <Dialog
+        open={!!editingHotspot}
+        onOpenChange={(open) => {
+          if (!open) setEditingHotspot(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
-              <div className="p-1.5 rounded-lg bg-primary/10">
-                <AISparkles className="w-4 h-4" />
-              </div>
-              Generate background image
-            </DialogTitle>
+            <DialogTitle className="text-base font-semibold">Edit hotspot</DialogTitle>
             <DialogDescription>
-              Describe the new image. The current background will be replaced; existing hotspots are kept.
+              Add text, an image, or a link that will be revealed when learners click this hotspot.
             </DialogDescription>
           </DialogHeader>
-          <textarea
-            value={imagePrompt}
-            onChange={(e) => setImagePrompt(e.target.value)}
-            placeholder="e.g., A labeled diagram of the human heart…"
-            className="w-full rounded-xl border border-border/60 bg-muted/10 p-4 text-sm min-h-[120px] focus:outline-none focus:border-foreground/20"
-            aria-label="Image generation prompt"
-          />
-          <DialogFooter>
-            <Button variant="outline" size="sm" className="rounded-full px-4" onClick={() => setShowGenerateDialog(false)}>
+
+          {editingHotspot && (
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="hotspot-title" className="text-xs font-medium">
+                  Title
+                </Label>
+                <Input
+                  id="hotspot-title"
+                  value={editingHotspot.title}
+                  onChange={(e) => setEditingHotspot({ ...editingHotspot, title: e.target.value })}
+                  placeholder="Hotspot title"
+                  className="rounded-lg"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Description</Label>
+                <div className="rounded-lg border border-border/60 overflow-hidden">
+                  <DescriptionEditor
+                    content={editingHotspot.description}
+                    onChange={(val) => setEditingHotspot({ ...editingHotspot, description: val })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="hotspot-image" className="text-xs font-medium flex items-center gap-1.5">
+                    <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    Image URL (optional)
+                  </Label>
+                  <Input
+                    id="hotspot-image"
+                    value={editingHotspot.imageUrl || ""}
+                    onChange={(e) => setEditingHotspot({ ...editingHotspot, imageUrl: e.target.value })}
+                    placeholder="https://…"
+                    className="rounded-lg"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="hotspot-link" className="text-xs font-medium flex items-center gap-1.5">
+                    <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    Link URL (optional)
+                  </Label>
+                  <Input
+                    id="hotspot-link"
+                    value={editingHotspot.linkUrl || ""}
+                    onChange={(e) => setEditingHotspot({ ...editingHotspot, linkUrl: e.target.value })}
+                    placeholder="https://…"
+                    className="rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full px-4"
+              onClick={() => setEditingHotspot(null)}
+            >
               Cancel
             </Button>
-            <Button size="sm" className="rounded-full px-4" onClick={handleGenerateSubmit} disabled={!imagePrompt.trim()}>
-              Generate
+            <Button
+              size="sm"
+              className="rounded-full px-4"
+              onClick={() => {
+                if (!editingHotspot) return;
+                persist({
+                  hotspots: hotspots.map((h) => (h.id === editingHotspot.id ? editingHotspot : h)),
+                });
+                setEditingHotspot(null);
+              }}
+            >
+              Done
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -765,251 +712,3 @@ export function HotspotBlock({ content, onChange, aiEnabled, externalGenerateReq
     </>
   );
 }
-
-// ===== HotspotEditCard — popover content for editing a single hotspot =====
-
-interface HotspotEditCardProps {
-  value: HotspotItem;
-  onChange: (next: HotspotItem) => void;
-  onDone: () => void;
-  onCancel: () => void;
-}
-
-function HotspotEditCard({ value, onChange, onDone, onCancel }: HotspotEditCardProps) {
-  const iconId = value.icon ?? "plus";
-  const iconSize = value.iconSize ?? 16;
-  const iconColor = value.iconColor ?? "#ffffff";
-  const PreviewIcon = getHotspotIcon(iconId);
-
-  const [descError, setDescError] = useState(false);
-  const [activeTab, setActiveTab] = useState<"content" | "settings">("content");
-  const descIsEmpty = !value.description || value.description.replace(/<[^>]*>/g, "").trim() === "";
-
-  const handleDone = () => {
-    if (descIsEmpty) {
-      setDescError(true);
-      if (activeTab !== "content") setActiveTab("content");
-      toast.error("Description is required", {
-        description: "Please add a description for this hotspot before saving.",
-      });
-      return;
-    }
-    setDescError(false);
-    onDone();
-  };
-
-  return (
-    <div className="flex flex-col h-[520px] max-h-[80vh] bg-background">
-      {/* Header with live marker preview */}
-      <div className="flex items-center justify-between px-4 pt-3.5 pb-3 border-b border-border/60 bg-gradient-to-b from-muted/40 to-transparent">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span
-            className="relative flex items-center justify-center rounded-full bg-white shrink-0 h-8 w-8 border-2 border-primary"
-            aria-hidden="true"
-          >
-            <Pencil className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground leading-tight truncate">
-              {value.title || "Edit hotspot"}
-            </p>
-            <p className="text-[11px] text-muted-foreground leading-tight">Configure content and marker style</p>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 w-7 p-0 rounded-full text-muted-foreground hover:text-foreground shrink-0"
-          aria-label="Close"
-          onClick={onCancel}
-        >
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-            <path d="M6 6l12 12M6 18L18 6" />
-          </svg>
-        </Button>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "content" | "settings")} className="flex-1 flex flex-col overflow-hidden min-h-0">
-        {/* Segmented toggle tabs (Outline/Blocks style) */}
-        <div className="px-4 pt-3 pb-2">
-          <TabsList className="grid grid-cols-2 w-full h-auto rounded-full bg-foreground/[0.06] border border-border/50 p-[3px]">
-            <TabsTrigger
-              value="content"
-              className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-full text-muted-foreground transition-colors duration-300 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)]"
-            >
-              <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
-              Content
-            </TabsTrigger>
-            <TabsTrigger
-              value="settings"
-              className="relative z-10 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-full text-muted-foreground transition-colors duration-300 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)]"
-            >
-              <SettingsIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
-        </div>
-
-        <TabsContent
-          value="content"
-          forceMount
-          className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 data-[state=inactive]:hidden"
-        >
-          <div className="flex flex-col h-full space-y-1.5">
-            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
-              Description <span className="text-destructive">*</span>
-            </Label>
-            <div className="flex-1 min-h-0">
-              <MiniRichTextEditor
-                content={value.description}
-                onChange={(val) => {
-                  if (descError) setDescError(false);
-                  onChange({ ...value, description: val });
-                }}
-                placeholder="Describe this hotspot…"
-                maxHeight={9999}
-                maxLength={300}
-                error={descError}
-              />
-            </div>
-            {descError && (
-              <p className="text-xs text-destructive mt-1" role="alert">
-                Description is required.
-              </p>
-            )}
-          </div>
-        </TabsContent>
-
-        <TabsContent
-          value="settings"
-          forceMount
-          className="flex-1 min-h-0 overflow-y-auto m-0 px-4 pb-4 space-y-4 data-[state=inactive]:hidden"
-        >
-          {/* Icon picker */}
-          <div className="space-y-2">
-            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Marker icon</Label>
-            <div className="grid grid-cols-7 gap-1.5">
-              {HOTSPOT_ICONS.map(({ id, label, icon: Icon }) => {
-                const active = iconId === id;
-                return (
-                  <Tooltip key={id}>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        aria-label={label}
-                        aria-pressed={active}
-                        onClick={() => onChange({ ...value, icon: id })}
-                        className={cn(
-                          "h-9 w-9 rounded-lg flex items-center justify-center transition-all border",
-                          active
-                            ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
-                            : "bg-background text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground hover:bg-muted/40"
-                        )}
-                      >
-                        <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="text-xs">{label}</TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Icon size — modern chip selector */}
-          <div className="space-y-2">
-            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon size</Label>
-            <div className="grid grid-cols-4 gap-1.5 rounded-xl bg-muted p-1">
-              {[
-                { id: "sm", label: "S", size: 12, dot: 10 },
-                { id: "md", label: "M", size: 16, dot: 14 },
-                { id: "lg", label: "L", size: 22, dot: 18 },
-                { id: "xl", label: "XL", size: 30, dot: 24 },
-              ].map((opt) => {
-                const active = iconSize === opt.size;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    aria-label={`Size ${opt.label}`}
-                    aria-pressed={active}
-                    onClick={() => onChange({ ...value, iconSize: opt.size })}
-                    className={cn(
-                      "h-12 rounded-lg flex flex-col items-center justify-center gap-0.5 transition-all",
-                      active
-                        ? "bg-background text-foreground shadow-sm ring-1 ring-primary/30"
-                        : "text-muted-foreground hover:bg-background/60"
-                    )}
-                  >
-                    <span
-                      className="rounded-full"
-                      style={{
-                        width: opt.dot,
-                        height: opt.dot,
-                        background: active ? "hsl(var(--primary))" : "hsl(var(--muted-foreground) / 0.5)",
-                      }}
-                      aria-hidden="true"
-                    />
-                    <span className="text-[10px] font-semibold tracking-wide">{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Icon color */}
-          <div className="space-y-2">
-            <Label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Icon color</Label>
-            <div className="flex items-center gap-2">
-              <label
-                className="relative h-9 w-9 rounded-lg border border-border/60 cursor-pointer overflow-hidden shrink-0 shadow-inner"
-                style={{ background: iconColor }}
-                aria-label="Pick icon color"
-              >
-                <input
-                  type="color"
-                  value={/^#([0-9a-f]{6})$/i.test(iconColor) ? iconColor : "#ffffff"}
-                  onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  aria-label="Icon color picker"
-                />
-              </label>
-              <Input
-                value={iconColor}
-                onChange={(e) => onChange({ ...value, iconColor: e.target.value })}
-                placeholder="#ffffff"
-                className="h-9 rounded-lg text-sm font-mono"
-                aria-label="Icon color value"
-              />
-            </div>
-            <div className="flex items-center gap-1.5 pt-1">
-              {["#3b82f6", "#000000", "#ef4444", "#22c55e", "#f59e0b", "#a855f7", "#0ea5e9"].map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => onChange({ ...value, iconColor: c })}
-                  aria-label={`Use color ${c}`}
-                  className={cn(
-                    "w-6 h-6 rounded-full border-2 transition-all",
-                    iconColor.toLowerCase() === c ? "border-foreground scale-110 shadow-sm" : "border-border/40 hover:scale-105"
-                  )}
-                  style={{ background: c }}
-                />
-              ))}
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border/60 bg-muted/30">
-        <Button variant="outline" size="sm" className="rounded-full px-4 h-8" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button size="sm" className="rounded-full px-4 h-8" onClick={handleDone}>
-          Done
-        </Button>
-      </div>
-    </div>
-  );
-}
-
