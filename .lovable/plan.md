@@ -1,43 +1,30 @@
 ## Goal
-Make the "Create Course" button always look enabled, but on click validate the form. If invalid, scroll to the first missing field and show an inline error. Mark Course Title as mandatory.
 
-## Changes — `src/components/Dashboard/CreateCourseDialog.tsx`
+Replace the inline shimmer/skeleton loader inside `PageEditorDialog`'s AI-generation block with the new `CourseGenerationAnimation` spec — without changing the existing animation used by Dashboard `CreateCourseDialog`, `LoadingCourseProgressDialog`, or the full-screen `CreationLoader`.
 
-### 1. Remove disabled state from CTA
-- Drop `disabled={!courseTitle.trim()}` on the Create Course `<Button>`.
-- Button stays in primary enabled style at all times.
+## Approach
 
-### 2. Add error state + refs
-- New state: `titleError: string | null`, `aiError: string | null`.
-- Refs: `titleInputRef` (input) and `aiSectionRef` (AIToggleRow wrapper) for scroll-into-view.
-- Scrollable form container also gets a ref so we can scroll within the dialog (since the form area is the scroll container, not the window).
+1. **Create a new, isolated component** `src/components/CourseCreation/PageEditorGenerationAnimation.tsx` that implements the spec exactly:
+   - 200×200 SVG, `viewBox="0 0 200 200"`, `overflow-visible`, `aria-hidden="true"`, `focusable="false"`.
+   - Wrapper `<div role="img" aria-label="Generating course content">` with optional `className` merged via `cn`.
+   - All colors via HSL semantic tokens (`hsl(var(--primary))`, `hsl(var(--card))`, `hsl(var(--muted))`, `hsl(var(--muted-foreground) / 0.5)`, `hsl(var(--border))`, `hsl(var(--foreground) / 0.06)`).
+   - Defs: `linearGradient#cga-page`, `linearGradient#cga-accent`, `filter#cga-soft` (feGaussianBlur stdDeviation=3, region -50% -50% 200% 200%).
+   - Halo circle, floating page group with shadow + page rect + header/subheader, five animated text-line groups with the exact `{y, max, delay}` tuples, writing-cursor circle, orbiting sparkles group (14s), counter-rotating sparkles group (22s), and the `Sparkle` 8-point star helper.
+   - Pure inline SMIL `<animate>` / `<animateTransform>`; no Lottie, framer-motion, or other deps.
 
-### 3. Mark Course Title as mandatory
-- Append a red asterisk `<span aria-hidden="true" className="text-destructive ml-0.5">*</span>` to the "Course Title" label.
-- Add `aria-required="true"` and `aria-invalid={!!titleError}` plus `aria-describedby="cc-title-error"` on the input.
-- When `titleError` is set: input bottom border becomes `border-destructive` and replace the helper "💡 Used as the primary prompt..." line with the error message in `text-destructive` (id `cc-title-error`, `role="alert"`). Helper text returns once user starts typing.
+2. **Swap it into `PageEditorDialog.tsx`** at the existing AI-generating branch (around lines 1241–1278):
+   - Import the new component.
+   - Replace the current skeleton shimmer block (gradient bg + skeleton lines + rotating ring + `AISparkles`) with a centered `<PageEditorGenerationAnimation />` (≈200×200) plus the existing status text ("Generating content…" / "This may take a moment").
+   - Keep surrounding frame (`rounded-xl border border-primary/20 …`), padding, and the non-loading `<ContentBlock>` branch untouched.
 
-### 4. Validate on click in `handleStartCreating`
-Order of checks (first failure wins, so we can scroll to it):
-1. Empty title → set `titleError = "Course title is required"`, focus + scroll `titleInputRef` into view (`block: "center"`), return.
-2. AI enabled but config invalid (`!isAIConfigValid`) → set `aiError = "Complete AI configuration to continue"`, scroll `aiSectionRef` into view, also keep current behavior of opening `setShowAIConfig(true)` (after a short delay so user sees the highlight) — or simply open immediately; recommend: scroll + brief 250ms highlight, then open config view.
-3. Otherwise clear errors and proceed (`setIsLoading(true)`).
+3. **Leave the shared `CourseGenerationAnimation`** (books/cup) and its three current usages completely unchanged.
 
-### 5. Clear errors reactively
-- `useEffect` on `courseTitle`: if non-empty, clear `titleError`.
-- `useEffect` on `aiOptions`: if `isAIConfigValid`, clear `aiError`.
-- `handleClose` resets both errors.
+## Files
 
-### 6. AI section error styling
-- Wrap `<AIToggleRow>` in a div with `ref={aiSectionRef}`. When `aiError` is set, add a `ring-1 ring-destructive rounded-lg` around the wrapper and render an `aria-live="polite"` `<p className="text-xs text-destructive mt-1.5" role="alert">{aiError}</p>` underneath. No changes inside `AIToggleRow` itself.
-
-### 7. Scrolling implementation detail
-The form scroll container is the `<div className="flex-1 overflow-y-auto thin-scrollbar ...">`. Use `element.scrollIntoView({ behavior: "smooth", block: "center" })` on the target ref — works inside the nearest scrollable ancestor. After scroll, call `titleInputRef.current?.focus({ preventScroll: true })` for the title case.
-
-## Accessibility
-- Asterisk is decorative (`aria-hidden`); `aria-required` conveys requirement.
-- Errors use `role="alert"` and are linked via `aria-describedby`.
-- Button no longer has `disabled`, so screen readers won't announce it as disabled; validation feedback is announced via the live error region.
+- New: `src/components/CourseCreation/PageEditorGenerationAnimation.tsx`
+- Edited: `src/components/CourseCreation/PageEditorDialog.tsx` (only the AI generating branch)
 
 ## Out of scope
-- No changes to layout, AI config view internals, SCORM dialog, or routing/navigation behavior after a successful submit.
+
+- No changes to Dashboard `CreateCourseDialog`, `LoadingCourseProgressDialog`, or `CreationLoader`.
+- No changes to block types, AI workflow, or any business logic.
