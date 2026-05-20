@@ -3,7 +3,7 @@ import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLef
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
-import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
+import { PageEditorGenerationAnimation } from "@/components/CourseCreation/PageEditorGenerationAnimation";
 import { useEffect, useState } from "react";
 
 type Status = "completed" | "in-progress" | "not-started";
@@ -398,7 +398,7 @@ function RightPane({
       <div className="relative flex-1 flex flex-col items-center justify-center px-10 py-10 max-w-md mx-auto w-full">
         {/* Hero animation */}
         <div className="relative w-[220px] h-[220px] mb-2">
-          <CourseGenerationAnimation />
+          <PageEditorGenerationAnimation />
         </div>
 
         {/* Course title */}
