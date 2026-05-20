@@ -9,7 +9,6 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import type { SinglePageRestoreState } from "@/components/CourseCreation/SinglePageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
-import { HotspotImage } from "@/components/CoursePreview/HotspotImage";
 
 interface CourseItem {
   id: string;
@@ -20,13 +19,13 @@ interface CourseItem {
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
 }
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
 }
 
@@ -361,9 +360,6 @@ const SinglepageCoursePreview = () => {
             </div>
           );
         } catch { return null; }
-      }
-      case "hotspot": {
-        return <HotspotImage content={block.content} />;
       }
       case "audio": {
         const audioSrc = block.content || DEMO_AUDIO_URL;

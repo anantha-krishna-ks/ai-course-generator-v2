@@ -29,7 +29,6 @@ import { MediaUploadBlock } from "./MediaUploadBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
 import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
-import { HotspotBlock } from "./HotspotBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -147,7 +146,7 @@ function encodeContentColumns(layout: ContentLayoutType, columns: string[]): str
 
 interface ContentBlockProps {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description";
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
@@ -156,7 +155,7 @@ interface ContentBlockProps {
   aiEnabled?: boolean;
   readOnly?: boolean;
   variant?: string;
-  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", newContent: string, newVariant?: string) => void;
+  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", newContent: string, newVariant?: string) => void;
   /** Per-block font override id. When undefined, the block inherits the course-level font. */
   font?: string;
   /** Update the per-block font override. Pass undefined to revert to course default. */
@@ -187,7 +186,6 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
-  const [hotspotGenerateNonce, setHotspotGenerateNonce] = useState(0);
   
   const layout = detectContentLayout(content);
 
@@ -480,19 +478,13 @@ export function ContentBlock({
             onClick={onDelete}
             className="hover:text-destructive"
           />
-          {aiEnabled && (type === "text" || type === "image" || type === "hotspot") && (
+          {aiEnabled && (type === "text" || type === "image") && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => {
-                      if (type === "hotspot") {
-                        setHotspotGenerateNonce((n) => n + 1);
-                      } else {
-                        setShowGenerateDialog(true);
-                      }
-                    }}
+                    onClick={() => setShowGenerateDialog(true)}
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
                     aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
                   >
@@ -527,8 +519,6 @@ export function ContentBlock({
         >
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
-          ) : type === "hotspot" ? (
-            <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerateRequest={hotspotGenerateNonce} />
           ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (

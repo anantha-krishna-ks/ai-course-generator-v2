@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import Lottie from "lottie-react";
+import courseCreationAnimation from "@/assets/course-creation-lottie.json";
 import previewMultipage from "@/assets/preview-multipage.jpg";
 import previewSinglepage from "@/assets/preview-singlepage.jpg";
 
@@ -23,7 +25,6 @@ import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -53,8 +54,8 @@ function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComp
 
   return (
     <div className="flex flex-col items-center justify-center py-10 px-4 space-y-4">
-      <div className="w-56 h-56">
-        <CourseGenerationAnimation />
+      <div className="w-40 h-40 sm:w-48 sm:h-48">
+        <Lottie animationData={courseCreationAnimation} loop autoplay className="w-full h-full" />
       </div>
       <div className="text-center space-y-1.5">
         <p className="text-sm text-muted-foreground">Creating your course</p>

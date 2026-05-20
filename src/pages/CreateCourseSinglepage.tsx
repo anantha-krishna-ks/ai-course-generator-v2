@@ -43,7 +43,7 @@ const CreateCourseSinglepage = () => {
     })),
     contentBlocks: state.restoreState.contentBlocks.map(b => ({
       id: b.id,
-      type: b.type as "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot",
+      type: b.type as "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description",
       content: b.content,
     })),
     pageBlocksMap: Object.fromEntries(
@@ -51,7 +51,7 @@ const CreateCourseSinglepage = () => {
         k,
         v.map(b => ({
           id: b.id,
-          type: b.type as "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot",
+          type: b.type as "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description",
           content: b.content,
         })),
       ])

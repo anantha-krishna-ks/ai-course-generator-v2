@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, BookOpen, Sparkles } from "lucide-react";
+import { AISparkles } from "@/components/ui/ai-sparkles";
 import { cn } from "@/lib/utils";
-import { CourseGenerationAnimation } from "@/components/Dashboard/CourseGenerationAnimation";
 
 interface CreationLoaderProps {
   courseTitle: string;
@@ -53,9 +53,14 @@ export function CreationLoader({ courseTitle, onComplete }: CreationLoaderProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <div className="flex flex-col items-center space-y-8 px-4">
-        {/* Animated illustration */}
-        <div className="w-56 h-56">
-          <CourseGenerationAnimation />
+        {/* Animated Icon */}
+        <div className="relative">
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+            <BookOpen className="w-10 h-10 text-primary" aria-hidden="true" focusable="false" />
+          </div>
+          <div className="absolute -top-1 -right-1">
+            <AISparkles className="w-6 h-6" />
+          </div>
         </div>
 
         {/* Course Title */}

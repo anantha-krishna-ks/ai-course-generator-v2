@@ -21,7 +21,7 @@ interface AddContentButtonProps {
   onAIGenerateText?: (prompt: string) => void;
   onAIGenerateImage?: (prompt: string) => void;
   onMore?: () => void;
-  onDropBlock?: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", variant?: string) => void;
+  onDropBlock?: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
   variant?: "simple" | "full";
