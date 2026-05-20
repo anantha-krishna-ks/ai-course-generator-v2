@@ -3,7 +3,7 @@ import { Check, Loader2, FileText, LayoutGrid, X, Sparkles, Clock, Zap, ArrowLef
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getMinutesAgoLabel, getProgress, type LoadingCourse } from "@/lib/loadingCourses";
-import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
+import { PageEditorGenerationAnimation } from "@/components/CourseCreation/PageEditorGenerationAnimation";
 import { useEffect, useState } from "react";
 
 type Status = "completed" | "in-progress" | "not-started";
