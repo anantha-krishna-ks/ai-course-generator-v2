@@ -27,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
+import { PageEditorGenerationAnimation } from "./PageEditorGenerationAnimation";
 import {
   DndContext,
   closestCenter,
