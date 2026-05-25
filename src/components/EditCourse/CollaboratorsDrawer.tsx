@@ -28,6 +28,8 @@ import {
   X,
   Plus,
   Pencil,
+  Link as LinkIcon,
+  Copy,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
