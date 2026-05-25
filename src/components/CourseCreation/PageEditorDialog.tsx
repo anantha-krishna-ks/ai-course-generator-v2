@@ -1161,9 +1161,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     onPageTitleChange(e.target.value);
                   }
                 }}
+                readOnly={readOnly}
                 className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                 placeholder="Untitled page"
               />
+
 
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
@@ -1502,6 +1504,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               </div>
 
               {/* Content type toolbar - below blocks */}
+              {!readOnly && (
               <div className={cn("flex items-center gap-2", blocks.length > 0 && "mt-6")}>
                 <div className="rounded-2xl border border-border/60 bg-muted/20 backdrop-blur-sm px-2 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center flex-1 justify-evenly gap-0.5 shadow-sm">
                   <Button variant="ghost" className="gap-1.5 sm:gap-2 text-muted-foreground text-xs sm:text-[13px] h-8 sm:h-9 rounded-full hover:text-foreground hover:bg-foreground/5 px-2.5 sm:px-4 transition-all duration-200" onClick={() => addBlockWithSkeleton("text", undefined, undefined, "adding")}>
@@ -1529,6 +1532,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <span className="hidden sm:inline">More</span>
                 </button>
               </div>
+              )}
+
 
               {/* AI Creation Block */}
               {showAiBlock && aiEnabled && (
