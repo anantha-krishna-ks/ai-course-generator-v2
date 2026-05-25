@@ -139,6 +139,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const { toast } = useToast();
   const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
   const [showCloneDialog, setShowCloneDialog] = useState(false);
+  const [showFinishReviewDialog, setShowFinishReviewDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showTour, setShowTour] = useState(() => {
     if (initialRestoreState) return false;
