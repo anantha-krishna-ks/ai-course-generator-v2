@@ -309,36 +309,108 @@ function PersonCard({
 
 /* ---------- review share link ---------- */
 
-function ReviewShareLink({ courseId }: { courseId: string }) {
+function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: Person }) {
   const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/review-course/${courseId}`;
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      toast({ title: "Review link copied", description: "Share it with your reviewer." });
+      setCopied(true);
+      toast({ title: "Link copied", description: "Paste it anywhere to share with your reviewer." });
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({ title: "Could not copy link", description: url });
     }
   };
+
+  const handleEmail = () => {
+    const subject = encodeURIComponent("Please review this course");
+    const body = encodeURIComponent(
+      `Hi ${reviewer.name.split(" ")[0]},\n\nPlease review this course and leave your comments:\n${url}\n\nThanks!`,
+    );
+    window.location.href = `mailto:${reviewer.email}?subject=${subject}&body=${body}`;
+  };
+
+  const handleOpen = () => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-3 py-2">
-      <LinkIcon className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
-      <span className="text-xs text-muted-foreground truncate flex-1" title={url}>{url}</span>
-      <Button
-        size="sm"
-        variant="ghost"
-        className="rounded-full h-8 px-3 gap-1.5 text-xs"
-        onClick={handleCopy}
-        aria-label="Copy reviewer share link"
-      >
-        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
-        Copy
-      </Button>
+    <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 via-background to-background p-3 space-y-2.5">
+      <div className="flex items-center gap-2">
+        <span className="w-6 h-6 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0" aria-hidden="true">
+          <LinkIcon className="w-3.5 h-3.5" />
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-foreground leading-tight">Reviewer access link</p>
+          <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+            Anyone with this link can view and comment.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-stretch gap-1.5 rounded-lg bg-muted/60 border border-border p-1">
+        <Input
+          readOnly
+          value={url}
+          onFocus={(e) => e.currentTarget.select()}
+          aria-label="Reviewer share link"
+          className="h-8 border-0 bg-transparent text-xs font-mono text-muted-foreground px-2 focus-visible:ring-0 focus-visible:ring-offset-0"
+        />
+        <Button
+          size="sm"
+          onClick={handleCopy}
+          aria-label={copied ? "Link copied" : "Copy reviewer share link"}
+          className={cn(
+            "h-8 px-3 gap-1.5 text-xs rounded-md shrink-0 transition-colors",
+            copied && "bg-emerald-600 hover:bg-emerald-600 text-white",
+          )}
+        >
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5" aria-hidden="true" />
+              Copied
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+              Copy link
+            </>
+          )}
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleEmail}
+          className="flex-1 h-8 gap-1.5 text-xs rounded-md text-muted-foreground hover:text-foreground"
+          aria-label={`Email link to ${reviewer.name}`}
+        >
+          <Mail className="w-3.5 h-3.5" aria-hidden="true" />
+          Email to {reviewer.name.split(" ")[0]}
+        </Button>
+        <span className="w-px h-4 bg-border" aria-hidden="true" />
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={handleOpen}
+          className="flex-1 h-8 gap-1.5 text-xs rounded-md text-muted-foreground hover:text-foreground"
+          aria-label="Open reviewer preview in a new tab"
+        >
+          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+          Preview
+        </Button>
+      </div>
     </div>
   );
 }
 
 /* ---------- main ---------- */
+
 
 export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle }: Props) {
   const { toast } = useToast();
