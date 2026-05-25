@@ -41,6 +41,7 @@ interface PreviewState {
   returnState?: MultiPageCourseCreatorRestoreState;
   initialPageId?: string | null;
   fontId?: string;
+  origin?: string;
 }
 
 const MultipageCoursePreview = () => {
@@ -288,6 +289,29 @@ const MultipageCoursePreview = () => {
   };
 
   const handleBack = useCallback(() => {
+    const origin = previewState?.origin;
+
+    // Navigate back to edit-course or review-course where state is reloaded from mock data
+    if (origin && (origin.startsWith("/edit-course/") || origin.startsWith("/review-course/"))) {
+      navigate(origin, { replace: true });
+      return;
+    }
+
+    // Navigate back to create-course flow with restored state
+    if (origin === "/create-course-multipage" && previewState?.returnState) {
+      navigate("/create-course-multipage", {
+        replace: true,
+        state: {
+          title: previewState.returnState.title,
+          layout: "multi-page",
+          aiOptions: previewState.returnState.aiOptions,
+          restoreState: previewState.returnState,
+        },
+      });
+      return;
+    }
+
+    // Legacy fallback: returnState present without origin
     if (previewState?.returnState) {
       navigate("/create-course-multipage", {
         replace: true,

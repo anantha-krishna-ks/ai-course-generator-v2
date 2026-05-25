@@ -681,6 +681,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         returnState,
         initialPageId: initialPageId || null,
         fontId,
+        origin: window.location.pathname,
       },
     });
   }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions, fontId]);
