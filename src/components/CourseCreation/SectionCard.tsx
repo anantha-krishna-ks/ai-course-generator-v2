@@ -702,26 +702,27 @@ export function SectionCard({
                   </DndContext>
 
                   {/* Add page button (tree-style) */}
-                  <div className="relative flex items-center">
-                    <div className="relative w-6 flex items-center justify-center shrink-0 self-stretch">
-                      {pages.length > 0 && (
-                        <div className="absolute left-1/2 -translate-x-1/2 top-0 h-1/2 w-px bg-border/50" />
-                      )}
-                      <div className={cn(
-                        "absolute left-1/2 top-1/2 -translate-y-1/2 w-3 h-px bg-border/50",
-                        pages.length > 0 ? "opacity-100" : "opacity-0"
-                      )} />
+                  {!readOnly && (
+                    <div className="relative flex items-center">
+                      <div className="relative w-6 flex items-center justify-center shrink-0 self-stretch">
+                        {pages.length > 0 && (
+                          <div className="absolute left-1/2 -translate-x-1/2 top-0 h-1/2 w-px bg-border/50" />
+                        )}
+                        <div className={cn(
+                          "absolute left-1/2 top-1/2 -translate-y-1/2 w-3 h-px bg-border/50",
+                          pages.length > 0 ? "opacity-100" : "opacity-0"
+                        )} />
+                      </div>
+                      <button
+                        onClick={handleAddPage}
+                        className="flex items-center gap-1.5 py-2 pl-2 pr-3 rounded-lg text-[12px] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-150 group/add"
+                        aria-label="Add new page to section"
+                      >
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        <span>Add page</span>
+                      </button>
                     </div>
-                    <button
-                      onClick={handleAddPage}
-                      className="flex items-center gap-1.5 py-2 pl-2 pr-3 rounded-lg text-[12px] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-150 group/add"
-                      aria-label="Add new page to section"
-                    >
-                      <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      <span>Add page</span>
-                    </button>
-                  </div>
-                </div>
+                  )}
               </div>
             </div>
           </div>
