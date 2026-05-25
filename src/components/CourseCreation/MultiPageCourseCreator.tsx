@@ -711,18 +711,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   </TooltipContent>
                 )}
               </Tooltip>
-              <span className="text-muted-foreground select-none" aria-hidden="true">|</span>
-              <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} transferState={{
-                title,
-                items: items as LayoutTransferState["items"],
-                contentBlocks,
-                pageBlocksMap,
-                sectionObjectivesMap,
-                sectionImages: Object.fromEntries(
-                  items.filter(i => i.type === "section" && i.thumbnailUrl).map(i => [i.id, i.thumbnailUrl!])
-                ),
-                aiOptions,
-              }} />
+              {!readOnly && <span className="text-muted-foreground select-none" aria-hidden="true">|</span>}
+              {!readOnly && (
+                <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} transferState={{
+                  title,
+                  items: items as LayoutTransferState["items"],
+                  contentBlocks,
+                  pageBlocksMap,
+                  sectionObjectivesMap,
+                  sectionImages: Object.fromEntries(
+                    items.filter(i => i.type === "section" && i.thumbnailUrl).map(i => [i.id, i.thumbnailUrl!])
+                  ),
+                  aiOptions,
+                }} />
+              )}
+              {readOnly && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 text-emerald-700 px-2.5 py-1 text-[11px] font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Reviewer · view only
+                </span>
+              )}
             </div>
           </div>
 
