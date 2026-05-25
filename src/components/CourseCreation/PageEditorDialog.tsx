@@ -574,6 +574,21 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             <span className="text-sm font-medium text-foreground">Page editor</span>
           </div>
           <div className="flex items-center gap-2">
+            {readOnly && (
+              <Button
+                className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2 h-9"
+                onClick={() => {
+                  toast({
+                    title: "Review submitted",
+                    description: "Your comments have been shared with the author.",
+                  });
+                  setTimeout(() => navigate("/dashboard"), 600);
+                }}
+              >
+                <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                Finish review
+              </Button>
+            )}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
