@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading, GitBranch, Sparkles, History, Clock, RotateCcw } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -82,7 +84,10 @@ export function DescriptionBlock({
   onClear,
   onDuplicate,
 }: DescriptionBlockProps) {
+  const location = useLocation();
+  const isReviewer = location.pathname.startsWith("/review-course");
   const [isEditing, setIsEditing] = useState(false);
+
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
@@ -341,8 +346,12 @@ export function DescriptionBlock({
 
       {/* Content area */}
       <div className="w-full">
-        {isEditing ? (
+        {isEditing && !isReviewer ? (
           renderEditor()
+        ) : isReviewer ? (
+          <div className="w-full text-left px-4 py-3 overflow-hidden max-w-full">
+            {renderPreview()}
+          </div>
         ) : (
           <button
             onClick={() => setIsEditing(true)}
@@ -351,6 +360,7 @@ export function DescriptionBlock({
             {renderPreview()}
           </button>
         )}
+
       </div>
 
       {/* Per-column Version History Dialog */}
