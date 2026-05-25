@@ -99,6 +99,7 @@ interface MultiPageCourseCreatorProps {
   courseTitle: string;
   aiOptions?: AIOptions | null;
   initialRestoreState?: MultiPageCourseCreatorRestoreState | null;
+  readOnly?: boolean;
 }
 
 interface DeletedBlock {
@@ -122,7 +123,7 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
   );
 }
 
-export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
+export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null, readOnly = false }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
