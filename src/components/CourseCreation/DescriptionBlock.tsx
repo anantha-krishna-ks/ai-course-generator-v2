@@ -346,8 +346,12 @@ export function DescriptionBlock({
 
       {/* Content area */}
       <div className="w-full">
-        {isEditing ? (
+        {isEditing && !isReviewer ? (
           renderEditor()
+        ) : isReviewer ? (
+          <div className="w-full text-left px-4 py-3 overflow-hidden max-w-full">
+            {renderPreview()}
+          </div>
         ) : (
           <button
             onClick={() => setIsEditing(true)}
@@ -356,6 +360,7 @@ export function DescriptionBlock({
             {renderPreview()}
           </button>
         )}
+
       </div>
 
       {/* Per-column Version History Dialog */}
