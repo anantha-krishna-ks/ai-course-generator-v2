@@ -47,6 +47,7 @@ interface SectionCardProps {
   onObjectiveChange?: (objective: string) => void;
   pages?: PageEntry[];
   onPagesChange?: (pages: PageEntry[]) => void;
+  readOnly?: boolean;
 }
 
 const MAX_TITLE_LENGTH = 255;
