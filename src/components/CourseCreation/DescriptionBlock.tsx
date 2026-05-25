@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 import { GripVertical, Copy, Trash2, LayoutGrid, Type, Columns2, Columns3, Heading, GitBranch, Sparkles, History, Clock, RotateCcw } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
