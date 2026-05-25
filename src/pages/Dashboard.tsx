@@ -483,7 +483,7 @@ const Dashboard = () => {
             role="tablist"
             aria-label="Course collections"
             id="courses-heading"
-            className="relative w-full sm:max-w-2xl mx-auto grid grid-cols-3 gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-2xl bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
+            className="relative w-full sm:max-w-3xl mx-auto grid grid-cols-3 gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-2xl bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
 
           >
             {tabs.map((t, idx) => {
