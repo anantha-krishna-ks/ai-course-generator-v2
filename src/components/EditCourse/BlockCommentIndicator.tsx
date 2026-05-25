@@ -83,53 +83,70 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
       : "bg-primary text-primary-foreground border-primary/40 hover:bg-primary/90";
 
+  const tooltipLabel = total === 0
+    ? (isReviewer ? "Add comment" : "Add comment")
+    : allResolved
+      ? `${total} resolved comment${total > 1 ? "s" : ""}`
+      : `${unresolved} unresolved comment${unresolved > 1 ? "s" : ""}`;
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <motion.button
-          type="button"
-          initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.92 }}
-          aria-label={
-            total === 0
-              ? "Add reviewer comment"
-              : `${unresolved > 0 ? `${unresolved} unresolved` : `${total}`} reviewer comment${total > 1 ? "s" : ""}`
-          }
-          className={cn(
-            triggerClasses,
-            "inline-flex items-center justify-center w-9 h-9 rounded-full shadow-md border backdrop-blur-sm transition-colors",
-            bgClass,
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+      <TooltipProvider delayDuration={150}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <motion.button
+                type="button"
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                aria-label={
+                  total === 0
+                    ? "Add reviewer comment"
+                    : `${unresolved > 0 ? `${unresolved} unresolved` : `${total}`} reviewer comment${total > 1 ? "s" : ""}`
+                }
+                className={cn(
+                  triggerClasses,
+                  "inline-flex items-center justify-center w-9 h-9 rounded-full shadow-md border backdrop-blur-sm transition-colors",
+                  bgClass,
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                )}
+              >
+                {total === 0 ? (
+                  <MessageSquarePlus className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+                ) : allResolved ? (
+                  <CheckCircle2 className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+                ) : (
+                  <MessageSquare className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+                )}
+                {total > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-background border border-border text-[10px] font-bold tabular-nums leading-none text-foreground flex items-center justify-center shadow-sm">
+                    {unresolved > 0 ? unresolved : total}
+                  </span>
+                )}
+                <AnimatePresence>
+                  {total > 0 && !allResolved && !open && (
+                    <motion.span
+                      key="pulse"
+                      initial={{ opacity: 0.5, scale: 1 }}
+                      animate={{ opacity: 0, scale: 1.6 }}
+                      transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                      className="absolute inset-0 rounded-full bg-primary/40"
+                      aria-hidden="true"
+                    />
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          {!open && (
+            <TooltipContent side="top" className="text-xs">
+              {tooltipLabel}
+            </TooltipContent>
           )}
-        >
-          {total === 0 ? (
-            <MessageSquarePlus className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
-          ) : allResolved ? (
-            <CheckCircle2 className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
-          ) : (
-            <MessageSquare className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
-          )}
-          {total > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-background border border-border text-[10px] font-bold tabular-nums leading-none text-foreground flex items-center justify-center shadow-sm">
-              {unresolved > 0 ? unresolved : total}
-            </span>
-          )}
-          <AnimatePresence>
-            {total > 0 && !allResolved && !open && (
-              <motion.span
-                key="pulse"
-                initial={{ opacity: 0.5, scale: 1 }}
-                animate={{ opacity: 0, scale: 1.6 }}
-                transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
-                className="absolute inset-0 rounded-full bg-primary/40"
-                aria-hidden="true"
-              />
-            )}
-          </AnimatePresence>
-        </motion.button>
-      </PopoverTrigger>
+        </Tooltip>
+      </TooltipProvider>
       <PopoverContent
         side={variant === "floating" ? "left" : "bottom"}
         align="start"
