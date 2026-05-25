@@ -124,8 +124,8 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id: routeCourseId } = useParams<{ id: string }>();
-  const courseId = routeCourseId ?? "draft";
+  const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
+  const courseId = routeCourseIdAlt ?? routeCourseId ?? "draft";
   // Show More menu on the edit-course route, OR on any creator route when an existing
   // course is being loaded (initialRestoreState present). Hide for brand-new blank courses.
   const isEditCoursePage =
