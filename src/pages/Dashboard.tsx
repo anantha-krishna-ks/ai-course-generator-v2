@@ -450,118 +450,96 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Search */}
+        {/* Unified toolbar: Tabs + Search */}
         <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex justify-end mb-4"
+          className="mb-5"
         >
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
-            <Input
-              type="search"
-              placeholder="Search courses..."
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              aria-label="Search courses"
-              className="pl-10 h-10 rounded-full border border-border bg-card/80 backdrop-blur-sm focus:border-primary/50 focus-visible:ring-primary/20"
-            />
-          </div>
-        </motion.div>
-
-        {/* Modern segmented tabs */}
-        <motion.div
-          custom={2.5}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="mb-6"
-        >
-          <div
-            role="tablist"
-            aria-label="Course collections"
-            id="courses-heading"
-            className="relative w-full sm:max-w-3xl mx-auto grid grid-cols-3 gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-2xl bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
-
-          >
-            {tabs.map((t, idx) => {
-              const Icon = t.icon;
-              const isActive = activeTab === t.id;
-              const prevActive = idx > 0 && activeTab === tabs[idx - 1].id;
-              const showDivider = idx > 0 && !isActive && !prevActive;
-              return (
-                <button
-                  key={t.id}
-                  role="tab"
-                  aria-selected={isActive}
-                  aria-controls={`tabpanel-${t.id}`}
-                  id={`tab-${t.id}`}
-                  type="button"
-                  onClick={() => {
-                    setActiveTab(t.id);
-                    setCurrentPage(1);
-                  }}
-                  className={cn(
-                    "group relative flex items-center justify-center sm:justify-between gap-2 sm:gap-3 px-2 sm:px-5 py-2.5 sm:py-3.5 rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                    isActive
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-background/60",
-                  )}
-                >
-                  {showDivider && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 h-6 sm:h-7 w-px bg-border/70 -ml-0.5 sm:-ml-1"
-                    />
-                  )}
-                  {isActive && (
-                    <motion.span
-                      layoutId="dashboard-tab-active"
-                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.18)]"
-                      transition={{ type: "spring", stiffness: 360, damping: 30 }}
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  <span className="relative z-10 flex items-center gap-2 sm:gap-2.5 min-w-0">
-                    <span
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <div
+              role="tablist"
+              aria-label="Course collections"
+              id="courses-heading"
+              className="relative inline-flex w-full lg:w-auto items-center gap-1 p-1 rounded-full bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
+            >
+              {tabs.map((t) => {
+                const Icon = t.icon;
+                const isActive = activeTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`tabpanel-${t.id}`}
+                    id={`tab-${t.id}`}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(t.id);
+                      setCurrentPage(1);
+                    }}
+                    className={cn(
+                      "group relative flex-1 lg:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                      isActive
+                        ? "text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="dashboard-tab-active"
+                        className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] shadow-[0_6px_18px_-8px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.18)]"
+                        transition={{ type: "spring", stiffness: 360, damping: 30 }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <Icon
                       className={cn(
-                        "inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg shrink-0 transition-all duration-200",
-                        isActive
-                          ? "bg-primary-foreground/15 text-primary-foreground ring-1 ring-primary-foreground/20"
-                          : "bg-background text-muted-foreground border border-border/70 group-hover:text-foreground group-hover:border-border",
+                        "relative z-10 w-4 h-4 shrink-0",
+                        isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground",
                       )}
                       aria-hidden="true"
-                    >
-                      <Icon className="w-[18px] h-[18px] sm:w-5 sm:h-5" focusable="false" />
-                    </span>
+                      focusable="false"
+                    />
                     <span
                       className={cn(
-                        "font-semibold tracking-[-0.01em] truncate text-sm sm:text-[15px] md:text-base",
+                        "relative z-10 font-medium text-sm whitespace-nowrap",
                         isActive ? "text-primary-foreground" : "text-foreground",
                       )}
                     >
                       {t.label}
                     </span>
-                  </span>
+                    <span
+                      className={cn(
+                        "relative z-10 inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full text-[11px] font-bold tabular-nums shrink-0",
+                        isActive
+                          ? "bg-primary-foreground/90 text-primary"
+                          : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {t.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
 
-                  <span
-                    className={cn(
-                      "relative z-10 inline-flex items-center justify-center min-w-[28px] sm:min-w-[30px] h-6 sm:h-7 px-2 rounded-full text-xs sm:text-[13px] font-bold tabular-nums transition-colors shrink-0",
-                      isActive
-                        ? "bg-primary-foreground text-primary"
-                        : "bg-background text-foreground border border-border/70",
-                    )}
-                  >
-                    {t.count}
-                  </span>
-                </button>
-              );
-            })}
+            <div className="relative w-full lg:w-80 shrink-0">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
+              <Input
+                type="search"
+                placeholder="Search courses..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                aria-label="Search courses"
+                className="pl-10 h-10 rounded-full border border-border bg-white focus:border-primary/50 focus-visible:ring-primary/20"
+              />
+            </div>
           </div>
         </motion.div>
+
 
 
 
@@ -573,7 +551,7 @@ const Dashboard = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 p-4 rounded-xl bg-card/60 backdrop-blur-sm border border-border/80"
+            className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 px-1"
           >
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <span className="font-medium">
