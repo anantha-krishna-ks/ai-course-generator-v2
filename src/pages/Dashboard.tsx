@@ -483,9 +483,9 @@ const Dashboard = () => {
             role="tablist"
             aria-label="Course collections"
             id="courses-heading"
-            className="relative w-full grid grid-cols-3 gap-2 p-2 rounded-2xl bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
+            className="relative w-full grid grid-cols-3 rounded-2xl bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)] overflow-hidden"
           >
-            {tabs.map((t) => {
+            {tabs.map((t, idx) => {
               const Icon = t.icon;
               const isActive = activeTab === t.id;
               return (
@@ -501,37 +501,26 @@ const Dashboard = () => {
                     setCurrentPage(1);
                   }}
                   className={cn(
-                    "group relative flex items-center justify-between gap-3 px-4 sm:px-5 py-3 rounded-xl text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    "group relative flex items-center justify-center gap-3 px-4 sm:px-5 py-3.5 text-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
+                    idx > 0 && "before:content-[''] before:absolute before:left-0 before:top-3 before:bottom-3 before:w-px before:bg-border",
                     isActive
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-background/60",
+                      ? "text-primary bg-primary/[0.04]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
                   )}
                 >
-                  {isActive && (
-                    <motion.span
-                      layoutId="dashboard-tab-active"
-                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.18)]"
-                      transition={{ type: "spring", stiffness: 360, damping: 30 }}
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  <span className="relative z-10 flex items-center gap-2.5 min-w-0">
-                    <span
+                  <span className="flex items-center gap-2.5 min-w-0">
+                    <Icon
                       className={cn(
-                        "inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-all duration-200",
-                        isActive
-                          ? "bg-primary-foreground/15 text-primary-foreground ring-1 ring-primary-foreground/20"
-                          : "bg-background text-muted-foreground border border-border/70 group-hover:text-foreground group-hover:border-border",
+                        "w-[18px] h-[18px] shrink-0 transition-colors",
+                        isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
                       )}
                       aria-hidden="true"
-                    >
-                      <Icon className="w-[18px] h-[18px]" focusable="false" />
-                    </span>
+                      focusable="false"
+                    />
                     <span
                       className={cn(
                         "font-semibold tracking-[-0.01em] truncate text-[13.5px] sm:text-sm",
-                        isActive ? "text-primary-foreground" : "text-foreground",
+                        isActive ? "text-primary" : "text-foreground",
                       )}
                     >
                       {t.label}
@@ -540,14 +529,23 @@ const Dashboard = () => {
 
                   <span
                     className={cn(
-                      "relative z-10 inline-flex items-center justify-center min-w-[26px] h-6 px-2 rounded-full text-[11px] font-bold tabular-nums transition-colors shrink-0",
+                      "inline-flex items-center justify-center min-w-[24px] h-[22px] px-2 rounded-full text-[11px] font-bold tabular-nums transition-colors shrink-0",
                       isActive
-                        ? "bg-primary-foreground text-primary"
-                        : "bg-background text-foreground border border-border/70",
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground group-hover:bg-background group-hover:text-foreground",
                     )}
                   >
                     {t.count}
                   </span>
+
+                  {isActive && (
+                    <motion.span
+                      layoutId="dashboard-tab-active"
+                      className="absolute left-3 right-3 bottom-0 h-[2.5px] rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      aria-hidden="true"
+                    />
+                  )}
                 </button>
               );
             })}
