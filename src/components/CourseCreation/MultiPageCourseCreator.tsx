@@ -1128,11 +1128,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                 />
                               )}
 
-                              {index === 0 && !activeId && !isSidebarDragging && block.type !== "description" && (
+                              {!readOnly && index === 0 && !activeId && !isSidebarDragging && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
                                   <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} onDropBlock={(type, variant) => addGenericBlock(type, 0, variant)} />
                                 </div>
                               )}
+
 
                               <div className="relative">
                                 <BlockCommentIndicator courseId={courseId} blockId={block.id} />
