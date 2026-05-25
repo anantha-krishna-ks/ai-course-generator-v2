@@ -1858,6 +1858,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         </div>
       </DialogContent>
     </Dialog>
+    {readOnly && (
+      <FinishReviewDialog open={showFinishReviewDialog} onOpenChange={setShowFinishReviewDialog} />
+    )}
     </>
   );
 }
