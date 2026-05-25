@@ -48,6 +48,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
+import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 import { AddContentButton } from "./AddContentButton";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import { DropIndicator } from "./DropIndicator";
@@ -124,8 +125,8 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id: routeCourseId } = useParams<{ id: string }>();
-  const courseId = routeCourseId ?? "draft";
+  const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
+  const courseId = routeCourseIdAlt ?? routeCourseId ?? "draft";
   // Show More menu on the edit-course route, OR on any creator route when an existing
   // course is being loaded (initialRestoreState present). Hide for brand-new blank courses.
   const isEditCoursePage =
@@ -1123,6 +1124,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                               )}
 
                               <div className="relative">
+                                <BlockCommentIndicator courseId={courseId} blockId={block.id} />
                                 <div
                                   className={cn(
                                     "absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
