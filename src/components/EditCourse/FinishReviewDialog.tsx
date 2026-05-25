@@ -22,7 +22,6 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { courseId } = useParams<{ courseId: string }>();
-  const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const commentCount = useMemo(
