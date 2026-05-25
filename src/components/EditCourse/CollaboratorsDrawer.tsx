@@ -309,7 +309,7 @@ function PersonCard({
 
 /* ---------- review share link ---------- */
 
-function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: Person }) {
+function ReviewShareLink({ courseId }: { courseId: string }) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/review-course/${courseId}`;
@@ -325,17 +325,6 @@ function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: P
     }
   };
 
-  const handleEmail = () => {
-    const subject = encodeURIComponent("Please review this course");
-    const body = encodeURIComponent(
-      `Hi ${reviewer.name.split(" ")[0]},\n\nPlease review this course and leave your comments:\n${url}\n\nThanks!`,
-    );
-    window.location.href = `mailto:${reviewer.email}?subject=${subject}&body=${body}`;
-  };
-
-  const handleOpen = () => {
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
 
   return (
     <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 via-background to-background p-3 space-y-2.5">
