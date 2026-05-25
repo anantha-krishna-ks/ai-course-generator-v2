@@ -450,21 +450,42 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Header, Tabs and Search */}
+        {/* Search */}
         <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6"
+          className="flex justify-end mb-4"
+        >
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
+            <Input
+              type="search"
+              placeholder="Search courses..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              aria-label="Search courses"
+              className="pl-10 h-10 rounded-full border border-border bg-card/80 backdrop-blur-sm focus:border-primary/50 focus-visible:ring-primary/20"
+            />
+          </div>
+        </motion.div>
+
+        {/* Full-width Tabs */}
+        <motion.div
+          custom={2.5}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="mb-6"
         >
           <div
             role="tablist"
             aria-label="Course collections"
             id="courses-heading"
-            className="relative inline-flex items-center gap-1 p-1.5 rounded-full bg-card/80 backdrop-blur-sm border border-border/80 shadow-sm w-full lg:w-auto overflow-x-auto"
+            className="relative w-full flex items-stretch rounded-2xl bg-card/80 backdrop-blur-sm border border-border/80 shadow-sm overflow-hidden"
           >
-            {tabs.map((t) => {
+            {tabs.map((t, idx) => {
               const Icon = t.icon;
               const isActive = activeTab === t.id;
               return (
@@ -480,28 +501,47 @@ const Dashboard = () => {
                     setCurrentPage(1);
                   }}
                   className={cn(
-                    "relative inline-flex items-center gap-2 px-4 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    "group relative flex-1 inline-flex items-center justify-center gap-2.5 px-4 py-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
+                    idx > 0 && "border-l border-border/60",
                     isActive
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground",
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
                   )}
                 >
                   {isActive && (
                     <motion.span
-                      layoutId="dashboard-tab-pill"
-                      className="absolute inset-0 rounded-full bg-primary shadow-sm"
+                      layoutId="dashboard-tab-bg"
+                      className="absolute inset-0 bg-primary/[0.06]"
                       transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       aria-hidden="true"
                     />
                   )}
-                  <span className="relative z-10 inline-flex items-center gap-2">
-                    <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    {t.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="dashboard-tab-underline"
+                      className="absolute left-4 right-4 bottom-0 h-[3px] rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="relative z-10 inline-flex items-center gap-2.5">
                     <span
                       className={cn(
-                        "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-semibold tabular-nums transition-colors",
+                        "inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors",
                         isActive
-                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          ? "bg-primary/15 text-primary"
+                          : "bg-muted text-muted-foreground group-hover:text-foreground",
+                      )}
+                      aria-hidden="true"
+                    >
+                      <Icon className="w-4 h-4" focusable="false" />
+                    </span>
+                    <span className="font-semibold tracking-[-0.01em]">{t.label}</span>
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold tabular-nums transition-colors",
+                        isActive
+                          ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground",
                       )}
                     >
@@ -512,19 +552,8 @@ const Dashboard = () => {
               );
             })}
           </div>
-
-          <div className="relative w-full lg:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
-            <Input
-              type="search"
-              placeholder="Search courses..."
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              aria-label="Search courses"
-              className="pl-10 h-10 rounded-full border border-border bg-card/80 backdrop-blur-sm focus:border-primary/50 focus-visible:ring-primary/20"
-            />
-          </div>
         </motion.div>
+
 
 
         {/* Pagination Info and Controls */}
