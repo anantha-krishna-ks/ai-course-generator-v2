@@ -41,6 +41,7 @@ interface PreviewState {
   returnState?: MultiPageCourseCreatorRestoreState;
   initialPageId?: string | null;
   fontId?: string;
+  origin?: string;
 }
 
 const MultipageCoursePreview = () => {
