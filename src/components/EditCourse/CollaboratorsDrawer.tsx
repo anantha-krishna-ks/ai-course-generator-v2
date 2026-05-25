@@ -305,6 +305,37 @@ function PersonCard({
   );
 }
 
+/* ---------- review share link ---------- */
+
+function ReviewShareLink({ courseId }: { courseId: string }) {
+  const { toast } = useToast();
+  const url = `${window.location.origin}/review-course/${courseId}`;
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({ title: "Review link copied", description: "Share it with your reviewer." });
+    } catch {
+      toast({ title: "Could not copy link", description: url });
+    }
+  };
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-3 py-2">
+      <LinkIcon className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+      <span className="text-xs text-muted-foreground truncate flex-1" title={url}>{url}</span>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="rounded-full h-8 px-3 gap-1.5 text-xs"
+        onClick={handleCopy}
+        aria-label="Copy reviewer share link"
+      >
+        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+        Copy
+      </Button>
+    </div>
+  );
+}
+
 /* ---------- main ---------- */
 
 export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle }: Props) {
