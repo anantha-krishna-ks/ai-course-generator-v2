@@ -55,8 +55,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const allResolved = total > 0 && unresolved === 0;
   const threadTitle = useMemo(() => label ?? comments[0]?.blockLabel ?? "", [label, comments]);
 
-  // Author view: hide if no comments. Reviewer view: always show.
-  if (!isReviewer && total === 0) return null;
+  // Always show indicator (for both reviewer and author) so threads are reachable everywhere.
 
   const submitNew = () => {
     const t = draft.trim();
@@ -66,11 +65,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       courseTitle: courseTitle || threadTitle || "Course",
       blockId,
       blockLabel: label || threadTitle || blockId,
-      author: REVIEWER_NAME,
+      author: isReviewer ? REVIEWER_NAME : AUTHOR_NAME,
       text: t,
     });
     setDraft("");
-    toast({ title: "Comment posted", description: "The author will be notified." });
+    toast({ title: "Comment posted", description: isReviewer ? "The author will be notified." : "Visible to the reviewer." });
   };
 
   const triggerClasses = variant === "floating"
