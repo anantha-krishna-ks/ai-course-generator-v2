@@ -13,6 +13,7 @@ import logo from "@/assets/logo.png";
 import excelsoftLogo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
 import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 interface HeaderProps {
   showTokens?: boolean;
@@ -65,6 +66,8 @@ const Header = ({ showTokens = true, onTokenClick, tokenCount = "932,679" }: Hea
                 <span className="text-xs text-muted-foreground">tokens</span>
               </button>
             )}
+
+            <NotificationsBell />
 
             <Button
               size="sm"

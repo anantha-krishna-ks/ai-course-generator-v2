@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect, ReactNode, lazy, Suspense } f
 import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -124,6 +124,8 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id: routeCourseId } = useParams<{ id: string }>();
+  const courseId = routeCourseId ?? "draft";
   // Show More menu on the edit-course route, OR on any creator route when an existing
   // course is being loaded (initialRestoreState present). Hide for brand-new blank courses.
   const isEditCoursePage =
@@ -1608,6 +1610,13 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         open={showTokenDialog}
         onClose={() => setShowTokenDialog(false)}
         imageVersionHistory={[]}
+      />
+
+      <CollaboratorsDrawer
+        open={showCollaboratorsDrawer}
+        onOpenChange={setShowCollaboratorsDrawer}
+        courseId={courseId}
+        courseTitle={title}
       />
 
       <ScormPreferencesDialog
