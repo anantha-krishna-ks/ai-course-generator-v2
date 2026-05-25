@@ -745,13 +745,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
             {readOnly && (
               <Button
                 className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2"
-                onClick={() => {
-                  toast({
-                    title: "Review submitted",
-                    description: "Your comments have been shared with the author.",
-                  });
-                  setTimeout(() => navigate("/dashboard"), 600);
-                }}
+                onClick={() => setShowFinishReviewDialog(true)}
               >
                 <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
                 Finish review
