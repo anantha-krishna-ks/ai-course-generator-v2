@@ -74,11 +74,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   };
 
   const triggerClasses = variant === "floating"
-    ? "absolute z-20 top-2 -left-3 sm:-left-4"
+    ? "absolute z-20 top-2 -right-3 sm:-right-4"
     : "relative";
 
   const bgClass = total === 0
-    ? "bg-card border-border text-muted-foreground hover:text-primary hover:border-primary/40"
+    ? "bg-card border-border text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/5"
     : allResolved
       ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
       : "bg-primary text-primary-foreground border-primary/40 hover:bg-primary/90";
@@ -90,8 +90,8 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
           type="button"
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.06 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
           aria-label={
             total === 0
               ? "Add reviewer comment"
@@ -99,35 +99,35 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
           }
           className={cn(
             triggerClasses,
-            "inline-flex items-center gap-1 h-7 pl-1.5 pr-2 rounded-full shadow-sm border backdrop-blur-sm transition-colors",
+            "relative inline-flex items-center justify-center w-9 h-9 rounded-full shadow-md border backdrop-blur-sm transition-colors",
             bgClass,
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
           )}
         >
-          <span className="relative inline-flex items-center justify-center w-5 h-5 rounded-full">
-            {total === 0 ? (
-              <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            ) : allResolved ? (
-              <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            ) : (
-              <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          {total === 0 ? (
+            <MessageSquarePlus className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+          ) : allResolved ? (
+            <CheckCircle2 className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+          ) : (
+            <MessageSquare className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+          )}
+          {total > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-background border border-border text-[10px] font-bold tabular-nums leading-none text-foreground flex items-center justify-center shadow-sm">
+              {unresolved > 0 ? unresolved : total}
+            </span>
+          )}
+          <AnimatePresence>
+            {total > 0 && !allResolved && !open && (
+              <motion.span
+                key="pulse"
+                initial={{ opacity: 0.5, scale: 1 }}
+                animate={{ opacity: 0, scale: 1.6 }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                className="absolute inset-0 rounded-full bg-primary/40"
+                aria-hidden="true"
+              />
             )}
-            <AnimatePresence>
-              {total > 0 && !allResolved && !open && (
-                <motion.span
-                  key="pulse"
-                  initial={{ opacity: 0.6, scale: 1 }}
-                  animate={{ opacity: 0, scale: 1.8 }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
-                  className="absolute inset-0 rounded-full bg-primary-foreground/40"
-                  aria-hidden="true"
-                />
-              )}
-            </AnimatePresence>
-          </span>
-          <span className="text-[11px] font-semibold tabular-nums leading-none">
-            {total === 0 ? "Comment" : unresolved > 0 ? unresolved : total}
-          </span>
+          </AnimatePresence>
         </motion.button>
       </PopoverTrigger>
       <PopoverContent
