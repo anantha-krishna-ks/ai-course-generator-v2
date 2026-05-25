@@ -1400,6 +1400,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       onDuplicate={() => duplicateBlock(block.id)}
                                       autoFocus={block.id === lastAddedBlockId}
                                       aiEnabled={aiEnabled}
+                                      readOnly={readOnly}
                                       variant={block.variant}
                                       onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                       font={block.font}
