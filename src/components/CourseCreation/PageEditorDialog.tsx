@@ -1228,7 +1228,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               const currentBlockIdx = blockIdx;
 
                               // Drop indicator BEFORE first block
-                              if (blockIdx === 0 && isSidebarDragging) {
+                              if (blockIdx === 0 && isSidebarDragging && !readOnly) {
                                 elements.push(
                                   <DropIndicator
                                     key="drop-0"
