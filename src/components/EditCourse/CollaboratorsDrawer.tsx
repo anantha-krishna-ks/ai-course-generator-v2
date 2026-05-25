@@ -313,6 +313,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
     coAuthors: [],
   });
   const [editing, setEditing] = useState<null | "author" | "reviewer" | "co-author">(null);
+  const [pendingCoAuthor, setPendingCoAuthor] = useState<Person | null>(null);
 
   useEffect(() => {
     if (open) {
