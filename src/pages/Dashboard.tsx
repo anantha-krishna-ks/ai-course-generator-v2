@@ -47,6 +47,7 @@ import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
 import { LoadingCourseProgressDialog } from "@/components/Dashboard/LoadingCourseProgressDialog";
 import { getLoadingCourses, getProgress, getMinutesAgoLabel, removeLoadingCourse, type LoadingCourse } from "@/lib/loadingCourses";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const mockCourses = [
   { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
