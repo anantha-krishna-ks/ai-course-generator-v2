@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
@@ -120,6 +122,8 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 }
 
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds }: PageEditorDialogProps) {
+  const { id: routeId, courseId: routeCourseId } = useParams<{ id?: string; courseId?: string }>();
+  const courseId = routeCourseId ?? routeId ?? "draft";
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
@@ -1367,34 +1371,38 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else if (block.type === "text" && (block.variant === "any-block-layout" || block.variant === "any-block-layout-2")) {
                                 elements.push(
-                                  <NestedLayoutBlock
-                                    key={block.id}
-                                    id={block.id}
-                                    content={block.content}
-                                    onChange={(content) => updateBlock(block.id, content)}
-                                    onDelete={() => deleteBlock(block.id)}
-                                    onDuplicate={() => duplicateBlock(block.id)}
-                                    aiEnabled={aiEnabled}
-                                    columnCount={block.variant === "any-block-layout-2" ? 2 : 1}
-                                  />
+                                  <div key={block.id} className="relative">
+                                    <BlockCommentIndicator courseId={courseId} blockId={block.id} />
+                                    <NestedLayoutBlock
+                                      id={block.id}
+                                      content={block.content}
+                                      onChange={(content) => updateBlock(block.id, content)}
+                                      onDelete={() => deleteBlock(block.id)}
+                                      onDuplicate={() => duplicateBlock(block.id)}
+                                      aiEnabled={aiEnabled}
+                                      columnCount={block.variant === "any-block-layout-2" ? 2 : 1}
+                                    />
+                                  </div>
                                 );
                               } else {
                                 elements.push(
-                                  <ContentBlock
-                                    key={block.id}
-                                    id={block.id}
-                                    type={block.type}
-                                    content={block.content}
-                                    onChange={(content) => updateBlock(block.id, content)}
-                                    onDelete={() => deleteBlock(block.id)}
-                                    onDuplicate={() => duplicateBlock(block.id)}
-                                    autoFocus={block.id === lastAddedBlockId}
-                                    aiEnabled={aiEnabled}
-                                    variant={block.variant}
-                                    onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
-                                    font={block.font}
-                                    onFontChange={(fid) => updateBlockFont(block.id, fid)}
-                                  />
+                                  <div key={block.id} className="relative">
+                                    <BlockCommentIndicator courseId={courseId} blockId={block.id} />
+                                    <ContentBlock
+                                      id={block.id}
+                                      type={block.type}
+                                      content={block.content}
+                                      onChange={(content) => updateBlock(block.id, content)}
+                                      onDelete={() => deleteBlock(block.id)}
+                                      onDuplicate={() => duplicateBlock(block.id)}
+                                      autoFocus={block.id === lastAddedBlockId}
+                                      aiEnabled={aiEnabled}
+                                      variant={block.variant}
+                                      onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                      font={block.font}
+                                      onFontChange={(fid) => updateBlockFont(block.id, fid)}
+                                    />
+                                  </div>
                                 );
                               }
                               // Duplicate skeleton placeholder right after the source block
