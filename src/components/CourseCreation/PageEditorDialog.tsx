@@ -809,9 +809,10 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           Section {sectionIndex}
                                         </span>
                                         <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
+                                          {!readOnly && (
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                              <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                              <button className="p-1.5 rounded-md hover:bg-muted transition-colors" aria-label="More section options">
                                                 <Dots className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                               </button>
                                             </DropdownMenuTrigger>
@@ -831,7 +832,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               </DropdownMenuItem>
                                             </DropdownMenuContent>
                                           </DropdownMenu>
-                                          <span className="w-px h-4 bg-border" />
+                                          )}
+                                          {!readOnly && <span className="w-px h-4 bg-border" />}
+
                                           <button
                                             className="p-1.5 rounded-md hover:bg-muted transition-colors"
                                             onClick={() => setCollapsedSections(prev => {
