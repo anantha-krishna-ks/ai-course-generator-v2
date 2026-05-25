@@ -16,6 +16,7 @@ import { ImageBlock } from "./ImageBlock";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 
 interface PageEntry {
   id: string;
@@ -25,6 +26,7 @@ interface PageEntry {
 }
 
 interface SectionCardProps {
+  sectionId?: string;
   sectionNumber: number;
   title: string;
   inclusions?: string;
@@ -160,6 +162,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             Open
             <ChevronRight className="w-3 h-3" aria-hidden="true" focusable="false" />
           </button>
+          <BlockCommentIndicator
+            courseId=""
+            blockId={`page:${page.id}`}
+            label={`Page · ${page.title || "Untitled"}`}
+            variant="inline"
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 rounded-md hover:bg-muted transition-colors shrink-0" aria-label={`More options for ${pageDisplayTitle}`}>
@@ -319,6 +327,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
 }
 
 export function SectionCard({
+  sectionId,
   sectionNumber,
   title,
   inclusions = "",
@@ -490,6 +499,15 @@ export function SectionCard({
                   <ChevronRight className="w-3 h-3" aria-hidden="true" focusable="false" />
                 </button>
 
+                {sectionId && (
+                  <BlockCommentIndicator
+                    courseId=""
+                    blockId={`section:${sectionId}`}
+                    label={`Section ${sectionNumber} · ${title || "Untitled"}`}
+                    courseTitle={title}
+                    variant="inline"
+                  />
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="w-7 h-7 rounded-lg border border-border bg-muted/50 hover:bg-muted data-[state=open]:bg-primary/10 data-[state=open]:border-primary/30 flex items-center justify-center transition-colors shrink-0 group/trigger" aria-label="More section options">
