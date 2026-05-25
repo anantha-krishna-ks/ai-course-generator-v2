@@ -313,7 +313,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
     coAuthors: [],
   });
   const [editing, setEditing] = useState<null | "author" | "reviewer" | "co-author">(null);
-  const [pendingCoAuthor, setPendingCoAuthor] = useState<Person | null>(null);
+  const [pendingAuthor, setPendingAuthor] = useState<Person | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -365,10 +365,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                 <InlinePicker
                   placeholder="Search to change author…"
                   excludeIds={excludeIds}
-                  onPick={(p) => {
-                    setState((s) => ({ ...s, author: p }));
-                    setEditing(null);
-                  }}
+                  onPick={(p) => setPendingAuthor(p)}
                   onCancel={() => setEditing(null)}
                 />
               ) : state.author ? (
@@ -490,17 +487,14 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                     multi
                     selected={state.coAuthors}
                     excludeIds={[state.author?.id, state.reviewer?.id].filter(Boolean) as string[]}
-                    onPick={(p) => {
-                      const already = state.coAuthors.some((c) => c.id === p.id);
-                      if (already) {
-                        setState((s) => ({
-                          ...s,
-                          coAuthors: s.coAuthors.filter((c) => c.id !== p.id),
-                        }));
-                      } else {
-                        setPendingCoAuthor(p);
-                      }
-                    }}
+                    onPick={(p) =>
+                      setState((s) => ({
+                        ...s,
+                        coAuthors: s.coAuthors.some((c) => c.id === p.id)
+                          ? s.coAuthors.filter((c) => c.id !== p.id)
+                          : [...s.coAuthors, p],
+                      }))
+                    }
                     onRemoveSelected={(id) =>
                       setState((s) => ({
                         ...s,
@@ -538,18 +532,25 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
       </Sheet>
 
       <AlertDialog
-        open={!!pendingCoAuthor}
-        onOpenChange={(o) => !o && setPendingCoAuthor(null)}
+        open={!!pendingAuthor}
+        onOpenChange={(o) => !o && setPendingAuthor(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add as co-author?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {state.author ? "Change author?" : "Set as author?"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {pendingCoAuthor ? (
+              {pendingAuthor ? (
                 <>
-                  <span className="font-medium text-foreground">{pendingCoAuthor.name}</span>{" "}
-                  ({pendingCoAuthor.email}) will be able to edit{" "}
-                  <span className="font-medium text-foreground">"{courseTitle}"</span> alongside the author.
+                  <span className="font-medium text-foreground">{pendingAuthor.name}</span>{" "}
+                  ({pendingAuthor.email}) will {state.author ? "replace " : "become the author of "}
+                  {state.author ? (
+                    <>
+                      <span className="font-medium text-foreground">{state.author.name}</span> as author of{" "}
+                    </>
+                  ) : null}
+                  <span className="font-medium text-foreground">"{courseTitle}"</span>.
                 </>
               ) : null}
             </AlertDialogDescription>
@@ -559,11 +560,12 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
             <AlertDialogAction
               className="rounded-full"
               onClick={() => {
-                if (pendingCoAuthor) {
-                  const p = pendingCoAuthor;
-                  setState((s) => ({ ...s, coAuthors: [...s.coAuthors, p] }));
+                if (pendingAuthor) {
+                  const p = pendingAuthor;
+                  setState((s) => ({ ...s, author: p }));
+                  setEditing(null);
                 }
-                setPendingCoAuthor(null);
+                setPendingAuthor(null);
               }}
             >
               Confirm
