@@ -48,6 +48,12 @@ export function AuthorReviewCommentsButton({ courseId, courseTitle, defaultOpen 
     }
   }, [open, unread, courseId]);
 
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener("review-comments:open", handler);
+    return () => window.removeEventListener("review-comments:open", handler);
+  }, []);
+
   return (
     <>
       {/* Floating trigger */}
