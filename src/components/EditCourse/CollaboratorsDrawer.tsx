@@ -1,10 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, UserCog, ShieldCheck, Users, Search, Check, UserPlus, Pencil } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  Search,
+  Check,
+  ChevronDown,
+  Users,
+  Trash2,
+  Crown,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   getCollaborators,
@@ -15,12 +36,29 @@ import {
 } from "@/services/collaboratorsStore";
 import { cn } from "@/lib/utils";
 
+type Role = "author" | "reviewer" | "co-author";
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   courseId: string;
   courseTitle: string;
 }
+
+interface Assignment {
+  person: Person;
+  role: Role;
+}
+
+/* ---------- helpers ---------- */
+
+const ROLE_META: Record<Role, { label: string; icon: React.ElementType; hint: string }> = {
+  author: { label: "Author", icon: Crown, hint: "Owns and leads the course" },
+  reviewer: { label: "Reviewer", icon: ShieldCheck, hint: "Signs off on the course" },
+  "co-author": { label: "Co-author", icon: UserRound, hint: "Can edit alongside the author" },
+};
+
+const ROLE_ORDER: Role[] = ["author", "reviewer", "co-author"];
 
 function initials(name: string) {
   return name
@@ -31,17 +69,11 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-/* ---------- Reusable bits ---------- */
-
-function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  const dims =
-    size === "lg" ? "w-11 h-11 text-sm" : size === "sm" ? "w-6 h-6 text-[10px]" : "w-9 h-9 text-xs";
+function Avatar({ name, size = 36 }: { name: string; size?: number }) {
   return (
     <span
-      className={cn(
-        "rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold shrink-0",
-        dims,
-      )}
+      style={{ width: size, height: size, fontSize: size * 0.34 }}
+      className="rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold shrink-0"
       aria-hidden="true"
     >
       {initials(name)}
@@ -49,352 +81,325 @@ function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg"
   );
 }
 
-function PersonRow({
-  person,
-  trailing,
-}: {
-  person: Person;
-  trailing?: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-3 min-w-0">
-      <Avatar name={person.name} size="lg" />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-foreground truncate">{person.name}</p>
-        <p className="text-xs text-muted-foreground truncate">{person.email}</p>
-      </div>
-      {trailing}
-    </div>
-  );
+/* ---------- state utils ---------- */
+
+function toAssignments(s: CourseCollaborators): Assignment[] {
+  const out: Assignment[] = [];
+  if (s.author) out.push({ person: s.author, role: "author" });
+  if (s.reviewer) out.push({ person: s.reviewer, role: "reviewer" });
+  s.coAuthors.forEach((p) => out.push({ person: p, role: "co-author" }));
+  return out;
 }
 
-function PersonChip({ person, onRemove }: { person: Person; onRemove: () => void }) {
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full bg-primary/5 border border-primary/20 pl-1 pr-1.5 py-1 text-sm max-w-full">
-      <Avatar name={person.name} size="sm" />
-      <span className="text-foreground font-medium truncate max-w-[140px]">{person.name}</span>
-      <button
-        type="button"
-        onClick={onRemove}
-        aria-label={`Remove ${person.name}`}
-        className="rounded-full p-0.5 hover:bg-primary/10 text-muted-foreground hover:text-foreground shrink-0"
-      >
-        <X className="w-3 h-3" aria-hidden="true" focusable="false" />
-      </button>
-    </div>
-  );
+function fromAssignments(list: Assignment[]): CourseCollaborators {
+  return {
+    author: list.find((a) => a.role === "author")?.person ?? null,
+    reviewer: list.find((a) => a.role === "reviewer")?.person ?? null,
+    coAuthors: list.filter((a) => a.role === "co-author").map((a) => a.person),
+  };
 }
 
-/* ---------- Autocomplete ---------- */
-
-function PersonAutocomplete({
-  placeholder,
-  excludeIds,
-  onPick,
-  autoFocus = false,
-}: {
-  placeholder: string;
-  excludeIds: string[];
-  onPick: (p: Person) => void;
-  autoFocus?: boolean;
-}) {
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState(false);
-  const results = useMemo(() => searchPeople(query, excludeIds), [query, excludeIds]);
-
-  return (
-    <div className="relative">
-      <div className="relative">
-        <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
-          aria-hidden="true"
-        />
-        <Input
-          value={query}
-          autoFocus={autoFocus}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setOpen(true);
-          }}
-          onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
-          placeholder={placeholder}
-          className="pl-9 h-10 rounded-full bg-background"
-          aria-label={placeholder}
-        />
-      </div>
-      {open && (
-        <div className="absolute z-50 mt-1.5 w-full rounded-xl border border-border bg-popover shadow-lg overflow-hidden">
-          {results.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-center text-muted-foreground">
-              No matches for "{query}"
-            </p>
-          ) : (
-            <ScrollArea className="max-h-64">
-              <ul role="listbox" className="py-1">
-                {results.map((p) => (
-                  <li key={p.id}>
-                    <button
-                      type="button"
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        onPick(p);
-                        setQuery("");
-                        setOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 hover:bg-accent flex items-center gap-3"
-                    >
-                      <Avatar name={p.name} />
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-medium text-foreground truncate">
-                          {p.name}
-                        </span>
-                        <span className="block text-xs text-muted-foreground truncate">
-                          {p.email}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </ScrollArea>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ---------- Section shell ---------- */
-
-function SectionCard({
-  icon: Icon,
-  title,
-  hint,
-  badge,
-  children,
-}: {
-  icon: React.ElementType;
-  title: string;
-  hint: string;
-  badge?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-2xl border border-border bg-card/60 p-4 space-y-3">
-      <header className="flex items-start gap-3">
-        <span
-          className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0"
-          aria-hidden="true"
-        >
-          <Icon className="w-4 h-4" aria-hidden />
-        </span>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-            {badge}
-          </div>
-          <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>
-        </div>
-      </header>
-      <div className="space-y-3">{children}</div>
-    </section>
-  );
-}
-
-/* ---------- Main ---------- */
+/* ---------- main ---------- */
 
 export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle }: Props) {
   const { toast } = useToast();
-  const [state, setState] = useState<CourseCollaborators>({
-    author: null,
-    reviewer: null,
-    coAuthors: [],
-  });
-  const [editingAuthor, setEditingAuthor] = useState(false);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [pendingRole, setPendingRole] = useState<Role>("co-author");
+  const [query, setQuery] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
-      setState(getCollaborators(courseId));
-      setEditingAuthor(false);
+      setAssignments(toAssignments(getCollaborators(courseId)));
+      setQuery("");
+      setPendingRole("co-author");
     }
   }, [open, courseId]);
 
-  const excludeIds = [
-    state.author?.id,
-    state.reviewer?.id,
-    ...state.coAuthors.map((c) => c.id),
-  ].filter(Boolean) as string[];
+  const excludeIds = useMemo(() => assignments.map((a) => a.person.id), [assignments]);
+  const results = useMemo(() => searchPeople(query, excludeIds), [query, excludeIds]);
 
-  const totalAssigned =
-    (state.author ? 1 : 0) + (state.reviewer ? 1 : 0) + state.coAuthors.length;
+  const hasAuthor = assignments.some((a) => a.role === "author");
+  const hasReviewer = assignments.some((a) => a.role === "reviewer");
+
+  // Group for display
+  const grouped = useMemo(() => {
+    const map: Record<Role, Assignment[]> = { author: [], reviewer: [], "co-author": [] };
+    assignments.forEach((a) => map[a.role].push(a));
+    return map;
+  }, [assignments]);
+
+  const addPerson = (p: Person) => {
+    // If role is author/reviewer and already taken, replace it.
+    setAssignments((prev) => {
+      let next = prev.filter((a) => a.person.id !== p.id);
+      if (pendingRole === "author") next = next.filter((a) => a.role !== "author");
+      if (pendingRole === "reviewer") next = next.filter((a) => a.role !== "reviewer");
+      return [...next, { person: p, role: pendingRole }];
+    });
+    setQuery("");
+  };
+
+  const changeRole = (id: string, role: Role) => {
+    setAssignments((prev) => {
+      let next = prev.map((a) => ({ ...a }));
+      if (role === "author") next = next.filter((a) => a.role !== "author" || a.person.id === id);
+      if (role === "reviewer") next = next.filter((a) => a.role !== "reviewer" || a.person.id === id);
+      return next.map((a) => (a.person.id === id ? { ...a, role } : a));
+    });
+  };
+
+  const remove = (id: string) =>
+    setAssignments((prev) => prev.filter((a) => a.person.id !== id));
 
   const handleSave = () => {
-    saveCollaborators(courseId, courseTitle, state);
+    saveCollaborators(courseId, courseTitle, fromAssignments(assignments));
     toast({ title: "Collaborators updated", description: `Saved for "${courseTitle}".` });
     onOpenChange(false);
   };
+
+  const RoleIcon = ROLE_META[pendingRole].icon;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col gap-0">
         {/* Header */}
-        <SheetHeader className="px-6 pt-6 pb-5 border-b bg-gradient-to-b from-primary/5 to-transparent space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span
-              className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center"
-              aria-hidden="true"
-            >
-              <Users className="w-4 h-4" />
-            </span>
-            <SheetTitle className="text-lg">Course collaborators</SheetTitle>
-          </div>
-          <SheetDescription className="text-xs leading-relaxed">
-            Manage who can author, review, and edit{" "}
-            <span className="font-medium text-foreground">"{courseTitle}"</span>.
+        <SheetHeader className="px-6 pt-6 pb-4 border-b space-y-1 text-left">
+          <SheetTitle className="text-lg font-semibold">Share course</SheetTitle>
+          <SheetDescription className="text-xs text-muted-foreground truncate">
+            {courseTitle}
           </SheetDescription>
-          <div className="flex items-center gap-2 pt-1">
-            <Badge variant="secondary" className="rounded-full text-[11px]">
-              {totalAssigned} {totalAssigned === 1 ? "person" : "people"} assigned
-            </Badge>
-          </div>
         </SheetHeader>
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 bg-muted/30">
-          {/* Author */}
-          <SectionCard
-            icon={UserCog}
-            title="Author"
-            hint="The primary owner responsible for this course."
-          >
-            {state.author && !editingAuthor ? (
-              <div className="flex items-center justify-between rounded-xl border border-border bg-background p-3">
-                <PersonRow
-                  person={state.author}
-                  trailing={<Badge variant="secondary" className="rounded-full">Current</Badge>}
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-full ml-2 gap-1 h-8 px-3 text-xs"
-                  onClick={() => setEditingAuthor(true)}
-                  aria-label="Change author"
-                >
-                  <Pencil className="w-3 h-3" aria-hidden="true" />
-                  Change
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <PersonAutocomplete
-                  placeholder="Search by name or email…"
-                  excludeIds={excludeIds}
-                  autoFocus
-                  onPick={(p) => {
-                    setState((s) => ({ ...s, author: p }));
-                    setEditingAuthor(false);
-                  }}
-                />
-                {state.author && (
-                  <button
-                    type="button"
-                    onClick={() => setEditingAuthor(false)}
-                    className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
-                  >
-                    Cancel change
-                  </button>
+        {/* Invite bar */}
+        <div className="px-6 pt-5 pb-3 space-y-2 border-b bg-background">
+          <div className="relative flex items-center gap-2 rounded-full border border-input bg-background pl-3 pr-1 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background transition-shadow">
+            <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
+            <Input
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setDropdownOpen(true);
+              }}
+              onFocus={() => setDropdownOpen(true)}
+              onBlur={() => setTimeout(() => setDropdownOpen(false), 150)}
+              placeholder="Add people by name or email"
+              aria-label="Add people by name or email"
+              className="h-10 border-0 px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
+            />
+            <RoleMenu value={pendingRole} onChange={setPendingRole} compact />
+          </div>
+
+          {dropdownOpen && (
+            <div className="relative">
+              <div className="absolute z-50 left-0 right-0 -mt-1 rounded-xl border border-border bg-popover shadow-lg overflow-hidden">
+                {results.length === 0 ? (
+                  <p className="px-4 py-5 text-sm text-center text-muted-foreground">
+                    {query ? `No matches for "${query}"` : "Everyone has been added"}
+                  </p>
+                ) : (
+                  <ScrollArea className="max-h-64">
+                    <ul role="listbox" className="py-1">
+                      {results.map((p) => (
+                        <li key={p.id}>
+                          <button
+                            type="button"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              addPerson(p);
+                            }}
+                            className="w-full text-left px-3 py-2 hover:bg-accent flex items-center gap-3"
+                          >
+                            <Avatar name={p.name} size={32} />
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-sm font-medium text-foreground truncate">
+                                {p.name}
+                              </span>
+                              <span className="block text-xs text-muted-foreground truncate">
+                                {p.email}
+                              </span>
+                            </span>
+                            <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                              <RoleIcon className="w-3 h-3" aria-hidden="true" />
+                              {ROLE_META[pendingRole].label}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </ScrollArea>
                 )}
               </div>
-            )}
-          </SectionCard>
+            </div>
+          )}
+        </div>
 
-          {/* Reviewer */}
-          <SectionCard
-            icon={ShieldCheck}
-            title="Reviewer"
-            hint="A single reviewer who signs off on the course."
-            badge={
-              state.reviewer ? (
-                <Badge variant="secondary" className="rounded-full">Assigned</Badge>
-              ) : null
-            }
-          >
-            {state.reviewer ? (
-              <div className="flex items-center justify-between rounded-xl border border-border bg-background p-3">
-                <PersonRow person={state.reviewer} />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-full ml-2 h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                  onClick={() => setState((s) => ({ ...s, reviewer: null }))}
-                  aria-label={`Remove reviewer ${state.reviewer.name}`}
-                >
-                  <X className="w-4 h-4" aria-hidden="true" />
-                </Button>
+        {/* People list */}
+        <div className="flex-1 overflow-y-auto px-3 py-2">
+          {assignments.length === 0 ? (
+            <div className="flex flex-col items-center justify-center text-center px-6 py-16 text-muted-foreground">
+              <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-3">
+                <Users className="w-6 h-6" aria-hidden="true" />
               </div>
-            ) : (
-              <PersonAutocomplete
-                placeholder="Assign a reviewer by name or email…"
-                excludeIds={excludeIds}
-                onPick={(p) => setState((s) => ({ ...s, reviewer: p }))}
-              />
-            )}
-          </SectionCard>
-
-          {/* Co-authors */}
-          <SectionCard
-            icon={Users}
-            title="Co-authors"
-            hint="Teammates who can edit alongside the author."
-            badge={
-              state.coAuthors.length > 0 ? (
-                <Badge variant="secondary" className="rounded-full">
-                  {state.coAuthors.length}
-                </Badge>
-              ) : null
-            }
-          >
-            <PersonAutocomplete
-              placeholder="Add a co-author by name or email…"
-              excludeIds={excludeIds}
-              onPick={(p) => setState((s) => ({ ...s, coAuthors: [...s.coAuthors, p] }))}
-            />
-            {state.coAuthors.length > 0 ? (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {state.coAuthors.map((p) => (
-                  <PersonChip
-                    key={p.id}
-                    person={p}
-                    onRemove={() =>
-                      setState((s) => ({
-                        ...s,
-                        coAuthors: s.coAuthors.filter((c) => c.id !== p.id),
-                      }))
-                    }
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
-                <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
-                No co-authors added yet.
-              </div>
-            )}
-          </SectionCard>
+              <p className="text-sm font-medium text-foreground">No one added yet</p>
+              <p className="text-xs mt-1">Search above to add an author, reviewer, or co-authors.</p>
+            </div>
+          ) : (
+            <div className="py-2 space-y-4">
+              {ROLE_ORDER.map((role) => {
+                const items = grouped[role];
+                if (items.length === 0) return null;
+                return (
+                  <div key={role}>
+                    <div className="px-3 pb-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                      {ROLE_META[role].label}
+                      {items.length > 1 ? `s · ${items.length}` : ""}
+                    </div>
+                    <ul className="space-y-0.5">
+                      {items.map((a) => (
+                        <PersonRow
+                          key={a.person.id}
+                          assignment={a}
+                          hasAuthor={hasAuthor}
+                          hasReviewer={hasReviewer}
+                          onChangeRole={(r) => changeRole(a.person.id, r)}
+                          onRemove={() => remove(a.person.id)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Footer */}
-        <SheetFooter className="px-6 py-4 border-t bg-card flex-row gap-2 sm:justify-end">
-          <Button variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button className="rounded-full gap-1.5" onClick={handleSave}>
-            <Check className="w-4 h-4" aria-hidden="true" />
-            Save changes
-          </Button>
-        </SheetFooter>
+        <div className="px-6 py-4 border-t bg-card flex items-center justify-between gap-2">
+          <p className="text-xs text-muted-foreground">
+            {assignments.length} {assignments.length === 1 ? "person" : "people"} with access
+          </p>
+          <div className="flex gap-2">
+            <Button variant="ghost" className="rounded-full" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button className="rounded-full gap-1.5" onClick={handleSave}>
+              <Check className="w-4 h-4" aria-hidden="true" />
+              Save
+            </Button>
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+/* ---------- row + role menu ---------- */
+
+function PersonRow({
+  assignment,
+  hasAuthor,
+  hasReviewer,
+  onChangeRole,
+  onRemove,
+}: {
+  assignment: Assignment;
+  hasAuthor: boolean;
+  hasReviewer: boolean;
+  onChangeRole: (r: Role) => void;
+  onRemove: () => void;
+}) {
+  const { person, role } = assignment;
+  return (
+    <li className="group flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted/60 transition-colors">
+      <Avatar name={person.name} />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-foreground truncate">{person.name}</p>
+        <p className="text-xs text-muted-foreground truncate">{person.email}</p>
+      </div>
+      <RoleMenu
+        value={role}
+        onChange={onChangeRole}
+        onRemove={onRemove}
+        disabledRoles={[
+          ...(hasAuthor && role !== "author" ? (["author"] as Role[]) : []),
+          ...(hasReviewer && role !== "reviewer" ? (["reviewer"] as Role[]) : []),
+        ]}
+      />
+    </li>
+  );
+}
+
+function RoleMenu({
+  value,
+  onChange,
+  onRemove,
+  disabledRoles = [],
+  compact = false,
+}: {
+  value: Role;
+  onChange: (r: Role) => void;
+  onRemove?: () => void;
+  disabledRoles?: Role[];
+  compact?: boolean;
+}) {
+  const Icon = ROLE_META[value].icon;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Role: ${ROLE_META[value].label}. Click to change.`}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full text-xs font-medium transition-colors shrink-0",
+            compact
+              ? "h-8 px-3 bg-muted hover:bg-muted/80 text-foreground"
+              : "h-8 px-3 text-muted-foreground hover:bg-background hover:text-foreground border border-transparent hover:border-border",
+          )}
+        >
+          <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>{ROLE_META[value].label}</span>
+          <ChevronDown className="w-3 h-3 opacity-60" aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        {ROLE_ORDER.map((r) => {
+          const meta = ROLE_META[r];
+          const RIcon = meta.icon;
+          const disabled = disabledRoles.includes(r) && r !== value;
+          return (
+            <DropdownMenuItem
+              key={r}
+              disabled={disabled}
+              onSelect={() => onChange(r)}
+              className="flex items-start gap-2.5 cursor-pointer py-2"
+            >
+              <RIcon className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{meta.label}</span>
+                  {value === r && <Check className="w-3.5 h-3.5 text-primary" aria-hidden="true" />}
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-snug">
+                  {disabled ? "Already assigned — replace from that person's row" : meta.hint}
+                </p>
+              </div>
+            </DropdownMenuItem>
+          );
+        })}
+        {onRemove && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onSelect={onRemove}
+              className="text-destructive focus:text-destructive cursor-pointer gap-2"
+            >
+              <Trash2 className="w-4 h-4" aria-hidden="true" />
+              Remove access
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
