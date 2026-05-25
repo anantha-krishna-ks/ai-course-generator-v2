@@ -1420,7 +1420,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               }
                               // Drop indicator / AddContentButton AFTER each block
-                              if (isSidebarDragging) {
+                              if (readOnly) {
+                                // no-op: no drop indicator, no add button
+                              } else if (isSidebarDragging) {
                                 elements.push(
                                   <DropIndicator
                                     key={`drop-${currentBlockIdx + 1}`}
