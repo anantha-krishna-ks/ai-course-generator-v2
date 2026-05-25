@@ -373,9 +373,11 @@ All colors MUST be HSL.
 [data-review-mode="true"] [aria-label*="thumbnail" i]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [data-tour="add-button"]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [data-tour="add-page-button"]:not([data-review-comment-thread] *),
-[data-review-mode="true"] [data-tour="add-section-button"]:not([data-review-comment-thread] *) {
+[data-review-mode="true"] [data-tour="add-section-button"]:not([data-review-comment-thread] *),
+[data-review-mode="true"] [data-block-toolbar="true"] {
   display: none !important;
 }
+
 
 /* Inputs/textareas remain visible but are not editable */
 [data-review-mode="true"] input:not([type="checkbox"]):not([type="radio"]),
