@@ -99,7 +99,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
           }
           className={cn(
             triggerClasses,
-            "relative inline-flex items-center justify-center w-9 h-9 rounded-full shadow-md border backdrop-blur-sm transition-colors",
+            "inline-flex items-center justify-center w-9 h-9 rounded-full shadow-md border backdrop-blur-sm transition-colors",
             bgClass,
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
           )}
