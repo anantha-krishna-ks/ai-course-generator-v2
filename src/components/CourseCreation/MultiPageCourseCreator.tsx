@@ -1238,11 +1238,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </DndContext>
 
               {/* Add content button when no blocks exist */}
-              {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
+              {!readOnly && contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
                   <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt)} onDropBlock={(type, variant) => addGenericBlock(type, undefined, variant)} forceOpen={tourStep === 1} />
                 </div>
               )}
+
             </div>
           </ScrollArea>
         </div>
