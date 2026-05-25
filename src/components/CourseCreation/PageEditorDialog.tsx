@@ -679,8 +679,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                             </div>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                      </DropdownMenu>
+                    </div>
+                  )}
 
                   {/* Dynamic outline items */}
                   {courseItems.length > 0 ? (
