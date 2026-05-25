@@ -489,14 +489,17 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                     multi
                     selected={state.coAuthors}
                     excludeIds={[state.author?.id, state.reviewer?.id].filter(Boolean) as string[]}
-                    onPick={(p) =>
-                      setState((s) => ({
-                        ...s,
-                        coAuthors: s.coAuthors.some((c) => c.id === p.id)
-                          ? s.coAuthors.filter((c) => c.id !== p.id)
-                          : [...s.coAuthors, p],
-                      }))
-                    }
+                    onPick={(p) => {
+                      const already = state.coAuthors.some((c) => c.id === p.id);
+                      if (already) {
+                        setState((s) => ({
+                          ...s,
+                          coAuthors: s.coAuthors.filter((c) => c.id !== p.id),
+                        }));
+                      } else {
+                        setPendingCoAuthor(p);
+                      }
+                    }}
                     onRemoveSelected={(id) =>
                       setState((s) => ({
                         ...s,
