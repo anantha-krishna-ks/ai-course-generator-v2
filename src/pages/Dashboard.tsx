@@ -563,13 +563,19 @@ const Dashboard = () => {
         )}
 
         {/* Courses Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8" role="list" aria-labelledby="courses-heading"
-        >
-          {loadingCourses.map((lc) => {
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            id={`tabpanel-${activeTab}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${activeTab}`}
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+            transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8"
+          >
+          {activeTab === "my" && loadingCourses.map((lc) => {
             const pct = getProgress(lc);
             return (
               <motion.div key={lc.id} variants={cardItem} role="listitem">
