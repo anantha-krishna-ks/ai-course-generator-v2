@@ -131,7 +131,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
         </motion.button>
       </PopoverTrigger>
       <PopoverContent
-        side={variant === "floating" ? "right" : "bottom"}
+        side={variant === "floating" ? "left" : "bottom"}
         align="start"
         sideOffset={10}
         data-review-comment-thread="true"
