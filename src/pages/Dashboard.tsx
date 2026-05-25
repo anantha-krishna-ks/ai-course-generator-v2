@@ -688,7 +688,9 @@ const Dashboard = () => {
               )}
             </div>
           )}
-        </motion.div>
+          </motion.div>
+        </AnimatePresence>
+
 
         {/* Pagination Controls */}
         {filteredCourses.length > 0 && (
