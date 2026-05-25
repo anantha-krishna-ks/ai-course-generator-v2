@@ -532,18 +532,25 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
       </Sheet>
 
       <AlertDialog
-        open={!!pendingCoAuthor}
-        onOpenChange={(o) => !o && setPendingCoAuthor(null)}
+        open={!!pendingAuthor}
+        onOpenChange={(o) => !o && setPendingAuthor(null)}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add as co-author?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {state.author ? "Change author?" : "Set as author?"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {pendingCoAuthor ? (
+              {pendingAuthor ? (
                 <>
-                  <span className="font-medium text-foreground">{pendingCoAuthor.name}</span>{" "}
-                  ({pendingCoAuthor.email}) will be able to edit{" "}
-                  <span className="font-medium text-foreground">"{courseTitle}"</span> alongside the author.
+                  <span className="font-medium text-foreground">{pendingAuthor.name}</span>{" "}
+                  ({pendingAuthor.email}) will {state.author ? "replace " : "become the author of "}
+                  {state.author ? (
+                    <>
+                      <span className="font-medium text-foreground">{state.author.name}</span> as author of{" "}
+                    </>
+                  ) : null}
+                  <span className="font-medium text-foreground">"{courseTitle}"</span>.
                 </>
               ) : null}
             </AlertDialogDescription>
@@ -553,11 +560,12 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
             <AlertDialogAction
               className="rounded-full"
               onClick={() => {
-                if (pendingCoAuthor) {
-                  const p = pendingCoAuthor;
-                  setState((s) => ({ ...s, coAuthors: [...s.coAuthors, p] }));
+                if (pendingAuthor) {
+                  const p = pendingAuthor;
+                  setState((s) => ({ ...s, author: p }));
+                  setEditing(null);
                 }
-                setPendingCoAuthor(null);
+                setPendingAuthor(null);
               }}
             >
               Confirm
