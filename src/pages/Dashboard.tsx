@@ -158,13 +158,26 @@ const Dashboard = () => {
     ? (tokenData.consumedTokens / tokenData.totalTokens) * 100 
     : 0;
 
+  // Split courses by role (demo data assignment)
+  const coursesByTab = {
+    my: mockCourses.slice(0, 9),
+    review: mockCourses.slice(9, 12),
+    shared: mockCourses.slice(12, 15),
+  } as const;
+
+  const tabs = [
+    { id: "my" as const, label: "My Courses", icon: Crown, count: coursesByTab.my.length },
+    { id: "review" as const, label: "Review Courses", icon: ShieldCheck, count: coursesByTab.review.length },
+    { id: "shared" as const, label: "Shared Courses", icon: Share2, count: coursesByTab.shared.length },
+  ];
+
   // Pagination logic
-  const filteredCourses = mockCourses.filter((course) =>
+  const filteredCourses = coursesByTab[activeTab].filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
-  const effectiveRecordsPerPage = recordsPerPage === 'all' ? filteredCourses.length : recordsPerPage;
-  const totalPages = Math.ceil(filteredCourses.length / effectiveRecordsPerPage);
+
+  const effectiveRecordsPerPage = recordsPerPage === 'all' ? Math.max(filteredCourses.length, 1) : recordsPerPage;
+  const totalPages = Math.max(1, Math.ceil(filteredCourses.length / effectiveRecordsPerPage));
   const startIndex = (currentPage - 1) * effectiveRecordsPerPage;
   const endIndex = startIndex + effectiveRecordsPerPage;
   const currentCourses = filteredCourses.slice(startIndex, endIndex);
