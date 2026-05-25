@@ -504,7 +504,7 @@ const Dashboard = () => {
                     "group relative flex items-center justify-between gap-3 px-4 sm:px-5 py-3 rounded-xl text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                     isActive
                       ? "text-primary-foreground"
-                      : "bg-background border border-border text-muted-foreground shadow-[0_1px_2px_hsl(0_0%_0%/0.04)] hover:border-primary/40 hover:text-foreground hover:shadow-sm hover:-translate-y-0.5",
+                      : "text-muted-foreground hover:text-foreground hover:bg-background/60",
                   )}
                 >
                   {isActive && (
