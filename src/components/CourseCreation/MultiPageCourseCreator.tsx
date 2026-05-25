@@ -680,7 +680,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions, fontId]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" data-review-mode={readOnly ? "true" : undefined}>
       {/* Skip to main content */}
       <a href="#course-main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md">
         Skip to main content
@@ -728,8 +728,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
-            <FontSelectorDropdown value={fontId} onChange={setFontId} />
-            <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
+            {!readOnly && <FontSelectorDropdown value={fontId} onChange={setFontId} />}
+            {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
              <Tooltip>
                <TooltipTrigger asChild>
                   <Button
