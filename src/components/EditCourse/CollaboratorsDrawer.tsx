@@ -309,7 +309,7 @@ function PersonCard({
 
 /* ---------- review share link ---------- */
 
-function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: Person }) {
+function ReviewShareLink({ courseId }: { courseId: string }) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/review-course/${courseId}`;
@@ -325,17 +325,6 @@ function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: P
     }
   };
 
-  const handleEmail = () => {
-    const subject = encodeURIComponent("Please review this course");
-    const body = encodeURIComponent(
-      `Hi ${reviewer.name.split(" ")[0]},\n\nPlease review this course and leave your comments:\n${url}\n\nThanks!`,
-    );
-    window.location.href = `mailto:${reviewer.email}?subject=${subject}&body=${body}`;
-  };
-
-  const handleOpen = () => {
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
 
   return (
     <div className="rounded-xl border border-border bg-gradient-to-br from-primary/5 via-background to-background p-3 space-y-2.5">
@@ -382,29 +371,6 @@ function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: P
         </Button>
       </div>
 
-      <div className="flex items-center gap-1.5">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleEmail}
-          className="flex-1 h-8 gap-1.5 text-xs rounded-md text-muted-foreground hover:text-foreground"
-          aria-label={`Email link to ${reviewer.name}`}
-        >
-          <Mail className="w-3.5 h-3.5" aria-hidden="true" />
-          Email to {reviewer.name.split(" ")[0]}
-        </Button>
-        <span className="w-px h-4 bg-border" aria-hidden="true" />
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleOpen}
-          className="flex-1 h-8 gap-1.5 text-xs rounded-md text-muted-foreground hover:text-foreground"
-          aria-label="Open reviewer preview in a new tab"
-        >
-          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-          Preview
-        </Button>
-      </div>
     </div>
   );
 }
@@ -541,7 +507,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                       </Button>
                     }
                   />
-                  <ReviewShareLink courseId={courseId} reviewer={state.reviewer} />
+                  <ReviewShareLink courseId={courseId} />
                 </div>
               ) : (
                 <Button
