@@ -1161,9 +1161,11 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                     onPageTitleChange(e.target.value);
                   }
                 }}
+                readOnly={readOnly}
                 className="text-3xl font-bold text-foreground bg-transparent border-none outline-none w-full placeholder:text-muted-foreground"
                 placeholder="Untitled page"
               />
+
 
               {/* Dotted separator */}
               <div className="border-t border-dashed border-border my-6" />
