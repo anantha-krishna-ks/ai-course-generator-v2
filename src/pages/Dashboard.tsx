@@ -471,7 +471,7 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Full-width Tabs */}
+        {/* Modern segmented tabs */}
         <motion.div
           custom={2.5}
           variants={fadeUp}
@@ -483,9 +483,9 @@ const Dashboard = () => {
             role="tablist"
             aria-label="Course collections"
             id="courses-heading"
-            className="relative w-full flex items-stretch rounded-2xl bg-card/80 backdrop-blur-sm border border-border/80 shadow-sm overflow-hidden"
+            className="relative w-full grid grid-cols-3 gap-2 p-2 rounded-2xl bg-muted/40 backdrop-blur-sm border border-border/60"
           >
-            {tabs.map((t, idx) => {
+            {tabs.map((t) => {
               const Icon = t.icon;
               const isActive = activeTab === t.id;
               return (
@@ -501,58 +501,59 @@ const Dashboard = () => {
                     setCurrentPage(1);
                   }}
                   className={cn(
-                    "group relative flex-1 inline-flex items-center justify-center gap-2.5 px-4 py-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40",
-                    idx > 0 && "border-l border-border/60",
+                    "group relative flex items-center justify-between gap-3 px-4 sm:px-5 py-3 rounded-xl text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                     isActive
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40",
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-background/60",
                   )}
                 >
                   {isActive && (
                     <motion.span
-                      layoutId="dashboard-tab-bg"
-                      className="absolute inset-0 bg-primary/[0.06]"
-                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      layoutId="dashboard-tab-active"
+                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.18)]"
+                      transition={{ type: "spring", stiffness: 360, damping: 30 }}
                       aria-hidden="true"
                     />
                   )}
-                  {isActive && (
-                    <motion.span
-                      layoutId="dashboard-tab-underline"
-                      className="absolute left-4 right-4 bottom-0 h-[3px] rounded-full bg-primary"
-                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <span className="relative z-10 inline-flex items-center gap-2.5">
+
+                  <span className="relative z-10 flex items-center gap-2.5 min-w-0">
                     <span
                       className={cn(
-                        "inline-flex items-center justify-center w-7 h-7 rounded-lg transition-colors",
+                        "inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 transition-all duration-200",
                         isActive
-                          ? "bg-primary/15 text-primary"
-                          : "bg-muted text-muted-foreground group-hover:text-foreground",
+                          ? "bg-primary-foreground/15 text-primary-foreground ring-1 ring-primary-foreground/20"
+                          : "bg-background text-muted-foreground border border-border/70 group-hover:text-foreground group-hover:border-border",
                       )}
                       aria-hidden="true"
                     >
-                      <Icon className="w-4 h-4" focusable="false" />
+                      <Icon className="w-[18px] h-[18px]" focusable="false" />
                     </span>
-                    <span className="font-semibold tracking-[-0.01em]">{t.label}</span>
                     <span
                       className={cn(
-                        "inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold tabular-nums transition-colors",
-                        isActive
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground",
+                        "font-semibold tracking-[-0.01em] truncate text-[13.5px] sm:text-sm",
+                        isActive ? "text-primary-foreground" : "text-foreground",
                       )}
                     >
-                      {t.count}
+                      {t.label}
                     </span>
+                  </span>
+
+                  <span
+                    className={cn(
+                      "relative z-10 inline-flex items-center justify-center min-w-[26px] h-6 px-2 rounded-full text-[11px] font-bold tabular-nums transition-colors shrink-0",
+                      isActive
+                        ? "bg-primary-foreground text-primary"
+                        : "bg-background text-foreground border border-border/70",
+                    )}
+                  >
+                    {t.count}
                   </span>
                 </button>
               );
             })}
           </div>
         </motion.div>
+
 
 
 
