@@ -30,6 +30,8 @@ import {
   Pencil,
   Link as LinkIcon,
   Copy,
+  Mail,
+  ExternalLink,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
