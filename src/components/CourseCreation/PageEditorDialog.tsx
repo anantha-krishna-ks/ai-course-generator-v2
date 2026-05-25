@@ -615,8 +615,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 <div
                   className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
                   style={{
-                    width: "calc(50% - 3px)",
-                    left: activeTab === "outline" ? "3px" : "calc(50%)",
+                    width: readOnly ? "calc(100% - 6px)" : "calc(50% - 3px)",
+                    left: readOnly ? "3px" : activeTab === "outline" ? "3px" : "calc(50%)",
                   }}
                 />
                 <button
@@ -653,31 +653,32 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               {activeTab === "outline" ? (
                 <div className="space-y-4">
                   {/* Navigate to */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Navigate to:</span>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4 bg-white hover:bg-white/90">
-                          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                          Add
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-52 p-1.5">
-                        <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("section")}>
-                          <LayoutGrid className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-sm font-medium">New section</span>
-                            <span className="text-[11px] text-muted-foreground">Group related pages</span>
-                          </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("page")}>
-                          <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-sm font-medium">New page</span>
-                            <span className="text-[11px] text-muted-foreground">Single learning unit</span>
-                          </div>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
+                  {!readOnly && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Navigate to:</span>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 border-border rounded-full px-4 bg-white hover:bg-white/90">
+                            <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                            Add
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-52 p-1.5">
+                          <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("section")}>
+                            <LayoutGrid className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-sm font-medium">New section</span>
+                              <span className="text-[11px] text-muted-foreground">Group related pages</span>
+                            </div>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="cursor-pointer gap-2.5 px-3 py-2.5 rounded-md" onClick={() => onAddItem?.("page")}>
+                            <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-sm font-medium">New page</span>
+                              <span className="text-[11px] text-muted-foreground">Single learning unit</span>
+                            </div>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
 
