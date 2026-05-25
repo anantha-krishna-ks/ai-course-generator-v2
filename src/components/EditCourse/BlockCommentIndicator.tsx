@@ -55,8 +55,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const allResolved = total > 0 && unresolved === 0;
   const threadTitle = useMemo(() => label ?? comments[0]?.blockLabel ?? "", [label, comments]);
 
-  // Author view: hide if no comments. Reviewer view: always show.
-  if (!isReviewer && total === 0) return null;
+  // Always show indicator (for both reviewer and author) so threads are reachable everywhere.
 
   const submitNew = () => {
     const t = draft.trim();
@@ -66,11 +65,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       courseTitle: courseTitle || threadTitle || "Course",
       blockId,
       blockLabel: label || threadTitle || blockId,
-      author: REVIEWER_NAME,
+      author: isReviewer ? REVIEWER_NAME : AUTHOR_NAME,
       text: t,
     });
     setDraft("");
-    toast({ title: "Comment posted", description: "The author will be notified." });
+    toast({ title: "Comment posted", description: isReviewer ? "The author will be notified." : "Visible to the reviewer." });
   };
 
   const triggerClasses = variant === "floating"
@@ -139,7 +138,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       >
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-foreground">Reviewer comments</h4>
+            <h4 className="text-sm font-semibold text-foreground">{isReviewer ? "Reviewer comments" : "Comments"}</h4>
             <p className="text-[11px] text-muted-foreground truncate">{threadTitle || "Add a comment for the author"}</p>
           </div>
           <button
@@ -175,23 +174,21 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
           </ScrollArea>
         )}
 
-        {isReviewer && (
-          <div className="border-t border-border p-3 space-y-2">
-            <Textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="Write a comment for the author…"
-              rows={2}
-              className="text-sm rounded-xl resize-none"
-            />
-            <div className="flex justify-end">
-              <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
-                <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
-                Post comment
-              </Button>
-            </div>
+        <div className="border-t border-border p-3 space-y-2">
+          <Textarea
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={isReviewer ? "Write a comment for the author…" : "Write a comment…"}
+            rows={2}
+            className="text-sm rounded-xl resize-none"
+          />
+          <div className="flex justify-end">
+            <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
+              <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
+              Post comment
+            </Button>
           </div>
-        )}
+        </div>
       </PopoverContent>
     </Popover>
   );
