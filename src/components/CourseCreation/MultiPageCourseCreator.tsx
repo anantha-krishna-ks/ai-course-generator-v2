@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
@@ -38,6 +38,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
@@ -55,7 +59,7 @@ import { DropIndicator } from "./DropIndicator";
 import { SectionCard } from "./SectionCard";
 import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
-import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, FONT_OPTIONS } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -736,7 +740,22 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
-            {!readOnly && <FontSelectorDropdown value={fontId} onChange={setFontId} />}
+            {!readOnly && isEditCoursePage && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full border-border"
+                    onClick={() => setShowCollaboratorsDrawer(true)}
+                    aria-label="Collaborators"
+                  >
+                    <UsersRound className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Collaborators</TooltipContent>
+              </Tooltip>
+            )}
             {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
              <Tooltip>
                <TooltipTrigger asChild>
@@ -774,10 +793,38 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
                    </DropdownMenuItem>
-                   <DropdownMenuItem onClick={() => setShowCollaboratorsDrawer(true)} className="gap-2 cursor-pointer">
-                     <UsersRound className="w-4 h-4" aria-hidden="true" focusable="false" />
-                     Collaborators
-                   </DropdownMenuItem>
+                   <DropdownMenuSub>
+                     <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+                       <CaseSensitive className="w-4 h-4" aria-hidden="true" focusable="false" />
+                       Change font ({(FONT_OPTIONS.find((f) => f.id === fontId) ?? FONT_OPTIONS[0]).label})
+                     </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                       <DropdownMenuSubContent className="w-56">
+                         {FONT_OPTIONS.map((font) => {
+                           const isActive = font.id === fontId;
+                           return (
+                             <DropdownMenuItem
+                               key={font.id}
+                               onClick={() => {
+                                 if (font.id !== fontId) {
+                                   setFontId(font.id);
+                                   toast({
+                                     title: "Course font updated",
+                                     description: "Your course-level font style has been updated. Text blocks with custom font styles were not modified.",
+                                   });
+                                 }
+                               }}
+                               className="cursor-pointer flex items-center justify-between gap-2"
+                               style={{ fontFamily: font.stack }}
+                             >
+                               <span className="text-sm">{font.label}</span>
+                               {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+                             </DropdownMenuItem>
+                           );
+                         })}
+                       </DropdownMenuSubContent>
+                     </DropdownMenuPortal>
+                   </DropdownMenuSub>
                    <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
                      <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
                      SCORM preferences
