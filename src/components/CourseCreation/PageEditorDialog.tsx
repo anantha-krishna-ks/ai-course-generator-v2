@@ -103,6 +103,7 @@ interface PageEditorDialogProps {
   outlineDuplicatingIds?: Map<string, "section" | "page">;
   outlinePendingTopAdds?: { id: string; kind: "section" | "page" }[];
   outlinePendingChildAdds?: Record<string, string[]>;
+  readOnly?: boolean;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
@@ -121,7 +122,7 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
   );
 }
 
-export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds }: PageEditorDialogProps) {
+export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds, readOnly = false }: PageEditorDialogProps) {
   const { id: routeId, courseId: routeCourseId } = useParams<{ id?: string; courseId?: string }>();
   const courseId = routeCourseId ?? routeId ?? "draft";
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
@@ -562,7 +563,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   return (
     <>
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden data-[state=open]:!animate-none data-[state=closed]:!animate-none data-[state=open]:!duration-0 data-[state=closed]:!duration-0">
+      <DialogContent data-review-mode={readOnly ? "true" : undefined} className="max-w-[98vw] w-[1600px] h-[95vh] p-0 gap-0 overflow-hidden flex flex-col [&>button]:hidden data-[state=open]:!animate-none data-[state=closed]:!animate-none data-[state=open]:!duration-0 data-[state=closed]:!duration-0">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
           <div className="flex items-center gap-2.5">
@@ -630,18 +631,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <LayoutGrid className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Outline
                 </button>
-                <button
-                  onClick={() => setActiveTab("blocks")}
-                  className={cn(
-                    "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
-                    activeTab === "blocks"
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-muted-foreground"
-                  )}
-                >
-                  <Layers className="w-3 h-3" aria-hidden="true" focusable="false" />
-                  Blocks
-                </button>
+                {!readOnly && (
+                  <button
+                    onClick={() => setActiveTab("blocks")}
+                    className={cn(
+                      "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
+                      activeTab === "blocks"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-muted-foreground"
+                    )}
+                  >
+                    <Layers className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    Blocks
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1225,7 +1228,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                               const currentBlockIdx = blockIdx;
 
                               // Drop indicator BEFORE first block
-                              if (blockIdx === 0 && isSidebarDragging) {
+                              if (blockIdx === 0 && isSidebarDragging && !readOnly) {
                                 elements.push(
                                   <DropIndicator
                                     key="drop-0"
@@ -1397,6 +1400,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       onDuplicate={() => duplicateBlock(block.id)}
                                       autoFocus={block.id === lastAddedBlockId}
                                       aiEnabled={aiEnabled}
+                                      readOnly={readOnly}
                                       variant={block.variant}
                                       onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                       font={block.font}
@@ -1416,7 +1420,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               }
                               // Drop indicator / AddContentButton AFTER each block
-                              if (isSidebarDragging) {
+                              if (readOnly) {
+                                // no-op: no drop indicator, no add button
+                              } else if (isSidebarDragging) {
                                 elements.push(
                                   <DropIndicator
                                     key={`drop-${currentBlockIdx + 1}`}

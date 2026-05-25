@@ -354,3 +354,39 @@ All colors MUST be HSL.
   word-break: break-word;
   overflow: hidden;
 }
+
+/* ============================================================
+   Review mode — neutralize editing affordances inside a course
+   container so reviewers see the layout exactly as authored
+   but cannot edit, add, delete, or reorder anything.
+   ============================================================ */
+[data-review-mode="true"] [aria-label*="Drag to reorder" i],
+[data-review-mode="true"] [aria-label*="More options" i],
+[data-review-mode="true"] [aria-label*="More course actions" i],
+[data-review-mode="true"] [aria-label*="Add page" i],
+[data-review-mode="true"] [aria-label*="Add section" i],
+[data-review-mode="true"] [aria-label*="Add learning objective" i],
+[data-review-mode="true"] [aria-label*="Delete" i],
+[data-review-mode="true"] [aria-label*="Duplicate" i],
+[data-review-mode="true"] [aria-label*="Upload" i],
+[data-review-mode="true"] [aria-label*="thumbnail" i],
+[data-review-mode="true"] [data-tour="add-button"],
+[data-review-mode="true"] [data-tour="add-page-button"],
+[data-review-mode="true"] [data-tour="add-section-button"] {
+  display: none !important;
+}
+
+/* Inputs/textareas remain visible but are not editable */
+[data-review-mode="true"] input:not([type="checkbox"]):not([type="radio"]),
+[data-review-mode="true"] textarea {
+  pointer-events: none !important;
+  caret-color: transparent !important;
+  user-select: text;
+}
+
+/* But allow the comment popover's reply textarea to work */
+[data-review-mode="true"] [data-review-comment-thread] textarea,
+[data-review-mode="true"] [data-review-comment-thread] input {
+  pointer-events: auto !important;
+  caret-color: auto !important;
+}

@@ -1,30 +1,77 @@
 ## Goal
 
-Replace the inline shimmer/skeleton loader inside `PageEditorDialog`'s AI-generation block with the new `CourseGenerationAnimation` spec — without changing the existing animation used by Dashboard `CreateCourseDialog`, `LoadingCourseProgressDialog`, or the full-screen `CreationLoader`.
+Reviewers should see the **exact same Multi-page / Single-page course layout** as authors do, but with no edit / add / delete affordances — only the ability to read content and leave comments on any block (using the existing `BlockCommentIndicator` popover thread).
 
 ## Approach
 
-1. **Create a new, isolated component** `src/components/CourseCreation/PageEditorGenerationAnimation.tsx` that implements the spec exactly:
-   - 200×200 SVG, `viewBox="0 0 200 200"`, `overflow-visible`, `aria-hidden="true"`, `focusable="false"`.
-   - Wrapper `<div role="img" aria-label="Generating course content">` with optional `className` merged via `cn`.
-   - All colors via HSL semantic tokens (`hsl(var(--primary))`, `hsl(var(--card))`, `hsl(var(--muted))`, `hsl(var(--muted-foreground) / 0.5)`, `hsl(var(--border))`, `hsl(var(--foreground) / 0.06)`).
-   - Defs: `linearGradient#cga-page`, `linearGradient#cga-accent`, `filter#cga-soft` (feGaussianBlur stdDeviation=3, region -50% -50% 200% 200%).
-   - Halo circle, floating page group with shadow + page rect + header/subheader, five animated text-line groups with the exact `{y, max, delay}` tuples, writing-cursor circle, orbiting sparkles group (14s), counter-rotating sparkles group (22s), and the `Sparkle` 8-point star helper.
-   - Pure inline SMIL `<animate>` / `<animateTransform>`; no Lottie, framer-motion, or other deps.
+Add a `readOnly` mode to the existing creators and reuse them on the reviewer route. No duplicated layout code.
 
-2. **Swap it into `PageEditorDialog.tsx`** at the existing AI-generating branch (around lines 1241–1278):
-   - Import the new component.
-   - Replace the current skeleton shimmer block (gradient bg + skeleton lines + rotating ring + `AISparkles`) with a centered `<PageEditorGenerationAnimation />` (≈200×200) plus the existing status text ("Generating content…" / "This may take a moment").
-   - Keep surrounding frame (`rounded-xl border border-primary/20 …`), padding, and the non-loading `<ContentBlock>` branch untouched.
+### 1. `MultiPageCourseCreator` — add `readOnly?: boolean`
 
-3. **Leave the shared `CourseGenerationAnimation`** (books/cup) and its three current usages completely unchanged.
+When `readOnly` is true:
+- Hide all action buttons in the header: Save / Export / Preview stays, but Add page, Add section, Generate, AI, Clone, Delete, Token, Modify Structure, Font, Layout selectors are hidden.
+- Outline sidebar: hide drag handles, `+ Add page/section`, rename, duplicate, delete menus on each `PageItemCard` / `SectionCard`. Clicks still navigate / open the page editor.
+- Disable `dnd-kit` sortable wiring (skip `useSortable` registrations or render as plain list).
+- Pass `readOnly` through to `PageEditorDialog`.
+- Hide the title autoresize textarea's editability (make it a static `<h1>`).
+- Hide the inline AddContentButton and DropIndicator components in the editor area.
 
-## Files
+### 2. `PageEditorDialog` — add `readOnly?: boolean`
 
-- New: `src/components/CourseCreation/PageEditorGenerationAnimation.tsx`
-- Edited: `src/components/CourseCreation/PageEditorDialog.tsx` (only the AI generating branch)
+When `readOnly` is true:
+- Render the dialog with the same chrome (header + tabs + content area), but:
+  - Hide block sidebar tab buttons that add blocks; keep "Outline" tab read-only.
+  - Pass `readOnly` to each `ContentBlock` / `NestedLayoutBlock` so they don't show their action toolbars.
+  - Skip rendering the inline `AddContentButton` between blocks and `DropIndicator`.
+  - `BlockCommentIndicator` stays — that's the only interaction.
+- Hide the trailing Save / Generate buttons in the dialog footer.
+
+### 3. `ContentBlock` already supports `readOnly` (used by AI review). Verify it disables typing in the rich editor and hides the action menu when set. If not, extend it.
+
+### 4. New reviewer container: `src/pages/ReviewCourse.tsx` (replace current implementation)
+
+```tsx
+const ReviewCourse = () => {
+  const { courseId } = useParams();
+  const courseData = mockCourseData[courseId!];
+  if (!courseData) return <Navigate to="/dashboard" />;
+  const restore = buildMockRestoreState(courseData.title);
+
+  return (
+    <>
+      <ReviewHeaderBanner title={courseData.title} />
+      <MultiPageCourseCreator
+        courseTitle={courseData.title}
+        aiOptions={restore.aiOptions}
+        initialRestoreState={restore}
+        readOnly
+      />
+    </>
+  );
+};
+```
+
+Notes:
+- The header banner shows "Review mode · view only" + reviewer badge + back button (replaces the editor's own header actions).
+- Comment popover (`BlockCommentIndicator`) already handles posting comments → store → notifies the author.
+
+### 5. Single-page parity
+
+Mirror the same `readOnly` prop on `SinglePageCourseCreator`. Decide which to render based on `mockCourseData[courseId].layout` (multi vs single). If only multi-page mock data exists today, gate single-page behind data and add it later.
+
+### 6. Cleanup
+
+- Remove the bespoke layout code in the current `ReviewCourse.tsx`.
+- Keep `reviewCommentsStore` and `BlockCommentIndicator` exactly as they are.
+- Dashboard "Review" tab cards still link to `/review-course/:courseId`.
 
 ## Out of scope
 
-- No changes to Dashboard `CreateCourseDialog`, `LoadingCourseProgressDialog`, or `CreationLoader`.
-- No changes to block types, AI workflow, or any business logic.
+- Real-time multi-reviewer sync (still localStorage mock).
+- Single-page mock data if not present — handled in a follow-up if needed.
+
+## Risk / size
+
+`MultiPageCourseCreator` is ~1650 lines; threading `readOnly` through outline cards, page editor dialog, content blocks, and header is the bulk of the work. Expect changes in ~6 files.
+
+Shall I proceed with this plan, or would you prefer a lighter-weight approach (e.g. keep the current simpler ReviewCourse layout and just upgrade it visually to match the editor's look without reusing the editor components)?

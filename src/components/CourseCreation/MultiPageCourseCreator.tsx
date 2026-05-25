@@ -99,6 +99,7 @@ interface MultiPageCourseCreatorProps {
   courseTitle: string;
   aiOptions?: AIOptions | null;
   initialRestoreState?: MultiPageCourseCreatorRestoreState | null;
+  readOnly?: boolean;
 }
 
 interface DeletedBlock {
@@ -122,7 +123,7 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
   );
 }
 
-export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: MultiPageCourseCreatorProps) {
+export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null, readOnly = false }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
@@ -679,7 +680,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionObjectivesMap, activeEditorPageId, aiOptions, fontId]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" data-review-mode={readOnly ? "true" : undefined}>
       {/* Skip to main content */}
       <a href="#course-main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md">
         Skip to main content
@@ -727,8 +728,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
-            <FontSelectorDropdown value={fontId} onChange={setFontId} />
-            <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
+            {!readOnly && <FontSelectorDropdown value={fontId} onChange={setFontId} />}
+            {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
              <Tooltip>
                <TooltipTrigger asChild>
                   <Button
@@ -743,7 +744,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                </TooltipTrigger>
                <TooltipContent>Preview</TooltipContent>
               </Tooltip>
-             {isEditCoursePage && (
+             {!readOnly && isEditCoursePage && (
                <DropdownMenu>
                  <Tooltip>
                    <TooltipTrigger asChild>
@@ -783,20 +784,22 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  </DropdownMenuContent>
                </DropdownMenu>
              )}
-             {isEditCoursePage && (
+             {!readOnly && isEditCoursePage && (
                <span
                  aria-hidden="true"
                  className="hidden sm:block h-7 w-px bg-gradient-to-b from-transparent via-border to-transparent mx-1"
                />
              )}
-             <Button
-               variant="outline"
-               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-               onClick={() => setShowExportDialog(true)}
-             >
-               <Download className="w-4 h-4" />
-               <span className="hidden sm:inline">Export</span>
-             </Button>
+             {!readOnly && (
+               <Button
+                 variant="outline"
+                 className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
+                 onClick={() => setShowExportDialog(true)}
+               >
+                 <Download className="w-4 h-4" />
+                 <span className="hidden sm:inline">Export</span>
+               </Button>
+             )}
                {isEditCoursePage ? (
                  <Popover>
                    <Tooltip>
