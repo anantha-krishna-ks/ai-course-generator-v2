@@ -551,7 +551,7 @@ const Dashboard = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 p-4 rounded-xl bg-card/60 backdrop-blur-sm border border-border/80"
+            className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 px-1"
           >
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <span className="font-medium">
