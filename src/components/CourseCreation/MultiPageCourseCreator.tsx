@@ -740,7 +740,22 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
-            {!readOnly && <FontSelectorDropdown value={fontId} onChange={setFontId} />}
+            {!readOnly && isEditCoursePage && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="rounded-full border-border"
+                    onClick={() => setShowCollaboratorsDrawer(true)}
+                    aria-label="Collaborators"
+                  >
+                    <UsersRound className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Collaborators</TooltipContent>
+              </Tooltip>
+            )}
             {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
              <Tooltip>
                <TooltipTrigger asChild>
