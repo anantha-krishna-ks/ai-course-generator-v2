@@ -88,6 +88,7 @@ export function BlockCommentIndicator({ courseId, blockId }: Props) {
         side="right"
         align="start"
         sideOffset={12}
+        data-review-comment-thread="true"
         className="w-[360px] p-0 rounded-2xl border border-border shadow-xl z-[60]"
       >
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
