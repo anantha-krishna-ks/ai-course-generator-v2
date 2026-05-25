@@ -421,21 +421,23 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                   onCancel={() => setEditing(null)}
                 />
               ) : state.reviewer ? (
-                <PersonCard
-                  person={state.reviewer}
-                  trailing={
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="rounded-full h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                      onClick={() => setState((s) => ({ ...s, reviewer: null }))}
-                      aria-label={`Remove reviewer ${state.reviewer.name}`}
-                    >
-                      <X className="w-4 h-4" aria-hidden="true" />
-                    </Button>
-                  }
-                />
-              ) : (
+                <div className="space-y-2">
+                  <PersonCard
+                    person={state.reviewer}
+                    trailing={
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="rounded-full h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        onClick={() => setState((s) => ({ ...s, reviewer: null }))}
+                        aria-label={`Remove reviewer ${state.reviewer.name}`}
+                      >
+                        <X className="w-4 h-4" aria-hidden="true" />
+                      </Button>
+                    }
+                  />
+                  <ReviewShareLink courseId={courseId} />
+                </div>
                 <Button
                   variant="outline"
                   className="w-full rounded-xl h-11 justify-center gap-2 border-dashed"
