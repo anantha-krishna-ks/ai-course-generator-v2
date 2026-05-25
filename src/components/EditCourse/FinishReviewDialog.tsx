@@ -40,7 +40,7 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
       });
       setSubmitting(false);
       onOpenChange(false);
-      setNote("");
+      
       setTimeout(() => navigate("/dashboard"), 400);
     }, 500);
   };
