@@ -1307,6 +1307,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                )}
               </div>
 
               {/* Outline Items */}
