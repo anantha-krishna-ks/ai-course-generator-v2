@@ -48,6 +48,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ContentBlock } from "./ContentBlock";
 import { DescriptionBlock } from "./DescriptionBlock";
+import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 import { AddContentButton } from "./AddContentButton";
 import { resolveTemplateDropData } from "./ContentBlocksPanel";
 import { DropIndicator } from "./DropIndicator";
