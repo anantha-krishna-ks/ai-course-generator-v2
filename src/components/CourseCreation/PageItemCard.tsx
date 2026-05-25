@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, Upload, X } from "lucide-react";
+import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -137,6 +138,14 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
               Open
               <ChevronRight className="w-3 h-3" aria-hidden="true" />
             </button>
+            {id && (
+              <BlockCommentIndicator
+                courseId=""
+                blockId={`page:${id}`}
+                label={`Page · ${displayTitle}`}
+                variant="inline"
+              />
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0" aria-label={`More options for ${displayTitle}`}>
