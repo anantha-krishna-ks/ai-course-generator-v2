@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers, RefreshCw } from "lucide-react";
+import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers, RefreshCw, Crown, ShieldCheck, Share2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { tokenApi, TokenInfo } from "@/services/tokenApi";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ import { CreateCourseDialog } from "@/components/Dashboard/CreateCourseDialog";
 import { LoadingCourseProgressDialog } from "@/components/Dashboard/LoadingCourseProgressDialog";
 import { getLoadingCourses, getProgress, getMinutesAgoLabel, removeLoadingCourse, type LoadingCourse } from "@/lib/loadingCourses";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const mockCourses = [
   { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
@@ -99,7 +100,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState<number | 'all'>(10);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState<"my" | "review" | "shared">("my");
   const [isTokenDialogOpen, setIsTokenDialogOpen] = useState(false);
   const [isCreateCourseDialogOpen, setIsCreateCourseDialogOpen] = useState(false);
   const [tokenData, setTokenData] = useState<TokenInfo>({
@@ -158,13 +159,26 @@ const Dashboard = () => {
     ? (tokenData.consumedTokens / tokenData.totalTokens) * 100 
     : 0;
 
+  // Split courses by role (demo data assignment)
+  const coursesByTab = {
+    my: mockCourses.slice(0, 9),
+    review: mockCourses.slice(9, 12),
+    shared: mockCourses.slice(12, 15),
+  } as const;
+
+  const tabs = [
+    { id: "my" as const, label: "My Courses", icon: Crown, count: coursesByTab.my.length },
+    { id: "review" as const, label: "Review Courses", icon: ShieldCheck, count: coursesByTab.review.length },
+    { id: "shared" as const, label: "Shared Courses", icon: Share2, count: coursesByTab.shared.length },
+  ];
+
   // Pagination logic
-  const filteredCourses = mockCourses.filter((course) =>
+  const filteredCourses = coursesByTab[activeTab].filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
-  const effectiveRecordsPerPage = recordsPerPage === 'all' ? filteredCourses.length : recordsPerPage;
-  const totalPages = Math.ceil(filteredCourses.length / effectiveRecordsPerPage);
+
+  const effectiveRecordsPerPage = recordsPerPage === 'all' ? Math.max(filteredCourses.length, 1) : recordsPerPage;
+  const totalPages = Math.max(1, Math.ceil(filteredCourses.length / effectiveRecordsPerPage));
   const startIndex = (currentPage - 1) * effectiveRecordsPerPage;
   const endIndex = startIndex + effectiveRecordsPerPage;
   const currentCourses = filteredCourses.slice(startIndex, endIndex);
@@ -436,17 +450,70 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Header and Search */}
+        {/* Header, Tabs and Search */}
         <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+          className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6"
         >
-          <h2 className="text-2xl font-bold text-foreground tracking-[-0.02em]" id="courses-heading">All Courses</h2>
+          <div
+            role="tablist"
+            aria-label="Course collections"
+            id="courses-heading"
+            className="relative inline-flex items-center gap-1 p-1.5 rounded-full bg-card/80 backdrop-blur-sm border border-border/80 shadow-sm w-full lg:w-auto overflow-x-auto"
+          >
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const isActive = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`tabpanel-${t.id}`}
+                  id={`tab-${t.id}`}
+                  type="button"
+                  onClick={() => {
+                    setActiveTab(t.id);
+                    setCurrentPage(1);
+                  }}
+                  className={cn(
+                    "relative inline-flex items-center gap-2 px-4 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    isActive
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="dashboard-tab-pill"
+                      className="absolute inset-0 rounded-full bg-primary shadow-sm"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="relative z-10 inline-flex items-center gap-2">
+                    <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    {t.label}
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-semibold tabular-nums transition-colors",
+                        isActive
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-muted text-foreground",
+                      )}
+                    >
+                      {t.count}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-          <div className="relative w-full sm:w-80">
+          <div className="relative w-full lg:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
             <Input
               type="search"
@@ -458,6 +525,7 @@ const Dashboard = () => {
             />
           </div>
         </motion.div>
+
 
         {/* Pagination Info and Controls */}
         {filteredCourses.length > 0 && (
@@ -495,13 +563,19 @@ const Dashboard = () => {
         )}
 
         {/* Courses Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8" role="list" aria-labelledby="courses-heading"
-        >
-          {loadingCourses.map((lc) => {
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            id={`tabpanel-${activeTab}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${activeTab}`}
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+            transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 mb-8"
+          >
+          {activeTab === "my" && loadingCourses.map((lc) => {
             const pct = getProgress(lc);
             return (
               <motion.div key={lc.id} variants={cardItem} role="listitem">
@@ -614,7 +688,9 @@ const Dashboard = () => {
               )}
             </div>
           )}
-        </motion.div>
+          </motion.div>
+        </AnimatePresence>
+
 
         {/* Pagination Controls */}
         {filteredCourses.length > 0 && (
