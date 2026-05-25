@@ -16,6 +16,7 @@ import { ImageBlock } from "./ImageBlock";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 
 interface PageEntry {
   id: string;
@@ -25,6 +26,7 @@ interface PageEntry {
 }
 
 interface SectionCardProps {
+  sectionId?: string;
   sectionNumber: number;
   title: string;
   inclusions?: string;
@@ -319,6 +321,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
 }
 
 export function SectionCard({
+  sectionId,
   sectionNumber,
   title,
   inclusions = "",
