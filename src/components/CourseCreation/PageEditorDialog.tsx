@@ -1384,21 +1384,23 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else {
                                 elements.push(
-                                  <ContentBlock
-                                    key={block.id}
-                                    id={block.id}
-                                    type={block.type}
-                                    content={block.content}
-                                    onChange={(content) => updateBlock(block.id, content)}
-                                    onDelete={() => deleteBlock(block.id)}
-                                    onDuplicate={() => duplicateBlock(block.id)}
-                                    autoFocus={block.id === lastAddedBlockId}
-                                    aiEnabled={aiEnabled}
-                                    variant={block.variant}
-                                    onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
-                                    font={block.font}
-                                    onFontChange={(fid) => updateBlockFont(block.id, fid)}
-                                  />
+                                  <div key={block.id} className="relative">
+                                    <BlockCommentIndicator courseId={courseId} blockId={block.id} />
+                                    <ContentBlock
+                                      id={block.id}
+                                      type={block.type}
+                                      content={block.content}
+                                      onChange={(content) => updateBlock(block.id, content)}
+                                      onDelete={() => deleteBlock(block.id)}
+                                      onDuplicate={() => duplicateBlock(block.id)}
+                                      autoFocus={block.id === lastAddedBlockId}
+                                      aiEnabled={aiEnabled}
+                                      variant={block.variant}
+                                      onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                      font={block.font}
+                                      onFontChange={(fid) => updateBlockFont(block.id, fid)}
+                                    />
+                                  </div>
                                 );
                               }
                               // Duplicate skeleton placeholder right after the source block
