@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
+import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
