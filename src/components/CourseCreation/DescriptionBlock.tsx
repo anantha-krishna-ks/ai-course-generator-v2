@@ -84,7 +84,10 @@ export function DescriptionBlock({
   onClear,
   onDuplicate,
 }: DescriptionBlockProps) {
+  const location = useLocation();
+  const isReviewer = location.pathname.startsWith("/review-course");
   const [isEditing, setIsEditing] = useState(false);
+
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [layout, setLayout] = useState<LayoutType>(() => detectLayout(content));
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
