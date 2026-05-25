@@ -631,18 +631,20 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                   <LayoutGrid className="w-3 h-3" aria-hidden="true" focusable="false" />
                   Outline
                 </button>
-                <button
-                  onClick={() => setActiveTab("blocks")}
-                  className={cn(
-                    "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
-                    activeTab === "blocks"
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-muted-foreground"
-                  )}
-                >
-                  <Layers className="w-3 h-3" aria-hidden="true" focusable="false" />
-                  Blocks
-                </button>
+                {!readOnly && (
+                  <button
+                    onClick={() => setActiveTab("blocks")}
+                    className={cn(
+                      "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
+                      activeTab === "blocks"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-muted-foreground"
+                    )}
+                  >
+                    <Layers className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    Blocks
+                  </button>
+                )}
               </div>
             </div>
 
