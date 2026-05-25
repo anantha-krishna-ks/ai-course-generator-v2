@@ -1382,6 +1382,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                       return i;
                                     }));
                                   }}
+                                  readOnly={readOnly}
                                 />
                               </SortableOutlineItem>,
                             );
