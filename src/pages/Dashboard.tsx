@@ -449,17 +449,70 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Header and Search */}
+        {/* Header, Tabs and Search */}
         <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+          className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6"
         >
-          <h2 className="text-2xl font-bold text-foreground tracking-[-0.02em]" id="courses-heading">All Courses</h2>
+          <div
+            role="tablist"
+            aria-label="Course collections"
+            id="courses-heading"
+            className="relative inline-flex items-center gap-1 p-1.5 rounded-full bg-card/80 backdrop-blur-sm border border-border/80 shadow-sm w-full lg:w-auto overflow-x-auto"
+          >
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              const isActive = activeTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`tabpanel-${t.id}`}
+                  id={`tab-${t.id}`}
+                  type="button"
+                  onClick={() => {
+                    setActiveTab(t.id);
+                    setCurrentPage(1);
+                  }}
+                  className={cn(
+                    "relative inline-flex items-center gap-2 px-4 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    isActive
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="dashboard-tab-pill"
+                      className="absolute inset-0 rounded-full bg-primary shadow-sm"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span className="relative z-10 inline-flex items-center gap-2">
+                    <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    {t.label}
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] font-semibold tabular-nums transition-colors",
+                        isActive
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-muted text-foreground",
+                      )}
+                    >
+                      {t.count}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-          <div className="relative w-full sm:w-80">
+          <div className="relative w-full lg:w-80">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10 pointer-events-none" aria-hidden="true" />
             <Input
               type="search"
@@ -471,6 +524,7 @@ const Dashboard = () => {
             />
           </div>
         </motion.div>
+
 
         {/* Pagination Info and Controls */}
         {filteredCourses.length > 0 && (
