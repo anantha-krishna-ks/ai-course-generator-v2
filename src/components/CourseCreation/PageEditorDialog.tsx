@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
