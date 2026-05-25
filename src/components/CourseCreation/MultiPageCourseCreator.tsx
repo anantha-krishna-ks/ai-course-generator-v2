@@ -1334,6 +1334,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                             rendered.push(
                               <SortableOutlineItem key={item.id} id={item.id}>
                                 <SectionCard
+                                  sectionId={item.id}
                                   sectionNumber={currentSectionNumber}
                                   title={item.title}
                                   inclusions={item.inclusions || ""}
