@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
@@ -131,6 +132,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
+  const [showFinishReviewDialog, setShowFinishReviewDialog] = useState(false);
   const flashTimerRef = useRef<number | null>(null);
   const triggerBlocksFlash = useCallback(() => {
     setSidebarCollapsed(false);
@@ -577,13 +579,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             {readOnly && (
               <Button
                 className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2 h-9"
-                onClick={() => {
-                  toast({
-                    title: "Review submitted",
-                    description: "Your comments have been shared with the author.",
-                  });
-                  setTimeout(() => navigate("/dashboard"), 600);
-                }}
+                onClick={() => setShowFinishReviewDialog(true)}
               >
                 <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
                 Finish review
@@ -1862,6 +1858,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
         </div>
       </DialogContent>
     </Dialog>
+    {readOnly && (
+      <FinishReviewDialog open={showFinishReviewDialog} onOpenChange={setShowFinishReviewDialog} />
+    )}
     </>
   );
 }
