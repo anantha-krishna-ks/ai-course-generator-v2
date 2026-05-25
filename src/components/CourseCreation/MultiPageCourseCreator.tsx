@@ -1166,7 +1166,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     aiEnabled={!!aiOptions?.enabled}
                                     font={block.font}
                                     onFontChange={(fid) => updateBlockFont(block.id, fid)}
+                                    readOnly={readOnly}
                                   />
+
                                 )}
 
                                 <div
