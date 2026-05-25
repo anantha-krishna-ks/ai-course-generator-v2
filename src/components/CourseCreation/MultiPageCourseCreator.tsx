@@ -1128,11 +1128,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                 />
                               )}
 
-                              {index === 0 && !activeId && !isSidebarDragging && block.type !== "description" && (
+                              {!readOnly && index === 0 && !activeId && !isSidebarDragging && block.type !== "description" && (
                                 <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
                                   <AddContentButton onAddText={() => addTextBlock(0)} onAddImage={() => addImageBlock(0)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, 0)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, 0)} onDropBlock={(type, variant) => addGenericBlock(type, 0, variant)} />
                                 </div>
                               )}
+
 
                               <div className="relative">
                                 <BlockCommentIndicator courseId={courseId} blockId={block.id} />
@@ -1197,11 +1198,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   }}
                                 />
                               ) : (
-                                !activeId && block.type !== "description" && (
+                                !readOnly && !activeId && block.type !== "description" && (
                                   <div className="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
                                     <AddContentButton onAddText={() => addTextBlock(index + 1)} onAddImage={() => addImageBlock(index + 1)} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt, index + 1)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt, index + 1)} onDropBlock={(type, variant) => addGenericBlock(type, index + 1, variant)} />
                                   </div>
                                 )
+
                               )}
                             </div>
                           );
@@ -1236,11 +1238,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </DndContext>
 
               {/* Add content button when no blocks exist */}
-              {contentBlocks.filter((b) => b.type !== "description").length === 0 && (
+              {!readOnly && contentBlocks.filter((b) => b.type !== "description").length === 0 && (
                 <div className="mt-6">
                   <AddContentButton onAddText={() => addTextBlock()} onAddImage={() => addImageBlock()} aiEnabled={!!aiOptions?.enabled} onAIGenerateText={(prompt) => aiGenerateText(prompt)} onAIGenerateImage={(prompt) => aiGenerateImage(prompt)} onDropBlock={(type, variant) => addGenericBlock(type, undefined, variant)} forceOpen={tourStep === 1} />
                 </div>
               )}
+
             </div>
           </ScrollArea>
         </div>
