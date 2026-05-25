@@ -738,11 +738,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         {item.title || "Untitled page"}
                                       </span>
                                       {/* Three-dot menu on hover */}
+                                      {!readOnly && (
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                           <button
                                             className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
                                             onClick={(e) => e.stopPropagation()}
+                                            aria-label="More options"
                                           >
                                             <Dots className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                           </button>
@@ -763,6 +765,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           </DropdownMenuItem>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
+                                      )}
+
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
