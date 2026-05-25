@@ -125,6 +125,8 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds, readOnly = false }: PageEditorDialogProps) {
   const { id: routeId, courseId: routeCourseId } = useParams<{ id?: string; courseId?: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const courseId = routeCourseId ?? routeId ?? "draft";
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
