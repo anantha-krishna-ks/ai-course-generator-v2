@@ -99,7 +99,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState<number | 'all'>(10);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState<"my" | "review" | "shared">("my");
   const [isTokenDialogOpen, setIsTokenDialogOpen] = useState(false);
   const [isCreateCourseDialogOpen, setIsCreateCourseDialogOpen] = useState(false);
   const [tokenData, setTokenData] = useState<TokenInfo>({
