@@ -365,10 +365,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                 <InlinePicker
                   placeholder="Search to change author…"
                   excludeIds={excludeIds}
-                  onPick={(p) => {
-                    setState((s) => ({ ...s, author: p }));
-                    setEditing(null);
-                  }}
+                  onPick={(p) => setPendingAuthor(p)}
                   onCancel={() => setEditing(null)}
                 />
               ) : state.author ? (
