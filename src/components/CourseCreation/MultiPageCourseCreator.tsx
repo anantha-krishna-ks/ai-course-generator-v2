@@ -740,6 +740,21 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3" data-tour="header-actions">
+            {readOnly && (
+              <Button
+                className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2"
+                onClick={() => {
+                  toast({
+                    title: "Review submitted",
+                    description: "Your comments have been shared with the author.",
+                  });
+                  setTimeout(() => navigate("/dashboard"), 600);
+                }}
+              >
+                <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                Finish review
+              </Button>
+            )}
             {!readOnly && isEditCoursePage && (
               <Tooltip>
                 <TooltipTrigger asChild>
