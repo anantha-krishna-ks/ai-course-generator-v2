@@ -64,13 +64,21 @@ function Avatar({ name, size = 36 }: { name: string; size?: number }) {
 function InlinePicker({
   placeholder,
   excludeIds,
+  selected = [],
+  multi = false,
   onPick,
+  onRemoveSelected,
   onCancel,
+  onDone,
 }: {
   placeholder: string;
   excludeIds: string[];
+  selected?: Person[];
+  multi?: boolean;
   onPick: (p: Person) => void;
+  onRemoveSelected?: (id: string) => void;
   onCancel?: () => void;
+  onDone?: () => void;
 }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,8 +88,42 @@ function InlinePicker({
     inputRef.current?.focus();
   }, []);
 
+  const handlePick = (p: Person) => {
+    onPick(p);
+    setQuery("");
+    if (multi) {
+      // keep focus for rapid multi-add
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  };
+
   return (
-    <div className="rounded-xl border border-primary/30 bg-background overflow-hidden shadow-sm">
+    <div className="rounded-xl border border-primary/40 bg-background overflow-hidden shadow-sm ring-2 ring-primary/10">
+      {/* Selected chips strip (multi-select only) */}
+      {multi && selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 px-2 py-2 border-b bg-primary/5">
+          {selected.map((p) => (
+            <span
+              key={p.id}
+              className="inline-flex items-center gap-1.5 rounded-full bg-background border border-primary/30 pl-1 pr-1.5 py-0.5 text-xs"
+            >
+              <Avatar name={p.name} size={20} />
+              <span className="font-medium text-foreground truncate max-w-[120px]">{p.name}</span>
+              {onRemoveSelected && (
+                <button
+                  type="button"
+                  onClick={() => onRemoveSelected(p.id)}
+                  aria-label={`Remove ${p.name}`}
+                  className="rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <X className="w-3 h-3" aria-hidden="true" />
+                </button>
+              )}
+            </span>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center gap-2 px-3 py-2 border-b">
         <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
         <Input
@@ -91,53 +133,93 @@ function InlinePicker({
           onKeyDown={(e) => {
             if (e.key === "Escape" && onCancel) onCancel();
           }}
-          placeholder={placeholder}
+          placeholder={
+            multi && selected.length > 0
+              ? "Search to add more…"
+              : placeholder
+          }
           aria-label={placeholder}
           className="h-8 border-0 px-0 shadow-none focus-visible:ring-0 bg-transparent text-sm"
         />
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            aria-label="Cancel"
-            className="rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        {multi && onDone ? (
+          <Button
+            size="sm"
+            onClick={onDone}
+            className="rounded-full h-7 px-3 text-xs gap-1"
           >
-            <X className="w-3.5 h-3.5" aria-hidden="true" />
-          </button>
+            <Check className="w-3 h-3" aria-hidden="true" />
+            Done{selected.length > 0 ? ` (${selected.length})` : ""}
+          </Button>
+        ) : (
+          onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              aria-label="Cancel"
+              className="rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              <X className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
+          )
         )}
       </div>
-      <ScrollArea className="max-h-56">
-        {results.length === 0 ? (
-          <p className="px-4 py-6 text-xs text-center text-muted-foreground">
-            {query ? `No matches for "${query}"` : "Start typing a name or email"}
-          </p>
-        ) : (
+
+      {results.length === 0 ? (
+        <p className="px-4 py-6 text-xs text-center text-muted-foreground">
+          {query
+            ? `No matches for "${query}"`
+            : multi && selected.length > 0
+            ? "All matching teammates added. Click Done to confirm."
+            : "Start typing a name or email"}
+        </p>
+      ) : (
+        <ScrollArea className="h-64">
           <ul className="py-1">
-            {results.map((p) => (
-              <li key={p.id}>
-                <button
-                  type="button"
-                  onClick={() => onPick(p)}
-                  className="w-full text-left px-3 py-2 hover:bg-accent flex items-center gap-3"
-                >
-                  <Avatar name={p.name} size={28} />
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-sm font-medium text-foreground truncate">
-                      {p.name}
+            {results.map((p) => {
+              const isSelected = selected.some((s) => s.id === p.id);
+              return (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onClick={() => handlePick(p)}
+                    className={cn(
+                      "w-full text-left px-3 py-2 flex items-center gap-3 transition-colors",
+                      isSelected ? "bg-primary/5" : "hover:bg-accent",
+                    )}
+                  >
+                    <Avatar name={p.name} size={28} />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-medium text-foreground truncate">
+                        {p.name}
+                      </span>
+                      <span className="block text-xs text-muted-foreground truncate">
+                        {p.email}
+                      </span>
                     </span>
-                    <span className="block text-xs text-muted-foreground truncate">
-                      {p.email}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))}
+                    {multi && (
+                      <span
+                        className={cn(
+                          "w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors",
+                          isSelected
+                            ? "bg-primary border-primary text-primary-foreground"
+                            : "border-input bg-background",
+                        )}
+                        aria-hidden="true"
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5" />}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
-        )}
-      </ScrollArea>
+        </ScrollArea>
+      )}
     </div>
   );
 }
+
 
 /* ---------- widget shell ---------- */
 
