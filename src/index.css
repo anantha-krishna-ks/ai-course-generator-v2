@@ -363,6 +363,7 @@ All colors MUST be HSL.
 [data-review-mode="true"] [aria-label*="Drag to reorder" i]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [aria-label*="More options" i]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [aria-label*="More course actions" i]:not([data-review-comment-thread] *),
+[data-review-mode="true"] [aria-label*="More section options" i]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [aria-label*="Add page" i]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [aria-label*="Add section" i]:not([data-review-comment-thread] *),
 [data-review-mode="true"] [aria-label*="Add learning objective" i]:not([data-review-comment-thread] *),
