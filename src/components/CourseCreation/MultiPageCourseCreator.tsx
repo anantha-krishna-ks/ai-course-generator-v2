@@ -137,6 +137,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   // course is being loaded (initialRestoreState present). Hide for brand-new blank courses.
   const isEditCoursePage =
     location.pathname.startsWith("/edit-course") || initialRestoreState != null;
+  const isSharedCourse = new URLSearchParams(location.search).get("shared") === "1";
   const { toast } = useToast();
   const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
   const [showCloneDialog, setShowCloneDialog] = useState(false);
