@@ -138,7 +138,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       >
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-foreground">Reviewer comments</h4>
+            <h4 className="text-sm font-semibold text-foreground">{isReviewer ? "Reviewer comments" : "Comments"}</h4>
             <p className="text-[11px] text-muted-foreground truncate">{threadTitle || "Add a comment for the author"}</p>
           </div>
           <button
