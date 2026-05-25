@@ -533,7 +533,43 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
             Save changes
           </Button>
         </div>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+
+      <AlertDialog
+        open={!!pendingCoAuthor}
+        onOpenChange={(o) => !o && setPendingCoAuthor(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add as co-author?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingCoAuthor ? (
+                <>
+                  <span className="font-medium text-foreground">{pendingCoAuthor.name}</span>{" "}
+                  ({pendingCoAuthor.email}) will be able to edit{" "}
+                  <span className="font-medium text-foreground">"{courseTitle}"</span> alongside the author.
+                </>
+              ) : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-full"
+              onClick={() => {
+                if (pendingCoAuthor) {
+                  const p = pendingCoAuthor;
+                  setState((s) => ({ ...s, coAuthors: [...s.coAuthors, p] }));
+                }
+                setPendingCoAuthor(null);
+              }}
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
