@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
@@ -711,18 +711,26 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   </TooltipContent>
                 )}
               </Tooltip>
-              <span className="text-muted-foreground select-none" aria-hidden="true">|</span>
-              <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} transferState={{
-                title,
-                items: items as LayoutTransferState["items"],
-                contentBlocks,
-                pageBlocksMap,
-                sectionObjectivesMap,
-                sectionImages: Object.fromEntries(
-                  items.filter(i => i.type === "section" && i.thumbnailUrl).map(i => [i.id, i.thumbnailUrl!])
-                ),
-                aiOptions,
-              }} />
+              {!readOnly && <span className="text-muted-foreground select-none" aria-hidden="true">|</span>}
+              {!readOnly && (
+                <LayoutSelectorDropdown currentLayout="multi-page" title={title} aiOptions={aiOptions} transferState={{
+                  title,
+                  items: items as LayoutTransferState["items"],
+                  contentBlocks,
+                  pageBlocksMap,
+                  sectionObjectivesMap,
+                  sectionImages: Object.fromEntries(
+                    items.filter(i => i.type === "section" && i.thumbnailUrl).map(i => [i.id, i.thumbnailUrl!])
+                  ),
+                  aiOptions,
+                }} />
+              )}
+              {readOnly && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 text-emerald-700 px-2.5 py-1 text-[11px] font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Reviewer · view only
+                </span>
+              )}
             </div>
           </div>
 
@@ -1425,6 +1433,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                   onBlocksChange={(blocks) => updatePageBlocks(item.id, blocks)}
                                    onAddItem={(type) => handleAddItem(type)}
                                    onPreview={handlePreview}
+                                   readOnly={readOnly}
                                  />
                               </SortableOutlineItem>,
                             );
@@ -1538,6 +1547,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               outlineDuplicatingIds={duplicatingIds}
               outlinePendingTopAdds={pendingTopAdds}
               outlinePendingChildAdds={pendingChildAdds}
+              readOnly={readOnly}
             />
            );
         }
@@ -1589,6 +1599,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   outlineDuplicatingIds={duplicatingIds}
                   outlinePendingTopAdds={pendingTopAdds}
                   outlinePendingChildAdds={pendingChildAdds}
+                  readOnly={readOnly}
                 />
               );
             }
