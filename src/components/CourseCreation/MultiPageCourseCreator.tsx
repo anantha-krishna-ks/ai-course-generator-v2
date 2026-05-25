@@ -793,10 +793,38 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
                    </DropdownMenuItem>
-                   <DropdownMenuItem onClick={() => setShowCollaboratorsDrawer(true)} className="gap-2 cursor-pointer">
-                     <UsersRound className="w-4 h-4" aria-hidden="true" focusable="false" />
-                     Collaborators
-                   </DropdownMenuItem>
+                   <DropdownMenuSub>
+                     <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+                       <CaseSensitive className="w-4 h-4" aria-hidden="true" focusable="false" />
+                       Change font ({(FONT_OPTIONS.find((f) => f.id === fontId) ?? FONT_OPTIONS[0]).label})
+                     </DropdownMenuSubTrigger>
+                     <DropdownMenuPortal>
+                       <DropdownMenuSubContent className="w-56">
+                         {FONT_OPTIONS.map((font) => {
+                           const isActive = font.id === fontId;
+                           return (
+                             <DropdownMenuItem
+                               key={font.id}
+                               onClick={() => {
+                                 if (font.id !== fontId) {
+                                   setFontId(font.id);
+                                   toast({
+                                     title: "Course font updated",
+                                     description: "Your course-level font style has been updated. Text blocks with custom font styles were not modified.",
+                                   });
+                                 }
+                               }}
+                               className="cursor-pointer flex items-center justify-between gap-2"
+                               style={{ fontFamily: font.stack }}
+                             >
+                               <span className="text-sm">{font.label}</span>
+                               {isActive && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+                             </DropdownMenuItem>
+                           );
+                         })}
+                       </DropdownMenuSubContent>
+                     </DropdownMenuPortal>
+                   </DropdownMenuSub>
                    <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
                      <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
                      SCORM preferences
