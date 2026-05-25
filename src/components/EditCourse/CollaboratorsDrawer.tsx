@@ -474,12 +474,25 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
 
                 {editing === "co-author" ? (
                   <InlinePicker
-                    placeholder="Search to add a co-author…"
-                    excludeIds={excludeIds}
+                    placeholder="Search teammates to add as co-authors…"
+                    multi
+                    selected={state.coAuthors}
+                    excludeIds={[state.author?.id, state.reviewer?.id].filter(Boolean) as string[]}
                     onPick={(p) =>
-                      setState((s) => ({ ...s, coAuthors: [...s.coAuthors, p] }))
+                      setState((s) => ({
+                        ...s,
+                        coAuthors: s.coAuthors.some((c) => c.id === p.id)
+                          ? s.coAuthors.filter((c) => c.id !== p.id)
+                          : [...s.coAuthors, p],
+                      }))
                     }
-                    onCancel={() => setEditing(null)}
+                    onRemoveSelected={(id) =>
+                      setState((s) => ({
+                        ...s,
+                        coAuthors: s.coAuthors.filter((c) => c.id !== id),
+                      }))
+                    }
+                    onDone={() => setEditing(null)}
                   />
                 ) : (
                   <Button
@@ -488,7 +501,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                     onClick={() => setEditing("co-author")}
                   >
                     <Plus className="w-4 h-4" aria-hidden="true" />
-                    {state.coAuthors.length > 0 ? "Add another co-author" : "Add co-author"}
+                    {state.coAuthors.length > 0 ? "Add more co-authors" : "Add co-authors"}
                   </Button>
                 )}
               </div>
