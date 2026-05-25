@@ -81,10 +81,8 @@ export function getCollaborators(courseId: string): CourseCollaborators {
 export function searchPeople(query: string, excludeIds: string[] = []): Person[] {
   const q = query.trim().toLowerCase();
   const list = MOCK_DIRECTORY.filter((p) => !excludeIds.includes(p.id));
-  if (!q) return list.slice(0, 8);
-  return list
-    .filter((p) => p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q))
-    .slice(0, 8);
+  if (!q) return list;
+  return list.filter((p) => p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q));
 }
 
 function readNotifs(): CollaboratorNotification[] {
