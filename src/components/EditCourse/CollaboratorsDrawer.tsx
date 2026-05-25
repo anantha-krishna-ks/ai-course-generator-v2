@@ -335,6 +335,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
   };
 
   return (
+    <>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col gap-0">
         {/* Header */}
