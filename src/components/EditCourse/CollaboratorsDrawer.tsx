@@ -438,6 +438,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                   />
                   <ReviewShareLink courseId={courseId} />
                 </div>
+              ) : (
                 <Button
                   variant="outline"
                   className="w-full rounded-xl h-11 justify-center gap-2 border-dashed"
