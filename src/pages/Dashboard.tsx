@@ -642,14 +642,19 @@ const Dashboard = () => {
               </motion.div>
             );
           })}
-          {currentCourses.map((course) => (
+          {currentCourses.map((course) => {
+            const targetPath = activeTab === "review"
+              ? `/review-course/${course.id}`
+              : `/edit-course/${course.id}`;
+            const ctaLabel = activeTab === "review" ? "Review" : "View";
+            return (
             <motion.div key={course.id} variants={cardItem} role="listitem">
               <Card 
-                onClick={() => navigate(`/edit-course/${course.id}`)}
+                onClick={() => navigate(targetPath)}
                 className="group overflow-hidden transition-all duration-300 cursor-pointer border border-border/80 hover:border-primary/30 hover:shadow-lg bg-card/80 backdrop-blur-sm rounded-2xl"
                 tabIndex={0}
                 role="button"
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/edit-course/${course.id}`); } }}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(targetPath); } }}
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img 
@@ -660,6 +665,12 @@ const Dashboard = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+                  {activeTab === "review" && (
+                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/95 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                      <ShieldCheck className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Reviewer
+                    </span>
+                  )}
                 </div>
                 
                 <div className="p-5 space-y-3.5">
@@ -675,14 +686,15 @@ const Dashboard = () => {
                     <span 
                       className="inline-flex items-center h-8 text-xs px-3 gap-1.5 font-semibold rounded-full group-hover:bg-primary/10 group-hover:text-primary transition-all"
                     >
-                      View
+                      {ctaLabel}
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" focusable="false" />
                     </span>
                   </div>
                 </div>
               </Card>
             </motion.div>
-          ))}
+            );
+          })}
           
           {filteredCourses.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">

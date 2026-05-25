@@ -13,7 +13,7 @@ export interface CourseCollaborators {
   coAuthors: Person[];
 }
 
-export type NotificationKind = "author" | "reviewer" | "co-author";
+export type NotificationKind = "author" | "reviewer" | "co-author" | "review-comment" | "review-reply";
 
 export interface CollaboratorNotification {
   id: string;
