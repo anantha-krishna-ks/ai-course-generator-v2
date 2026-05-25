@@ -541,7 +541,7 @@ export function CollaboratorsDrawer({ open, onOpenChange, courseId, courseTitle 
                       </Button>
                     }
                   />
-                  <ReviewShareLink courseId={courseId} />
+                  <ReviewShareLink courseId={courseId} reviewer={state.reviewer} />
                 </div>
               ) : (
                 <Button
