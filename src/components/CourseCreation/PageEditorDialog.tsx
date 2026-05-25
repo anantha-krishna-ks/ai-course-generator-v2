@@ -1371,16 +1371,18 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else if (block.type === "text" && (block.variant === "any-block-layout" || block.variant === "any-block-layout-2")) {
                                 elements.push(
-                                  <NestedLayoutBlock
-                                    key={block.id}
-                                    id={block.id}
-                                    content={block.content}
-                                    onChange={(content) => updateBlock(block.id, content)}
-                                    onDelete={() => deleteBlock(block.id)}
-                                    onDuplicate={() => duplicateBlock(block.id)}
-                                    aiEnabled={aiEnabled}
-                                    columnCount={block.variant === "any-block-layout-2" ? 2 : 1}
-                                  />
+                                  <div key={block.id} className="relative">
+                                    <BlockCommentIndicator courseId={courseId} blockId={block.id} />
+                                    <NestedLayoutBlock
+                                      id={block.id}
+                                      content={block.content}
+                                      onChange={(content) => updateBlock(block.id, content)}
+                                      onDelete={() => deleteBlock(block.id)}
+                                      onDuplicate={() => duplicateBlock(block.id)}
+                                      aiEnabled={aiEnabled}
+                                      columnCount={block.variant === "any-block-layout-2" ? 2 : 1}
+                                    />
+                                  </div>
                                 );
                               } else {
                                 elements.push(
