@@ -744,7 +744,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                </TooltipTrigger>
                <TooltipContent>Preview</TooltipContent>
               </Tooltip>
-             {isEditCoursePage && (
+             {!readOnly && isEditCoursePage && (
                <DropdownMenu>
                  <Tooltip>
                    <TooltipTrigger asChild>
@@ -784,20 +784,22 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  </DropdownMenuContent>
                </DropdownMenu>
              )}
-             {isEditCoursePage && (
+             {!readOnly && isEditCoursePage && (
                <span
                  aria-hidden="true"
                  className="hidden sm:block h-7 w-px bg-gradient-to-b from-transparent via-border to-transparent mx-1"
                />
              )}
-             <Button
-               variant="outline"
-               className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-               onClick={() => setShowExportDialog(true)}
-             >
-               <Download className="w-4 h-4" />
-               <span className="hidden sm:inline">Export</span>
-             </Button>
+             {!readOnly && (
+               <Button
+                 variant="outline"
+                 className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
+                 onClick={() => setShowExportDialog(true)}
+               >
+                 <Download className="w-4 h-4" />
+                 <span className="hidden sm:inline">Export</span>
+               </Button>
+             )}
                {isEditCoursePage ? (
                  <Popover>
                    <Tooltip>
