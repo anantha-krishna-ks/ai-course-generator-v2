@@ -573,16 +573,18 @@ export function SectionCard({
               </div>
             </div>
 
-            {/* Inline image block - always visible */}
-            <div className="px-4 pt-2 pb-1">
-              <ImageBlock
-                imageUrl={thumbnailUrl || ""}
-                onChange={(url) => {
-                  setThumbnailUrl(url);
-                }}
-                aiEnabled={aiEnabled}
-              />
-            </div>
+            {/* Inline image block - hidden in read-only mode when no image */}
+            {(!readOnly || thumbnailUrl) && (
+              <div className="px-4 pt-2 pb-1">
+                <ImageBlock
+                  imageUrl={thumbnailUrl || ""}
+                  onChange={(url) => {
+                    setThumbnailUrl(url);
+                  }}
+                  aiEnabled={aiEnabled}
+                />
+              </div>
+            )}
 
             {/* Learning Objective (inline, collapsible) */}
             <div className={cn(
