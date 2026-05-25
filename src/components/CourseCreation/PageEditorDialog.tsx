@@ -724,12 +724,15 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       )}
                                     >
                                       {/* Drag handle */}
+                                      {!readOnly && (
                                       <span
                                         className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                         {...listeners}
                                       >
                                         <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                       </span>
+                                      )}
+
                                       <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                       <span className={cn(
                                         "text-sm truncate flex-1",
@@ -738,11 +741,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                         {item.title || "Untitled page"}
                                       </span>
                                       {/* Three-dot menu on hover */}
+                                      {!readOnly && (
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                           <button
                                             className="opacity-0 group-hover/nav-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
                                             onClick={(e) => e.stopPropagation()}
+                                            aria-label="More options"
                                           >
                                             <Dots className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                           </button>
@@ -763,6 +768,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                           </DropdownMenuItem>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
+                                      )}
+
                                     </div>
                                   )}
                                 </SortableOutlineWrapper>
@@ -797,17 +804,23 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     >
                                       <div className="flex items-center justify-between">
                                         <span
-                                          className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1"
-                                          {...listeners}
+                                          className={cn(
+                                            "text-xs text-muted-foreground font-medium flex items-center gap-1",
+                                            !readOnly && "cursor-grab active:cursor-grabbing"
+                                          )}
+                                          {...(readOnly ? {} : listeners)}
                                           onClick={(e) => e.stopPropagation()}
                                         >
-                                          <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                          {!readOnly && <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />}
                                           Section {sectionIndex}
                                         </span>
+
+
                                         <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
+                                          {!readOnly && (
                                           <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                              <button className="p-1.5 rounded-md hover:bg-muted transition-colors">
+                                              <button className="p-1.5 rounded-md hover:bg-muted transition-colors" aria-label="More section options">
                                                 <Dots className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                                               </button>
                                             </DropdownMenuTrigger>
@@ -827,7 +840,9 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                               </DropdownMenuItem>
                                             </DropdownMenuContent>
                                           </DropdownMenu>
-                                          <span className="w-px h-4 bg-border" />
+                                          )}
+                                          {!readOnly && <span className="w-px h-4 bg-border" />}
+
                                           <button
                                             className="p-1.5 rounded-md hover:bg-muted transition-colors"
                                             onClick={() => setCollapsedSections(prev => {
@@ -895,12 +910,15 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                             : "hover:bg-muted/50 pl-3"
                                                         )}
                                                       >
+                                                        {!readOnly && (
                                                         <span
                                                           className="opacity-0 group-hover/child-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                                           {...childListeners}
                                                         >
                                                           <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
                                                         </span>
+                                                        )}
+
                                                         <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                                         <span
                                                           onClick={(e) => {
@@ -916,11 +934,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                           {child.title || "Untitled page"}
                                                         </span>
                                                         {/* Three-dot menu on hover */}
+                                                        {!readOnly && (
                                                         <DropdownMenu>
                                                           <DropdownMenuTrigger asChild>
                                                             <button
                                                               className="opacity-0 group-hover/child-page:opacity-100 p-1 rounded-md hover:bg-muted transition-all shrink-0"
                                                               onClick={(e) => e.stopPropagation()}
+                                                              aria-label="More options"
                                                             >
                                                               <Dots className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                                             </button>
@@ -941,6 +961,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                                             </DropdownMenuItem>
                                                           </DropdownMenuContent>
                                                         </DropdownMenu>
+                                                        )}
+
                                                       </div>
                                                     )}
                                                   </SortableOutlineWrapper>

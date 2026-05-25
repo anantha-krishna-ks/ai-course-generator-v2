@@ -146,6 +146,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                 variant="inline"
               />
             )}
+            {!readOnly && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="p-1.5 rounded-md hover:bg-muted transition-colors shrink-0" aria-label={`More options for ${displayTitle}`}>
@@ -178,6 +179,8 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            )}
+
           </div>
         </div>
       </div>
