@@ -1123,6 +1123,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                               )}
 
                               <div className="relative">
+                                <BlockCommentIndicator courseId={courseId} blockId={block.id} />
                                 <div
                                   className={cn(
                                     "absolute -top-1 left-0 right-0 h-[3px] rounded-full bg-primary transition-all duration-200 z-20",
