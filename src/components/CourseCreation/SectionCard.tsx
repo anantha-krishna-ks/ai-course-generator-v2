@@ -723,6 +723,7 @@ export function SectionCard({
                       </button>
                     </div>
                   )}
+                </div>
               </div>
             </div>
           </div>
