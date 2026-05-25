@@ -132,6 +132,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
+  const [showFinishReviewDialog, setShowFinishReviewDialog] = useState(false);
   const flashTimerRef = useRef<number | null>(null);
   const triggerBlocksFlash = useCallback(() => {
     setSidebarCollapsed(false);
