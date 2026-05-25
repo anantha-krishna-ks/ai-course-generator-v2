@@ -87,19 +87,25 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="finish-review-note" className="text-xs font-semibold text-foreground inline-flex items-center gap-1.5">
+          <div className="rounded-xl border border-border bg-background px-4 py-3">
+            <p className="text-xs font-semibold text-foreground inline-flex items-center gap-1.5 mb-2">
               <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-              Summary note <span className="text-muted-foreground font-normal">(optional)</span>
-            </label>
-            <Textarea
-              id="finish-review-note"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Add a quick overall message for the author…"
-              rows={3}
-              className="resize-none rounded-xl text-sm"
-            />
+              What happens next
+            </p>
+            <ul className="space-y-1.5 text-xs text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
+                The author receives your review with all comments attached.
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
+                You won't be able to add new comments after submitting.
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
+                You'll be returned to your dashboard.
+              </li>
+            </ul>
           </div>
         </div>
 
