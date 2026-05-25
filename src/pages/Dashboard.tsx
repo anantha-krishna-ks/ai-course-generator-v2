@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers, RefreshCw } from "lucide-react";
+import { Search, Plus, BookOpen, TrendingUp, Users, ChevronRight, MoreVertical, Clock, Star, KeyRound, Shield, LogOut, Zap, Calendar, ArrowRight, ChevronsLeft, ChevronsRight, PenLine, Sparkles, LayoutTemplate, FileUp, Layers, RefreshCw, Crown, ShieldCheck, Share2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { tokenApi, TokenInfo } from "@/services/tokenApi";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
