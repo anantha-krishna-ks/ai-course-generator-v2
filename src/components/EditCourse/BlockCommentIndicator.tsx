@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, CheckCircle2, Circle, Send, X } from "lucide-react";
+import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
+  addComment,
   addReply,
   getCommentsForBlock,
   subscribe,
@@ -18,56 +21,99 @@ import {
 interface Props {
   courseId: string;
   blockId: string;
+  /** Optional human label shown in notifications, e.g. "Section 1 · Page · Text". */
+  label?: string;
+  /** Optional course title (used for notifications when reviewer posts). */
+  courseTitle?: string;
+  /** Override visual variant. Defaults to "floating" (absolute, top-left of parent). */
+  variant?: "floating" | "inline";
 }
 
+const REVIEWER_NAME = "Priya Iyer";
 const AUTHOR_NAME = "You";
 
-export function BlockCommentIndicator({ courseId, blockId }: Props) {
-  const [comments, setComments] = useState<ReviewComment[]>(() => getCommentsForBlock(courseId, blockId));
+export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating" }: Props) {
+  const location = useLocation();
+  const params = useParams();
+  const { toast } = useToast();
+  const isReviewer = location.pathname.startsWith("/review-course");
+  const resolvedCourseId = courseId || (params.courseId as string | undefined) || "";
+
+  const [comments, setComments] = useState<ReviewComment[]>(() => getCommentsForBlock(resolvedCourseId, blockId));
   const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState("");
 
   useEffect(() => {
-    const refresh = () => setComments(getCommentsForBlock(courseId, blockId));
+    const refresh = () => setComments(getCommentsForBlock(resolvedCourseId, blockId));
     refresh();
     const unsub = subscribe(refresh);
     return () => { unsub(); };
-  }, [courseId, blockId]);
+  }, [resolvedCourseId, blockId]);
 
-  if (comments.length === 0) return null;
-
-  const unresolved = comments.filter((c) => !c.resolved).length;
   const total = comments.length;
-  const allResolved = unresolved === 0;
-  const courseTitle = comments[0]?.blockLabel ?? "";
+  const unresolved = comments.filter((c) => !c.resolved).length;
+  const allResolved = total > 0 && unresolved === 0;
+  const threadTitle = useMemo(() => label ?? comments[0]?.blockLabel ?? "", [label, comments]);
+
+  // Author view: hide if no comments. Reviewer view: always show.
+  if (!isReviewer && total === 0) return null;
+
+  const submitNew = () => {
+    const t = draft.trim();
+    if (!t) return;
+    addComment({
+      courseId: resolvedCourseId,
+      courseTitle: courseTitle || threadTitle || "Course",
+      blockId,
+      blockLabel: label || threadTitle || blockId,
+      author: REVIEWER_NAME,
+      text: t,
+    });
+    setDraft("");
+    toast({ title: "Comment posted", description: "The author will be notified." });
+  };
+
+  const triggerClasses = variant === "floating"
+    ? "absolute z-20 top-2 -left-3 sm:-left-4"
+    : "relative";
+
+  const bgClass = total === 0
+    ? "bg-card border-border text-muted-foreground hover:text-primary hover:border-primary/40"
+    : allResolved
+      ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+      : "bg-primary text-primary-foreground border-primary/40 hover:bg-primary/90";
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <motion.button
           type="button"
-          initial={{ opacity: 0, scale: 0.6, x: -6 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.95 }}
-          aria-label={`${unresolved > 0 ? `${unresolved} unresolved` : `${total}`} reviewer comment${total > 1 ? "s" : ""}`}
+          aria-label={
+            total === 0
+              ? "Add reviewer comment"
+              : `${unresolved > 0 ? `${unresolved} unresolved` : `${total}`} reviewer comment${total > 1 ? "s" : ""}`
+          }
           className={cn(
-            "absolute z-20 top-2 -left-3 sm:-left-4",
-            "inline-flex items-center gap-1 h-7 pl-1.5 pr-2 rounded-full shadow-md",
-            "border backdrop-blur-sm transition-colors",
-            allResolved
-              ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
-              : "bg-primary text-primary-foreground border-primary/40 hover:bg-primary/90",
+            triggerClasses,
+            "inline-flex items-center gap-1 h-7 pl-1.5 pr-2 rounded-full shadow-sm border backdrop-blur-sm transition-colors",
+            bgClass,
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
           )}
         >
           <span className="relative inline-flex items-center justify-center w-5 h-5 rounded-full">
-            {allResolved ? (
+            {total === 0 ? (
+              <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            ) : allResolved ? (
               <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             ) : (
               <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             )}
             <AnimatePresence>
-              {!allResolved && !open && (
+              {total > 0 && !allResolved && !open && (
                 <motion.span
                   key="pulse"
                   initial={{ opacity: 0.6, scale: 1 }}
@@ -80,21 +126,21 @@ export function BlockCommentIndicator({ courseId, blockId }: Props) {
             </AnimatePresence>
           </span>
           <span className="text-[11px] font-semibold tabular-nums leading-none">
-            {unresolved > 0 ? unresolved : total}
+            {total === 0 ? "Comment" : unresolved > 0 ? unresolved : total}
           </span>
         </motion.button>
       </PopoverTrigger>
       <PopoverContent
-        side="right"
+        side={variant === "floating" ? "right" : "bottom"}
         align="start"
-        sideOffset={12}
+        sideOffset={10}
         data-review-comment-thread="true"
         className="w-[360px] p-0 rounded-2xl border border-border shadow-xl z-[60]"
       >
         <div className="px-4 py-3 border-b border-border flex items-center justify-between">
           <div className="min-w-0">
             <h4 className="text-sm font-semibold text-foreground">Reviewer comments</h4>
-            <p className="text-[11px] text-muted-foreground truncate">{courseTitle}</p>
+            <p className="text-[11px] text-muted-foreground truncate">{threadTitle || "Add a comment for the author"}</p>
           </div>
           <button
             type="button"
@@ -105,19 +151,53 @@ export function BlockCommentIndicator({ courseId, blockId }: Props) {
             <X className="w-4 h-4" />
           </button>
         </div>
-        <ScrollArea className="max-h-[420px]">
-          <ul className="divide-y divide-border">
-            {comments.map((c) => (
-              <CommentRow key={c.id} comment={c} courseTitle={courseTitle} />
-            ))}
-          </ul>
-        </ScrollArea>
+
+        {total === 0 ? (
+          <div className="px-4 py-6 text-center">
+            <div className="w-10 h-10 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-2">
+              <MessageSquarePlus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            </div>
+            <p className="text-xs text-muted-foreground">No comments yet on this {label?.toLowerCase().includes("section") ? "section" : label?.toLowerCase().includes("page") ? "page" : "block"}.</p>
+          </div>
+        ) : (
+          <ScrollArea className="max-h-[360px]">
+            <ul className="divide-y divide-border">
+              {comments.map((c) => (
+                <CommentRow
+                  key={c.id}
+                  comment={c}
+                  courseTitle={courseTitle || threadTitle}
+                  authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
+                  authorRole={isReviewer ? "reviewer" : "author"}
+                />
+              ))}
+            </ul>
+          </ScrollArea>
+        )}
+
+        {isReviewer && (
+          <div className="border-t border-border p-3 space-y-2">
+            <Textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Write a comment for the author…"
+              rows={2}
+              className="text-sm rounded-xl resize-none"
+            />
+            <div className="flex justify-end">
+              <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
+                <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
+                Post comment
+              </Button>
+            </div>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
 }
 
-function CommentRow({ comment, courseTitle }: { comment: ReviewComment; courseTitle: string }) {
+function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author" }) {
   const [reply, setReply] = useState("");
   const submit = () => {
     const t = reply.trim();
@@ -125,8 +205,8 @@ function CommentRow({ comment, courseTitle }: { comment: ReviewComment; courseTi
     addReply({
       commentId: comment.id,
       courseTitle,
-      author: AUTHOR_NAME,
-      authorRole: "author",
+      author: authorName,
+      authorRole,
       text: t,
     });
     setReply("");
