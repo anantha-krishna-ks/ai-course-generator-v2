@@ -382,29 +382,6 @@ function ReviewShareLink({ courseId, reviewer }: { courseId: string; reviewer: P
         </Button>
       </div>
 
-      <div className="flex items-center gap-1.5">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleEmail}
-          className="flex-1 h-8 gap-1.5 text-xs rounded-md text-muted-foreground hover:text-foreground"
-          aria-label={`Email link to ${reviewer.name}`}
-        >
-          <Mail className="w-3.5 h-3.5" aria-hidden="true" />
-          Email to {reviewer.name.split(" ")[0]}
-        </Button>
-        <span className="w-px h-4 bg-border" aria-hidden="true" />
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleOpen}
-          className="flex-1 h-8 gap-1.5 text-xs rounded-md text-muted-foreground hover:text-foreground"
-          aria-label="Open reviewer preview in a new tab"
-        >
-          <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-          Preview
-        </Button>
-      </div>
     </div>
   );
 }
