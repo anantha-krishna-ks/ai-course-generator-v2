@@ -1267,6 +1267,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   </Tooltip>
                 </div>
 
+                {!readOnly && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
