@@ -3,7 +3,8 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound } from "lucide-react";
+import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
@@ -138,6 +139,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [showScormDialog, setShowScormDialog] = useState(false);
+  const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [contentBlocks, setContentBlocks] = useState<ContentBlockData[]>(
     initialRestoreState?.contentBlocks ?? [
@@ -759,6 +761,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                    <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setShowCollaboratorsDrawer(true)} className="gap-2 cursor-pointer">
+                     <UsersRound className="w-4 h-4" aria-hidden="true" focusable="false" />
+                     Collaborators
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
                      <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
