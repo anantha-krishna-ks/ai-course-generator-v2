@@ -1539,6 +1539,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               outlineDuplicatingIds={duplicatingIds}
               outlinePendingTopAdds={pendingTopAdds}
               outlinePendingChildAdds={pendingChildAdds}
+              readOnly={readOnly}
             />
            );
         }
@@ -1590,6 +1591,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   outlineDuplicatingIds={duplicatingIds}
                   outlinePendingTopAdds={pendingTopAdds}
                   outlinePendingChildAdds={pendingChildAdds}
+                  readOnly={readOnly}
                 />
               );
             }
