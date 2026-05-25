@@ -174,23 +174,21 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
           </ScrollArea>
         )}
 
-        {isReviewer && (
-          <div className="border-t border-border p-3 space-y-2">
-            <Textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="Write a comment for the author…"
-              rows={2}
-              className="text-sm rounded-xl resize-none"
-            />
-            <div className="flex justify-end">
-              <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
-                <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
-                Post comment
-              </Button>
-            </div>
+        <div className="border-t border-border p-3 space-y-2">
+          <Textarea
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={isReviewer ? "Write a comment for the author…" : "Write a comment…"}
+            rows={2}
+            className="text-sm rounded-xl resize-none"
+          />
+          <div className="flex justify-end">
+            <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
+              <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
+              Post comment
+            </Button>
           </div>
-        )}
+        </div>
       </PopoverContent>
     </Popover>
   );
