@@ -645,7 +645,9 @@ const Dashboard = () => {
           {currentCourses.map((course) => {
             const targetPath = activeTab === "review"
               ? `/review-course/${course.id}`
-              : `/edit-course/${course.id}`;
+              : activeTab === "shared"
+                ? `/edit-course/${course.id}?shared=1`
+                : `/edit-course/${course.id}`;
             const ctaLabel = activeTab === "review" ? "Review" : "View";
             return (
             <motion.div key={course.id} variants={cardItem} role="listitem">
