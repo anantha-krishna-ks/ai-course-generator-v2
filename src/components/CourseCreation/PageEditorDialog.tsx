@@ -724,12 +724,15 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       )}
                                     >
                                       {/* Drag handle */}
+                                      {!readOnly && (
                                       <span
                                         className="opacity-0 group-hover/nav-page:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                                         {...listeners}
                                       >
                                         <GripVertical className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                                       </span>
+                                      )}
+
                                       <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
                                       <span className={cn(
                                         "text-sm truncate flex-1",
