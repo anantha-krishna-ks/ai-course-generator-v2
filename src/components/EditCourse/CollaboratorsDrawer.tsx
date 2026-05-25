@@ -174,7 +174,7 @@ function SectionCard({
   badge,
   children,
 }: {
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  icon: React.ElementType;
   title: string;
   hint: string;
   badge?: React.ReactNode;
