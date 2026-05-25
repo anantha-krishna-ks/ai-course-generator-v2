@@ -842,13 +842,15 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                      <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
                      SCORM preferences
                    </DropdownMenuItem>
-                   <DropdownMenuItem
-                     onClick={() => setShowDeleteDialog(true)}
-                     className="gap-2 cursor-pointer text-destructive focus:text-destructive"
-                   >
-                     <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
-                     Delete course
-                   </DropdownMenuItem>
+                   {!isSharedCourse && (
+                     <DropdownMenuItem
+                       onClick={() => setShowDeleteDialog(true)}
+                       className="gap-2 cursor-pointer text-destructive focus:text-destructive"
+                     >
+                       <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                       Delete course
+                     </DropdownMenuItem>
+                   )}
                  </DropdownMenuContent>
                </DropdownMenu>
              )}
