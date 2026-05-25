@@ -103,7 +103,7 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
-                You'll be returned to your dashboard.
+                You'll be navigated to your dashboard.
               </li>
             </ul>
           </div>
