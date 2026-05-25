@@ -103,6 +103,7 @@ interface PageEditorDialogProps {
   outlineDuplicatingIds?: Map<string, "section" | "page">;
   outlinePendingTopAdds?: { id: string; kind: "section" | "page" }[];
   outlinePendingChildAdds?: Record<string, string[]>;
+  readOnly?: boolean;
 }
 
 function SortableOutlineWrapper({ id, children }: { id: string; children: (listeners: Record<string, unknown>) => React.ReactNode }) {
