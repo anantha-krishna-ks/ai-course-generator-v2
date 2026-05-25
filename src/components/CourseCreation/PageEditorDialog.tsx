@@ -801,14 +801,17 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                     >
                                       <div className="flex items-center justify-between">
                                         <span
-                                          className="text-xs text-muted-foreground font-medium cursor-grab active:cursor-grabbing flex items-center gap-1"
-                                          {...listeners}
+                                          className={cn(
+                                            "text-xs text-muted-foreground font-medium flex items-center gap-1",
+                                            !readOnly && "cursor-grab active:cursor-grabbing"
+                                          )}
+                                          {...(readOnly ? {} : listeners)}
                                           onClick={(e) => e.stopPropagation()}
-                                          aria-label="Drag to reorder section"
                                         >
-                                          <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                                          {!readOnly && <GripVertical className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />}
                                           Section {sectionIndex}
                                         </span>
+
 
                                         <div className="flex items-center gap-0" onClick={(e) => e.stopPropagation()}>
                                           {!readOnly && (
