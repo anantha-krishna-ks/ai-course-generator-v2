@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
@@ -124,6 +125,8 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 
 export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, aiEnabled = false, aiOptions = null, onAiOptionsChange, courseItems = [], currentPageId, onRenameItem, onDuplicateItem, onDeleteItem, onAddPageToSection, onReorderItems, onReorderChildItems, onNavigateToPage, onAddItem, initialBlocks, onBlocksChange, sectionObjectives = "", onSectionObjectivesChange, sectionThumbnailUrl, onSectionThumbnailChange, onPreview, outlineDeletingIds, outlineDuplicatingIds, outlinePendingTopAdds, outlinePendingChildAdds, readOnly = false }: PageEditorDialogProps) {
   const { id: routeId, courseId: routeCourseId } = useParams<{ id?: string; courseId?: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const courseId = routeCourseId ?? routeId ?? "draft";
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -571,6 +574,21 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             <span className="text-sm font-medium text-foreground">Page editor</span>
           </div>
           <div className="flex items-center gap-2">
+            {readOnly && (
+              <Button
+                className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2 h-9"
+                onClick={() => {
+                  toast({
+                    title: "Review submitted",
+                    description: "Your comments have been shared with the author.",
+                  });
+                  setTimeout(() => navigate("/dashboard"), 600);
+                }}
+              >
+                <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                Finish review
+              </Button>
+            )}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
