@@ -515,6 +515,10 @@ export function SectionCard({
                     courseTitle={title}
                     variant="inline"
                     readOnly
+                    aggregateBlockIds={pages.flatMap((p) => [
+                      `page:${p.id}`,
+                      ...((getBlockIdsForPage?.(p.id)) || []),
+                    ])}
                   />
                 )}
                 <DropdownMenu>
