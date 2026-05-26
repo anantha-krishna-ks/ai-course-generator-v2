@@ -127,15 +127,16 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
 
   // Read-only summary chip (used at page/section level — no add-comment composer).
   if (readOnly) {
-    if (total === 0) return null;
     const lastActivity = comments.reduce<number>((acc, c) => {
       const replyMax = c.replies.reduce((a, r) => Math.max(a, new Date(r.createdAt).getTime()), 0);
       return Math.max(acc, new Date(c.createdAt).getTime(), replyMax);
     }, 0);
-    const relative = formatRelative(lastActivity);
-    const summaryLabel = allResolved
-      ? `${total} comment${total > 1 ? "s" : ""} · all resolved · updated ${relative}`
-      : `${unresolved} unresolved of ${total} · updated ${relative}`;
+    const relative = lastActivity ? formatRelative(lastActivity) : "";
+    const summaryLabel = total === 0
+      ? "No comments yet"
+      : allResolved
+        ? `${total} comment${total > 1 ? "s" : ""} · all resolved · updated ${relative}`
+        : `${unresolved} unresolved of ${total} · updated ${relative}`;
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <TooltipProvider delayDuration={150}>
@@ -147,20 +148,28 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                   aria-label={summaryLabel}
                   className={cn(
                     "inline-flex items-center gap-1.5 h-6 px-2 rounded-full border text-[11px] font-medium tabular-nums transition-colors shrink-0",
-                    allResolved
-                      ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
-                      : "bg-primary/10 border-primary/30 text-primary hover:bg-primary/15",
+                    total === 0
+                      ? "bg-muted/60 border-border text-muted-foreground hover:bg-muted"
+                      : allResolved
+                        ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                        : "bg-primary/10 border-primary/30 text-primary hover:bg-primary/15",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   )}
                 >
-                  {allResolved ? (
+                  {total === 0 ? (
+                    <MessageSquare className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
+                  ) : allResolved ? (
                     <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
                   ) : (
                     <MessageSquare className="w-3 h-3" aria-hidden="true" focusable="false" />
                   )}
-                  <span>{allResolved ? total : `${unresolved}/${total}`}</span>
-                  <span className="opacity-60">·</span>
-                  <span className="opacity-80">{relative}</span>
+                  <span>{total === 0 ? "0" : allResolved ? total : `${unresolved}/${total}`}</span>
+                  {relative && (
+                    <>
+                      <span className="opacity-60">·</span>
+                      <span className="opacity-80">{relative}</span>
+                    </>
+                  )}
                 </button>
               </PopoverTrigger>
             </TooltipTrigger>
