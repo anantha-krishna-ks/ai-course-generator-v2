@@ -28,6 +28,13 @@ interface Props {
   courseTitle?: string;
   /** Override visual variant. Defaults to "floating" (absolute, top-left of parent). */
   variant?: "floating" | "inline";
+  /**
+   * Read-only summary mode for page/section level.
+   * Hides the add-comment composer entirely and renders nothing when there
+   * are no comments. When comments exist, shows a compact summary chip
+   * (count + unresolved status + last activity) that opens a view-only thread.
+   */
+  readOnly?: boolean;
 }
 
 const REVIEWER_NAME = "Priya Iyer";
