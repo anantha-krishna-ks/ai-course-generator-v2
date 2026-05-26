@@ -36,6 +36,12 @@ interface Props {
    * (count + unresolved status + last activity) that opens a view-only thread.
    */
   readOnly?: boolean;
+  /**
+   * In readOnly mode, additional block IDs to aggregate into this chip's
+   * count (e.g. a section chip aggregates all its pages and their blocks).
+   * The component's own `blockId` is always included.
+   */
+  aggregateBlockIds?: string[];
 }
 
 const REVIEWER_NAME = "Priya Iyer";
