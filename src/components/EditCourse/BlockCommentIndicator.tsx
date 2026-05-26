@@ -105,6 +105,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const [comments, setComments] = useState<ReviewComment[]>(() => loadComments());
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
+  const [category, setCategory] = useState<ReviewCategory | "">("");
 
   useEffect(() => {
     const refresh = () => setComments(loadComments());
@@ -124,6 +125,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const submitNew = () => {
     const t = draft.trim();
     if (!t) return;
+    if (isReviewer && !category) return;
     addComment({
       courseId: resolvedCourseId,
       courseTitle: courseTitle || threadTitle || "Course",
@@ -131,10 +133,13 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       blockLabel: label || threadTitle || blockId,
       author: isReviewer ? REVIEWER_NAME : AUTHOR_NAME,
       text: t,
+      category: isReviewer ? (category as ReviewCategory) : undefined,
     });
     setDraft("");
+    setCategory("");
     toast({ title: "Comment posted", description: isReviewer ? "The author will be notified." : "Visible to the reviewer." });
   };
+
 
   const triggerClasses = variant === "floating"
     ? "absolute z-20 top-2 -right-3 sm:-right-4"
