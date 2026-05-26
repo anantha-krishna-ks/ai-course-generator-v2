@@ -48,6 +48,8 @@ interface SectionCardProps {
   pages?: PageEntry[];
   onPagesChange?: (pages: PageEntry[]) => void;
   readOnly?: boolean;
+  /** Maps a page id to its content block ids — used to aggregate review-comment counts on the section/page chips. */
+  getBlockIdsForPage?: (pageId: string) => string[];
 }
 
 const MAX_TITLE_LENGTH = 255;
