@@ -172,6 +172,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             label={`Page · ${page.title || "Untitled"}`}
             variant="inline"
             readOnly
+            aggregateBlockIds={getBlockIdsForPage?.(page.id)}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
