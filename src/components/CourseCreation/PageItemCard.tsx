@@ -144,6 +144,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                 blockId={`page:${id}`}
                 label={`Page · ${displayTitle}`}
                 variant="inline"
+                readOnly
               />
             )}
             {!readOnly && (
