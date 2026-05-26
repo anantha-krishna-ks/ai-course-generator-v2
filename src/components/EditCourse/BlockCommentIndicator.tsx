@@ -40,6 +40,35 @@ interface Props {
 const REVIEWER_NAME = "Priya Iyer";
 const AUTHOR_NAME = "You";
 
+function formatRelative(ts: number): string {
+  if (!ts) return "just now";
+  const diff = Date.now() - ts;
+  const sec = Math.max(1, Math.floor(diff / 1000));
+  if (sec < 60) return `${sec}s ago`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function SummaryStat({ label, value, tone = "muted" }: { label: string; value: string; tone?: "muted" | "primary" | "emerald" }) {
+  const toneClass =
+    tone === "primary"
+      ? "text-primary"
+      : tone === "emerald"
+        ? "text-emerald-600"
+        : "text-foreground";
+  return (
+    <div className="flex flex-col items-center justify-center py-1">
+      <span className={cn("text-sm font-semibold tabular-nums", toneClass)}>{value}</span>
+      <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
 export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false }: Props) {
   const location = useLocation();
   const params = useParams();
