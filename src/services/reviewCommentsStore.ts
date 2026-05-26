@@ -3,6 +3,15 @@
 
 import type { CollaboratorNotification, NotificationKind } from "./collaboratorsStore";
 
+export const REVIEW_CATEGORIES = [
+  "Clarity & Readability",
+  "Structure & Presentation",
+  "Accuracy & Completeness",
+  "Consistency & Standards",
+  "Relevance & Actionability",
+] as const;
+export type ReviewCategory = (typeof REVIEW_CATEGORIES)[number];
+
 export interface ReviewReply {
   id: string;
   author: string;
@@ -19,11 +28,13 @@ export interface ReviewComment {
   author: string;
   authorRole: "reviewer" | "author";
   text: string;
+  category?: ReviewCategory;
   createdAt: number;
   resolved: boolean;
   replies: ReviewReply[];
   readByAuthor: boolean;
 }
+
 
 const STORAGE_KEY = "review_comments_v1";
 const NOTIF_KEY = "review_notifications_v1";
