@@ -96,6 +96,99 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       ? `${total} resolved comment${total > 1 ? "s" : ""}`
       : `${unresolved} unresolved comment${unresolved > 1 ? "s" : ""}`;
 
+  // Read-only summary chip (used at page/section level — no add-comment composer).
+  if (readOnly) {
+    if (total === 0) return null;
+    const lastActivity = comments.reduce<number>((acc, c) => {
+      const replyMax = c.replies.reduce((a, r) => Math.max(a, new Date(r.createdAt).getTime()), 0);
+      return Math.max(acc, new Date(c.createdAt).getTime(), replyMax);
+    }, 0);
+    const relative = formatRelative(lastActivity);
+    const summaryLabel = allResolved
+      ? `${total} comment${total > 1 ? "s" : ""} · all resolved · updated ${relative}`
+      : `${unresolved} unresolved of ${total} · updated ${relative}`;
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <TooltipProvider delayDuration={150}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={summaryLabel}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 h-6 px-2 rounded-full border text-[11px] font-medium tabular-nums transition-colors shrink-0",
+                    allResolved
+                      ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                      : "bg-primary/10 border-primary/30 text-primary hover:bg-primary/15",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  )}
+                >
+                  {allResolved ? (
+                    <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <MessageSquare className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  )}
+                  <span>{allResolved ? total : `${unresolved}/${total}`}</span>
+                  <span className="opacity-60">·</span>
+                  <span className="opacity-80">{relative}</span>
+                </button>
+              </PopoverTrigger>
+            </TooltipTrigger>
+            {!open && (
+              <TooltipContent side="top" className="text-xs">
+                {summaryLabel}
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
+        <PopoverContent
+          side="bottom"
+          align="start"
+          sideOffset={8}
+          data-review-comment-thread="true"
+          className="w-[360px] p-0 rounded-2xl border border-border shadow-xl z-[60]"
+        >
+          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+            <div className="min-w-0">
+              <h4 className="text-sm font-semibold text-foreground">Comments</h4>
+              <p className="text-[11px] text-muted-foreground truncate">{threadTitle || "Thread summary"}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close"
+              className="w-7 h-7 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="px-4 py-2 border-b border-border bg-muted/30 grid grid-cols-3 gap-2 text-center">
+            <SummaryStat label="Total" value={String(total)} />
+            <SummaryStat label="Open" value={String(unresolved)} tone={unresolved > 0 ? "primary" : "muted"} />
+            <SummaryStat label="Resolved" value={String(total - unresolved)} tone="emerald" />
+          </div>
+          <ScrollArea className="max-h-[360px]">
+            <ul className="divide-y divide-border">
+              {comments.map((c) => (
+                <CommentRow
+                  key={c.id}
+                  comment={c}
+                  courseTitle={courseTitle || threadTitle}
+                  authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
+                  authorRole={isReviewer ? "reviewer" : "author"}
+                />
+              ))}
+            </ul>
+          </ScrollArea>
+          <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground">
+            Open the block to add or reply to comments.
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <TooltipProvider delayDuration={150}>
