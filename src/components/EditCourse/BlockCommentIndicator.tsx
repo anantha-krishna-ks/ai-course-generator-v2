@@ -14,6 +14,7 @@ import {
   addComment,
   addReply,
   getCommentsForBlock,
+  getCommentsForBlocks,
   subscribe,
   toggleResolved,
   type ReviewComment,
