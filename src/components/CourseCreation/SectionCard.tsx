@@ -48,6 +48,8 @@ interface SectionCardProps {
   pages?: PageEntry[];
   onPagesChange?: (pages: PageEntry[]) => void;
   readOnly?: boolean;
+  /** Maps a page id to its content block ids — used to aggregate review-comment counts on the section/page chips. */
+  getBlockIdsForPage?: (pageId: string) => string[];
 }
 
 const MAX_TITLE_LENGTH = 255;
@@ -69,9 +71,10 @@ interface SortablePageRowProps {
   onExclusionsChange: (id: string, exclusions: string) => void;
   onOpenPage?: (pageId: string) => void;
   aiEnabled?: boolean;
+  getBlockIdsForPage?: (pageId: string) => string[];
 }
 
-function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, onOpenPage, aiEnabled }: SortablePageRowProps) {
+function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, onOpenPage, aiEnabled, getBlockIdsForPage }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
@@ -169,6 +172,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             label={`Page · ${page.title || "Untitled"}`}
             variant="inline"
             readOnly
+            aggregateBlockIds={getBlockIdsForPage?.(page.id)}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -351,6 +355,7 @@ export function SectionCard({
   pages: externalPages,
   onPagesChange,
   readOnly = false,
+  getBlockIdsForPage,
 }: SectionCardProps) {
   const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -510,6 +515,10 @@ export function SectionCard({
                     courseTitle={title}
                     variant="inline"
                     readOnly
+                    aggregateBlockIds={pages.flatMap((p) => [
+                      `page:${p.id}`,
+                      ...((getBlockIdsForPage?.(p.id)) || []),
+                    ])}
                   />
                 )}
                 <DropdownMenu>
@@ -698,6 +707,7 @@ export function SectionCard({
                           }}
                           onOpenPage={onOpenPage}
                           aiEnabled={aiEnabled}
+                          getBlockIdsForPage={getBlockIdsForPage}
                         />
                       ))}
                     </SortableContext>

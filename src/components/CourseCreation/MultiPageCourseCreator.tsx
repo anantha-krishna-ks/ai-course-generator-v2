@@ -1445,7 +1445,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     }));
                                   }}
                                   readOnly={readOnly}
+                                  getBlockIdsForPage={(pageId) => (pageBlocksMap[pageId] || []).map((b) => b.id)}
                                 />
+
                               </SortableOutlineItem>,
                             );
                             // Pending child page additions for this section -> show skeleton placeholders

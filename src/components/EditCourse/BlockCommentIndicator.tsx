@@ -14,6 +14,7 @@ import {
   addComment,
   addReply,
   getCommentsForBlock,
+  getCommentsForBlocks,
   subscribe,
   toggleResolved,
   type ReviewComment,
@@ -35,6 +36,12 @@ interface Props {
    * (count + unresolved status + last activity) that opens a view-only thread.
    */
   readOnly?: boolean;
+  /**
+   * In readOnly mode, additional block IDs to aggregate into this chip's
+   * count (e.g. a section chip aggregates all its pages and their blocks).
+   * The component's own `blockId` is always included.
+   */
+  aggregateBlockIds?: string[];
 }
 
 const REVIEWER_NAME = "Priya Iyer";
@@ -69,23 +76,38 @@ function SummaryStat({ label, value, tone = "muted" }: { label: string; value: s
   );
 }
 
-export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false }: Props) {
+export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false, aggregateBlockIds }: Props) {
   const location = useLocation();
   const params = useParams();
   const { toast } = useToast();
   const isReviewer = location.pathname.startsWith("/review-course");
   const resolvedCourseId = courseId || (params.courseId as string | undefined) || "";
 
-  const [comments, setComments] = useState<ReviewComment[]>(() => getCommentsForBlock(resolvedCourseId, blockId));
+  const aggregateKey = (aggregateBlockIds || []).join("|");
+  const effectiveIds = useMemo(
+    () => (aggregateBlockIds && aggregateBlockIds.length
+      ? Array.from(new Set([blockId, ...aggregateBlockIds]))
+      : [blockId]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [blockId, aggregateKey],
+  );
+  const isAggregated = effectiveIds.length > 1;
+
+  const loadComments = () => (isAggregated
+    ? getCommentsForBlocks(resolvedCourseId, effectiveIds)
+    : getCommentsForBlock(resolvedCourseId, blockId));
+
+  const [comments, setComments] = useState<ReviewComment[]>(() => loadComments());
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
 
   useEffect(() => {
-    const refresh = () => setComments(getCommentsForBlock(resolvedCourseId, blockId));
+    const refresh = () => setComments(loadComments());
     refresh();
     const unsub = subscribe(refresh);
     return () => { unsub(); };
-  }, [resolvedCourseId, blockId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedCourseId, blockId, aggregateKey]);
 
   const total = comments.length;
   const unresolved = comments.filter((c) => !c.resolved).length;
