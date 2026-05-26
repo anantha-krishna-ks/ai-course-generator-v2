@@ -509,7 +509,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
               <Button
                 size="sm"
                 onClick={submit}
-                disabled={!reply.trim() && !markResolved}
+                disabled={!reply.trim()}
                 className="rounded-full h-8"
               >
                 <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
