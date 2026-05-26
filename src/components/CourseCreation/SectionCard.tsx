@@ -355,6 +355,7 @@ export function SectionCard({
   pages: externalPages,
   onPagesChange,
   readOnly = false,
+  getBlockIdsForPage,
 }: SectionCardProps) {
   const { toast } = useToast();
   const [isCollapsed, setIsCollapsed] = useState(false);
