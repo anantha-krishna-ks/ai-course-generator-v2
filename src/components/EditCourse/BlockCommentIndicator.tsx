@@ -10,6 +10,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   addComment,
   addReply,
@@ -17,8 +19,11 @@ import {
   getCommentsForBlocks,
   subscribe,
   toggleResolved,
+  REVIEW_CATEGORIES,
+  type ReviewCategory,
   type ReviewComment,
 } from "@/services/reviewCommentsStore";
+
 
 interface Props {
   courseId: string;
