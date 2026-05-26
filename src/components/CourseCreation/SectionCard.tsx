@@ -703,6 +703,7 @@ export function SectionCard({
                           }}
                           onOpenPage={onOpenPage}
                           aiEnabled={aiEnabled}
+                          getBlockIdsForPage={getBlockIdsForPage}
                         />
                       ))}
                     </SortableContext>
