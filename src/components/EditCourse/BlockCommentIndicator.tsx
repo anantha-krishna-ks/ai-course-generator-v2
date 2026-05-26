@@ -428,16 +428,14 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
 
   const submit = () => {
     const t = reply.trim();
-    if (!t && !(isAuthorView && markResolved)) return;
-    if (t) {
-      addReply({
-        commentId: comment.id,
-        courseTitle,
-        author: authorName,
-        authorRole,
-        text: t,
-      });
-    }
+    if (!t) return;
+    addReply({
+      commentId: comment.id,
+      courseTitle,
+      author: authorName,
+      authorRole,
+      text: t,
+    });
     if (isAuthorView && markResolved && !comment.resolved) {
       toggleResolved(comment.id);
     }
