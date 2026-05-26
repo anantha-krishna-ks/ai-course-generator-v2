@@ -372,20 +372,50 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
         )}
 
         <div className="border-t border-border p-3 space-y-2">
+          {isReviewer && (
+            <div className="space-y-1">
+              <label className="text-[11px] font-medium text-muted-foreground" htmlFor={`cat-${blockId}`}>
+                Category <span className="text-destructive">*</span>
+              </label>
+              <Select value={category} onValueChange={(v) => setCategory(v as ReviewCategory)}>
+                <SelectTrigger id={`cat-${blockId}`} aria-label="Comment category" className="h-9 rounded-xl text-sm">
+                  <SelectValue placeholder="Select a category first…" />
+                </SelectTrigger>
+                <SelectContent className="z-[70]">
+                  {REVIEW_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <Textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder={isReviewer ? "Write a comment for the author…" : "Write a comment…"}
+            placeholder={
+              isReviewer
+                ? category
+                  ? "Write a comment for the author…"
+                  : "Select a category to enable commenting…"
+                : "Write a comment…"
+            }
             rows={2}
+            disabled={isReviewer && !category}
             className="text-sm rounded-xl resize-none"
           />
           <div className="flex justify-end">
-            <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
+            <Button
+              size="sm"
+              onClick={submitNew}
+              disabled={!draft.trim() || (isReviewer && !category)}
+              className="rounded-full"
+            >
               <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
               Post comment
             </Button>
           </div>
         </div>
+
       </PopoverContent>
     </Popover>
   );
