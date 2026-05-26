@@ -10,6 +10,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   addComment,
   addReply,
@@ -17,8 +19,11 @@ import {
   getCommentsForBlocks,
   subscribe,
   toggleResolved,
+  REVIEW_CATEGORIES,
+  type ReviewCategory,
   type ReviewComment,
 } from "@/services/reviewCommentsStore";
+
 
 interface Props {
   courseId: string;
@@ -100,6 +105,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const [comments, setComments] = useState<ReviewComment[]>(() => loadComments());
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
+  const [category, setCategory] = useState<ReviewCategory | "">("");
 
   useEffect(() => {
     const refresh = () => setComments(loadComments());
@@ -119,6 +125,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const submitNew = () => {
     const t = draft.trim();
     if (!t) return;
+    if (isReviewer && !category) return;
     addComment({
       courseId: resolvedCourseId,
       courseTitle: courseTitle || threadTitle || "Course",
@@ -126,10 +133,13 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
       blockLabel: label || threadTitle || blockId,
       author: isReviewer ? REVIEWER_NAME : AUTHOR_NAME,
       text: t,
+      category: isReviewer ? (category as ReviewCategory) : undefined,
     });
     setDraft("");
+    setCategory("");
     toast({ title: "Comment posted", description: isReviewer ? "The author will be notified." : "Visible to the reviewer." });
   };
+
 
   const triggerClasses = variant === "floating"
     ? "absolute z-20 top-2 -right-3 sm:-right-4"
@@ -362,20 +372,50 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
         )}
 
         <div className="border-t border-border p-3 space-y-2">
+          {isReviewer && (
+            <div className="space-y-1">
+              <label className="text-[11px] font-medium text-muted-foreground" htmlFor={`cat-${blockId}`}>
+                Category <span className="text-destructive">*</span>
+              </label>
+              <Select value={category} onValueChange={(v) => setCategory(v as ReviewCategory)}>
+                <SelectTrigger id={`cat-${blockId}`} aria-label="Comment category" className="h-9 rounded-xl text-sm">
+                  <SelectValue placeholder="Select a category first…" />
+                </SelectTrigger>
+                <SelectContent className="z-[70]">
+                  {REVIEW_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <Textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder={isReviewer ? "Write a comment for the author…" : "Write a comment…"}
+            placeholder={
+              isReviewer
+                ? category
+                  ? "Write a comment for the author…"
+                  : "Select a category to enable commenting…"
+                : "Write a comment…"
+            }
             rows={2}
+            disabled={isReviewer && !category}
             className="text-sm rounded-xl resize-none"
           />
           <div className="flex justify-end">
-            <Button size="sm" onClick={submitNew} disabled={!draft.trim()} className="rounded-full">
+            <Button
+              size="sm"
+              onClick={submitNew}
+              disabled={!draft.trim() || (isReviewer && !category)}
+              className="rounded-full"
+            >
               <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
               Post comment
             </Button>
           </div>
         </div>
+
       </PopoverContent>
     </Popover>
   );
@@ -383,17 +423,26 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
 
 function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author" }) {
   const [reply, setReply] = useState("");
+  const [markResolved, setMarkResolved] = useState(false);
+  const isAuthorView = authorRole === "author";
+
   const submit = () => {
     const t = reply.trim();
-    if (!t) return;
-    addReply({
-      commentId: comment.id,
-      courseTitle,
-      author: authorName,
-      authorRole,
-      text: t,
-    });
+    if (!t && !(isAuthorView && markResolved)) return;
+    if (t) {
+      addReply({
+        commentId: comment.id,
+        courseTitle,
+        author: authorName,
+        authorRole,
+        text: t,
+      });
+    }
+    if (isAuthorView && markResolved && !comment.resolved) {
+      toggleResolved(comment.id);
+    }
     setReply("");
+    setMarkResolved(false);
   };
 
   return (
@@ -406,6 +455,11 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-foreground">{comment.author}</span>
             <Badge variant="secondary" className="text-[10px] h-4 px-1.5 rounded-full">Reviewer</Badge>
+            {comment.category && (
+              <Badge variant="outline" className="text-[10px] h-4 px-1.5 rounded-full border-primary/30 text-primary">
+                {comment.category}
+              </Badge>
+            )}
             {comment.resolved && (
               <Badge className="text-[10px] h-4 px-1.5 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Resolved</Badge>
             )}
@@ -435,7 +489,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
       )}
 
       {!comment.resolved && (
-        <div className="pl-9 flex items-end gap-2">
+        <div className="pl-9 space-y-2">
           <Textarea
             value={reply}
             onChange={(e) => setReply(e.target.value)}
@@ -443,22 +497,62 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             rows={1}
             className="min-h-[36px] text-sm rounded-xl resize-none"
           />
-          <Button size="sm" onClick={submit} disabled={!reply.trim()} className="rounded-full h-9" aria-label="Send reply">
-            <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          </Button>
+          {isAuthorView ? (
+            <div className="flex items-center justify-between gap-2">
+              <label className="inline-flex items-center gap-2 text-[11px] text-muted-foreground cursor-pointer">
+                <Checkbox
+                  checked={markResolved}
+                  onCheckedChange={(v) => setMarkResolved(v === true)}
+                  aria-label="Mark as resolved"
+                  className="h-4 w-4"
+                />
+                Mark as resolved
+              </label>
+              <Button
+                size="sm"
+                onClick={submit}
+                disabled={!reply.trim() && !markResolved}
+                className="rounded-full h-8"
+              >
+                <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
+                Submit
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-end">
+              <Button size="sm" onClick={submit} disabled={!reply.trim()} className="rounded-full h-9" aria-label="Send reply">
+                <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="pl-9">
-        <button
-          type="button"
-          onClick={() => toggleResolved(comment.id)}
-          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-emerald-700"
-        >
-          {comment.resolved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
-          {comment.resolved ? "Reopen" : "Mark resolved"}
-        </button>
-      </div>
+      {!isAuthorView && (
+        <div className="pl-9">
+          <button
+            type="button"
+            onClick={() => toggleResolved(comment.id)}
+            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-emerald-700"
+          >
+            {comment.resolved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+            {comment.resolved ? "Reopen" : "Mark resolved"}
+          </button>
+        </div>
+      )}
+      {isAuthorView && comment.resolved && (
+        <div className="pl-9">
+          <button
+            type="button"
+            onClick={() => toggleResolved(comment.id)}
+            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Reopen
+          </button>
+        </div>
+      )}
     </li>
   );
 }
+

@@ -3,6 +3,15 @@
 
 import type { CollaboratorNotification, NotificationKind } from "./collaboratorsStore";
 
+export const REVIEW_CATEGORIES = [
+  "Clarity & Readability",
+  "Structure & Presentation",
+  "Accuracy & Completeness",
+  "Consistency & Standards",
+  "Relevance & Actionability",
+] as const;
+export type ReviewCategory = (typeof REVIEW_CATEGORIES)[number];
+
 export interface ReviewReply {
   id: string;
   author: string;
@@ -19,11 +28,13 @@ export interface ReviewComment {
   author: string;
   authorRole: "reviewer" | "author";
   text: string;
+  category?: ReviewCategory;
   createdAt: number;
   resolved: boolean;
   replies: ReviewReply[];
   readByAuthor: boolean;
 }
+
 
 const STORAGE_KEY = "review_comments_v1";
 const NOTIF_KEY = "review_notifications_v1";
@@ -122,6 +133,7 @@ export function addComment(opts: {
   blockLabel: string;
   author: string;
   text: string;
+  category?: ReviewCategory;
 }): ReviewComment {
   const list = read();
   const comment: ReviewComment = {
@@ -132,6 +144,8 @@ export function addComment(opts: {
     author: opts.author,
     authorRole: "reviewer",
     text: opts.text,
+    category: opts.category,
+
     createdAt: Date.now(),
     resolved: false,
     replies: [],
