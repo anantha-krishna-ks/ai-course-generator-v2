@@ -206,19 +206,28 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
             <SummaryStat label="Open" value={String(unresolved)} tone={unresolved > 0 ? "primary" : "muted"} />
             <SummaryStat label="Resolved" value={String(total - unresolved)} tone="emerald" />
           </div>
-          <ScrollArea className="max-h-[360px]">
-            <ul className="divide-y divide-border">
-              {comments.map((c) => (
-                <CommentRow
-                  key={c.id}
-                  comment={c}
-                  courseTitle={courseTitle || threadTitle}
-                  authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
-                  authorRole={isReviewer ? "reviewer" : "author"}
-                />
-              ))}
-            </ul>
-          </ScrollArea>
+          {total === 0 ? (
+            <div className="px-4 py-6 text-center">
+              <div className="w-10 h-10 mx-auto rounded-full bg-muted flex items-center justify-center mb-2">
+                <MessageSquare className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+              </div>
+              <p className="text-xs text-muted-foreground">No comments yet at this level.</p>
+            </div>
+          ) : (
+            <ScrollArea className="max-h-[360px]">
+              <ul className="divide-y divide-border">
+                {comments.map((c) => (
+                  <CommentRow
+                    key={c.id}
+                    comment={c}
+                    courseTitle={courseTitle || threadTitle}
+                    authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
+                    authorRole={isReviewer ? "reviewer" : "author"}
+                  />
+                ))}
+              </ul>
+            </ScrollArea>
+          )}
           <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground">
             Open the block to add or reply to comments.
           </div>
