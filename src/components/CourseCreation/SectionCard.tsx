@@ -71,6 +71,7 @@ interface SortablePageRowProps {
   onExclusionsChange: (id: string, exclusions: string) => void;
   onOpenPage?: (pageId: string) => void;
   aiEnabled?: boolean;
+  getBlockIdsForPage?: (pageId: string) => string[];
 }
 
 function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, onOpenPage, aiEnabled }: SortablePageRowProps) {
