@@ -55,6 +55,11 @@ export function getCommentsForBlock(courseId: string, blockId: string): ReviewCo
   return getCommentsForCourse(courseId).filter((c) => c.blockId === blockId).reverse();
 }
 
+export function getCommentsForBlocks(courseId: string, blockIds: string[]): ReviewComment[] {
+  const ids = new Set(blockIds);
+  return getCommentsForCourse(courseId).filter((c) => ids.has(c.blockId)).reverse();
+}
+
 export function unreadCountForCourse(courseId: string): number {
   return read().filter((c) => c.courseId === courseId && !c.readByAuthor).length;
 }
