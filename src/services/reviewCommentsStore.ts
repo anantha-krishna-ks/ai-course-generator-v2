@@ -133,6 +133,7 @@ export function addComment(opts: {
   blockLabel: string;
   author: string;
   text: string;
+  category?: ReviewCategory;
 }): ReviewComment {
   const list = read();
   const comment: ReviewComment = {
@@ -143,6 +144,8 @@ export function addComment(opts: {
     author: opts.author,
     authorRole: "reviewer",
     text: opts.text,
+    category: opts.category,
+
     createdAt: Date.now(),
     resolved: false,
     replies: [],
