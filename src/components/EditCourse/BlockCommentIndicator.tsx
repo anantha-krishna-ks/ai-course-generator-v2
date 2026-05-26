@@ -76,14 +76,28 @@ function SummaryStat({ label, value, tone = "muted" }: { label: string; value: s
   );
 }
 
-export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false }: Props) {
+export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false, aggregateBlockIds }: Props) {
   const location = useLocation();
   const params = useParams();
   const { toast } = useToast();
   const isReviewer = location.pathname.startsWith("/review-course");
   const resolvedCourseId = courseId || (params.courseId as string | undefined) || "";
 
-  const [comments, setComments] = useState<ReviewComment[]>(() => getCommentsForBlock(resolvedCourseId, blockId));
+  const aggregateKey = (aggregateBlockIds || []).join("|");
+  const effectiveIds = useMemo(
+    () => (aggregateBlockIds && aggregateBlockIds.length
+      ? Array.from(new Set([blockId, ...aggregateBlockIds]))
+      : [blockId]),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [blockId, aggregateKey],
+  );
+  const isAggregated = effectiveIds.length > 1;
+
+  const loadComments = () => (isAggregated
+    ? getCommentsForBlocks(resolvedCourseId, effectiveIds)
+    : getCommentsForBlock(resolvedCourseId, blockId));
+
+  const [comments, setComments] = useState<ReviewComment[]>(() => loadComments());
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
 
