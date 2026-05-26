@@ -40,7 +40,7 @@ interface Props {
 const REVIEWER_NAME = "Priya Iyer";
 const AUTHOR_NAME = "You";
 
-export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating" }: Props) {
+export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false }: Props) {
   const location = useLocation();
   const params = useParams();
   const { toast } = useToast();
