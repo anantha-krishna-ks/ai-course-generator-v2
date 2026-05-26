@@ -423,17 +423,26 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
 
 function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author" }) {
   const [reply, setReply] = useState("");
+  const [markResolved, setMarkResolved] = useState(false);
+  const isAuthorView = authorRole === "author";
+
   const submit = () => {
     const t = reply.trim();
-    if (!t) return;
-    addReply({
-      commentId: comment.id,
-      courseTitle,
-      author: authorName,
-      authorRole,
-      text: t,
-    });
+    if (!t && !(isAuthorView && markResolved)) return;
+    if (t) {
+      addReply({
+        commentId: comment.id,
+        courseTitle,
+        author: authorName,
+        authorRole,
+        text: t,
+      });
+    }
+    if (isAuthorView && markResolved && !comment.resolved) {
+      toggleResolved(comment.id);
+    }
     setReply("");
+    setMarkResolved(false);
   };
 
   return (
@@ -446,6 +455,11 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-foreground">{comment.author}</span>
             <Badge variant="secondary" className="text-[10px] h-4 px-1.5 rounded-full">Reviewer</Badge>
+            {comment.category && (
+              <Badge variant="outline" className="text-[10px] h-4 px-1.5 rounded-full border-primary/30 text-primary">
+                {comment.category}
+              </Badge>
+            )}
             {comment.resolved && (
               <Badge className="text-[10px] h-4 px-1.5 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Resolved</Badge>
             )}
@@ -475,7 +489,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
       )}
 
       {!comment.resolved && (
-        <div className="pl-9 flex items-end gap-2">
+        <div className="pl-9 space-y-2">
           <Textarea
             value={reply}
             onChange={(e) => setReply(e.target.value)}
@@ -483,22 +497,62 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             rows={1}
             className="min-h-[36px] text-sm rounded-xl resize-none"
           />
-          <Button size="sm" onClick={submit} disabled={!reply.trim()} className="rounded-full h-9" aria-label="Send reply">
-            <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          </Button>
+          {isAuthorView ? (
+            <div className="flex items-center justify-between gap-2">
+              <label className="inline-flex items-center gap-2 text-[11px] text-muted-foreground cursor-pointer">
+                <Checkbox
+                  checked={markResolved}
+                  onCheckedChange={(v) => setMarkResolved(v === true)}
+                  aria-label="Mark as resolved"
+                  className="h-4 w-4"
+                />
+                Mark as resolved
+              </label>
+              <Button
+                size="sm"
+                onClick={submit}
+                disabled={!reply.trim() && !markResolved}
+                className="rounded-full h-8"
+              >
+                <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
+                Submit
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-end">
+              <Button size="sm" onClick={submit} disabled={!reply.trim()} className="rounded-full h-9" aria-label="Send reply">
+                <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="pl-9">
-        <button
-          type="button"
-          onClick={() => toggleResolved(comment.id)}
-          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-emerald-700"
-        >
-          {comment.resolved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
-          {comment.resolved ? "Reopen" : "Mark resolved"}
-        </button>
-      </div>
+      {!isAuthorView && (
+        <div className="pl-9">
+          <button
+            type="button"
+            onClick={() => toggleResolved(comment.id)}
+            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-emerald-700"
+          >
+            {comment.resolved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+            {comment.resolved ? "Reopen" : "Mark resolved"}
+          </button>
+        </div>
+      )}
+      {isAuthorView && comment.resolved && (
+        <div className="pl-9">
+          <button
+            type="button"
+            onClick={() => toggleResolved(comment.id)}
+            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Reopen
+          </button>
+        </div>
+      )}
     </li>
   );
 }
+
