@@ -168,6 +168,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
             blockId={`page:${page.id}`}
             label={`Page · ${page.title || "Untitled"}`}
             variant="inline"
+            readOnly
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -508,6 +509,7 @@ export function SectionCard({
                     label={`Section ${sectionNumber} · ${title || "Untitled"}`}
                     courseTitle={title}
                     variant="inline"
+                    readOnly
                   />
                 )}
                 <DropdownMenu>
