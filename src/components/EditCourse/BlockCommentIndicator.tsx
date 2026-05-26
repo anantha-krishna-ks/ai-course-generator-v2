@@ -102,11 +102,12 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const [draft, setDraft] = useState("");
 
   useEffect(() => {
-    const refresh = () => setComments(getCommentsForBlock(resolvedCourseId, blockId));
+    const refresh = () => setComments(loadComments());
     refresh();
     const unsub = subscribe(refresh);
     return () => { unsub(); };
-  }, [resolvedCourseId, blockId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedCourseId, blockId, aggregateKey]);
 
   const total = comments.length;
   const unresolved = comments.filter((c) => !c.resolved).length;
