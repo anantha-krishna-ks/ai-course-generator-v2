@@ -29,18 +29,20 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
     [open, courseId],
   );
 
-  const handleSubmit = () => {
+  const finish = (mode: "draft" | "ready") => {
     setSubmitting(true);
     setTimeout(() => {
       toast({
-        title: "Review submitted",
-        description: commentCount
-          ? `Your ${commentCount} comment${commentCount === 1 ? "" : "s"} ${commentCount === 1 ? "has" : "have"} been shared with the author.`
-          : "The author has been notified that your review is complete.",
+        title: mode === "ready" ? "Marked as Ready to Publish" : "Feedback submitted",
+        description:
+          mode === "ready"
+            ? "Course status updated to Ready to Publish."
+            : commentCount
+              ? `Your ${commentCount} comment${commentCount === 1 ? "" : "s"} ${commentCount === 1 ? "has" : "have"} been shared with the author. Course remains in Draft.`
+              : "The author has been notified. Course remains in Draft.",
       });
       setSubmitting(false);
       onOpenChange(false);
-      
       setTimeout(() => navigate("/dashboard"), 400);
     }, 500);
   };
