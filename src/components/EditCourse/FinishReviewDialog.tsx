@@ -49,7 +49,7 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] p-0 overflow-hidden gap-0 rounded-2xl">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[600px] sm:max-w-[600px] p-0 overflow-hidden gap-0 rounded-2xl max-h-[90vh] overflow-y-auto">
         {/* Hero band */}
         <div className="relative px-6 pt-6 pb-5 bg-gradient-to-br from-emerald-50 via-emerald-50/60 to-background border-b border-border">
           <div className="flex items-start gap-4">
@@ -111,7 +111,7 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
           </div>
         </div>
 
-        <DialogFooter className="px-6 py-4 border-t border-border bg-muted/30 gap-2 sm:gap-2">
+        <DialogFooter className="px-4 sm:px-6 py-4 border-t border-border bg-muted/30 flex-col sm:flex-row gap-2 sm:gap-2 [&>button]:w-full sm:[&>button]:w-auto">
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
