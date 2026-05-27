@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X } from "lucide-react";
+import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,12 +13,26 @@ import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   addComment,
   addReply,
   getCommentsForBlock,
   getCommentsForBlocks,
   subscribe,
   toggleResolved,
+  deleteComment,
+  updateComment,
+  deleteReply,
+  updateReply,
   REVIEW_CATEGORIES,
   type ReviewCategory,
   type ReviewComment,
