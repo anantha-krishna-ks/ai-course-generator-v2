@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Rocket } from "lucide-react";
 import { CheckCircle2, MessageSquare, Send, Sparkles } from "lucide-react";
 import {
   Dialog,
