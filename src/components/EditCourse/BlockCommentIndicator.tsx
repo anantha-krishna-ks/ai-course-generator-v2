@@ -260,7 +260,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
               <p className="text-xs text-muted-foreground">No comments yet at this level.</p>
             </div>
           ) : (
-            <div className="max-h-[55vh] overflow-y-auto overscroll-contain scrollbar-thin">
+            <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar">
 
               <ul className="divide-y divide-border">
                 {comments.map((c) => (
@@ -371,7 +371,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
             <p className="text-xs text-muted-foreground">No comments yet on this {label?.toLowerCase().includes("section") ? "section" : label?.toLowerCase().includes("page") ? "page" : "block"}.</p>
           </div>
         ) : (
-          <div className="max-h-[50vh] overflow-y-auto overscroll-contain scrollbar-thin">
+          <div className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar">
             <ul className="divide-y divide-border">
               {comments.map((c) => (
                 <CommentRow
