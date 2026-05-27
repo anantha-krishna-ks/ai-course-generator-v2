@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CheckCircle2, MessageSquare, Send, Sparkles } from "lucide-react";
+import { CheckCircle2, MessageSquare, Send, Sparkles, Rocket } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -29,18 +29,20 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
     [open, courseId],
   );
 
-  const handleSubmit = () => {
+  const finish = (mode: "draft" | "ready") => {
     setSubmitting(true);
     setTimeout(() => {
       toast({
-        title: "Review submitted",
-        description: commentCount
-          ? `Your ${commentCount} comment${commentCount === 1 ? "" : "s"} ${commentCount === 1 ? "has" : "have"} been shared with the author.`
-          : "The author has been notified that your review is complete.",
+        title: mode === "ready" ? "Marked as Ready to Publish" : "Feedback submitted",
+        description:
+          mode === "ready"
+            ? "Course status updated to Ready to Publish."
+            : commentCount
+              ? `Your ${commentCount} comment${commentCount === 1 ? "" : "s"} ${commentCount === 1 ? "has" : "have"} been shared with the author. Course remains in Draft.`
+              : "The author has been notified. Course remains in Draft.",
       });
       setSubmitting(false);
       onOpenChange(false);
-      
       setTimeout(() => navigate("/dashboard"), 400);
     }, 500);
   };
@@ -119,12 +121,21 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
             Keep reviewing
           </Button>
           <Button
-            onClick={handleSubmit}
+            variant="outline"
+            onClick={() => finish("ready")}
+            disabled={submitting}
+            className="rounded-full gap-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+          >
+            <Rocket className="w-4 h-4" aria-hidden="true" focusable="false" />
+            Ready to Publish
+          </Button>
+          <Button
+            onClick={() => finish("draft")}
             disabled={submitting}
             className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2"
           >
             <Send className="w-4 h-4" aria-hidden="true" focusable="false" />
-            {submitting ? "Submitting…" : "Submit review"}
+            {submitting ? "Submitting…" : "Submit Feedback"}
           </Button>
         </DialogFooter>
       </DialogContent>
