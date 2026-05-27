@@ -436,10 +436,43 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   );
 }
 
+const RESOLVED_TIP = "Mark as resolved after you've addressed this feedback. Resolved threads are hidden from the open list and signal to the reviewer that no further action is needed.";
+
+function OwnerActions({ onEdit, onDelete, label }: { onEdit: () => void; onDelete: () => void; label: string }) {
+  return (
+    <div className="inline-flex items-center gap-0.5 shrink-0">
+      <button
+        type="button"
+        onClick={onEdit}
+        aria-label={`Edit ${label}`}
+        className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-muted flex items-center justify-center"
+      >
+        <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
+      </button>
+      <button
+        type="button"
+        onClick={onDelete}
+        aria-label={`Delete ${label}`}
+        className="w-6 h-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-muted flex items-center justify-center"
+      >
+        <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+      </button>
+    </div>
+  );
+}
+
 function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author" }) {
   const [reply, setReply] = useState("");
   const [markResolved, setMarkResolved] = useState(false);
   const isAuthorView = authorRole === "author";
+
+  const [editingComment, setEditingComment] = useState(false);
+  const [commentDraft, setCommentDraft] = useState(comment.text);
+  const [editingReplyId, setEditingReplyId] = useState<string | null>(null);
+  const [replyDraft, setReplyDraft] = useState("");
+  const [confirm, setConfirm] = useState<null | { kind: "comment" } | { kind: "reply"; id: string }>(null);
+
+  const canEditComment = comment.author === authorName;
 
   const submit = () => {
     const t = reply.trim();
@@ -458,6 +491,20 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
     setMarkResolved(false);
   };
 
+  const saveCommentEdit = () => {
+    const t = commentDraft.trim();
+    if (!t) return;
+    updateComment(comment.id, t);
+    setEditingComment(false);
+  };
+
+  const saveReplyEdit = (replyId: string) => {
+    const t = replyDraft.trim();
+    if (!t) return;
+    updateReply(comment.id, replyId, t);
+    setEditingReplyId(null);
+  };
+
   return (
     <li className={cn("p-3 space-y-2", comment.resolved && "bg-emerald-50/40")}>
       <div className="flex items-start gap-2">
@@ -467,7 +514,9 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-foreground">{comment.author}</span>
-            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 rounded-full">Reviewer</Badge>
+            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 rounded-full">
+              {comment.authorRole === "author" ? "Author" : "Reviewer"}
+            </Badge>
             {comment.category && (
               <Badge variant="outline" className="text-[10px] h-4 px-1.5 rounded-full border-primary/30 text-primary">
                 {comment.category}
@@ -476,28 +525,82 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             {comment.resolved && (
               <Badge className="text-[10px] h-4 px-1.5 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Resolved</Badge>
             )}
+            {canEditComment && !editingComment && (
+              <span className="ml-auto">
+                <OwnerActions
+                  label="comment"
+                  onEdit={() => { setCommentDraft(comment.text); setEditingComment(true); }}
+                  onDelete={() => setConfirm({ kind: "comment" })}
+                />
+              </span>
+            )}
           </div>
-          <p className="text-sm text-foreground mt-1 whitespace-pre-wrap break-words">{comment.text}</p>
+          {editingComment ? (
+            <div className="mt-1 space-y-2">
+              <Textarea
+                value={commentDraft}
+                onChange={(e) => setCommentDraft(e.target.value)}
+                rows={2}
+                className="text-sm rounded-xl resize-none"
+              />
+              <div className="flex justify-end gap-2">
+                <Button size="sm" variant="ghost" className="rounded-full h-8" onClick={() => setEditingComment(false)}>Cancel</Button>
+                <Button size="sm" className="rounded-full h-8" onClick={saveCommentEdit} disabled={!commentDraft.trim()}>Save</Button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-foreground mt-1 whitespace-pre-wrap break-words">{comment.text}</p>
+          )}
           <p className="text-[10px] text-muted-foreground mt-1">{new Date(comment.createdAt).toLocaleString()}</p>
         </div>
       </div>
 
       {comment.replies.length > 0 && (
         <ul className="pl-9 space-y-2 border-l-2 border-border ml-3">
-          {comment.replies.map((r) => (
-            <li key={r.id} className="flex items-start gap-2">
-              <div className={cn(
-                "w-6 h-6 rounded-full text-[10px] font-semibold flex items-center justify-center shrink-0",
-                r.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
-              )}>
-                {r.author.slice(0, 1)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-foreground">{r.author}</p>
-                <p className="text-sm text-foreground whitespace-pre-wrap break-words">{r.text}</p>
-              </div>
-            </li>
-          ))}
+          {comment.replies.map((r) => {
+            const canEditReply = r.author === authorName;
+            const isEditing = editingReplyId === r.id;
+            return (
+              <li key={r.id} className="flex items-start gap-2">
+                <div className={cn(
+                  "w-6 h-6 rounded-full text-[10px] font-semibold flex items-center justify-center shrink-0",
+                  r.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
+                )}>
+                  {r.author.slice(0, 1)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold text-foreground">{r.author}</p>
+                    {canEditReply && !isEditing && (
+                      <span className="ml-auto">
+                        <OwnerActions
+                          label="reply"
+                          onEdit={() => { setReplyDraft(r.text); setEditingReplyId(r.id); }}
+                          onDelete={() => setConfirm({ kind: "reply", id: r.id })}
+                        />
+                      </span>
+                    )}
+                  </div>
+                  {isEditing ? (
+                    <div className="mt-1 space-y-2">
+                      <Textarea
+                        value={replyDraft}
+                        onChange={(e) => setReplyDraft(e.target.value)}
+                        rows={2}
+                        className="text-sm rounded-xl resize-none"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="ghost" className="rounded-full h-8" onClick={() => setEditingReplyId(null)}>Cancel</Button>
+                        <Button size="sm" className="rounded-full h-8" onClick={() => saveReplyEdit(r.id)} disabled={!replyDraft.trim()}>Save</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-foreground whitespace-pre-wrap break-words">{r.text}</p>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
 
@@ -512,7 +615,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
           />
           {isAuthorView ? (
             <div className="flex items-center justify-between gap-2">
-              <label className="inline-flex items-center gap-2 text-[11px] text-muted-foreground cursor-pointer">
+              <label className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground cursor-pointer">
                 <Checkbox
                   checked={markResolved}
                   onCheckedChange={(v) => setMarkResolved(v === true)}
@@ -520,6 +623,18 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
                   className="h-4 w-4"
                 />
                 Mark as resolved
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button type="button" aria-label="What does mark as resolved mean?" className="text-muted-foreground hover:text-primary">
+                        <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                      {RESOLVED_TIP}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </label>
               <Button
                 size="sm"
@@ -542,7 +657,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
       )}
 
       {!isAuthorView && (
-        <div className="pl-9">
+        <div className="pl-9 flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => toggleResolved(comment.id)}
@@ -551,6 +666,18 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             {comment.resolved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
             {comment.resolved ? "Reopen" : "Mark resolved"}
           </button>
+          <TooltipProvider delayDuration={150}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" aria-label="What does mark resolved mean?" className="text-muted-foreground hover:text-primary">
+                  <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                {RESOLVED_TIP}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       )}
       {isAuthorView && comment.resolved && (
@@ -565,6 +692,31 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
           </button>
         </div>
       )}
+
+      <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {confirm?.kind === "reply" ? "reply" : "comment"}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. {confirm?.kind === "comment" ? "All replies on this comment will also be removed." : "The reply will be permanently removed from this thread."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (!confirm) return;
+                if (confirm.kind === "comment") deleteComment(comment.id);
+                else deleteReply(comment.id, confirm.id);
+                setConfirm(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </li>
   );
 }
