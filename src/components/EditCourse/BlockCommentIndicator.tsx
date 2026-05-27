@@ -260,7 +260,8 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
               <p className="text-xs text-muted-foreground">No comments yet at this level.</p>
             </div>
           ) : (
-            <ScrollArea className="max-h-[360px]">
+            <div className="max-h-[55vh] overflow-y-auto overscroll-contain scrollbar-thin">
+
               <ul className="divide-y divide-border">
                 {comments.map((c) => (
                   <CommentRow
