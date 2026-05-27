@@ -215,6 +215,35 @@ export function deleteComment(commentId: string) {
   emit();
 }
 
+export function updateComment(commentId: string, text: string) {
+  const list = read();
+  const idx = list.findIndex((c) => c.id === commentId);
+  if (idx === -1) return;
+  list[idx].text = text;
+  write(list);
+  emit();
+}
+
+export function updateReply(commentId: string, replyId: string, text: string) {
+  const list = read();
+  const c = list.find((x) => x.id === commentId);
+  if (!c) return;
+  const r = c.replies.find((x) => x.id === replyId);
+  if (!r) return;
+  r.text = text;
+  write(list);
+  emit();
+}
+
+export function deleteReply(commentId: string, replyId: string) {
+  const list = read();
+  const c = list.find((x) => x.id === commentId);
+  if (!c) return;
+  c.replies = c.replies.filter((r) => r.id !== replyId);
+  write(list);
+  emit();
+}
+
 // Bridge for NotificationsBell: convert to the shared notification shape so the
 // existing bell can render them alongside collaborator notifications.
 export function getReviewNotificationsAsCollab(): CollaboratorNotification[] {
