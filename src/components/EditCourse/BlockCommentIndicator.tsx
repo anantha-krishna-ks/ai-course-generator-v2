@@ -273,7 +273,7 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                   />
                 ))}
               </ul>
-            </ScrollArea>
+              </div>
           )}
           <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground">
             Open the block to add or reply to comments.
