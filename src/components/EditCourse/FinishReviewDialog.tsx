@@ -121,12 +121,21 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
             Keep reviewing
           </Button>
           <Button
-            onClick={handleSubmit}
+            variant="outline"
+            onClick={() => finish("ready")}
+            disabled={submitting}
+            className="rounded-full gap-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+          >
+            <Rocket className="w-4 h-4" aria-hidden="true" focusable="false" />
+            Ready to Publish
+          </Button>
+          <Button
+            onClick={() => finish("draft")}
             disabled={submitting}
             className="rounded-full bg-emerald-600 text-white hover:bg-emerald-700 gap-2"
           >
             <Send className="w-4 h-4" aria-hidden="true" focusable="false" />
-            {submitting ? "Submitting…" : "Submit review"}
+            {submitting ? "Submitting…" : "Submit Feedback"}
           </Button>
         </DialogFooter>
       </DialogContent>
