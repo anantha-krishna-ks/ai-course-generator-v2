@@ -1520,7 +1520,7 @@ const TabsPreview = ({ content }: { content: string }) => {
         <div
           role="tablist"
           aria-label="Info tabs"
-          className="flex items-stretch overflow-x-auto scrollbar-thin"
+          className="flex items-stretch overflow-x-auto pretty-scrollbar"
         >
           {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
@@ -1686,7 +1686,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         <div
           role="tablist"
           aria-label="Info tabs"
-          className="flex flex-col shrink-0 gap-1 border-r border-border/60 bg-gradient-to-b from-muted/40 to-muted/10 p-2.5 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl"
+          className="flex flex-col shrink-0 gap-1 border-r border-border/60 bg-gradient-to-b from-muted/40 to-muted/10 p-2.5 max-h-[calc(100vh-8rem)] overflow-y-auto pretty-scrollbar rounded-l-2xl"
         >
           {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
@@ -1739,7 +1739,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
           })}
 
         </div>
-        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto animate-in fade-in duration-300">
+        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto pretty-scrollbar animate-in fade-in duration-300">
           {active.imageUrl && (
             <img
               src={active.imageUrl}
