@@ -85,7 +85,7 @@ interface ContentBlockData {
 
 interface PageContentBlockData {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
   content: string;
   font?: string;
 }
@@ -294,7 +294,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     });
   }, []);
 
-  const addGenericBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", insertAt?: number, variant?: string) => {
+  const addGenericBlock = useCallback((type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs", insertAt?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     let content = "";
     let blockType: ContentBlockData["type"] = type as ContentBlockData["type"];
