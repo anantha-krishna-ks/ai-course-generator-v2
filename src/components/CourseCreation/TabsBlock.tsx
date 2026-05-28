@@ -50,6 +50,7 @@ interface TabsBlockProps {
   content: string;
   onChange: (content: string) => void;
   aiEnabled?: boolean;
+  variant?: string;
 }
 
 function makeId() {
