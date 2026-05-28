@@ -22,6 +22,9 @@ import {
   LayoutGrid,
   Rows,
   MousePointerClick,
+  LayoutPanelTop,
+  LayoutPanelLeft,
+  Rows3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -81,6 +84,9 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
   // INTERACTIVITY
   { id: "hotspot-block", label: "Hotspot on Image", icon: MousePointerClick, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "hotspot", variant: "hotspot", description: "Make an image clickable — add labels, tooltips, links, and reveals on hotspots" },
+  { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
+  { id: "vertical-tabs", label: "Vertical Tabs", icon: LayoutPanelLeft, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "vertical-tabs", description: "Organise content into a list of tabs stacked along the left" },
+  { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
@@ -471,6 +477,89 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "horizontal-tabs":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="flex items-end gap-1 border-b border-[hsl(220,13%,91%)]">
+              {["Overview", "Details", "FAQ"].map((t, i) => (
+                <div
+                  key={t}
+                  className={cn(
+                    "px-2 py-1 text-[8px] font-semibold rounded-t-md",
+                    i === 0
+                      ? "bg-white text-primary border border-b-0 border-[hsl(220,13%,91%)]"
+                      : "text-[hsl(220,8%,55%)]"
+                  )}
+                >
+                  {t}
+                </div>
+              ))}
+            </div>
+            <div className="pt-2 space-y-1">
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between sections of content</p>
+          </div>
+        </div>
+      );
+    case "vertical-tabs":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="flex gap-2">
+              <div className="flex flex-col gap-1 w-20 border-r border-[hsl(220,13%,91%)] pr-2">
+                {["Intro", "Setup", "Usage", "FAQ"].map((t, i) => (
+                  <div
+                    key={t}
+                    className={cn(
+                      "px-1.5 py-1 text-[8px] font-semibold rounded-md text-left",
+                      i === 0 ? "bg-primary/10 text-primary" : "text-[hsl(220,8%,55%)]"
+                    )}
+                  >
+                    {t}
+                  </div>
+                ))}
+              </div>
+              <div className="flex-1 space-y-1 pt-0.5">
+                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
+                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-2/3" />
+              </div>
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Stacked tabs along the left edge</p>
+          </div>
+        </div>
+      );
+    case "accordion":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 space-y-1.5")}>
+            {[
+              { q: "What's included?", open: true },
+              { q: "How do I get started?", open: false },
+              { q: "Is there a free trial?", open: false },
+            ].map((row, i) => (
+              <div key={i} className="rounded-md border border-[hsl(220,13%,91%)] overflow-hidden">
+                <div className={cn("flex items-center justify-between px-2 py-1.5", row.open && "bg-primary/5")}>
+                  <span className="text-[9px] font-semibold text-[hsl(220,15%,18%)]">{row.q}</span>
+                  <span className={cn("text-[10px] text-primary transition-transform", row.open ? "rotate-180" : "rotate-0")}>⌄</span>
+                </div>
+                {row.open && (
+                  <div className="px-2 pb-1.5 space-y-1">
+                    <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
+                    <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+                  </div>
+                )}
+              </div>
+            ))}
+            <p className="text-[9px] text-[hsl(220,8%,46%)] pt-0.5 px-0.5">Click headings to expand each panel</p>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
@@ -835,6 +924,74 @@ function BlockThumbnail({ id }: { id: string }) {
               {/* faux selection rect */}
               <div className="absolute border-[1px] border-primary/80 bg-primary/15 rounded-[1px]" style={{ left: "40%", top: "40%", width: "20%", height: "30%" }} />
             </div>
+          </div>
+        </div>
+      );
+    case "horizontal-tabs":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className="flex items-end gap-[2px] border-b border-[hsl(220,13%,91%)]">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-[6px] rounded-t-[2px] px-[3px]",
+                    i === 0 ? "bg-primary/15 border border-b-0 border-primary/30 w-[16px]" : "bg-[hsl(220,13%,93%)] w-[14px]"
+                  )}
+                />
+              ))}
+            </div>
+            <div className="pt-[3px] space-y-[2px]">
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+            </div>
+          </div>
+        </div>
+      );
+    case "vertical-tabs":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
+            <div className="flex flex-col gap-[2px] w-[14px] border-r border-[hsl(220,13%,91%)] pr-[2px]">
+              {[0, 1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-[5px] rounded-[1.5px]",
+                    i === 0 ? "bg-primary/20" : "bg-[hsl(220,13%,93%)]"
+                  )}
+                />
+              ))}
+            </div>
+            <div className="flex-1 space-y-[2px] pt-[1px]">
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-2/3" />
+            </div>
+          </div>
+        </div>
+      );
+    case "accordion":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] space-y-[2px]")}>
+            {[true, false, false].map((open, i) => (
+              <div key={i} className="rounded-[2px] border border-[hsl(220,13%,91%)] overflow-hidden">
+                <div className={cn("flex items-center justify-between px-[3px] h-[7px]", open && "bg-primary/10")}>
+                  <div className={cn("h-[2px] rounded-full", open ? "bg-primary/50 w-[14px]" : "bg-[hsl(220,13%,80%)] w-[12px]")} />
+                  <div className={cn("h-[2px] w-[2px] rounded-full", open ? "bg-primary" : "bg-[hsl(220,13%,75%)]")} />
+                </div>
+                {open && (
+                  <div className="px-[3px] py-[2px] space-y-[1.5px]">
+                    <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
+                    <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       );
