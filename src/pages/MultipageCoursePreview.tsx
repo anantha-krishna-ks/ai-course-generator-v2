@@ -1593,7 +1593,8 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
   return (
     <>
       {/* Mobile: compact vertical tabs with rotated labels */}
-      <div className="sm:hidden grid grid-cols-[2.25rem_minmax(0,1fr)] rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden min-h-[16rem]">
+      {isMobile && (
+      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden min-h-[16rem]">
         <div role="tablist" aria-label="Info tabs" className="flex flex-col bg-muted/40 border-r border-border">
           {tabs.map((tab) => {
             const isActive = tab.id === active.id;
