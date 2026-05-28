@@ -22,6 +22,9 @@ import {
   LayoutGrid,
   Rows,
   MousePointerClick,
+  LayoutPanelTop,
+  LayoutPanelLeft,
+  Rows3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
