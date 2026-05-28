@@ -637,9 +637,14 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
           <Textarea
             value={reply}
             onChange={(e) => setReply(e.target.value)}
+            onInput={(e) => {
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+            }}
             placeholder={isAuthorView ? "Write a reply…" : "Reply…"}
             rows={1}
-            className="min-h-[38px] text-[13px] rounded-xl resize-none"
+            className="min-h-[38px] max-h-[200px] text-[13px] rounded-xl resize-none overflow-y-auto thin-scrollbar"
           />
           <div className="flex items-center justify-between gap-2">
             {isAuthorView ? (
