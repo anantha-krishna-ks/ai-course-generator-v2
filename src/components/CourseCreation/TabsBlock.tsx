@@ -256,36 +256,61 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
   };
 
   return (
-    <div className="w-full px-1">
-      {/* Header — title + preview toggle */}
-      <div className="flex items-center justify-between mb-3 px-3">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <span>Info Tabs</span>
-          <span className="text-muted-foreground/60">·</span>
-          <span className="text-muted-foreground">{data.tabs.length} {data.tabs.length === 1 ? "tab" : "tabs"}</span>
+    <div className="w-full">
+      {/* Header — label chip + segmented preview toggle */}
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div className="inline-flex items-center gap-2 rounded-full bg-muted/60 border border-border/60 px-3 py-1">
+          <Layers className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground">Info Tabs</span>
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-semibold">
+            {data.tabs.length}
+          </span>
         </div>
-        <Button
-          variant={previewMode ? "default" : "outline"}
-          size="sm"
-          className="rounded-full h-8 text-xs gap-1.5"
-          onClick={() => {
-            setPreviewMode((p) => !p);
-            cancelRename();
-          }}
+        <div
+          role="group"
+          aria-label="Editor mode"
+          className="inline-flex items-center rounded-full bg-muted/60 border border-border/60 p-0.5"
         >
-          {previewMode ? <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> : <Eye className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
-          {previewMode ? "Edit" : "Preview"}
-        </Button>
+          <button
+            type="button"
+            onClick={() => { setPreviewMode(false); cancelRename(); }}
+            aria-pressed={!previewMode}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-3 h-7 text-xs font-medium transition-colors",
+              !previewMode
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => { setPreviewMode(true); cancelRename(); }}
+            aria-pressed={previewMode}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-3 h-7 text-xs font-medium transition-colors",
+              previewMode
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Eye className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Preview
+          </button>
+        </div>
       </div>
 
-      {/* Tab bar */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="flex items-stretch border-b border-border bg-muted/40">
+      {/* Tab container card */}
+      <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden">
+        {/* Tab bar */}
+        <div className="relative flex items-stretch bg-gradient-to-b from-muted/50 to-muted/20 border-b border-border/70">
           <div
             ref={tabBarRef}
-            className="flex-1 flex items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border min-w-0"
+            className="flex-1 flex items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border min-w-0 px-1.5 pt-1.5"
           >
-            {data.tabs.map((tab) => {
+            {data.tabs.map((tab, idx) => {
               const isActive = tab.id === data.activeId;
               const isRenaming = renamingId === tab.id;
               const isDragOver = dragOverId === tab.id && dragId !== tab.id;
@@ -298,20 +323,24 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                   onDrop={(e) => onDrop(e, tab.id)}
                   onDragEnd={onDragEnd}
                   className={cn(
-                    "group/tab relative flex items-center gap-1.5 pl-2 pr-1.5 py-2 border-r border-border shrink-0 max-w-[220px] transition-colors",
+                    "group/tab relative flex items-center gap-1 pl-2 pr-1 mr-1 rounded-t-xl shrink-0 max-w-[220px] transition-all duration-150",
                     isActive
-                      ? "bg-card text-foreground"
-                      : "bg-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground cursor-pointer",
-                    isDragOver && "ring-2 ring-primary/40 ring-inset",
-                    dragId === tab.id && "opacity-50",
+                      ? "bg-card text-foreground shadow-[0_-1px_0_0_hsl(var(--border))_inset,1px_0_0_0_hsl(var(--border))_inset,-1px_0_0_0_hsl(var(--border))_inset]"
+                      : "bg-transparent text-muted-foreground hover:bg-card/70 hover:text-foreground cursor-pointer",
+                    isDragOver && "ring-2 ring-primary/50 ring-offset-1 ring-offset-muted/40",
+                    dragId === tab.id && "opacity-40 scale-[0.98]",
                   )}
                 >
+                  {/* Active indicator — sits flush with bottom border, slight glow */}
                   {isActive && (
-                    <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-primary" aria-hidden="true" />
+                    <span
+                      className="absolute left-1.5 right-1.5 -bottom-px h-[2px] bg-primary rounded-full shadow-[0_0_8px_hsl(var(--primary)/0.4)]"
+                      aria-hidden="true"
+                    />
                   )}
                   {!previewMode && !isRenaming && (
                     <GripVertical
-                      className="w-3.5 h-3.5 text-muted-foreground/60 opacity-0 group-hover/tab:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
+                      className="w-3.5 h-3.5 text-muted-foreground/50 opacity-0 group-hover/tab:opacity-100 transition-opacity shrink-0 cursor-grab active:cursor-grabbing"
                       aria-hidden="true"
                       focusable="false"
                     />
@@ -333,7 +362,7 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                       }}
                       maxLength={TAB_NAME_MAX}
                       aria-label="Rename tab"
-                      className="h-7 w-[160px] text-xs px-2 rounded-md"
+                      className="h-7 w-[170px] text-xs px-2 rounded-md my-1.5"
                     />
                   ) : (
                     <TooltipProvider delayDuration={400}>
@@ -344,8 +373,8 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                             onClick={() => activateTab(tab.id)}
                             onDoubleClick={() => startRename(tab)}
                             className={cn(
-                              "text-xs font-medium truncate max-w-[160px] py-0.5 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded",
-                              isActive && "text-foreground font-semibold"
+                              "text-xs truncate max-w-[160px] py-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded",
+                              isActive ? "text-foreground font-semibold" : "font-medium"
                             )}
                           >
                             {tab.name}
@@ -353,6 +382,9 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                         </TooltipTrigger>
                         <TooltipContent side="top" className="text-xs max-w-[260px]">
                           {tab.name}
+                          {!previewMode && (
+                            <span className="block mt-0.5 text-[10px] text-muted-foreground">Double-click to rename</span>
+                          )}
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -364,7 +396,7 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                           type="button"
                           aria-label={`Tab options for ${tab.name}`}
                           className={cn(
-                            "ml-0.5 w-5 h-5 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted shrink-0",
+                            "w-5 h-5 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted shrink-0 transition-opacity",
                             isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
                           )}
                           onClick={(e) => e.stopPropagation()}
@@ -391,27 +423,29 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
             })}
           </div>
           {!previewMode && (
-            <button
-              type="button"
-              onClick={addTab}
-              aria-label="Add a new tab"
-              className="shrink-0 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 border-l border-border"
-            >
-              <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              Add Tab
-            </button>
+            <div className="shrink-0 flex items-center pr-2 pl-1 py-1.5">
+              <button
+                type="button"
+                onClick={addTab}
+                aria-label="Add a new tab"
+                className="h-7 inline-flex items-center gap-1.5 rounded-full bg-primary/10 hover:bg-primary/15 text-primary px-3 text-xs font-semibold transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                Add Tab
+              </button>
+            </div>
           )}
         </div>
 
         {/* Tab panel */}
         {activeTab && (
-          <div className="p-4">
-            <div className="flex flex-col md:flex-row gap-4">
+          <div className="p-5 sm:p-6">
+            <div className="flex flex-col md:flex-row gap-5">
               {/* Image (left) — optional. Hidden in preview when there's no image so text uses full width */}
               {!(previewMode && !activeTab.imageUrl) && (
-                <div className="w-full md:w-[240px] shrink-0">
+                <div className="w-full md:w-[260px] shrink-0">
                   {activeTab.imageUrl ? (
-                    <div className="relative group/img rounded-xl overflow-hidden border border-border bg-muted/30">
+                    <div className="relative group/img rounded-xl overflow-hidden border border-border/60 bg-muted/30 shadow-sm">
                       <img
                         src={activeTab.imageUrl}
                         alt={`Visual for ${activeTab.name}`}
@@ -446,9 +480,7 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                       dangerouslySetInnerHTML={{ __html: activeTab.content }}
                     />
                   ) : (
-                    <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
-                      {PLACEHOLDER}
-                    </div>
+                    <EmptyTabPreview />
                   )
                 ) : (
                   <DescriptionEditor
@@ -462,6 +494,14 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
           </div>
         )}
       </div>
+
+      {/* Footer hint — only in edit mode */}
+      {!previewMode && (
+        <div className="mt-2.5 px-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+          <MousePointerClick className="w-3 h-3" aria-hidden="true" focusable="false" />
+          <span>Double-click a tab to rename · Drag tabs to reorder · Click <span className="font-semibold text-primary">+ Add Tab</span> for more</span>
+        </div>
+      )}
 
       {/* Delete confirmation */}
       <AlertDialog open={!!confirmDeleteId} onOpenChange={(o) => { if (!o) setConfirmDeleteId(null); }}>
