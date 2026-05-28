@@ -443,7 +443,9 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                     key={activeTab.id}
                     content={activeTab.content}
                     onChange={updateActiveContent}
+                    placeholder={`Write content for "${activeTab.name}"… Add headings, lists, links, images, and more.`}
                   />
+
                 )}
               </div>
             </div>
