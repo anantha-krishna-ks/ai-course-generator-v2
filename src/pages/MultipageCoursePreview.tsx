@@ -1737,19 +1737,50 @@ function parseAccordion(raw: string): AccordionItem[] {
 
 const AccordionPreview = ({ content }: { content: string }) => {
   const items = parseAccordion(content);
-  const [openId, setOpenId] = useState<string>(items[0]?.id ?? "");
+  // Parse open mode + default open ids from JSON if available
+  let openMode: "single" | "multiple" = "single";
+  let defaultOpenIds: string[] = [];
+  try {
+    const parsed = JSON.parse(content || "{}");
+    if (parsed?.openMode === "multiple") openMode = "multiple";
+    if (Array.isArray(parsed?.defaultOpenIds)) {
+      defaultOpenIds = parsed.defaultOpenIds.map(String).filter((id: string) => items.some((it) => it.id === id));
+    }
+  } catch {
+    /* ignore */
+  }
+  const initialOpen: string[] =
+    defaultOpenIds.length > 0
+      ? (openMode === "single" ? [defaultOpenIds[0]] : defaultOpenIds)
+      : (items[0] ? [items[0].id] : []);
+  const [openIds, setOpenIds] = useState<Set<string>>(() => new Set(initialOpen));
+
+  const toggle = (id: string) => {
+    setOpenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        if (openMode === "single") next.clear();
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm divide-y divide-border/60">
       {items.map((item) => {
-        const isOpen = item.id === openId;
+        const isOpen = openIds.has(item.id);
         const hasBody = (item.body || "").replace(/<[^>]+>/g, "").trim().length > 0;
+        const imageUrl = (item as any).imageUrl as string | undefined;
         return (
           <div key={item.id}>
             <button
               type="button"
-              onClick={() => setOpenId(isOpen ? "" : item.id)}
+              onClick={() => toggle(item.id)}
               aria-expanded={isOpen}
+              aria-controls={`acc-prev-${item.id}`}
               className={cn(
                 "w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-3 text-left transition-colors",
                 isOpen ? "bg-primary/[0.04] text-foreground" : "hover:bg-muted/40 text-foreground"
@@ -1765,7 +1796,14 @@ const AccordionPreview = ({ content }: { content: string }) => {
               />
             </button>
             {isOpen && (
-              <div className="px-4 sm:px-5 pb-4 pt-1">
+              <div id={`acc-prev-${item.id}`} className="px-4 sm:px-5 pb-4 pt-1 space-y-3">
+                {imageUrl && (
+                  <img
+                    src={imageUrl}
+                    alt={`Visual for ${item.title}`}
+                    className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover"
+                  />
+                )}
                 {hasBody ? (
                   <div
                     className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
