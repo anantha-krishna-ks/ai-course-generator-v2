@@ -368,7 +368,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
                             onClick={() => activateTab(tab.id)}
                             onDoubleClick={() => startRename(tab)}
                             className={cn(
-                              "text-xs font-medium truncate max-w-[160px] py-0.5 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded",
+                              "flex-1 min-w-0 text-left text-xs font-medium truncate py-0.5 outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded",
                               isActive && "text-foreground font-semibold"
                             )}
                           >
