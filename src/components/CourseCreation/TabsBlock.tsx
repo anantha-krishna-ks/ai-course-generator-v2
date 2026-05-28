@@ -510,13 +510,13 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:text-primary px-3 text-center"
+          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-primary bg-background shadow-lg shadow-primary/10 hover:bg-accent hover:border-primary transition-colors flex flex-col items-center justify-center gap-2 text-foreground px-3 text-center"
         >
-          <ImagePlus className="w-6 h-6" aria-hidden="true" focusable="false" />
-          <span className="text-xs font-medium">Upload image <span className="text-muted-foreground font-normal">(optional)</span></span>
-          <span className="text-[10px] text-muted-foreground">PNG, JPG, SVG</span>
-          <span className="text-[10px] text-muted-foreground">Recommended: 800×600px (4:3)</span>
-          <span className="text-[10px] text-muted-foreground">PNG, JPG, SVG</span>
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
+            <ImagePlus className="w-5 h-5" aria-hidden="true" focusable="false" />
+          </span>
+          <span className="text-sm font-semibold">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
+          <span className="text-[11px] font-medium text-muted-foreground">PNG, JPG, SVG · Recommended: 800×600px (4:3)</span>
         </button>
       )}
     </>
