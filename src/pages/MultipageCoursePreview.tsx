@@ -1828,17 +1828,16 @@ const AccordionPreview = ({ content }: { content: string }) => {
                 : "border-border/60 bg-card hover:border-border hover:shadow-sm"
             )}
           >
-            {/* Active left accent bar — gradient pill with soft glow */}
+            {/* Active left accent bar — clean flush rail */}
             <span
               aria-hidden="true"
               className={cn(
-                "pointer-events-none absolute left-1.5 top-3 bottom-3 w-[3px] rounded-full",
-                "bg-gradient-to-b from-primary/70 via-primary to-primary/70",
-                "shadow-[0_0_10px_hsl(var(--primary)/0.55)]",
-                "transition-all duration-500 ease-out origin-center",
+                "pointer-events-none absolute left-0 top-0 bottom-0 w-[3px] bg-primary",
+                "transition-all duration-300 ease-out origin-top",
                 isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
               )}
             />
+
 
 
             <button
