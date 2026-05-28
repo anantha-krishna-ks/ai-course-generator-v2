@@ -1579,32 +1579,7 @@ const TabsPreview = ({ content }: { content: string }) => {
   );
 };
 
-      <div role="tabpanel" className="p-4 sm:p-6 animate-in fade-in duration-300">
-        <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
-          {active.imageUrl ? (
-            <div className="w-full md:w-[260px] shrink-0">
-              <img
-                src={active.imageUrl}
-                alt={`Visual for ${active.name}`}
-                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3] shadow-sm"
-              />
-            </div>
-          ) : null}
-          <div className="flex-1 min-w-0">
-            {hasBody ? (
-              <div
-                className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
-              />
-            ) : (
-              <EmptyTabContent />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+
 
 
 const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: string; isMobile?: boolean }) => {
