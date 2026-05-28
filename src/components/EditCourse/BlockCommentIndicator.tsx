@@ -753,7 +753,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
       )}
 
       <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null); }}>
-        <AlertDialogContent>
+        <AlertDialogContent className="z-[80]">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete {confirm?.kind === "reply" ? "reply" : "comment"}?</AlertDialogTitle>
             <AlertDialogDescription>
