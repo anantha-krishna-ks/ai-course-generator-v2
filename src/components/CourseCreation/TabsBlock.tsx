@@ -407,37 +407,35 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
         {activeTab && (
           <div className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
-              {/* Image (left) */}
-              <div className="w-full md:w-[240px] shrink-0">
-                {activeTab.imageUrl ? (
-                  <div className="relative group/img rounded-xl overflow-hidden border border-border bg-muted/30">
-                    <img
-                      src={activeTab.imageUrl}
-                      alt={`Visual for ${activeTab.name}`}
-                      className="w-full h-auto object-cover aspect-[4/3]"
-                    />
-                    {!previewMode && (
-                      <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover/img:opacity-100 transition-opacity">
-                        <ImageUploadButton onUpload={handleImageUpload} compact />
-                        <button
-                          type="button"
-                          onClick={removeImage}
-                          aria-label="Remove image"
-                          className="w-7 h-7 rounded-full bg-background/90 backdrop-blur border border-border inline-flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/40"
-                        >
-                          <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : previewMode ? (
-                  <div className="rounded-xl border border-dashed border-border bg-muted/20 aspect-[4/3] flex items-center justify-center text-xs text-muted-foreground">
-                    No image
-                  </div>
-                ) : (
-                  <ImageUploadButton onUpload={handleImageUpload} />
-                )}
-              </div>
+              {/* Image (left) — optional. Hidden in preview when there's no image so text uses full width */}
+              {!(previewMode && !activeTab.imageUrl) && (
+                <div className="w-full md:w-[240px] shrink-0">
+                  {activeTab.imageUrl ? (
+                    <div className="relative group/img rounded-xl overflow-hidden border border-border bg-muted/30">
+                      <img
+                        src={activeTab.imageUrl}
+                        alt={`Visual for ${activeTab.name}`}
+                        className="w-full h-auto object-cover aspect-[4/3]"
+                      />
+                      {!previewMode && (
+                        <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover/img:opacity-100 transition-opacity">
+                          <ImageUploadButton onUpload={handleImageUpload} compact />
+                          <button
+                            type="button"
+                            onClick={removeImage}
+                            aria-label="Remove image"
+                            className="w-7 h-7 rounded-full bg-background/90 backdrop-blur border border-border inline-flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/40"
+                          >
+                            <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <ImageUploadButton onUpload={handleImageUpload} />
+                  )}
+                </div>
+              )}
 
               {/* Rich text (right) */}
               <div className="flex-1 min-w-0">
@@ -522,10 +520,12 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+          className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:text-primary px-3 text-center"
         >
           <ImagePlus className="w-6 h-6" aria-hidden="true" focusable="false" />
-          <span className="text-xs font-medium">Upload image</span>
+          <span className="text-xs font-medium">Upload image <span className="text-muted-foreground font-normal">(optional)</span></span>
+          <span className="text-[10px] text-muted-foreground">PNG, JPG, SVG</span>
+          <span className="text-[10px] text-muted-foreground">Recommended: 800×600px (4:3)</span>
           <span className="text-[10px] text-muted-foreground">PNG, JPG, SVG</span>
         </button>
       )}
