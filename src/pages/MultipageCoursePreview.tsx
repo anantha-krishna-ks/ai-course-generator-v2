@@ -645,6 +645,9 @@ const MultipageCoursePreview = () => {
           return null;
         }
       }
+      case "tabs": {
+        return <TabsPreview content={block.content || ""} />;
+      }
       case "audio": {
         const audioSrc = block.content || DEMO_AUDIO_URL;
         return (
