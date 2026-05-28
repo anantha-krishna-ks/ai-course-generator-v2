@@ -87,6 +87,7 @@ interface PageContentBlockData {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
   content: string;
+  variant?: string;
   font?: string;
 }
 
