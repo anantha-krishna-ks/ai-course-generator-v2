@@ -1828,14 +1828,18 @@ const AccordionPreview = ({ content }: { content: string }) => {
                 : "border-border/60 bg-card hover:border-border hover:shadow-sm"
             )}
           >
-            {/* Active left accent bar — thin & elegant */}
+            {/* Active left accent bar — gradient pill with soft glow */}
             <span
               aria-hidden="true"
               className={cn(
-                "absolute left-0 top-2 bottom-2 w-[2px] bg-primary rounded-full transition-all duration-300",
-                isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
+                "pointer-events-none absolute left-1.5 top-3 bottom-3 w-[3px] rounded-full",
+                "bg-gradient-to-b from-primary/70 via-primary to-primary/70",
+                "shadow-[0_0_10px_hsl(var(--primary)/0.55)]",
+                "transition-all duration-500 ease-out origin-center",
+                isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-0"
               )}
             />
+
 
             <button
               type="button"
