@@ -264,18 +264,6 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
           <span className="text-muted-foreground/60">·</span>
           <span className="text-muted-foreground">{data.tabs.length} {data.tabs.length === 1 ? "tab" : "tabs"}</span>
         </div>
-        <Button
-          variant={previewMode ? "default" : "outline"}
-          size="sm"
-          className="rounded-full h-8 text-xs gap-1.5"
-          onClick={() => {
-            setPreviewMode((p) => !p);
-            cancelRename();
-          }}
-        >
-          {previewMode ? <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> : <Eye className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
-          {previewMode ? "Edit" : "Preview"}
-        </Button>
       </div>
 
       {/* Tab bar */}
