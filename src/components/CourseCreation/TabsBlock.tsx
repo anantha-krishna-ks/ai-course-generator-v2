@@ -84,7 +84,8 @@ function parseContent(raw: string): TabsBlockData {
   return { tabs: [first], activeId: first.id };
 }
 
-export function TabsBlock({ content, onChange }: TabsBlockProps) {
+export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
+  const isVertical = variant === "vertical-tabs";
   const [data, setData] = useState<TabsBlockData>(() => parseContent(content));
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
