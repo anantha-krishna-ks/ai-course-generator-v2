@@ -50,6 +50,7 @@ interface TabsBlockProps {
   content: string;
   onChange: (content: string) => void;
   aiEnabled?: boolean;
+  variant?: string;
 }
 
 function makeId() {
@@ -83,7 +84,8 @@ function parseContent(raw: string): TabsBlockData {
   return { tabs: [first], activeId: first.id };
 }
 
-export function TabsBlock({ content, onChange }: TabsBlockProps) {
+export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
+  const isVertical = variant === "vertical-tabs";
   const [data, setData] = useState<TabsBlockData>(() => parseContent(content));
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
@@ -261,18 +263,26 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
       {/* Header — title + preview toggle */}
       <div className="flex items-center justify-between mb-3 px-3">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <span>Info Tabs</span>
+          <span>{isVertical ? "Vertical Tabs" : "Info Tabs"}</span>
           <span className="text-muted-foreground/60">·</span>
           <span className="text-muted-foreground">{data.tabs.length} {data.tabs.length === 1 ? "tab" : "tabs"}</span>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="flex items-stretch border-b border-border bg-muted/40">
+      <div className={cn("rounded-2xl border border-border bg-card overflow-hidden", isVertical && "flex items-stretch")}>
+        <div className={cn(
+          "flex bg-muted/40",
+          isVertical
+            ? "flex-col w-48 shrink-0 border-r border-border"
+            : "items-stretch border-b border-border",
+        )}>
           <div
             ref={tabBarRef}
-            className="flex-1 flex items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border min-w-0"
+            className={cn(
+              "flex-1 flex min-w-0",
+              isVertical ? "flex-col overflow-y-auto" : "items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border",
+            )}
           >
             {data.tabs.map((tab) => {
               const isActive = tab.id === data.activeId;
@@ -287,7 +297,10 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                   onDrop={(e) => onDrop(e, tab.id)}
                   onDragEnd={onDragEnd}
                   className={cn(
-                    "group/tab relative flex items-center gap-1.5 pl-2 pr-1.5 py-2 border-r border-border shrink-0 max-w-[220px] transition-colors",
+                    "group/tab relative flex items-center gap-1.5 pl-2 pr-1.5 py-2 shrink-0 transition-colors",
+                    isVertical
+                      ? "w-full border-b border-border last:border-b-0 max-w-none"
+                      : "border-r border-border max-w-[220px]",
                     isActive
                       ? "bg-card text-foreground"
                       : "bg-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground cursor-pointer",
@@ -296,7 +309,15 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
                   )}
                 >
                   {isActive && (
-                    <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-primary" aria-hidden="true" />
+                    <span
+                      className={cn(
+                        "absolute bg-primary",
+                        isVertical
+                          ? "left-0 top-0 bottom-0 w-[2px]"
+                          : "left-0 right-0 bottom-0 h-[2px]",
+                      )}
+                      aria-hidden="true"
+                    />
                   )}
                   {!previewMode && !isRenaming && (
                     <GripVertical
@@ -384,7 +405,10 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
               type="button"
               onClick={addTab}
               aria-label="Add a new tab"
-              className="shrink-0 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 border-l border-border"
+              className={cn(
+                "shrink-0 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 inline-flex items-center gap-1.5",
+                isVertical ? "border-t border-border justify-center" : "border-l border-border",
+              )}
             >
               <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Add Tab
@@ -394,7 +418,7 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
 
         {/* Tab panel */}
         {activeTab && (
-          <div className="p-4">
+          <div className="p-4 flex-1 min-w-0">
             <div className="flex flex-col md:flex-row gap-4">
               {/* Image (left) — optional. Hidden in preview when there's no image so text uses full width */}
               {!(previewMode && !activeTab.imageUrl) && (
