@@ -1700,10 +1700,11 @@ interface AccordionItem {
   id: string;
   title: string;
   body: string;
+  imageUrl?: string;
 }
 
 function parseAccordion(raw: string): AccordionItem[] {
-  // 1) Try structured JSON { items: [{title, body}] }
+  // 1) Try structured JSON { items: [{title, body, imageUrl}] }
   try {
     const parsed = JSON.parse(raw || "{}");
     if (Array.isArray(parsed?.items) && parsed.items.length > 0) {
@@ -1711,6 +1712,7 @@ function parseAccordion(raw: string): AccordionItem[] {
         id: String(it.id || `acc-${i}`),
         title: String(it.title || `Section ${i + 1}`),
         body: String(it.body || ""),
+        imageUrl: typeof it.imageUrl === "string" ? it.imageUrl : undefined,
       }));
     }
   } catch {
