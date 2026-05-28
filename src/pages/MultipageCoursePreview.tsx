@@ -656,6 +656,9 @@ const MultipageCoursePreview = () => {
         }
       }
       case "tabs": {
+        if (block.variant === "vertical-tabs") {
+          return <VerticalTextTabsPreview content={block.content || ""} />;
+        }
         return <TabsPreview content={block.content || ""} />;
       }
       case "audio": {
