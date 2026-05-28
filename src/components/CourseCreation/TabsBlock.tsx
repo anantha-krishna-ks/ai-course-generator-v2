@@ -520,10 +520,12 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+          className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted/20 hover:bg-muted/40 hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:text-primary px-3 text-center"
         >
           <ImagePlus className="w-6 h-6" aria-hidden="true" focusable="false" />
-          <span className="text-xs font-medium">Upload image</span>
+          <span className="text-xs font-medium">Upload image <span className="text-muted-foreground font-normal">(optional)</span></span>
+          <span className="text-[10px] text-muted-foreground">PNG, JPG, SVG</span>
+          <span className="text-[10px] text-muted-foreground">Recommended: 800×600px (4:3)</span>
           <span className="text-[10px] text-muted-foreground">PNG, JPG, SVG</span>
         </button>
       )}
