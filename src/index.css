@@ -259,7 +259,7 @@ All colors MUST be HSL.
   /* Pretty, minimal scrollbar for tab strips and rails */
   .pretty-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--foreground) / 0.35) transparent;
+    scrollbar-color: hsl(var(--foreground) / 0.22) transparent;
   }
   .pretty-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -270,14 +270,14 @@ All colors MUST be HSL.
     margin: 4px;
   }
   .pretty-scrollbar::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--foreground) / 0.35);
+    background-color: hsl(var(--foreground) / 0.22);
     border-radius: 9999px;
     border: 1px solid transparent;
     background-clip: padding-box;
     transition: background-color 0.2s ease;
   }
   .pretty-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--foreground) / 0.55);
+    background-color: hsl(var(--foreground) / 0.35);
   }
   .pretty-scrollbar::-webkit-scrollbar-corner {
     background: transparent;
