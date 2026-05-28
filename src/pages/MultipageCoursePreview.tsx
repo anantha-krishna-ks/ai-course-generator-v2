@@ -1591,48 +1591,98 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   };
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:grid sm:grid-cols-[11rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
-      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl">
+    <>
+      {/* Mobile: accordion-style */}
+      <div className="sm:hidden rounded-2xl border border-border/60 bg-card shadow-sm divide-y divide-border overflow-hidden">
         {tabs.map((tab) => {
           const isActive = tab.id === active.id;
+          const tabHasBody = (tab.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
           return (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={isActive}
-              type="button"
-              onClick={() => handleTabSelect(tab.id)}
-              title={tab.name}
-              className={cn(
-                "relative text-left px-4 py-3 text-sm font-medium whitespace-nowrap sm:whitespace-normal sm:truncate transition-colors shrink-0",
-                isActive
-                  ? "text-foreground bg-card border-b-[3px] border-b-primary sm:border-b-0 sm:border-l-[3px] sm:border-l-primary sm:-ml-px"
-                  : "text-muted-foreground hover:text-foreground hover:bg-card/60 border-b-[3px] border-b-transparent sm:border-b-0"
+            <div key={tab.id}>
+              <button
+                type="button"
+                aria-expanded={isActive}
+                onClick={() => handleTabSelect(isActive ? "" : tab.id)}
+                className={cn(
+                  "w-full flex items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium transition-colors",
+                  isActive ? "text-foreground bg-muted/40" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <span className="truncate">{tab.name}</span>
+                <ChevronDown
+                  className={cn("h-4 w-4 shrink-0 transition-transform", isActive && "rotate-180")}
+                  aria-hidden="true"
+                  focusable="false"
+                />
+              </button>
+              {isActive && (
+                <div className="px-4 pb-4 pt-1">
+                  {tab.imageUrl && (
+                    <img
+                      src={tab.imageUrl}
+                      alt={`Visual for ${tab.name}`}
+                      className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3"
+                    />
+                  )}
+                  {tabHasBody ? (
+                    <div
+                      className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(tab.content) }}
+                    />
+                  ) : (
+                    <EmptyTabContent />
+                  )}
+                </div>
               )}
-            >
-              {tab.name}
-            </button>
+            </div>
           );
         })}
       </div>
-      <div ref={panelRef} role="tabpanel" className="p-4 sm:p-6 flex-1 min-w-0 sm:min-h-0 sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto">
-        {active.imageUrl && (
-          <img
-            src={active.imageUrl}
-            alt={`Visual for ${active.name}`}
-            className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4"
-          />
-        )}
-        {hasBody ? (
-          <div
-            className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
-          />
-        ) : (
-          <EmptyTabContent />
-        )}
+
+      {/* Desktop: vertical tabs */}
+      <div className="hidden sm:grid rounded-2xl border border-border/60 bg-card shadow-sm sm:grid-cols-[11rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
+        <div role="tablist" aria-label="Info tabs" className="flex flex-col shrink-0 border-r border-border bg-muted/40 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl">
+          {tabs.map((tab) => {
+            const isActive = tab.id === active.id;
+            return (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={isActive}
+                type="button"
+                onClick={() => handleTabSelect(tab.id)}
+                title={tab.name}
+                className={cn(
+                  "relative text-left px-4 py-3 text-sm font-medium truncate transition-colors shrink-0",
+                  isActive
+                    ? "text-foreground bg-card border-l-[3px] border-l-primary -ml-px"
+                    : "text-muted-foreground hover:text-foreground hover:bg-card/60"
+                )}
+              >
+                {tab.name}
+              </button>
+            );
+          })}
+        </div>
+        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto">
+          {active.imageUrl && (
+            <img
+              src={active.imageUrl}
+              alt={`Visual for ${active.name}`}
+              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4"
+            />
+          )}
+          {hasBody ? (
+            <div
+              className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
+            />
+          ) : (
+            <EmptyTabContent />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
