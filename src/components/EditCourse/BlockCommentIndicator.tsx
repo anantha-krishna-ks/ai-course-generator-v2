@@ -637,14 +637,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="text-[12px] font-semibold text-foreground truncate">{r.author}</span>
-                    <span className={cn(
-                      "inline-flex items-center h-4 px-1.5 rounded-full text-[9px] font-semibold uppercase tracking-wide border",
-                      r.authorRole === "author"
-                        ? "bg-primary/10 text-primary border-primary/20"
-                        : "bg-violet-50 text-violet-700 border-violet-200",
-                    )}>
-                      {r.authorRole === "author" ? "Author" : "Reviewer"}
-                    </span>
+                    <RoleBadge role={r.authorRole} />
                     <span className="text-muted-foreground/40 text-[10px]">·</span>
                     <span className="text-[10px] text-muted-foreground tabular-nums">
                       {formatRelative(new Date(r.createdAt).getTime())}
