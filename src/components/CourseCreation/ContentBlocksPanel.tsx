@@ -931,24 +931,28 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px]")}>
-            <div className="flex items-end gap-[2px] border-b border-[hsl(220,13%,91%)] px-[1px]">
-              {["Overview", "Details", "FAQ"].map((label, i) => (
+            <div className="flex items-end gap-[3px] border-b border-[hsl(220,13%,91%)] px-[2px]">
+              {["Overview", "Features", "Pricing", "FAQ"].map((label, i) => (
                 <div
                   key={label}
                   className={cn(
-                    "px-[3px] py-[1.5px] text-[3px] font-semibold rounded-t-[2px]",
-                    i === 0
-                      ? "bg-white text-primary border border-b-0 border-[hsl(220,13%,91%)]"
-                      : "text-[hsl(220,8%,55%)]"
+                    "relative px-[3px] pb-[2px] pt-[1px] text-[3px] font-semibold leading-none",
+                    i === 0 ? "text-primary" : "text-[hsl(220,8%,55%)]"
                   )}
                 >
                   {label}
+                  {i === 0 && (
+                    <span className="absolute -bottom-[0.5px] left-0 right-0 h-[1px] bg-primary rounded-full" />
+                  )}
                 </div>
               ))}
             </div>
-            <div className="pt-[3px] px-[2px]">
-              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">What you'll learn</p>
-              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">A quick overview of the topics covered in this module.</p>
+            <div className="pt-[3px] px-[2px] flex gap-[4px]">
+              <img src={workspaceImg} alt="" className="w-[18px] h-[16px] rounded-[2px] object-cover shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-[3.5px] font-bold text-[hsl(220,15%,15%)] leading-[1.3] mb-[1.5px]">What you'll learn</p>
+                <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.55]">A guided tour of every topic — from fundamentals to advanced patterns.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -957,22 +961,29 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
-            <div className="flex flex-col gap-[1.5px] w-[22px] border-r border-[hsl(220,13%,91%)] pr-[2px]">
+            <div className="flex flex-col gap-[1.5px] w-[24px] border-r border-[hsl(220,13%,91%)] pr-[2px]">
               {["Intro", "Setup", "Usage", "FAQ"].map((label, i) => (
                 <div
                   key={label}
                   className={cn(
-                    "px-[2px] py-[1px] text-[3px] font-semibold rounded-[1.5px] text-left truncate",
+                    "relative flex items-center gap-[2px] px-[2px] py-[1.5px] text-[3px] font-semibold rounded-[1.5px] text-left truncate",
                     i === 0 ? "bg-primary/10 text-primary" : "text-[hsl(220,8%,55%)]"
                   )}
                 >
-                  {label}
+                  {i === 0 && (
+                    <span className="absolute left-0 top-[1px] bottom-[1px] w-[0.75px] bg-primary rounded-full" />
+                  )}
+                  <span className={cn("w-[2px] h-[2px] rounded-full shrink-0", i === 0 ? "bg-primary" : "bg-[hsl(220,13%,80%)]")} />
+                  <span className="truncate">{label}</span>
                 </div>
               ))}
             </div>
             <div className="flex-1 min-w-0 pt-[1px]">
-              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Introduction</p>
-              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Welcome to the course — here's everything you need to begin.</p>
+              <p className="text-[3.5px] font-bold text-[hsl(220,15%,15%)] leading-[1.3] mb-[1.5px]">Introduction</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.55] mb-[2px]">Welcome — here's everything you need to begin the journey.</p>
+              <div className="h-[8px] rounded-[1.5px] bg-[hsl(220,14%,96%)] border border-[hsl(220,13%,93%)] flex items-center justify-center">
+                <ImageIcon className="w-[4px] h-[4px] text-[hsl(220,8%,60%)]" aria-hidden="true" focusable="false" />
+              </div>
             </div>
           </div>
         </div>
@@ -982,18 +993,18 @@ function BlockThumbnail({ id }: { id: string }) {
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px] space-y-[1.5px]")}>
             {[
-              { q: "What's included?", open: true },
-              { q: "How do I get started?", open: false },
-              { q: "Is there a free trial?", open: false },
+              { q: "What's included in the course?", open: true },
+              { q: "How long do I have access?", open: false },
+              { q: "Is there a free trial available?", open: false },
             ].map((row, i) => (
-              <div key={i} className="rounded-[2px] border border-[hsl(220,13%,91%)] overflow-hidden">
-                <div className={cn("flex items-center justify-between px-[3px] h-[7px]", row.open && "bg-primary/5")}>
-                  <span className="text-[3px] font-semibold text-[hsl(220,15%,18%)] truncate">{row.q}</span>
-                  <span className={cn("text-[4px] leading-none text-primary transition-transform", row.open ? "rotate-180" : "rotate-0")}>⌄</span>
+              <div key={i} className={cn("rounded-[2px] border overflow-hidden", row.open ? "border-primary/30 bg-primary/[0.04]" : "border-[hsl(220,13%,91%)]")}>
+                <div className="flex items-center justify-between px-[3px] h-[8px] gap-[3px]">
+                  <span className={cn("text-[3px] font-semibold truncate", row.open ? "text-primary" : "text-[hsl(220,15%,22%)]")}>{row.q}</span>
+                  <span className={cn("text-[4px] leading-none transition-transform shrink-0", row.open ? "rotate-180 text-primary" : "rotate-0 text-[hsl(220,8%,55%)]")}>⌄</span>
                 </div>
                 {row.open && (
-                  <div className="px-[3px] pb-[2px]">
-                    <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Lessons, projects and full lifetime access.</p>
+                  <div className="px-[3px] pt-[1px] pb-[2.5px] border-t border-primary/15">
+                    <p className="text-[3px] text-[hsl(220,8%,48%)] leading-[1.55]">12 lessons, 4 hands-on projects, and full lifetime access on any device.</p>
                   </div>
                 )}
               </div>
