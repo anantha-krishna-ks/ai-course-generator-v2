@@ -657,7 +657,7 @@ const MultipageCoursePreview = () => {
       }
       case "tabs": {
         if (block.variant === "vertical-tabs") {
-          return <VerticalTextTabsPreview content={block.content || ""} />;
+          return <VerticalTextTabsPreview content={block.content || ""} isMobile={isMobileView} />;
         }
         return <TabsPreview content={block.content || ""} />;
       }
