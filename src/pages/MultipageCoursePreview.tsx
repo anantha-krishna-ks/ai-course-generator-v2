@@ -1520,7 +1520,7 @@ const TabsPreview = ({ content }: { content: string }) => {
         <div
           role="tablist"
           aria-label="Info tabs"
-          className="flex items-stretch overflow-x-auto scrollbar-thin"
+          className="flex items-stretch overflow-x-auto pretty-scrollbar"
         >
           {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
