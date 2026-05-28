@@ -1771,54 +1771,95 @@ const AccordionPreview = ({ content }: { content: string }) => {
   };
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm divide-y divide-border/60">
-      {items.map((item) => {
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm space-y-2 p-2 sm:p-3">
+      {items.map((item, idx) => {
         const isOpen = openIds.has(item.id);
         const hasBody = (item.body || "").replace(/<[^>]+>/g, "").trim().length > 0;
         const imageUrl = (item as any).imageUrl as string | undefined;
         return (
-          <div key={item.id}>
+          <div
+            key={item.id}
+            className={cn(
+              "group relative rounded-xl border transition-all duration-300 ease-out overflow-hidden",
+              isOpen
+                ? "border-primary/30 bg-gradient-to-br from-primary/[0.06] via-primary/[0.02] to-transparent shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.25)]"
+                : "border-border/60 bg-card hover:border-border hover:shadow-sm"
+            )}
+          >
+            {/* Active left accent bar */}
+            <span
+              aria-hidden="true"
+              className={cn(
+                "absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl transition-all duration-300",
+                isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
+              )}
+            />
             <button
               type="button"
               onClick={() => toggle(item.id)}
               aria-expanded={isOpen}
               aria-controls={`acc-prev-${item.id}`}
-              className={cn(
-                "w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-3 text-left transition-colors",
-                isOpen ? "bg-primary/[0.04] text-foreground" : "hover:bg-muted/40 text-foreground"
-              )}
+              className="w-full flex items-center gap-3 sm:gap-4 pl-4 sm:pl-5 pr-3 sm:pr-4 py-3.5 text-left"
             >
-              <span className="text-sm sm:text-base font-semibold break-words [overflow-wrap:anywhere]">{item.title}</span>
-              <ChevronDown
+              {/* Numbered badge */}
+              <span
                 className={cn(
-                  "w-4 h-4 shrink-0 text-muted-foreground transition-transform",
-                  isOpen && "rotate-180 text-primary"
+                  "shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-bold tabular-nums transition-all duration-300",
+                  isOpen
+                    ? "bg-primary text-primary-foreground shadow-sm scale-105"
+                    : "bg-muted text-muted-foreground group-hover:bg-muted/80"
                 )}
                 aria-hidden="true"
-              />
+              >
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <span className={cn(
+                "flex-1 text-sm sm:text-base font-semibold break-words [overflow-wrap:anywhere] transition-colors",
+                isOpen ? "text-foreground" : "text-foreground/90"
+              )}>{item.title}</span>
+              {/* Animated chevron in pill */}
+              <span
+                className={cn(
+                  "shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300",
+                  isOpen ? "bg-primary/15 text-primary rotate-180" : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                )}
+                aria-hidden="true"
+              >
+                <ChevronDown className="w-4 h-4" />
+              </span>
             </button>
-            {isOpen && (
-              <div id={`acc-prev-${item.id}`} className="px-4 sm:px-5 pb-4 pt-1 space-y-3">
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt={`Visual for ${item.title}`}
-                    className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover"
-                  />
-                )}
-                {hasBody ? (
-                  <div
-                    className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.body) }}
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">No content in this panel yet.</p>
-                )}
+            {/* Smooth expand using grid rows trick */}
+            <div
+              id={`acc-prev-${item.id}`}
+              className={cn(
+                "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
+                isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
+            >
+              <div className="overflow-hidden">
+                <div className="px-4 sm:px-5 pb-4 pt-1 space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
+                  {imageUrl && (
+                    <img
+                      src={imageUrl}
+                      alt={`Visual for ${item.title}`}
+                      className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover shadow-sm"
+                    />
+                  )}
+                  {hasBody ? (
+                    <div
+                      className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.body) }}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">No content in this panel yet.</p>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         );
       })}
     </div>
   );
 };
+
