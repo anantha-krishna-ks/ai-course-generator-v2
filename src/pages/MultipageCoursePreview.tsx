@@ -1429,6 +1429,47 @@ export default MultipageCoursePreview;
 
 // ============= Interactive preview components =============
 
+const EmptyTabContent = () => (
+  <div className="rounded-xl border border-dashed border-border bg-gradient-to-br from-muted/30 to-muted/10 px-6 py-10 flex flex-col items-center justify-center text-center gap-4">
+    <svg
+      width="120"
+      height="96"
+      viewBox="0 0 120 96"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+      className="text-primary"
+    >
+      {/* Back page */}
+      <rect x="22" y="14" width="64" height="76" rx="6" className="fill-muted" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.2" />
+      {/* Front page */}
+      <rect x="32" y="8" width="64" height="76" rx="6" fill="hsl(var(--background))" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1.4" />
+      {/* Header bar */}
+      <rect x="40" y="18" width="32" height="5" rx="2.5" fill="currentColor" fillOpacity="0.9" />
+      {/* Content lines */}
+      <rect x="40" y="30" width="48" height="3" rx="1.5" fill="currentColor" fillOpacity="0.18" />
+      <rect x="40" y="38" width="44" height="3" rx="1.5" fill="currentColor" fillOpacity="0.18" />
+      <rect x="40" y="46" width="40" height="3" rx="1.5" fill="currentColor" fillOpacity="0.18" />
+      {/* Image placeholder block */}
+      <rect x="40" y="56" width="48" height="20" rx="3" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1" strokeDasharray="2 2" />
+      <circle cx="48" cy="65" r="2" fill="currentColor" fillOpacity="0.35" />
+      <path d="M54 72 L62 64 L72 72 L84 60" stroke="currentColor" strokeOpacity="0.35" strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Plus badge */}
+      <circle cx="92" cy="14" r="9" fill="currentColor" />
+      <path d="M92 10 V18 M88 14 H96" stroke="hsl(var(--primary-foreground))" strokeWidth="1.6" strokeLinecap="round" />
+      {/* Sparkle */}
+      <path d="M14 36 L15.5 39 L18.5 40.5 L15.5 42 L14 45 L12.5 42 L9.5 40.5 L12.5 39 Z" fill="currentColor" fillOpacity="0.5" />
+      <circle cx="108" cy="74" r="2" fill="currentColor" fillOpacity="0.5" />
+    </svg>
+    <div className="space-y-1">
+      <p className="text-sm font-medium text-foreground">Nothing here yet</p>
+      <p className="text-xs text-muted-foreground">Add content to bring this tab to life.</p>
+    </div>
+  </div>
+);
+
+
 interface PreviewTab {
   id: string;
   name: string;
