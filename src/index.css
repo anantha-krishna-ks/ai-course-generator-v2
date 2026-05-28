@@ -393,3 +393,13 @@ All colors MUST be HSL.
   pointer-events: auto !important;
   caret-color: auto !important;
 }
+
+/* Tiptap placeholder — shown when editor is empty */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
