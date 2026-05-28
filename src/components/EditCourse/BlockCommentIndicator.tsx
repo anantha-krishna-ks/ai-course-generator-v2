@@ -516,15 +516,10 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
           {comment.author.slice(0, 1).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-            <span className="text-[13px] font-semibold text-foreground truncate">{comment.author}</span>
-            <span className={cn(
-              "inline-flex items-center h-[18px] px-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border",
-              comment.authorRole === "author"
-                ? "bg-primary/10 text-primary border-primary/20"
-                : "bg-violet-50 text-violet-700 border-violet-200",
-            )}>
-              {comment.authorRole === "author" ? "Author" : "Reviewer"}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[13px] font-semibold text-foreground truncate leading-tight">{comment.author}</span>
+            <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap">
+              {formatRelative(new Date(comment.createdAt).getTime())}
             </span>
             {canEditComment && !editingComment && (
               <span className="ml-auto opacity-0 group-hover/comment:opacity-100 focus-within:opacity-100 transition-opacity">
@@ -536,21 +531,26 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+            <span className={cn(
+              "inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-semibold uppercase tracking-wide border",
+              comment.authorRole === "author"
+                ? "bg-primary/10 text-primary border-primary/20"
+                : "bg-violet-50 text-violet-700 border-violet-200",
+            )}>
+              {comment.authorRole === "author" ? "Author" : "Reviewer"}
+            </span>
             {comment.category && (
               <span className="inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
                 {comment.category}
               </span>
             )}
             {comment.resolved && (
-              <span className="inline-flex items-center gap-1 h-[18px] px-1.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="inline-flex items-center gap-1 h-[18px] px-2 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <CheckCircle2 className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
                 Resolved
               </span>
             )}
-            <span className="text-[10.5px] text-muted-foreground tabular-nums">
-              {formatRelative(new Date(comment.createdAt).getTime())}
-            </span>
           </div>
         </div>
       </div>
