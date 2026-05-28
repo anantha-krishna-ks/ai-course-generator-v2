@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Plus, Trash2, GripVertical, ImagePlus, X, Eye, Pencil, ChevronDown } from "lucide-react";
+import { Plus, Trash2, GripVertical, ImagePlus, X, Eye, Pencil, ChevronDown, LayoutPanelTop, Columns2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -260,14 +260,24 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
 
   return (
     <div className="w-full px-1">
-      {/* Header — title + preview toggle */}
-      <div className="flex items-center justify-between mb-3 px-3">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <span>{isVertical ? "Vertical Tabs" : "Info Tabs"}</span>
-          <span className="text-muted-foreground/60">·</span>
-          <span className="text-muted-foreground">{data.tabs.length} {data.tabs.length === 1 ? "tab" : "tabs"}</span>
+      {/* Header — pill bar with glass feel */}
+      <div className="flex items-center justify-between mb-4 px-1">
+        <div className="inline-flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-full border border-border/70 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent backdrop-blur-sm">
+          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/15 text-primary">
+            {isVertical
+              ? <Columns2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              : <LayoutPanelTop className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+          </span>
+          <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+            {isVertical ? "Vertical Tabs" : "Horizontal Tabs"}
+          </span>
+          <span className="text-muted-foreground/50" aria-hidden="true">·</span>
+          <span className="text-[11px] font-medium text-muted-foreground">
+            {data.tabs.length} {data.tabs.length === 1 ? "tab" : "tabs"}
+          </span>
         </div>
       </div>
+
 
       {/* Tab bar */}
       <div className={cn("rounded-2xl border border-border bg-card overflow-hidden", isVertical && "flex items-stretch max-h-[600px]")}>
