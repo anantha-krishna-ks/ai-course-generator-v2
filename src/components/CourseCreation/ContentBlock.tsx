@@ -522,6 +522,8 @@ export function ContentBlock({
         >
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
+          ) : type === "text" && variant === "accordion" ? (
+            <AccordionBlock content={content} onChange={onChange} />
           ) : type === "tabs" ? (
             <TabsBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "hotspot" ? (
