@@ -505,6 +505,16 @@ const MultipageCoursePreview = () => {
     switch (block.type) {
       case "text": {
         const content = block.content || "";
+
+        // Accordion variant (currently stored as a text block) renders as a collapsible panel
+        if (block.variant === "accordion") {
+          return <AccordionPreview content={content} />;
+        }
+        // Vertical tabs variant renders using the tabs preview in vertical orientation
+        if (block.variant === "vertical-tabs") {
+          return <VerticalTextTabsPreview content={content} />;
+        }
+
         const COL_SEPARATOR = "<!--col-break-->";
         const layoutMatch = content.match(/<!--layout:(\w[\w-]*)-->/);
         const layout = layoutMatch ? layoutMatch[1] : "heading-text";
