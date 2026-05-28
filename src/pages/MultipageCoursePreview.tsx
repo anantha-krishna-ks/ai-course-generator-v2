@@ -1668,9 +1668,13 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
 
       {/* Desktop: vertical tabs */}
       {!isMobile && (
-      <div className="grid rounded-2xl border border-border/60 bg-card shadow-sm grid-cols-[12rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
-        <div role="tablist" aria-label="Info tabs" className="flex flex-col shrink-0 gap-1 border-r border-border bg-muted/30 p-2 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl">
-          {tabs.map((tab) => {
+      <div className="grid rounded-2xl border border-border/60 bg-card shadow-md shadow-foreground/[0.04] ring-1 ring-foreground/[0.02] grid-cols-[14rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
+        <div
+          role="tablist"
+          aria-label="Info tabs"
+          className="flex flex-col shrink-0 gap-1 border-r border-border/60 bg-gradient-to-b from-muted/40 to-muted/10 p-2.5 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl"
+        >
+          {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
             return (
               <button
@@ -1681,23 +1685,40 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
                 onClick={() => handleTabSelect(tab.id)}
                 title={tab.name}
                 className={cn(
-                  "relative text-left px-3 py-2.5 text-sm font-medium rounded-lg truncate transition-all shrink-0 border",
+                  "group relative text-left pl-3 pr-2.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shrink-0 inline-flex items-center gap-2.5 overflow-hidden",
                   isActive
-                    ? "bg-card text-foreground border-border shadow-sm border-l-[3px] border-l-primary"
-                    : "bg-transparent text-muted-foreground border-transparent hover:bg-card/70 hover:text-foreground hover:border-border/60"
+                    ? "bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent text-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
                 )}
               >
-                {tab.name}
+                {/* Active rail */}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary transition-all duration-300 origin-center",
+                    isActive ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
+                  )}
+                />
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold tabular-nums transition-colors",
+                    isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                  )}
+                >
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <span className="truncate flex-1">{tab.name}</span>
               </button>
             );
           })}
         </div>
-        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto">
+        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto animate-in fade-in duration-300">
           {active.imageUrl && (
             <img
               src={active.imageUrl}
               alt={`Visual for ${active.name}`}
-              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4"
+              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4 shadow-sm"
             />
           )}
           {hasBody ? (
@@ -1711,6 +1732,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         </div>
       </div>
       )}
+
     </>
   );
 };
