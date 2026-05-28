@@ -1567,7 +1567,7 @@ const TabsPreview = ({ content }: { content: string }) => {
   );
 };
 
-const VerticalTextTabsPreview = ({ content }: { content: string }) => {
+const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: string; isMobile?: boolean }) => {
   // Vertical tabs share the tabs JSON shape; if parseable use it, otherwise render content as a single panel
   const parsed = parseTabs(content);
   const [activeId, setActiveId] = useState<string>(parsed?.activeId ?? "");
