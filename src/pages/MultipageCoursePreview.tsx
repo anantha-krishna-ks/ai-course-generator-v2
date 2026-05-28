@@ -1686,7 +1686,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         <div
           role="tablist"
           aria-label="Info tabs"
-          className="flex flex-col shrink-0 gap-1 border-r border-border/60 bg-gradient-to-b from-muted/40 to-muted/10 p-2.5 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl"
+          className="flex flex-col shrink-0 gap-1 border-r border-border/60 bg-gradient-to-b from-muted/40 to-muted/10 p-2.5 max-h-[calc(100vh-8rem)] overflow-y-auto pretty-scrollbar rounded-l-2xl"
         >
           {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
