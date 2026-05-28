@@ -1690,42 +1690,54 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         >
           {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
+            const prevActive = idx > 0 && tabs[idx - 1].id === active.id;
             return (
-              <button
-                key={tab.id}
-                role="tab"
-                aria-selected={isActive}
-                type="button"
-                onClick={() => handleTabSelect(tab.id)}
-                title={tab.name}
-                className={cn(
-                  "group relative text-left pl-3 pr-2.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shrink-0 inline-flex items-center gap-2.5 overflow-hidden",
-                  isActive
-                    ? "bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent text-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
+              <div key={tab.id} className="flex flex-col">
+                {idx > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "mx-3 h-px bg-gradient-to-r from-transparent via-border to-transparent transition-opacity duration-200",
+                      isActive || prevActive ? "opacity-0" : "opacity-100"
+                    )}
+                  />
                 )}
-              >
-                {/* Active rail */}
-                <span
-                  aria-hidden="true"
+                <button
+                  role="tab"
+                  aria-selected={isActive}
+                  type="button"
+                  onClick={() => handleTabSelect(tab.id)}
+                  title={tab.name}
                   className={cn(
-                    "absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary transition-all duration-300 origin-center",
-                    isActive ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
-                  )}
-                />
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold tabular-nums transition-colors",
-                    isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                    "group relative text-left pl-3 pr-2.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shrink-0 inline-flex items-center gap-2.5 overflow-hidden",
+                    isActive
+                      ? "bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent text-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
                   )}
                 >
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-                <span className="truncate flex-1">{tab.name}</span>
-              </button>
+                  {/* Active rail */}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary transition-all duration-300 origin-center",
+                      isActive ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
+                    )}
+                  />
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold tabular-nums transition-colors",
+                      isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                    )}
+                  >
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <span className="truncate flex-1">{tab.name}</span>
+                </button>
+              </div>
             );
           })}
+
         </div>
         <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto animate-in fade-in duration-300">
           {active.imageUrl && (
