@@ -512,7 +512,7 @@ const MultipageCoursePreview = () => {
         }
         // Vertical tabs variant renders using the tabs preview in vertical orientation
         if (block.variant === "vertical-tabs") {
-          return <VerticalTextTabsPreview content={content} />;
+          return <VerticalTextTabsPreview content={content} isMobile={isMobileView} />;
         }
 
         const COL_SEPARATOR = "<!--col-break-->";
