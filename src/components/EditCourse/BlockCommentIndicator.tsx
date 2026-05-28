@@ -760,6 +760,46 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
               This action cannot be undone. {confirm?.kind === "comment" ? "All replies on this comment will also be removed." : "The reply will be permanently removed from this thread."}
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          {(() => {
+            if (!confirm) return null;
+            const target = confirm.kind === "comment"
+              ? comment
+              : comment.replies.find((r) => r.id === confirm.id);
+            if (!target) return null;
+            const replyCount = confirm.kind === "comment" ? comment.replies.length : 0;
+            return (
+              <div className="rounded-xl border border-border bg-muted/40 p-3">
+                <div className="flex items-start gap-2.5">
+                  <div className={cn(
+                    "w-7 h-7 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0",
+                    target.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
+                  )}>
+                    {target.author.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-[12px] font-semibold text-foreground truncate">{target.author}</span>
+                      <RoleBadge role={target.authorRole} />
+                      <span className="text-muted-foreground/40 text-[10px]">·</span>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        {formatRelative(new Date(target.createdAt).getTime())}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words line-clamp-4">
+                      {target.text}
+                    </p>
+                    {confirm.kind === "comment" && replyCount > 0 && (
+                      <p className="mt-2 text-[11px] font-medium text-destructive">
+                        {replyCount} {replyCount === 1 ? "reply" : "replies"} will also be deleted
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
             <AlertDialogAction
