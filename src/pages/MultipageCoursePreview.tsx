@@ -1772,6 +1772,46 @@ const AccordionPreview = ({ content }: { content: string }) => {
     });
   };
 
+  if (items.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border/70 bg-gradient-to-br from-muted/40 via-card to-card p-8 sm:p-10 flex flex-col items-center justify-center text-center">
+        <svg
+          width="120"
+          height="96"
+          viewBox="0 0 120 96"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+          className="mb-4"
+        >
+          <defs>
+            <linearGradient id="acc-empty-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.04" />
+            </linearGradient>
+          </defs>
+          {/* Stacked cards */}
+          <rect x="14" y="14" width="92" height="20" rx="6" fill="url(#acc-empty-grad)" stroke="hsl(var(--border))" />
+          <rect x="14" y="38" width="92" height="20" rx="6" fill="hsl(var(--card))" stroke="hsl(var(--border))" />
+          <rect x="14" y="62" width="92" height="20" rx="6" fill="hsl(var(--card))" stroke="hsl(var(--border))" />
+          {/* Lines inside top expanded card */}
+          <rect x="22" y="22" width="40" height="4" rx="2" fill="hsl(var(--primary))" opacity="0.5" />
+          <rect x="22" y="46" width="60" height="3" rx="1.5" fill="hsl(var(--muted-foreground))" opacity="0.35" />
+          <rect x="22" y="70" width="50" height="3" rx="1.5" fill="hsl(var(--muted-foreground))" opacity="0.35" />
+          {/* Chevrons */}
+          <path d="M92 22 l4 4 l4 -4" stroke="hsl(var(--primary))" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <path d="M92 46 l4 4 l4 -4" stroke="hsl(var(--muted-foreground))" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.5" />
+          <path d="M92 70 l4 4 l4 -4" stroke="hsl(var(--muted-foreground))" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.5" />
+        </svg>
+        <p className="text-sm font-semibold text-foreground">No sections yet</p>
+        <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+          Add sections in the editor to build a collapsible accordion of content.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm space-y-2 p-2 sm:p-3">
       {items.map((item, idx) => {
@@ -1788,14 +1828,15 @@ const AccordionPreview = ({ content }: { content: string }) => {
                 : "border-border/60 bg-card hover:border-border hover:shadow-sm"
             )}
           >
-            {/* Active left accent bar */}
+            {/* Active left accent bar — thin & elegant */}
             <span
               aria-hidden="true"
               className={cn(
-                "absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl transition-all duration-300",
+                "absolute left-0 top-2 bottom-2 w-[2px] bg-primary rounded-full transition-all duration-300",
                 isOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
               )}
             />
+
             <button
               type="button"
               onClick={() => toggle(item.id)}
