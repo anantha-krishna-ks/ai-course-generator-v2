@@ -1591,8 +1591,8 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   };
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
-      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto sm:rounded-l-2xl">
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:grid sm:grid-cols-[11rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
+      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl">
         {tabs.map((tab) => {
           const isActive = tab.id === active.id;
           return (
@@ -1604,10 +1604,10 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
               onClick={() => handleTabSelect(tab.id)}
               title={tab.name}
               className={cn(
-                "relative text-left px-4 py-3 text-sm font-medium whitespace-nowrap sm:whitespace-normal truncate transition-colors shrink-0",
+                "relative text-left px-4 py-3 text-sm font-medium whitespace-nowrap sm:whitespace-normal sm:truncate transition-colors shrink-0",
                 isActive
-                  ? "text-foreground bg-card sm:border-l-[3px] sm:border-l-primary sm:-ml-px"
-                  : "text-muted-foreground hover:text-foreground hover:bg-card/60"
+                  ? "text-foreground bg-card border-b-[3px] border-b-primary sm:border-b-0 sm:border-l-[3px] sm:border-l-primary sm:-ml-px"
+                  : "text-muted-foreground hover:text-foreground hover:bg-card/60 border-b-[3px] border-b-transparent sm:border-b-0"
               )}
             >
               {tab.name}
