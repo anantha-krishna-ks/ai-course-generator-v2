@@ -388,7 +388,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
                           type="button"
                           aria-label={`Tab options for ${tab.name}`}
                           className={cn(
-                            "ml-0.5 w-5 h-5 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted shrink-0",
+                            "ml-auto w-5 h-5 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted shrink-0",
                             isActive ? "opacity-100" : "opacity-0 group-hover/tab:opacity-100"
                           )}
                           onClick={(e) => e.stopPropagation()}
