@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info } from "lucide-react";
+import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info, ShieldCheck, PenLine, Eye, BookOpen, LayoutPanelTop, FileCheck2, Scale, Target, Tag } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
