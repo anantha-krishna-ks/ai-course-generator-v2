@@ -32,6 +32,8 @@ const DEFAULT_TAB_NAME = "Untitled Tab";
 const ACCEPTED_IMAGE_TYPES = "image/png,image/jpeg,image/jpg,image/svg+xml";
 const PLACEHOLDER = "Add content to this tab";
 
+type ParsedTab = Partial<Pick<TabItem, "id" | "name" | "content" | "imageUrl">>;
+
 export interface TabItem {
   id: string;
   name: string;
@@ -62,7 +64,7 @@ function parseContent(raw: string): TabsBlockData {
   try {
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed?.tabs) && parsed.tabs.length > 0) {
-      const tabs: TabItem[] = parsed.tabs.map((t: any) => ({
+      const tabs: TabItem[] = parsed.tabs.map((t: ParsedTab) => ({
         id: String(t.id || makeId()),
         name: String(t.name || DEFAULT_TAB_NAME).slice(0, TAB_NAME_MAX) || DEFAULT_TAB_NAME,
         content: String(t.content || ""),
@@ -99,7 +101,6 @@ export function TabsBlock({ content, onChange }: TabsBlockProps) {
       if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
       return next;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
   const persist = useCallback(
