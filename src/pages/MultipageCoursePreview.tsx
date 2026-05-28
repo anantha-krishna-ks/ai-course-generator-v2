@@ -1739,7 +1739,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
           })}
 
         </div>
-        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto animate-in fade-in duration-300">
+        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto pretty-scrollbar animate-in fade-in duration-300">
           {active.imageUrl && (
             <img
               src={active.imageUrl}
