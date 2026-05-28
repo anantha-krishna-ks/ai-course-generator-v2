@@ -31,6 +31,7 @@ import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
 import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
 import { HotspotBlock } from "./HotspotBlock";
 import { TabsBlock } from "./TabsBlock";
+import { AccordionBlock } from "./AccordionBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -521,6 +522,8 @@ export function ContentBlock({
         >
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
+          ) : type === "text" && variant === "accordion" ? (
+            <AccordionBlock content={content} onChange={onChange} />
           ) : type === "tabs" ? (
             <TabsBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "hotspot" ? (
