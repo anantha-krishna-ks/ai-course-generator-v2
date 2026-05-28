@@ -364,7 +364,7 @@ function TableMenu({ editor }: { editor: Editor }) {
   );
 }
 
-export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBlockFontChange }: DescriptionEditorProps) {
+export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBlockFontChange, placeholder }: DescriptionEditorProps) {
   const [moreOpen, setMoreOpen] = useState(false);
   const editor = useEditor({
     extensions: [
@@ -372,7 +372,7 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
       Highlight.configure({ multicolor: true }),
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Placeholder.configure({
-        placeholder: 'Tell your learners what the course will be about...',
+        placeholder: placeholder ?? 'Tell your learners what the course will be about...',
       }),
       Link.configure({
         openOnClick: false,
