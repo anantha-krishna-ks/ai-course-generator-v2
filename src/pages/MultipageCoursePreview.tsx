@@ -1707,7 +1707,8 @@ function parseAccordion(raw: string): AccordionItem[] {
   // 1) Try structured JSON { items: [{title, body, imageUrl}] }
   try {
     const parsed = JSON.parse(raw || "{}");
-    if (Array.isArray(parsed?.items) && parsed.items.length > 0) {
+    if (Array.isArray(parsed?.items)) {
+      if (parsed.items.length === 0) return [];
       return parsed.items.map((it: any, i: number) => ({
         id: String(it.id || `acc-${i}`),
         title: String(it.title || `Section ${i + 1}`),
@@ -1718,6 +1719,7 @@ function parseAccordion(raw: string): AccordionItem[] {
   } catch {
     /* fall through */
   }
+
 
   // 2) Split HTML by headings (h2/h3) — each heading becomes a panel
   if (raw && /<h[23][^>]*>/i.test(raw)) {
