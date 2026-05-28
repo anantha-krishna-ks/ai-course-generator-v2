@@ -263,7 +263,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
       {/* Header — title + preview toggle */}
       <div className="flex items-center justify-between mb-3 px-3">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <span>Info Tabs</span>
+          <span>{isVertical ? "Vertical Tabs" : "Info Tabs"}</span>
           <span className="text-muted-foreground/60">·</span>
           <span className="text-muted-foreground">{data.tabs.length} {data.tabs.length === 1 ? "tab" : "tabs"}</span>
         </div>
