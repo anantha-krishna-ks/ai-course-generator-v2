@@ -1555,9 +1555,7 @@ const TabsPreview = ({ content }: { content: string }) => {
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
               />
             ) : (
-              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
-                Add content to this tab
-              </div>
+              <EmptyTabContent />
             )}
           </div>
         </div>
