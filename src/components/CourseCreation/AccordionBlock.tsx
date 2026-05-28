@@ -623,15 +623,13 @@ export function AccordionBlock({ content, onChange }: AccordionBlockProps) {
         })}
       </div>
 
-      {/* Add new — gradient dashed CTA */}
+      {/* Add new — subtle solid CTA */}
       <button
         type="button"
         onClick={addItem}
-        className="group/add mt-3 w-full inline-flex items-center justify-center gap-2 h-12 rounded-2xl border-2 border-dashed border-border bg-gradient-to-r from-primary/[0.03] via-transparent to-primary/[0.03] text-sm font-semibold text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/[0.04] transition-all"
+        className="group/add mt-3 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-primary/30 bg-primary/5 text-sm font-medium text-primary hover:bg-primary/10 hover:border-primary/50 transition-colors"
       >
-        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-muted group-hover/add:bg-primary/15 transition-colors">
-          <Plus className="w-3.5 h-3.5 group-hover/add:text-primary transition-colors" aria-hidden="true" focusable="false" />
-        </span>
+        <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
         Add section
       </button>
 
