@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info } from "lucide-react";
+import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info, ShieldCheck, PenLine, Eye, BookOpen, LayoutPanelTop, FileCheck2, Scale, Target, Tag } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -436,6 +436,67 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   );
 }
 
+const CATEGORY_META: Record<string, { icon: typeof Tag; classes: string }> = {
+  "Clarity & Readability": { icon: Eye, classes: "bg-sky-50 text-sky-700 border-sky-200" },
+  "Structure & Presentation": { icon: LayoutPanelTop, classes: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+  "Accuracy & Completeness": { icon: FileCheck2, classes: "bg-amber-50 text-amber-800 border-amber-200" },
+  "Consistency & Standards": { icon: Scale, classes: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200" },
+  "Relevance & Actionability": { icon: Target, classes: "bg-rose-50 text-rose-700 border-rose-200" },
+};
+
+function RoleBadge({ role }: { role: "author" | "reviewer" }) {
+  const isAuthor = role === "author";
+  const Icon = isAuthor ? PenLine : ShieldCheck;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 h-[20px] pl-1 pr-2 rounded-full text-[10px] font-semibold tracking-wide border shadow-[0_1px_0_rgba(0,0,0,0.02)]",
+        isAuthor
+          ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary border-primary/25"
+          : "bg-gradient-to-b from-violet-100 to-violet-50 text-violet-700 border-violet-200",
+      )}
+    >
+      <span
+        className={cn(
+          "inline-flex items-center justify-center w-3.5 h-3.5 rounded-full",
+          isAuthor ? "bg-primary text-primary-foreground" : "bg-violet-600 text-white",
+        )}
+        aria-hidden="true"
+      >
+        <Icon className="w-2 h-2" strokeWidth={2.5} aria-hidden="true" focusable="false" />
+      </span>
+      {isAuthor ? "Author" : "Reviewer"}
+    </span>
+  );
+}
+
+function CategoryBadge({ category }: { category: string }) {
+  const meta = CATEGORY_META[category] ?? { icon: Tag, classes: "bg-muted text-foreground border-border" };
+  const Icon = meta.icon;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-medium border",
+        meta.classes,
+      )}
+    >
+      <Icon className="w-2.5 h-2.5" strokeWidth={2.5} aria-hidden="true" focusable="false" />
+      <span className="truncate max-w-[180px]">{category}</span>
+    </span>
+  );
+}
+
+function ResolvedBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 h-[20px] pl-1 pr-2 rounded-full text-[10px] font-semibold border bg-gradient-to-b from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200">
+      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-600 text-white" aria-hidden="true">
+        <CheckCircle2 className="w-2.5 h-2.5" strokeWidth={2.5} aria-hidden="true" focusable="false" />
+      </span>
+      Resolved
+    </span>
+  );
+}
+
 const RESOLVED_TIP = "Mark as resolved after you've addressed this feedback. Resolved threads are hidden from the open list and signal to the reviewer that no further action is needed.";
 
 function OwnerActions({ onEdit, onDelete, label }: { onEdit: () => void; onDelete: () => void; label: string }) {
@@ -532,25 +593,9 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             )}
           </div>
           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-            <span className={cn(
-              "inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-semibold uppercase tracking-wide border",
-              comment.authorRole === "author"
-                ? "bg-primary/10 text-primary border-primary/20"
-                : "bg-violet-50 text-violet-700 border-violet-200",
-            )}>
-              {comment.authorRole === "author" ? "Author" : "Reviewer"}
-            </span>
-            {comment.category && (
-              <span className="inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
-                {comment.category}
-              </span>
-            )}
-            {comment.resolved && (
-              <span className="inline-flex items-center gap-1 h-[18px] px-2 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <CheckCircle2 className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-                Resolved
-              </span>
-            )}
+            <RoleBadge role={comment.authorRole} />
+            {comment.category && <CategoryBadge category={comment.category} />}
+            {comment.resolved && <ResolvedBadge />}
           </div>
         </div>
       </div>
@@ -592,14 +637,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="text-[12px] font-semibold text-foreground truncate">{r.author}</span>
-                    <span className={cn(
-                      "inline-flex items-center h-4 px-1.5 rounded-full text-[9px] font-semibold uppercase tracking-wide border",
-                      r.authorRole === "author"
-                        ? "bg-primary/10 text-primary border-primary/20"
-                        : "bg-violet-50 text-violet-700 border-violet-200",
-                    )}>
-                      {r.authorRole === "author" ? "Author" : "Reviewer"}
-                    </span>
+                    <RoleBadge role={r.authorRole} />
                     <span className="text-muted-foreground/40 text-[10px]">·</span>
                     <span className="text-[10px] text-muted-foreground tabular-nums">
                       {formatRelative(new Date(r.createdAt).getTime())}
