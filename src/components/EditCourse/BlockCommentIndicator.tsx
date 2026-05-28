@@ -506,27 +506,23 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
   };
 
   return (
-    <li className={cn("p-3 space-y-2", comment.resolved && "bg-emerald-50/40")}>
-      <div className="flex items-start gap-2">
-        <div className="w-7 h-7 rounded-full bg-primary/10 text-primary text-xs font-semibold flex items-center justify-center shrink-0">
-          {comment.author.slice(0, 1)}
+    <li className={cn("group/comment px-3 py-3", comment.resolved && "bg-emerald-50/40")}>
+      {/* Header: avatar + identity */}
+      <div className="flex items-start gap-2.5">
+        <div className={cn(
+          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0",
+          comment.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
+        )}>
+          {comment.author.slice(0, 1).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-semibold text-foreground">{comment.author}</span>
-            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 rounded-full">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-[13px] font-semibold text-foreground truncate">{comment.author}</span>
+            <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
               {comment.authorRole === "author" ? "Author" : "Reviewer"}
-            </Badge>
-            {comment.category && (
-              <Badge variant="outline" className="text-[10px] h-4 px-1.5 rounded-full border-primary/30 text-primary">
-                {comment.category}
-              </Badge>
-            )}
-            {comment.resolved && (
-              <Badge className="text-[10px] h-4 px-1.5 rounded-full bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Resolved</Badge>
-            )}
+            </span>
             {canEditComment && !editingComment && (
-              <span className="ml-auto">
+              <span className="ml-auto opacity-0 group-hover/comment:opacity-100 focus-within:opacity-100 transition-opacity">
                 <OwnerActions
                   label="comment"
                   onEdit={() => { setCommentDraft(comment.text); setEditingComment(true); }}
@@ -535,44 +531,75 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
               </span>
             )}
           </div>
-          {editingComment ? (
-            <div className="mt-1 space-y-2">
-              <Textarea
-                value={commentDraft}
-                onChange={(e) => setCommentDraft(e.target.value)}
-                rows={2}
-                className="text-sm rounded-xl resize-none"
-              />
-              <div className="flex justify-end gap-2">
-                <Button size="sm" variant="ghost" className="rounded-full h-8" onClick={() => setEditingComment(false)}>Cancel</Button>
-                <Button size="sm" className="rounded-full h-8" onClick={saveCommentEdit} disabled={!commentDraft.trim()}>Save</Button>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-foreground mt-1 whitespace-pre-wrap break-words">{comment.text}</p>
-          )}
-          <p className="text-[10px] text-muted-foreground mt-1">{new Date(comment.createdAt).toLocaleString()}</p>
+          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+            <span className="text-[10.5px] text-muted-foreground tabular-nums">
+              {formatRelative(new Date(comment.createdAt).getTime())}
+            </span>
+            {comment.category && (
+              <>
+                <span className="text-muted-foreground/40 text-[10px]">·</span>
+                <span className="text-[10.5px] text-primary font-medium">{comment.category}</span>
+              </>
+            )}
+            {comment.resolved && (
+              <>
+                <span className="text-muted-foreground/40 text-[10px]">·</span>
+                <span className="inline-flex items-center gap-1 text-[10.5px] text-emerald-700 font-medium">
+                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  Resolved
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Comment body */}
+      <div className="mt-2 pl-[42px]">
+        {editingComment ? (
+          <div className="space-y-2">
+            <Textarea
+              value={commentDraft}
+              onChange={(e) => setCommentDraft(e.target.value)}
+              rows={2}
+              className="text-[13px] rounded-xl resize-none"
+            />
+            <div className="flex justify-end gap-1.5">
+              <Button size="sm" variant="ghost" className="rounded-full h-7 px-3 text-xs" onClick={() => setEditingComment(false)}>Cancel</Button>
+              <Button size="sm" className="rounded-full h-7 px-3 text-xs" onClick={saveCommentEdit} disabled={!commentDraft.trim()}>Save</Button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words">{comment.text}</p>
+        )}
+      </div>
+
+      {/* Replies */}
       {comment.replies.length > 0 && (
-        <ul className="pl-9 space-y-2 border-l-2 border-border ml-3">
+        <ul className="mt-3 pl-[42px] space-y-2.5">
           {comment.replies.map((r) => {
             const canEditReply = r.author === authorName;
             const isEditing = editingReplyId === r.id;
             return (
-              <li key={r.id} className="flex items-start gap-2">
+              <li key={r.id} className="group/reply flex items-start gap-2 pl-3 border-l-2 border-border">
                 <div className={cn(
                   "w-6 h-6 rounded-full text-[10px] font-semibold flex items-center justify-center shrink-0",
                   r.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
                 )}>
-                  {r.author.slice(0, 1)}
+                  {r.author.slice(0, 1).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-xs font-semibold text-foreground">{r.author}</p>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="text-[12px] font-semibold text-foreground truncate">{r.author}</span>
+                    <span className="text-[9.5px] uppercase tracking-wide text-muted-foreground font-medium">
+                      {r.authorRole === "author" ? "Author" : "Reviewer"}
+                    </span>
+                    <span className="text-muted-foreground/40 text-[10px]">·</span>
+                    <span className="text-[10px] text-muted-foreground tabular-nums">
+                      {formatRelative(new Date(r.createdAt).getTime())}
+                    </span>
                     {canEditReply && !isEditing && (
-                      <span className="ml-auto">
+                      <span className="ml-auto opacity-0 group-hover/reply:opacity-100 focus-within:opacity-100 transition-opacity">
                         <OwnerActions
                           label="reply"
                           onEdit={() => { setReplyDraft(r.text); setEditingReplyId(r.id); }}
@@ -587,15 +614,15 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
                         value={replyDraft}
                         onChange={(e) => setReplyDraft(e.target.value)}
                         rows={2}
-                        className="text-sm rounded-xl resize-none"
+                        className="text-[13px] rounded-xl resize-none"
                       />
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="ghost" className="rounded-full h-8" onClick={() => setEditingReplyId(null)}>Cancel</Button>
-                        <Button size="sm" className="rounded-full h-8" onClick={() => saveReplyEdit(r.id)} disabled={!replyDraft.trim()}>Save</Button>
+                      <div className="flex justify-end gap-1.5">
+                        <Button size="sm" variant="ghost" className="rounded-full h-7 px-3 text-xs" onClick={() => setEditingReplyId(null)}>Cancel</Button>
+                        <Button size="sm" className="rounded-full h-7 px-3 text-xs" onClick={() => saveReplyEdit(r.id)} disabled={!replyDraft.trim()}>Save</Button>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-foreground whitespace-pre-wrap break-words">{r.text}</p>
+                    <p className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words mt-0.5">{r.text}</p>
                   )}
                 </div>
               </li>
@@ -604,25 +631,26 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
         </ul>
       )}
 
+      {/* Composer + actions footer */}
       {!comment.resolved && (
-        <div className="pl-9 space-y-2">
+        <div className="mt-3 pl-[42px] space-y-2">
           <Textarea
             value={reply}
             onChange={(e) => setReply(e.target.value)}
-            placeholder="Reply…"
+            placeholder={isAuthorView ? "Write a reply…" : "Reply…"}
             rows={1}
-            className="min-h-[36px] text-sm rounded-xl resize-none"
+            className="min-h-[38px] text-[13px] rounded-xl resize-none"
           />
-          {isAuthorView ? (
-            <div className="flex items-center justify-between gap-2">
-              <label className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground cursor-pointer">
+          <div className="flex items-center justify-between gap-2">
+            {isAuthorView ? (
+              <label className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground cursor-pointer select-none">
                 <Checkbox
                   checked={markResolved}
                   onCheckedChange={(v) => setMarkResolved(v === true)}
                   aria-label="Mark as resolved"
-                  className="h-4 w-4"
+                  className="h-3.5 w-3.5"
                 />
-                Mark as resolved
+                <span>Mark as resolved</span>
                 <TooltipProvider delayDuration={150}>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -636,59 +664,47 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
                   </Tooltip>
                 </TooltipProvider>
               </label>
-              <Button
-                size="sm"
-                onClick={submit}
-                disabled={!reply.trim()}
-                className="rounded-full h-8"
-              >
-                <Send className="w-3.5 h-3.5 mr-1" aria-hidden="true" focusable="false" />
-                Submit
-              </Button>
-            </div>
-          ) : (
-            <div className="flex justify-end">
-              <Button size="sm" onClick={submit} disabled={!reply.trim()} className="rounded-full h-9" aria-label="Send reply">
-                <Send className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              </Button>
-            </div>
-          )}
+            ) : (
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => toggleResolved(comment.id)}
+                      className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-emerald-700 transition-colors"
+                    >
+                      <Circle className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      Mark resolved
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
+                    {RESOLVED_TIP}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            <Button
+              size="sm"
+              onClick={submit}
+              disabled={!reply.trim()}
+              className="rounded-full h-7 px-3 text-xs"
+            >
+              <Send className="w-3 h-3 mr-1" aria-hidden="true" focusable="false" />
+              {isAuthorView ? "Submit" : "Reply"}
+            </Button>
+          </div>
         </div>
       )}
 
-      {!isAuthorView && (
-        <div className="pl-9 flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => toggleResolved(comment.id)}
-            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-emerald-700"
-          >
-            {comment.resolved ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
-            {comment.resolved ? "Reopen" : "Mark resolved"}
-          </button>
-          <TooltipProvider delayDuration={150}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button type="button" aria-label="What does mark resolved mean?" className="text-muted-foreground hover:text-primary">
-                  <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[240px] text-xs leading-relaxed">
-                {RESOLVED_TIP}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      )}
       {isAuthorView && comment.resolved && (
-        <div className="pl-9">
+        <div className="mt-2 pl-[42px]">
           <button
             type="button"
             onClick={() => toggleResolved(comment.id)}
-            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary"
+            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-primary transition-colors"
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            Reopen
+            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Reopen thread
           </button>
         </div>
       )}
@@ -720,4 +736,5 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
     </li>
   );
 }
+
 
