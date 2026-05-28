@@ -1682,7 +1682,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
 
       {/* Desktop: vertical tabs */}
       {!isMobile && (
-      <div className="grid rounded-2xl border border-border/60 bg-card shadow-md shadow-foreground/[0.04] ring-1 ring-foreground/[0.02] grid-cols-[14rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
+      <div className="grid rounded-2xl border border-border/60 bg-card shadow-md shadow-foreground/[0.04] ring-1 ring-foreground/[0.02] grid-cols-[12rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
         <div
           role="tablist"
           aria-label="Info tabs"
