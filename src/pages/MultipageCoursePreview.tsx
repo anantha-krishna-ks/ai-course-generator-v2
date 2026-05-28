@@ -1592,52 +1592,58 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
 
   return (
     <>
-      {/* Mobile: accordion-style */}
-      <div className="sm:hidden rounded-2xl border border-border/60 bg-card shadow-sm divide-y divide-border overflow-hidden">
-        {tabs.map((tab) => {
-          const isActive = tab.id === active.id;
-          const tabHasBody = (tab.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
-          return (
-            <div key={tab.id}>
+      {/* Mobile: compact vertical tabs with rotated labels */}
+      <div className="sm:hidden grid grid-cols-[2.25rem_minmax(0,1fr)] rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden min-h-[16rem]">
+        <div role="tablist" aria-label="Info tabs" className="flex flex-col bg-muted/40 border-r border-border">
+          {tabs.map((tab) => {
+            const isActive = tab.id === active.id;
+            return (
               <button
+                key={tab.id}
+                role="tab"
+                aria-selected={isActive}
                 type="button"
-                aria-expanded={isActive}
-                onClick={() => handleTabSelect(isActive ? "" : tab.id)}
+                onClick={() => handleTabSelect(tab.id)}
+                title={tab.name}
                 className={cn(
-                  "w-full flex items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium transition-colors",
-                  isActive ? "text-foreground bg-muted/40" : "text-muted-foreground hover:text-foreground"
+                  "relative flex-1 min-h-[5rem] flex items-center justify-center px-1 py-3 transition-colors border-b border-border last:border-b-0",
+                  isActive
+                    ? "bg-card text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-card/60"
                 )}
               >
-                <span className="truncate">{tab.name}</span>
-                <ChevronDown
-                  className={cn("h-4 w-4 shrink-0 transition-transform", isActive && "rotate-180")}
-                  aria-hidden="true"
-                  focusable="false"
-                />
+                {isActive && (
+                  <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary" aria-hidden="true" />
+                )}
+                <span
+                  className="text-[11px] font-semibold tracking-wide uppercase truncate max-h-full"
+                  style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                >
+                  {tab.name}
+                </span>
               </button>
-              {isActive && (
-                <div className="px-4 pb-4 pt-1">
-                  {tab.imageUrl && (
-                    <img
-                      src={tab.imageUrl}
-                      alt={`Visual for ${tab.name}`}
-                      className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3"
-                    />
-                  )}
-                  {tabHasBody ? (
-                    <div
-                      className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(tab.content) }}
-                    />
-                  ) : (
-                    <EmptyTabContent />
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+        <div role="tabpanel" className="p-4 min-w-0 overflow-y-auto max-h-[70vh]">
+          {active.imageUrl && (
+            <img
+              src={active.imageUrl}
+              alt={`Visual for ${active.name}`}
+              className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3"
+            />
+          )}
+          {hasBody ? (
+            <div
+              className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
+            />
+          ) : (
+            <EmptyTabContent />
+          )}
+        </div>
       </div>
+
 
       {/* Desktop: vertical tabs */}
       <div className="hidden sm:grid rounded-2xl border border-border/60 bg-card shadow-sm sm:grid-cols-[12rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
