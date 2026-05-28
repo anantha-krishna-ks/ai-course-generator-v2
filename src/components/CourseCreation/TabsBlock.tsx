@@ -30,7 +30,7 @@ import { DescriptionEditor } from "./DescriptionEditor";
 const TAB_NAME_MAX = 40;
 const DEFAULT_TAB_NAME = "Untitled Tab";
 const ACCEPTED_IMAGE_TYPES = "image/png,image/jpeg,image/jpg,image/svg+xml";
-const PLACEHOLDER = "Add content to this tab";
+
 
 export interface TabItem {
   id: string;
