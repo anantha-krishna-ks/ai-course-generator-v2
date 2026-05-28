@@ -436,51 +436,47 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   );
 }
 
-const CATEGORY_META: Record<string, { icon: typeof Tag; classes: string }> = {
-  "Clarity & Readability": { icon: Eye, classes: "bg-sky-50 text-sky-700 border-sky-200" },
-  "Structure & Presentation": { icon: LayoutPanelTop, classes: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-  "Accuracy & Completeness": { icon: FileCheck2, classes: "bg-amber-50 text-amber-800 border-amber-200" },
-  "Consistency & Standards": { icon: Scale, classes: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200" },
-  "Relevance & Actionability": { icon: Target, classes: "bg-rose-50 text-rose-700 border-rose-200" },
+const CATEGORY_META: Record<string, { dot: string; text: string; bg: string; border: string }> = {
+  "Clarity & Readability":      { dot: "bg-sky-500",     text: "text-sky-700",     bg: "bg-sky-50",     border: "border-sky-200" },
+  "Structure & Presentation":   { dot: "bg-indigo-500",  text: "text-indigo-700",  bg: "bg-indigo-50",  border: "border-indigo-200" },
+  "Accuracy & Completeness":    { dot: "bg-amber-500",   text: "text-amber-800",   bg: "bg-amber-50",   border: "border-amber-200" },
+  "Consistency & Standards":    { dot: "bg-fuchsia-500", text: "text-fuchsia-700", bg: "bg-fuchsia-50", border: "border-fuchsia-200" },
+  "Relevance & Actionability":  { dot: "bg-rose-500",    text: "text-rose-700",    bg: "bg-rose-50",    border: "border-rose-200" },
 };
 
 function RoleBadge({ role }: { role: "author" | "reviewer" }) {
   const isAuthor = role === "author";
-  const Icon = isAuthor ? PenLine : ShieldCheck;
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 h-[20px] pl-1 pr-2 rounded-full text-[10px] font-semibold tracking-wide border shadow-[0_1px_0_rgba(0,0,0,0.02)]",
+        "inline-flex items-center gap-1.5 h-[20px] px-2 rounded-full text-[10px] font-semibold tracking-wide border",
         isAuthor
-          ? "bg-gradient-to-b from-primary/15 to-primary/5 text-primary border-primary/25"
-          : "bg-gradient-to-b from-violet-100 to-violet-50 text-violet-700 border-violet-200",
+          ? "bg-primary/8 text-primary border-primary/20"
+          : "bg-violet-50 text-violet-700 border-violet-200",
       )}
     >
       <span
         className={cn(
-          "inline-flex items-center justify-center w-3.5 h-3.5 rounded-full",
-          isAuthor ? "bg-primary text-primary-foreground" : "bg-violet-600 text-white",
+          "w-1.5 h-1.5 rounded-full",
+          isAuthor ? "bg-primary" : "bg-violet-500",
         )}
         aria-hidden="true"
-      >
-        <Icon className="w-2 h-2" strokeWidth={2.5} aria-hidden="true" focusable="false" />
-      </span>
+      />
       {isAuthor ? "Author" : "Reviewer"}
     </span>
   );
 }
 
 function CategoryBadge({ category }: { category: string }) {
-  const meta = CATEGORY_META[category] ?? { icon: Tag, classes: "bg-muted text-foreground border-border" };
-  const Icon = meta.icon;
+  const meta = CATEGORY_META[category] ?? { dot: "bg-muted-foreground", text: "text-foreground", bg: "bg-muted", border: "border-border" };
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-medium border",
-        meta.classes,
+        "inline-flex items-center gap-1.5 h-[20px] px-2 rounded-full text-[10px] font-medium border",
+        meta.bg, meta.text, meta.border,
       )}
     >
-      <Icon className="w-2.5 h-2.5" strokeWidth={2.5} aria-hidden="true" focusable="false" />
+      <span className={cn("w-1.5 h-1.5 rounded-full", meta.dot)} aria-hidden="true" />
       <span className="truncate max-w-[180px]">{category}</span>
     </span>
   );
@@ -488,10 +484,8 @@ function CategoryBadge({ category }: { category: string }) {
 
 function ResolvedBadge() {
   return (
-    <span className="inline-flex items-center gap-1 h-[20px] pl-1 pr-2 rounded-full text-[10px] font-semibold border bg-gradient-to-b from-emerald-100 to-emerald-50 text-emerald-700 border-emerald-200">
-      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-600 text-white" aria-hidden="true">
-        <CheckCircle2 className="w-2.5 h-2.5" strokeWidth={2.5} aria-hidden="true" focusable="false" />
-      </span>
+    <span className="inline-flex items-center gap-1.5 h-[20px] px-2 rounded-full text-[10px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
       Resolved
     </span>
   );
