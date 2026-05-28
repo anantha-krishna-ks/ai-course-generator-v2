@@ -593,25 +593,9 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             )}
           </div>
           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-            <span className={cn(
-              "inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-semibold uppercase tracking-wide border",
-              comment.authorRole === "author"
-                ? "bg-primary/10 text-primary border-primary/20"
-                : "bg-violet-50 text-violet-700 border-violet-200",
-            )}>
-              {comment.authorRole === "author" ? "Author" : "Reviewer"}
-            </span>
-            {comment.category && (
-              <span className="inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
-                {comment.category}
-              </span>
-            )}
-            {comment.resolved && (
-              <span className="inline-flex items-center gap-1 h-[18px] px-2 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <CheckCircle2 className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-                Resolved
-              </span>
-            )}
+            <RoleBadge role={comment.authorRole} />
+            {comment.category && <CategoryBadge category={comment.category} />}
+            {comment.resolved && <ResolvedBadge />}
           </div>
         </div>
       </div>
