@@ -1515,9 +1515,13 @@ const TabsPreview = ({ content }: { content: string }) => {
   const hasBody = (active.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
-      <div role="tablist" aria-label="Info tabs" className="flex items-stretch border-b border-border bg-muted/40 overflow-x-auto">
-        {tabs.map((tab) => {
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-md shadow-foreground/[0.04] ring-1 ring-foreground/[0.02]">
+      <div
+        role="tablist"
+        aria-label="Info tabs"
+        className="flex items-stretch gap-1 px-2 pt-2 bg-gradient-to-b from-muted/50 to-muted/20 border-b border-border/60 overflow-x-auto scrollbar-thin"
+      >
+        {tabs.map((tab, idx) => {
           const isActive = tab.id === active.id;
           return (
             <button
@@ -1528,26 +1532,40 @@ const TabsPreview = ({ content }: { content: string }) => {
               onClick={() => setActiveId(tab.id)}
               title={tab.name}
               className={cn(
-                "relative px-4 py-3 text-sm font-medium whitespace-nowrap max-w-[220px] truncate transition-colors border-r border-border/60 last:border-r-0",
+                "group relative px-4 py-2.5 text-sm font-medium whitespace-nowrap max-w-[240px] truncate rounded-t-xl transition-all duration-200 inline-flex items-center gap-2",
                 isActive
-                  ? "text-foreground bg-card"
-                  : "text-muted-foreground hover:text-foreground hover:bg-card/60"
+                  ? "text-foreground bg-card shadow-[0_-1px_0_hsl(var(--border))_inset,1px_0_0_hsl(var(--border))_inset,-1px_0_0_hsl(var(--border))_inset]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-card/70"
               )}
             >
-              {tab.name}
-              {isActive && <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-primary" aria-hidden="true" />}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold tabular-nums transition-colors",
+                  isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                )}
+              >
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <span className="truncate">{tab.name}</span>
+              {isActive && (
+                <span
+                  className="absolute left-3 right-3 -bottom-px h-[2px] bg-primary rounded-full"
+                  aria-hidden="true"
+                />
+              )}
             </button>
           );
         })}
       </div>
-      <div role="tabpanel" className="p-4 sm:p-6">
+      <div role="tabpanel" className="p-4 sm:p-6 animate-in fade-in duration-300">
         <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
           {active.imageUrl ? (
             <div className="w-full md:w-[260px] shrink-0">
               <img
                 src={active.imageUrl}
                 alt={`Visual for ${active.name}`}
-                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3]"
+                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3] shadow-sm"
               />
             </div>
           ) : null}
@@ -1566,6 +1584,7 @@ const TabsPreview = ({ content }: { content: string }) => {
     </div>
   );
 };
+
 
 const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: string; isMobile?: boolean }) => {
   // Vertical tabs share the tabs JSON shape; if parseable use it, otherwise render content as a single panel
@@ -1649,9 +1668,13 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
 
       {/* Desktop: vertical tabs */}
       {!isMobile && (
-      <div className="grid rounded-2xl border border-border/60 bg-card shadow-sm grid-cols-[12rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
-        <div role="tablist" aria-label="Info tabs" className="flex flex-col shrink-0 gap-1 border-r border-border bg-muted/30 p-2 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl">
-          {tabs.map((tab) => {
+      <div className="grid rounded-2xl border border-border/60 bg-card shadow-md shadow-foreground/[0.04] ring-1 ring-foreground/[0.02] grid-cols-[14rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
+        <div
+          role="tablist"
+          aria-label="Info tabs"
+          className="flex flex-col shrink-0 gap-1 border-r border-border/60 bg-gradient-to-b from-muted/40 to-muted/10 p-2.5 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl"
+        >
+          {tabs.map((tab, idx) => {
             const isActive = tab.id === active.id;
             return (
               <button
@@ -1662,23 +1685,40 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
                 onClick={() => handleTabSelect(tab.id)}
                 title={tab.name}
                 className={cn(
-                  "relative text-left px-3 py-2.5 text-sm font-medium rounded-lg truncate transition-all shrink-0 border",
+                  "group relative text-left pl-3 pr-2.5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 shrink-0 inline-flex items-center gap-2.5 overflow-hidden",
                   isActive
-                    ? "bg-card text-foreground border-border shadow-sm border-l-[3px] border-l-primary"
-                    : "bg-transparent text-muted-foreground border-transparent hover:bg-card/70 hover:text-foreground hover:border-border/60"
+                    ? "bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent text-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
                 )}
               >
-                {tab.name}
+                {/* Active rail */}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary transition-all duration-300 origin-center",
+                    isActive ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50"
+                  )}
+                />
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-bold tabular-nums transition-colors",
+                    isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                  )}
+                >
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <span className="truncate flex-1">{tab.name}</span>
               </button>
             );
           })}
         </div>
-        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto">
+        <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto animate-in fade-in duration-300">
           {active.imageUrl && (
             <img
               src={active.imageUrl}
               alt={`Visual for ${active.name}`}
-              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4"
+              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4 shadow-sm"
             />
           )}
           {hasBody ? (
@@ -1692,6 +1732,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         </div>
       </div>
       )}
+
     </>
   );
 };
