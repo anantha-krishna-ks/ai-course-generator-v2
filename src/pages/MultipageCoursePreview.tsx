@@ -1691,6 +1691,7 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
           )}
         </div>
       </div>
+      )}
     </>
   );
 };
