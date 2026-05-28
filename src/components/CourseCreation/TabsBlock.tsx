@@ -418,7 +418,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
 
         {/* Tab panel */}
         {activeTab && (
-          <div className="p-4 flex-1 min-w-0">
+          <div className={cn("p-4 flex-1 min-w-0", isVertical && "min-h-0 overflow-y-auto")}>
             <div className="flex flex-col md:flex-row gap-4">
               {/* Image (left) — optional. Hidden in preview when there's no image so text uses full width */}
               {!(previewMode && !activeTab.imageUrl) && (
