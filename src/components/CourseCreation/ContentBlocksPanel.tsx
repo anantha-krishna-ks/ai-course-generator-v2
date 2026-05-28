@@ -927,6 +927,74 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "horizontal-tabs":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px]")}>
+            <div className="flex items-end gap-[2px] border-b border-[hsl(220,13%,91%)]">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-[6px] rounded-t-[2px] px-[3px]",
+                    i === 0 ? "bg-primary/15 border border-b-0 border-primary/30 w-[16px]" : "bg-[hsl(220,13%,93%)] w-[14px]"
+                  )}
+                />
+              ))}
+            </div>
+            <div className="pt-[3px] space-y-[2px]">
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+            </div>
+          </div>
+        </div>
+      );
+    case "vertical-tabs":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
+            <div className="flex flex-col gap-[2px] w-[14px] border-r border-[hsl(220,13%,91%)] pr-[2px]">
+              {[0, 1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-[5px] rounded-[1.5px]",
+                    i === 0 ? "bg-primary/20" : "bg-[hsl(220,13%,93%)]"
+                  )}
+                />
+              ))}
+            </div>
+            <div className="flex-1 space-y-[2px] pt-[1px]">
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-2/3" />
+            </div>
+          </div>
+        </div>
+      );
+    case "accordion":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] space-y-[2px]")}>
+            {[true, false, false].map((open, i) => (
+              <div key={i} className="rounded-[2px] border border-[hsl(220,13%,91%)] overflow-hidden">
+                <div className={cn("flex items-center justify-between px-[3px] h-[7px]", open && "bg-primary/10")}>
+                  <div className={cn("h-[2px] rounded-full", open ? "bg-primary/50 w-[14px]" : "bg-[hsl(220,13%,80%)] w-[12px]")} />
+                  <div className={cn("h-[2px] w-[2px] rounded-full", open ? "bg-primary" : "bg-[hsl(220,13%,75%)]")} />
+                </div>
+                {open && (
+                  <div className="px-[3px] py-[2px] space-y-[1.5px]">
+                    <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
+                    <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
     default:
       return null;
   }
