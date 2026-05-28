@@ -8,6 +8,8 @@ import {
   ChevronDown,
   Settings2,
   Pencil,
+  Rows3,
+  MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
