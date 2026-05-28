@@ -1584,8 +1584,8 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   const hasBody = (active.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm flex flex-col sm:flex-row">
-      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col sm:w-56 shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible">
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:flex-row sm:items-start">
+      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col sm:w-56 shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:sticky sm:top-4 sm:self-start sm:max-h-[calc(100vh-2rem)] sm:overflow-y-auto sm:rounded-l-2xl">
         {tabs.map((tab) => {
           const isActive = tab.id === active.id;
           return (
