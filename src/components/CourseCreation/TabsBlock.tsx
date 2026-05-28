@@ -511,9 +511,9 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-primary bg-background shadow-lg shadow-primary/10 hover:bg-accent hover:border-primary transition-colors flex flex-col items-center justify-center gap-2 text-foreground px-3 text-center"
+          className="w-full aspect-[4/3] rounded-xl border border-dashed border-border bg-muted/30 hover:bg-muted/50 hover:border-muted-foreground/40 transition-colors flex flex-col items-center justify-center gap-2 text-foreground px-3 text-center"
         >
-          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm" aria-hidden="true">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden="true">
             <ImagePlus className="w-5 h-5" aria-hidden="true" focusable="false" />
           </span>
           <span className="text-sm font-semibold">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
