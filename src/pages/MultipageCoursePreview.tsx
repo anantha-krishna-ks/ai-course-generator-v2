@@ -1571,6 +1571,7 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   // Vertical tabs share the tabs JSON shape; if parseable use it, otherwise render content as a single panel
   const parsed = parseTabs(content);
   const [activeId, setActiveId] = useState<string>(parsed?.activeId ?? "");
+  const panelRef = useRef<HTMLDivElement | null>(null);
   if (!parsed) {
     return (
       <div
@@ -1582,10 +1583,16 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   const { tabs } = parsed;
   const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
   const hasBody = (active.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
+  const handleTabSelect = (tabId: string) => {
+    setActiveId(tabId);
+    requestAnimationFrame(() => {
+      if (panelRef.current) panelRef.current.scrollTop = 0;
+    });
+  };
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:flex-row sm:items-start">
-      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col sm:w-56 shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:sticky sm:top-4 sm:self-start sm:max-h-[calc(100vh-2rem)] sm:overflow-y-auto sm:rounded-l-2xl">
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
+      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto sm:rounded-l-2xl">
         {tabs.map((tab) => {
           const isActive = tab.id === active.id;
           return (
@@ -1594,10 +1601,10 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
               role="tab"
               aria-selected={isActive}
               type="button"
-              onClick={() => setActiveId(tab.id)}
+              onClick={() => handleTabSelect(tab.id)}
               title={tab.name}
               className={cn(
-                "relative text-left px-4 py-3 text-sm font-medium whitespace-nowrap sm:whitespace-normal truncate transition-colors",
+                "relative text-left px-4 py-3 text-sm font-medium whitespace-nowrap sm:whitespace-normal truncate transition-colors shrink-0",
                 isActive
                   ? "text-foreground bg-card sm:border-l-[3px] sm:border-l-primary sm:-ml-px"
                   : "text-muted-foreground hover:text-foreground hover:bg-card/60"
@@ -1608,7 +1615,7 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
           );
         })}
       </div>
-      <div role="tabpanel" className="p-4 sm:p-6 flex-1 min-w-0">
+      <div ref={panelRef} role="tabpanel" className="p-4 sm:p-6 flex-1 min-w-0 sm:min-h-0 sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto">
         {active.imageUrl && (
           <img
             src={active.imageUrl}
