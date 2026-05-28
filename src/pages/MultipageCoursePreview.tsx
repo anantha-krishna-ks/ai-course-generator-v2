@@ -1640,8 +1640,8 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
       </div>
 
       {/* Desktop: vertical tabs */}
-      <div className="hidden sm:grid rounded-2xl border border-border/60 bg-card shadow-sm sm:grid-cols-[11rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
-        <div role="tablist" aria-label="Info tabs" className="flex flex-col shrink-0 border-r border-border bg-muted/40 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl">
+      <div className="hidden sm:grid rounded-2xl border border-border/60 bg-card shadow-sm sm:grid-cols-[12rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
+        <div role="tablist" aria-label="Info tabs" className="flex flex-col shrink-0 gap-1 border-r border-border bg-muted/30 p-2 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl">
           {tabs.map((tab) => {
             const isActive = tab.id === active.id;
             return (
@@ -1653,10 +1653,10 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
                 onClick={() => handleTabSelect(tab.id)}
                 title={tab.name}
                 className={cn(
-                  "relative text-left px-4 py-3 text-sm font-medium truncate transition-colors shrink-0",
+                  "relative text-left px-3 py-2.5 text-sm font-medium rounded-lg truncate transition-all shrink-0 border",
                   isActive
-                    ? "text-foreground bg-card border-l-[3px] border-l-primary -ml-px"
-                    : "text-muted-foreground hover:text-foreground hover:bg-card/60"
+                    ? "bg-card text-foreground border-border shadow-sm border-l-[3px] border-l-primary"
+                    : "bg-transparent text-muted-foreground border-transparent hover:bg-card/70 hover:text-foreground hover:border-border/60"
                 )}
               >
                 {tab.name}
