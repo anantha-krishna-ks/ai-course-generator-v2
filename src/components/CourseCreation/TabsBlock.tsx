@@ -280,7 +280,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
 
 
       {/* Tab bar */}
-      <div className={cn("rounded-2xl border border-border bg-card overflow-hidden", isVertical && "flex items-stretch max-h-[600px]")}>
+      <div className={cn("rounded-2xl border border-border/70 bg-card shadow-md shadow-foreground/[0.04] ring-1 ring-foreground/[0.02] overflow-hidden", isVertical && "flex items-stretch max-h-[600px]")}>
         <div className={cn(
           "flex bg-muted/40",
           isVertical
