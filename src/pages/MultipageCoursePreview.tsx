@@ -1426,3 +1426,252 @@ const MultipageCoursePreview = () => {
 };
 
 export default MultipageCoursePreview;
+
+// ============= Interactive preview components =============
+
+interface PreviewTab {
+  id: string;
+  name: string;
+  content: string;
+  imageUrl?: string;
+}
+
+function parseTabs(raw: string): { tabs: PreviewTab[]; activeId: string } | null {
+  try {
+    const parsed = JSON.parse(raw || "{}");
+    if (!Array.isArray(parsed.tabs) || parsed.tabs.length === 0) return null;
+    const tabs: PreviewTab[] = parsed.tabs.map((t: any, i: number) => ({
+      id: String(t.id || `tab-${i}`),
+      name: String(t.name || "Untitled Tab"),
+      content: String(t.content || ""),
+      imageUrl: typeof t.imageUrl === "string" ? t.imageUrl : "",
+    }));
+    const activeId =
+      typeof parsed.activeId === "string" && tabs.some((t) => t.id === parsed.activeId)
+        ? parsed.activeId
+        : tabs[0].id;
+    return { tabs, activeId };
+  } catch {
+    return null;
+  }
+}
+
+const TabsPreview = ({ content }: { content: string }) => {
+  const initial = parseTabs(content);
+  const [activeId, setActiveId] = useState<string>(initial?.activeId ?? "");
+  if (!initial) {
+    return (
+      <div className="p-4 bg-muted/30 rounded-xl border border-border/40 text-sm text-muted-foreground">
+        No tabs configured yet.
+      </div>
+    );
+  }
+  const { tabs } = initial;
+  const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
+  const hasBody = (active.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
+
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
+      <div role="tablist" aria-label="Info tabs" className="flex items-stretch border-b border-border bg-muted/40 overflow-x-auto">
+        {tabs.map((tab) => {
+          const isActive = tab.id === active.id;
+          return (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={isActive}
+              type="button"
+              onClick={() => setActiveId(tab.id)}
+              title={tab.name}
+              className={cn(
+                "relative px-4 py-3 text-sm font-medium whitespace-nowrap max-w-[220px] truncate transition-colors border-r border-border/60 last:border-r-0",
+                isActive
+                  ? "text-foreground bg-card"
+                  : "text-muted-foreground hover:text-foreground hover:bg-card/60"
+              )}
+            >
+              {tab.name}
+              {isActive && <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-primary" aria-hidden="true" />}
+            </button>
+          );
+        })}
+      </div>
+      <div role="tabpanel" className="p-4 sm:p-6">
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
+          {active.imageUrl ? (
+            <div className="w-full md:w-[260px] shrink-0">
+              <img
+                src={active.imageUrl}
+                alt={`Visual for ${active.name}`}
+                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3]"
+              />
+            </div>
+          ) : null}
+          <div className="flex-1 min-w-0">
+            {hasBody ? (
+              <div
+                className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
+              />
+            ) : (
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                Add content to this tab
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const VerticalTextTabsPreview = ({ content }: { content: string }) => {
+  // Vertical tabs share the tabs JSON shape; if parseable use it, otherwise render content as a single panel
+  const parsed = parseTabs(content);
+  const [activeId, setActiveId] = useState<string>(parsed?.activeId ?? "");
+  if (!parsed) {
+    return (
+      <div
+        className="prose prose-sm max-w-none text-foreground"
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(content || "") }}
+      />
+    );
+  }
+  const { tabs } = parsed;
+  const active = tabs.find((t) => t.id === activeId) ?? tabs[0];
+  const hasBody = (active.content || "").replace(/<[^>]+>/g, "").trim().length > 0;
+
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm flex flex-col sm:flex-row">
+      <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col sm:w-56 shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible">
+        {tabs.map((tab) => {
+          const isActive = tab.id === active.id;
+          return (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={isActive}
+              type="button"
+              onClick={() => setActiveId(tab.id)}
+              title={tab.name}
+              className={cn(
+                "relative text-left px-4 py-3 text-sm font-medium whitespace-nowrap sm:whitespace-normal truncate transition-colors",
+                isActive
+                  ? "text-foreground bg-card sm:border-l-[3px] sm:border-l-primary sm:-ml-px"
+                  : "text-muted-foreground hover:text-foreground hover:bg-card/60"
+              )}
+            >
+              {tab.name}
+            </button>
+          );
+        })}
+      </div>
+      <div role="tabpanel" className="p-4 sm:p-6 flex-1 min-w-0">
+        {active.imageUrl && (
+          <img
+            src={active.imageUrl}
+            alt={`Visual for ${active.name}`}
+            className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4"
+          />
+        )}
+        {hasBody ? (
+          <div
+            className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(active.content) }}
+          />
+        ) : (
+          <div className="rounded-xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+            Add content to this tab
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+interface AccordionItem {
+  id: string;
+  title: string;
+  body: string;
+}
+
+function parseAccordion(raw: string): AccordionItem[] {
+  // 1) Try structured JSON { items: [{title, body}] }
+  try {
+    const parsed = JSON.parse(raw || "{}");
+    if (Array.isArray(parsed?.items) && parsed.items.length > 0) {
+      return parsed.items.map((it: any, i: number) => ({
+        id: String(it.id || `acc-${i}`),
+        title: String(it.title || `Section ${i + 1}`),
+        body: String(it.body || ""),
+      }));
+    }
+  } catch {
+    /* fall through */
+  }
+
+  // 2) Split HTML by headings (h2/h3) — each heading becomes a panel
+  if (raw && /<h[23][^>]*>/i.test(raw)) {
+    const parts = raw.split(/(?=<h[23][^>]*>)/i).filter(Boolean);
+    return parts.map((chunk, i) => {
+      const match = chunk.match(/<h[23][^>]*>([\s\S]*?)<\/h[23]>([\s\S]*)/i);
+      if (!match) return { id: `acc-${i}`, title: `Section ${i + 1}`, body: chunk };
+      return {
+        id: `acc-${i}`,
+        title: match[1].replace(/<[^>]+>/g, "").trim() || `Section ${i + 1}`,
+        body: (match[2] || "").trim(),
+      };
+    });
+  }
+
+  // 3) Single panel fallback
+  return [{ id: "acc-0", title: "Section 1", body: raw || "" }];
+}
+
+const AccordionPreview = ({ content }: { content: string }) => {
+  const items = parseAccordion(content);
+  const [openId, setOpenId] = useState<string>(items[0]?.id ?? "");
+
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm divide-y divide-border/60">
+      {items.map((item) => {
+        const isOpen = item.id === openId;
+        const hasBody = (item.body || "").replace(/<[^>]+>/g, "").trim().length > 0;
+        return (
+          <div key={item.id}>
+            <button
+              type="button"
+              onClick={() => setOpenId(isOpen ? "" : item.id)}
+              aria-expanded={isOpen}
+              className={cn(
+                "w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-3 text-left transition-colors",
+                isOpen ? "bg-primary/[0.04] text-foreground" : "hover:bg-muted/40 text-foreground"
+              )}
+            >
+              <span className="text-sm sm:text-base font-semibold break-words [overflow-wrap:anywhere]">{item.title}</span>
+              <ChevronDown
+                className={cn(
+                  "w-4 h-4 shrink-0 text-muted-foreground transition-transform",
+                  isOpen && "rotate-180 text-primary"
+                )}
+                aria-hidden="true"
+              />
+            </button>
+            {isOpen && (
+              <div className="px-4 sm:px-5 pb-4 pt-1">
+                {hasBody ? (
+                  <div
+                    className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.body) }}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">No content in this panel yet.</p>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
