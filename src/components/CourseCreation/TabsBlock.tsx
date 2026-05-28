@@ -279,7 +279,10 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
         )}>
           <div
             ref={tabBarRef}
-            className="flex-1 flex items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border min-w-0"
+            className={cn(
+              "flex-1 flex min-w-0",
+              isVertical ? "flex-col overflow-y-auto" : "items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border",
+            )}
           >
             {data.tabs.map((tab) => {
               const isActive = tab.id === data.activeId;
