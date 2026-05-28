@@ -1591,7 +1591,7 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   };
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:overflow-hidden">
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col sm:grid sm:grid-cols-[14rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
       <div role="tablist" aria-label="Info tabs" className="flex sm:flex-col shrink-0 border-b sm:border-b-0 sm:border-r border-border bg-muted/40 overflow-x-auto sm:overflow-x-visible sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto sm:rounded-l-2xl">
         {tabs.map((tab) => {
           const isActive = tab.id === active.id;
@@ -1615,7 +1615,7 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
           );
         })}
       </div>
-      <div ref={panelRef} role="tabpanel" className="p-4 sm:p-6 flex-1 min-w-0 sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto">
+      <div ref={panelRef} role="tabpanel" className="p-4 sm:p-6 flex-1 min-w-0 sm:min-h-0 sm:max-h-[calc(100vh-8rem)] sm:overflow-y-auto">
         {active.imageUrl && (
           <img
             src={active.imageUrl}
