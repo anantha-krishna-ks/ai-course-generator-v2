@@ -277,6 +277,20 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
             ? "flex-col w-48 shrink-0 border-r border-border"
             : "items-stretch border-b border-border",
         )}>
+          {!previewMode && (
+            <button
+              type="button"
+              onClick={addTab}
+              aria-label="Add a new tab"
+              className={cn(
+                "shrink-0 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 inline-flex items-center gap-1.5",
+                isVertical ? "border-b border-border justify-center" : "border-r border-border",
+              )}
+            >
+              <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              Add Tab
+            </button>
+          )}
           <div
             ref={tabBarRef}
             className={cn(
@@ -400,20 +414,6 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
               );
             })}
           </div>
-          {!previewMode && (
-            <button
-              type="button"
-              onClick={addTab}
-              aria-label="Add a new tab"
-              className={cn(
-                "shrink-0 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 inline-flex items-center gap-1.5",
-                isVertical ? "border-t border-border justify-center" : "border-l border-border",
-              )}
-            >
-              <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              Add Tab
-            </button>
-          )}
         </div>
 
         {/* Tab panel */}
