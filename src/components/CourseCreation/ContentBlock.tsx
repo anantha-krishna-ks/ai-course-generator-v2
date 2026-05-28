@@ -30,6 +30,7 @@ import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
 import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
 import { HotspotBlock } from "./HotspotBlock";
+import { TabsBlock } from "./TabsBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -147,7 +148,7 @@ function encodeContentColumns(layout: ContentLayoutType, columns: string[]): str
 
 interface ContentBlockProps {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
@@ -156,7 +157,7 @@ interface ContentBlockProps {
   aiEnabled?: boolean;
   readOnly?: boolean;
   variant?: string;
-  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", newContent: string, newVariant?: string) => void;
+  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs", newContent: string, newVariant?: string) => void;
   /** Per-block font override id. When undefined, the block inherits the course-level font. */
   font?: string;
   /** Update the per-block font override. Pass undefined to revert to course default. */
@@ -520,6 +521,8 @@ export function ContentBlock({
         >
           {type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
+          ) : type === "tabs" ? (
+            <TabsBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "hotspot" ? (
             <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "image-description" ? (

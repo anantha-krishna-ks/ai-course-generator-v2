@@ -43,7 +43,7 @@ interface BlockItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   categoryLabel: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
   variant?: string;
   locked?: boolean;
   isQuizGenerator?: boolean;
@@ -51,7 +51,7 @@ interface BlockItem {
 }
 
 interface ContentBlocksPanelProps {
-  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot", variant?: string) => void;
+  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
 }
@@ -84,7 +84,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
   // INTERACTIVITY
   { id: "hotspot-block", label: "Hotspot on Image", icon: MousePointerClick, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "hotspot", variant: "hotspot", description: "Make an image clickable — add labels, tooltips, links, and reveals on hotspots" },
-  { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
+  { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
   { id: "vertical-tabs", label: "Vertical Tabs", icon: LayoutPanelLeft, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "vertical-tabs", description: "Organise content into a list of tabs stacked along the left" },
   { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
 ];
@@ -93,7 +93,7 @@ const ALL_BLOCKS: BlockItem[] = [
 export function resolveTemplateDropData(
   templateId: string,
   categoryId: string
-): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot"; variant?: string } | null {
+): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs"; variant?: string } | null {
   const block = ALL_BLOCKS.find((b) => b.id === templateId);
   if (!block || block.isQuizGenerator) return null;
   return { type: block.type, variant: block.variant };
