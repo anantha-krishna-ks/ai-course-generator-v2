@@ -931,21 +931,24 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px]")}>
-            <div className="flex items-end gap-[2px] border-b border-[hsl(220,13%,91%)]">
-              {[0, 1, 2].map((i) => (
+            <div className="flex items-end gap-[2px] border-b border-[hsl(220,13%,91%)] px-[1px]">
+              {["Overview", "Details", "FAQ"].map((label, i) => (
                 <div
-                  key={i}
+                  key={label}
                   className={cn(
-                    "h-[6px] rounded-t-[2px] px-[3px]",
-                    i === 0 ? "bg-primary/15 border border-b-0 border-primary/30 w-[16px]" : "bg-[hsl(220,13%,93%)] w-[14px]"
+                    "px-[3px] py-[1.5px] text-[3px] font-semibold rounded-t-[2px]",
+                    i === 0
+                      ? "bg-white text-primary border border-b-0 border-[hsl(220,13%,91%)]"
+                      : "text-[hsl(220,8%,55%)]"
                   )}
-                />
+                >
+                  {label}
+                </div>
               ))}
             </div>
-            <div className="pt-[3px] space-y-[2px]">
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+            <div className="pt-[3px] px-[2px]">
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">What you'll learn</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">A quick overview of the topics covered in this module.</p>
             </div>
           </div>
         </div>
@@ -954,22 +957,22 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
-            <div className="flex flex-col gap-[2px] w-[14px] border-r border-[hsl(220,13%,91%)] pr-[2px]">
-              {[0, 1, 2, 3].map((i) => (
+            <div className="flex flex-col gap-[1.5px] w-[22px] border-r border-[hsl(220,13%,91%)] pr-[2px]">
+              {["Intro", "Setup", "Usage", "FAQ"].map((label, i) => (
                 <div
-                  key={i}
+                  key={label}
                   className={cn(
-                    "h-[5px] rounded-[1.5px]",
-                    i === 0 ? "bg-primary/20" : "bg-[hsl(220,13%,93%)]"
+                    "px-[2px] py-[1px] text-[3px] font-semibold rounded-[1.5px] text-left truncate",
+                    i === 0 ? "bg-primary/10 text-primary" : "text-[hsl(220,8%,55%)]"
                   )}
-                />
+                >
+                  {label}
+                </div>
               ))}
             </div>
-            <div className="flex-1 space-y-[2px] pt-[1px]">
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
-              <div className="h-[2px] rounded-full bg-[hsl(220,13%,93%)] w-2/3" />
+            <div className="flex-1 min-w-0 pt-[1px]">
+              <p className="text-[4px] font-semibold text-[hsl(220,15%,18%)] mb-[2px]">Introduction</p>
+              <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Welcome to the course — here's everything you need to begin.</p>
             </div>
           </div>
         </div>
@@ -977,17 +980,20 @@ function BlockThumbnail({ id }: { id: string }) {
     case "accordion":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-[3px] space-y-[2px]")}>
-            {[true, false, false].map((open, i) => (
+          <div className={cn(miniCard, "p-[3px] space-y-[1.5px]")}>
+            {[
+              { q: "What's included?", open: true },
+              { q: "How do I get started?", open: false },
+              { q: "Is there a free trial?", open: false },
+            ].map((row, i) => (
               <div key={i} className="rounded-[2px] border border-[hsl(220,13%,91%)] overflow-hidden">
-                <div className={cn("flex items-center justify-between px-[3px] h-[7px]", open && "bg-primary/10")}>
-                  <div className={cn("h-[2px] rounded-full", open ? "bg-primary/50 w-[14px]" : "bg-[hsl(220,13%,80%)] w-[12px]")} />
-                  <div className={cn("h-[2px] w-[2px] rounded-full", open ? "bg-primary" : "bg-[hsl(220,13%,75%)]")} />
+                <div className={cn("flex items-center justify-between px-[3px] h-[7px]", row.open && "bg-primary/5")}>
+                  <span className="text-[3px] font-semibold text-[hsl(220,15%,18%)] truncate">{row.q}</span>
+                  <span className={cn("text-[4px] leading-none text-primary transition-transform", row.open ? "rotate-180" : "rotate-0")}>⌄</span>
                 </div>
-                {open && (
-                  <div className="px-[3px] py-[2px] space-y-[1.5px]">
-                    <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,93%)] w-full" />
-                    <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+                {row.open && (
+                  <div className="px-[3px] pb-[2px]">
+                    <p className="text-[3px] text-[hsl(220,8%,52%)] leading-[1.6]">Lessons, projects and full lifetime access.</p>
                   </div>
                 )}
               </div>
