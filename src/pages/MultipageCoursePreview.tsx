@@ -512,7 +512,7 @@ const MultipageCoursePreview = () => {
         }
         // Vertical tabs variant renders using the tabs preview in vertical orientation
         if (block.variant === "vertical-tabs") {
-          return <VerticalTextTabsPreview content={content} />;
+          return <VerticalTextTabsPreview content={content} isMobile={isMobileView} />;
         }
 
         const COL_SEPARATOR = "<!--col-break-->";
@@ -657,7 +657,7 @@ const MultipageCoursePreview = () => {
       }
       case "tabs": {
         if (block.variant === "vertical-tabs") {
-          return <VerticalTextTabsPreview content={block.content || ""} />;
+          return <VerticalTextTabsPreview content={block.content || ""} isMobile={isMobileView} />;
         }
         return <TabsPreview content={block.content || ""} />;
       }
@@ -1567,7 +1567,7 @@ const TabsPreview = ({ content }: { content: string }) => {
   );
 };
 
-const VerticalTextTabsPreview = ({ content }: { content: string }) => {
+const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: string; isMobile?: boolean }) => {
   // Vertical tabs share the tabs JSON shape; if parseable use it, otherwise render content as a single panel
   const parsed = parseTabs(content);
   const [activeId, setActiveId] = useState<string>(parsed?.activeId ?? "");
@@ -1593,7 +1593,8 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
   return (
     <>
       {/* Mobile: compact vertical tabs with rotated labels */}
-      <div className="sm:hidden grid grid-cols-[2.25rem_minmax(0,1fr)] rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden min-h-[16rem]">
+      {isMobile && (
+      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden min-h-[16rem]">
         <div role="tablist" aria-label="Info tabs" className="flex flex-col bg-muted/40 border-r border-border">
           {tabs.map((tab) => {
             const isActive = tab.id === active.id;
@@ -1643,10 +1644,12 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
           )}
         </div>
       </div>
+      )}
 
 
       {/* Desktop: vertical tabs */}
-      <div className="hidden sm:grid rounded-2xl border border-border/60 bg-card shadow-sm sm:grid-cols-[12rem_minmax(0,1fr)] sm:max-h-[calc(100vh-8rem)] sm:min-h-0 sm:overflow-hidden">
+      {!isMobile && (
+      <div className="grid rounded-2xl border border-border/60 bg-card shadow-sm grid-cols-[12rem_minmax(0,1fr)] max-h-[calc(100vh-8rem)] min-h-0 overflow-hidden">
         <div role="tablist" aria-label="Info tabs" className="flex flex-col shrink-0 gap-1 border-r border-border bg-muted/30 p-2 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-l-2xl">
           {tabs.map((tab) => {
             const isActive = tab.id === active.id;
@@ -1688,6 +1691,7 @@ const VerticalTextTabsPreview = ({ content }: { content: string }) => {
           )}
         </div>
       </div>
+      )}
     </>
   );
 };
