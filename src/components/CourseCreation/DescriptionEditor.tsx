@@ -68,6 +68,8 @@ interface DescriptionEditorProps {
   blockFont?: string;
   /** Update the per-block font override. Pass undefined to revert to course default. */
   onBlockFontChange?: (fontId: string | undefined) => void;
+  /** Optional placeholder shown when the editor is empty. */
+  placeholder?: string;
 }
 
 const FONT_SIZES = [
