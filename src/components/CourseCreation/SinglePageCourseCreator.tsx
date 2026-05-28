@@ -73,7 +73,7 @@ interface PageContentBlock {
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
   content: string;
   variant?: string;
   font?: string;
