@@ -270,8 +270,13 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
       </div>
 
       {/* Tab bar */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        <div className="flex items-stretch border-b border-border bg-muted/40">
+      <div className={cn("rounded-2xl border border-border bg-card overflow-hidden", isVertical && "flex items-stretch")}>
+        <div className={cn(
+          "flex bg-muted/40",
+          isVertical
+            ? "flex-col w-48 shrink-0 border-r border-border"
+            : "items-stretch border-b border-border",
+        )}>
           <div
             ref={tabBarRef}
             className="flex-1 flex items-stretch overflow-x-auto scrollbar-thin scrollbar-thumb-border min-w-0"
