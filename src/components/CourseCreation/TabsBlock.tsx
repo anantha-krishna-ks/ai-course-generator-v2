@@ -283,14 +283,17 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
               onClick={addTab}
               aria-label="Add a new tab"
               className={cn(
-                "shrink-0 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 inline-flex items-center gap-1.5",
-                isVertical ? "border-b border-border justify-center" : "border-r border-border",
+                "shrink-0 inline-flex items-center justify-center gap-1.5 text-xs font-medium text-primary bg-primary/5 hover:bg-primary/10 transition-colors",
+                isVertical
+                  ? "mx-2 mt-2 mb-1 h-9 rounded-lg border border-primary/30 hover:border-primary/50"
+                  : "my-2 ml-2 mr-1 px-3 h-9 rounded-lg border border-primary/30 hover:border-primary/50",
               )}
             >
               <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Add Tab
             </button>
           )}
+
           <div
             ref={tabBarRef}
             className={cn(
