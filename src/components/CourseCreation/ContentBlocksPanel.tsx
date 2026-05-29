@@ -596,10 +596,7 @@ function BlockPreview({ id }: { id: string }) {
   }
 }
 
-    default:
-      return null;
-  }
-}
+
 
 /** Miniature thumbnails — styled as tiny page screenshots with real images and text */
 function BlockThumbnail({ id }: { id: string }) {
