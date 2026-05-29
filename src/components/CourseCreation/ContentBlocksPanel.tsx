@@ -482,14 +482,8 @@ function BlockPreview({ id }: { id: string }) {
     case "horizontal-tabs":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
-          {/* Header pill — mirrors real block */}
-          <div className="inline-flex items-center gap-1.5 pl-1.5 pr-2 py-[3px] rounded-full border border-[hsl(220,13%,88%)] bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent mb-2">
-            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary/15 text-primary">
-              <LayoutPanelTop className="w-2 h-2" aria-hidden="true" focusable="false" />
-            </span>
-            <span className="text-[8px] font-bold uppercase tracking-wider text-[hsl(220,15%,18%)]">Horizontal Tabs</span>
-          </div>
           {/* Card */}
+
           <div className="rounded-xl border border-[hsl(220,13%,88%)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
             <div className="flex items-stretch bg-[hsl(220,14%,97%)] border-b border-[hsl(220,13%,91%)]">
               {["Overview", "Details", "FAQ"].map((t, i) => (
