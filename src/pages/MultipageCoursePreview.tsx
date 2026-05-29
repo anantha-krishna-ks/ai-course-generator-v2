@@ -1576,7 +1576,7 @@ const TabsPreview = ({ content }: { content: string }) => {
       <div role="tabpanel" className="p-4 sm:p-6 animate-in fade-in duration-300">
         <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
           {active.imageUrl ? (
-            <div className="w-full md:w-[260px] shrink-0">
+            <div className="w-full md:w-[140px] shrink-0">
               <img
                 src={active.imageUrl}
                 alt={`Visual for ${active.name}`}
