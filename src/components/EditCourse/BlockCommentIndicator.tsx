@@ -277,6 +277,10 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                     courseTitle={courseTitle || threadTitle}
                     authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
                     authorRole={isReviewer ? "reviewer" : "author"}
+                    onJumpToBlock={(blockId) => {
+                      dispatchCommentNavigate(blockId);
+                      setOpen(false);
+                    }}
                   />
                 ))}
               </ul>
