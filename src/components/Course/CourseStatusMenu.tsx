@@ -124,7 +124,7 @@ export function CourseStatusMenu({ courseId, readOnly, className }: CourseStatus
                     toneClasses[t.tone],
                   )}
                 >
-                  <Icon className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                  <Icon className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-medium">{t.label}</span>
                     <span className="block text-[11px] text-muted-foreground leading-snug">
