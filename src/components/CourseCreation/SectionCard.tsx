@@ -95,6 +95,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
       <div
         ref={setNodeRef}
         style={style}
+        data-comment-anchor={`page:${page.id}`}
         className="group/row relative flex items-center"
       >
         {/* Tree connector line */}
