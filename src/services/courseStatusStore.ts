@@ -138,10 +138,22 @@ export interface StatusTransition {
   tone: "default" | "primary" | "success" | "warning" | "destructive";
 }
 
-export function getAvailableTransitions(current: CourseStatus): StatusTransition[] {
+export interface TransitionContext {
+  /** True when there is at least one reviewer comment on the course. */
+  hasReviewerComments?: boolean;
+  /** True when all reviewer comments have been marked resolved. */
+  allCommentsResolved?: boolean;
+  /** True when the current user has publish privilege. */
+  canPublish?: boolean;
+}
+
+export function getAvailableTransitions(
+  current: CourseStatus,
+  ctx: TransitionContext = {},
+): StatusTransition[] {
   switch (current) {
-    case "draft":
-      return [
+    case "draft": {
+      const list: StatusTransition[] = [
         {
           id: "submit",
           label: "Submit for Review",
@@ -150,6 +162,19 @@ export function getAvailableTransitions(current: CourseStatus): StatusTransition
           tone: "primary",
         },
       ];
+      // Author "Approve" path: only meaningful after a review cycle, once every
+      // reviewer comment has been addressed (resolved) by the author.
+      if (ctx.hasReviewerComments && ctx.allCommentsResolved) {
+        list.push({
+          id: "approve",
+          label: "Approve",
+          to: "ready-to-publish",
+          description: "All reviewer feedback addressed. Approve for publication.",
+          tone: "success",
+        });
+      }
+      return list;
+    }
     case "in-review":
       return [
         {
@@ -161,29 +186,32 @@ export function getAvailableTransitions(current: CourseStatus): StatusTransition
         },
         {
           id: "request-changes",
-          label: "Request Changes",
+          label: "Submit Feedback to Author",
           to: "draft",
-          description: "Send back to the author for revisions.",
+          description: "Send your comments back to the author for revisions.",
           tone: "warning",
         },
       ];
-    case "ready-to-publish":
-      return [
-        {
+    case "ready-to-publish": {
+      const list: StatusTransition[] = [];
+      if (ctx.canPublish !== false) {
+        list.push({
           id: "publish",
           label: "Publish",
           to: "published",
           description: "Make the course live and accessible to learners.",
           tone: "success",
-        },
-        {
-          id: "back-to-draft",
-          label: "Return to Draft",
-          to: "draft",
-          description: "Re-open the course for further edits.",
-          tone: "default",
-        },
-      ];
+        });
+      }
+      list.push({
+        id: "back-to-draft",
+        label: "Return to Draft",
+        to: "draft",
+        description: "Re-open the course for further edits.",
+        tone: "default",
+      });
+      return list;
+    }
     case "published":
       return [
         {

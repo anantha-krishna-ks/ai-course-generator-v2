@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronDown, Send, CheckCircle2, RotateCcw, Rocket, Archive, Undo2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronDown, Send, CheckCircle2, RotateCcw, Rocket, Archive, Undo2, ThumbsUp } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -26,6 +26,8 @@ import {
 } from "@/services/courseStatusStore";
 import { CourseStatusBadge, useLiveCourseStatus } from "./CourseStatusBadge";
 import { cn } from "@/lib/utils";
+import { canPublish, getCurrentRole, subscribeRole } from "@/services/currentUserStore";
+import { getCommentsForCourse, subscribe as subscribeComments } from "@/services/reviewCommentsStore";
 
 interface CourseStatusMenuProps {
   courseId: string | number | undefined;
@@ -36,7 +38,7 @@ interface CourseStatusMenuProps {
 
 const TRANSITION_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
   submit: Send,
-  approve: CheckCircle2,
+  approve: ThumbsUp,
   "request-changes": RotateCcw,
   publish: Rocket,
   "back-to-draft": Undo2,
@@ -57,8 +59,29 @@ export function CourseStatusMenu({ courseId, readOnly, className }: CourseStatus
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<StatusTransition | null>(null);
+  const [, setTick] = useState(0);
 
-  const transitions = getAvailableTransitions(current);
+  // Re-render when role changes or comments change so transition list updates.
+  useEffect(() => {
+    const bump = () => setTick((t) => t + 1);
+    const unsubRole = subscribeRole(bump);
+    const unsubComments = subscribeComments(bump);
+    return () => {
+      unsubRole();
+      unsubComments();
+    };
+  }, []);
+
+  const cid = courseId != null ? String(courseId) : "";
+  const comments = cid ? getCommentsForCourse(cid) : [];
+  const hasReviewerComments = comments.length > 0;
+  const allCommentsResolved = hasReviewerComments && comments.every((c) => c.resolved);
+
+  const transitions = getAvailableTransitions(current, {
+    hasReviewerComments,
+    allCommentsResolved,
+    canPublish: canPublish(getCurrentRole()),
+  });
 
   if (!courseId || readOnly || transitions.length === 0) {
     return <CourseStatusBadge status={current} size="sm" className={className} />;
