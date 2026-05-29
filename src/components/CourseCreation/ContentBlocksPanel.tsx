@@ -510,9 +510,9 @@ function BlockPreview({ id }: { id: string }) {
       );
     case "vertical-tabs":
       return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
           {/* Card */}
 
-          {/* Card */}
           <div className="rounded-xl border border-[hsl(220,13%,88%)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden flex items-stretch">
             <div className="flex flex-col w-20 shrink-0 bg-[hsl(220,14%,97%)] border-r border-[hsl(220,13%,91%)]">
               {["Intro", "Setup", "Usage", "FAQ"].map((t, i) => (
