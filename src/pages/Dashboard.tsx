@@ -48,6 +48,7 @@ import { LoadingCourseProgressDialog } from "@/components/Dashboard/LoadingCours
 import { getLoadingCourses, getProgress, getMinutesAgoLabel, removeLoadingCourse, type LoadingCourse } from "@/lib/loadingCourses";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CourseStatusBadge } from "@/components/Course/CourseStatusBadge";
 
 const mockCourses = [
   { id: 1, title: "Carbon Accounting-ACCA", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop", students: 234, progress: 85, lastUpdated: "2 days ago" },
@@ -667,12 +668,15 @@ const Dashboard = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
-                  {activeTab === "review" && (
-                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/95 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                      <ShieldCheck className="w-3 h-3" aria-hidden="true" focusable="false" />
-                      Reviewer
-                    </span>
-                  )}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <CourseStatusBadge courseId={course.id} size="xs" />
+                    {activeTab === "review" && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/95 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                        <ShieldCheck className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        Reviewer
+                      </span>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="p-5 space-y-3.5">
