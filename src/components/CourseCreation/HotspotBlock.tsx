@@ -697,8 +697,122 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                               </div>
                             </TabsContent>
 
-                            <TabsContent value="settings" className="mt-0 space-y-3">
-                              <div className="space-y-1.5">
+                            <TabsContent value="settings" className="mt-0 space-y-4">
+                              <div className="space-y-2">
+                                <Label className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
+                                  Marker icon
+                                </Label>
+                                <div className="grid grid-cols-7 gap-1.5">
+                                  {([
+                                    { name: "plus", Icon: Plus },
+                                    { name: "info", Icon: Info },
+                                    { name: "help", Icon: HelpCircle },
+                                    { name: "star", Icon: Star },
+                                    { name: "heart", Icon: Heart },
+                                    { name: "flag", Icon: Flag },
+                                    { name: "bookmark", Icon: Bookmark },
+                                    { name: "map-pin", Icon: MapPin },
+                                    { name: "lightbulb", Icon: Lightbulb },
+                                    { name: "alert", Icon: AlertCircle },
+                                    { name: "check", Icon: CheckCircle },
+                                    { name: "eye", Icon: Eye },
+                                    { name: "zap", Icon: Zap },
+                                  ] as const).map(({ name, Icon }) => {
+                                    const current = editingHotspot.icon ?? "plus";
+                                    const active = current === name;
+                                    return (
+                                      <button
+                                        key={name}
+                                        type="button"
+                                        aria-label={`Select ${name} icon`}
+                                        aria-pressed={active}
+                                        onClick={() => setEditingHotspot({ ...editingHotspot, icon: name })}
+                                        className={cn(
+                                          "w-9 h-9 inline-flex items-center justify-center rounded-full border transition-all",
+                                          active
+                                            ? "bg-primary text-primary-foreground border-primary"
+                                            : "bg-background text-muted-foreground border-border/60 hover:text-foreground hover:border-border"
+                                        )}
+                                      >
+                                        <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <Label className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
+                                  Icon size
+                                </Label>
+                                <div className="grid grid-cols-4 gap-2">
+                                  {([
+                                    { key: "s", label: "S", dot: 10 },
+                                    { key: "m", label: "M", dot: 14 },
+                                    { key: "l", label: "L", dot: 18 },
+                                    { key: "xl", label: "XL", dot: 22 },
+                                  ] as const).map(({ key, label, dot }) => {
+                                    const current = editingHotspot.iconSize ?? "m";
+                                    const active = current === key;
+                                    return (
+                                      <button
+                                        key={key}
+                                        type="button"
+                                        aria-label={`Icon size ${label}`}
+                                        aria-pressed={active}
+                                        onClick={() => setEditingHotspot({ ...editingHotspot, iconSize: key })}
+                                        className={cn(
+                                          "flex flex-col items-center justify-center gap-1 h-16 rounded-lg border transition-all",
+                                          active
+                                            ? "border-primary bg-primary/5"
+                                            : "border-border/60 hover:border-border"
+                                        )}
+                                      >
+                                        <span
+                                          className={cn(
+                                            "rounded-full",
+                                            active ? "bg-primary" : "bg-muted-foreground/50"
+                                          )}
+                                          style={{ width: dot, height: dot }}
+                                          aria-hidden="true"
+                                        />
+                                        <span className={cn("text-[11px] font-medium", active ? "text-primary" : "text-muted-foreground")}>
+                                          {label}
+                                        </span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <Label htmlFor={`hs-icon-color-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
+                                  Icon color
+                                </Label>
+                                <div className="flex items-center gap-2">
+                                  <label
+                                    htmlFor={`hs-icon-color-${hs.id}`}
+                                    className="w-9 h-9 rounded-full border border-border/60 shrink-0 cursor-pointer"
+                                    style={{ background: editingHotspot.iconColor ?? "#3b82f6" }}
+                                    aria-label="Pick icon color"
+                                  />
+                                  <input
+                                    id={`hs-icon-color-${hs.id}`}
+                                    type="color"
+                                    value={editingHotspot.iconColor ?? "#3b82f6"}
+                                    onChange={(e) => setEditingHotspot({ ...editingHotspot, iconColor: e.target.value })}
+                                    className="sr-only"
+                                  />
+                                  <Input
+                                    value={editingHotspot.iconColor ?? "#3b82f6"}
+                                    onChange={(e) => setEditingHotspot({ ...editingHotspot, iconColor: e.target.value })}
+                                    className="rounded-lg h-9 font-mono text-xs"
+                                    placeholder="#3b82f6"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="space-y-1.5 pt-1 border-t border-border/60">
                                 <Label htmlFor={`hs-image-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label flex items-center gap-1.5">
                                   <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
                                   Image URL (optional)
@@ -728,6 +842,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                             </TabsContent>
                           </Tabs>
                         </div>
+
 
 
                         {/* Footer */}
