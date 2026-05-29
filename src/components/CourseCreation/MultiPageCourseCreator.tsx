@@ -685,6 +685,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         returnState,
         initialPageId: initialPageId || null,
         fontId,
+        courseId,
         origin: window.location.pathname,
       },
     });
