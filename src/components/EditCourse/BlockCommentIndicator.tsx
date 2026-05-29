@@ -587,15 +587,34 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
             <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap">
               {formatRelative(new Date(comment.createdAt).getTime())}
             </span>
-            {canEditComment && !editingComment && (
-              <span className="ml-auto opacity-0 group-hover/comment:opacity-100 focus-within:opacity-100 transition-opacity">
-                <OwnerActions
-                  label="comment"
-                  onEdit={() => { setCommentDraft(comment.text); setEditingComment(true); }}
-                  onDelete={() => setConfirm({ kind: "comment" })}
-                />
-              </span>
-            )}
+            <div className="ml-auto inline-flex items-center gap-0.5">
+              {onJumpToBlock && (
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={() => onJumpToBlock(comment.blockId)}
+                        aria-label="Jump to commented block"
+                        className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-muted flex items-center justify-center"
+                      >
+                        <CornerUpRight className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs">Jump to block</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {canEditComment && !editingComment && (
+                <span className="opacity-0 group-hover/comment:opacity-100 focus-within:opacity-100 transition-opacity">
+                  <OwnerActions
+                    label="comment"
+                    onEdit={() => { setCommentDraft(comment.text); setEditingComment(true); }}
+                    onDelete={() => setConfirm({ kind: "comment" })}
+                  />
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
             <RoleBadge role={comment.authorRole} />
