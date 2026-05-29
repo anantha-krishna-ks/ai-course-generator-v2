@@ -31,6 +31,23 @@ const MAX_IMAGE_MB = 10;
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=1200&q=80";
 
+export type HotspotIconName =
+  | "plus"
+  | "info"
+  | "help"
+  | "star"
+  | "heart"
+  | "flag"
+  | "bookmark"
+  | "map-pin"
+  | "lightbulb"
+  | "alert"
+  | "check"
+  | "eye"
+  | "zap";
+
+export type HotspotIconSize = "s" | "m" | "l" | "xl";
+
 export interface HotspotItem {
   id: string;
   /** percentage units (0..100) of image dimensions */
@@ -43,6 +60,9 @@ export interface HotspotItem {
   description: string;
   imageUrl?: string;
   linkUrl?: string;
+  icon?: HotspotIconName;
+  iconSize?: HotspotIconSize;
+  iconColor?: string;
 }
 
 interface HotspotData {
