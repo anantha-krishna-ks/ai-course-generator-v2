@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronDown, Send, CheckCircle2, RotateCcw, Rocket, Archive, Undo2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronDown, Send, CheckCircle2, RotateCcw, Rocket, Archive, Undo2, ThumbsUp } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -26,6 +26,8 @@ import {
 } from "@/services/courseStatusStore";
 import { CourseStatusBadge, useLiveCourseStatus } from "./CourseStatusBadge";
 import { cn } from "@/lib/utils";
+import { canPublish, getCurrentRole, subscribeRole } from "@/services/currentUserStore";
+import { getCommentsForCourse, subscribe as subscribeComments } from "@/services/reviewCommentsStore";
 
 interface CourseStatusMenuProps {
   courseId: string | number | undefined;
@@ -36,7 +38,7 @@ interface CourseStatusMenuProps {
 
 const TRANSITION_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
   submit: Send,
-  approve: CheckCircle2,
+  approve: ThumbsUp,
   "request-changes": RotateCcw,
   publish: Rocket,
   "back-to-draft": Undo2,
