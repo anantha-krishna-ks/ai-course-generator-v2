@@ -435,7 +435,6 @@ export function SectionCard({
   const hasScope = hasInclusions || hasExclusions;
 
     <div className="group/section" data-comment-anchor={sectionId ? `section:${sectionId}` : undefined}>
-    <div className="group/section">
       <div className="flex items-start gap-2">
         {/* Drag handle */}
         <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-60 hover:!opacity-100 mt-3" aria-label="Drag to reorder section">
