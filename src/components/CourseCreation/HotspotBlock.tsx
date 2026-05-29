@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { Upload, ImagePlus, Sparkles, Trash2, Settings as SettingsIcon, Plus, Pencil, Link as LinkIcon, ImageIcon } from "lucide-react";
+import { Upload, ImagePlus, Sparkles, Trash2, Settings as SettingsIcon, Plus, Pencil, Link as LinkIcon, ImageIcon, X } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverAnchor,
 } from "@/components/ui/popover";
+
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { DescriptionEditor } from "./DescriptionEditor";
