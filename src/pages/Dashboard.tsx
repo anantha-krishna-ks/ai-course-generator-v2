@@ -671,7 +671,6 @@ const Dashboard = () => {
                   <div className="absolute top-3 left-3 flex items-center gap-1.5">
                     <CourseStatusBadge courseId={course.id} size="xs" />
                   </div>
-                  </div>
                 </div>
                 
                 <div className="p-5 space-y-3.5">
