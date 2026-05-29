@@ -435,7 +435,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
             <div className="flex flex-col md:flex-row gap-4">
               {/* Image (left) — optional. Hidden in preview when there's no image so text uses full width */}
               {!(previewMode && !activeTab.imageUrl) && (
-                <div className="w-full md:w-[240px] shrink-0">
+                <div className="w-full md:w-[180px] shrink-0">
                   {activeTab.imageUrl ? (
                     <div className="relative group/img rounded-xl overflow-hidden border border-border bg-muted/30">
                       <img
@@ -548,13 +548,13 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-primary/60 bg-muted/30 hover:bg-muted/50 hover:border-primary/80 transition-colors flex flex-col items-center justify-center gap-2 text-foreground px-3 text-center"
+          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-primary/60 bg-muted/30 hover:bg-muted/50 hover:border-primary/80 transition-colors flex flex-col items-center justify-center gap-1.5 text-foreground px-2 text-center"
         >
-          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden="true">
-            <ImagePlus className="w-5 h-5" aria-hidden="true" focusable="false" />
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden="true">
+            <ImagePlus className="w-4 h-4" aria-hidden="true" focusable="false" />
           </span>
-          <span className="text-sm font-semibold">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
-          <span className="text-[11px] font-medium text-muted-foreground">PNG, JPG, SVG · Recommended: 800×600px (4:3)</span>
+          <span className="text-xs font-semibold leading-tight">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
+          <span className="text-[10px] font-medium text-muted-foreground leading-tight">PNG, JPG, SVG · 600×450px (4:3)</span>
         </button>
       )}
     </>
