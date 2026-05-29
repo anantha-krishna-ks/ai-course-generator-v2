@@ -159,6 +159,24 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     onBlocksChangeRef.current?.(blocks);
   }, [blocks]);
 
+  // Listen for comment-navigation events while the editor dialog is open,
+  // and scroll the target block into view + highlight it.
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: Event) => {
+      const blockId = (e as CustomEvent<{ blockId: string }>).detail?.blockId;
+      if (!blockId || blockId.startsWith("page:") || blockId.startsWith("section:")) return;
+      // Defer one frame so newly-mounted blocks are present in the DOM.
+      requestAnimationFrame(() => {
+        import("@/lib/commentNavigation").then(({ scrollToCommentAnchor }) =>
+          scrollToCommentAnchor(blockId),
+        );
+      });
+    };
+    window.addEventListener("review-comments:navigate", handler);
+    return () => window.removeEventListener("review-comments:navigate", handler);
+  }, [open]);
+
   // Find the current item (page or section) from courseItems
   const currentItem = (() => {
     for (const item of courseItems) {
