@@ -433,7 +433,7 @@ export function SectionCard({
   const hasInclusions = inclusions.trim().length > 0;
   const hasExclusions = exclusions.trim().length > 0;
   const hasScope = hasInclusions || hasExclusions;
-
+  return (
     <div className="group/section" data-comment-anchor={sectionId ? `section:${sectionId}` : undefined}>
       <div className="flex items-start gap-2">
         {/* Drag handle */}
