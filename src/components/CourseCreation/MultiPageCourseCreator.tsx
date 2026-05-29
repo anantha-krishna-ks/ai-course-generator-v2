@@ -65,6 +65,8 @@ import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
+import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
+import { CourseStatusBadge } from "@/components/Course/CourseStatusBadge";
 
 interface CourseItem {
   id: string;
@@ -683,6 +685,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         returnState,
         initialPageId: initialPageId || null,
         fontId,
+        courseId,
         origin: window.location.pathname,
       },
     });
@@ -739,6 +742,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                   <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                   Reviewer · view only
                 </span>
+              )}
+              {readOnly && isEditCoursePage && (
+                <CourseStatusBadge courseId={courseId} size="sm" />
+              )}
+              {!readOnly && isEditCoursePage && (
+                <CourseStatusMenu courseId={courseId} />
               )}
             </div>
           </div>

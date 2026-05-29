@@ -12,6 +12,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 
 interface CourseItem {
   id: string;
@@ -42,6 +43,7 @@ interface PreviewState {
   returnState?: MultiPageCourseCreatorRestoreState;
   initialPageId?: string | null;
   fontId?: string;
+  courseId?: string | number;
   origin?: string;
 }
 
@@ -912,6 +914,7 @@ const MultipageCoursePreview = () => {
             </Button>
           </div>
         </div>
+        <CoursePreviewStatusBanner courseId={(data ?? previewState)?.courseId} />
 
         <div className={cn(
           "flex-1 flex justify-center overflow-hidden bg-muted/20",
