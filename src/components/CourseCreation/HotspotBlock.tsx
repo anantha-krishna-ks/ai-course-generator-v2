@@ -700,7 +700,6 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                           </Tabs>
                         </div>
 
-                        </div>
 
                         {/* Footer */}
                         <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border/60 bg-muted/20">
