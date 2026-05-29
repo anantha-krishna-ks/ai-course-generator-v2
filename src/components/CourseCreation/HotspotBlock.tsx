@@ -157,7 +157,12 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
 
   const onImagePointerDown = (e: React.PointerEvent) => {
     if (!imageWrapRef.current) return;
-    if ((e.target as HTMLElement).closest("[data-hotspot]")) return;
+    // Don't create/draw while an editor popover is open
+    if (editingHotspot) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("[data-hotspot]")) return;
+    // Ignore clicks coming from a Radix popover portal that visually overlaps the image
+    if (target.closest("[data-radix-popper-content-wrapper]")) return;
     e.preventDefault();
     setSelectedId(null);
     const bounds = imageWrapRef.current.getBoundingClientRect();
@@ -166,6 +171,7 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
     setDraftRect({ x: p.x, y: p.y, w: 0, h: 0 });
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
   };
+
   const onImagePointerMove = (e: React.PointerEvent) => {
     if (!dragStartRef.current || !imageWrapRef.current) return;
     const bounds = imageWrapRef.current.getBoundingClientRect();
