@@ -435,7 +435,7 @@ export function TabsBlock({ content, onChange, variant }: TabsBlockProps) {
             <div className="flex flex-col md:flex-row gap-4">
               {/* Image (left) — optional. Hidden in preview when there's no image so text uses full width */}
               {!(previewMode && !activeTab.imageUrl) && (
-                <div className="w-full md:w-[180px] shrink-0">
+                <div className="w-full md:w-[140px] shrink-0">
                   {activeTab.imageUrl ? (
                     <div className="relative group/img rounded-xl overflow-hidden border border-border bg-muted/30">
                       <img
