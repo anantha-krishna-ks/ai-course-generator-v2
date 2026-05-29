@@ -159,6 +159,24 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     onBlocksChangeRef.current?.(blocks);
   }, [blocks]);
 
+  // Listen for comment-navigation events while the editor dialog is open,
+  // and scroll the target block into view + highlight it.
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: Event) => {
+      const blockId = (e as CustomEvent<{ blockId: string }>).detail?.blockId;
+      if (!blockId || blockId.startsWith("page:") || blockId.startsWith("section:")) return;
+      // Defer one frame so newly-mounted blocks are present in the DOM.
+      requestAnimationFrame(() => {
+        import("@/lib/commentNavigation").then(({ scrollToCommentAnchor }) =>
+          scrollToCommentAnchor(blockId),
+        );
+      });
+    };
+    window.addEventListener("review-comments:navigate", handler);
+    return () => window.removeEventListener("review-comments:navigate", handler);
+  }, [open]);
+
   // Find the current item (page or section) from courseItems
   const currentItem = (() => {
     for (const item of courseItems) {
@@ -1414,7 +1432,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else if (block.type === "text" && (block.variant === "any-block-layout" || block.variant === "any-block-layout-2")) {
                                 elements.push(
-                                  <div key={block.id} className="relative">
+                                  <div key={block.id} data-comment-anchor={block.id} className="relative">
                                     <BlockCommentIndicator courseId={courseId} blockId={block.id} />
                                     <NestedLayoutBlock
                                       id={block.id}
@@ -1429,7 +1447,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else {
                                 elements.push(
-                                  <div key={block.id} className="relative">
+                                  <div key={block.id} data-comment-anchor={block.id} className="relative">
                                     <BlockCommentIndicator courseId={courseId} blockId={block.id} />
                                     <ContentBlock
                                       id={block.id}

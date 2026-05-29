@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info, ShieldCheck, PenLine, Eye, BookOpen, LayoutPanelTop, FileCheck2, Scale, Target, Tag } from "lucide-react";
+import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info, ShieldCheck, PenLine, Eye, BookOpen, LayoutPanelTop, FileCheck2, Scale, Target, Tag, CornerUpRight } from "lucide-react";
+import { dispatchCommentNavigate } from "@/lib/commentNavigation";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -192,6 +193,12 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                 <button
                   type="button"
                   aria-label={summaryLabel}
+                  onClick={() => {
+                    if (comments.length > 0) {
+                      const target = comments.find((c) => !c.resolved) ?? comments[0];
+                      dispatchCommentNavigate(target.blockId);
+                    }
+                  }}
                   className={cn(
                     "inline-flex items-center gap-1.5 h-6 px-2 rounded-full border text-[11px] font-medium tabular-nums transition-colors shrink-0",
                     total === 0
@@ -270,6 +277,10 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                     courseTitle={courseTitle || threadTitle}
                     authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
                     authorRole={isReviewer ? "reviewer" : "author"}
+                    onJumpToBlock={(blockId) => {
+                      dispatchCommentNavigate(blockId);
+                      setOpen(false);
+                    }}
                   />
                 ))}
               </ul>
@@ -516,7 +527,7 @@ function OwnerActions({ onEdit, onDelete, label }: { onEdit: () => void; onDelet
   );
 }
 
-function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author" }) {
+function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBlock }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author"; onJumpToBlock?: (blockId: string) => void }) {
   const [reply, setReply] = useState("");
   const [markResolved, setMarkResolved] = useState(false);
   const isAuthorView = authorRole === "author";
@@ -576,15 +587,34 @@ function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment:
             <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap">
               {formatRelative(new Date(comment.createdAt).getTime())}
             </span>
-            {canEditComment && !editingComment && (
-              <span className="ml-auto opacity-0 group-hover/comment:opacity-100 focus-within:opacity-100 transition-opacity">
-                <OwnerActions
-                  label="comment"
-                  onEdit={() => { setCommentDraft(comment.text); setEditingComment(true); }}
-                  onDelete={() => setConfirm({ kind: "comment" })}
-                />
-              </span>
-            )}
+            <div className="ml-auto inline-flex items-center gap-0.5">
+              {onJumpToBlock && (
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={() => onJumpToBlock(comment.blockId)}
+                        aria-label="Jump to commented block"
+                        className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-muted flex items-center justify-center"
+                      >
+                        <CornerUpRight className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xs">Jump to block</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {canEditComment && !editingComment && (
+                <span className="opacity-0 group-hover/comment:opacity-100 focus-within:opacity-100 transition-opacity">
+                  <OwnerActions
+                    label="comment"
+                    onEdit={() => { setCommentDraft(comment.text); setEditingComment(true); }}
+                    onDelete={() => setConfirm({ kind: "comment" })}
+                  />
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
             <RoleBadge role={comment.authorRole} />

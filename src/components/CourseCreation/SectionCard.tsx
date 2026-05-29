@@ -95,6 +95,7 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
       <div
         ref={setNodeRef}
         style={style}
+        data-comment-anchor={`page:${page.id}`}
         className="group/row relative flex items-center"
       >
         {/* Tree connector line */}
@@ -432,9 +433,8 @@ export function SectionCard({
   const hasInclusions = inclusions.trim().length > 0;
   const hasExclusions = exclusions.trim().length > 0;
   const hasScope = hasInclusions || hasExclusions;
-
   return (
-    <div className="group/section">
+    <div className="group/section" data-comment-anchor={sectionId ? `section:${sectionId}` : undefined}>
       <div className="flex items-start gap-2">
         {/* Drag handle */}
         <button className="cursor-grab active:cursor-grabbing p-1 rounded-md hover:bg-muted transition-all shrink-0 touch-none opacity-0 group-hover/section:opacity-60 hover:!opacity-100 mt-3" aria-label="Drag to reorder section">

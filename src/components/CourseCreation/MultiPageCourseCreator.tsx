@@ -665,6 +665,70 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     }
   };
 
+  // ── Comment navigation: jump to a specific commented block from any chip ──
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ blockId: string }>).detail;
+      const blockId = detail?.blockId;
+      if (!blockId) return;
+
+      // Section-level chip → close any open page editor, scroll to section card.
+      if (blockId.startsWith("section:")) {
+        setActiveEditorPageId(null);
+        setTimeout(() => {
+          import("@/lib/commentNavigation").then(({ scrollToCommentAnchor }) =>
+            scrollToCommentAnchor(blockId),
+          );
+        }, 50);
+        return;
+      }
+
+      // Page-level chip → open that page in the editor dialog.
+      if (blockId.startsWith("page:")) {
+        const pageId = blockId.slice("page:".length);
+        const page = findPageItem(pageId);
+        if (page) {
+          setActiveEditorPageId(pageId);
+        } else {
+          setActiveEditorPageId(null);
+          setTimeout(() => {
+            import("@/lib/commentNavigation").then(({ scrollToCommentAnchor }) =>
+              scrollToCommentAnchor(blockId),
+            );
+          }, 50);
+        }
+        return;
+      }
+
+      // Block-level: find the page that owns this block.
+      const ownerPageId = Object.entries(pageBlocksMap).find(([, blocks]) =>
+        blocks.some((b) => b.id === blockId),
+      )?.[0];
+
+      if (ownerPageId) {
+        setActiveEditorPageId(ownerPageId);
+        // Re-emit after the editor dialog mounts so its own listener can scroll.
+        setTimeout(() => {
+          window.dispatchEvent(
+            new CustomEvent("review-comments:navigate", { detail: { blockId } }),
+          );
+        }, 350);
+        return;
+      }
+
+      // Fallback: top-level (single-page) content block visible on the main canvas.
+      setActiveEditorPageId(null);
+      setTimeout(() => {
+        import("@/lib/commentNavigation").then(({ scrollToCommentAnchor }) =>
+          scrollToCommentAnchor(blockId),
+        );
+      }, 50);
+    };
+    window.addEventListener("review-comments:navigate", handler);
+    return () => window.removeEventListener("review-comments:navigate", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageBlocksMap, items]);
+
   const handlePreview = useCallback((initialPageId?: string | null) => {
     const returnState: MultiPageCourseCreatorRestoreState = {
       title,
@@ -1183,7 +1247,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                           const showBelow = isOver && activeBlockIdx < index;
 
                           elements.push(
-                            <div key={block.id} className="group/item">
+                            <div key={block.id} data-comment-anchor={block.id} className="group/item">
                               {/* Drop indicator BEFORE first block during sidebar drag */}
                               {index === 0 && isSidebarDragging && (
                                 <DropIndicator
