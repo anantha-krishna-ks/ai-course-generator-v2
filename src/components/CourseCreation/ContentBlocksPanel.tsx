@@ -25,6 +25,8 @@ import {
   LayoutPanelTop,
   LayoutPanelLeft,
   Rows3,
+  ChevronDown,
+
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -479,91 +481,124 @@ function BlockPreview({ id }: { id: string }) {
       );
     case "horizontal-tabs":
       return (
-        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
-          <div className={cn(card, "p-3")}>
-            <div className="flex items-end gap-1 border-b border-[hsl(220,13%,91%)]">
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          {/* Header pill — mirrors real block */}
+          <div className="inline-flex items-center gap-1.5 pl-1.5 pr-2 py-[3px] rounded-full border border-[hsl(220,13%,88%)] bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent mb-2">
+            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary/15 text-primary">
+              <LayoutPanelTop className="w-2 h-2" aria-hidden="true" focusable="false" />
+            </span>
+            <span className="text-[8px] font-bold uppercase tracking-wider text-[hsl(220,15%,18%)]">Horizontal Tabs</span>
+          </div>
+          {/* Card */}
+          <div className="rounded-xl border border-[hsl(220,13%,88%)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="flex items-stretch bg-[hsl(220,14%,97%)] border-b border-[hsl(220,13%,91%)]">
               {["Overview", "Details", "FAQ"].map((t, i) => (
                 <div
                   key={t}
                   className={cn(
-                    "px-2 py-1 text-[8px] font-semibold rounded-t-md",
-                    i === 0
-                      ? "bg-white text-primary border border-b-0 border-[hsl(220,13%,91%)]"
-                      : "text-[hsl(220,8%,55%)]"
+                    "relative px-2 py-1.5 text-[8px] font-semibold border-r border-[hsl(220,13%,91%)] last:border-r-0",
+                    i === 0 ? "bg-white text-[hsl(220,15%,18%)]" : "text-[hsl(220,8%,55%)]"
                   )}
                 >
                   {t}
+                  {i === 0 && <span className="absolute left-0 right-0 bottom-0 h-[1.5px] bg-primary" />}
                 </div>
               ))}
             </div>
-            <div className="pt-2 space-y-1">
+            <div className="p-2.5 space-y-1">
               <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
               <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
               <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
             </div>
-            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between sections of content</p>
           </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between sections of content</p>
         </div>
       );
     case "vertical-tabs":
       return (
-        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
-          <div className={cn(card, "p-3")}>
-            <div className="flex gap-2">
-              <div className="flex flex-col gap-1 w-20 border-r border-[hsl(220,13%,91%)] pr-2">
-                {["Intro", "Setup", "Usage", "FAQ"].map((t, i) => (
-                  <div
-                    key={t}
-                    className={cn(
-                      "px-1.5 py-1 text-[8px] font-semibold rounded-md text-left",
-                      i === 0 ? "bg-primary/10 text-primary" : "text-[hsl(220,8%,55%)]"
-                    )}
-                  >
-                    {t}
-                  </div>
-                ))}
-              </div>
-              <div className="flex-1 space-y-1 pt-0.5">
-                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
-                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
-                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
-                <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-2/3" />
-              </div>
-            </div>
-            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Stacked tabs along the left edge</p>
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          {/* Header pill */}
+          <div className="inline-flex items-center gap-1.5 pl-1.5 pr-2 py-[3px] rounded-full border border-[hsl(220,13%,88%)] bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent mb-2">
+            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary/15 text-primary">
+              <Columns2 className="w-2 h-2" aria-hidden="true" focusable="false" />
+            </span>
+            <span className="text-[8px] font-bold uppercase tracking-wider text-[hsl(220,15%,18%)]">Vertical Tabs</span>
           </div>
+          {/* Card */}
+          <div className="rounded-xl border border-[hsl(220,13%,88%)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden flex items-stretch">
+            <div className="flex flex-col w-20 shrink-0 bg-[hsl(220,14%,97%)] border-r border-[hsl(220,13%,91%)]">
+              {["Intro", "Setup", "Usage", "FAQ"].map((t, i) => (
+                <div
+                  key={t}
+                  className={cn(
+                    "relative px-2 py-1.5 text-[8px] font-semibold border-b border-[hsl(220,13%,91%)] last:border-b-0",
+                    i === 0 ? "bg-white text-[hsl(220,15%,18%)]" : "text-[hsl(220,8%,55%)]"
+                  )}
+                >
+                  {t}
+                  {i === 0 && <span className="absolute left-0 top-0 bottom-0 w-[1.5px] bg-primary" />}
+                </div>
+              ))}
+            </div>
+            <div className="flex-1 p-2.5 space-y-1">
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-3/4" />
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
+              <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-2/3" />
+            </div>
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Stacked tabs along the left edge</p>
         </div>
       );
     case "accordion":
       return (
-        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
-          <div className={cn(card, "p-3 space-y-1.5")}>
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          {/* Header pill */}
+          <div className="inline-flex items-center gap-1.5 pl-1.5 pr-2 py-[3px] rounded-full border border-[hsl(220,13%,88%)] bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent mb-2">
+            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary/15 text-primary">
+              <Rows3 className="w-2 h-2" aria-hidden="true" focusable="false" />
+            </span>
+            <span className="text-[8px] font-bold uppercase tracking-wider text-[hsl(220,15%,18%)]">Accordion</span>
+          </div>
+          <div className="space-y-1.5">
             {[
               { q: "What's included?", open: true },
               { q: "How do I get started?", open: false },
               { q: "Is there a free trial?", open: false },
             ].map((row, i) => (
-              <div key={i} className="rounded-md border border-[hsl(220,13%,91%)] overflow-hidden">
-                <div className={cn("flex items-center justify-between px-2 py-1.5", row.open && "bg-primary/5")}>
+              <div
+                key={i}
+                className={cn(
+                  "rounded-xl border bg-white overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03)]",
+                  row.open ? "border-primary/40" : "border-[hsl(220,13%,88%)]"
+                )}
+              >
+                <div className={cn("flex items-center justify-between px-2.5 py-1.5", row.open && "bg-primary/[0.06]")}>
                   <span className="text-[9px] font-semibold text-[hsl(220,15%,18%)]">{row.q}</span>
-                  <span className={cn("text-[10px] text-primary transition-transform", row.open ? "rotate-180" : "rotate-0")}>⌄</span>
+                  <ChevronDown
+                    className={cn("w-2.5 h-2.5 text-primary transition-transform", row.open ? "rotate-180" : "rotate-0")}
+                    aria-hidden="true"
+                    focusable="false"
+                  />
                 </div>
                 {row.open && (
-                  <div className="px-2 pb-1.5 space-y-1">
+                  <div className="px-2.5 pb-2 pt-1 space-y-1 border-t border-[hsl(220,13%,93%)]">
                     <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-full" />
                     <div className="h-1.5 rounded-full bg-[hsl(220,13%,93%)] w-5/6" />
                   </div>
                 )}
               </div>
             ))}
-            <p className="text-[9px] text-[hsl(220,8%,46%)] pt-0.5 px-0.5">Click headings to expand each panel</p>
           </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Click headings to expand each panel</p>
         </div>
       );
-    default:
+      default:
       return null;
   }
 }
+
+
 
 /** Miniature thumbnails — styled as tiny page screenshots with real images and text */
 function BlockThumbnail({ id }: { id: string }) {
