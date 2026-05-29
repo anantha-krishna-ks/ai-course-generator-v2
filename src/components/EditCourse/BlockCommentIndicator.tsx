@@ -527,7 +527,7 @@ function OwnerActions({ onEdit, onDelete, label }: { onEdit: () => void; onDelet
   );
 }
 
-function CommentRow({ comment, courseTitle, authorName, authorRole }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author" }) {
+function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBlock }: { comment: ReviewComment; courseTitle: string; authorName: string; authorRole: "reviewer" | "author"; onJumpToBlock?: (blockId: string) => void }) {
   const [reply, setReply] = useState("");
   const [markResolved, setMarkResolved] = useState(false);
   const isAuthorView = authorRole === "author";
