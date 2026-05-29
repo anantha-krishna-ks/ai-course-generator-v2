@@ -541,9 +541,8 @@ function BlockPreview({ id }: { id: string }) {
     case "accordion":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
-
-          </div>
           <div className="space-y-1.5">
+
             {[
               { q: "What's included?", open: true },
               { q: "How do I get started?", open: false },
