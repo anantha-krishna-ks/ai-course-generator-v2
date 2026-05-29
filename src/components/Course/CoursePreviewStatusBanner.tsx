@@ -53,7 +53,7 @@ export function CoursePreviewStatusBanner({ courseId }: Props) {
         tone.wrap,
       )}
     >
-      <Icon className="w-4 h-4 shrink-0" aria-hidden="true" focusable="false" />
+      <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
       <span className="font-semibold uppercase tracking-wider text-[10px]">{meta.label}</span>
       <span aria-hidden="true" className="opacity-50">·</span>
       <span className="truncate">{tone.copy}</span>
