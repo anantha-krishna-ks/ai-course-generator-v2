@@ -582,7 +582,7 @@ export function AccordionBlock({ content, onChange }: AccordionBlockProps) {
                   className="px-4 pb-4 pt-2 border-t border-border/50 bg-background/40 animate-in fade-in slide-in-from-top-1 duration-200"
                 >
                   <div className="flex flex-col md:flex-row gap-4">
-                    <div className="w-full md:w-[220px] shrink-0">
+                  <div className="w-full md:w-[140px] shrink-0">
                       {item.imageUrl ? (
                         <div className="relative group/img rounded-xl overflow-hidden border border-border/70 bg-muted/30 shadow-sm">
                           <img
@@ -691,13 +691,13 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-primary/50 bg-muted/30 hover:bg-muted/50 hover:border-primary/80 transition-colors flex flex-col items-center justify-center gap-2 text-foreground px-3 text-center"
+          className="w-full aspect-[4/3] rounded-xl border-2 border-dashed border-primary/50 bg-muted/30 hover:bg-muted/50 hover:border-primary/80 transition-colors flex flex-col items-center justify-center gap-1.5 text-foreground px-2 text-center"
         >
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden="true">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground" aria-hidden="true">
             <ImagePlus className="w-4 h-4" aria-hidden="true" focusable="false" />
           </span>
-          <span className="text-xs font-semibold">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
-          <span className="text-[10px] font-medium text-muted-foreground">PNG, JPG, SVG · 4:3</span>
+          <span className="text-xs font-semibold leading-tight">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
+          <span className="text-[10px] font-medium text-muted-foreground leading-tight">PNG, JPG, SVG · 600×450px (4:3)</span>
         </button>
       )}
     </>
