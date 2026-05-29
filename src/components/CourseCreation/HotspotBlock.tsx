@@ -621,61 +621,85 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                             <X className="w-4 h-4" aria-hidden="true" focusable="false" />
                           </button>
                         </div>
-
                         {/* Body */}
-                        <div className="px-4 py-3 space-y-3 max-h-[60vh] overflow-y-auto">
-                          <div className="space-y-1.5">
-                            <Label htmlFor={`hs-title-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
-                              Title
-                            </Label>
-                            <Input
-                              id={`hs-title-${hs.id}`}
-                              value={editingHotspot.title}
-                              onChange={(e) => setEditingHotspot({ ...editingHotspot, title: e.target.value })}
-                              placeholder="Hotspot title"
-                              className="rounded-lg h-9"
-                            />
-                          </div>
+                        <div className="px-4 py-3 max-h-[60vh] overflow-y-auto">
+                          <Tabs defaultValue="content" className="w-full">
+                            <TabsList className="grid grid-cols-2 w-full h-9 rounded-full bg-muted/60 p-1 mb-3">
+                              <TabsTrigger
+                                value="content"
+                                className="rounded-full text-xs gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                              >
+                                <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                Content
+                              </TabsTrigger>
+                              <TabsTrigger
+                                value="settings"
+                                className="rounded-full text-xs gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                              >
+                                <SettingsIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                Settings
+                              </TabsTrigger>
+                            </TabsList>
 
-                          <div className="space-y-1.5">
-                            <Label className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
-                              Description <span className="text-destructive">*</span>
-                            </Label>
-                            <div className="rounded-lg border border-border/60 overflow-hidden">
-                              <DescriptionEditor
-                                content={editingHotspot.description}
-                                onChange={(val) => setEditingHotspot({ ...editingHotspot, description: val })}
-                              />
-                            </div>
-                          </div>
+                            <TabsContent value="content" className="mt-0 space-y-3">
+                              <div className="space-y-1.5">
+                                <Label htmlFor={`hs-title-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
+                                  Title
+                                </Label>
+                                <Input
+                                  id={`hs-title-${hs.id}`}
+                                  value={editingHotspot.title}
+                                  onChange={(e) => setEditingHotspot({ ...editingHotspot, title: e.target.value })}
+                                  placeholder="Hotspot title"
+                                  className="rounded-lg h-9"
+                                />
+                              </div>
 
-                          <div className="space-y-1.5">
-                            <Label htmlFor={`hs-image-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label flex items-center gap-1.5">
-                              <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                              Image URL (optional)
-                            </Label>
-                            <Input
-                              id={`hs-image-${hs.id}`}
-                              value={editingHotspot.imageUrl || ""}
-                              onChange={(e) => setEditingHotspot({ ...editingHotspot, imageUrl: e.target.value })}
-                              placeholder="https://…"
-                              className="rounded-lg h-9"
-                            />
-                          </div>
+                              <div className="space-y-1.5">
+                                <Label className="text-[11px] font-semibold uppercase tracking-wider text-field-label">
+                                  Description <span className="text-destructive">*</span>
+                                </Label>
+                                <div className="rounded-lg border border-border/60 overflow-hidden">
+                                  <DescriptionEditor
+                                    content={editingHotspot.description}
+                                    onChange={(val) => setEditingHotspot({ ...editingHotspot, description: val })}
+                                  />
+                                </div>
+                              </div>
+                            </TabsContent>
 
-                          <div className="space-y-1.5">
-                            <Label htmlFor={`hs-link-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label flex items-center gap-1.5">
-                              <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                              Link URL (optional)
-                            </Label>
-                            <Input
-                              id={`hs-link-${hs.id}`}
-                              value={editingHotspot.linkUrl || ""}
-                              onChange={(e) => setEditingHotspot({ ...editingHotspot, linkUrl: e.target.value })}
-                              placeholder="https://…"
-                              className="rounded-lg h-9"
-                            />
-                          </div>
+                            <TabsContent value="settings" className="mt-0 space-y-3">
+                              <div className="space-y-1.5">
+                                <Label htmlFor={`hs-image-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label flex items-center gap-1.5">
+                                  <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                                  Image URL (optional)
+                                </Label>
+                                <Input
+                                  id={`hs-image-${hs.id}`}
+                                  value={editingHotspot.imageUrl || ""}
+                                  onChange={(e) => setEditingHotspot({ ...editingHotspot, imageUrl: e.target.value })}
+                                  placeholder="https://…"
+                                  className="rounded-lg h-9"
+                                />
+                              </div>
+
+                              <div className="space-y-1.5">
+                                <Label htmlFor={`hs-link-${hs.id}`} className="text-[11px] font-semibold uppercase tracking-wider text-field-label flex items-center gap-1.5">
+                                  <LinkIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                                  Link URL (optional)
+                                </Label>
+                                <Input
+                                  id={`hs-link-${hs.id}`}
+                                  value={editingHotspot.linkUrl || ""}
+                                  onChange={(e) => setEditingHotspot({ ...editingHotspot, linkUrl: e.target.value })}
+                                  placeholder="https://…"
+                                  className="rounded-lg h-9"
+                                />
+                              </div>
+                            </TabsContent>
+                          </Tabs>
+                        </div>
+
                         </div>
 
                         {/* Footer */}
