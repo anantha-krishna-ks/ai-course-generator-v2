@@ -59,8 +59,29 @@ export function CourseStatusMenu({ courseId, readOnly, className }: CourseStatus
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<StatusTransition | null>(null);
+  const [, setTick] = useState(0);
 
-  const transitions = getAvailableTransitions(current);
+  // Re-render when role changes or comments change so transition list updates.
+  useEffect(() => {
+    const bump = () => setTick((t) => t + 1);
+    const unsubRole = subscribeRole(bump);
+    const unsubComments = subscribeComments(bump);
+    return () => {
+      unsubRole();
+      unsubComments();
+    };
+  }, []);
+
+  const cid = courseId != null ? String(courseId) : "";
+  const comments = cid ? getCommentsForCourse(cid) : [];
+  const hasReviewerComments = comments.length > 0;
+  const allCommentsResolved = hasReviewerComments && comments.every((c) => c.resolved);
+
+  const transitions = getAvailableTransitions(current, {
+    hasReviewerComments,
+    allCommentsResolved,
+    canPublish: canPublish(getCurrentRole()),
+  });
 
   if (!courseId || readOnly || transitions.length === 0) {
     return <CourseStatusBadge status={current} size="sm" className={className} />;
