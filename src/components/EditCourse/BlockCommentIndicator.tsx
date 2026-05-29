@@ -189,12 +189,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
         <TooltipProvider delayDuration={150}>
           <Tooltip>
             <TooltipTrigger asChild>
+              <PopoverTrigger asChild>
                 <button
                   type="button"
                   aria-label={summaryLabel}
                   onClick={() => {
-                    // Navigate to the first unresolved (or first) commented block,
-                    // in addition to opening the popover for context.
                     if (comments.length > 0) {
                       const target = comments.find((c) => !c.resolved) ?? comments[0];
                       dispatchCommentNavigate(target.blockId);
@@ -209,7 +208,6 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                         : "bg-primary/10 border-primary/30 text-primary hover:bg-primary/15",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   )}
-                >
                 >
                   {total === 0 ? (
                     <MessageSquare className="w-3 h-3 opacity-70" aria-hidden="true" focusable="false" />
