@@ -670,12 +670,6 @@ const Dashboard = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
                   <div className="absolute top-3 left-3 flex items-center gap-1.5">
                     <CourseStatusBadge courseId={course.id} size="xs" />
-                    {activeTab === "review" && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/95 text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
-                        <ShieldCheck className="w-3 h-3" aria-hidden="true" focusable="false" />
-                        Reviewer
-                      </span>
-                    )}
                   </div>
                 </div>
                 
