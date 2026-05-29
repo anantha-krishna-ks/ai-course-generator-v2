@@ -707,10 +707,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
       if (ownerPageId) {
         setActiveEditorPageId(ownerPageId);
-        // Re-emit after the editor dialog mounts so its own listener can scroll.
+        // Scroll once the editor dialog has mounted the target block.
         setTimeout(() => {
-          window.dispatchEvent(
-            new CustomEvent("review-comments:navigate", { detail: { blockId } }),
+          import("@/lib/commentNavigation").then(({ scrollToCommentAnchor }) =>
+            scrollToCommentAnchor(blockId),
           );
         }, 350);
         return;
