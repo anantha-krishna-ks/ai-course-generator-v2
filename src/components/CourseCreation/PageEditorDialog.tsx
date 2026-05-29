@@ -1429,7 +1429,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else {
                                 elements.push(
-                                  <div key={block.id} className="relative">
+                                  <div key={block.id} data-comment-anchor={block.id} className="relative">
                                     <BlockCommentIndicator courseId={courseId} blockId={block.id} />
                                     <ContentBlock
                                       id={block.id}
