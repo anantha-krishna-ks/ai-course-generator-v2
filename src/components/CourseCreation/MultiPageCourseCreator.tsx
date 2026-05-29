@@ -1183,7 +1183,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                           const showBelow = isOver && activeBlockIdx < index;
 
                           elements.push(
-                            <div key={block.id} className="group/item">
+                            <div key={block.id} data-comment-anchor={block.id} className="group/item">
                               {/* Drop indicator BEFORE first block during sidebar drag */}
                               {index === 0 && isSidebarDragging && (
                                 <DropIndicator
