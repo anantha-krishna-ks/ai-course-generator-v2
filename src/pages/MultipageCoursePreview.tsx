@@ -1953,23 +1953,30 @@ const AccordionPreview = ({ content }: { content: string }) => {
               )}
             >
               <div className="overflow-hidden">
-                <div className="px-4 sm:px-5 pb-4 pt-1 space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
-                  {imageUrl && (
-                    <img
-                      src={imageUrl}
-                      alt={`Visual for ${item.title}`}
-                      className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover shadow-sm"
-                    />
-                  )}
-                  {hasBody ? (
-                    <div
-                      className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.body) }}
-                    />
-                  ) : (
-                    <p className="text-sm text-muted-foreground italic">No content in this panel yet.</p>
-                  )}
+                <div className="px-4 sm:px-5 pb-4 pt-1 animate-in fade-in slide-in-from-top-1 duration-300">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    {imageUrl && (
+                      <div className="w-full md:w-[140px] shrink-0">
+                        <img
+                          src={imageUrl}
+                          alt={`Visual for ${item.title}`}
+                          className="w-full h-auto aspect-[4/3] rounded-xl border border-border/40 object-cover shadow-sm"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      {hasBody ? (
+                        <div
+                          className="prose prose-sm max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.body) }}
+                        />
+                      ) : (
+                        <p className="text-sm text-muted-foreground italic">No content in this panel yet.</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
+
               </div>
             </div>
           </div>
