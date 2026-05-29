@@ -541,12 +541,7 @@ function BlockPreview({ id }: { id: string }) {
     case "accordion":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
-          {/* Header pill */}
-          <div className="inline-flex items-center gap-1.5 pl-1.5 pr-2 py-[3px] rounded-full border border-[hsl(220,13%,88%)] bg-gradient-to-r from-primary/10 via-primary/[0.04] to-transparent mb-2">
-            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-primary/15 text-primary">
-              <Rows3 className="w-2 h-2" aria-hidden="true" focusable="false" />
-            </span>
-            <span className="text-[8px] font-bold uppercase tracking-wider text-[hsl(220,15%,18%)]">Accordion</span>
+
           </div>
           <div className="space-y-1.5">
             {[
