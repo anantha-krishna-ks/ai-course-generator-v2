@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { Upload, ImagePlus, Sparkles, Trash2, Settings as SettingsIcon, Plus, Pencil, Link as LinkIcon, ImageIcon, X, FileText } from "lucide-react";
+import { Upload, ImagePlus, Sparkles, Trash2, Settings as SettingsIcon, Plus, Pencil, Link as LinkIcon, ImageIcon, X, FileText, Info, HelpCircle, Star, Heart, Flag, Bookmark, MapPin, Lightbulb, AlertCircle, CheckCircle, Eye, Zap } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import { AISparkles } from "@/components/ui/ai-sparkles";
