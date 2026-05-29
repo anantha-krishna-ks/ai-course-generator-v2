@@ -1414,7 +1414,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                 );
                               } else if (block.type === "text" && (block.variant === "any-block-layout" || block.variant === "any-block-layout-2")) {
                                 elements.push(
-                                  <div key={block.id} className="relative">
+                                  <div key={block.id} data-comment-anchor={block.id} className="relative">
                                     <BlockCommentIndicator courseId={courseId} blockId={block.id} />
                                     <NestedLayoutBlock
                                       id={block.id}
