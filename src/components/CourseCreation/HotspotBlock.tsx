@@ -602,7 +602,10 @@ export function HotspotBlock({ content, onChange, aiEnabled }: HotspotBlockProps
                       const target = e.target as HTMLElement;
                       if (target.closest("[data-hotspot]")) e.preventDefault();
                     }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   >
+
                     {editingHotspot && editingHotspot.id === hs.id && (
                       <div className="flex flex-col">
                         {/* Header */}
