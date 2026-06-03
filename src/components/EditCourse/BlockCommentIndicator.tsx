@@ -121,6 +121,52 @@ function ShowResolvedToggle({ showResolved, resolvedCount, onToggle }: { showRes
   );
 }
 
+interface TimelineListProps {
+  comments: ReviewComment[];
+  resolvedShown: boolean;
+  renderRow: (c: ReviewComment) => React.ReactNode;
+}
+
+function TimelineList({ comments, resolvedShown, renderRow }: TimelineListProps) {
+  const open = comments.filter((c) => !c.resolved);
+  const resolved = comments.filter((c) => c.resolved);
+  const showResolvedSection = resolvedShown && resolved.length > 0;
+
+  const Rail = ({ children, dimmed = false }: { children: React.ReactNode; dimmed?: boolean }) => (
+    <ul
+      className={cn(
+        "relative",
+        // vertical rail at avatar center (px-3 padding + 16px to avatar center = 28px)
+        "before:content-[''] before:absolute before:top-4 before:bottom-4 before:left-[28px] before:w-px before:bg-border",
+        dimmed && "opacity-75",
+      )}
+    >
+      {children}
+    </ul>
+  );
+
+  return (
+    <div>
+      {open.length > 0 && <Rail>{open.map(renderRow)}</Rail>}
+
+      {showResolvedSection && (
+        <>
+          {open.length > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 mt-1">
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" focusable="false" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Resolved · {resolved.length}
+              </span>
+              <div className="h-px flex-1 bg-border" aria-hidden="true" />
+            </div>
+          )}
+          <Rail dimmed>{resolved.map(renderRow)}</Rail>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false, aggregateBlockIds }: Props) {
   const location = useLocation();
   const params = useParams();
