@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info, ShieldCheck, PenLine, Eye, BookOpen, LayoutPanelTop, FileCheck2, Scale, Target, Tag, CornerUpRight } from "lucide-react";
@@ -117,6 +117,52 @@ function ShowResolvedToggle({ showResolved, resolvedCount, onToggle }: { showRes
         {showResolved ? <Eye className="w-3 h-3" aria-hidden="true" /> : <CheckCircle2 className="w-3 h-3" aria-hidden="true" />}
         {showResolved ? "Hide resolved" : "Show resolved"}
       </button>
+    </div>
+  );
+}
+
+interface TimelineListProps {
+  comments: ReviewComment[];
+  resolvedShown: boolean;
+  renderRow: (c: ReviewComment) => ReactNode;
+}
+
+function TimelineList({ comments, resolvedShown, renderRow }: TimelineListProps) {
+  const open = comments.filter((c) => !c.resolved);
+  const resolved = comments.filter((c) => c.resolved);
+  const showResolvedSection = resolvedShown && resolved.length > 0;
+
+  const Rail = ({ children, dimmed = false }: { children: ReactNode; dimmed?: boolean }) => (
+    <ul
+      className={cn(
+        "relative",
+        // vertical rail at avatar center (px-3 padding + 16px to avatar center = 28px)
+        "before:content-[''] before:absolute before:top-4 before:bottom-4 before:left-[28px] before:w-px before:bg-border",
+        dimmed && "opacity-75",
+      )}
+    >
+      {children}
+    </ul>
+  );
+
+  return (
+    <div>
+      {open.length > 0 && <Rail>{open.map(renderRow)}</Rail>}
+
+      {showResolvedSection && (
+        <>
+          {open.length > 0 && (
+            <div className="flex items-center gap-2 px-4 py-2 mt-1">
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" focusable="false" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Resolved · {resolved.length}
+              </span>
+              <div className="h-px flex-1 bg-border" aria-hidden="true" />
+            </div>
+          )}
+          <Rail dimmed>{resolved.map(renderRow)}</Rail>
+        </>
+      )}
     </div>
   );
 }
@@ -306,13 +352,16 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                   onToggle={() => setShowResolved((v) => !v)}
                 />
               )}
-              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar bg-muted/20 p-3 space-y-2.5">
+              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth">
                 {visibleComments.length === 0 ? (
-                  <p className="text-xs text-muted-foreground text-center py-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
+                  <p className="text-xs text-muted-foreground text-center py-6 px-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
                 ) : (
-                  visibleComments.map((c) => (
-                    <div key={c.id} className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                  <TimelineList
+                    comments={visibleComments}
+                    resolvedShown={showResolved}
+                    renderRow={(c) => (
                       <CommentRow
+                        key={c.id}
                         comment={c}
                         courseTitle={courseTitle || threadTitle}
                         authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
@@ -322,8 +371,8 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                           setOpen(false);
                         }}
                       />
-                    </div>
-                  ))
+                    )}
+                  />
                 )}
               </div>
             </>
@@ -432,20 +481,23 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                 onToggle={() => setShowResolved((v) => !v)}
               />
             )}
-            <div className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar bg-muted/20 p-3 space-y-2.5">
+            <div className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth">
               {visibleComments.length === 0 ? (
-                <p className="text-xs text-muted-foreground text-center py-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
+                <p className="text-xs text-muted-foreground text-center py-6 px-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
               ) : (
-                visibleComments.map((c) => (
-                  <div key={c.id} className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                <TimelineList
+                  comments={visibleComments}
+                  resolvedShown={showResolved}
+                  renderRow={(c) => (
                     <CommentRow
+                      key={c.id}
                       comment={c}
                       courseTitle={courseTitle || threadTitle}
                       authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
                       authorRole={isReviewer ? "reviewer" : "author"}
                     />
-                  </div>
-                ))
+                  )}
+                />
               )}
             </div>
           </>
@@ -626,11 +678,11 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
   };
 
   return (
-    <li className={cn("group/comment px-3 py-3", comment.resolved && "bg-emerald-50/40")}>
+    <li className={cn("group/comment relative px-3 py-3", comment.resolved && "opacity-90")}>
       {/* Header: avatar + identity */}
       <div className="flex items-start gap-2.5">
         <div className={cn(
-          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0",
+          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0 relative z-10 ring-4 ring-popover",
           comment.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
         )}>
           {comment.author.slice(0, 1).toUpperCase()}
