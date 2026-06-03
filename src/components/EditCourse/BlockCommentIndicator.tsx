@@ -96,6 +96,31 @@ function SummaryStat({ label, value, tone = "muted" }: { label: string; value: s
   );
 }
 
+function ShowResolvedToggle({ showResolved, resolvedCount, onToggle }: { showResolved: boolean; resolvedCount: number; onToggle: () => void }) {
+  return (
+    <div className="px-4 py-2 border-b border-border bg-muted/40 flex items-center justify-between">
+      <span className="text-[11px] font-medium text-muted-foreground">
+        {resolvedCount} resolved {resolvedCount === 1 ? "comment" : "comments"} {showResolved ? "shown" : "hidden"}
+      </span>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={showResolved}
+        className={cn(
+          "inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[11px] font-semibold border transition-colors",
+          showResolved
+            ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+            : "bg-card border-border text-foreground hover:bg-muted",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+        )}
+      >
+        {showResolved ? <Eye className="w-3 h-3" aria-hidden="true" /> : <CheckCircle2 className="w-3 h-3" aria-hidden="true" />}
+        {showResolved ? "Hide resolved" : "Show resolved"}
+      </button>
+    </div>
+  );
+}
+
 export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, variant = "floating", readOnly = false, aggregateBlockIds }: Props) {
   const location = useLocation();
   const params = useParams();
