@@ -672,11 +672,11 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
   };
 
   return (
-    <li className={cn("group/comment px-3 py-3", comment.resolved && "bg-emerald-50/40")}>
+    <li className={cn("group/comment relative px-3 py-3", comment.resolved && "opacity-90")}>
       {/* Header: avatar + identity */}
       <div className="flex items-start gap-2.5">
         <div className={cn(
-          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0",
+          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0 relative z-10 ring-4 ring-popover",
           comment.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
         )}>
           {comment.author.slice(0, 1).toUpperCase()}
