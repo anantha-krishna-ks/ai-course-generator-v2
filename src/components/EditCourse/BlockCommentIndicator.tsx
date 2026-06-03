@@ -352,13 +352,16 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                   onToggle={() => setShowResolved((v) => !v)}
                 />
               )}
-              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar bg-muted/20 p-3 space-y-2.5">
+              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth">
                 {visibleComments.length === 0 ? (
-                  <p className="text-xs text-muted-foreground text-center py-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
+                  <p className="text-xs text-muted-foreground text-center py-6 px-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
                 ) : (
-                  visibleComments.map((c) => (
-                    <div key={c.id} className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                  <TimelineList
+                    comments={visibleComments}
+                    resolvedShown={showResolved}
+                    renderRow={(c) => (
                       <CommentRow
+                        key={c.id}
                         comment={c}
                         courseTitle={courseTitle || threadTitle}
                         authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
@@ -368,8 +371,8 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                           setOpen(false);
                         }}
                       />
-                    </div>
-                  ))
+                    )}
+                  />
                 )}
               </div>
             </>
