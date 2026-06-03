@@ -273,24 +273,35 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
               <p className="text-xs text-muted-foreground">No comments yet at this level.</p>
             </div>
           ) : (
-            <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar">
-
-              <ul className="divide-y divide-border">
-                {comments.map((c) => (
-                  <CommentRow
-                    key={c.id}
-                    comment={c}
-                    courseTitle={courseTitle || threadTitle}
-                    authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
-                    authorRole={isReviewer ? "reviewer" : "author"}
-                    onJumpToBlock={(blockId) => {
-                      dispatchCommentNavigate(blockId);
-                      setOpen(false);
-                    }}
-                  />
-                ))}
-              </ul>
+            <>
+              {resolvedCount > 0 && (
+                <ShowResolvedToggle
+                  showResolved={showResolved}
+                  resolvedCount={resolvedCount}
+                  onToggle={() => setShowResolved((v) => !v)}
+                />
+              )}
+              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar bg-muted/20 p-3 space-y-2.5">
+                {visibleComments.length === 0 ? (
+                  <p className="text-xs text-muted-foreground text-center py-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
+                ) : (
+                  visibleComments.map((c) => (
+                    <div key={c.id} className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                      <CommentRow
+                        comment={c}
+                        courseTitle={courseTitle || threadTitle}
+                        authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
+                        authorRole={isReviewer ? "reviewer" : "author"}
+                        onJumpToBlock={(blockId) => {
+                          dispatchCommentNavigate(blockId);
+                          setOpen(false);
+                        }}
+                      />
+                    </div>
+                  ))
+                )}
               </div>
+            </>
           )}
           <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground">
             Open the block to add or reply to comments.
