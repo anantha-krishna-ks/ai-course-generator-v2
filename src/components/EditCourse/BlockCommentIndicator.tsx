@@ -121,6 +121,12 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [category, setCategory] = useState<ReviewCategory | "">("");
+  const [showResolved, setShowResolved] = useState(false);
+  const visibleComments = useMemo(
+    () => (showResolved ? comments : comments.filter((c) => !c.resolved)),
+    [comments, showResolved],
+  );
+  const resolvedCount = comments.length - comments.filter((c) => !c.resolved).length;
 
   useEffect(() => {
     const refresh = () => setComments(loadComments());
