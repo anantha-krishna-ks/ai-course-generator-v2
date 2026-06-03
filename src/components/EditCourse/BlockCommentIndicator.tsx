@@ -399,19 +399,31 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
             <p className="text-xs text-muted-foreground">No comments yet on this {label?.toLowerCase().includes("section") ? "section" : label?.toLowerCase().includes("page") ? "page" : "block"}.</p>
           </div>
         ) : (
-          <div className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar">
-            <ul className="divide-y divide-border">
-              {comments.map((c) => (
-                <CommentRow
-                  key={c.id}
-                  comment={c}
-                  courseTitle={courseTitle || threadTitle}
-                  authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
-                  authorRole={isReviewer ? "reviewer" : "author"}
-                />
-              ))}
-            </ul>
-          </div>
+          <>
+            {resolvedCount > 0 && (
+              <ShowResolvedToggle
+                showResolved={showResolved}
+                resolvedCount={resolvedCount}
+                onToggle={() => setShowResolved((v) => !v)}
+              />
+            )}
+            <div className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar bg-muted/20 p-3 space-y-2.5">
+              {visibleComments.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
+              ) : (
+                visibleComments.map((c) => (
+                  <div key={c.id} className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                    <CommentRow
+                      comment={c}
+                      courseTitle={courseTitle || threadTitle}
+                      authorName={isReviewer ? REVIEWER_NAME : AUTHOR_NAME}
+                      authorRole={isReviewer ? "reviewer" : "author"}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+          </>
         )}
 
         <div className="border-t border-border p-3 space-y-2">
