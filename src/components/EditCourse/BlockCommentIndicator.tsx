@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, MessageSquarePlus, CheckCircle2, Circle, Send, X, Pencil, Trash2, Info, ShieldCheck, PenLine, Eye, BookOpen, LayoutPanelTop, FileCheck2, Scale, Target, Tag, CornerUpRight } from "lucide-react";
