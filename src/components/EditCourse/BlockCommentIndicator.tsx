@@ -124,7 +124,7 @@ function ShowResolvedToggle({ showResolved, resolvedCount, onToggle }: { showRes
 interface TimelineListProps {
   comments: ReviewComment[];
   resolvedShown: boolean;
-  renderRow: (c: ReviewComment) => React.ReactNode;
+  renderRow: (c: ReviewComment) => ReactNode;
 }
 
 function TimelineList({ comments, resolvedShown, renderRow }: TimelineListProps) {
@@ -132,7 +132,7 @@ function TimelineList({ comments, resolvedShown, renderRow }: TimelineListProps)
   const resolved = comments.filter((c) => c.resolved);
   const showResolvedSection = resolvedShown && resolved.length > 0;
 
-  const Rail = ({ children, dimmed = false }: { children: React.ReactNode; dimmed?: boolean }) => (
+  const Rail = ({ children, dimmed = false }: { children: ReactNode; dimmed?: boolean }) => (
     <ul
       className={cn(
         "relative",
