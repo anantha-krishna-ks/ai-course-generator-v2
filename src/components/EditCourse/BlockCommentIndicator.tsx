@@ -127,40 +127,39 @@ interface TimelineListProps {
   renderRow: (c: ReviewComment) => ReactNode;
 }
 
+/**
+ * Stacked card layout — each comment is a self-contained card with a colored
+ * category accent strip on the left edge. Generous gap between cards makes
+ * demarcation obvious at a glance. Resolved comments live under a labeled
+ * divider and render dimmed.
+ */
 function TimelineList({ comments, resolvedShown, renderRow }: TimelineListProps) {
   const open = comments.filter((c) => !c.resolved);
   const resolved = comments.filter((c) => c.resolved);
   const showResolvedSection = resolvedShown && resolved.length > 0;
 
-  const Rail = ({ children, dimmed = false }: { children: ReactNode; dimmed?: boolean }) => (
-    <ul
-      className={cn(
-        "relative",
-        // vertical rail at avatar center (px-3 padding + 16px to avatar center = 28px)
-        "before:content-[''] before:absolute before:top-4 before:bottom-4 before:left-[28px] before:w-px before:bg-border",
-        dimmed && "opacity-75",
-      )}
-    >
-      {children}
-    </ul>
-  );
-
   return (
-    <div>
-      {open.length > 0 && <Rail>{open.map(renderRow)}</Rail>}
+    <div className="px-3 py-3">
+      {open.length > 0 && (
+        <ul className="space-y-2.5" aria-label="Open comments">
+          {open.map(renderRow)}
+        </ul>
+      )}
 
       {showResolvedSection && (
         <>
           {open.length > 0 && (
-            <div className="flex items-center gap-2 px-4 py-2 mt-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" focusable="false" />
+            <div className="flex items-center gap-2 px-1 pt-4 pb-2" aria-hidden="true">
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" focusable="false" />
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 Resolved · {resolved.length}
               </span>
-              <div className="h-px flex-1 bg-border" aria-hidden="true" />
+              <div className="h-px flex-1 bg-border" />
             </div>
           )}
-          <Rail dimmed>{resolved.map(renderRow)}</Rail>
+          <ul className={cn("space-y-2.5", open.length > 0 ? "opacity-75" : "")} aria-label="Resolved comments">
+            {resolved.map(renderRow)}
+          </ul>
         </>
       )}
     </div>
@@ -677,12 +676,25 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
     setEditingReplyId(null);
   };
 
+  const accent = CATEGORY_META[comment.category ?? ""]?.dot ?? "bg-muted-foreground/30";
+
   return (
-    <li className={cn("group/comment relative px-3 py-3", comment.resolved && "opacity-90")}>
+    <li
+      className={cn(
+        "group/comment relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md",
+        comment.resolved && "bg-muted/30",
+      )}
+    >
+      {/* Category accent strip */}
+      <span
+        aria-hidden="true"
+        className={cn("absolute left-0 top-0 bottom-0 w-[3px]", accent)}
+      />
+      <div className="px-3 py-3">
       {/* Header: avatar + identity */}
       <div className="flex items-start gap-2.5">
         <div className={cn(
-          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0 relative z-10 ring-4 ring-popover",
+          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0",
           comment.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
         )}>
           {comment.author.slice(0, 1).toUpperCase()}
@@ -952,6 +964,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </li>
   );
 }
