@@ -351,7 +351,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                   onToggle={() => setShowResolved((v) => !v)}
                 />
               )}
-              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth">
+              <div
+                className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth"
+                onWheel={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
+              >
                 {visibleComments.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-6 px-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
                 ) : (
@@ -480,7 +484,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                 onToggle={() => setShowResolved((v) => !v)}
               />
             )}
-            <div className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth">
+            <div
+              className="max-h-[50vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth"
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+            >
               {visibleComments.length === 0 ? (
                 <p className="text-xs text-muted-foreground text-center py-6 px-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
               ) : (
@@ -557,7 +565,7 @@ const CATEGORY_META: Record<string, { dot: string; text: string; bg: string; bor
   "Structure & Presentation":   { dot: "bg-indigo-500",  text: "text-indigo-700",  bg: "bg-indigo-50",  border: "border-indigo-200" },
   "Accuracy & Completeness":    { dot: "bg-amber-500",   text: "text-amber-800",   bg: "bg-amber-50",   border: "border-amber-200" },
   "Consistency & Standards":    { dot: "bg-fuchsia-500", text: "text-fuchsia-700", bg: "bg-fuchsia-50", border: "border-fuchsia-200" },
-  "Relevance & Actionability":  { dot: "bg-rose-500",    text: "text-rose-700",    bg: "bg-rose-50",    border: "border-rose-200" },
+  "Relevance & Actionability":  { dot: "bg-purple-500",  text: "text-purple-700",  bg: "bg-purple-50",  border: "border-purple-200" },
 };
 
 function RoleBadge({ role }: { role: "author" | "reviewer" }) {
