@@ -676,12 +676,25 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
     setEditingReplyId(null);
   };
 
+  const accent = CATEGORY_META[comment.category ?? ""]?.dot ?? "bg-muted-foreground/30";
+
   return (
-    <li className={cn("group/comment relative px-3 py-3", comment.resolved && "opacity-90")}>
+    <li
+      className={cn(
+        "group/comment relative overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md",
+        comment.resolved && "bg-muted/30",
+      )}
+    >
+      {/* Category accent strip */}
+      <span
+        aria-hidden="true"
+        className={cn("absolute left-0 top-0 bottom-0 w-[3px]", accent)}
+      />
+      <div className="px-3 py-3">
       {/* Header: avatar + identity */}
       <div className="flex items-start gap-2.5">
         <div className={cn(
-          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0 relative z-10 ring-4 ring-popover",
+          "w-8 h-8 rounded-full text-[11px] font-semibold flex items-center justify-center shrink-0",
           comment.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
         )}>
           {comment.author.slice(0, 1).toUpperCase()}
