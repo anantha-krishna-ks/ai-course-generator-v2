@@ -709,10 +709,24 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[13px] font-semibold text-foreground truncate leading-tight">{comment.author}</span>
-            <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap">
-              {formatRelative(new Date(comment.createdAt).getTime())}
-            </span>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-[13px] font-semibold text-foreground truncate leading-tight min-w-0 cursor-default">{comment.author}</span>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">{comment.author}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap shrink-0 cursor-default">
+                    {formatRelative(new Date(comment.createdAt).getTime())}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">{new Date(comment.createdAt).toLocaleString()}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="ml-auto inline-flex items-center gap-0.5">
               {onJumpToBlock && (
                 <TooltipProvider delayDuration={150}>
@@ -770,60 +784,102 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
         )}
       </div>
 
-      {/* Replies */}
+      {/* Replies — mini cards matching parent card design, indented under the comment */}
       {comment.replies.length > 0 && (
-        <ul className="mt-3 pl-[42px] space-y-2.5">
-          {comment.replies.map((r) => {
-            const canEditReply = r.author === authorName;
-            const isEditing = editingReplyId === r.id;
-            return (
-              <li key={r.id} className="group/reply flex items-start gap-2 pl-3 border-l-2 border-border">
-                <div className={cn(
-                  "w-6 h-6 rounded-full text-[10px] font-semibold flex items-center justify-center shrink-0",
-                  r.authorRole === "author" ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
-                )}>
-                  {r.author.slice(0, 1).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-[12px] font-semibold text-foreground truncate">{r.author}</span>
-                    <RoleBadge role={r.authorRole} />
-                    <span className="text-muted-foreground/40 text-[10px]">·</span>
-                    <span className="text-[10px] text-muted-foreground tabular-nums">
-                      {formatRelative(new Date(r.createdAt).getTime())}
-                    </span>
-                    {canEditReply && !isEditing && (
-                      <span className="ml-auto opacity-0 group-hover/reply:opacity-100 focus-within:opacity-100 transition-opacity">
-                        <OwnerActions
-                          label="reply"
-                          onEdit={() => { setReplyDraft(r.text); setEditingReplyId(r.id); }}
-                          onDelete={() => setConfirm({ kind: "reply", id: r.id })}
-                        />
-                      </span>
-                    )}
-                  </div>
-                  {isEditing ? (
-                    <div className="mt-1 space-y-2">
-                      <Textarea
-                        value={replyDraft}
-                        onChange={(e) => setReplyDraft(e.target.value)}
-                        rows={2}
-                        className="text-[13px] rounded-xl resize-none"
-                      />
-                      <div className="flex justify-end gap-1.5">
-                        <Button size="sm" variant="ghost" className="rounded-full h-7 px-3 text-xs" onClick={() => setEditingReplyId(null)}>Cancel</Button>
-                        <Button size="sm" className="rounded-full h-7 px-3 text-xs" onClick={() => saveReplyEdit(r.id)} disabled={!replyDraft.trim()}>Save</Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words mt-0.5">{r.text}</p>
+        <div className="mt-3 pl-[42px]">
+          <div className="flex items-center gap-2 mb-1.5" aria-hidden="true">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {comment.replies.length} {comment.replies.length === 1 ? "reply" : "replies"}
+            </span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <ul className="space-y-2">
+            {comment.replies.map((r) => {
+              const canEditReply = r.author === authorName;
+              const isEditing = editingReplyId === r.id;
+              const isAuthorReply = r.authorRole === "author";
+              return (
+                <li
+                  key={r.id}
+                  className={cn(
+                    "group/reply relative overflow-hidden rounded-lg border border-border bg-muted/30 transition-shadow hover:shadow-sm",
                   )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute left-0 top-0 bottom-0 w-[2px]",
+                      isAuthorReply ? "bg-primary" : "bg-muted-foreground/40",
+                    )}
+                  />
+                  <div className="px-2.5 py-2 flex items-start gap-2">
+                    <div className={cn(
+                      "w-6 h-6 rounded-full text-[10px] font-semibold flex items-center justify-center shrink-0",
+                      isAuthorReply ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary",
+                    )}>
+                      {r.author.slice(0, 1).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-[12px] font-semibold text-foreground truncate min-w-0 cursor-default">
+                                {r.author}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs">{r.author}</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <RoleBadge role={r.authorRole} />
+                        <span className="text-muted-foreground/40 text-[10px] shrink-0">·</span>
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-[10px] text-muted-foreground tabular-nums shrink-0 cursor-default">
+                                {formatRelative(new Date(r.createdAt).getTime())}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs">
+                              {new Date(r.createdAt).toLocaleString()}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        {canEditReply && !isEditing && (
+                          <span className="ml-auto shrink-0 opacity-0 group-hover/reply:opacity-100 focus-within:opacity-100 transition-opacity">
+                            <OwnerActions
+                              label="reply"
+                              onEdit={() => { setReplyDraft(r.text); setEditingReplyId(r.id); }}
+                              onDelete={() => setConfirm({ kind: "reply", id: r.id })}
+                            />
+                          </span>
+                        )}
+                      </div>
+                      {isEditing ? (
+                        <div className="mt-1.5 space-y-2">
+                          <Textarea
+                            value={replyDraft}
+                            onChange={(e) => setReplyDraft(e.target.value)}
+                            rows={2}
+                            className="text-[13px] rounded-xl resize-none"
+                          />
+                          <div className="flex justify-end gap-1.5">
+                            <Button size="sm" variant="ghost" className="rounded-full h-7 px-3 text-xs" onClick={() => setEditingReplyId(null)}>Cancel</Button>
+                            <Button size="sm" className="rounded-full h-7 px-3 text-xs" onClick={() => saveReplyEdit(r.id)} disabled={!replyDraft.trim()}>Save</Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words mt-1">{r.text}</p>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
+
 
       {/* Composer + actions footer */}
       {!comment.resolved && (
