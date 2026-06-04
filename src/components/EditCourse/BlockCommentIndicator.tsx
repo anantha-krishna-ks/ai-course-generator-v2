@@ -351,7 +351,11 @@ export function BlockCommentIndicator({ courseId, blockId, label, courseTitle, v
                   onToggle={() => setShowResolved((v) => !v)}
                 />
               )}
-              <div className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth">
+              <div
+                className="max-h-[55vh] overflow-y-auto overscroll-contain thin-scrollbar scroll-smooth"
+                onWheel={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
+              >
                 {visibleComments.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-6 px-4">All comments are resolved. Toggle "Show resolved" to view them.</p>
                 ) : (
