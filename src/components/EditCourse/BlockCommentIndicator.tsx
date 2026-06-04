@@ -964,6 +964,7 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      </div>
     </li>
   );
 }
