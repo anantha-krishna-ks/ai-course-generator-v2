@@ -709,10 +709,24 @@ function CommentRow({ comment, courseTitle, authorName, authorRole, onJumpToBloc
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[13px] font-semibold text-foreground truncate leading-tight">{comment.author}</span>
-            <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap">
-              {formatRelative(new Date(comment.createdAt).getTime())}
-            </span>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-[13px] font-semibold text-foreground truncate leading-tight min-w-0 cursor-default">{comment.author}</span>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">{comment.author}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-[10.5px] text-muted-foreground tabular-nums leading-tight whitespace-nowrap shrink-0 cursor-default">
+                    {formatRelative(new Date(comment.createdAt).getTime())}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">{new Date(comment.createdAt).toLocaleString()}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="ml-auto inline-flex items-center gap-0.5">
               {onJumpToBlock && (
                 <TooltipProvider delayDuration={150}>
