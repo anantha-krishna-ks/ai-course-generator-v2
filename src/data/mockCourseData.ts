@@ -1,4 +1,6 @@
 import type { MultiPageCourseCreatorRestoreState } from "@/components/CourseCreation/MultiPageCourseCreator";
+import { getCourseCopies } from "@/services/courseCopyStore";
+
 
 export const mockCourseData: Record<string, { title: string; layoutType: "multi-page" | "single-page" }> = {
   "1": { title: "Carbon Accounting-ACCA", layoutType: "multi-page" },
