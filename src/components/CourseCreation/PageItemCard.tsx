@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, Upload, X } from "lucide-react";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { CopyToCourseDialog } from "./CopyToCourseDialog";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
