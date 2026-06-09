@@ -550,7 +550,7 @@ export default function CourseBrandingPage() {
                                   return (
                                     <label
                                       key={opt.value}
-                                      className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                      className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary has-[:checked]:border-primary has-[:checked]:text-primary-foreground has-[:checked]:shadow-sm has-[:checked]:shadow-primary/30"
                                     >
                                       <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
                                       <PosIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
@@ -586,7 +586,7 @@ export default function CourseBrandingPage() {
                                   return (
                                     <label
                                       key={opt.value}
-                                      className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                      className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary has-[:checked]:border-primary has-[:checked]:text-primary-foreground has-[:checked]:shadow-sm has-[:checked]:shadow-primary/30"
                                     >
                                       <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
                                       <PosIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
