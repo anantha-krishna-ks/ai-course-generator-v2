@@ -199,6 +199,13 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
                 <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                 Duplicate
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setShowCopyDialog(true)}
+                className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+              >
+                <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                Copy to…
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setShowDeleteDialog(true)}
