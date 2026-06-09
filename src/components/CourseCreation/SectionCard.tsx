@@ -933,6 +933,12 @@ export function SectionCard({
           </div>
         </DialogContent>
       </Dialog>
+      <CopyToCourseDialog
+        open={showCopySectionDialog}
+        onOpenChange={setShowCopySectionDialog}
+        mode="section"
+        itemTitle={title.trim() || `Section ${sectionNumber}`}
+      />
     </div>
   );
 }
