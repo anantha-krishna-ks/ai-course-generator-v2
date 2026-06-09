@@ -269,7 +269,7 @@ export default function CourseBrandingPage() {
   const [branding, setBranding] = useState<CourseBranding>(DEFAULT_COURSE_BRANDING);
   const [introWarn, setIntroWarn] = useState(false);
   const [contentWarn, setContentWarn] = useState(false);
-  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color">("intro");
+  
 
   useEffect(() => {
     if (courseId) setBranding(courseBrandingStore.get(courseId));
