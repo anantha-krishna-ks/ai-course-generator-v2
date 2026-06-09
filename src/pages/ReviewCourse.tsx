@@ -10,9 +10,10 @@ const ReviewCourse = () => {
 
   const course = courseId ? mockCourseData[courseId] : null;
   const restoreState = useMemo(
-    () => (course ? buildMockRestoreState(course.title) : null),
-    [course],
+    () => (course && courseId ? buildMockRestoreState(course.title, courseId) : null),
+    [course, courseId],
   );
+
 
   useEffect(() => {
     document.title = course ? `Review · ${course.title}` : "Review Course";
