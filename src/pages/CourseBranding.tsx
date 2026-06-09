@@ -456,6 +456,9 @@ export default function CourseBrandingPage() {
                 position={branding.introPosition}
                 primary={branding.primaryColor}
                 cta={branding.ctaColor}
+                heroImage={introHero}
+                ctaLabel="Start Course"
+                subtitle="Welcome — your branded course introduction."
               />
               <PreviewCard
                 badge="Section / Page"
@@ -464,6 +467,9 @@ export default function CourseBrandingPage() {
                 position={branding.contentPosition}
                 primary={branding.primaryColor}
                 cta={branding.ctaColor}
+                heroImage={sectionHero}
+                ctaLabel="Next"
+                subtitle="Section header on every content page."
               />
             </div>
           </div>
