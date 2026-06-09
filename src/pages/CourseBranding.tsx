@@ -592,8 +592,8 @@ export default function CourseBrandingPage() {
                         )}
                       </div>
                     </Card>
-                  </div>
                 );
+
               })}
             </div>
 
