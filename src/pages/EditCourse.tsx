@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import { MultiPageCourseCreator } from "@/components/CourseCreation/MultiPageCourseCreator";
 import { AuthorReviewCommentsButton } from "@/components/EditCourse/AuthorReviewCommentsButton";
 import { mockCourseData, buildMockRestoreState } from "@/data/mockCourseData";
 import { useLiveCourseStatus } from "@/components/Course/CourseStatusBadge";
 import { useToast } from "@/hooks/use-toast";
+import { subscribeCourseCopies } from "@/services/courseCopyStore";
 
 const EditCourse = () => {
   const { courseId } = useParams();
@@ -14,8 +15,13 @@ const EditCourse = () => {
   const courseData = courseId ? mockCourseData[courseId] : null;
   const status = useLiveCourseStatus(courseId);
 
-  // Author-side lock: once a course is submitted for review, the author can no
-  // longer edit it. Redirect them to the read-only reviewer view.
+  // Re-mount the editor whenever copied items change so newly copied pages /
+  // sections show up live in the destination course.
+  const [copyVersion, setCopyVersion] = useState(0);
+  useEffect(() => {
+    return subscribeCourseCopies(() => setCopyVersion((v) => v + 1));
+  }, []);
+
   useEffect(() => {
     if (courseId && status === "in-review") {
       toast({
@@ -26,23 +32,27 @@ const EditCourse = () => {
     }
   }, [courseId, status, navigate, toast]);
 
+  const restoreState = useMemo(
+    () => (courseData && courseId ? buildMockRestoreState(courseData.title, courseId) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [courseData, courseId, copyVersion],
+  );
+
   if (!courseData) {
     return <Navigate to="/dashboard" replace />;
   }
 
   if (status === "in-review") {
-    // Avoid briefly mounting the editor before the redirect fires.
     return null;
   }
-
-  const restoreState = buildMockRestoreState(courseData.title);
 
   return (
     <>
       <MultiPageCourseCreator
+        key={`${courseId}-${copyVersion}`}
         courseTitle={courseData.title}
-        aiOptions={restoreState.aiOptions}
-        initialRestoreState={restoreState}
+        aiOptions={restoreState!.aiOptions}
+        initialRestoreState={restoreState!}
       />
       <AuthorReviewCommentsButton
         courseId={courseId!}

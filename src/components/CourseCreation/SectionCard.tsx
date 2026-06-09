@@ -342,7 +342,14 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         onOpenChange={setShowCopyDialog}
         mode="page"
         itemTitle={pageDisplayTitle}
+        pagePayload={{
+          id: page.id,
+          title: pageDisplayTitle,
+          inclusions: page.inclusions,
+          exclusions: page.exclusions,
+        }}
       />
+
 
     </>
   );
@@ -938,7 +945,18 @@ export function SectionCard({
         onOpenChange={setShowCopySectionDialog}
         mode="section"
         itemTitle={title.trim() || `Section ${sectionNumber}`}
+        sectionPayload={{
+          id: sectionId || "src",
+          title: title.trim() || `Section ${sectionNumber}`,
+          pages: (pages || []).map((p) => ({
+            id: p.id,
+            title: p.title.trim() || "Untitled page",
+            inclusions: p.inclusions,
+            exclusions: p.exclusions,
+          })),
+        }}
       />
+
     </div>
   );
 }
