@@ -269,11 +269,42 @@ export default function CourseBrandingPage() {
   const [branding, setBranding] = useState<CourseBranding>(DEFAULT_COURSE_BRANDING);
   const [introWarn, setIntroWarn] = useState(false);
   const [contentWarn, setContentWarn] = useState(false);
-  
+  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color">("intro");
+
+  const introRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const colorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (courseId) setBranding(courseBrandingStore.get(courseId));
   }, [courseId]);
+
+  useEffect(() => {
+    const sections: Array<["intro" | "content" | "color", HTMLDivElement | null]> = [
+      ["intro", introRef.current],
+      ["content", contentRef.current],
+      ["color", colorRef.current],
+    ];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          const key = (visible[0].target as HTMLElement).dataset.section as "intro" | "content" | "color" | undefined;
+          if (key) setActiveSection(key);
+        }
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    sections.forEach(([, el]) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (key: "intro" | "content" | "color") => {
+    const map = { intro: introRef, content: contentRef, color: colorRef };
+    map[key].current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const update = <K extends keyof CourseBranding>(key: K, value: CourseBranding[K]) =>
     setBranding((prev) => ({ ...prev, [key]: value }));
@@ -290,6 +321,21 @@ export default function CourseBrandingPage() {
     setIntroWarn(false);
     setContentWarn(false);
   };
+
+  const timelineItems = [
+    { key: "intro" as const, label: "Intro Branding", icon: LayoutTemplate, done: !!branding.introLogo },
+    { key: "content" as const, label: "Content Image", icon: ImageIcon, done: !!branding.contentLogo },
+    {
+      key: "color" as const,
+      label: "Color Theme",
+      icon: Palette,
+      done:
+        branding.primaryColor !== DEFAULT_COURSE_BRANDING.primaryColor ||
+        branding.ctaColor !== DEFAULT_COURSE_BRANDING.ctaColor,
+    },
+  ];
+
+
 
 
   return (
