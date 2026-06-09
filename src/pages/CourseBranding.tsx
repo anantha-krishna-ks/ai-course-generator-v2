@@ -382,17 +382,28 @@ export default function CourseBrandingPage() {
         <main className="w-full px-6 lg:px-10 py-6">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
             {/* Sections with inline vertical timeline rail */}
-            <div className="relative lg:pl-16 space-y-5">
-              {/* Continuous rail line */}
+            <div className="relative lg:pl-20 space-y-6">
+              {/* Track (full) */}
               <span
-                className="hidden lg:block absolute left-[23px] top-6 bottom-6 w-px bg-gradient-to-b from-primary/40 via-border to-border"
+                className="hidden lg:block absolute left-[47px] top-8 bottom-8 w-[2px] rounded-full bg-border/70"
                 aria-hidden="true"
               />
+              {/* Progress fill — animates up to the active node */}
+              <span
+                className="hidden lg:block absolute left-[47px] top-8 w-[2px] rounded-full bg-gradient-to-b from-primary via-primary/80 to-primary/30 transition-[height] duration-500 ease-out shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
+                aria-hidden="true"
+                style={{
+                  height: `calc(${(timelineItems.findIndex((t) => t.key === activeSection) / Math.max(timelineItems.length - 1, 1)) * 100}% - 0px)`,
+                }}
+              />
+
 
               {timelineItems.map((item, idx) => {
                 const Icon = item.icon;
                 const isActive = activeSection === item.key;
                 const isDone = item.done;
+                const activeIdx = timelineItems.findIndex((t) => t.key === activeSection);
+                const isPast = idx < activeIdx;
                 const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
 
                 return (
@@ -403,30 +414,47 @@ export default function CourseBrandingPage() {
                       onClick={() => scrollToSection(item.key)}
                       aria-current={isActive ? "step" : undefined}
                       aria-label={`Step ${idx + 1}: ${item.label}${isDone ? ", configured" : ""}`}
-                      className="hidden lg:flex absolute left-[-49px] top-3 z-10 items-center justify-center w-12 h-12 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
+                      className="hidden lg:flex absolute left-[-60px] top-2 z-10 items-center justify-center w-14 h-14 group focus:outline-none rounded-full"
                     >
+                      {/* Outer halo (active only) */}
+                      {isActive && (
+                        <span
+                          className="absolute inset-0 rounded-full bg-primary/15 blur-md animate-pulse"
+                          aria-hidden="true"
+                        />
+                      )}
+                      {/* Gradient ring frame */}
                       <span
-                        className={`relative flex items-center justify-center w-11 h-11 rounded-full border-2 transition-all duration-300 ${
+                        className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-500 ${
                           isActive
-                            ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40 scale-110"
-                            : isDone
-                            ? "bg-primary/10 border-primary/60 text-primary"
-                            : "bg-background border-border text-muted-foreground group-hover:border-primary/60 group-hover:text-foreground"
+                            ? "scale-110 bg-gradient-to-br from-primary to-primary/70 shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.6)] ring-4 ring-primary/15"
+                            : isPast || isDone
+                            ? "bg-gradient-to-br from-primary/15 to-primary/5 ring-1 ring-primary/30"
+                            : "bg-background ring-1 ring-border group-hover:ring-primary/40 group-hover:bg-muted/40"
                         }`}
                       >
-                        {isDone && !isActive ? (
-                          <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        {/* Inner content */}
+                        {isActive ? (
+                          <Icon className="w-5 h-5 text-primary-foreground drop-shadow-sm" aria-hidden="true" focusable="false" />
+                        ) : isDone || isPast ? (
+                          <Check className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                         ) : (
-                          <span className="text-xs font-mono font-semibold">{String(idx + 1).padStart(2, "0")}</span>
-                        )}
-                        {isActive && (
-                          <span
-                            className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
-                            aria-hidden="true"
-                          />
+                          <span className="text-[11px] font-mono font-bold tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
+                            {String(idx + 1).padStart(2, "0")}
+                          </span>
                         )}
                       </span>
+                      {/* Step label badge */}
+                      <span
+                        className={`absolute -bottom-1 left-1/2 -translate-x-1/2 translate-y-full text-[9px] font-mono font-semibold uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-sm transition-opacity ${
+                          isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-80"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        0{idx + 1}
+                      </span>
                     </button>
+
 
                     {/* Section Card */}
                     <Card
