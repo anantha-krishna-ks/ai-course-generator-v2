@@ -404,16 +404,51 @@ export default function CourseBrandingPage() {
                 const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
 
                 return (
-                  <Card
-                    key={item.key}
-                    ref={cardRef as any}
-                    data-section={item.key}
-                    className={`relative overflow-hidden scroll-mt-32 transition-all duration-500 ${
-                      isActive
-                        ? "border-primary/40 shadow-xl shadow-primary/10 -translate-y-px"
-                        : "hover:border-primary/20"
-                    }`}
-                  >
+                  <div key={item.key} className="relative">
+                    {/* Inline section marker (left of card) */}
+                    <Tooltip delayDuration={150}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          onClick={() => scrollToSection(item.key)}
+                          aria-label={`Go to ${item.label}`}
+                          aria-current={isActive ? "step" : undefined}
+                          className="hidden lg:flex absolute -left-10 top-6 z-10 items-center justify-center w-7 h-7 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          <span
+                            className={`flex items-center justify-center rounded-full transition-all duration-300 ${
+                              isActive
+                                ? "w-7 h-7 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-[0_0_14px_hsl(var(--primary)/0.55)] ring-4 ring-primary/15"
+                                : isDone
+                                ? "w-3 h-3 bg-primary/70 hover:scale-125"
+                                : "w-2.5 h-2.5 bg-muted-foreground/30 hover:bg-muted-foreground/60 hover:scale-125"
+                            }`}
+                          >
+                            {isActive && (
+                              <span className="text-[10px] font-mono font-semibold">{idx + 1}</span>
+                            )}
+                            {isDone && !isActive && (
+                              <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />
+                            )}
+                          </span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="left" className="text-xs">
+                        <span className="font-mono text-muted-foreground mr-1.5">0{idx + 1}</span>
+                        {item.label}
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Card
+                      ref={cardRef as any}
+                      data-section={item.key}
+                      className={`relative overflow-hidden scroll-mt-32 transition-all duration-500 ${
+                        isActive
+                          ? "border-primary/40 shadow-xl shadow-primary/10 -translate-y-px"
+                          : "hover:border-primary/20"
+                      }`}
+                    >
+
                     {/* Left accent strip */}
                     <span
                       className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-500 ${
