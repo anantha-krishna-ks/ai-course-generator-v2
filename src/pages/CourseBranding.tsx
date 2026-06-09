@@ -391,47 +391,10 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          {/* Floating scrollspy dots — minimal & intuitive */}
-          <nav
-            aria-label="Section navigation"
-            className="hidden lg:flex fixed right-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-3 rounded-full border bg-card/80 backdrop-blur-md px-2 py-3 shadow-lg shadow-foreground/5"
-          >
-            {timelineItems.map((item, idx) => {
-              const isActive = activeSection === item.key;
-              const isDone = item.done;
-              return (
-                <Tooltip key={item.key} delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={() => scrollToSection(item.key)}
-                      aria-label={`Go to ${item.label}`}
-                      aria-current={isActive ? "step" : undefined}
-                      className="group relative flex items-center justify-center w-6 h-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
-                    >
-                      <span
-                        className={`block rounded-full transition-all duration-300 ${
-                          isActive
-                            ? "w-2.5 h-6 bg-gradient-to-b from-primary to-primary/70 shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
-                            : isDone
-                            ? "w-2 h-2 bg-primary/60 group-hover:scale-125"
-                            : "w-2 h-2 bg-muted-foreground/30 group-hover:bg-muted-foreground/60 group-hover:scale-125"
-                        }`}
-                      />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="text-xs">
-                    <span className="font-mono text-muted-foreground mr-1.5">0{idx + 1}</span>
-                    {item.label}
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
-          </nav>
-
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
             {/* Editor column */}
-            <div className="space-y-5">
+            <nav aria-label="Section navigation" className="space-y-5 lg:pl-10">
+
 
 
               {timelineItems.map((item, idx) => {
@@ -441,16 +404,51 @@ export default function CourseBrandingPage() {
                 const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
 
                 return (
-                  <Card
-                    key={item.key}
-                    ref={cardRef as any}
-                    data-section={item.key}
-                    className={`relative overflow-hidden scroll-mt-32 transition-all duration-500 ${
-                      isActive
-                        ? "border-primary/40 shadow-xl shadow-primary/10 -translate-y-px"
-                        : "hover:border-primary/20"
-                    }`}
-                  >
+                  <div key={item.key} className="relative">
+                    {/* Inline section marker (left of card) */}
+                    <Tooltip delayDuration={150}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          onClick={() => scrollToSection(item.key)}
+                          aria-label={`Go to ${item.label}`}
+                          aria-current={isActive ? "step" : undefined}
+                          className="hidden lg:flex absolute -left-10 top-6 z-10 items-center justify-center w-7 h-7 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                        >
+                          <span
+                            className={`flex items-center justify-center rounded-full transition-all duration-300 ${
+                              isActive
+                                ? "w-7 h-7 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-[0_0_14px_hsl(var(--primary)/0.55)] ring-4 ring-primary/15"
+                                : isDone
+                                ? "w-3 h-3 bg-primary/70 hover:scale-125"
+                                : "w-2.5 h-2.5 bg-muted-foreground/30 hover:bg-muted-foreground/60 hover:scale-125"
+                            }`}
+                          >
+                            {isActive && (
+                              <span className="text-[10px] font-mono font-semibold">{idx + 1}</span>
+                            )}
+                            {isDone && !isActive && (
+                              <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />
+                            )}
+                          </span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="left" className="text-xs">
+                        <span className="font-mono text-muted-foreground mr-1.5">0{idx + 1}</span>
+                        {item.label}
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Card
+                      ref={cardRef as any}
+                      data-section={item.key}
+                      className={`relative overflow-hidden scroll-mt-32 transition-all duration-500 ${
+                        isActive
+                          ? "border-primary/40 shadow-xl shadow-primary/10 -translate-y-px"
+                          : "hover:border-primary/20"
+                      }`}
+                    >
+
                     {/* Left accent strip */}
                     <span
                       className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-500 ${
@@ -590,10 +588,13 @@ export default function CourseBrandingPage() {
                         )}
                       </div>
                     </Card>
+                  </div>
                 );
 
+
               })}
-            </div>
+            </nav>
+
 
 
             {/* Preview column */}
