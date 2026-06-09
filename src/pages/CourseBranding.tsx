@@ -380,75 +380,105 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          <div className="grid gap-6 xl:grid-cols-[180px_minmax(0,1fr)_minmax(0,1.05fr)] lg:grid-cols-[160px_minmax(0,1fr)] items-start">
-            {/* Vertical Timeline */}
-            <aside className="hidden lg:block sticky top-24 self-start" aria-label="Section progress">
-              <ol className="relative space-y-6 pl-1">
-                <span
-                  className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-border via-border to-transparent"
-                  aria-hidden="true"
-                />
-                {timelineItems.map((item, idx) => {
-                  const Icon = item.icon;
-                  const isActive = activeSection === item.key;
-                  const isPast = timelineItems.findIndex((t) => t.key === activeSection) > idx;
-                  return (
-                    <li key={item.key} className="relative">
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection(item.key)}
-                        aria-current={isActive ? "step" : undefined}
-                        aria-label={`Go to ${item.label}${item.done ? ", configured" : ""}`}
-                        className="group flex items-start gap-3 text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md"
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
+            {/* Sections with inline vertical timeline rail */}
+            <div className="relative lg:pl-16 space-y-5">
+              {/* Continuous rail line */}
+              <span
+                className="hidden lg:block absolute left-[23px] top-6 bottom-6 w-px bg-gradient-to-b from-primary/40 via-border to-border"
+                aria-hidden="true"
+              />
+
+              {timelineItems.map((item, idx) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.key;
+                const isDone = item.done;
+                const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
+
+                return (
+                  <div key={item.key} className="relative">
+                    {/* Timeline node */}
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection(item.key)}
+                      aria-current={isActive ? "step" : undefined}
+                      aria-label={`Step ${idx + 1}: ${item.label}${isDone ? ", configured" : ""}`}
+                      className="hidden lg:flex absolute left-[-49px] top-3 z-10 items-center justify-center w-12 h-12 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
+                    >
+                      <span
+                        className={`relative flex items-center justify-center w-11 h-11 rounded-full border-2 transition-all duration-300 ${
+                          isActive
+                            ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40 scale-110"
+                            : isDone
+                            ? "bg-primary/10 border-primary/60 text-primary"
+                            : "bg-background border-border text-muted-foreground group-hover:border-primary/60 group-hover:text-foreground"
+                        }`}
                       >
-                        <span
-                          className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0 transition-all ${
-                            isActive
-                              ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/30 scale-110"
-                              : isPast || item.done
-                              ? "bg-primary/10 border-primary/60 text-primary"
-                              : "bg-background border-border text-muted-foreground group-hover:border-primary/50 group-hover:text-foreground"
+                        {isDone && !isActive ? (
+                          <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        ) : (
+                          <span className="text-xs font-mono font-semibold">{String(idx + 1).padStart(2, "0")}</span>
+                        )}
+                        {isActive && (
+                          <span
+                            className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </span>
+                    </button>
+
+                    {/* Section Card */}
+                    <Card
+                      ref={cardRef as any}
+                      data-section={item.key}
+                      className={`overflow-hidden scroll-mt-24 transition-all duration-300 ${
+                        isActive ? "border-primary/40 shadow-lg shadow-primary/5" : ""
+                      }`}
+                    >
+                      <div
+                        className={`flex items-center gap-3 px-5 py-3 border-b transition-colors ${
+                          isActive ? "bg-primary/5" : "bg-muted/30"
+                        }`}
+                      >
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                            isActive ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
                           }`}
                         >
-                          {item.done && !isActive ? (
-                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                          ) : (
-                            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                          )}
-                          {isActive && (
-                            <span
-                              className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
-                              aria-hidden="true"
-                            />
-                          )}
-                        </span>
-                        <span className="pt-1 min-w-0">
+                          <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h2 className="text-sm font-semibold leading-tight">{item.label}</h2>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {item.key === "intro"
+                              ? "Logo & position on the course introduction page."
+                              : item.key === "content"
+                              ? "Displayed on all sections & lesson pages."
+                              : "Brand primary & call-to-action button color."}
+                          </p>
+                        </div>
+                        {isDone && (
                           <span
-                            className={`block text-[10px] font-mono font-semibold uppercase tracking-wider ${
-                              isActive ? "text-primary" : "text-muted-foreground"
-                            }`}
+                            className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center"
+                            aria-label="Configured"
                           >
-                            Step {idx + 1}
+                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
                           </span>
-                          <span
-                            className={`block text-sm font-medium leading-tight mt-0.5 transition-colors ${
-                              isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                            }`}
-                          >
-                            {item.label}
-                          </span>
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </aside>
+                        )}
+                      </div>
 
-            {/* All sections — always visible, no clicks */}
-            <div className="space-y-4">
-              {/* Intro */}
-              <Card ref={introRef as any} data-section="intro" className="overflow-hidden scroll-mt-24">
+                      <div className="p-5 space-y-4">
+                        {item.key === "intro" && <IntroFields branding={branding} update={update} warn={introWarn} setWarn={setIntroWarn} />}
+                        {item.key === "content" && <ContentFields branding={branding} update={update} warn={contentWarn} setWarn={setContentWarn} />}
+                        {item.key === "color" && <ColorFields branding={branding} update={update} />}
+                      </div>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
+
 
                 <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
