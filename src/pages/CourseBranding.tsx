@@ -25,11 +25,12 @@ const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/svg+xml", "image/we
 const SUPPORTED_LABEL = "PNG, JPG, SVG, WEBP · max 2MB";
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-const POSITION_OPTIONS: { value: LogoPosition; label: string }[] = [
-  { value: "top-left", label: "Top Left" },
-  { value: "top-center", label: "Top Center" },
-  { value: "top-right", label: "Top Right" },
+const POSITION_OPTIONS: { value: LogoPosition; label: string; icon: typeof AlignLeft }[] = [
+  { value: "top-left", label: "Top Left", icon: AlignLeft },
+  { value: "top-center", label: "Top Center", icon: AlignCenter },
+  { value: "top-right", label: "Top Right", icon: AlignRight },
 ];
+
 
 const POSITION_CLASS: Record<LogoPosition, string> = {
   "top-left": "items-start justify-start",
