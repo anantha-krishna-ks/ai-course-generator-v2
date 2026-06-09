@@ -64,6 +64,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showScopeDialog, setShowScopeDialog] = useState(false);
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
   const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
