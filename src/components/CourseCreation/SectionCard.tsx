@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { CopyToCourseDialog } from "./CopyToCourseDialog";
 
 interface PageEntry {
   id: string;
@@ -77,6 +78,7 @@ interface SortablePageRowProps {
 function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, onOpenPage, aiEnabled, getBlockIdsForPage }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
   const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
@@ -196,6 +198,13 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
               >
                 <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                 Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setShowCopyDialog(true)}
+                className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+              >
+                <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                Copy to…
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -328,6 +337,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           </div>
         </DialogContent>
       </Dialog>
+      <CopyToCourseDialog
+        open={showCopyDialog}
+        onOpenChange={setShowCopyDialog}
+        mode="page"
+        itemTitle={pageDisplayTitle}
+      />
 
     </>
   );
@@ -364,6 +379,7 @@ export function SectionCard({
   const objectiveText = externalObjective ?? "";
   const setObjectiveText = (val: string) => onObjectiveChange?.(val);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [showCopySectionDialog, setShowCopySectionDialog] = useState(false);
   const [inclusionDocs, setInclusionDocs] = useState<string[]>([]);
   const [exclusionDocs, setExclusionDocs] = useState<string[]>([]);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
@@ -559,6 +575,13 @@ export function SectionCard({
                     >
                       <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                       Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setShowCopySectionDialog(true)}
+                      className="cursor-pointer gap-3 px-3 py-2.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                    >
+                      <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                      Copy to course…
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -910,6 +933,12 @@ export function SectionCard({
           </div>
         </DialogContent>
       </Dialog>
+      <CopyToCourseDialog
+        open={showCopySectionDialog}
+        onOpenChange={setShowCopySectionDialog}
+        mode="section"
+        itemTitle={title.trim() || `Section ${sectionNumber}`}
+      />
     </div>
   );
 }

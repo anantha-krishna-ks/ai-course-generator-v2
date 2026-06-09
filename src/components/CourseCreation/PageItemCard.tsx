@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { FileText, MoreHorizontal, Copy, Trash2, GripVertical, ListChecks, ChevronRight, Upload, X } from "lucide-react";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { CopyToCourseDialog } from "./CopyToCourseDialog";
 import { PageEditorDialog } from "./PageEditorDialog";
 import {
   DropdownMenu,
@@ -63,6 +64,7 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
   const [isFocused, setIsFocused] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showScopeDialog, setShowScopeDialog] = useState(false);
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
   const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -170,6 +172,13 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
                 >
                   <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                   Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setShowCopyDialog(true)}
+                  className="cursor-pointer gap-3 px-3 py-2 hover:!bg-muted focus:!bg-muted focus:!text-foreground"
+                >
+                  <Copy className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  Copy to…
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -325,6 +334,12 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         onAddItem={onAddItem}
         onPreview={onPreview}
         readOnly={readOnly}
+      />
+      <CopyToCourseDialog
+        open={showCopyDialog}
+        onOpenChange={setShowCopyDialog}
+        mode="page"
+        itemTitle={displayTitle}
       />
     </>
   );
