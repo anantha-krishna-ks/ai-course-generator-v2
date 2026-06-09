@@ -342,7 +342,14 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
         onOpenChange={setShowCopyDialog}
         mode="page"
         itemTitle={pageDisplayTitle}
+        pagePayload={{
+          id: page.id,
+          title: pageDisplayTitle,
+          inclusions: page.inclusions,
+          exclusions: page.exclusions,
+        }}
       />
+
 
     </>
   );
