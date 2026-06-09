@@ -391,47 +391,10 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          {/* Floating scrollspy dots — minimal & intuitive */}
-          <nav
-            aria-label="Section navigation"
-            className="hidden lg:flex fixed right-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-3 rounded-full border bg-card/80 backdrop-blur-md px-2 py-3 shadow-lg shadow-foreground/5"
-          >
-            {timelineItems.map((item, idx) => {
-              const isActive = activeSection === item.key;
-              const isDone = item.done;
-              return (
-                <Tooltip key={item.key} delayDuration={150}>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={() => scrollToSection(item.key)}
-                      aria-label={`Go to ${item.label}`}
-                      aria-current={isActive ? "step" : undefined}
-                      className="group relative flex items-center justify-center w-6 h-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
-                    >
-                      <span
-                        className={`block rounded-full transition-all duration-300 ${
-                          isActive
-                            ? "w-2.5 h-6 bg-gradient-to-b from-primary to-primary/70 shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
-                            : isDone
-                            ? "w-2 h-2 bg-primary/60 group-hover:scale-125"
-                            : "w-2 h-2 bg-muted-foreground/30 group-hover:bg-muted-foreground/60 group-hover:scale-125"
-                        }`}
-                      />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="text-xs">
-                    <span className="font-mono text-muted-foreground mr-1.5">0{idx + 1}</span>
-                    {item.label}
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
-          </nav>
-
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
             {/* Editor column */}
-            <div className="space-y-5">
+            <nav aria-label="Section navigation" className="space-y-5 lg:pl-10">
+
 
 
               {timelineItems.map((item, idx) => {
