@@ -495,7 +495,8 @@ export default function CourseBrandingPage() {
               </Card>
 
               {/* Content */}
-              <Card className="overflow-hidden">
+              <Card ref={contentRef as any} data-section="content" className="overflow-hidden scroll-mt-24">
+
                 <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                     <ImageIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
