@@ -5,15 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { mockCourseData, buildMockRestoreState } from "@/data/mockCourseData";
+import {
+  addCopiedPage,
+  addCopiedSection,
+  type CopiedPage,
+  type CopiedSection,
+} from "@/services/courseCopyStore";
 
 interface CopyToCourseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   mode: "page" | "section";
   itemTitle: string;
+  /** Page payload (mode = "page"). */
+  pagePayload?: CopiedPage;
+  /** Section payload (mode = "section"). */
+  sectionPayload?: CopiedSection;
 }
 
-export function CopyToCourseDialog({ open, onOpenChange, mode, itemTitle }: CopyToCourseDialogProps) {
+export function CopyToCourseDialog({
+  open,
+  onOpenChange,
+  mode,
+  itemTitle,
+  pagePayload,
+  sectionPayload,
+}: CopyToCourseDialogProps) {
   const { toast } = useToast();
   const [courseId, setCourseId] = useState<string>("");
   const [sectionId, setSectionId] = useState<string>("");
@@ -34,26 +51,36 @@ export function CopyToCourseDialog({ open, onOpenChange, mode, itemTitle }: Copy
     if (!courseId) return [];
     const course = mockCourseData[courseId];
     if (!course) return [];
-    const state = buildMockRestoreState(course.title);
+    // Use merged restore state so users can also copy into sections that
+    // were themselves copied in earlier.
+    const state = buildMockRestoreState(course.title, courseId);
     return state.items
       .filter((i) => i.type === "section")
       .map((s) => ({ id: s.id, title: s.title }));
-  }, [courseId]);
+  }, [courseId, open]);
 
   const canConfirm = mode === "section" ? !!courseId : !!courseId && !!sectionId;
 
   const handleConfirm = () => {
     const course = mockCourseData[courseId];
+    if (!course) return;
+
     if (mode === "page") {
+      const payload: CopiedPage =
+        pagePayload ?? { id: "src", title: itemTitle };
+      addCopiedPage(courseId, sectionId, { ...payload, title: itemTitle });
       const section = sections.find((s) => s.id === sectionId);
       toast({
         title: "Page copied",
-        description: `"${itemTitle}" copied to ${course?.title} › ${section?.title}.`,
+        description: `"${itemTitle}" copied to ${course.title} › ${section?.title}.`,
       });
     } else {
+      const payload: CopiedSection =
+        sectionPayload ?? { id: "src", title: itemTitle };
+      addCopiedSection(courseId, { ...payload, title: itemTitle });
       toast({
         title: "Section copied",
-        description: `"${itemTitle}" copied to ${course?.title}.`,
+        description: `"${itemTitle}" copied to ${course.title}.`,
       });
     }
     onOpenChange(false);
