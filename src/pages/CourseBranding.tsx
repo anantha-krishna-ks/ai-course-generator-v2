@@ -381,120 +381,135 @@ export default function CourseBrandingPage() {
 
         <main className="w-full px-6 lg:px-10 py-6">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
-            {/* Sections with inline vertical timeline rail */}
-            <div className="relative lg:pl-20 space-y-6">
-              {/* Track (full) */}
-              <span
-                className="hidden lg:block absolute left-[47px] top-8 bottom-8 w-[2px] rounded-full bg-border/70"
-                aria-hidden="true"
-              />
-              {/* Progress fill — animates up to the active node */}
-              <span
-                className="hidden lg:block absolute left-[47px] top-8 w-[2px] rounded-full bg-gradient-to-b from-primary via-primary/80 to-primary/30 transition-[height] duration-500 ease-out shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
-                aria-hidden="true"
-                style={{
-                  height: `calc(${(timelineItems.findIndex((t) => t.key === activeSection) / Math.max(timelineItems.length - 1, 1)) * 100}% - 0px)`,
-                }}
-              />
+            {/* Editor column */}
+            <div className="space-y-5">
+              {/* Sleek sticky progress bar — replaces the timeline */}
+              {(() => {
+                const activeIdx = timelineItems.findIndex((t) => t.key === activeSection);
+                const active = timelineItems[activeIdx] ?? timelineItems[0];
+                const ActiveIcon = active.icon;
+                return (
+                  <div className="sticky top-[72px] z-10 -mx-1 px-1 pt-1 pb-3 bg-gradient-to-b from-background via-background/95 to-background/0">
+                    <div className="rounded-2xl border bg-card/80 backdrop-blur-sm shadow-sm px-4 py-3 flex items-center gap-4">
+                      {/* Active section badge */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground flex items-center justify-center shadow-md shadow-primary/30 shrink-0">
+                          <ActiveIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-mono font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            Section {activeIdx + 1} of {timelineItems.length}
+                          </p>
+                          <p className="text-sm font-semibold leading-tight truncate">{active.label}</p>
+                        </div>
+                      </div>
 
+                      {/* Segmented progress */}
+                      <div className="flex-1 flex items-center gap-1.5">
+                        {timelineItems.map((seg, i) => {
+                          const segActive = i === activeIdx;
+                          const segPast = i < activeIdx || seg.done;
+                          return (
+                            <button
+                              key={seg.key}
+                              type="button"
+                              onClick={() => scrollToSection(seg.key)}
+                              aria-label={`Jump to ${seg.label}`}
+                              aria-current={segActive ? "step" : undefined}
+                              className="group flex-1 min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
+                            >
+                              <span
+                                className={`block h-1.5 rounded-full transition-all duration-500 ${
+                                  segActive
+                                    ? "bg-gradient-to-r from-primary to-primary/70 shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
+                                    : segPast
+                                    ? "bg-primary/60"
+                                    : "bg-border group-hover:bg-muted-foreground/40"
+                                }`}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {timelineItems.map((item, idx) => {
                 const Icon = item.icon;
                 const isActive = activeSection === item.key;
                 const isDone = item.done;
-                const activeIdx = timelineItems.findIndex((t) => t.key === activeSection);
-                const isPast = idx < activeIdx;
                 const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
 
                 return (
-                  <div key={item.key} className="relative">
-                    {/* Timeline node */}
-                    <button
-                      type="button"
-                      onClick={() => scrollToSection(item.key)}
-                      aria-current={isActive ? "step" : undefined}
-                      aria-label={`Step ${idx + 1}: ${item.label}${isDone ? ", configured" : ""}`}
-                      className="hidden lg:flex absolute left-[-60px] top-2 z-10 items-center justify-center w-14 h-14 group focus:outline-none rounded-full"
+                  <Card
+                    key={item.key}
+                    ref={cardRef as any}
+                    data-section={item.key}
+                    className={`relative overflow-hidden scroll-mt-32 transition-all duration-500 ${
+                      isActive
+                        ? "border-primary/40 shadow-xl shadow-primary/10 -translate-y-px"
+                        : "hover:border-primary/20"
+                    }`}
+                  >
+                    {/* Left accent strip */}
+                    <span
+                      className={`absolute left-0 top-0 bottom-0 w-1 transition-all duration-500 ${
+                        isActive
+                          ? "bg-gradient-to-b from-primary via-primary to-primary/40"
+                          : isDone
+                          ? "bg-primary/30"
+                          : "bg-transparent"
+                      }`}
+                      aria-hidden="true"
+                    />
+
+                    <div
+                      className={`flex items-center gap-4 px-5 py-4 border-b transition-colors ${
+                        isActive ? "bg-primary/5" : "bg-muted/20"
+                      }`}
                     >
-                      {/* Outer halo (active only) */}
-                      {isActive && (
-                        <span
-                          className="absolute inset-0 rounded-full bg-primary/15 blur-md animate-pulse"
-                          aria-hidden="true"
-                        />
-                      )}
-                      {/* Gradient ring frame */}
+                      {/* Editorial chapter number */}
                       <span
-                        className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-500 ${
-                          isActive
-                            ? "scale-110 bg-gradient-to-br from-primary to-primary/70 shadow-[0_8px_24px_-6px_hsl(var(--primary)/0.6)] ring-4 ring-primary/15"
-                            : isPast || isDone
-                            ? "bg-gradient-to-br from-primary/15 to-primary/5 ring-1 ring-primary/30"
-                            : "bg-background ring-1 ring-border group-hover:ring-primary/40 group-hover:bg-muted/40"
-                        }`}
-                      >
-                        {/* Inner content */}
-                        {isActive ? (
-                          <Icon className="w-5 h-5 text-primary-foreground drop-shadow-sm" aria-hidden="true" focusable="false" />
-                        ) : isDone || isPast ? (
-                          <Check className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
-                        ) : (
-                          <span className="text-[11px] font-mono font-bold tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
-                            {String(idx + 1).padStart(2, "0")}
-                          </span>
-                        )}
-                      </span>
-                      {/* Step label badge */}
-                      <span
-                        className={`absolute -bottom-1 left-1/2 -translate-x-1/2 translate-y-full text-[9px] font-mono font-semibold uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-sm transition-opacity ${
-                          isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-0 group-hover:opacity-80"
+                        className={`font-serif italic text-3xl leading-none tracking-tight transition-colors ${
+                          isActive ? "text-primary" : "text-muted-foreground/40"
                         }`}
                         aria-hidden="true"
                       >
-                        0{idx + 1}
+                        {String(idx + 1).padStart(2, "0")}
                       </span>
-                    </button>
 
-
-                    {/* Section Card */}
-                    <Card
-                      ref={cardRef as any}
-                      data-section={item.key}
-                      className={`overflow-hidden scroll-mt-24 transition-all duration-300 ${
-                        isActive ? "border-primary/40 shadow-lg shadow-primary/5" : ""
-                      }`}
-                    >
-                      <div
-                        className={`flex items-center gap-3 px-5 py-3 border-b transition-colors ${
-                          isActive ? "bg-primary/5" : "bg-muted/30"
+                      <span
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                          isActive
+                            ? "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-md shadow-primary/30"
+                            : "bg-primary/10 text-primary"
                         }`}
                       >
-                        <div
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                            isActive ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-                          }`}
-                        >
-                          <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h2 className="text-sm font-semibold leading-tight">{item.label}</h2>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {item.key === "intro"
-                              ? "Logo & position on the course introduction page."
-                              : item.key === "content"
-                              ? "Displayed on all sections & lesson pages."
-                              : "Brand primary & call-to-action button color."}
-                          </p>
-                        </div>
-                        {isDone && (
-                          <span
-                            className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center"
-                            aria-label="Configured"
-                          >
-                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          </span>
-                        )}
+                        <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      </span>
+
+                      <div className="min-w-0 flex-1">
+                        <h2 className="text-sm font-semibold leading-tight">{item.label}</h2>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {item.key === "intro"
+                            ? "Logo & position on the course introduction page."
+                            : item.key === "content"
+                            ? "Displayed on all sections & lesson pages."
+                            : "Brand primary & call-to-action button color."}
+                        </p>
                       </div>
+                      {isDone && (
+                        <span
+                          className="w-6 h-6 rounded-full bg-primary/15 text-primary flex items-center justify-center ring-1 ring-primary/20"
+                          aria-label="Configured"
+                        >
+                          <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        </span>
+                      )}
+                    </div>
+
 
                       <div className="p-5 space-y-4">
                         {item.key === "intro" && (
@@ -577,8 +592,8 @@ export default function CourseBrandingPage() {
                         )}
                       </div>
                     </Card>
-                  </div>
                 );
+
               })}
             </div>
 
