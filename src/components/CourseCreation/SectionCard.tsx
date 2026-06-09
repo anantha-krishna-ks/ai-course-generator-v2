@@ -78,6 +78,7 @@ interface SortablePageRowProps {
 function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focusedPageId, setFocusedPageId, setPages, onDuplicate, onDelete, onInclusionsChange, onExclusionsChange, onOpenPage, aiEnabled, getBlockIdsForPage }: SortablePageRowProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
   const [pageInclusionDocs, setPageInclusionDocs] = useState<string[]>([]);
   const [pageExclusionDocs, setPageExclusionDocs] = useState<string[]>([]);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: page.id });
