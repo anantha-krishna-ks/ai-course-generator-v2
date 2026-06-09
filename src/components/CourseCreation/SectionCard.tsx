@@ -379,6 +379,7 @@ export function SectionCard({
   const objectiveText = externalObjective ?? "";
   const setObjectiveText = (val: string) => onObjectiveChange?.(val);
   const [showInclusionsDialog, setShowInclusionsDialog] = useState(false);
+  const [showCopySectionDialog, setShowCopySectionDialog] = useState(false);
   const [inclusionDocs, setInclusionDocs] = useState<string[]>([]);
   const [exclusionDocs, setExclusionDocs] = useState<string[]>([]);
   const [isTitleFocused, setIsTitleFocused] = useState(false);
