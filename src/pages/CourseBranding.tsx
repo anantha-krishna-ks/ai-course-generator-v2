@@ -556,7 +556,8 @@ export default function CourseBrandingPage() {
                 );
 
               })}
-            </div>
+            </nav>
+
 
 
             {/* Preview column */}
