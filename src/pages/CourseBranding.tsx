@@ -269,6 +269,7 @@ export default function CourseBrandingPage() {
   const [branding, setBranding] = useState<CourseBranding>(DEFAULT_COURSE_BRANDING);
   const [introWarn, setIntroWarn] = useState(false);
   const [contentWarn, setContentWarn] = useState(false);
+  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color">("intro");
 
   useEffect(() => {
     if (courseId) setBranding(courseBrandingStore.get(courseId));
@@ -281,6 +282,7 @@ export default function CourseBrandingPage() {
     if (!courseId) return;
     courseBrandingStore.set(courseId, branding);
     toast({ title: "Branding saved", description: "Your course branding has been updated." });
+    navigate(`/edit-course/${courseId}`);
   };
 
   const handleReset = () => {
@@ -289,12 +291,38 @@ export default function CourseBrandingPage() {
     setContentWarn(false);
   };
 
+  const sectionMeta = [
+    {
+      key: "intro" as const,
+      title: "Intro Branding",
+      description: "Logo & position for the course introduction page.",
+      icon: LayoutTemplate,
+      done: !!branding.introLogo,
+    },
+    {
+      key: "content" as const,
+      title: "Content Image",
+      description: "Logo shown on every section & lesson page.",
+      icon: ImageIcon,
+      done: !!branding.contentLogo,
+    },
+    {
+      key: "color" as const,
+      title: "Color Theme",
+      description: "Primary brand color & call-to-action button color.",
+      icon: Palette,
+      done:
+        branding.primaryColor !== DEFAULT_COURSE_BRANDING.primaryColor ||
+        branding.ctaColor !== DEFAULT_COURSE_BRANDING.ctaColor,
+    },
+  ];
+
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-muted/30 via-background to-background">
         {/* Header */}
-        <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
-          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="w-full px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -324,155 +352,237 @@ export default function CourseBrandingPage() {
               </Button>
               <Button size="sm" onClick={handleSave} className="gap-2">
                 <Save className="w-4 h-4" aria-hidden="true" focusable="false" />
-                Save changes
+                Save & Close
               </Button>
             </div>
           </div>
         </header>
 
-        <main className="max-w-6xl mx-auto px-6 py-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-          {/* Form column */}
-          <div className="space-y-6">
-            {/* Intro Branding */}
-            <Card className="p-6 space-y-6">
-              <div>
-                <h2 className="text-base font-semibold flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                  Intro Branding
-                </h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Shown on the course introduction page.
-                </p>
-              </div>
-
-              <LogoField
-                id="intro-logo"
-                label="Introduction Image"
-                value={branding.introLogo}
-                onChange={(v) => update("introLogo", v)}
-                warningTooLarge={introWarn}
-                setWarningTooLarge={setIntroWarn}
-              />
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Position</Label>
-                <RadioGroup
-                  value={branding.introPosition}
-                  onValueChange={(v) => update("introPosition", v as LogoPosition)}
-                  className="flex flex-wrap gap-4"
-                >
-                  {POSITION_OPTIONS.map((opt) => (
-                    <label key={opt.value} className="flex items-center gap-2 cursor-pointer text-sm">
-                      <RadioGroupItem value={opt.value} aria-label={opt.label} />
-                      {opt.label}
-                    </label>
-                  ))}
-                </RadioGroup>
-              </div>
-            </Card>
-
-            {/* Content Branding */}
-            <Card className="p-6 space-y-6">
-              <div>
-                <h2 className="text-base font-semibold flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                  Content Image
-                </h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                  The logo will be displayed on all Sections and Pages of the course.
-                </p>
-              </div>
-
-              <LogoField
-                id="content-logo"
-                label="Content Logo"
-                value={branding.contentLogo}
-                onChange={(v) => update("contentLogo", v)}
-                warningTooLarge={contentWarn}
-                setWarningTooLarge={setContentWarn}
-              />
-
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Position</Label>
-                <RadioGroup
-                  value={branding.contentPosition}
-                  onValueChange={(v) => update("contentPosition", v as LogoPosition)}
-                  className="flex flex-wrap gap-4"
-                >
-                  {POSITION_OPTIONS.map((opt) => (
-                    <label key={opt.value} className="flex items-center gap-2 cursor-pointer text-sm">
-                      <RadioGroupItem value={opt.value} aria-label={opt.label} />
-                      {opt.label}
-                    </label>
-                  ))}
-                </RadioGroup>
-              </div>
-
-              <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground flex items-start gap-2">
-                <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-                <span>Transparent logos blend with any background; non-transparent logos render on their own tile to avoid color clashes.</span>
-              </div>
-            </Card>
-
-            {/* Color Theme */}
-            <Card className="p-6 space-y-6">
-              <div>
-                <h2 className="text-base font-semibold flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                  Color Theme
-                </h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Drives the overall branding feel — headers, highlights, and key actions.
-                </p>
-              </div>
-
-              <ColorField
-                label="Brand Color (Primary)"
-                value={branding.primaryColor}
-                onChange={(v) => update("primaryColor", v)}
-                helper="Used for headers and highlights. The Introduction background uses 10% of this color."
-              />
-
-              <ColorField
-                label="Call-to-Action Button Color"
-                value={branding.ctaColor}
-                onChange={(v) => update("ctaColor", v)}
-                helper="Used for Start, Next, and Submit buttons. Text color auto-adjusts for contrast."
-              />
-            </Card>
-          </div>
-
-          {/* Preview column */}
-          <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Visual Preview</h2>
-              <p className="text-xs text-muted-foreground mt-1">Side-by-side preview of your branding choices.</p>
+        <main className="w-full px-6 lg:px-10 py-8 space-y-8">
+          {/* Section selector */}
+          <section aria-label="Branding sections">
+            <div className="mb-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                Customize in 3 steps
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Pick a section below — your changes preview live on the right.
+              </p>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <PreviewCard
-                badge="Introduction"
-                title={courseTitle}
-                logo={branding.introLogo}
-                position={branding.introPosition}
-                primary={branding.primaryColor}
-                cta={branding.ctaColor}
-                heroImage={introHero}
-                ctaLabel="Start Course"
-                subtitle="Welcome — your branded course introduction."
-              />
-              <PreviewCard
-                badge="Section / Page"
-                title="Lesson Title"
-                logo={branding.contentLogo}
-                position={branding.contentPosition}
-                primary={branding.primaryColor}
-                cta={branding.ctaColor}
-                heroImage={sectionHero}
-                ctaLabel="Next"
-                subtitle="Section header on every content page."
-              />
+            <div className="grid gap-4 md:grid-cols-3">
+              {sectionMeta.map((s, idx) => {
+                const Icon = s.icon;
+                const active = activeSection === s.key;
+                return (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => setActiveSection(s.key)}
+                    aria-pressed={active}
+                    aria-label={`${s.title}: ${s.description}`}
+                    className={`group relative text-left rounded-2xl border p-5 transition-all overflow-hidden ${
+                      active
+                        ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 ring-2 ring-primary/40"
+                        : "border-border bg-card hover:border-primary/40 hover:shadow-md"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div
+                        className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                          active
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-foreground group-hover:bg-primary/10"
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" aria-hidden="true" focusable="false" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full ${
+                            active
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          0{idx + 1}
+                        </span>
+                        {s.done && (
+                          <span
+                            className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center"
+                            aria-label="Configured"
+                          >
+                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <h3 className="mt-4 text-base font-semibold">{s.title}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.description}</p>
+                    {active && (
+                      <div
+                        className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-primary via-primary/70 to-primary"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
-          </div>
+          </section>
+
+          {/* Editor + Preview */}
+          <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+            <Card className="p-6 lg:p-8 space-y-6">
+              {activeSection === "intro" && (
+                <>
+                  <header>
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                      <LayoutTemplate className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                      Intro Branding
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Configure the logo and its position on the course introduction page.
+                    </p>
+                  </header>
+                  <LogoField
+                    id="intro-logo"
+                    label="Introduction Image"
+                    value={branding.introLogo}
+                    onChange={(v) => update("introLogo", v)}
+                    warningTooLarge={introWarn}
+                    setWarningTooLarge={setIntroWarn}
+                  />
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Position</Label>
+                    <RadioGroup
+                      value={branding.introPosition}
+                      onValueChange={(v) => update("introPosition", v as LogoPosition)}
+                      className="flex flex-wrap gap-3"
+                    >
+                      {POSITION_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.value}
+                          className="flex items-center gap-2 cursor-pointer text-sm rounded-md border border-border px-3 py-2 hover:bg-muted/50 transition-colors"
+                        >
+                          <RadioGroupItem value={opt.value} aria-label={opt.label} />
+                          {opt.label}
+                        </label>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                </>
+              )}
+
+              {activeSection === "content" && (
+                <>
+                  <header>
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                      <ImageIcon className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                      Content Image
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      The logo will be displayed on all Sections and Pages of the course.
+                    </p>
+                  </header>
+                  <LogoField
+                    id="content-logo"
+                    label="Content Logo"
+                    value={branding.contentLogo}
+                    onChange={(v) => update("contentLogo", v)}
+                    warningTooLarge={contentWarn}
+                    setWarningTooLarge={setContentWarn}
+                  />
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Position</Label>
+                    <RadioGroup
+                      value={branding.contentPosition}
+                      onValueChange={(v) => update("contentPosition", v as LogoPosition)}
+                      className="flex flex-wrap gap-3"
+                    >
+                      {POSITION_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.value}
+                          className="flex items-center gap-2 cursor-pointer text-sm rounded-md border border-border px-3 py-2 hover:bg-muted/50 transition-colors"
+                        >
+                          <RadioGroupItem value={opt.value} aria-label={opt.label} />
+                          {opt.label}
+                        </label>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                  <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground flex items-start gap-2">
+                    <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                    <span>
+                      Transparent logos blend with any background; non-transparent logos render on their own tile to avoid color clashes.
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {activeSection === "color" && (
+                <>
+                  <header>
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                      <Palette className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                      Color Theme
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Drives the overall branding feel — headers, highlights, and key actions.
+                    </p>
+                  </header>
+                  <ColorField
+                    label="Brand Color (Primary)"
+                    value={branding.primaryColor}
+                    onChange={(v) => update("primaryColor", v)}
+                    helper="Used for headers and highlights. The Introduction background uses 10% of this color."
+                  />
+                  <ColorField
+                    label="Call-to-Action Button Color"
+                    value={branding.ctaColor}
+                    onChange={(v) => update("ctaColor", v)}
+                    helper="Used for Start, Next, and Submit buttons. Text color auto-adjusts for contrast."
+                  />
+                </>
+              )}
+            </Card>
+
+            {/* Preview column */}
+            <div className="space-y-4 xl:sticky xl:top-24 xl:self-start">
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Live Preview
+                </h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  See exactly how learners will experience your course.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <PreviewCard
+                  badge="Introduction"
+                  title={courseTitle}
+                  logo={branding.introLogo}
+                  position={branding.introPosition}
+                  primary={branding.primaryColor}
+                  cta={branding.ctaColor}
+                  heroImage={introHero}
+                  ctaLabel="Start Course"
+                  subtitle="Welcome — your branded course introduction."
+                />
+                <PreviewCard
+                  badge="Section / Page"
+                  title="Lesson Title"
+                  logo={branding.contentLogo}
+                  position={branding.contentPosition}
+                  primary={branding.primaryColor}
+                  cta={branding.ctaColor}
+                  heroImage={sectionHero}
+                  ctaLabel="Next"
+                  subtitle="Section header on every content page."
+                />
+              </div>
+            </div>
+          </section>
         </main>
       </div>
     </TooltipProvider>
