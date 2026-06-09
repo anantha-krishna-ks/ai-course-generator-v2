@@ -335,6 +335,12 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         onPreview={onPreview}
         readOnly={readOnly}
       />
+      <CopyToCourseDialog
+        open={showCopyDialog}
+        onOpenChange={setShowCopyDialog}
+        mode="page"
+        itemTitle={displayTitle}
+      />
     </>
   );
 }
