@@ -469,9 +469,84 @@ export default function CourseBrandingPage() {
                       </div>
 
                       <div className="p-5 space-y-4">
-                        {item.key === "intro" && <IntroFields branding={branding} update={update} warn={introWarn} setWarn={setIntroWarn} />}
-                        {item.key === "content" && <ContentFields branding={branding} update={update} warn={contentWarn} setWarn={setContentWarn} />}
-                        {item.key === "color" && <ColorFields branding={branding} update={update} />}
+                        {item.key === "intro" && (
+                          <>
+                            <LogoField
+                              id="intro-logo"
+                              label="Introduction Image"
+                              value={branding.introLogo}
+                              onChange={(v) => update("introLogo", v)}
+                              warningTooLarge={introWarn}
+                              setWarningTooLarge={setIntroWarn}
+                            />
+                            <div className="flex flex-wrap items-center gap-3">
+                              <Label className="text-xs font-medium text-muted-foreground">Position</Label>
+                              <RadioGroup
+                                value={branding.introPosition}
+                                onValueChange={(v) => update("introPosition", v as LogoPosition)}
+                                className="flex flex-wrap gap-2"
+                              >
+                                {POSITION_OPTIONS.map((opt) => (
+                                  <label
+                                    key={opt.value}
+                                    className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                  >
+                                    <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
+                                    {opt.label}
+                                  </label>
+                                ))}
+                              </RadioGroup>
+                            </div>
+                          </>
+                        )}
+
+                        {item.key === "content" && (
+                          <>
+                            <LogoField
+                              id="content-logo"
+                              label="Content Logo"
+                              value={branding.contentLogo}
+                              onChange={(v) => update("contentLogo", v)}
+                              warningTooLarge={contentWarn}
+                              setWarningTooLarge={setContentWarn}
+                            />
+                            <div className="flex flex-wrap items-center gap-3">
+                              <Label className="text-xs font-medium text-muted-foreground">Position</Label>
+                              <RadioGroup
+                                value={branding.contentPosition}
+                                onValueChange={(v) => update("contentPosition", v as LogoPosition)}
+                                className="flex flex-wrap gap-2"
+                              >
+                                {POSITION_OPTIONS.map((opt) => (
+                                  <label
+                                    key={opt.value}
+                                    className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                  >
+                                    <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
+                                    {opt.label}
+                                  </label>
+                                ))}
+                              </RadioGroup>
+                            </div>
+                          </>
+                        )}
+
+                        {item.key === "color" && (
+                          <>
+                            <ColorField
+                              label="Brand Color (Primary)"
+                              value={branding.primaryColor}
+                              onChange={(v) => update("primaryColor", v)}
+                              helper="Headers & highlights. Intro background uses 10% of this color."
+                            />
+                            <ColorField
+                              label="Call-to-Action Button Color"
+                              value={branding.ctaColor}
+                              onChange={(v) => update("ctaColor", v)}
+                              helper="Start, Next, Submit buttons. Text color auto-adjusts for contrast."
+                            />
+                          </>
+                        )}
                       </div>
                     </Card>
                   </div>
@@ -479,126 +554,6 @@ export default function CourseBrandingPage() {
               })}
             </div>
 
-
-                <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <LayoutTemplate className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold leading-tight">Intro Branding</h2>
-                    <p className="text-xs text-muted-foreground truncate">Logo & position on the course introduction page.</p>
-                  </div>
-                  {!!branding.introLogo && (
-                    <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center" aria-label="Configured">
-                      <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    </span>
-                  )}
-                </div>
-                <div className="p-5 space-y-4">
-                  <LogoField
-                    id="intro-logo"
-                    label="Introduction Image"
-                    value={branding.introLogo}
-                    onChange={(v) => update("introLogo", v)}
-                    warningTooLarge={introWarn}
-                    setWarningTooLarge={setIntroWarn}
-                  />
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Label className="text-xs font-medium text-muted-foreground">Position</Label>
-                    <RadioGroup
-                      value={branding.introPosition}
-                      onValueChange={(v) => update("introPosition", v as LogoPosition)}
-                      className="flex flex-wrap gap-2"
-                    >
-                      {POSITION_OPTIONS.map((opt) => (
-                        <label
-                          key={opt.value}
-                          className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
-                        >
-                          <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
-                          {opt.label}
-                        </label>
-                      ))}
-                    </RadioGroup>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Content */}
-              <Card ref={contentRef as any} data-section="content" className="overflow-hidden scroll-mt-24">
-
-                <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <ImageIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold leading-tight">Content Image</h2>
-                    <p className="text-xs text-muted-foreground truncate">Displayed on all sections & lesson pages.</p>
-                  </div>
-                  {!!branding.contentLogo && (
-                    <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center" aria-label="Configured">
-                      <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    </span>
-                  )}
-                </div>
-                <div className="p-5 space-y-4">
-                  <LogoField
-                    id="content-logo"
-                    label="Content Logo"
-                    value={branding.contentLogo}
-                    onChange={(v) => update("contentLogo", v)}
-                    warningTooLarge={contentWarn}
-                    setWarningTooLarge={setContentWarn}
-                  />
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Label className="text-xs font-medium text-muted-foreground">Position</Label>
-                    <RadioGroup
-                      value={branding.contentPosition}
-                      onValueChange={(v) => update("contentPosition", v as LogoPosition)}
-                      className="flex flex-wrap gap-2"
-                    >
-                      {POSITION_OPTIONS.map((opt) => (
-                        <label
-                          key={opt.value}
-                          className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
-                        >
-                          <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
-                          {opt.label}
-                        </label>
-                      ))}
-                    </RadioGroup>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Color Theme */}
-              <Card ref={colorRef as any} data-section="color" className="overflow-hidden scroll-mt-24">
-
-                <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold leading-tight">Color Theme</h2>
-                    <p className="text-xs text-muted-foreground truncate">Brand primary & call-to-action button color.</p>
-                  </div>
-                </div>
-                <div className="p-5 space-y-4">
-                  <ColorField
-                    label="Brand Color (Primary)"
-                    value={branding.primaryColor}
-                    onChange={(v) => update("primaryColor", v)}
-                    helper="Headers & highlights. Intro background uses 10% of this color."
-                  />
-                  <ColorField
-                    label="Call-to-Action Button Color"
-                    value={branding.ctaColor}
-                    onChange={(v) => update("ctaColor", v)}
-                    helper="Start, Next, Submit buttons. Text color auto-adjusts for contrast."
-                  />
-                </div>
-              </Card>
-            </div>
 
             {/* Preview column */}
             <div className="space-y-3 xl:sticky xl:top-24 xl:self-start">
