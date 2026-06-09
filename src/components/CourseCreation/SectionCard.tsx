@@ -337,6 +337,12 @@ function SortablePageRow({ page, idx, totalPages, isLastPage, newPageRef, focuse
           </div>
         </DialogContent>
       </Dialog>
+      <CopyToCourseDialog
+        open={showCopyDialog}
+        onOpenChange={setShowCopyDialog}
+        mode="page"
+        itemTitle={pageDisplayTitle}
+      />
 
     </>
   );
