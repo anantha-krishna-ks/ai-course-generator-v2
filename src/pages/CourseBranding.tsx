@@ -280,26 +280,37 @@ export default function CourseBrandingPage() {
   }, [courseId]);
 
   useEffect(() => {
-    const sections: Array<["intro" | "content" | "color", HTMLDivElement | null]> = [
-      ["intro", introRef.current],
-      ["content", contentRef.current],
-      ["color", colorRef.current],
+    const sections: Array<["intro" | "content" | "color", React.RefObject<HTMLDivElement>]> = [
+      ["intro", introRef],
+      ["content", contentRef],
+      ["color", colorRef],
     ];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) {
-          const key = (visible[0].target as HTMLElement).dataset.section as "intro" | "content" | "color" | undefined;
-          if (key) setActiveSection(key);
-        }
-      },
-      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
-    );
-    sections.forEach(([, el]) => el && observer.observe(el));
-    return () => observer.disconnect();
+
+    const computeActive = () => {
+      const offset = 160; // header + breathing room
+      let current: "intro" | "content" | "color" = "intro";
+      for (const [key, ref] of sections) {
+        const el = ref.current;
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top - offset <= 0) current = key;
+      }
+      // If bottom of page reached, force last
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        current = sections[sections.length - 1][0];
+      }
+      setActiveSection(current);
+    };
+
+    computeActive();
+    window.addEventListener("scroll", computeActive, { passive: true });
+    window.addEventListener("resize", computeActive);
+    return () => {
+      window.removeEventListener("scroll", computeActive);
+      window.removeEventListener("resize", computeActive);
+    };
   }, []);
+
 
   const scrollToSection = (key: "intro" | "content" | "color") => {
     const map = { intro: introRef, content: contentRef, color: colorRef };
@@ -380,61 +391,48 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
+          {/* Floating scrollspy dots — minimal & intuitive */}
+          <nav
+            aria-label="Section navigation"
+            className="hidden lg:flex fixed right-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-3 rounded-full border bg-card/80 backdrop-blur-md px-2 py-3 shadow-lg shadow-foreground/5"
+          >
+            {timelineItems.map((item, idx) => {
+              const isActive = activeSection === item.key;
+              const isDone = item.done;
+              return (
+                <Tooltip key={item.key} delayDuration={150}>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection(item.key)}
+                      aria-label={`Go to ${item.label}`}
+                      aria-current={isActive ? "step" : undefined}
+                      className="group relative flex items-center justify-center w-6 h-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
+                    >
+                      <span
+                        className={`block rounded-full transition-all duration-300 ${
+                          isActive
+                            ? "w-2.5 h-6 bg-gradient-to-b from-primary to-primary/70 shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
+                            : isDone
+                            ? "w-2 h-2 bg-primary/60 group-hover:scale-125"
+                            : "w-2 h-2 bg-muted-foreground/30 group-hover:bg-muted-foreground/60 group-hover:scale-125"
+                        }`}
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="text-xs">
+                    <span className="font-mono text-muted-foreground mr-1.5">0{idx + 1}</span>
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </nav>
+
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
             {/* Editor column */}
             <div className="space-y-5">
-              {/* Sleek sticky progress bar — replaces the timeline */}
-              {(() => {
-                const activeIdx = timelineItems.findIndex((t) => t.key === activeSection);
-                const active = timelineItems[activeIdx] ?? timelineItems[0];
-                const ActiveIcon = active.icon;
-                return (
-                  <div className="sticky top-[72px] z-10 -mx-1 px-1 pt-1 pb-3 bg-gradient-to-b from-background via-background/95 to-background/0">
-                    <div className="rounded-2xl border bg-card/80 backdrop-blur-sm shadow-sm px-4 py-3 flex items-center gap-4">
-                      {/* Active section badge */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground flex items-center justify-center shadow-md shadow-primary/30 shrink-0">
-                          <ActiveIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-[10px] font-mono font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                            Section {activeIdx + 1} of {timelineItems.length}
-                          </p>
-                          <p className="text-sm font-semibold leading-tight truncate">{active.label}</p>
-                        </div>
-                      </div>
 
-                      {/* Segmented progress */}
-                      <div className="flex-1 flex items-center gap-1.5">
-                        {timelineItems.map((seg, i) => {
-                          const segActive = i === activeIdx;
-                          const segPast = i < activeIdx || seg.done;
-                          return (
-                            <button
-                              key={seg.key}
-                              type="button"
-                              onClick={() => scrollToSection(seg.key)}
-                              aria-label={`Jump to ${seg.label}`}
-                              aria-current={segActive ? "step" : undefined}
-                              className="group flex-1 min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
-                            >
-                              <span
-                                className={`block h-1.5 rounded-full transition-all duration-500 ${
-                                  segActive
-                                    ? "bg-gradient-to-r from-primary to-primary/70 shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
-                                    : segPast
-                                    ? "bg-primary/60"
-                                    : "bg-border group-hover:bg-muted-foreground/40"
-                                }`}
-                              />
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
 
               {timelineItems.map((item, idx) => {
                 const Icon = item.icon;
