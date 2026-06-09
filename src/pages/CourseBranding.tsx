@@ -269,11 +269,42 @@ export default function CourseBrandingPage() {
   const [branding, setBranding] = useState<CourseBranding>(DEFAULT_COURSE_BRANDING);
   const [introWarn, setIntroWarn] = useState(false);
   const [contentWarn, setContentWarn] = useState(false);
-  
+  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color">("intro");
+
+  const introRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const colorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (courseId) setBranding(courseBrandingStore.get(courseId));
   }, [courseId]);
+
+  useEffect(() => {
+    const sections: Array<["intro" | "content" | "color", HTMLDivElement | null]> = [
+      ["intro", introRef.current],
+      ["content", contentRef.current],
+      ["color", colorRef.current],
+    ];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          const key = (visible[0].target as HTMLElement).dataset.section as "intro" | "content" | "color" | undefined;
+          if (key) setActiveSection(key);
+        }
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    sections.forEach(([, el]) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (key: "intro" | "content" | "color") => {
+    const map = { intro: introRef, content: contentRef, color: colorRef };
+    map[key].current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const update = <K extends keyof CourseBranding>(key: K, value: CourseBranding[K]) =>
     setBranding((prev) => ({ ...prev, [key]: value }));
@@ -290,6 +321,21 @@ export default function CourseBrandingPage() {
     setIntroWarn(false);
     setContentWarn(false);
   };
+
+  const timelineItems = [
+    { key: "intro" as const, label: "Intro Branding", icon: LayoutTemplate, done: !!branding.introLogo },
+    { key: "content" as const, label: "Content Image", icon: ImageIcon, done: !!branding.contentLogo },
+    {
+      key: "color" as const,
+      label: "Color Theme",
+      icon: Palette,
+      done:
+        branding.primaryColor !== DEFAULT_COURSE_BRANDING.primaryColor ||
+        branding.ctaColor !== DEFAULT_COURSE_BRANDING.ctaColor,
+    },
+  ];
+
+
 
 
   return (
@@ -334,11 +380,76 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
+          <div className="grid gap-6 xl:grid-cols-[180px_minmax(0,1fr)_minmax(0,1.05fr)] lg:grid-cols-[160px_minmax(0,1fr)] items-start">
+            {/* Vertical Timeline */}
+            <aside className="hidden lg:block sticky top-24 self-start" aria-label="Section progress">
+              <ol className="relative space-y-6 pl-1">
+                <span
+                  className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-border via-border to-transparent"
+                  aria-hidden="true"
+                />
+                {timelineItems.map((item, idx) => {
+                  const Icon = item.icon;
+                  const isActive = activeSection === item.key;
+                  const isPast = timelineItems.findIndex((t) => t.key === activeSection) > idx;
+                  return (
+                    <li key={item.key} className="relative">
+                      <button
+                        type="button"
+                        onClick={() => scrollToSection(item.key)}
+                        aria-current={isActive ? "step" : undefined}
+                        aria-label={`Go to ${item.label}${item.done ? ", configured" : ""}`}
+                        className="group flex items-start gap-3 text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md"
+                      >
+                        <span
+                          className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0 transition-all ${
+                            isActive
+                              ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/30 scale-110"
+                              : isPast || item.done
+                              ? "bg-primary/10 border-primary/60 text-primary"
+                              : "bg-background border-border text-muted-foreground group-hover:border-primary/50 group-hover:text-foreground"
+                          }`}
+                        >
+                          {item.done && !isActive ? (
+                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          ) : (
+                            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          )}
+                          {isActive && (
+                            <span
+                              className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </span>
+                        <span className="pt-1 min-w-0">
+                          <span
+                            className={`block text-[10px] font-mono font-semibold uppercase tracking-wider ${
+                              isActive ? "text-primary" : "text-muted-foreground"
+                            }`}
+                          >
+                            Step {idx + 1}
+                          </span>
+                          <span
+                            className={`block text-sm font-medium leading-tight mt-0.5 transition-colors ${
+                              isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                            }`}
+                          >
+                            {item.label}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </aside>
+
             {/* All sections — always visible, no clicks */}
             <div className="space-y-4">
               {/* Intro */}
-              <Card className="overflow-hidden">
+              <Card ref={introRef as any} data-section="intro" className="overflow-hidden scroll-mt-24">
+
                 <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                     <LayoutTemplate className="w-4 h-4" aria-hidden="true" focusable="false" />
@@ -384,7 +495,8 @@ export default function CourseBrandingPage() {
               </Card>
 
               {/* Content */}
-              <Card className="overflow-hidden">
+              <Card ref={contentRef as any} data-section="content" className="overflow-hidden scroll-mt-24">
+
                 <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                     <ImageIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
@@ -430,7 +542,8 @@ export default function CourseBrandingPage() {
               </Card>
 
               {/* Color Theme */}
-              <Card className="overflow-hidden">
+              <Card ref={colorRef as any} data-section="color" className="overflow-hidden scroll-mt-24">
+
                 <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                     <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
