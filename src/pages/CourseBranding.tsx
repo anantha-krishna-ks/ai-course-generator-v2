@@ -393,7 +393,26 @@ export default function CourseBrandingPage() {
         <main className="w-full px-6 lg:px-10 py-6">
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
             {/* Editor column */}
-            <nav aria-label="Section navigation" className="space-y-5 lg:pl-10">
+              <nav aria-label="Section navigation" className="relative space-y-5 lg:pl-10">
+                {/* Connecting rail behind markers (desktop only) */}
+                <span
+                  aria-hidden="true"
+                  className="hidden lg:block pointer-events-none absolute left-[14px] top-9 bottom-9 w-px rounded-full bg-gradient-to-b from-transparent via-border to-transparent"
+                />
+                <span
+                  aria-hidden="true"
+                  className="hidden lg:block pointer-events-none absolute left-[14px] top-9 w-px rounded-full bg-gradient-to-b from-primary via-primary/60 to-transparent transition-all duration-500"
+                  style={{
+                    height:
+                      activeSection === "intro"
+                        ? "20%"
+                        : activeSection === "content"
+                        ? "60%"
+                        : "calc(100% - 72px)",
+                    boxShadow: "0 0 12px hsl(var(--primary) / 0.45)",
+                  }}
+                />
+
 
 
 
