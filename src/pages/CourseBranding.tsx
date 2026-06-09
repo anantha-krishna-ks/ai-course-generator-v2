@@ -291,31 +291,6 @@ export default function CourseBrandingPage() {
     setContentWarn(false);
   };
 
-  const sectionMeta = [
-    {
-      key: "intro" as const,
-      title: "Intro Branding",
-      description: "Logo & position for the course introduction page.",
-      icon: LayoutTemplate,
-      done: !!branding.introLogo,
-    },
-    {
-      key: "content" as const,
-      title: "Content Image",
-      description: "Logo shown on every section & lesson page.",
-      icon: ImageIcon,
-      done: !!branding.contentLogo,
-    },
-    {
-      key: "color" as const,
-      title: "Color Theme",
-      description: "Primary brand color & call-to-action button color.",
-      icon: Palette,
-      done:
-        branding.primaryColor !== DEFAULT_COURSE_BRANDING.primaryColor ||
-        branding.ctaColor !== DEFAULT_COURSE_BRANDING.ctaColor,
-    },
-  ];
 
   return (
     <TooltipProvider>
