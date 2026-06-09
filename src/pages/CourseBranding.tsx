@@ -380,195 +380,180 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          <div className="grid gap-6 xl:grid-cols-[180px_minmax(0,1fr)_minmax(0,1.05fr)] lg:grid-cols-[160px_minmax(0,1fr)] items-start">
-            {/* Vertical Timeline */}
-            <aside className="hidden lg:block sticky top-24 self-start" aria-label="Section progress">
-              <ol className="relative space-y-6 pl-1">
-                <span
-                  className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-border via-border to-transparent"
-                  aria-hidden="true"
-                />
-                {timelineItems.map((item, idx) => {
-                  const Icon = item.icon;
-                  const isActive = activeSection === item.key;
-                  const isPast = timelineItems.findIndex((t) => t.key === activeSection) > idx;
-                  return (
-                    <li key={item.key} className="relative">
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection(item.key)}
-                        aria-current={isActive ? "step" : undefined}
-                        aria-label={`Go to ${item.label}${item.done ? ", configured" : ""}`}
-                        className="group flex items-start gap-3 text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md"
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
+            {/* Sections with inline vertical timeline rail */}
+            <div className="relative lg:pl-16 space-y-5">
+              {/* Continuous rail line */}
+              <span
+                className="hidden lg:block absolute left-[23px] top-6 bottom-6 w-px bg-gradient-to-b from-primary/40 via-border to-border"
+                aria-hidden="true"
+              />
+
+              {timelineItems.map((item, idx) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.key;
+                const isDone = item.done;
+                const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
+
+                return (
+                  <div key={item.key} className="relative">
+                    {/* Timeline node */}
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection(item.key)}
+                      aria-current={isActive ? "step" : undefined}
+                      aria-label={`Step ${idx + 1}: ${item.label}${isDone ? ", configured" : ""}`}
+                      className="hidden lg:flex absolute left-[-49px] top-3 z-10 items-center justify-center w-12 h-12 group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-full"
+                    >
+                      <span
+                        className={`relative flex items-center justify-center w-11 h-11 rounded-full border-2 transition-all duration-300 ${
+                          isActive
+                            ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/40 scale-110"
+                            : isDone
+                            ? "bg-primary/10 border-primary/60 text-primary"
+                            : "bg-background border-border text-muted-foreground group-hover:border-primary/60 group-hover:text-foreground"
+                        }`}
                       >
-                        <span
-                          className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0 transition-all ${
-                            isActive
-                              ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/30 scale-110"
-                              : isPast || item.done
-                              ? "bg-primary/10 border-primary/60 text-primary"
-                              : "bg-background border-border text-muted-foreground group-hover:border-primary/50 group-hover:text-foreground"
+                        {isDone && !isActive ? (
+                          <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        ) : (
+                          <span className="text-xs font-mono font-semibold">{String(idx + 1).padStart(2, "0")}</span>
+                        )}
+                        {isActive && (
+                          <span
+                            className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </span>
+                    </button>
+
+                    {/* Section Card */}
+                    <Card
+                      ref={cardRef as any}
+                      data-section={item.key}
+                      className={`overflow-hidden scroll-mt-24 transition-all duration-300 ${
+                        isActive ? "border-primary/40 shadow-lg shadow-primary/5" : ""
+                      }`}
+                    >
+                      <div
+                        className={`flex items-center gap-3 px-5 py-3 border-b transition-colors ${
+                          isActive ? "bg-primary/5" : "bg-muted/30"
+                        }`}
+                      >
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                            isActive ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
                           }`}
                         >
-                          {item.done && !isActive ? (
-                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                          ) : (
-                            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                          )}
-                          {isActive && (
-                            <span
-                              className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
-                              aria-hidden="true"
+                          <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h2 className="text-sm font-semibold leading-tight">{item.label}</h2>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {item.key === "intro"
+                              ? "Logo & position on the course introduction page."
+                              : item.key === "content"
+                              ? "Displayed on all sections & lesson pages."
+                              : "Brand primary & call-to-action button color."}
+                          </p>
+                        </div>
+                        {isDone && (
+                          <span
+                            className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center"
+                            aria-label="Configured"
+                          >
+                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="p-5 space-y-4">
+                        {item.key === "intro" && (
+                          <>
+                            <LogoField
+                              id="intro-logo"
+                              label="Introduction Image"
+                              value={branding.introLogo}
+                              onChange={(v) => update("introLogo", v)}
+                              warningTooLarge={introWarn}
+                              setWarningTooLarge={setIntroWarn}
                             />
-                          )}
-                        </span>
-                        <span className="pt-1 min-w-0">
-                          <span
-                            className={`block text-[10px] font-mono font-semibold uppercase tracking-wider ${
-                              isActive ? "text-primary" : "text-muted-foreground"
-                            }`}
-                          >
-                            Step {idx + 1}
-                          </span>
-                          <span
-                            className={`block text-sm font-medium leading-tight mt-0.5 transition-colors ${
-                              isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-                            }`}
-                          >
-                            {item.label}
-                          </span>
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </aside>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <Label className="text-xs font-medium text-muted-foreground">Position</Label>
+                              <RadioGroup
+                                value={branding.introPosition}
+                                onValueChange={(v) => update("introPosition", v as LogoPosition)}
+                                className="flex flex-wrap gap-2"
+                              >
+                                {POSITION_OPTIONS.map((opt) => (
+                                  <label
+                                    key={opt.value}
+                                    className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                  >
+                                    <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
+                                    {opt.label}
+                                  </label>
+                                ))}
+                              </RadioGroup>
+                            </div>
+                          </>
+                        )}
 
-            {/* All sections — always visible, no clicks */}
-            <div className="space-y-4">
-              {/* Intro */}
-              <Card ref={introRef as any} data-section="intro" className="overflow-hidden scroll-mt-24">
+                        {item.key === "content" && (
+                          <>
+                            <LogoField
+                              id="content-logo"
+                              label="Content Logo"
+                              value={branding.contentLogo}
+                              onChange={(v) => update("contentLogo", v)}
+                              warningTooLarge={contentWarn}
+                              setWarningTooLarge={setContentWarn}
+                            />
+                            <div className="flex flex-wrap items-center gap-3">
+                              <Label className="text-xs font-medium text-muted-foreground">Position</Label>
+                              <RadioGroup
+                                value={branding.contentPosition}
+                                onValueChange={(v) => update("contentPosition", v as LogoPosition)}
+                                className="flex flex-wrap gap-2"
+                              >
+                                {POSITION_OPTIONS.map((opt) => (
+                                  <label
+                                    key={opt.value}
+                                    className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                  >
+                                    <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
+                                    {opt.label}
+                                  </label>
+                                ))}
+                              </RadioGroup>
+                            </div>
+                          </>
+                        )}
 
-                <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <LayoutTemplate className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        {item.key === "color" && (
+                          <>
+                            <ColorField
+                              label="Brand Color (Primary)"
+                              value={branding.primaryColor}
+                              onChange={(v) => update("primaryColor", v)}
+                              helper="Headers & highlights. Intro background uses 10% of this color."
+                            />
+                            <ColorField
+                              label="Call-to-Action Button Color"
+                              value={branding.ctaColor}
+                              onChange={(v) => update("ctaColor", v)}
+                              helper="Start, Next, Submit buttons. Text color auto-adjusts for contrast."
+                            />
+                          </>
+                        )}
+                      </div>
+                    </Card>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold leading-tight">Intro Branding</h2>
-                    <p className="text-xs text-muted-foreground truncate">Logo & position on the course introduction page.</p>
-                  </div>
-                  {!!branding.introLogo && (
-                    <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center" aria-label="Configured">
-                      <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    </span>
-                  )}
-                </div>
-                <div className="p-5 space-y-4">
-                  <LogoField
-                    id="intro-logo"
-                    label="Introduction Image"
-                    value={branding.introLogo}
-                    onChange={(v) => update("introLogo", v)}
-                    warningTooLarge={introWarn}
-                    setWarningTooLarge={setIntroWarn}
-                  />
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Label className="text-xs font-medium text-muted-foreground">Position</Label>
-                    <RadioGroup
-                      value={branding.introPosition}
-                      onValueChange={(v) => update("introPosition", v as LogoPosition)}
-                      className="flex flex-wrap gap-2"
-                    >
-                      {POSITION_OPTIONS.map((opt) => (
-                        <label
-                          key={opt.value}
-                          className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
-                        >
-                          <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
-                          {opt.label}
-                        </label>
-                      ))}
-                    </RadioGroup>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Content */}
-              <Card ref={contentRef as any} data-section="content" className="overflow-hidden scroll-mt-24">
-
-                <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <ImageIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold leading-tight">Content Image</h2>
-                    <p className="text-xs text-muted-foreground truncate">Displayed on all sections & lesson pages.</p>
-                  </div>
-                  {!!branding.contentLogo && (
-                    <span className="w-5 h-5 rounded-full bg-primary/15 text-primary flex items-center justify-center" aria-label="Configured">
-                      <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    </span>
-                  )}
-                </div>
-                <div className="p-5 space-y-4">
-                  <LogoField
-                    id="content-logo"
-                    label="Content Logo"
-                    value={branding.contentLogo}
-                    onChange={(v) => update("contentLogo", v)}
-                    warningTooLarge={contentWarn}
-                    setWarningTooLarge={setContentWarn}
-                  />
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Label className="text-xs font-medium text-muted-foreground">Position</Label>
-                    <RadioGroup
-                      value={branding.contentPosition}
-                      onValueChange={(v) => update("contentPosition", v as LogoPosition)}
-                      className="flex flex-wrap gap-2"
-                    >
-                      {POSITION_OPTIONS.map((opt) => (
-                        <label
-                          key={opt.value}
-                          className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
-                        >
-                          <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
-                          {opt.label}
-                        </label>
-                      ))}
-                    </RadioGroup>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Color Theme */}
-              <Card ref={colorRef as any} data-section="color" className="overflow-hidden scroll-mt-24">
-
-                <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-semibold leading-tight">Color Theme</h2>
-                    <p className="text-xs text-muted-foreground truncate">Brand primary & call-to-action button color.</p>
-                  </div>
-                </div>
-                <div className="p-5 space-y-4">
-                  <ColorField
-                    label="Brand Color (Primary)"
-                    value={branding.primaryColor}
-                    onChange={(v) => update("primaryColor", v)}
-                    helper="Headers & highlights. Intro background uses 10% of this color."
-                  />
-                  <ColorField
-                    label="Call-to-Action Button Color"
-                    value={branding.ctaColor}
-                    onChange={(v) => update("ctaColor", v)}
-                    helper="Start, Next, Submit buttons. Text color auto-adjusts for contrast."
-                  />
-                </div>
-              </Card>
+                );
+              })}
             </div>
+
 
             {/* Preview column */}
             <div className="space-y-3 xl:sticky xl:top-24 xl:self-start">
