@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Upload, Image as ImageIcon, AlertTriangle, Info, Palette, RotateCcw, Save, LayoutTemplate, Check } from "lucide-react";
+import { ArrowLeft, Upload, Image as ImageIcon, AlertTriangle, Info, Palette, RotateCcw, Save, LayoutTemplate, Check, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -25,11 +25,12 @@ const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/svg+xml", "image/we
 const SUPPORTED_LABEL = "PNG, JPG, SVG, WEBP · max 2MB";
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-const POSITION_OPTIONS: { value: LogoPosition; label: string }[] = [
-  { value: "top-left", label: "Top Left" },
-  { value: "top-center", label: "Top Center" },
-  { value: "top-right", label: "Top Right" },
+const POSITION_OPTIONS: { value: LogoPosition; label: string; icon: typeof AlignLeft }[] = [
+  { value: "top-left", label: "Top Left", icon: AlignLeft },
+  { value: "top-center", label: "Top Center", icon: AlignCenter },
+  { value: "top-right", label: "Top Right", icon: AlignRight },
 ];
+
 
 const POSITION_CLASS: Record<LogoPosition, string> = {
   "top-left": "items-start justify-start",
@@ -544,15 +545,20 @@ export default function CourseBrandingPage() {
                                 onValueChange={(v) => update("introPosition", v as LogoPosition)}
                                 className="flex flex-wrap gap-2"
                               >
-                                {POSITION_OPTIONS.map((opt) => (
-                                  <label
-                                    key={opt.value}
-                                    className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
-                                  >
-                                    <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
-                                    {opt.label}
-                                  </label>
-                                ))}
+                                {POSITION_OPTIONS.map((opt) => {
+                                  const PosIcon = opt.icon;
+                                  return (
+                                    <label
+                                      key={opt.value}
+                                      className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                    >
+                                      <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
+                                      <PosIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                      {opt.label}
+                                    </label>
+                                  );
+                                })}
+
                               </RadioGroup>
                             </div>
                           </>
@@ -575,15 +581,20 @@ export default function CourseBrandingPage() {
                                 onValueChange={(v) => update("contentPosition", v as LogoPosition)}
                                 className="flex flex-wrap gap-2"
                               >
-                                {POSITION_OPTIONS.map((opt) => (
-                                  <label
-                                    key={opt.value}
-                                    className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
-                                  >
-                                    <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
-                                    {opt.label}
-                                  </label>
-                                ))}
+                                {POSITION_OPTIONS.map((opt) => {
+                                  const PosIcon = opt.icon;
+                                  return (
+                                    <label
+                                      key={opt.value}
+                                      className="flex items-center gap-1.5 cursor-pointer text-xs rounded-full border border-border px-3 py-1.5 hover:bg-muted/50 transition-colors has-[:checked]:bg-primary/10 has-[:checked]:border-primary has-[:checked]:text-primary"
+                                    >
+                                      <RadioGroupItem value={opt.value} aria-label={opt.label} className="h-3.5 w-3.5" />
+                                      <PosIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                      {opt.label}
+                                    </label>
+                                  );
+                                })}
+
                               </RadioGroup>
                             </div>
                           </>
