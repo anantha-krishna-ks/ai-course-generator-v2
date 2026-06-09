@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -912,10 +912,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                        </DropdownMenuSubContent>
                      </DropdownMenuPortal>
                    </DropdownMenuSub>
-                   <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
-                     <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
-                     SCORM preferences
-                   </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
+                      <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      SCORM preferences
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate(`/edit-course/${courseId}/branding`)} className="gap-2 cursor-pointer">
+                      <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      Branding
+                    </DropdownMenuItem>
                    {!isSharedCourse && (
                      <DropdownMenuItem
                        onClick={() => setShowDeleteDialog(true)}

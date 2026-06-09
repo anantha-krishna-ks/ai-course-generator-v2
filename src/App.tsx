@@ -12,6 +12,7 @@ import CreateCourseSinglepage from "./pages/CreateCourseSinglepage";
 import MultipageCoursePreview from "./pages/MultipageCoursePreview";
 import SinglepageCoursePreview from "./pages/SinglepageCoursePreview";
 import EditCourse from "./pages/EditCourse";
+import CourseBranding from "./pages/CourseBranding";
 import ReviewCourse from "./pages/ReviewCourse";
 import CoursePreview from "./pages/CoursePreview";
 import Blueprints from "./pages/Blueprints";
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/multipage-preview" element={<ProtectedRoute><MultipageCoursePreview /></ProtectedRoute>} />
           <Route path="/singlepage-preview" element={<ProtectedRoute><SinglepageCoursePreview /></ProtectedRoute>} />
           <Route path="/edit-course/:courseId" element={<ProtectedRoute><EditCourse /></ProtectedRoute>} />
+          <Route path="/edit-course/:courseId/branding" element={<ProtectedRoute><CourseBranding /></ProtectedRoute>} />
           <Route path="/review-course/:courseId" element={<ProtectedRoute><ReviewCourse /></ProtectedRoute>} />
           <Route path="/course-preview/:courseId" element={<ProtectedRoute><CoursePreview /></ProtectedRoute>} />
           <Route path="/blueprints" element={<ProtectedRoute><Blueprints /></ProtectedRoute>} />
