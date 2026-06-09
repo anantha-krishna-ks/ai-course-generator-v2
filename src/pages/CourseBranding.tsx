@@ -280,26 +280,37 @@ export default function CourseBrandingPage() {
   }, [courseId]);
 
   useEffect(() => {
-    const sections: Array<["intro" | "content" | "color", HTMLDivElement | null]> = [
-      ["intro", introRef.current],
-      ["content", contentRef.current],
-      ["color", colorRef.current],
+    const sections: Array<["intro" | "content" | "color", React.RefObject<HTMLDivElement>]> = [
+      ["intro", introRef],
+      ["content", contentRef],
+      ["color", colorRef],
     ];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) {
-          const key = (visible[0].target as HTMLElement).dataset.section as "intro" | "content" | "color" | undefined;
-          if (key) setActiveSection(key);
-        }
-      },
-      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
-    );
-    sections.forEach(([, el]) => el && observer.observe(el));
-    return () => observer.disconnect();
+
+    const computeActive = () => {
+      const offset = 160; // header + breathing room
+      let current: "intro" | "content" | "color" = "intro";
+      for (const [key, ref] of sections) {
+        const el = ref.current;
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top - offset <= 0) current = key;
+      }
+      // If bottom of page reached, force last
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        current = sections[sections.length - 1][0];
+      }
+      setActiveSection(current);
+    };
+
+    computeActive();
+    window.addEventListener("scroll", computeActive, { passive: true });
+    window.addEventListener("resize", computeActive);
+    return () => {
+      window.removeEventListener("scroll", computeActive);
+      window.removeEventListener("resize", computeActive);
+    };
   }, []);
+
 
   const scrollToSection = (key: "intro" | "content" | "color") => {
     const map = { intro: introRef, content: contentRef, color: colorRef };
