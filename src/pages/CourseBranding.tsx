@@ -385,17 +385,18 @@ export default function CourseBrandingPage() {
             <div className="relative lg:pl-20 space-y-6">
               {/* Track (full) */}
               <span
-                className="hidden lg:block absolute left-[27px] top-8 bottom-8 w-[2px] rounded-full bg-border/70"
+                className="hidden lg:block absolute left-[47px] top-8 bottom-8 w-[2px] rounded-full bg-border/70"
                 aria-hidden="true"
               />
               {/* Progress fill — animates up to the active node */}
               <span
-                className="hidden lg:block absolute left-[27px] top-8 w-[2px] rounded-full bg-gradient-to-b from-primary via-primary/80 to-primary/30 transition-[height] duration-500 ease-out shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
+                className="hidden lg:block absolute left-[47px] top-8 w-[2px] rounded-full bg-gradient-to-b from-primary via-primary/80 to-primary/30 transition-[height] duration-500 ease-out shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
                 aria-hidden="true"
                 style={{
                   height: `calc(${(timelineItems.findIndex((t) => t.key === activeSection) / Math.max(timelineItems.length - 1, 1)) * 100}% - 0px)`,
                 }}
               />
+
 
               {timelineItems.map((item, idx) => {
                 const Icon = item.icon;
