@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { CopyToCourseDialog } from "./CopyToCourseDialog";
 
 interface PageEntry {
   id: string;
