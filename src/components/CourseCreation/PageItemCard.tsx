@@ -340,7 +340,19 @@ export function PageItemCard({ id, title, inclusions = "", exclusions = "", onTi
         onOpenChange={setShowCopyDialog}
         mode="page"
         itemTitle={displayTitle}
+        pagePayload={{
+          id: id || "src",
+          title: displayTitle,
+          inclusions,
+          exclusions,
+          blocks: (initialBlocks || []).map((b) => ({
+            id: b.id,
+            type: b.type,
+            content: b.content,
+          })),
+        }}
       />
+
     </>
   );
 }
