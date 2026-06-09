@@ -132,4 +132,75 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
       courseSpanTime: 60,
     },
   };
+
+  if (!courseId) return base;
+
+  const copies = getCourseCopies(courseId);
+  if (
+    Object.keys(copies.pagesBySection).length === 0 &&
+    copies.sections.length === 0
+  ) {
+    return base;
+  }
+
+  // Merge copied pages into existing sections.
+  const mergedItems = base.items.map((item) => {
+    if (item.type !== "section") return item;
+    const extra = copies.pagesBySection[item.id] || [];
+    if (extra.length === 0) return item;
+    return {
+      ...item,
+      children: [
+        ...(item.children || []),
+        ...extra.map((p) => ({ id: p.id, type: "page" as const, title: p.title })),
+      ],
+    };
+  });
+
+  // Append copied sections at the bottom.
+  for (const s of copies.sections) {
+    mergedItems.push({
+      id: s.id,
+      type: "section",
+      title: s.title,
+      children: (s.pages || []).map((p) => ({ id: p.id, type: "page" as const, title: p.title })),
+    });
+  }
+
+  // Merge pageBlocksMap entries for copied pages (with their blocks).
+  const mergedPageBlocks = { ...base.pageBlocksMap };
+  const addPageBlocks = (p: CopiedLike) => {
+    if (p.blocks && p.blocks.length > 0) {
+      mergedPageBlocks[p.id] = p.blocks.map((b) => ({
+        id: `${p.id}-${b.id}`,
+        type: b.type as PageContentBlockType,
+        content: b.content,
+        variant: b.variant,
+        font: b.font,
+      }));
+    }
+  };
+  for (const list of Object.values(copies.pagesBySection)) list.forEach(addPageBlocks);
+  for (const s of copies.sections) (s.pages || []).forEach(addPageBlocks);
+
+  return {
+    ...base,
+    items: mergedItems,
+    pageBlocksMap: mergedPageBlocks,
+  };
 }
+
+type PageContentBlockType =
+  | "text"
+  | "image"
+  | "video"
+  | "audio"
+  | "doc"
+  | "quiz"
+  | "image-description"
+  | "video-description"
+  | "hotspot"
+  | "tabs";
+
+type CopiedLike = { id: string; blocks?: { id: string; type: string; content: string; variant?: string; font?: string }[] };
+
