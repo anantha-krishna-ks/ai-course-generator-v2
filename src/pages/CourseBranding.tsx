@@ -9,6 +9,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import defaultLogo from "@/assets/logo.png";
+import introHero from "@/assets/block-preview-landscape.jpg";
+import sectionHero from "@/assets/block-preview-workspace.jpg";
 import {
   courseBrandingStore,
   CourseBranding,
@@ -195,6 +197,9 @@ function PreviewCard({
   primary,
   cta,
   badge,
+  heroImage,
+  ctaLabel,
+  subtitle,
 }: {
   title: string;
   logo: string | null;
@@ -202,6 +207,9 @@ function PreviewCard({
   primary: string;
   cta: string;
   badge: string;
+  heroImage: string;
+  ctaLabel: string;
+  subtitle: string;
 }) {
   const introTint = hexToRgba(primary, 0.1);
   const ctaText = readableTextColor(cta);
@@ -212,23 +220,35 @@ function PreviewCard({
       <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/40">
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{badge}</span>
       </div>
-      <div className="relative aspect-[4/3] flex flex-col" style={{ background: introTint }}>
-        <div className={`flex p-4 ${POSITION_CLASS[position]}`}>
-          <div className="h-10 max-w-[140px] flex items-center">
-            <img src={displayedLogo} alt="Logo preview" className="max-h-10 max-w-full object-contain" />
+      <div className="relative aspect-[4/3] flex flex-col">
+        {/* Hero image */}
+        <div className="relative h-1/2 w-full overflow-hidden">
+          <img src={heroImage} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover" />
+          <div
+            className="absolute inset-0"
+            style={{ background: `linear-gradient(180deg, ${hexToRgba(primary, 0.15)} 0%, ${hexToRgba(primary, 0.55)} 100%)` }}
+            aria-hidden="true"
+          />
+          <div className={`relative z-10 flex p-3 h-full ${POSITION_CLASS[position]}`}>
+            <div className="h-9 max-w-[120px] flex items-center rounded-md bg-white/85 backdrop-blur px-2 py-1 shadow-sm">
+              <img src={displayedLogo} alt="Logo preview" className="max-h-7 max-w-full object-contain" />
+            </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 -mt-4">
-          <h3 className="text-lg font-semibold" style={{ color: primary }}>{title}</h3>
-          <p className="text-xs text-muted-foreground mt-2 max-w-xs">
-            This is how your branding will appear to learners.
-          </p>
+
+        {/* Content area */}
+        <div
+          className="flex-1 flex flex-col items-center justify-center text-center px-5 py-4"
+          style={{ background: introTint }}
+        >
+          <h3 className="text-base font-semibold leading-tight" style={{ color: primary }}>{title}</h3>
+          <p className="text-[11px] text-muted-foreground mt-1.5 max-w-xs line-clamp-2">{subtitle}</p>
           <button
             type="button"
-            className="mt-4 inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium shadow-sm transition-transform hover:scale-[1.02]"
+            className="mt-3 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs font-medium shadow-sm transition-transform hover:scale-[1.02]"
             style={{ backgroundColor: cta, color: ctaText }}
           >
-            Start Section
+            {ctaLabel}
           </button>
         </div>
       </div>
@@ -436,6 +456,9 @@ export default function CourseBrandingPage() {
                 position={branding.introPosition}
                 primary={branding.primaryColor}
                 cta={branding.ctaColor}
+                heroImage={introHero}
+                ctaLabel="Start Course"
+                subtitle="Welcome — your branded course introduction."
               />
               <PreviewCard
                 badge="Section / Page"
@@ -444,6 +467,9 @@ export default function CourseBrandingPage() {
                 position={branding.contentPosition}
                 primary={branding.primaryColor}
                 cta={branding.ctaColor}
+                heroImage={sectionHero}
+                ctaLabel="Next"
+                subtitle="Section header on every content page."
               />
             </div>
           </div>
