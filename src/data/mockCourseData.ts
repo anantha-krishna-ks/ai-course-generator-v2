@@ -20,8 +20,9 @@ export const mockCourseData: Record<string, { title: string; layoutType: "multi-
   "15": { title: "Financial Forecasting Methods", layoutType: "multi-page" },
 };
 
-export function buildMockRestoreState(title: string): MultiPageCourseCreatorRestoreState {
-  return {
+export function buildMockRestoreState(title: string, courseId?: string): MultiPageCourseCreatorRestoreState {
+  const base: MultiPageCourseCreatorRestoreState = {
+
     title,
     items: [
       {
