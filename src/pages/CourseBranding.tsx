@@ -380,11 +380,76 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
+          <div className="grid gap-6 xl:grid-cols-[180px_minmax(0,1fr)_minmax(0,1.05fr)] lg:grid-cols-[160px_minmax(0,1fr)] items-start">
+            {/* Vertical Timeline */}
+            <aside className="hidden lg:block sticky top-24 self-start" aria-label="Section progress">
+              <ol className="relative space-y-6 pl-1">
+                <span
+                  className="absolute left-[15px] top-2 bottom-2 w-px bg-gradient-to-b from-border via-border to-transparent"
+                  aria-hidden="true"
+                />
+                {timelineItems.map((item, idx) => {
+                  const Icon = item.icon;
+                  const isActive = activeSection === item.key;
+                  const isPast = timelineItems.findIndex((t) => t.key === activeSection) > idx;
+                  return (
+                    <li key={item.key} className="relative">
+                      <button
+                        type="button"
+                        onClick={() => scrollToSection(item.key)}
+                        aria-current={isActive ? "step" : undefined}
+                        aria-label={`Go to ${item.label}${item.done ? ", configured" : ""}`}
+                        className="group flex items-start gap-3 text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded-md"
+                      >
+                        <span
+                          className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full border-2 shrink-0 transition-all ${
+                            isActive
+                              ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/30 scale-110"
+                              : isPast || item.done
+                              ? "bg-primary/10 border-primary/60 text-primary"
+                              : "bg-background border-border text-muted-foreground group-hover:border-primary/50 group-hover:text-foreground"
+                          }`}
+                        >
+                          {item.done && !isActive ? (
+                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          ) : (
+                            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                          )}
+                          {isActive && (
+                            <span
+                              className="absolute inset-0 rounded-full bg-primary/30 animate-ping"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </span>
+                        <span className="pt-1 min-w-0">
+                          <span
+                            className={`block text-[10px] font-mono font-semibold uppercase tracking-wider ${
+                              isActive ? "text-primary" : "text-muted-foreground"
+                            }`}
+                          >
+                            Step {idx + 1}
+                          </span>
+                          <span
+                            className={`block text-sm font-medium leading-tight mt-0.5 transition-colors ${
+                              isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                            }`}
+                          >
+                            {item.label}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </aside>
+
             {/* All sections — always visible, no clicks */}
             <div className="space-y-4">
               {/* Intro */}
-              <Card className="overflow-hidden">
+              <Card ref={introRef as any} data-section="intro" className="overflow-hidden scroll-mt-24">
+
                 <div className="flex items-center gap-3 px-5 py-3 border-b bg-muted/30">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                     <LayoutTemplate className="w-4 h-4" aria-hidden="true" focusable="false" />
