@@ -6,8 +6,10 @@ import {
   HelpCircle,
   GraduationCap,
   ClipboardCheck,
+  Sliders,
 } from "lucide-react";
 import type { DocumentPreferencesValue } from "./StepDocumentPreferences";
+import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 
 interface Props {
   state: Partial<DocumentPreferencesValue>;
@@ -368,6 +370,24 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
             );
           })}
         </div>
+      </PrefCard>
+
+      {/* SCORM Preferences */}
+      <PrefCard>
+        <div className="flex items-start gap-3 mb-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/20 shrink-0">
+            <Sliders className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[16px] font-semibold text-foreground leading-tight">
+              SCORM preferences
+            </div>
+            <p className="text-[13px] text-muted-foreground mt-1">
+              Configure how the generated package behaves inside an LMS. Optional.
+            </p>
+          </div>
+        </div>
+        <ScormPreferencesContent showHeader={false} />
       </PrefCard>
     </div>
   );
