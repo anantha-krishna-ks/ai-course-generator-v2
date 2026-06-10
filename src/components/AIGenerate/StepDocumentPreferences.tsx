@@ -536,7 +536,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
                           })
                         }
                         aria-label={`${q.label} count`}
-                        className="w-full h-9 rounded-lg border border-border bg-background text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
+                        className="w-full h-9 rounded-lg border border-border bg-white text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
                       >
                         {[0, 1, 2, 3, 4, 5].map((n) => (
                           <option key={n} value={n}>
