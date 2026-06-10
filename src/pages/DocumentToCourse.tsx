@@ -28,9 +28,8 @@ import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationL
 
 const STEPS = [
   { id: 1, label: "Course Intent" },
-  { id: 2, label: "Course Details" },
-  { id: 3, label: "Preferences" },
-  { id: 4, label: "Blueprint" },
+  { id: 2, label: "Preferences" },
+  { id: 3, label: "Blueprint" },
 ] as const;
 
 export interface AIGenerateState {
@@ -111,9 +110,9 @@ const initialState: AIGenerateState = {
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
 };
 
-const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
+const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepBlueprintGenerate, StepEditRefine];
 
-export default function AIGenerateCourse() {
+export default function DocumentToCourse() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formState, setFormState] = useState<AIGenerateState>(initialState);
@@ -157,13 +156,6 @@ export default function AIGenerateCourse() {
       case 1:
         if (!formState.title.trim()) fail("title", "Course title is required");
         break;
-      case 2:
-        if (!formState.learningOutcome.trim()) fail("learningOutcome", "Please describe what learners should be able to do");
-        if (!formState.intendedLearners.trim()) fail("intendedLearners", "Please select intended learners");
-        if (!formState.pageSpanTime) fail("pageSpanTime", "Please set a page duration");
-        if (formState.bloomsTaxonomy.length === 0) fail("bloomsTaxonomy", "Select at least one Bloom's Taxonomy level");
-        if (!formState.learningObjectives.some((o) => o.trim())) fail("learningObjectives", "Add at least one learning objective");
-        break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };
   };
@@ -187,7 +179,7 @@ export default function AIGenerateCourse() {
       return;
     }
     setErrors({});
-    if (currentStep < 4) {
+    if (currentStep < STEPS.length) {
       setDirection(1);
       setCurrentStep((s) => {
         const next = s + 1;
@@ -493,7 +485,7 @@ export default function AIGenerateCourse() {
                   {remainingCards === 0 ? "Final step" : `${remainingCards} step${remainingCards > 1 ? "s" : ""} remaining`}
                 </span>
 
-                {currentStep < 4 ? (
+                {currentStep < STEPS.length ? (
                   <motion.div whileTap={{ scale: 0.95 }}>
                     <Button
                       size="sm"
