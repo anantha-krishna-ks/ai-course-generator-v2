@@ -263,97 +263,146 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                   </button>
                 </div>
 
-                {cfg.enabled && (
-                  <div className="mt-4 pt-4 border-t border-primary/15">
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <label
-                        htmlFor={inputId}
-                        className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide"
-                      >
-                        Questions per quiz
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setCount(cfg.questionsPerQuiz - 1)}
-                          disabled={cfg.questionsPerQuiz <= min}
-                          aria-label={`Decrease questions for ${title}`}
-                          className="w-7 h-7 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
-                        >
-                          <Minus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                        </button>
-                        <input
-                          id={inputId}
-                          type="number"
-                          min={min}
-                          max={max}
-                          value={cfg.questionsPerQuiz}
-                          onChange={(e) => setCount(Number(e.target.value) || min)}
-                          aria-label={`${title} questions per quiz`}
-                          className="w-14 h-8 rounded-lg border border-border bg-white text-center text-sm font-semibold text-foreground tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:border-primary/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setCount(cfg.questionsPerQuiz + 1)}
-                          disabled={cfg.questionsPerQuiz >= max}
-                          aria-label={`Increase questions for ${title}`}
-                          className="w-7 h-7 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
-                        >
-                          <Plus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                        </button>
-                      </div>
-                    </div>
-                    <Slider
-                      value={[cfg.questionsPerQuiz]}
-                      min={min}
-                      max={max}
-                      step={1}
-                      onValueChange={(v) => setCount(v[0])}
-                      aria-label={`${title} questions per quiz slider`}
-                      className="py-1"
-                    />
-                    {(() => {
-                      const ticks =
-                        key === "formative"
-                          ? [1, 5, 10, 15, 20]
-                          : [1, 10, 20, 30, 40, 50];
-                      return (
-                        <div className="relative mt-2 px-[10px]" aria-hidden="true">
-                          <div className="relative h-4">
-                            {ticks.map((t) => {
-                              const pct = ((t - min) / (max - min)) * 100;
-                              const active = cfg.questionsPerQuiz >= t;
-                              return (
-                                <div
-                                  key={t}
-                                  className="absolute top-0 -translate-x-1/2 flex flex-col items-center gap-1"
-                                  style={{ left: `${pct}%` }}
-                                >
-                                  <span
-                                    className={cn(
-                                      "w-px h-1.5",
-                                      active ? "bg-primary/70" : "bg-border"
-                                    )}
-                                  />
-                                  <span
-                                    className={cn(
-                                      "text-[10px] font-medium tabular-nums",
-                                      cfg.questionsPerQuiz === t
-                                        ? "text-primary font-semibold"
-                                        : "text-muted-foreground"
-                                    )}
-                                  >
-                                    {t}
-                                  </span>
-                                </div>
-                              );
-                            })}
+                {cfg.enabled && (() => {
+                  const perTypeMax = key === "formative" ? 8 : 15;
+                  const types = cfg.questionTypes ?? { singleChoice: 0, multipleChoice: 0, trueFalse: 0, fillInBlank: 0 };
+                  const total = QUESTION_TYPES.reduce((s, q) => s + (types[q.key] || 0), 0);
+                  const setType = (k: typeof QUESTION_TYPES[number]["key"], n: number) =>
+                    update({
+                      questionTypes: { ...types, [k]: Math.max(0, Math.min(perTypeMax, n)) },
+                      questionsPerQuiz: Math.max(
+                        1,
+                        QUESTION_TYPES.reduce(
+                          (s, q) => s + (q.key === k ? Math.max(0, Math.min(perTypeMax, n)) : types[q.key] || 0),
+                          0
+                        )
+                      ),
+                    } as any);
+                  // Mix bar segments
+                  const palette: Record<string, string> = {
+                    singleChoice: "bg-primary",
+                    multipleChoice: "bg-primary/70",
+                    trueFalse: "bg-primary/50",
+                    fillInBlank: "bg-primary/30",
+                  };
+                  return (
+                    <div className="mt-4 pt-4 border-t border-primary/15">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <div>
+                          <div className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide">
+                            Question mix
                           </div>
+                          <p className="text-[12px] text-muted-foreground mt-0.5">
+                            Tune how many of each type. Total updates live.
+                          </p>
                         </div>
-                      );
-                    })()}
-                  </div>
-                )}
+                        <div
+                          className="flex items-baseline gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 ring-1 ring-primary/20"
+                          aria-live="polite"
+                        >
+                          <span className="text-lg font-bold text-primary tabular-nums leading-none">
+                            {total}
+                          </span>
+                          <span className="text-[11px] font-medium text-primary/80 uppercase tracking-wide">
+                            {total === 1 ? "question" : "questions"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Proportional mix bar */}
+                      {total > 0 && (
+                        <div
+                          className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted/60 mb-4"
+                          role="presentation"
+                          aria-hidden="true"
+                        >
+                          {QUESTION_TYPES.map((q) => {
+                            const n = types[q.key] || 0;
+                            if (n === 0) return null;
+                            const pct = (n / total) * 100;
+                            return (
+                              <div
+                                key={q.key}
+                                className={cn("h-full transition-all duration-300", palette[q.key])}
+                                style={{ width: `${pct}%` }}
+                              />
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {QUESTION_TYPES.map((q) => {
+                          const n = types[q.key] || 0;
+                          const decId = `${key}-${q.key}-dec`;
+                          const incId = `${key}-${q.key}-inc`;
+                          return (
+                            <div
+                              key={q.key}
+                              className={cn(
+                                "group relative flex items-center justify-between gap-2 rounded-xl border bg-background px-3 py-2.5 transition-all",
+                                n > 0
+                                  ? "border-primary/40 shadow-[0_1px_0_hsl(var(--primary)/0.08)]"
+                                  : "border-border hover:border-primary/30"
+                              )}
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span
+                                  className={cn(
+                                    "w-2 h-2 rounded-full shrink-0 transition-colors",
+                                    n > 0 ? palette[q.key] : "bg-muted-foreground/30"
+                                  )}
+                                  aria-hidden="true"
+                                />
+                                <span className="text-[13px] font-medium text-foreground truncate">
+                                  {q.label}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <button
+                                  id={decId}
+                                  type="button"
+                                  onClick={() => setType(q.key, n - 1)}
+                                  disabled={n <= 0}
+                                  aria-label={`Decrease ${q.label} for ${title}`}
+                                  className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                >
+                                  <Minus className="w-3 h-3 text-foreground" aria-hidden="true" focusable="false" />
+                                </button>
+                                <span
+                                  className={cn(
+                                    "text-sm font-bold tabular-nums w-5 text-center transition-colors",
+                                    n > 0 ? "text-primary" : "text-muted-foreground"
+                                  )}
+                                  aria-live="polite"
+                                  aria-label={`${n} ${q.label} questions`}
+                                >
+                                  {n}
+                                </span>
+                                <button
+                                  id={incId}
+                                  type="button"
+                                  onClick={() => setType(q.key, n + 1)}
+                                  disabled={n >= perTypeMax}
+                                  aria-label={`Increase ${q.label} for ${title}`}
+                                  className="w-6 h-6 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 hover:border-primary/50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                >
+                                  <Plus className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {total === 0 && (
+                        <p className="text-[12px] text-muted-foreground mt-3 text-center">
+                          Add at least one question type to include in this quiz.
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
