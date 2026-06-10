@@ -215,7 +215,13 @@ function ImageToggleTile({
   );
 }
 
-export function StepDocumentPreferences({ value, onChange }: Props) {
+export function StepDocumentPreferences({ state, onChange }: Props) {
+  const value: DocumentPreferencesValue = {
+    wordsPerPage: state.wordsPerPage ?? 250,
+    layoutType: state.layoutType,
+    sectionImages: state.sectionImages ?? true,
+    pageImages: state.pageImages ?? true,
+  };
   const dec = () => onChange({ wordsPerPage: Math.max(MIN_WORDS, value.wordsPerPage - WORD_STEP) });
   const inc = () => onChange({ wordsPerPage: Math.min(MAX_WORDS, value.wordsPerPage + WORD_STEP) });
 
