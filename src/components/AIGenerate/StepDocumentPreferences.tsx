@@ -203,7 +203,7 @@ function ImageToggleTile({
             )}
             aria-hidden="true"
           >
-            <ImageIcon className="w-4 h-4" />
+            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
           </span>
           <span className="flex flex-col min-w-0">
             <span className="text-sm font-semibold text-foreground leading-tight">{title}</span>
