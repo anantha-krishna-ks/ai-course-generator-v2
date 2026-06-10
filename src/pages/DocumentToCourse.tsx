@@ -22,13 +22,15 @@ import { AISparkles } from "@/components/ui/ai-sparkles";
 import { SideRibbon } from "@/components/AIGenerate/SideRibbon";
 import { StepDocumentIntent } from "@/components/AIGenerate/StepDocumentIntent";
 import { StepDocumentPreferences } from "@/components/AIGenerate/StepDocumentPreferences";
+import { StepDocumentAssessment } from "@/components/AIGenerate/StepDocumentAssessment";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
 
 const STEPS = [
   { id: 1, label: "Course Intent" },
   { id: 2, label: "Preferences" },
-  { id: 3, label: "Blueprint" },
+  { id: 3, label: "Assessments" },
+  { id: 4, label: "Blueprint" },
 ] as const;
 
 export interface AIGenerateState {
@@ -115,7 +117,7 @@ const initialState: AIGenerateState = {
   pageImages: true,
 };
 
-const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepEditRefine];
+const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepDocumentAssessment, StepEditRefine];
 
 export default function DocumentToCourse() {
   const navigate = useNavigate();
