@@ -309,25 +309,40 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                         </div>
                       </div>
 
-                      {/* Proportional mix bar */}
+                      {/* Premium proportional mix bar */}
                       {total > 0 && (
-                        <div
-                          className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted/60 mb-4"
-                          role="presentation"
-                          aria-hidden="true"
-                        >
-                          {QUESTION_TYPES.map((q) => {
-                            const n = types[q.key] || 0;
-                            if (n === 0) return null;
-                            const pct = (n / total) * 100;
-                            return (
-                              <div
-                                key={q.key}
-                                className={cn("h-full transition-all duration-300", palette[q.key])}
-                                style={{ width: `${pct}%` }}
-                              />
-                            );
-                          })}
+                        <div className="mb-4">
+                          <div
+                            className="relative flex h-3 w-full overflow-hidden rounded-full bg-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]"
+                            role="presentation"
+                            aria-hidden="true"
+                          >
+                            {QUESTION_TYPES.map((q, i) => {
+                              const n = types[q.key] || 0;
+                              if (n === 0) return null;
+                              const pct = (n / total) * 100;
+                              return (
+                                <div
+                                  key={q.key}
+                                  className="relative h-full transition-[width] duration-500 ease-out"
+                                  style={{
+                                    width: `${pct}%`,
+                                    background: `linear-gradient(180deg, hsl(${q.hue} / 0.95) 0%, hsl(${q.hue}) 55%, hsl(${q.hue} / 0.88) 100%)`,
+                                    boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.hue} / 0.4), 0 1px 4px -1px hsl(${q.hue} / 0.45)`,
+                                    marginLeft: i === 0 ? 0 : 1,
+                                  }}
+                                >
+                                  <span
+                                    className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
+                                    style={{
+                                      background:
+                                        "linear-gradient(180deg, hsl(0 0% 100% / 0.35), hsl(0 0% 100% / 0))",
+                                    }}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       )}
 
@@ -336,24 +351,44 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                           const n = types[q.key] || 0;
                           const decId = `${key}-${q.key}-dec`;
                           const incId = `${key}-${q.key}-inc`;
+                          const Icon = q.icon;
+                          const active = n > 0;
                           return (
                             <div
                               key={q.key}
                               className={cn(
                                 "group relative flex items-center justify-between gap-2 rounded-xl border bg-background px-3 py-2.5 transition-all",
-                                n > 0
-                                  ? "border-primary/40 shadow-[0_1px_0_hsl(var(--primary)/0.08)]"
+                                active
+                                  ? "border-transparent shadow-[0_1px_2px_hsl(var(--foreground)/0.04)]"
                                   : "border-border hover:border-primary/30"
                               )}
+                              style={
+                                active
+                                  ? {
+                                      backgroundImage: `linear-gradient(135deg, hsl(${q.hue} / 0.07), hsl(${q.hue} / 0.02))`,
+                                      boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.35), 0 1px 2px hsl(${q.hue} / 0.1)`,
+                                    }
+                                  : undefined
+                              }
                             >
                               <div className="flex items-center gap-2 min-w-0">
                                 <span
                                   className={cn(
-                                    "w-2 h-2 rounded-full shrink-0 transition-colors",
-                                    n > 0 ? palette[q.key] : "bg-muted-foreground/30"
+                                    "w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-all",
                                   )}
+                                  style={
+                                    active
+                                      ? {
+                                          backgroundColor: `hsl(${q.hue} / 0.15)`,
+                                          color: `hsl(${q.hue})`,
+                                          boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.25)`,
+                                        }
+                                      : { backgroundColor: "hsl(var(--muted))", color: "hsl(var(--muted-foreground))" }
+                                  }
                                   aria-hidden="true"
-                                />
+                                >
+                                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                </span>
                                 <span className="text-[13px] font-medium text-foreground truncate">
                                   {q.label}
                                 </span>
@@ -370,10 +405,10 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                                   <Minus className="w-3 h-3 text-foreground" aria-hidden="true" focusable="false" />
                                 </button>
                                 <span
-                                  className={cn(
-                                    "text-sm font-bold tabular-nums w-5 text-center transition-colors",
-                                    n > 0 ? "text-primary" : "text-muted-foreground"
-                                  )}
+                                  className="text-sm font-bold tabular-nums w-5 text-center transition-colors"
+                                  style={{
+                                    color: active ? `hsl(${q.hue})` : "hsl(var(--muted-foreground))",
+                                  }}
                                   aria-live="polite"
                                   aria-label={`${n} ${q.label} questions`}
                                 >
@@ -385,9 +420,14 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                                   onClick={() => setType(q.key, n + 1)}
                                   disabled={n >= perTypeMax}
                                   aria-label={`Increase ${q.label} for ${title}`}
-                                  className="w-6 h-6 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 hover:border-primary/50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-6 h-6 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  style={{
+                                    border: `1px solid hsl(${q.hue} / 0.4)`,
+                                    backgroundColor: `hsl(${q.hue} / 0.08)`,
+                                    color: `hsl(${q.hue})`,
+                                  }}
                                 >
-                                  <Plus className="w-3 h-3 text-primary" aria-hidden="true" focusable="false" />
+                                  <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
                                 </button>
                               </div>
                             </div>
