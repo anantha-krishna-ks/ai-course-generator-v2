@@ -259,14 +259,14 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                               className={cn(
                                 "group relative flex items-center justify-between gap-3 rounded-xl border bg-background px-4 py-3.5 transition-all",
                                 active
-                                  ? "border-transparent shadow-[0_1px_2px_hsl(var(--foreground)/0.04)]"
+                                  ? ""
                                   : "border-border hover:border-primary/30"
                               )}
                               style={
                                 active
                                   ? {
-                                      backgroundImage: `linear-gradient(135deg, hsl(${q.hue} / 0.07), hsl(${q.hue} / 0.02))`,
-                                      boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.35), 0 1px 2px hsl(${q.hue} / 0.1)`,
+                                      backgroundImage: `linear-gradient(135deg, hsl(${q.hue} / 0.06), hsl(${q.hue} / 0.02))`,
+                                      borderColor: `hsl(${q.hue} / 0.5)`,
                                     }
                                   : undefined
                               }
