@@ -43,7 +43,7 @@ function SectionHeader({ title, desc }: { title: string; desc?: string }) {
   );
 }
 
-function MultiPageIllustration({ active }: { active: boolean }) {
+function SingleBlockIllustration({ active }: { active: boolean }) {
   return (
     <svg
       width="120"
@@ -55,20 +55,18 @@ function MultiPageIllustration({ active }: { active: boolean }) {
       focusable="false"
     >
       <rect x="4" y="4" width="92" height="64" rx="4" className={cn(active ? "fill-primary/5" : "fill-muted/50", "stroke-border")} strokeWidth="1" />
-      <rect x="12" y="10" width="20" height="4" rx="1.5" className="fill-muted-foreground/25" />
-      <rect x="12" y="18" width="40" height="4" rx="1.5" className={cn(active ? "fill-primary/40" : "fill-primary/25")} />
-      <rect x="12" y="27" width="76" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="12" y="32" width="60" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="12" y="37" width="70" height="2" rx="1" className="fill-muted-foreground/20" />
-      <line x1="12" y1="46" x2="88" y2="46" className="stroke-border" strokeWidth="0.6" strokeDasharray="2 2" />
-      <rect x="12" y="51" width="50" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="12" y="56" width="65" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="12" y="61" width="40" height="2" rx="1" className="fill-muted-foreground/20" />
+      <rect x="12" y="12" width="76" height="48" rx="3" className={cn(active ? "fill-primary/15 stroke-primary/40" : "fill-primary/5 stroke-primary/25")} strokeWidth="0.8" />
+      <rect x="18" y="20" width="36" height="3" rx="1" className={cn(active ? "fill-primary/55" : "fill-primary/30")} />
+      <rect x="18" y="28" width="64" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="34" width="58" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="40" width="62" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="46" width="50" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="52" width="56" height="2" rx="1" className="fill-muted-foreground/25" />
     </svg>
   );
 }
 
-function SinglePageIllustration({ active }: { active: boolean }) {
+function DualBlockIllustration({ active }: { active: boolean }) {
   return (
     <svg
       width="120"
@@ -80,17 +78,22 @@ function SinglePageIllustration({ active }: { active: boolean }) {
       focusable="false"
     >
       <rect x="4" y="4" width="92" height="64" rx="4" className={cn(active ? "fill-primary/5" : "fill-muted/50", "stroke-border")} strokeWidth="1" />
-      <rect x="12" y="10" width="20" height="4" rx="1.5" className="fill-muted-foreground/25" />
-      <rect x="12" y="18" width="40" height="4" rx="1.5" className={cn(active ? "fill-primary/40" : "fill-primary/25")} />
-      <rect x="12" y="27" width="76" height="36" rx="2" className={cn(active ? "fill-primary/10 stroke-primary/30" : "fill-primary/5 stroke-primary/20")} strokeWidth="0.5" />
-      <rect x="18" y="33" width="64" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="18" y="38" width="50" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="18" y="43" width="58" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="18" y="48" width="44" height="2" rx="1" className="fill-muted-foreground/20" />
-      <rect x="18" y="53" width="52" height="2" rx="1" className="fill-muted-foreground/20" />
+      <rect x="12" y="12" width="36" height="48" rx="3" className={cn(active ? "fill-primary/15 stroke-primary/40" : "fill-primary/5 stroke-primary/25")} strokeWidth="0.8" />
+      <rect x="18" y="20" width="20" height="3" rx="1" className={cn(active ? "fill-primary/55" : "fill-primary/30")} />
+      <rect x="18" y="28" width="24" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="34" width="20" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="40" width="22" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="18" y="46" width="18" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="52" y="12" width="36" height="48" rx="3" className={cn(active ? "fill-primary/10 stroke-primary/30" : "fill-primary/5 stroke-primary/25")} strokeWidth="0.8" />
+      <rect x="58" y="20" width="20" height="3" rx="1" className={cn(active ? "fill-primary/45" : "fill-primary/30")} />
+      <rect x="58" y="28" width="24" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="58" y="34" width="20" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="58" y="40" width="22" height="2" rx="1" className="fill-muted-foreground/25" />
+      <rect x="58" y="46" width="18" height="2" rx="1" className="fill-muted-foreground/25" />
     </svg>
   );
 }
+
 
 function LayoutCard({
   selected,
