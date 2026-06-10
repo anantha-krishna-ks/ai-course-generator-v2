@@ -1,8 +1,12 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
-import { Upload, X, FileText, AlertCircle, Info } from "lucide-react";
+import { Upload, X, FileText, AlertCircle, Info, Check } from "lucide-react";
 import { useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface StepDocumentIntentProps {
   state: AIGenerateState;
