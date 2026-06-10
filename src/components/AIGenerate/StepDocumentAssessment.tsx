@@ -7,6 +7,7 @@ import {
   GraduationCap,
   ClipboardCheck,
   Sliders,
+  ChevronDown,
 } from "lucide-react";
 import type { DocumentPreferencesValue } from "./StepDocumentPreferences";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
