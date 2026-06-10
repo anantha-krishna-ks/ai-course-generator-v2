@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { SideRibbon } from "@/components/AIGenerate/SideRibbon";
 import { StepDocumentIntent } from "@/components/AIGenerate/StepDocumentIntent";
-import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
+import { StepDocumentPreferences } from "@/components/AIGenerate/StepDocumentPreferences";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
 
