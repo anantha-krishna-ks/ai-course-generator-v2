@@ -190,7 +190,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
               min: 1,
               max: 50,
             },
-          ]).map(({ key, title, description, icon: Icon, min, max }) => {
+          ]).map(({ key, title, description, icon: Icon }) => {
             const cfg = value.quizConfig[key];
             const update = (partial: Partial<typeof cfg>) =>
               onChange({
