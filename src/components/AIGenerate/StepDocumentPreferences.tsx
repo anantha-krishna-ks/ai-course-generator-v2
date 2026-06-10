@@ -18,7 +18,7 @@ export interface DocumentPreferencesValue {
 }
 
 interface Props {
-  value: DocumentPreferencesValue;
+  state: Partial<DocumentPreferencesValue> & { layoutType: "multi-page" | "single-page" };
   onChange: (partial: Partial<DocumentPreferencesValue>) => void;
 }
 
