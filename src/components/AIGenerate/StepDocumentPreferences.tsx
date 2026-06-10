@@ -3,7 +3,7 @@ import {
   FileText,
   Minus,
   Plus,
-  Square,
+  Rows,
   Columns2,
   Image as ImageIcon,
   LayoutPanelTop,
