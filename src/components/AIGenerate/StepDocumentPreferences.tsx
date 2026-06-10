@@ -40,10 +40,10 @@ interface Props {
   onChange: (partial: Partial<DocumentPreferencesValue>) => void;
 }
 
-const WORD_PRESETS = [150, 250, 400, 600];
-const MIN_WORDS = 50;
-const MAX_WORDS = 1500;
-const WORD_STEP = 50;
+const WORD_PRESETS = [100, 125, 150, 200];
+const MIN_WORDS = 100;
+const MAX_WORDS = 200;
+const WORD_STEP = 25;
 
 function PrefCard({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
@@ -258,7 +258,7 @@ const QUESTION_TYPES = [
 
 export function StepDocumentPreferences({ state, onChange }: Props) {
   const value: DocumentPreferencesValue = {
-    wordsPerPage: state.wordsPerPage ?? 250,
+    wordsPerPage: state.wordsPerPage ?? 150,
     layoutType: state.layoutType,
     sectionImages: state.sectionImages ?? true,
     pageImages: state.pageImages ?? true,
