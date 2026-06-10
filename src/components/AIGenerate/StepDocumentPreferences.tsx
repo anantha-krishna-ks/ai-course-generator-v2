@@ -10,6 +10,7 @@ import {
   GalleryHorizontalEnd,
   LayoutPanelTop,
   Check,
+  HelpCircle,
 } from "lucide-react";
 
 
@@ -18,6 +19,18 @@ export interface DocumentPreferencesValue {
   layoutType: "multi-page" | "single-page";
   sectionImages: boolean;
   pageImages: boolean;
+  questionsPerPage: number;
+  questionTypes: {
+    singleChoice: number;
+    multipleChoice: number;
+    trueFalse: number;
+    fillInBlank: number;
+  };
+  contentPreferences: {
+    includeQuestions: boolean;
+    interactiveBlocks: boolean;
+    addImages: boolean;
+  };
 }
 
 interface Props {
