@@ -24,6 +24,7 @@ import Customers from "./pages/Customers";
 import CustomerConfiguration from "./pages/CustomerConfiguration";
 import Users from "./pages/Users";
 import AIGenerateCourse from "./pages/AIGenerateCourse";
+import DocumentToCourse from "./pages/DocumentToCourse";
 import AIGeneratedCourse from "./pages/AIGeneratedCourse";
 import ErrorPage from "./pages/ErrorPage";
 import Help from "./pages/Help";
@@ -59,6 +60,7 @@ const App = () => (
           <Route path="/customers/:customerId/configuration" element={<ProtectedRoute><CustomerConfiguration /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
           <Route path="/ai-generate-course" element={<ProtectedRoute><AIGenerateCourse /></ProtectedRoute>} />
+          <Route path="/document-to-course" element={<ProtectedRoute><DocumentToCourse /></ProtectedRoute>} />
           <Route path="/ai-generated-course" element={<ProtectedRoute><AIGeneratedCourse /></ProtectedRoute>} />
           <Route path="/help" element={<Help />} />
           <Route path="/error/:type" element={<ErrorPage />} />
