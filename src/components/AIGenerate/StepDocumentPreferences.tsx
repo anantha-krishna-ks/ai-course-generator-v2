@@ -3,12 +3,13 @@ import {
   FileText,
   Minus,
   Plus,
-  Layers,
-  FileStack,
+  Square,
+  Columns2,
   Image as ImageIcon,
   LayoutPanelTop,
   Check,
 } from "lucide-react";
+
 
 export interface DocumentPreferencesValue {
   wordsPerPage: number;
