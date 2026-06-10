@@ -563,6 +563,168 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
           )}
         </div>
       </PrefCard>
+
+      {/* Quiz Configuration */}
+      <PrefCard>
+        <SectionHeader
+          title="Quiz configuration"
+          desc="Enable formative and summative quizzes, and set how many questions each should include."
+        />
+        <div className="space-y-3">
+          {([
+            {
+              key: "formative" as const,
+              title: "Formative quiz",
+              description: "Low-stakes check-ins woven into the learning flow.",
+              icon: GraduationCap,
+              min: 1,
+              max: 20,
+            },
+            {
+              key: "summative" as const,
+              title: "Summative quiz",
+              description: "End-of-course assessment to evaluate mastery.",
+              icon: ClipboardCheck,
+              min: 1,
+              max: 50,
+            },
+          ]).map(({ key, title, description, icon: Icon, min, max }) => {
+            const cfg = value.quizConfig[key];
+            const update = (partial: Partial<typeof cfg>) =>
+              onChange({
+                quizConfig: {
+                  ...value.quizConfig,
+                  [key]: { ...cfg, ...partial },
+                },
+              });
+            const toggle = () => update({ enabled: !cfg.enabled });
+            const setCount = (n: number) =>
+              update({ questionsPerQuiz: Math.max(min, Math.min(max, n)) });
+            const inputId = `quiz-${key}-count`;
+            return (
+              <div
+                key={key}
+                className={cn(
+                  "rounded-2xl border transition-all duration-200 p-4",
+                  cfg.enabled
+                    ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02]"
+                    : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+                )}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={toggle}
+                    role="switch"
+                    aria-checked={cfg.enabled}
+                    aria-label={`Toggle ${title}`}
+                    className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+                  >
+                    <span
+                      className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                        cfg.enabled
+                          ? "bg-primary/15 text-primary"
+                          : "bg-muted text-muted-foreground"
+                      )}
+                      aria-hidden="true"
+                    >
+                      <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </span>
+                    <span className="flex flex-col min-w-0">
+                      <span className="text-sm font-semibold text-foreground leading-tight">
+                        {title}
+                      </span>
+                      <span className="text-[12px] text-muted-foreground leading-snug mt-0.5">
+                        {description}
+                      </span>
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggle}
+                    role="switch"
+                    aria-checked={cfg.enabled}
+                    aria-label={`Switch ${title}`}
+                    className={cn(
+                      "w-10 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                      cfg.enabled ? "bg-primary" : "bg-muted-foreground/25"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-background shadow-sm transition-transform",
+                        cfg.enabled && "translate-x-4"
+                      )}
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+
+                {cfg.enabled && (
+                  <div className="mt-4 pt-4 border-t border-primary/15">
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <label
+                        htmlFor={inputId}
+                        className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide"
+                      >
+                        Questions per quiz
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setCount(cfg.questionsPerQuiz - 1)}
+                          disabled={cfg.questionsPerQuiz <= min}
+                          aria-label={`Decrease questions for ${title}`}
+                          className="w-7 h-7 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
+                        >
+                          <Minus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                        </button>
+                        <input
+                          id={inputId}
+                          type="number"
+                          min={min}
+                          max={max}
+                          value={cfg.questionsPerQuiz}
+                          onChange={(e) => setCount(Number(e.target.value) || min)}
+                          aria-label={`${title} questions per quiz`}
+                          className="w-14 h-8 rounded-lg border border-border bg-white text-center text-sm font-semibold text-foreground tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:border-primary/50 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setCount(cfg.questionsPerQuiz + 1)}
+                          disabled={cfg.questionsPerQuiz >= max}
+                          aria-label={`Increase questions for ${title}`}
+                          className="w-7 h-7 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
+                        >
+                          <Plus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                        </button>
+                      </div>
+                    </div>
+                    <Slider
+                      value={[cfg.questionsPerQuiz]}
+                      min={min}
+                      max={max}
+                      step={1}
+                      onValueChange={(v) => setCount(v[0])}
+                      aria-label={`${title} questions per quiz slider`}
+                      className="py-1"
+                    />
+                    <div className="flex justify-between mt-1.5">
+                      <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
+                        {min}
+                      </span>
+                      <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
+                        {max}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </PrefCard>
     </div>
   );
 }
