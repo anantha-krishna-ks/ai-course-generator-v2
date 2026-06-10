@@ -45,54 +45,65 @@ function SectionHeader({ title, desc }: { title: string; desc?: string }) {
 
 function SingleBlockIllustration({ active }: { active: boolean }) {
   return (
-    <svg
-      width="120"
-      height="84"
-      viewBox="0 0 100 72"
-      fill="none"
-      className={cn("shrink-0 transition-opacity", active ? "opacity-100" : "opacity-70")}
+    <div
+      className={cn(
+        "shrink-0 w-[136px] rounded-[8px] bg-[hsl(220,14%,96%)] p-[6px] transition-opacity",
+        active ? "opacity-100" : "opacity-75"
+      )}
       aria-hidden="true"
-      focusable="false"
     >
-      <rect x="4" y="4" width="92" height="64" rx="4" className={cn(active ? "fill-primary/5" : "fill-muted/50", "stroke-border")} strokeWidth="1" />
-      <rect x="12" y="12" width="76" height="48" rx="3" className={cn(active ? "fill-primary/15 stroke-primary/40" : "fill-primary/5 stroke-primary/25")} strokeWidth="0.8" />
-      <rect x="18" y="20" width="36" height="3" rx="1" className={cn(active ? "fill-primary/55" : "fill-primary/30")} />
-      <rect x="18" y="28" width="64" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="34" width="58" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="40" width="62" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="46" width="50" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="52" width="56" height="2" rx="1" className="fill-muted-foreground/25" />
-    </svg>
+      <div className="bg-white rounded-[5px] shadow-[0_0.5px_2px_rgba(0,0,0,0.07)] border border-[hsl(220,13%,91%)] p-[5px]">
+        <div className="relative w-full rounded-[4px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[64px] overflow-hidden p-[5px] flex flex-col gap-[3px]">
+          <div className="h-[3px] rounded-full bg-primary/35 w-2/3" />
+          <div className="w-full h-[16px] rounded-[2px] bg-primary/20 flex items-center justify-center">
+            <ImageIcon className="w-[8px] h-[8px] text-primary/60" aria-hidden="true" focusable="false" />
+          </div>
+          <div className="w-full h-[12px] rounded-[2px] bg-[hsl(225,15%,18%)] flex items-center justify-center">
+            <div className="w-[8px] h-[8px] rounded-full bg-white/30 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-white" />
+            </div>
+          </div>
+          <div className="h-[2px] rounded-full bg-primary/25 w-full" />
+          <div className="h-[2px] rounded-full bg-primary/25 w-5/6" />
+        </div>
+      </div>
+    </div>
   );
 }
 
 function DualBlockIllustration({ active }: { active: boolean }) {
   return (
-    <svg
-      width="120"
-      height="84"
-      viewBox="0 0 100 72"
-      fill="none"
-      className={cn("shrink-0 transition-opacity", active ? "opacity-100" : "opacity-70")}
+    <div
+      className={cn(
+        "shrink-0 w-[136px] rounded-[8px] bg-[hsl(220,14%,96%)] p-[6px] transition-opacity",
+        active ? "opacity-100" : "opacity-75"
+      )}
       aria-hidden="true"
-      focusable="false"
     >
-      <rect x="4" y="4" width="92" height="64" rx="4" className={cn(active ? "fill-primary/5" : "fill-muted/50", "stroke-border")} strokeWidth="1" />
-      <rect x="12" y="12" width="36" height="48" rx="3" className={cn(active ? "fill-primary/15 stroke-primary/40" : "fill-primary/5 stroke-primary/25")} strokeWidth="0.8" />
-      <rect x="18" y="20" width="20" height="3" rx="1" className={cn(active ? "fill-primary/55" : "fill-primary/30")} />
-      <rect x="18" y="28" width="24" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="34" width="20" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="40" width="22" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="18" y="46" width="18" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="52" y="12" width="36" height="48" rx="3" className={cn(active ? "fill-primary/10 stroke-primary/30" : "fill-primary/5 stroke-primary/25")} strokeWidth="0.8" />
-      <rect x="58" y="20" width="20" height="3" rx="1" className={cn(active ? "fill-primary/45" : "fill-primary/30")} />
-      <rect x="58" y="28" width="24" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="58" y="34" width="20" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="58" y="40" width="22" height="2" rx="1" className="fill-muted-foreground/25" />
-      <rect x="58" y="46" width="18" height="2" rx="1" className="fill-muted-foreground/25" />
-    </svg>
+      <div className="bg-white rounded-[5px] shadow-[0_0.5px_2px_rgba(0,0,0,0.07)] border border-[hsl(220,13%,91%)] p-[5px] flex gap-[5px]">
+        <div className="relative flex-1 rounded-[4px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[64px] overflow-hidden p-[4px] flex flex-col gap-[3px]">
+          <div className="h-[3px] rounded-full bg-primary/35 w-3/4" />
+          <div className="w-full h-[18px] rounded-[2px] bg-[hsl(225,15%,18%)] flex items-center justify-center">
+            <div className="w-[8px] h-[8px] rounded-full bg-white/30 flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[2px] border-b-[2px] border-l-[3px] border-transparent border-l-white" />
+            </div>
+          </div>
+          <div className="h-[2px] rounded-full bg-primary/25 w-full" />
+          <div className="h-[2px] rounded-full bg-primary/25 w-2/3" />
+        </div>
+        <div className="relative flex-1 rounded-[4px] border border-dashed border-primary/35 bg-gradient-to-br from-primary/[0.06] to-primary/[0.14] h-[64px] overflow-hidden p-[4px] flex flex-col gap-[3px]">
+          <div className="w-full h-[20px] rounded-[2px] bg-primary/20 flex items-center justify-center">
+            <ImageIcon className="w-[8px] h-[8px] text-primary/60" aria-hidden="true" focusable="false" />
+          </div>
+          <div className="h-[3px] rounded-full bg-primary/30 w-full" />
+          <div className="h-[2px] rounded-full bg-primary/25 w-5/6" />
+          <div className="h-[2px] rounded-full bg-primary/25 w-2/3" />
+        </div>
+      </div>
+    </div>
   );
 }
+
 
 
 function LayoutCard({
