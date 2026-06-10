@@ -158,6 +158,162 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
           </div>
         )}
       </div>
+
+      {/* Guidelines Documents Upload Helper */}
+      <GuidelinesUpload
+        documents={state.guidelinesDocuments ?? []}
+        onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
+        guidelines={state.guidelines}
+        onGuidelinesChange={(g) => onChange({ guidelines: g })}
+      />
+
+      {/* Course Font */}
+      <div className="rounded-xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between gap-3 mb-2.5">
+          <div className="text-[16px] font-semibold text-foreground leading-tight">Course Font</div>
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-muted-foreground" role="note">
+            <Info className="w-3 h-3" aria-hidden="true" focusable="false" />
+            Text block–level fonts can be customized independently
+          </span>
+        </div>
+        <div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5"
+          role="radiogroup"
+          aria-label="Course font"
+        >
+          {FONT_OPTIONS.map((opt) => {
+            const selected = (state.font ?? "default") === opt.id;
+            const stack = getFontStack(opt.id);
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                aria-label={`${opt.label} font`}
+                onClick={() => onChange({ font: opt.id })}
+                className={cn(
+                  "relative flex items-center gap-2 h-10 pl-2.5 pr-3 rounded-lg border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                  selected
+                    ? "border-primary bg-primary/[0.06] shadow-[0_0_0_1px_hsl(var(--primary))]"
+                    : "border-border hover:border-primary/40 hover:bg-accent/40"
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-flex items-center justify-center w-7 h-7 rounded-md text-[14px] font-semibold leading-none shrink-0 transition-colors",
+                    selected ? "bg-primary/10 text-primary" : "bg-muted text-foreground"
+                  )}
+                  style={stack ? { fontFamily: stack } : undefined}
+                  aria-hidden="true"
+                >
+                  Aa
+                </span>
+                <span
+                  className={cn(
+                    "text-[12.5px] font-medium leading-none truncate text-left flex-1",
+                    selected ? "text-foreground" : "text-muted-foreground"
+                  )}
+                  style={stack ? { fontFamily: stack } : undefined}
+                >
+                  {opt.label}
+                </span>
+                {selected && (
+                  <Check className="w-3.5 h-3.5 text-primary shrink-0" strokeWidth={3} aria-hidden="true" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GuidelinesUpload({
+  documents,
+  onDocumentsChange,
+  guidelines,
+  onGuidelinesChange,
+}: {
+  documents: string[];
+  onDocumentsChange: (docs: string[]) => void;
+  guidelines: string;
+  onGuidelinesChange: (v: string) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleFiles = (files: FileList | File[]) => {
+    const names = Array.from(files).map((f) => f.name);
+    onDocumentsChange([...documents, ...names]);
+  };
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="text-[16px] font-semibold text-foreground leading-tight mb-2.5">Guidelines</div>
+      <div className="space-y-3">
+        <Textarea
+          value={guidelines}
+          onChange={(e) => onGuidelinesChange(e.target.value)}
+          placeholder="e.g., Use plain language, include real-world examples…"
+          className="min-h-[80px] resize-none rounded-xl text-sm"
+          aria-label="Guidelines"
+        />
+        <div className="space-y-2">
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Upload guidelines documents"
+            onClick={() => inputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                inputRef.current?.click();
+              }
+            }}
+            className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl border-2 border-dashed border-primary/40 bg-primary/[0.04] hover:border-primary hover:bg-primary/10 hover:text-primary text-foreground text-xs font-medium cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Upload className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            <span>
+              Drop files or <span className="text-primary font-semibold underline-offset-2">click to upload</span>
+            </span>
+          </div>
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            className="hidden"
+            accept=".pdf,.doc,.docx,.txt,.md"
+            aria-label="Upload guidelines documents file input"
+            onChange={(e) => {
+              if (e.target.files?.length) {
+                handleFiles(e.target.files);
+                e.target.value = "";
+              }
+            }}
+          />
+          {documents.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {documents.map((doc, i) => (
+                <Badge
+                  key={i}
+                  variant="secondary"
+                  className="gap-1.5 pl-2 pr-1 py-1 rounded-full text-[11px] font-normal bg-muted text-foreground hover:bg-muted"
+                >
+                  <FileText className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <span className="max-w-[180px] truncate">{doc}</span>
+                  <button
+                    type="button"
+                    onClick={() => onDocumentsChange(documents.filter((_, idx) => idx !== i))}
+                    className="rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors"
+                    aria-label={`Remove ${doc}`}
+                  >
+                    <X className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
