@@ -110,6 +110,9 @@ const initialState: AIGenerateState = {
   scormBgOpacity: 40,
   scormPassMessage: "Congratulations! You have successfully completed the course.",
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
+  wordsPerPage: 250,
+  sectionImages: true,
+  pageImages: true,
 };
 
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepEditRefine];
