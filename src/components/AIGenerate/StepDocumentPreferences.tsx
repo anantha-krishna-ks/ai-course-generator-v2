@@ -6,6 +6,8 @@ import {
   RectangleVertical,
   Columns2,
   Image as ImageIcon,
+  Images,
+  GalleryHorizontalEnd,
   LayoutPanelTop,
   Check,
 } from "lucide-react";
@@ -167,12 +169,14 @@ function ImageToggleTile({
   title,
   description,
   ariaLabel,
+  icon: Icon = ImageIcon,
 }: {
   selected: boolean;
   onToggle: () => void;
   title: string;
   description: string;
   ariaLabel: string;
+  icon?: typeof ImageIcon;
 }) {
   return (
     <div
@@ -199,7 +203,7 @@ function ImageToggleTile({
             )}
             aria-hidden="true"
           >
-            <ImageIcon className="w-4 h-4" />
+            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
           </span>
           <span className="flex flex-col min-w-0">
             <span className="text-sm font-semibold text-foreground leading-tight">{title}</span>
@@ -353,6 +357,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
             title="Section images"
             description="Generate a hero image for each section"
             ariaLabel="section images"
+            icon={GalleryHorizontalEnd}
           />
           <ImageToggleTile
             selected={value.pageImages}
@@ -360,6 +365,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
             title="Page images"
             description="Add supporting images inside pages"
             ariaLabel="page images"
+            icon={Images}
           />
         </div>
       </PrefCard>
