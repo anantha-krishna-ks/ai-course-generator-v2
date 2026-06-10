@@ -200,9 +200,6 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                 },
               });
             const toggle = () => update({ enabled: !cfg.enabled });
-            const setCount = (n: number) =>
-              update({ questionsPerQuiz: Math.max(min, Math.min(max, n)) });
-            const inputId = `quiz-${key}-count`;
             return (
               <div
                 key={key}
