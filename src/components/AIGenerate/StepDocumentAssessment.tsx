@@ -282,13 +282,9 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                         )
                       ),
                     } as any);
-                  // Mix bar segments
-                  const palette: Record<string, string> = {
-                    singleChoice: "bg-primary",
-                    multipleChoice: "bg-primary/70",
-                    trueFalse: "bg-primary/50",
-                    fillInBlank: "bg-primary/30",
-                  };
+                  // Per-type color lookup
+                  const hueOf = (k: QTypeKey) =>
+                    QUESTION_TYPES.find((q) => q.key === k)?.hue ?? "211 100% 50%";
                   return (
                     <div className="mt-4 pt-4 border-t border-primary/15">
                       <div className="flex items-center justify-between gap-3 mb-3">
