@@ -30,8 +30,16 @@ export interface DocumentPreferencesValue {
     addImages: boolean;
   };
   quizConfig: {
-    formative: { enabled: boolean; questionsPerQuiz: number };
-    summative: { enabled: boolean; questionsPerQuiz: number };
+    formative: {
+      enabled: boolean;
+      questionsPerQuiz: number;
+      questionTypes: { singleChoice: number; multipleChoice: number; trueFalse: number; fillInBlank: number };
+    };
+    summative: {
+      enabled: boolean;
+      questionsPerQuiz: number;
+      questionTypes: { singleChoice: number; multipleChoice: number; trueFalse: number; fillInBlank: number };
+    };
   };
 }
 
