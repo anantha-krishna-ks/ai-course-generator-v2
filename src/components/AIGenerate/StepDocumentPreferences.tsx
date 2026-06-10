@@ -169,12 +169,14 @@ function ImageToggleTile({
   title,
   description,
   ariaLabel,
+  icon: Icon = ImageIcon,
 }: {
   selected: boolean;
   onToggle: () => void;
   title: string;
   description: string;
   ariaLabel: string;
+  icon?: typeof ImageIcon;
 }) {
   return (
     <div
