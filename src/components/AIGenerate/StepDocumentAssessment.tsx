@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import {
   Minus,
@@ -212,37 +213,69 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                       {/* Premium proportional mix bar */}
                       {total > 0 && (
                         <div className="mb-4">
-                          <div
-                            className="relative flex h-3 w-full overflow-hidden rounded-full bg-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]"
-                            role="presentation"
-                            aria-hidden="true"
-                          >
-                            {QUESTION_TYPES.map((q, i) => {
-                              const n = types[q.key] || 0;
-                              if (n === 0) return null;
-                              const pct = (n / total) * 100;
-                              return (
-                                <div
-                                  key={q.key}
-                                  className="relative h-full transition-[width] duration-500 ease-out"
-                                  style={{
-                                    width: `${pct}%`,
-                                    background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
-                                    boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
-                                    marginLeft: i === 0 ? 0 : 1,
-                                  }}
-                                >
-                                  <span
-                                    className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
-                                    style={{
-                                      background:
-                                        "linear-gradient(180deg, hsl(0 0% 100% / 0.35), hsl(0 0% 100% / 0))",
-                                    }}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </div>
+                          <TooltipProvider delayDuration={100}>
+                            <div
+                              className="relative flex h-3 w-full overflow-hidden rounded-full bg-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]"
+                            >
+                              {QUESTION_TYPES.map((q, i) => {
+                                const n = types[q.key] || 0;
+                                if (n === 0) return null;
+                                const pct = (n / total) * 100;
+                                return (
+                                  <Tooltip key={q.key}>
+                                    <TooltipTrigger asChild>
+                                      <div
+                                        className="relative h-full transition-[width,transform] duration-500 ease-out cursor-pointer hover:brightness-110 hover:scale-y-[1.35] origin-center"
+                                        style={{
+                                          width: `${pct}%`,
+                                          background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
+                                          boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
+                                          marginLeft: i === 0 ? 0 : 1,
+                                        }}
+                                        aria-label={`${q.label}: ${n} ${n === 1 ? "question" : "questions"} (${Math.round(pct)}%)`}
+                                      >
+                                        <span
+                                          className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
+                                          aria-hidden="true"
+                                          style={{
+                                            background:
+                                              "linear-gradient(180deg, hsl(0 0% 100% / 0.35), hsl(0 0% 100% / 0))",
+                                          }}
+                                        />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="top"
+                                      sideOffset={10}
+                                      className="px-3 py-2 rounded-xl border border-border/70 bg-popover shadow-lg"
+                                    >
+                                      <div className="flex items-center gap-2.5">
+                                        <span
+                                          className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                                          style={{
+                                            backgroundColor: `hsl(${q.hue} / 0.15)`,
+                                            color: `hsl(${q.hue})`,
+                                            boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.35)`,
+                                          }}
+                                          aria-hidden="true"
+                                        >
+                                          <q.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                        </span>
+                                        <div className="flex flex-col leading-tight">
+                                          <span className="text-[12px] font-semibold text-foreground">
+                                            {q.label}
+                                          </span>
+                                          <span className="text-[11px] text-muted-foreground tabular-nums">
+                                            {n} {n === 1 ? "question" : "questions"} · {Math.round(pct)}% of mix
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                );
+                              })}
+                            </div>
+                          </TooltipProvider>
                         </div>
                       )}
 
