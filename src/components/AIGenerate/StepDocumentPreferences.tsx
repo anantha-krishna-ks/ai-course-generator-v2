@@ -413,10 +413,10 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
         </div>
       </PrefCard>
 
-      {/* Page-level Preferences: Questions */}
+      {/* Assessment preferences */}
       <PrefCard>
         <SectionHeader
-          title="Page-level preferences"
+          title="Assessment preferences"
           desc="Control whether each page includes questions and how many."
         />
         <div
