@@ -68,6 +68,9 @@ export interface AIGenerateState {
   scormBgOpacity: number;
   scormPassMessage: string;
   scormFailMessage: string;
+  wordsPerPage: number;
+  sectionImages: boolean;
+  pageImages: boolean;
 }
 
 const initialState: AIGenerateState = {
