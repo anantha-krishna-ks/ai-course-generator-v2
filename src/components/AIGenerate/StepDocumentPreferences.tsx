@@ -6,6 +6,8 @@ import {
   RectangleVertical,
   Columns2,
   Image as ImageIcon,
+  Images,
+  GalleryHorizontalEnd,
   LayoutPanelTop,
   Check,
 } from "lucide-react";
