@@ -371,41 +371,41 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                                   : undefined
                               }
                             >
-                              <div className="flex items-center gap-2 min-w-0">
+                              <div className="flex items-center gap-2.5 min-w-0">
                                 <span
                                   className={cn(
-                                    "w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-all",
+                                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all",
                                   )}
                                   style={
                                     active
                                       ? {
                                           backgroundColor: `hsl(${q.hue} / 0.15)`,
                                           color: `hsl(${q.hue})`,
-                                          boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.25)`,
+                                          boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.3)`,
                                         }
                                       : { backgroundColor: "hsl(var(--muted))", color: "hsl(var(--muted-foreground))" }
                                   }
                                   aria-hidden="true"
                                 >
-                                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                  <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
                                 </span>
-                                <span className="text-[13px] font-medium text-foreground truncate">
+                                <span className="text-sm font-medium text-foreground truncate">
                                   {q.label}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-1.5 shrink-0">
+                              <div className="flex items-center gap-2 shrink-0">
                                 <button
                                   id={decId}
                                   type="button"
                                   onClick={() => setType(q.key, n - 1)}
                                   disabled={n <= 0}
                                   aria-label={`Decrease ${q.label} for ${title}`}
-                                  className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-7 h-7 rounded-full border border-border bg-background flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
-                                  <Minus className="w-3 h-3 text-foreground" aria-hidden="true" focusable="false" />
+                                  <Minus className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
                                 </button>
                                 <span
-                                  className="text-sm font-bold tabular-nums w-5 text-center transition-colors"
+                                  className="text-base font-bold tabular-nums w-6 text-center transition-colors"
                                   style={{
                                     color: active ? `hsl(${q.hue})` : "hsl(var(--muted-foreground))",
                                   }}
@@ -420,14 +420,14 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                                   onClick={() => setType(q.key, n + 1)}
                                   disabled={n >= perTypeMax}
                                   aria-label={`Increase ${q.label} for ${title}`}
-                                  className="w-6 h-6 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="w-7 h-7 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                   style={{
-                                    border: `1px solid hsl(${q.hue} / 0.4)`,
-                                    backgroundColor: `hsl(${q.hue} / 0.08)`,
+                                    border: `1px solid hsl(${q.hue} / 0.45)`,
+                                    backgroundColor: `hsl(${q.hue} / 0.1)`,
                                     color: `hsl(${q.hue})`,
                                   }}
                                 >
-                                  <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                                  <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                                 </button>
                               </div>
                             </div>
