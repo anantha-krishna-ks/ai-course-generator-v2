@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import {
   Minus,
   Plus,
-  HelpCircle,
+  
   GraduationCap,
   ClipboardCheck,
   Sliders,
