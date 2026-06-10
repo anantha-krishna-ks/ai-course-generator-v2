@@ -24,11 +24,11 @@ interface Props {
 
 type QTypeKey = "singleChoice" | "multipleChoice" | "trueFalse" | "fillInBlank";
 
-const QUESTION_TYPES: { key: QTypeKey; label: string; icon: LucideIcon; hue: string }[] = [
-  { key: "singleChoice", label: "Single Choice", icon: CircleDot, hue: "212 90% 40%" },
-  { key: "multipleChoice", label: "Multiple Choice", icon: ListChecks, hue: "262 60% 45%" },
-  { key: "trueFalse", label: "True / False", icon: ToggleRight, hue: "160 84% 28%" },
-  { key: "fillInBlank", label: "Fill in Blank", icon: PenLine, hue: "25 90% 38%" },
+const QUESTION_TYPES: { key: QTypeKey; label: string; icon: LucideIcon; hue: string; barHue: string }[] = [
+  { key: "singleChoice", label: "Single Choice", icon: CircleDot, hue: "212 90% 40%", barHue: "211 100% 50%" },
+  { key: "multipleChoice", label: "Multiple Choice", icon: ListChecks, hue: "262 60% 45%", barHue: "262 83% 58%" },
+  { key: "trueFalse", label: "True / False", icon: ToggleRight, hue: "160 84% 28%", barHue: "160 84% 39%" },
+  { key: "fillInBlank", label: "Fill in Blank", icon: PenLine, hue: "25 90% 38%", barHue: "32 95% 53%" },
 ];
 
 function PrefCard({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -327,8 +327,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                                   className="relative h-full transition-[width] duration-500 ease-out"
                                   style={{
                                     width: `${pct}%`,
-                                    background: `linear-gradient(180deg, hsl(${q.hue} / 0.95) 0%, hsl(${q.hue}) 55%, hsl(${q.hue} / 0.88) 100%)`,
-                                    boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.hue} / 0.4), 0 1px 4px -1px hsl(${q.hue} / 0.45)`,
+                                    background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
+                                    boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
                                     marginLeft: i === 0 ? 0 : 1,
                                   }}
                                 >
