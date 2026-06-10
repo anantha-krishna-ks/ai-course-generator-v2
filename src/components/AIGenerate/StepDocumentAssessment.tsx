@@ -379,10 +379,10 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
           type="button"
           onClick={() =>
             onChange({
-              scormPreferencesEnabled: !(state.scormPreferencesEnabled ?? false),
+              scormPreferencesEnabled: !((state as any).scormPreferencesEnabled ?? false),
             } as Partial<DocumentPreferencesValue>)
           }
-          aria-expanded={state.scormPreferencesEnabled ?? false}
+          aria-expanded={(state as any).scormPreferencesEnabled ?? false}
           aria-controls="scorm-prefs-panel"
           className="w-full flex items-center gap-3 p-5 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
         >
