@@ -357,7 +357,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                             <div
                               key={q.key}
                               className={cn(
-                                "group relative flex items-center justify-between gap-2 rounded-xl border bg-background px-3 py-2.5 transition-all",
+                                "group relative flex items-center justify-between gap-3 rounded-xl border bg-background px-4 py-3.5 transition-all",
                                 active
                                   ? "border-transparent shadow-[0_1px_2px_hsl(var(--foreground)/0.04)]"
                                   : "border-border hover:border-primary/30"
