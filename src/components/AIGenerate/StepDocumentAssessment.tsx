@@ -372,22 +372,51 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
         </div>
       </PrefCard>
 
-      {/* SCORM Preferences */}
-      <PrefCard>
-        <div className="flex items-start gap-3 mb-4">
+      {/* SCORM Preferences (optional) */}
+      <PrefCard className="p-0 overflow-hidden">
+        <button
+          type="button"
+          onClick={() =>
+            onChange({
+              scormPreferencesEnabled: !(state.scormPreferencesEnabled ?? false),
+            } as Partial<DocumentPreferencesValue>)
+          }
+          aria-expanded={state.scormPreferencesEnabled ?? false}
+          aria-controls="scorm-prefs-panel"
+          className="w-full flex items-center gap-3 p-5 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
+        >
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/20 shrink-0">
             <Sliders className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[16px] font-semibold text-foreground leading-tight">
-              SCORM preferences
+            <div className="flex items-center gap-2">
+              <div className="text-[16px] font-semibold text-foreground leading-tight">
+                SCORM preferences
+              </div>
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                Optional
+              </span>
             </div>
             <p className="text-[13px] text-muted-foreground mt-1">
-              Configure how the generated package behaves inside an LMS. Optional.
+              Configure how the generated package behaves inside an LMS.
             </p>
           </div>
-        </div>
-        <ScormPreferencesContent showHeader={false} />
+          <ChevronDown
+            className={cn(
+              "w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200",
+              ((state as any).scormPreferencesEnabled ?? false) && "rotate-180"
+            )}
+            aria-hidden="true"
+            focusable="false"
+          />
+        </button>
+        {((state as any).scormPreferencesEnabled ?? false) && (
+          <div id="scorm-prefs-panel" className="px-5 pb-5 border-t border-border">
+            <div className="pt-5">
+              <ScormPreferencesContent showHeader={false} />
+            </div>
+          </div>
+        )}
       </PrefCard>
     </div>
   );
