@@ -112,7 +112,7 @@ const initialState: AIGenerateState = {
   scormBgOpacity: 40,
   scormPassMessage: "Congratulations! You have successfully completed the course.",
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
-  wordsPerPage: 250,
+  wordsPerPage: 150,
   sectionImages: true,
   pageImages: true,
 };
