@@ -3,7 +3,7 @@ import {
   FileText,
   Minus,
   Plus,
-  Square,
+  Rows,
   Columns2,
   Image as ImageIcon,
   LayoutPanelTop,
@@ -116,7 +116,7 @@ function LayoutCard({
 }: {
   selected: boolean;
   onClick: () => void;
-  icon: typeof Square;
+  icon: typeof Rows;
   title: string;
   description: string;
   illustration: React.ReactNode;
@@ -322,7 +322,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
           <LayoutCard
             selected={value.layoutType === "single-page"}
             onClick={() => onChange({ layoutType: "single-page" })}
-            icon={Square}
+            icon={Rows}
             title="Single block"
             description="Content flows in a single, focused column block per page."
             illustration={<SingleBlockIllustration active={value.layoutType === "single-page"} />}
