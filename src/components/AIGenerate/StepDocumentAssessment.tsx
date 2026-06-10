@@ -40,6 +40,7 @@ function SectionHeader({ title, desc }: { title: string; desc?: string }) {
 }
 
 export function StepDocumentAssessment({ state, onChange }: Props) {
+  const defaultMix = { singleChoice: 2, multipleChoice: 1, trueFalse: 1, fillInBlank: 1 };
   const value = {
     questionsPerPage: state.questionsPerPage ?? 3,
     questionTypes: state.questionTypes ?? {
@@ -54,8 +55,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
       addImages: true,
     },
     quizConfig: state.quizConfig ?? {
-      formative: { enabled: true, questionsPerQuiz: 5 },
-      summative: { enabled: false, questionsPerQuiz: 10 },
+      formative: { enabled: true, questionsPerQuiz: 5, questionTypes: { ...defaultMix } },
+      summative: { enabled: false, questionsPerQuiz: 10, questionTypes: { ...defaultMix, singleChoice: 4, multipleChoice: 3, trueFalse: 2, fillInBlank: 1 } },
     },
   };
 
