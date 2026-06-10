@@ -16,6 +16,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { addLoadingCourse } from "@/lib/loadingCourses";
+import { setCourseStatus } from "@/services/courseStatusStore";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
@@ -239,7 +240,11 @@ export default function DocumentToCourse() {
   };
 
   const handleGenerationComplete = useCallback(() => {
-    navigate("/ai-generated-course", { state: { title: formState.title || "AI Generated Course" } });
+    const newCourseId = `gen-${Date.now()}`;
+    setCourseStatus(newCourseId, "draft");
+    navigate(`/edit-course/${newCourseId}`, {
+      state: { title: formState.title || "AI Generated Course", justGenerated: true },
+    });
   }, [navigate, formState.title]);
 
   const remainingCards = STEPS.length - currentStep;
