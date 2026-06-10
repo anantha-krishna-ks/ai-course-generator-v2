@@ -327,8 +327,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                                   className="relative h-full transition-[width] duration-500 ease-out"
                                   style={{
                                     width: `${pct}%`,
-                                    background: `linear-gradient(180deg, hsl(${q.hue} / 0.95) 0%, hsl(${q.hue}) 55%, hsl(${q.hue} / 0.88) 100%)`,
-                                    boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.hue} / 0.4), 0 1px 4px -1px hsl(${q.hue} / 0.45)`,
+                                    background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
+                                    boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
                                     marginLeft: i === 0 ? 0 : 1,
                                   }}
                                 >
