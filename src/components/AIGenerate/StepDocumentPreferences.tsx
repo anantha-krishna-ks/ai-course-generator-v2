@@ -279,6 +279,10 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
       interactiveBlocks: true,
       addImages: true,
     },
+    quizConfig: state.quizConfig ?? {
+      formative: { enabled: true, questionsPerQuiz: 5 },
+      summative: { enabled: false, questionsPerQuiz: 10 },
+    },
   };
   const dec = () => onChange({ wordsPerPage: Math.max(MIN_WORDS, value.wordsPerPage - WORD_STEP) });
   const inc = () => onChange({ wordsPerPage: Math.min(MAX_WORDS, value.wordsPerPage + WORD_STEP) });
