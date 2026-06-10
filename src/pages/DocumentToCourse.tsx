@@ -20,8 +20,7 @@ import { addLoadingCourse } from "@/lib/loadingCourses";
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { SideRibbon } from "@/components/AIGenerate/SideRibbon";
-import { StepCourseIntent } from "@/components/AIGenerate/StepCourseIntent";
-import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
+import { StepDocumentIntent } from "@/components/AIGenerate/StepDocumentIntent";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
@@ -110,7 +109,7 @@ const initialState: AIGenerateState = {
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
 };
 
-const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepBlueprintGenerate, StepEditRefine];
+const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepBlueprintGenerate, StepEditRefine];
 
 export default function DocumentToCourse() {
   const navigate = useNavigate();
@@ -155,6 +154,7 @@ export default function DocumentToCourse() {
     switch (currentStep) {
       case 1:
         if (!formState.title.trim()) fail("title", "Course title is required");
+        if (formState.supportingDocuments.length === 0) fail("supportingDocuments", "Please make sure the uploaded document matches the course title, as the course will be created exactly based on what's in the document.");
         break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };
