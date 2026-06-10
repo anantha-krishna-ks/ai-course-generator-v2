@@ -341,17 +341,11 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
 
       {/* Images */}
       <PrefCard>
-        <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary" aria-hidden="true">
-            <LayoutPanelTop className="w-4 h-4" />
-          </span>
-          <div>
-            <div className="text-[16px] font-semibold text-foreground leading-tight">Images</div>
-            <p className="text-[13px] text-muted-foreground mt-0.5">
-              Choose whether AI generates visuals for sections and pages.
-            </p>
-          </div>
-        </div>
+        <SectionHeader
+          title="Images"
+          desc="Choose whether AI generates visuals for sections and pages."
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <ImageToggleTile
             selected={value.sectionImages}
