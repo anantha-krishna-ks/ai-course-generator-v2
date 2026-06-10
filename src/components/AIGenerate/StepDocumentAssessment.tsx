@@ -25,10 +25,10 @@ interface Props {
 type QTypeKey = "singleChoice" | "multipleChoice" | "trueFalse" | "fillInBlank";
 
 const QUESTION_TYPES: { key: QTypeKey; label: string; icon: LucideIcon; hue: string }[] = [
-  { key: "singleChoice", label: "Single Choice", icon: CircleDot, hue: "211 100% 50%" },
-  { key: "multipleChoice", label: "Multiple Choice", icon: ListChecks, hue: "262 83% 58%" },
-  { key: "trueFalse", label: "True / False", icon: ToggleRight, hue: "160 84% 39%" },
-  { key: "fillInBlank", label: "Fill in Blank", icon: PenLine, hue: "32 95% 53%" },
+  { key: "singleChoice", label: "Single Choice", icon: CircleDot, hue: "212 90% 40%" },
+  { key: "multipleChoice", label: "Multiple Choice", icon: ListChecks, hue: "262 60% 45%" },
+  { key: "trueFalse", label: "True / False", icon: ToggleRight, hue: "160 84% 28%" },
+  { key: "fillInBlank", label: "Fill in Blank", icon: PenLine, hue: "25 90% 38%" },
 ];
 
 function PrefCard({ children, className }: { children: React.ReactNode; className?: string }) {
