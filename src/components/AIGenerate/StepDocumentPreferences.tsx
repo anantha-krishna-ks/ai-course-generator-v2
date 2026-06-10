@@ -357,6 +357,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
             title="Section images"
             description="Generate a hero image for each section"
             ariaLabel="section images"
+            icon={GalleryHorizontalEnd}
           />
           <ImageToggleTile
             selected={value.pageImages}
@@ -364,6 +365,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
             title="Page images"
             description="Add supporting images inside pages"
             ariaLabel="page images"
+            icon={Images}
           />
         </div>
       </PrefCard>
