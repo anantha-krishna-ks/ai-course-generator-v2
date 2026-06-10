@@ -434,6 +434,18 @@ const Dashboard = () => {
                         <span className="text-[11px] text-muted-foreground leading-snug">Have AI create your course end-to-end</span>
                       </div>
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/ai-generate-course?source=document")}
+                      className="cursor-pointer gap-4 px-4 py-3.5 hover:!bg-muted focus:!bg-muted focus:!text-foreground rounded-md"
+                    >
+                      <div className="w-9 h-9 rounded-lg border border-border bg-muted/50 flex items-center justify-center shrink-0">
+                        <FileUp className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-semibold text-foreground">Document to Course</span>
+                        <span className="text-[11px] text-muted-foreground leading-snug">Your content, converted as-is into a structured course.</span>
+                      </div>
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <div className="h-6 w-px bg-border/60" aria-hidden="true" />
