@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Slider } from "@/components/ui/slider";
 import {
   FileText,
   Minus,
@@ -9,11 +8,7 @@ import {
   Image as ImageIcon,
   Images,
   GalleryHorizontalEnd,
-  LayoutPanelTop,
   Check,
-  HelpCircle,
-  GraduationCap,
-  ClipboardCheck,
 } from "lucide-react";
 
 
