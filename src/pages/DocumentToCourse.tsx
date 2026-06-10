@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { SideRibbon } from "@/components/AIGenerate/SideRibbon";
 import { StepDocumentIntent } from "@/components/AIGenerate/StepDocumentIntent";
-import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
+import { StepDocumentPreferences } from "@/components/AIGenerate/StepDocumentPreferences";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
 
@@ -68,6 +68,9 @@ export interface AIGenerateState {
   scormBgOpacity: number;
   scormPassMessage: string;
   scormFailMessage: string;
+  wordsPerPage: number;
+  sectionImages: boolean;
+  pageImages: boolean;
 }
 
 const initialState: AIGenerateState = {
@@ -107,9 +110,12 @@ const initialState: AIGenerateState = {
   scormBgOpacity: 40,
   scormPassMessage: "Congratulations! You have successfully completed the course.",
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
+  wordsPerPage: 250,
+  sectionImages: true,
+  pageImages: true,
 };
 
-const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepBlueprintGenerate, StepEditRefine];
+const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepEditRefine];
 
 export default function DocumentToCourse() {
   const navigate = useNavigate();
