@@ -247,15 +247,45 @@ function ImageToggleTile({
   );
 }
 
+const QUESTION_TYPES = [
+  { key: "singleChoice" as const, label: "Single Choice" },
+  { key: "multipleChoice" as const, label: "Multiple Choice" },
+  { key: "trueFalse" as const, label: "True / False" },
+  { key: "fillInBlank" as const, label: "Fill in Blank" },
+];
+
 export function StepDocumentPreferences({ state, onChange }: Props) {
   const value: DocumentPreferencesValue = {
     wordsPerPage: state.wordsPerPage ?? 250,
     layoutType: state.layoutType,
     sectionImages: state.sectionImages ?? true,
     pageImages: state.pageImages ?? true,
+    questionsPerPage: state.questionsPerPage ?? 3,
+    questionTypes: state.questionTypes ?? {
+      singleChoice: 1,
+      multipleChoice: 1,
+      trueFalse: 1,
+      fillInBlank: 0,
+    },
+    contentPreferences: state.contentPreferences ?? {
+      includeQuestions: true,
+      interactiveBlocks: true,
+      addImages: true,
+    },
   };
   const dec = () => onChange({ wordsPerPage: Math.max(MIN_WORDS, value.wordsPerPage - WORD_STEP) });
   const inc = () => onChange({ wordsPerPage: Math.min(MAX_WORDS, value.wordsPerPage + WORD_STEP) });
+  const toggleQuestions = () =>
+    onChange({
+      contentPreferences: {
+        ...value.contentPreferences,
+        includeQuestions: !value.contentPreferences.includeQuestions,
+      },
+    });
+  const decQpp = () =>
+    onChange({ questionsPerPage: Math.max(1, value.questionsPerPage - 1) });
+  const incQpp = () =>
+    onChange({ questionsPerPage: Math.min(10, value.questionsPerPage + 1) });
 
   return (
     <div className="space-y-4">
