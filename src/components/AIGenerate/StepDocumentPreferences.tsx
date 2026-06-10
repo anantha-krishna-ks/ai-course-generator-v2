@@ -309,21 +309,22 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3" role="radiogroup" aria-label="Course layout">
           <LayoutCard
-            selected={value.layoutType === "multi-page"}
-            onClick={() => onChange({ layoutType: "multi-page" })}
-            icon={Layers}
-            title="Multi-page layout"
-            description="A full-length course split across multiple pages and sections."
-            illustration={<MultiPageIllustration active={value.layoutType === "multi-page"} />}
-          />
-          <LayoutCard
             selected={value.layoutType === "single-page"}
             onClick={() => onChange({ layoutType: "single-page" })}
-            icon={FileStack}
-            title="Single-page layout"
-            description="A short, focused course on a single scrollable page."
-            illustration={<SinglePageIllustration active={value.layoutType === "single-page"} />}
+            icon={Square}
+            title="Single block"
+            description="Content flows in a single, focused column block per page."
+            illustration={<SingleBlockIllustration active={value.layoutType === "single-page"} />}
           />
+          <LayoutCard
+            selected={value.layoutType === "multi-page"}
+            onClick={() => onChange({ layoutType: "multi-page" })}
+            icon={Columns2}
+            title="Dual block"
+            description="Content is laid out side-by-side in two parallel blocks."
+            illustration={<DualBlockIllustration active={value.layoutType === "multi-page"} />}
+          />
+
         </div>
       </PrefCard>
 
