@@ -8,6 +8,11 @@ import {
   ClipboardCheck,
   Sliders,
   ChevronDown,
+  CircleDot,
+  ListChecks,
+  ToggleRight,
+  PenLine,
+  type LucideIcon,
 } from "lucide-react";
 import type { DocumentPreferencesValue } from "./StepDocumentPreferences";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -17,11 +22,13 @@ interface Props {
   onChange: (partial: Partial<DocumentPreferencesValue>) => void;
 }
 
-const QUESTION_TYPES = [
-  { key: "singleChoice" as const, label: "Single Choice" },
-  { key: "multipleChoice" as const, label: "Multiple Choice" },
-  { key: "trueFalse" as const, label: "True / False" },
-  { key: "fillInBlank" as const, label: "Fill in Blank" },
+type QTypeKey = "singleChoice" | "multipleChoice" | "trueFalse" | "fillInBlank";
+
+const QUESTION_TYPES: { key: QTypeKey; label: string; icon: LucideIcon; hue: string }[] = [
+  { key: "singleChoice", label: "Single Choice", icon: CircleDot, hue: "211 100% 50%" },
+  { key: "multipleChoice", label: "Multiple Choice", icon: ListChecks, hue: "262 83% 58%" },
+  { key: "trueFalse", label: "True / False", icon: ToggleRight, hue: "160 84% 39%" },
+  { key: "fillInBlank", label: "Fill in Blank", icon: PenLine, hue: "32 95% 53%" },
 ];
 
 function PrefCard({ children, className }: { children: React.ReactNode; className?: string }) {
