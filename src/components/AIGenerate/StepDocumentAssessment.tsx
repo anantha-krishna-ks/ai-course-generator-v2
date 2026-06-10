@@ -357,14 +357,46 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                       aria-label={`${title} questions per quiz slider`}
                       className="py-1"
                     />
-                    <div className="flex justify-between mt-1.5">
-                      <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
-                        {min}
-                      </span>
-                      <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
-                        {max}
-                      </span>
-                    </div>
+                    {(() => {
+                      const ticks =
+                        key === "formative"
+                          ? [1, 5, 10, 15, 20]
+                          : [1, 10, 20, 30, 40, 50];
+                      return (
+                        <div className="relative mt-2 px-[10px]" aria-hidden="true">
+                          <div className="relative h-4">
+                            {ticks.map((t) => {
+                              const pct = ((t - min) / (max - min)) * 100;
+                              const active = cfg.questionsPerQuiz >= t;
+                              return (
+                                <div
+                                  key={t}
+                                  className="absolute top-0 -translate-x-1/2 flex flex-col items-center gap-1"
+                                  style={{ left: `${pct}%` }}
+                                >
+                                  <span
+                                    className={cn(
+                                      "w-px h-1.5",
+                                      active ? "bg-primary/70" : "bg-border"
+                                    )}
+                                  />
+                                  <span
+                                    className={cn(
+                                      "text-[10px] font-medium tabular-nums",
+                                      cfg.questionsPerQuiz === t
+                                        ? "text-primary font-semibold"
+                                        : "text-muted-foreground"
+                                    )}
+                                  >
+                                    {t}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
