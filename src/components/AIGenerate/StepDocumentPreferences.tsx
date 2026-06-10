@@ -30,8 +30,16 @@ export interface DocumentPreferencesValue {
     addImages: boolean;
   };
   quizConfig: {
-    formative: { enabled: boolean; questionsPerQuiz: number };
-    summative: { enabled: boolean; questionsPerQuiz: number };
+    formative: {
+      enabled: boolean;
+      questionsPerQuiz: number;
+      questionTypes: { singleChoice: number; multipleChoice: number; trueFalse: number; fillInBlank: number };
+    };
+    summative: {
+      enabled: boolean;
+      questionsPerQuiz: number;
+      questionTypes: { singleChoice: number; multipleChoice: number; trueFalse: number; fillInBlank: number };
+    };
   };
 }
 
@@ -275,8 +283,8 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
       addImages: true,
     },
     quizConfig: state.quizConfig ?? {
-      formative: { enabled: true, questionsPerQuiz: 5 },
-      summative: { enabled: false, questionsPerQuiz: 10 },
+      formative: { enabled: true, questionsPerQuiz: 5, questionTypes: { singleChoice: 2, multipleChoice: 1, trueFalse: 1, fillInBlank: 1 } },
+      summative: { enabled: false, questionsPerQuiz: 10, questionTypes: { singleChoice: 4, multipleChoice: 3, trueFalse: 2, fillInBlank: 1 } },
     },
   };
   const dec = () => onChange({ wordsPerPage: Math.max(MIN_WORDS, value.wordsPerPage - WORD_STEP) });
