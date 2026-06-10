@@ -67,15 +67,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
     },
   };
 
-  const toggleQuestions = () =>
-    onChange({
-      contentPreferences: {
-        ...value.contentPreferences,
-        includeQuestions: !value.contentPreferences.includeQuestions,
-      },
-    });
-  const decQpp = () => onChange({ questionsPerPage: Math.max(1, value.questionsPerPage - 1) });
-  const incQpp = () => onChange({ questionsPerPage: Math.min(10, value.questionsPerPage + 1) });
+
+
 
   return (
     <div className="space-y-4">
