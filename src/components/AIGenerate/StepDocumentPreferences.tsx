@@ -10,6 +10,7 @@ import {
   GalleryHorizontalEnd,
   LayoutPanelTop,
   Check,
+  HelpCircle,
 } from "lucide-react";
 
 
@@ -18,6 +19,18 @@ export interface DocumentPreferencesValue {
   layoutType: "multi-page" | "single-page";
   sectionImages: boolean;
   pageImages: boolean;
+  questionsPerPage: number;
+  questionTypes: {
+    singleChoice: number;
+    multipleChoice: number;
+    trueFalse: number;
+    fillInBlank: number;
+  };
+  contentPreferences: {
+    includeQuestions: boolean;
+    interactiveBlocks: boolean;
+    addImages: boolean;
+  };
 }
 
 interface Props {
@@ -234,15 +247,45 @@ function ImageToggleTile({
   );
 }
 
+const QUESTION_TYPES = [
+  { key: "singleChoice" as const, label: "Single Choice" },
+  { key: "multipleChoice" as const, label: "Multiple Choice" },
+  { key: "trueFalse" as const, label: "True / False" },
+  { key: "fillInBlank" as const, label: "Fill in Blank" },
+];
+
 export function StepDocumentPreferences({ state, onChange }: Props) {
   const value: DocumentPreferencesValue = {
     wordsPerPage: state.wordsPerPage ?? 250,
     layoutType: state.layoutType,
     sectionImages: state.sectionImages ?? true,
     pageImages: state.pageImages ?? true,
+    questionsPerPage: state.questionsPerPage ?? 3,
+    questionTypes: state.questionTypes ?? {
+      singleChoice: 1,
+      multipleChoice: 1,
+      trueFalse: 1,
+      fillInBlank: 0,
+    },
+    contentPreferences: state.contentPreferences ?? {
+      includeQuestions: true,
+      interactiveBlocks: true,
+      addImages: true,
+    },
   };
   const dec = () => onChange({ wordsPerPage: Math.max(MIN_WORDS, value.wordsPerPage - WORD_STEP) });
   const inc = () => onChange({ wordsPerPage: Math.min(MAX_WORDS, value.wordsPerPage + WORD_STEP) });
+  const toggleQuestions = () =>
+    onChange({
+      contentPreferences: {
+        ...value.contentPreferences,
+        includeQuestions: !value.contentPreferences.includeQuestions,
+      },
+    });
+  const decQpp = () =>
+    onChange({ questionsPerPage: Math.max(1, value.questionsPerPage - 1) });
+  const incQpp = () =>
+    onChange({ questionsPerPage: Math.min(10, value.questionsPerPage + 1) });
 
   return (
     <div className="space-y-4">
@@ -367,6 +410,146 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
             ariaLabel="page images"
             icon={Images}
           />
+        </div>
+      </PrefCard>
+
+      {/* Page-level Preferences: Questions */}
+      <PrefCard>
+        <SectionHeader
+          title="Page-level preferences"
+          desc="Control whether each page includes questions and how many."
+        />
+        <div
+          className={cn(
+            "rounded-2xl border transition-all duration-200 p-3.5",
+            value.contentPreferences.includeQuestions
+              ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02]"
+              : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+          )}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={toggleQuestions}
+              role="switch"
+              aria-checked={value.contentPreferences.includeQuestions}
+              aria-label="Include questions in pages"
+              className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+            >
+              <span
+                className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                  value.contentPreferences.includeQuestions
+                    ? "bg-primary/15 text-primary"
+                    : "bg-muted text-muted-foreground"
+                )}
+                aria-hidden="true"
+              >
+                <HelpCircle className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </span>
+              <span className="flex flex-col min-w-0">
+                <span className="text-sm font-semibold text-foreground leading-tight">Questions</span>
+                <span className="text-[12px] text-muted-foreground leading-snug mt-0.5">
+                  Include questions in pages
+                </span>
+              </span>
+            </button>
+            <div className="flex items-center gap-3">
+              {value.contentPreferences.includeQuestions && (
+                <div className="hidden sm:flex items-center gap-2 pr-2 border-r border-border/60">
+                  <span className="text-xs font-medium text-muted-foreground">Per page</span>
+                  <button
+                    type="button"
+                    onClick={decQpp}
+                    disabled={value.questionsPerPage <= 1}
+                    aria-label="Decrease questions per page"
+                    className="w-7 h-7 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
+                  >
+                    <Minus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  </button>
+                  <span className="text-sm font-semibold text-foreground tabular-nums w-5 text-center">
+                    {value.questionsPerPage}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={incQpp}
+                    disabled={value.questionsPerPage >= 10}
+                    aria-label="Increase questions per page"
+                    className="w-7 h-7 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center hover:bg-primary/10 transition-colors disabled:opacity-30"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                  </button>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={toggleQuestions}
+                role="switch"
+                aria-checked={value.contentPreferences.includeQuestions}
+                aria-label="Toggle include questions in pages"
+                className={cn(
+                  "w-10 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  value.contentPreferences.includeQuestions ? "bg-primary" : "bg-muted-foreground/25"
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-background shadow-sm transition-transform",
+                    value.contentPreferences.includeQuestions && "translate-x-4"
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+          </div>
+
+          {value.contentPreferences.includeQuestions && (
+            <div className="mt-4 pt-4 border-t border-primary/15">
+              <div className="mb-3">
+                <div className="text-[14px] font-semibold text-foreground leading-tight">
+                  Number of questions
+                </div>
+                <p className="text-[12px] text-muted-foreground mt-0.5">
+                  Set how many of each question type to include per page.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {QUESTION_TYPES.map((q) => {
+                  const id = `doc-qtype-${q.key}`;
+                  return (
+                    <div key={q.key} className="space-y-1.5">
+                      <label
+                        htmlFor={id}
+                        className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide block"
+                      >
+                        {q.label}
+                      </label>
+                      <select
+                        id={id}
+                        value={value.questionTypes[q.key]}
+                        onChange={(e) =>
+                          onChange({
+                            questionTypes: {
+                              ...value.questionTypes,
+                              [q.key]: Number(e.target.value),
+                            },
+                          })
+                        }
+                        aria-label={`${q.label} count`}
+                        className="w-full h-9 rounded-lg border border-border bg-background text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
+                      >
+                        {[0, 1, 2, 3, 4, 5].map((n) => (
+                          <option key={n} value={n}>
+                            {n}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </PrefCard>
     </div>
