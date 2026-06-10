@@ -159,14 +159,6 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
         )}
       </div>
 
-      {/* Guidelines Documents Upload Helper */}
-      <GuidelinesUpload
-        documents={state.guidelinesDocuments ?? []}
-        onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
-        guidelines={state.guidelines}
-        onGuidelinesChange={(g) => onChange({ guidelines: g })}
-      />
-
       {/* Course Font */}
       <div className="rounded-xl border border-border bg-card p-4">
         <div className="flex items-center justify-between gap-3 mb-2.5">
@@ -226,6 +218,14 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
           })}
         </div>
       </div>
+
+      {/* Guidelines Documents Upload Helper */}
+      <GuidelinesUpload
+        documents={state.guidelinesDocuments ?? []}
+        onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
+        guidelines={state.guidelines}
+        onGuidelinesChange={(g) => onChange({ guidelines: g })}
+      />
     </div>
   );
 }
