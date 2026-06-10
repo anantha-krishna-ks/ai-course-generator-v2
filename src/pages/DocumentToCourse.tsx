@@ -16,6 +16,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { addLoadingCourse } from "@/lib/loadingCourses";
+import { setCourseStatus } from "@/services/courseStatusStore";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
