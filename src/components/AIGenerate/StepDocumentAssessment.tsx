@@ -6,8 +6,10 @@ import {
   HelpCircle,
   GraduationCap,
   ClipboardCheck,
+  Sliders,
 } from "lucide-react";
 import type { DocumentPreferencesValue } from "./StepDocumentPreferences";
+import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 
 interface Props {
   state: Partial<DocumentPreferencesValue>;
