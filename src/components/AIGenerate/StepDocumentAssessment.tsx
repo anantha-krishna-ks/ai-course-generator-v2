@@ -162,53 +162,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
             </div>
           </div>
 
-          {value.contentPreferences.includeQuestions && (
-            <div className="mt-4 pt-4 border-t border-primary/15">
-              <div className="mb-3">
-                <div className="text-[14px] font-semibold text-foreground leading-tight">
-                  Number of questions
-                </div>
-                <p className="text-[12px] text-muted-foreground mt-0.5">
-                  Set how many of each question type to include per page.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {QUESTION_TYPES.map((q) => {
-                  const id = `doc-qtype-${q.key}`;
-                  return (
-                    <div key={q.key} className="space-y-1.5">
-                      <label
-                        htmlFor={id}
-                        className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide block"
-                      >
-                        {q.label}
-                      </label>
-                      <select
-                        id={id}
-                        value={value.questionTypes[q.key]}
-                        onChange={(e) =>
-                          onChange({
-                            questionTypes: {
-                              ...value.questionTypes,
-                              [q.key]: Number(e.target.value),
-                            },
-                          })
-                        }
-                        aria-label={`${q.label} count`}
-                        className="w-full h-9 rounded-lg border border-border bg-white text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
-                      >
-                        {[0, 1, 2, 3, 4, 5].map((n) => (
-                          <option key={n} value={n}>
-                            {n}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          {/* Per-page question mix moved into each quiz below */}
         </div>
       </PrefCard>
 
