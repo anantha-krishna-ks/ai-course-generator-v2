@@ -281,17 +281,6 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
   };
   const dec = () => onChange({ wordsPerPage: Math.max(MIN_WORDS, value.wordsPerPage - WORD_STEP) });
   const inc = () => onChange({ wordsPerPage: Math.min(MAX_WORDS, value.wordsPerPage + WORD_STEP) });
-  const toggleQuestions = () =>
-    onChange({
-      contentPreferences: {
-        ...value.contentPreferences,
-        includeQuestions: !value.contentPreferences.includeQuestions,
-      },
-    });
-  const decQpp = () =>
-    onChange({ questionsPerPage: Math.max(1, value.questionsPerPage - 1) });
-  const incQpp = () =>
-    onChange({ questionsPerPage: Math.min(10, value.questionsPerPage + 1) });
 
   return (
     <div className="space-y-4">
