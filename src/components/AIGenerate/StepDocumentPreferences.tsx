@@ -34,6 +34,10 @@ export interface DocumentPreferencesValue {
     interactiveBlocks: boolean;
     addImages: boolean;
   };
+  quizConfig: {
+    formative: { enabled: boolean; questionsPerQuiz: number };
+    summative: { enabled: boolean; questionsPerQuiz: number };
+  };
 }
 
 interface Props {
