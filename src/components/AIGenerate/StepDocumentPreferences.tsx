@@ -102,7 +102,7 @@ function LayoutCard({
 }: {
   selected: boolean;
   onClick: () => void;
-  icon: typeof Layers;
+  icon: typeof Square;
   title: string;
   description: string;
   illustration: React.ReactNode;
