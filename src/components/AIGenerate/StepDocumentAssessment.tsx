@@ -197,12 +197,12 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                       <div
                         role="radiogroup"
                         aria-label="Quiz type"
-                        className="relative inline-flex items-center p-1 rounded-full bg-muted/60 ring-1 ring-border/60"
+                        className="relative inline-flex items-center p-1 rounded-full bg-muted/60 ring-1 ring-border/70 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.08)]"
                       >
-                        {/* Sliding thumb */}
+                        {/* Sliding thumb with primary gradient */}
                         <span
                           aria-hidden="true"
-                          className="absolute top-1 bottom-1 rounded-full bg-background ring-1 ring-border/70 shadow-[0_1px_2px_hsl(var(--foreground)/0.06)] transition-all duration-[420ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
+                          className="absolute top-1 bottom-1 rounded-full bg-gradient-to-b from-primary to-[hsl(var(--primary)/0.88)] ring-1 ring-primary/50 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.45),inset_0_1px_0_hsl(0_0%_100%/0.25)] transition-all duration-[420ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
                           style={{
                             width: `calc((100% - 0.5rem) / ${keys.length})`,
                             left: `calc(0.25rem + ${activeIdx} * (100% - 0.5rem) / ${keys.length})`,
@@ -220,10 +220,29 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                               aria-checked={selected}
                               onClick={() => setActiveType(k)}
                               className={cn(
-                                "relative z-10 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-[14px] font-semibold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-w-[120px]",
-                                selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                                "relative z-10 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-[14px] font-semibold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-w-[130px]",
+                                selected
+                                  ? "text-primary-foreground"
+                                  : "text-muted-foreground hover:text-foreground"
                               )}
                             >
+                              {/* Radio indicator */}
+                              <span
+                                aria-hidden="true"
+                                className={cn(
+                                  "relative w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-300 shrink-0",
+                                  selected
+                                    ? "border-primary-foreground/90 bg-primary-foreground/15"
+                                    : "border-muted-foreground/40 bg-transparent"
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    "w-1.5 h-1.5 rounded-full bg-primary-foreground transition-all duration-300",
+                                    selected ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                                  )}
+                                />
+                              </span>
                               <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
                               <span>{v.title.replace(" quiz", "")}</span>
                             </button>
@@ -232,6 +251,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                       </div>
                     );
                   })()}
+
 
 
                   <span
