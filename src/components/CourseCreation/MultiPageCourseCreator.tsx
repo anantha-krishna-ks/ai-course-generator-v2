@@ -21,6 +21,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
@@ -132,6 +133,28 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
   );
 }
 
+function TopLevelEndDropZone() {
+  const { setNodeRef, isOver } = useDroppable({ id: "outline-top-end-drop" });
+  return (
+    <div
+      ref={setNodeRef}
+      role="region"
+      aria-label="Drop here to make this a standalone page"
+      className={cn(
+        "mt-2 rounded-xl border-2 border-dashed transition-colors",
+        isOver
+          ? "border-primary bg-primary/10"
+          : "border-border/40 bg-muted/20"
+      )}
+    >
+      <div className="py-5 px-4 text-center text-xs font-medium text-muted-foreground">
+        {isOver ? "Release to make a standalone page" : "Drop here to pull out of section"}
+      </div>
+    </div>
+  );
+}
+
+
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null, readOnly = false }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -219,6 +242,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [editorDragOver, setEditorDragOver] = useState(false);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
   const [isSidebarDragging, setIsSidebarDragging] = useState(false);
+  const [activeOutlineId, setActiveOutlineId] = useState<string | null>(null);
+
   
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -293,6 +318,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     list: CourseItem[],
     overId: string,
   ): { container: "top" | string; index?: number } | null => {
+    if (overId === "outline-top-end-drop") {
+      return { container: "top" };
+    }
     if (overId.startsWith("section-drop:")) {
       return { container: overId.slice("section-drop:".length) };
     }
@@ -300,6 +328,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     if (!loc) return null;
     return { container: loc.container, index: loc.index };
   };
+
+  const handleOutlineDragStart = useCallback((event: DragStartEvent) => {
+    setActiveOutlineId(String(event.active.id));
+  }, []);
+
+  const handleOutlineDragCancel = useCallback(() => {
+    setActiveOutlineId(null);
+  }, []);
 
   const handleOutlineDragOver = useCallback((event: DragOverEvent) => {
     const { active, over } = event;
@@ -319,6 +355,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, []);
 
   const handleOutlineDragEnd = useCallback((event: DragEndEvent) => {
+    setActiveOutlineId(null);
     const { active, over } = event;
     if (!over) return;
     const activeId = String(active.id);
@@ -337,7 +374,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
       let targetContainer: "top" | string;
       let targetIndex: number;
-      if (overId.startsWith("section-drop:")) {
+      if (overId === "outline-top-end-drop") {
+        targetContainer = "top";
+        targetIndex = prev.length;
+      } else if (overId.startsWith("section-drop:")) {
         targetContainer = overId.slice("section-drop:".length);
         const sec = prev.find((i) => i.id === targetContainer);
         targetIndex = sec?.children?.length ?? 0;
@@ -363,6 +403,17 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       return movePage(prev, activeLoc, targetContainer, targetIndex);
     });
   }, []);
+
+  // True when the user is currently dragging a child page (one nested inside a section).
+  const isDraggingChildPage = (() => {
+    if (!activeOutlineId) return false;
+    for (const it of items) {
+      if (it.type === "section" && it.children?.some((c) => c.id === activeOutlineId)) return true;
+    }
+    return false;
+  })();
+
+
 
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -1581,9 +1632,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 <DndContext
                   sensors={outlineSensors}
                   collisionDetection={closestCorners}
+                  onDragStart={handleOutlineDragStart}
                   onDragOver={handleOutlineDragOver}
                   onDragEnd={handleOutlineDragEnd}
+                  onDragCancel={handleOutlineDragCancel}
                 >
+
 
                   <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
                     <div className="space-y-6">
@@ -1745,7 +1799,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       })()}
                     </div>
                   </SortableContext>
+                  {isDraggingChildPage && <TopLevelEndDropZone />}
                 </DndContext>
+
               )}
 
               {/* Empty State */}
