@@ -407,18 +407,15 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                             <div
                               key={q.key}
                               className={cn(
-                                "group relative flex items-center justify-between gap-3 rounded-2xl border bg-background px-4 py-3.5 transition-all",
-                                active ? "" : "border-border hover:border-primary/30"
+                                "group relative flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 transition-all"
                               )}
                               style={
                                 active
-                                  ? {
-                                      backgroundImage: `linear-gradient(135deg, hsl(${q.hue} / 0.06), hsl(${q.hue} / 0.02))`,
-                                      borderColor: `hsl(${q.hue} / 0.5)`,
-                                    }
-                                  : undefined
+                                  ? { backgroundColor: `hsl(${q.hue} / 0.10)` }
+                                  : { backgroundColor: "hsl(var(--muted) / 0.5)" }
                               }
                             >
+
                               <div className="flex items-center gap-2.5 min-w-0">
                                 <span
                                   className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all"
