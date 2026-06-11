@@ -1826,6 +1826,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                           }
                         });
 
+                        // Trailing gap drop zone (after last top-level item)
+                        if (isDraggingChildPage) {
+                          rendered.push(
+                            <OutlineGapDropZone key={`gap-${items.length}`} index={items.length} />
+                          );
+                        }
+
+
                         // Pending top-level additions -> placeholder at bottom
                         pendingTopAdds.forEach((p) => {
                           rendered.push(
