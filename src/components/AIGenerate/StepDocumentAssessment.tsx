@@ -494,8 +494,9 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                     </div>
                   );
                 })()}
-              </>
-            )}
+              </div>
+            </div>
+
           </PrefCard>
         );
       })}
