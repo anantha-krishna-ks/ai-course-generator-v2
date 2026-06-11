@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Check, Info, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Info, AlertTriangle, Sparkles } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -307,6 +307,34 @@ export default function AIGenerateCourse() {
           <div className="sr-only" aria-live="polite">
             Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].label}
           </div>
+
+          {/* Workflow heading — compact, centered */}
+          <div className="-mt-2 sm:-mt-4 mb-5 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="group relative inline-flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/[0.06] to-transparent ring-1 ring-inset ring-primary/20 backdrop-blur-sm"
+            >
+              <span
+                className="relative w-7 h-7 rounded-full bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.78)] text-primary-foreground flex items-center justify-center shadow-[0_4px_12px_-3px_hsl(var(--primary)/0.5),inset_0_1px_0_hsl(0_0%_100%/0.25)] shrink-0"
+                aria-hidden="true"
+              >
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                <ArrowRight className="absolute -right-0.5 -bottom-0.5 w-3 h-3 p-[2px] rounded-full bg-background text-primary ring-1 ring-primary/30" aria-hidden="true" focusable="false" />
+              </span>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary/80">
+                  Workflow
+                </span>
+                <span aria-hidden="true" className="w-px h-3 bg-primary/25" />
+                <span className="text-[13px] font-semibold text-foreground leading-none whitespace-nowrap">
+                  AI Generate Course
+                </span>
+              </div>
+            </motion.div>
+          </div>
+
 
           {/* Elegant step indicators */}
           <nav aria-label="Course generation steps" className="mb-6">
