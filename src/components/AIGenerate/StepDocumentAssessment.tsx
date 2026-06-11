@@ -74,13 +74,27 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
   return (
     <div className="space-y-4">
 
-      {/* Section-level Quiz Configuration */}
-      {(() => {
+      {/* Quiz Configuration — Section & Course scopes */}
+      {(["section", "course"] as const).map((scope) => {
+        const isSection = scope === "section";
+        const typeKey = isSection ? "sectionQuizType" : "courseQuizType";
+        const configKey = isSection ? "quizConfig" : "courseQuizConfig";
+        const scopeConfig = ((state as any)[configKey] as typeof value.quizConfig) ?? value.quizConfig;
+        const cardTitle = isSection ? "Section quiz" : "Course quiz";
+        const scopeBadge = isSection ? "Applies to every section" : "One per course";
+        const offHelp = isSection
+          ? "Turn on to add an assessment to every section. Pick a quiz type and tune the question mix."
+          : "Turn on to add a single assessment for the whole course. Pick a quiz type and tune the question mix.";
+        const mixScopeLabel = isSection ? "· per section" : "· whole course";
+        const toggleAria = isSection ? "Toggle section quiz" : "Toggle course quiz";
+
         const QUIZ_VARIANTS = {
           formative: {
             title: "Formative quiz",
             subtitle: "Low-stakes check-ins during learning",
-            description: "Low-stakes check-ins woven into the learning flow to reinforce concepts as learners progress.",
+            description: isSection
+              ? "Low-stakes check-ins woven into the learning flow to reinforce concepts as learners progress."
+              : "Low-stakes check-ins woven into the learning flow. Unscored or lightly scored, instant feedback.",
             icon: GraduationCap,
             badge: "In-flow",
             badgeHue: "212 90% 40%",
@@ -88,8 +102,10 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
           },
           summative: {
             title: "Summative quiz",
-            subtitle: "Graded end-of-section assessment",
-            description: "End-of-section assessment that evaluates mastery of the material covered.",
+            subtitle: isSection ? "Graded end-of-section assessment" : "Graded end-of-course assessment",
+            description: isSection
+              ? "End-of-section assessment that evaluates mastery of the material covered."
+              : "Single end-of-course assessment that evaluates overall mastery.",
             icon: ClipboardCheck,
             badge: "Graded",
             badgeHue: "262 70% 45%",
@@ -97,45 +113,47 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
           },
         } as const;
         type QuizVariantKey = keyof typeof QUIZ_VARIANTS;
-        const activeType: QuizVariantKey = ((state as any).sectionQuizType as QuizVariantKey) ?? "formative";
+        const activeType: QuizVariantKey = ((state as any)[typeKey] as QuizVariantKey) ?? "formative";
         const variant = QUIZ_VARIANTS[activeType];
-        const cfg = value.quizConfig[activeType];
+        const cfg = scopeConfig[activeType];
         const ActiveIcon = variant.icon;
+
 
         const update = (partial: Partial<typeof cfg>) =>
           onChange({
-            quizConfig: {
-              ...value.quizConfig,
+            [configKey]: {
+              ...scopeConfig,
               [activeType]: { ...cfg, ...partial },
             },
-          });
+          } as Partial<DocumentPreferencesValue>);
 
 
 
-        // Master "section quiz" toggle drives both variants in sync
-        const masterEnabled = value.quizConfig.formative.enabled || value.quizConfig.summative.enabled;
+        // Master quiz toggle drives both variants in sync
+        const masterEnabled = scopeConfig.formative.enabled || scopeConfig.summative.enabled;
         const toggleMaster = () => {
           const next = !masterEnabled;
           onChange({
-            quizConfig: {
-              formative: { ...value.quizConfig.formative, enabled: next && activeType === "formative" },
-              summative: { ...value.quizConfig.summative, enabled: next && activeType === "summative" },
+            [configKey]: {
+              formative: { ...scopeConfig.formative, enabled: next && activeType === "formative" },
+              summative: { ...scopeConfig.summative, enabled: next && activeType === "summative" },
             },
-          });
+          } as Partial<DocumentPreferencesValue>);
         };
         const setActiveType = (t: QuizVariantKey) => {
           const wasOn = masterEnabled;
           onChange({
-            sectionQuizType: t,
-            quizConfig: {
-              formative: { ...value.quizConfig.formative, enabled: wasOn && t === "formative" },
-              summative: { ...value.quizConfig.summative, enabled: wasOn && t === "summative" },
+            [typeKey]: t,
+            [configKey]: {
+              formative: { ...scopeConfig.formative, enabled: wasOn && t === "formative" },
+              summative: { ...scopeConfig.summative, enabled: wasOn && t === "summative" },
             },
           } as Partial<DocumentPreferencesValue>);
         };
 
         return (
-          <PrefCard>
+          <PrefCard key={scope}>
+
             {/* Master header row */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -151,16 +169,14 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[16px] font-semibold text-foreground leading-tight">
-                      Section quiz
+                      {cardTitle}
                     </span>
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary ring-1 ring-inset ring-primary/25">
-                      Applies to every section
+                      {scopeBadge}
                     </span>
                   </div>
                   <p className="text-[13px] text-muted-foreground mt-1 leading-snug">
-                    {masterEnabled
-                      ? variant.description
-                      : "Turn on to add an assessment to every section. Pick a quiz type and tune the question mix."}
+                    {masterEnabled ? variant.description : offHelp}
                   </p>
                 </div>
               </div>
@@ -169,7 +185,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                 onClick={toggleMaster}
                 role="switch"
                 aria-checked={masterEnabled}
-                aria-label="Toggle section quiz"
+                aria-label={toggleAria}
+
                 className={cn(
                   "w-11 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   masterEnabled ? "bg-primary" : "bg-muted-foreground/25"
@@ -290,7 +307,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                       <div className="flex items-center justify-between gap-3 mb-3">
                         <div>
                           <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                            Question mix <span className="text-muted-foreground/70 normal-case font-medium tracking-normal">· per section</span>
+                            Question mix <span className="text-muted-foreground/70 normal-case font-medium tracking-normal">{mixScopeLabel}</span>
                           </div>
                           <p className="text-[12px] text-muted-foreground mt-0.5">
                             Tune how many of each type. Total updates live.
@@ -466,7 +483,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
             )}
           </PrefCard>
         );
-      })()}
+      })}
+
 
       {/* SCORM Preferences (optional) */}
       <PrefCard className="p-0 overflow-hidden">
