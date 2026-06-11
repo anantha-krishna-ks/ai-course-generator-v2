@@ -307,7 +307,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                       <div className="flex items-center justify-between gap-3 mb-3">
                         <div>
                           <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                            Question mix <span className="text-muted-foreground/70 normal-case font-medium tracking-normal">· per section</span>
+                            Question mix <span className="text-muted-foreground/70 normal-case font-medium tracking-normal">{mixScopeLabel}</span>
                           </div>
                           <p className="text-[12px] text-muted-foreground mt-0.5">
                             Tune how many of each type. Total updates live.
