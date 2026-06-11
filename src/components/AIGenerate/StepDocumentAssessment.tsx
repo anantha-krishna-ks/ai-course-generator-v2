@@ -193,16 +193,6 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Quiz type
                     </span>
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors"
-                      style={{
-                        backgroundColor: `hsl(${variant.badgeHue} / 0.12)`,
-                        color: `hsl(${variant.badgeHue})`,
-                        boxShadow: `inset 0 0 0 1px hsl(${variant.badgeHue} / 0.3)`,
-                      }}
-                    >
-                      {variant.badge}
-                    </span>
                   </div>
                   <div
                     role="radiogroup"
