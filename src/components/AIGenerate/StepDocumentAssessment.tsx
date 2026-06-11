@@ -121,38 +121,39 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
 
         const update = (partial: Partial<typeof cfg>) =>
           onChange({
-            quizConfig: {
-              ...value.quizConfig,
+            [configKey]: {
+              ...scopeConfig,
               [activeType]: { ...cfg, ...partial },
             },
-          });
+          } as Partial<DocumentPreferencesValue>);
 
 
 
-        // Master "section quiz" toggle drives both variants in sync
-        const masterEnabled = value.quizConfig.formative.enabled || value.quizConfig.summative.enabled;
+        // Master quiz toggle drives both variants in sync
+        const masterEnabled = scopeConfig.formative.enabled || scopeConfig.summative.enabled;
         const toggleMaster = () => {
           const next = !masterEnabled;
           onChange({
-            quizConfig: {
-              formative: { ...value.quizConfig.formative, enabled: next && activeType === "formative" },
-              summative: { ...value.quizConfig.summative, enabled: next && activeType === "summative" },
+            [configKey]: {
+              formative: { ...scopeConfig.formative, enabled: next && activeType === "formative" },
+              summative: { ...scopeConfig.summative, enabled: next && activeType === "summative" },
             },
-          });
+          } as Partial<DocumentPreferencesValue>);
         };
         const setActiveType = (t: QuizVariantKey) => {
           const wasOn = masterEnabled;
           onChange({
-            sectionQuizType: t,
-            quizConfig: {
-              formative: { ...value.quizConfig.formative, enabled: wasOn && t === "formative" },
-              summative: { ...value.quizConfig.summative, enabled: wasOn && t === "summative" },
+            [typeKey]: t,
+            [configKey]: {
+              formative: { ...scopeConfig.formative, enabled: wasOn && t === "formative" },
+              summative: { ...scopeConfig.summative, enabled: wasOn && t === "summative" },
             },
           } as Partial<DocumentPreferencesValue>);
         };
 
         return (
-          <PrefCard>
+          <PrefCard key={scope}>
+
             {/* Master header row */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3 min-w-0 flex-1">
