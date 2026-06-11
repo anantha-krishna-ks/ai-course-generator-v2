@@ -408,6 +408,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       if (overId === "outline-top-end-drop") {
         targetContainer = "top";
         targetIndex = prev.length;
+      } else if (overId.startsWith("outline-top-gap-")) {
+        const idx = parseInt(overId.slice("outline-top-gap-".length), 10);
+        targetContainer = "top";
+        targetIndex = Number.isFinite(idx) ? Math.min(idx, prev.length) : prev.length;
       } else if (overId.startsWith("section-drop:")) {
         targetContainer = overId.slice("section-drop:".length);
         const sec = prev.find((i) => i.id === targetContainer);
