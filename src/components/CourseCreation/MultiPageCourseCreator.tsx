@@ -16,6 +16,7 @@ import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
   closestCenter,
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -228,16 +229,141 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
 
-  const handleOutlineDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setItems((prev) => {
-        const oldIndex = prev.findIndex((i) => i.id === active.id);
-        const newIndex = prev.findIndex((i) => i.id === over.id);
-        return arrayMove(prev, oldIndex, newIndex);
+  // --- Outline tree drag helpers (cross-container page moves) ---
+  type ItemLoc =
+    | { kind: "section"; container: "top"; index: number }
+    | { kind: "page"; container: "top" | string; index: number };
+
+  const findLoc = (list: CourseItem[], id: string): ItemLoc | null => {
+    const topIdx = list.findIndex((i) => i.id === id);
+    if (topIdx >= 0) {
+      const it = list[topIdx];
+      return { kind: it.type === "section" ? "section" : "page", container: "top", index: topIdx } as ItemLoc;
+    }
+    for (const it of list) {
+      if (it.type === "section" && it.children) {
+        const ci = it.children.findIndex((c) => c.id === id);
+        if (ci >= 0) return { kind: "page", container: it.id, index: ci };
+      }
+    }
+    return null;
+  };
+
+  const movePage = (
+    list: CourseItem[],
+    from: ItemLoc,
+    toContainer: "top" | string,
+    toIndex?: number,
+  ): CourseItem[] => {
+    let moved: CourseItem | null = null;
+    let next: CourseItem[] = list;
+    if (from.container === "top") {
+      moved = list[from.index];
+      next = list.filter((_, i) => i !== from.index);
+    } else {
+      next = list.map((it) => {
+        if (it.id === from.container && it.children) {
+          moved = it.children[from.index];
+          return { ...it, children: it.children.filter((_, i) => i !== from.index) };
+        }
+        return it;
       });
     }
+    if (!moved) return list;
+    const pageNode: CourseItem = { ...moved, type: "page", children: undefined };
+
+    if (toContainer === "top") {
+      const idx = toIndex ?? next.length;
+      const out = [...next];
+      out.splice(idx, 0, pageNode);
+      return out;
+    }
+    return next.map((it) => {
+      if (it.id === toContainer) {
+        const children = it.children ? [...it.children] : [];
+        const idx = toIndex ?? children.length;
+        children.splice(idx, 0, pageNode);
+        return { ...it, children };
+      }
+      return it;
+    });
+  };
+
+  const resolveOverTarget = (
+    list: CourseItem[],
+    overId: string,
+  ): { container: "top" | string; index?: number } | null => {
+    if (overId.startsWith("section-drop:")) {
+      return { container: overId.slice("section-drop:".length) };
+    }
+    const loc = findLoc(list, overId);
+    if (!loc) return null;
+    return { container: loc.container, index: loc.index };
+  };
+
+  const handleOutlineDragOver = useCallback((event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const activeId = String(active.id);
+    const overId = String(over.id);
+    if (activeId === overId) return;
+
+    setItems((prev) => {
+      const activeLoc = findLoc(prev, activeId);
+      if (!activeLoc || activeLoc.kind === "section") return prev;
+      const target = resolveOverTarget(prev, overId);
+      if (!target) return prev;
+      if (target.container === activeLoc.container) return prev;
+      return movePage(prev, activeLoc, target.container, target.index);
+    });
   }, []);
+
+  const handleOutlineDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+    const activeId = String(active.id);
+    const overId = String(over.id);
+    if (activeId === overId) return;
+
+    setItems((prev) => {
+      const activeLoc = findLoc(prev, activeId);
+      if (!activeLoc) return prev;
+
+      if (activeLoc.kind === "section") {
+        const overLoc = findLoc(prev, overId);
+        if (!overLoc || overLoc.container !== "top") return prev;
+        return arrayMove(prev, activeLoc.index, overLoc.index);
+      }
+
+      let targetContainer: "top" | string;
+      let targetIndex: number;
+      if (overId.startsWith("section-drop:")) {
+        targetContainer = overId.slice("section-drop:".length);
+        const sec = prev.find((i) => i.id === targetContainer);
+        targetIndex = sec?.children?.length ?? 0;
+      } else {
+        const overLoc = findLoc(prev, overId);
+        if (!overLoc) return prev;
+        targetContainer = overLoc.container;
+        targetIndex = overLoc.index;
+      }
+
+      if (targetContainer === activeLoc.container) {
+        if (targetContainer === "top") {
+          return arrayMove(prev, activeLoc.index, targetIndex);
+        }
+        return prev.map((item) => {
+          if (item.id === targetContainer && item.children) {
+            return { ...item, children: arrayMove(item.children, activeLoc.index, targetIndex) };
+          }
+          return item;
+        });
+      }
+
+      return movePage(prev, activeLoc, targetContainer, targetIndex);
+    });
+  }, []);
+
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -1454,9 +1580,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               {(items.length > 0 || pendingTopAdds.length > 0) && (
                 <DndContext
                   sensors={outlineSensors}
-                  collisionDetection={closestCenter}
+                  collisionDetection={closestCorners}
+                  onDragOver={handleOutlineDragOver}
                   onDragEnd={handleOutlineDragEnd}
                 >
+
                   <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
                     <div className="space-y-6">
                       {(() => {
