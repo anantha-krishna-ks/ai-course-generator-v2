@@ -75,16 +75,16 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
     <div className="space-y-4">
 
       {/* Quiz Configuration — Section & Course scopes */}
-      {(["section", "course"] as const).map((scope) => {
+      {(["course", "section"] as const).map((scope) => {
         const isSection = scope === "section";
         const typeKey = isSection ? "sectionQuizType" : "courseQuizType";
         const configKey = isSection ? "quizConfig" : "courseQuizConfig";
         const defaultScopeConfig = isSection
-          ? value.quizConfig
-          : {
+          ? {
               formative: { ...value.quizConfig.formative, enabled: false },
               summative: { ...value.quizConfig.summative, enabled: false },
-            };
+            }
+          : value.quizConfig;
         const scopeConfig = ((state as any)[configKey] as typeof value.quizConfig) ?? defaultScopeConfig;
         const cardTitle = isSection ? "Section quiz" : "Course quiz";
         const scopeBadge = isSection ? "Applies to every section" : "One per course";
