@@ -16,6 +16,7 @@ import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
   closestCenter,
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   useSensor,
