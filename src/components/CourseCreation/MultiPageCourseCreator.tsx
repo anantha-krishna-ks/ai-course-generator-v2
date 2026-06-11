@@ -133,6 +133,28 @@ function SortableOutlineItem({ id, children }: { id: string; children: ReactNode
   );
 }
 
+function TopLevelEndDropZone() {
+  const { setNodeRef, isOver } = useDroppable({ id: "outline-top-end-drop" });
+  return (
+    <div
+      ref={setNodeRef}
+      role="region"
+      aria-label="Drop here to make this a standalone page"
+      className={cn(
+        "mt-2 rounded-xl border-2 border-dashed transition-colors",
+        isOver
+          ? "border-primary bg-primary/10"
+          : "border-border/40 bg-muted/20"
+      )}
+    >
+      <div className="py-5 px-4 text-center text-xs font-medium text-muted-foreground">
+        {isOver ? "Release to make a standalone page" : "Drop here to pull out of section"}
+      </div>
+    </div>
+  );
+}
+
+
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null, readOnly = false }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
