@@ -74,15 +74,27 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
   return (
     <div className="space-y-4">
 
-      {/* Section-level Quiz Configuration */}
-      {(() => {
-
+      {/* Quiz Configuration — Section & Course scopes */}
+      {(["section", "course"] as const).map((scope) => {
+        const isSection = scope === "section";
+        const typeKey = isSection ? "sectionQuizType" : "courseQuizType";
+        const configKey = isSection ? "quizConfig" : "courseQuizConfig";
+        const scopeConfig = ((state as any)[configKey] as typeof value.quizConfig) ?? value.quizConfig;
+        const cardTitle = isSection ? "Section quiz" : "Course quiz";
+        const scopeBadge = isSection ? "Applies to every section" : "One per course";
+        const offHelp = isSection
+          ? "Turn on to add an assessment to every section. Pick a quiz type and tune the question mix."
+          : "Turn on to add a single assessment for the whole course. Pick a quiz type and tune the question mix.";
+        const mixScopeLabel = isSection ? "· per section" : "· whole course";
+        const toggleAria = isSection ? "Toggle section quiz" : "Toggle course quiz";
 
         const QUIZ_VARIANTS = {
           formative: {
             title: "Formative quiz",
             subtitle: "Low-stakes check-ins during learning",
-            description: "Low-stakes check-ins woven into the learning flow to reinforce concepts as learners progress.",
+            description: isSection
+              ? "Low-stakes check-ins woven into the learning flow to reinforce concepts as learners progress."
+              : "Low-stakes check-ins woven into the learning flow. Unscored or lightly scored, instant feedback.",
             icon: GraduationCap,
             badge: "In-flow",
             badgeHue: "212 90% 40%",
@@ -90,8 +102,10 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
           },
           summative: {
             title: "Summative quiz",
-            subtitle: "Graded end-of-section assessment",
-            description: "End-of-section assessment that evaluates mastery of the material covered.",
+            subtitle: isSection ? "Graded end-of-section assessment" : "Graded end-of-course assessment",
+            description: isSection
+              ? "End-of-section assessment that evaluates mastery of the material covered."
+              : "Single end-of-course assessment that evaluates overall mastery.",
             icon: ClipboardCheck,
             badge: "Graded",
             badgeHue: "262 70% 45%",
@@ -99,10 +113,11 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
           },
         } as const;
         type QuizVariantKey = keyof typeof QUIZ_VARIANTS;
-        const activeType: QuizVariantKey = ((state as any).sectionQuizType as QuizVariantKey) ?? "formative";
+        const activeType: QuizVariantKey = ((state as any)[typeKey] as QuizVariantKey) ?? "formative";
         const variant = QUIZ_VARIANTS[activeType];
-        const cfg = value.quizConfig[activeType];
+        const cfg = scopeConfig[activeType];
         const ActiveIcon = variant.icon;
+
 
         const update = (partial: Partial<typeof cfg>) =>
           onChange({
