@@ -441,17 +441,10 @@ export function SectionCard({
     });
   };
 
-  const pageSensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const { setNodeRef: setPagesDropRef, isOver: isPagesDropOver } = useDroppable({
+    id: sectionId ? `section-drop:${sectionId}` : `section-drop:${sectionNumber}`,
+  });
 
-  const handlePageDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    setPages((prev) => {
-      const oldIdx = prev.findIndex((p) => p.id === active.id);
-      const newIdx = prev.findIndex((p) => p.id === over.id);
-      return arrayMove(prev, oldIdx, newIdx);
-    });
-  };
 
   const hasInclusions = inclusions.trim().length > 0;
   const hasExclusions = exclusions.trim().length > 0;
