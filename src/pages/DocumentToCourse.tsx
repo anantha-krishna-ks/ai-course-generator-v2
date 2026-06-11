@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Check, Info, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Info, AlertTriangle, FileText, Sparkles } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogContent,
