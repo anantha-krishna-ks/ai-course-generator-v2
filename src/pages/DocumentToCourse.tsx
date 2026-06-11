@@ -313,8 +313,8 @@ export default function DocumentToCourse() {
             Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].label}
           </div>
 
-          {/* Workflow heading — compact, modern */}
-          <div className="mb-4 flex items-center justify-between gap-3">
+          {/* Workflow heading — compact, centered */}
+          <div className="mb-4 flex justify-center">
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
@@ -338,11 +338,8 @@ export default function DocumentToCourse() {
                 </span>
               </div>
             </motion.div>
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-              <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-              AI-powered
-            </span>
           </div>
+
 
           {/* Elegant step indicators */}
           <nav aria-label="Course generation steps" className="mb-6">
