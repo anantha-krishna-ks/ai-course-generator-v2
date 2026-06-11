@@ -1679,7 +1679,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       {(() => {
                         let sectionIndex = 0;
                         const rendered: React.ReactNode[] = [];
-                        items.forEach((item) => {
+                        items.forEach((item, topIdx) => {
+                          // Gap drop zone before each top-level item (only while dragging a child page)
+                          if (isDraggingChildPage && !deletingIds.has(item.id)) {
+                            rendered.push(
+                              <OutlineGapDropZone key={`gap-${topIdx}`} index={topIdx} />
+                            );
+                          }
+
                           // Deleting -> swap card for skeleton
                           if (deletingIds.has(item.id)) {
                             rendered.push(
