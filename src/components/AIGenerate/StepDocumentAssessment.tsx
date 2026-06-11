@@ -169,16 +169,14 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[16px] font-semibold text-foreground leading-tight">
-                      Section quiz
+                      {cardTitle}
                     </span>
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary ring-1 ring-inset ring-primary/25">
-                      Applies to every section
+                      {scopeBadge}
                     </span>
                   </div>
                   <p className="text-[13px] text-muted-foreground mt-1 leading-snug">
-                    {masterEnabled
-                      ? variant.description
-                      : "Turn on to add an assessment to every section. Pick a quiz type and tune the question mix."}
+                    {masterEnabled ? variant.description : offHelp}
                   </p>
                 </div>
               </div>
@@ -187,7 +185,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                 onClick={toggleMaster}
                 role="switch"
                 aria-checked={masterEnabled}
-                aria-label="Toggle section quiz"
+                aria-label={toggleAria}
+
                 className={cn(
                   "w-11 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   masterEnabled ? "bg-primary" : "bg-muted-foreground/25"
