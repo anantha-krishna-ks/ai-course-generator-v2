@@ -484,7 +484,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
             )}
           </PrefCard>
         );
-      })()}
+      })}
+
 
       {/* SCORM Preferences (optional) */}
       <PrefCard className="p-0 overflow-hidden">
