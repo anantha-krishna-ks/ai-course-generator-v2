@@ -686,55 +686,64 @@ export function SectionCard({
             )}>
               <div className="overflow-hidden">
                 {/* Pages tree */}
-                <div className="pl-8 pr-3 pb-3">
+                <div
+                  ref={setPagesDropRef}
+                  className={cn(
+                    "pl-8 pr-3 pb-3 rounded-lg transition-colors",
+                    isPagesDropOver && "ring-2 ring-dashed ring-primary/40 bg-primary/5"
+                  )}
+                  aria-label={`Drop pages into ${title || `Section ${sectionNumber}`}`}
+                >
                   {/* Empty state */}
                   {pages.length === 0 && (
-                    <div className="flex items-center gap-3 py-4 px-3 rounded-lg border border-dashed border-border/50 bg-accent/20 mb-2">
+                    <div className={cn(
+                      "flex items-center gap-3 py-4 px-3 rounded-lg border border-dashed border-border/50 bg-accent/20 mb-2",
+                      isPagesDropOver && "border-primary/50 bg-primary/5"
+                    )}>
                       <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
                         <FileText className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-muted-foreground">No pages yet</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Add pages to build this section's content</p>
+                        <p className="text-xs font-medium text-muted-foreground">
+                          {isPagesDropOver ? "Drop page here" : "No pages yet"}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {isPagesDropOver ? "Release to add to this section" : "Add pages to build this section's content"}
+                        </p>
                       </div>
                     </div>
                   )}
-                  <DndContext
-                    sensors={pageSensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handlePageDragEnd}
-                  >
-                    <SortableContext items={pages.map(p => p.id)} strategy={verticalListSortingStrategy}>
-                      {pages.map((page, idx) => (
-                        <SortablePageRow
-                          key={page.id}
-                          page={page}
-                          idx={idx}
-                          totalPages={pages.length}
-                          isLastPage={idx === pages.length - 1}
-                          newPageRef={newPageRef}
-                          focusedPageId={focusedPageId}
-                          setFocusedPageId={setFocusedPageId}
-                          setPages={setPages}
-                          onDuplicate={handleDuplicatePage}
-                          onDelete={handleDeletePage}
-                          onInclusionsChange={(id, val) => {
-                            setPages((prev) =>
-                              prev.map((p) => p.id === id ? { ...p, inclusions: val } : p)
-                            );
-                          }}
-                          onExclusionsChange={(id, val) => {
-                            setPages((prev) =>
-                              prev.map((p) => p.id === id ? { ...p, exclusions: val } : p)
-                            );
-                          }}
-                          onOpenPage={onOpenPage}
-                          aiEnabled={aiEnabled}
-                          getBlockIdsForPage={getBlockIdsForPage}
-                        />
-                      ))}
-                    </SortableContext>
-                  </DndContext>
+                  <SortableContext items={pages.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                    {pages.map((page, idx) => (
+                      <SortablePageRow
+                        key={page.id}
+                        page={page}
+                        idx={idx}
+                        totalPages={pages.length}
+                        isLastPage={idx === pages.length - 1}
+                        newPageRef={newPageRef}
+                        focusedPageId={focusedPageId}
+                        setFocusedPageId={setFocusedPageId}
+                        setPages={setPages}
+                        onDuplicate={handleDuplicatePage}
+                        onDelete={handleDeletePage}
+                        onInclusionsChange={(id, val) => {
+                          setPages((prev) =>
+                            prev.map((p) => p.id === id ? { ...p, inclusions: val } : p)
+                          );
+                        }}
+                        onExclusionsChange={(id, val) => {
+                          setPages((prev) =>
+                            prev.map((p) => p.id === id ? { ...p, exclusions: val } : p)
+                          );
+                        }}
+                        onOpenPage={onOpenPage}
+                        aiEnabled={aiEnabled}
+                        getBlockIdsForPage={getBlockIdsForPage}
+                      />
+                    ))}
+                  </SortableContext>
+
 
                   {/* Add page button (tree-style) */}
                   {!readOnly && (
