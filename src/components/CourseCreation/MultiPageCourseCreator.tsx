@@ -347,6 +347,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     if (overId === "outline-top-end-drop") {
       return { container: "top" };
     }
+    if (overId.startsWith("outline-top-gap-")) {
+      const idx = parseInt(overId.slice("outline-top-gap-".length), 10);
+      return { container: "top", index: Number.isFinite(idx) ? idx : undefined };
+    }
     if (overId.startsWith("section-drop:")) {
       return { container: overId.slice("section-drop:".length) };
     }
@@ -354,6 +358,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     if (!loc) return null;
     return { container: loc.container, index: loc.index };
   };
+
 
   const handleOutlineDragStart = useCallback((event: DragStartEvent) => {
     setActiveOutlineId(String(event.active.id));
