@@ -111,312 +111,322 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
         const setActiveType = (t: QuizVariantKey) =>
           onChange({ sectionQuizType: t } as Partial<DocumentPreferencesValue>);
 
+        // Master "section quiz" toggle drives both variants in sync
+        const masterEnabled = value.quizConfig.formative.enabled || value.quizConfig.summative.enabled;
+        const toggleMaster = () => {
+          const next = !masterEnabled;
+          onChange({
+            quizConfig: {
+              formative: { ...value.quizConfig.formative, enabled: next && activeType === "formative" },
+              summative: { ...value.quizConfig.summative, enabled: next && activeType === "summative" },
+            },
+          });
+        };
+        const setActiveType = (t: QuizVariantKey) => {
+          const wasOn = masterEnabled;
+          onChange({
+            sectionQuizType: t,
+            quizConfig: {
+              formative: { ...value.quizConfig.formative, enabled: wasOn && t === "formative" },
+              summative: { ...value.quizConfig.summative, enabled: wasOn && t === "summative" },
+            },
+          } as Partial<DocumentPreferencesValue>);
+        };
+
         return (
           <PrefCard>
-            <SectionHeader
-              title="Section quiz"
-              desc="Add an assessment to this section. Choose its purpose and tune the question mix."
-            />
-
-            {/* Type selector (segmented) */}
-            <div
-              role="radiogroup"
-              aria-label="Quiz type"
-              className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-muted/50 ring-1 ring-border/60 mb-4"
-            >
-              {(Object.keys(QUIZ_VARIANTS) as QuizVariantKey[]).map((k) => {
-                const v = QUIZ_VARIANTS[k];
-                const Icon = v.icon;
-                const selected = activeType === k;
-                return (
-                  <button
-                    key={k}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => setActiveType(k)}
-                    className={cn(
-                      "flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      selected
-                        ? "bg-background text-foreground shadow-sm ring-1 ring-border"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    <span>{v.title}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Active quiz card */}
-            <div
-              className={cn(
-                "rounded-2xl border transition-all duration-200 p-4",
-                cfg.enabled
-                  ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02]"
-                  : "border-border bg-background"
-              )}
-            >
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span
-                    className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
-                      cfg.enabled ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-                    )}
-                    aria-hidden="true"
-                  >
-                    <ActiveIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                  </span>
-                  <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-foreground leading-tight">
-                        {variant.title}
-                      </span>
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                        style={{
-                          backgroundColor: `hsl(${variant.badgeHue} / 0.12)`,
-                          color: `hsl(${variant.badgeHue})`,
-                          boxShadow: `inset 0 0 0 1px hsl(${variant.badgeHue} / 0.3)`,
-                        }}
-                      >
-                        {variant.badge}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full",
-                          cfg.enabled
-                            ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-500/30"
-                            : "bg-muted text-muted-foreground ring-1 ring-inset ring-border"
-                        )}
-                      >
-                        {cfg.enabled ? "Enabled" : "Disabled"}
-                      </span>
-                    </div>
-                    <span className="text-[12px] text-muted-foreground leading-snug mt-1">
-                      {cfg.enabled
-                        ? variant.description
-                        : `${variant.title} is turned off. Enable it to include this assessment in the section.`}
+            {/* Master header row */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0 flex-1">
+                <span
+                  className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                    masterEnabled ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                  )}
+                  aria-hidden="true"
+                >
+                  <ActiveIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                </span>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[16px] font-semibold text-foreground leading-tight">
+                      Section quiz
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary ring-1 ring-inset ring-primary/25">
+                      Applies to every section
                     </span>
                   </div>
+                  <p className="text-[13px] text-muted-foreground mt-1 leading-snug">
+                    {masterEnabled
+                      ? variant.description
+                      : "Turn on to add an assessment to every section. Pick a quiz type and tune the question mix."}
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={toggle}
-                  role="switch"
-                  aria-checked={cfg.enabled}
-                  aria-label={`Toggle ${variant.title}`}
-                  className={cn(
-                    "w-10 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    cfg.enabled ? "bg-primary" : "bg-muted-foreground/25"
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-background shadow-sm transition-transform",
-                      cfg.enabled && "translate-x-4"
-                    )}
-                    aria-hidden="true"
-                  />
-                </button>
               </div>
+              <button
+                type="button"
+                onClick={toggleMaster}
+                role="switch"
+                aria-checked={masterEnabled}
+                aria-label="Toggle section quiz"
+                className={cn(
+                  "w-11 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  masterEnabled ? "bg-primary" : "bg-muted-foreground/25"
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-background shadow-sm transition-transform",
+                    masterEnabled && "translate-x-5"
+                  )}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
 
-              {cfg.enabled && (() => {
-                const perTypeMax = variant.perTypeMax;
-                const types = cfg.questionTypes ?? { singleChoice: 0, multipleChoice: 0, trueFalse: 0, fillInBlank: 0 };
-                const total = QUESTION_TYPES.reduce((s, q) => s + (types[q.key] || 0), 0);
-                const setType = (k: QTypeKey, n: number) =>
-                  update({
-                    questionTypes: { ...types, [k]: Math.max(0, Math.min(perTypeMax, n)) },
-                    questionsPerQuiz: Math.max(
-                      1,
-                      QUESTION_TYPES.reduce(
-                        (s, q) => s + (q.key === k ? Math.max(0, Math.min(perTypeMax, n)) : types[q.key] || 0),
-                        0
-                      )
-                    ),
-                  } as any);
-                return (
-                  <div className="mt-4 pt-4 border-t border-primary/15">
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <div>
-                        <div className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide">
-                          Question mix
+            {masterEnabled && (
+              <>
+                {/* Quiz type selector */}
+                <div className="mt-5 flex items-center gap-3 flex-wrap">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Quiz type
+                  </span>
+                  <div
+                    role="radiogroup"
+                    aria-label="Quiz type"
+                    className="inline-flex items-center gap-1 p-1 rounded-full bg-muted/50 ring-1 ring-border/60"
+                  >
+                    {(Object.keys(QUIZ_VARIANTS) as QuizVariantKey[]).map((k) => {
+                      const v = QUIZ_VARIANTS[k];
+                      const Icon = v.icon;
+                      const selected = activeType === k;
+                      return (
+                        <button
+                          key={k}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          onClick={() => setActiveType(k)}
+                          className={cn(
+                            "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            selected
+                              ? "bg-background text-foreground shadow-sm ring-1 ring-border"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                        >
+                          <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          <span>{v.title.replace(" quiz", "")}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <span
+                    className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    style={{
+                      backgroundColor: `hsl(${variant.badgeHue} / 0.12)`,
+                      color: `hsl(${variant.badgeHue})`,
+                      boxShadow: `inset 0 0 0 1px hsl(${variant.badgeHue} / 0.3)`,
+                    }}
+                  >
+                    {variant.badge}
+                  </span>
+                </div>
+
+                {/* Question mix */}
+                {(() => {
+                  const perTypeMax = variant.perTypeMax;
+                  const types = cfg.questionTypes ?? { singleChoice: 0, multipleChoice: 0, trueFalse: 0, fillInBlank: 0 };
+                  const total = QUESTION_TYPES.reduce((s, q) => s + (types[q.key] || 0), 0);
+                  const setType = (k: QTypeKey, n: number) =>
+                    update({
+                      questionTypes: { ...types, [k]: Math.max(0, Math.min(perTypeMax, n)) },
+                      questionsPerQuiz: Math.max(
+                        1,
+                        QUESTION_TYPES.reduce(
+                          (s, q) => s + (q.key === k ? Math.max(0, Math.min(perTypeMax, n)) : types[q.key] || 0),
+                          0
+                        )
+                      ),
+                    } as any);
+                  return (
+                    <div className="mt-5 pt-5 border-t border-border">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <div>
+                          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                            Question mix <span className="text-muted-foreground/70 normal-case font-medium tracking-normal">· per section</span>
+                          </div>
+                          <p className="text-[12px] text-muted-foreground mt-0.5">
+                            Tune how many of each type. Total updates live.
+                          </p>
                         </div>
-                        <p className="text-[12px] text-muted-foreground mt-0.5">
-                          Tune how many of each type. Total updates live.
-                        </p>
+                        <div
+                          className="flex items-baseline gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 ring-1 ring-primary/20"
+                          aria-live="polite"
+                        >
+                          <span className="text-lg font-bold text-primary tabular-nums leading-none">
+                            {total}
+                          </span>
+                          <span className="text-[11px] font-medium text-primary/80 uppercase tracking-wide">
+                            {total === 1 ? "question" : "questions"}
+                          </span>
+                        </div>
                       </div>
-                      <div
-                        className="flex items-baseline gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 ring-1 ring-primary/20"
-                        aria-live="polite"
-                      >
-                        <span className="text-lg font-bold text-primary tabular-nums leading-none">
-                          {total}
-                        </span>
-                        <span className="text-[11px] font-medium text-primary/80 uppercase tracking-wide">
-                          {total === 1 ? "question" : "questions"}
-                        </span>
-                      </div>
-                    </div>
 
-                    {/* Premium proportional mix bar */}
-                    {total > 0 && (
-                      <div className="mb-4">
-                        <TooltipProvider delayDuration={100}>
-                          <div className="relative flex h-3 w-full overflow-hidden rounded-full bg-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]">
-                            {QUESTION_TYPES.map((q, i) => {
-                              const n = types[q.key] || 0;
-                              if (n === 0) return null;
-                              const pct = (n / total) * 100;
-                              return (
-                                <Tooltip key={q.key}>
-                                  <TooltipTrigger asChild>
-                                    <div
-                                      className="relative h-full transition-[width,transform] duration-500 ease-out cursor-pointer hover:brightness-110 hover:scale-y-[1.35] origin-center"
-                                      style={{
-                                        width: `${pct}%`,
-                                        background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
-                                        boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
-                                        marginLeft: i === 0 ? 0 : 1,
-                                      }}
-                                      aria-label={`${q.label}: ${n} ${n === 1 ? "question" : "questions"} (${Math.round(pct)}%)`}
-                                    >
-                                      <span
-                                        className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
-                                        aria-hidden="true"
+                      {total > 0 && (
+                        <div className="mb-4">
+                          <TooltipProvider delayDuration={100}>
+                            <div className="relative flex h-3 w-full overflow-hidden rounded-full bg-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]">
+                              {QUESTION_TYPES.map((q, i) => {
+                                const n = types[q.key] || 0;
+                                if (n === 0) return null;
+                                const pct = (n / total) * 100;
+                                return (
+                                  <Tooltip key={q.key}>
+                                    <TooltipTrigger asChild>
+                                      <div
+                                        className="relative h-full transition-[width,transform] duration-500 ease-out cursor-pointer hover:brightness-110 hover:scale-y-[1.35] origin-center"
                                         style={{
-                                          background:
-                                            "linear-gradient(180deg, hsl(0 0% 100% / 0.35), hsl(0 0% 100% / 0))",
+                                          width: `${pct}%`,
+                                          background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
+                                          boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
+                                          marginLeft: i === 0 ? 0 : 1,
                                         }}
-                                      />
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent
-                                    side="top"
-                                    sideOffset={10}
-                                    className="px-3 py-2 rounded-xl border border-border/70 bg-popover shadow-lg"
-                                  >
-                                    <div className="flex items-center gap-2.5">
-                                      <span
-                                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                                        style={{
+                                        aria-label={`${q.label}: ${n} ${n === 1 ? "question" : "questions"} (${Math.round(pct)}%)`}
+                                      >
+                                        <span
+                                          className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
+                                          aria-hidden="true"
+                                          style={{
+                                            background:
+                                              "linear-gradient(180deg, hsl(0 0% 100% / 0.35), hsl(0 0% 100% / 0))",
+                                          }}
+                                        />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="top"
+                                      sideOffset={10}
+                                      className="px-3 py-2 rounded-xl border border-border/70 bg-popover shadow-lg"
+                                    >
+                                      <div className="flex items-center gap-2.5">
+                                        <span
+                                          className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                                          style={{
+                                            backgroundColor: `hsl(${q.hue} / 0.15)`,
+                                            color: `hsl(${q.hue})`,
+                                            boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.35)`,
+                                          }}
+                                          aria-hidden="true"
+                                        >
+                                          <q.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                        </span>
+                                        <div className="flex flex-col leading-tight">
+                                          <span className="text-[12px] font-semibold text-foreground">
+                                            {q.label}
+                                          </span>
+                                          <span className="text-[11px] text-muted-foreground tabular-nums">
+                                            {n} {n === 1 ? "question" : "questions"} · {Math.round(pct)}% of mix
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                );
+                              })}
+                            </div>
+                          </TooltipProvider>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {QUESTION_TYPES.map((q) => {
+                          const n = types[q.key] || 0;
+                          const Icon = q.icon;
+                          const active = n > 0;
+                          return (
+                            <div
+                              key={q.key}
+                              className={cn(
+                                "group relative flex items-center justify-between gap-3 rounded-2xl border bg-background px-4 py-3.5 transition-all",
+                                active ? "" : "border-border hover:border-primary/30"
+                              )}
+                              style={
+                                active
+                                  ? {
+                                      backgroundImage: `linear-gradient(135deg, hsl(${q.hue} / 0.06), hsl(${q.hue} / 0.02))`,
+                                      borderColor: `hsl(${q.hue} / 0.5)`,
+                                    }
+                                  : undefined
+                              }
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <span
+                                  className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all"
+                                  style={
+                                    active
+                                      ? {
                                           backgroundColor: `hsl(${q.hue} / 0.15)`,
                                           color: `hsl(${q.hue})`,
-                                          boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.35)`,
-                                        }}
-                                        aria-hidden="true"
-                                      >
-                                        <q.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                                      </span>
-                                      <div className="flex flex-col leading-tight">
-                                        <span className="text-[12px] font-semibold text-foreground">
-                                          {q.label}
-                                        </span>
-                                        <span className="text-[11px] text-muted-foreground tabular-nums">
-                                          {n} {n === 1 ? "question" : "questions"} · {Math.round(pct)}% of mix
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </TooltipContent>
-                                </Tooltip>
-                              );
-                            })}
-                          </div>
-                        </TooltipProvider>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {QUESTION_TYPES.map((q) => {
-                        const n = types[q.key] || 0;
-                        const Icon = q.icon;
-                        const active = n > 0;
-                        return (
-                          <div
-                            key={q.key}
-                            className={cn(
-                              "group relative flex items-center justify-between gap-3 rounded-2xl border bg-background px-4 py-3.5 transition-all",
-                              active ? "" : "border-border hover:border-primary/30"
-                            )}
-                            style={
-                              active
-                                ? {
-                                    backgroundImage: `linear-gradient(135deg, hsl(${q.hue} / 0.06), hsl(${q.hue} / 0.02))`,
-                                    borderColor: `hsl(${q.hue} / 0.5)`,
+                                          boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.3)`,
+                                        }
+                                      : { backgroundColor: "hsl(var(--muted))", color: "hsl(var(--muted-foreground))" }
                                   }
-                                : undefined
-                            }
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <span
-                                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all"
-                                style={
-                                  active
-                                    ? {
-                                        backgroundColor: `hsl(${q.hue} / 0.15)`,
-                                        color: `hsl(${q.hue})`,
-                                        boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.3)`,
-                                      }
-                                    : { backgroundColor: "hsl(var(--muted))", color: "hsl(var(--muted-foreground))" }
-                                }
-                                aria-hidden="true"
-                              >
-                                <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                              </span>
-                              <span className="text-sm font-medium text-foreground truncate">
-                                {q.label}
-                              </span>
+                                  aria-hidden="true"
+                                >
+                                  <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                                </span>
+                                <span className="text-sm font-medium text-foreground truncate">
+                                  {q.label}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => setType(q.key, n - 1)}
+                                  disabled={n <= 0}
+                                  aria-label={`Decrease ${q.label} for ${variant.title}`}
+                                  className="w-7 h-7 rounded-full border border-border bg-background flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                >
+                                  <Minus className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
+                                </button>
+                                <span
+                                  className="text-base font-bold tabular-nums w-6 text-center transition-colors"
+                                  style={{ color: active ? `hsl(${q.hue})` : "hsl(var(--muted-foreground))" }}
+                                  aria-live="polite"
+                                  aria-label={`${n} ${q.label} questions`}
+                                >
+                                  {n}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setType(q.key, n + 1)}
+                                  disabled={n >= perTypeMax}
+                                  aria-label={`Increase ${q.label} for ${variant.title}`}
+                                  className="w-7 h-7 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  style={{
+                                    border: `1px solid hsl(${q.hue} / 0.45)`,
+                                    backgroundColor: `hsl(${q.hue} / 0.1)`,
+                                    color: `hsl(${q.hue})`,
+                                  }}
+                                >
+                                  <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                </button>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <button
-                                type="button"
-                                onClick={() => setType(q.key, n - 1)}
-                                disabled={n <= 0}
-                                aria-label={`Decrease ${q.label} for ${variant.title}`}
-                                className="w-7 h-7 rounded-full border border-border bg-background flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                              >
-                                <Minus className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
-                              </button>
-                              <span
-                                className="text-base font-bold tabular-nums w-6 text-center transition-colors"
-                                style={{ color: active ? `hsl(${q.hue})` : "hsl(var(--muted-foreground))" }}
-                                aria-live="polite"
-                                aria-label={`${n} ${q.label} questions`}
-                              >
-                                {n}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => setType(q.key, n + 1)}
-                                disabled={n >= perTypeMax}
-                                aria-label={`Increase ${q.label} for ${variant.title}`}
-                                className="w-7 h-7 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                style={{
-                                  border: `1px solid hsl(${q.hue} / 0.45)`,
-                                  backgroundColor: `hsl(${q.hue} / 0.1)`,
-                                  color: `hsl(${q.hue})`,
-                                }}
-                              >
-                                <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          );
+                        })}
+                      </div>
 
-                    {total === 0 && (
-                      <p className="text-[12px] text-muted-foreground mt-3 text-center">
-                        Add at least one question type to include in this quiz.
-                      </p>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
+                      {total === 0 && (
+                        <p className="text-[12px] text-muted-foreground mt-3 text-center">
+                          Add at least one question type to include in this quiz.
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
+              </>
+            )}
           </PrefCard>
         );
       })()}
