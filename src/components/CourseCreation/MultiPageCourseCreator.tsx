@@ -295,6 +295,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     list: CourseItem[],
     overId: string,
   ): { container: "top" | string; index?: number } | null => {
+    if (overId === "outline-top-end-drop") {
+      return { container: "top" };
+    }
     if (overId.startsWith("section-drop:")) {
       return { container: overId.slice("section-drop:".length) };
     }
@@ -302,6 +305,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     if (!loc) return null;
     return { container: loc.container, index: loc.index };
   };
+
+  const handleOutlineDragStart = useCallback((event: DragStartEvent) => {
+    setActiveOutlineId(String(event.active.id));
+  }, []);
+
+  const handleOutlineDragCancel = useCallback(() => {
+    setActiveOutlineId(null);
+  }, []);
 
   const handleOutlineDragOver = useCallback((event: DragOverEvent) => {
     const { active, over } = event;
@@ -321,6 +332,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   }, []);
 
   const handleOutlineDragEnd = useCallback((event: DragEndEvent) => {
+    setActiveOutlineId(null);
     const { active, over } = event;
     if (!over) return;
     const activeId = String(active.id);
@@ -339,7 +351,10 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
       let targetContainer: "top" | string;
       let targetIndex: number;
-      if (overId.startsWith("section-drop:")) {
+      if (overId === "outline-top-end-drop") {
+        targetContainer = "top";
+        targetIndex = prev.length;
+      } else if (overId.startsWith("section-drop:")) {
         targetContainer = overId.slice("section-drop:".length);
         const sec = prev.find((i) => i.id === targetContainer);
         targetIndex = sec?.children?.length ?? 0;
@@ -365,6 +380,17 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       return movePage(prev, activeLoc, targetContainer, targetIndex);
     });
   }, []);
+
+  // True when the user is currently dragging a child page (one nested inside a section).
+  const isDraggingChildPage = (() => {
+    if (!activeOutlineId) return false;
+    for (const it of items) {
+      if (it.type === "section" && it.children?.some((c) => c.id === activeOutlineId)) return true;
+    }
+    return false;
+  })();
+
+
 
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
