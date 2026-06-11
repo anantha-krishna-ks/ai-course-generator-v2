@@ -1799,7 +1799,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                       })()}
                     </div>
                   </SortableContext>
+                  {isDraggingChildPage && <TopLevelEndDropZone />}
                 </DndContext>
+
               )}
 
               {/* Empty State */}
