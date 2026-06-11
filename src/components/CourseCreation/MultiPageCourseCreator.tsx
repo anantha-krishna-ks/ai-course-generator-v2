@@ -21,6 +21,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
