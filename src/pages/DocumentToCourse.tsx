@@ -313,8 +313,40 @@ export default function DocumentToCourse() {
             Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1].label}
           </div>
 
+          {/* Workflow heading — compact, modern */}
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="group relative inline-flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/[0.06] to-transparent ring-1 ring-inset ring-primary/20 backdrop-blur-sm"
+            >
+              <span
+                className="relative w-7 h-7 rounded-full bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.78)] text-primary-foreground flex items-center justify-center shadow-[0_4px_12px_-3px_hsl(var(--primary)/0.5),inset_0_1px_0_hsl(0_0%_100%/0.25)] shrink-0"
+                aria-hidden="true"
+              >
+                <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                <ArrowRight className="absolute -right-0.5 -bottom-0.5 w-3 h-3 p-[2px] rounded-full bg-background text-primary ring-1 ring-primary/30" aria-hidden="true" focusable="false" />
+              </span>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary/80">
+                  Workflow
+                </span>
+                <span aria-hidden="true" className="w-px h-3 bg-primary/25" />
+                <span className="text-[13px] font-semibold text-foreground leading-none whitespace-nowrap">
+                  Document to Course
+                </span>
+              </div>
+            </motion.div>
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+              <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+              AI-powered
+            </span>
+          </div>
+
           {/* Elegant step indicators */}
           <nav aria-label="Course generation steps" className="mb-6">
+
             <div className="flex items-center justify-between rounded-xl bg-muted/40 border border-border/60 px-2 py-2 sm:px-3 sm:py-2.5 backdrop-blur-sm">
               {STEPS.map((step, i) => {
                 const isActive = step.id === currentStep;
