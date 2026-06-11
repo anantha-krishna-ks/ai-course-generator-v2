@@ -219,6 +219,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const [editorDragOver, setEditorDragOver] = useState(false);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
   const [isSidebarDragging, setIsSidebarDragging] = useState(false);
+  const [activeOutlineId, setActiveOutlineId] = useState<string | null>(null);
+
   
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
