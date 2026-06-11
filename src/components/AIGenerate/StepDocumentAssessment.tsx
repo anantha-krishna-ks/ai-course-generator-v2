@@ -190,42 +190,49 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Quiz type
                   </span>
-                  <div
-                    role="radiogroup"
-                    aria-label="Quiz type"
-                    className="relative inline-flex items-center gap-1 p-1.5 rounded-full bg-gradient-to-b from-muted/70 to-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]"
-                  >
-                    {(Object.keys(QUIZ_VARIANTS) as QuizVariantKey[]).map((k) => {
-                      const v = QUIZ_VARIANTS[k];
-                      const Icon = v.icon;
-                      const selected = activeType === k;
-                      return (
-                        <button
-                          key={k}
-                          type="button"
-                          role="radio"
-                          aria-checked={selected}
-                          onClick={() => setActiveType(k)}
-                          className={cn(
-                            "relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            selected
-                              ? "text-primary-foreground shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.25)] bg-gradient-to-b from-primary to-primary/85 ring-1 ring-primary/40 scale-[1.02]"
-                              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
-                          )}
-                        >
-                          <Icon
-                            className={cn(
-                              "w-4 h-4 transition-transform",
-                              selected && "scale-110"
-                            )}
-                            aria-hidden="true"
-                            focusable="false"
-                          />
-                          <span>{v.title.replace(" quiz", "")}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  {(() => {
+                    const keys = Object.keys(QUIZ_VARIANTS) as QuizVariantKey[];
+                    const activeIdx = keys.indexOf(activeType);
+                    return (
+                      <div
+                        role="radiogroup"
+                        aria-label="Quiz type"
+                        className="relative inline-flex items-center p-1 rounded-full bg-muted/60 ring-1 ring-border/60"
+                      >
+                        {/* Sliding thumb */}
+                        <span
+                          aria-hidden="true"
+                          className="absolute top-1 bottom-1 rounded-full bg-background ring-1 ring-border/70 shadow-[0_1px_2px_hsl(var(--foreground)/0.06)] transition-all duration-[420ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
+                          style={{
+                            width: `calc((100% - 0.5rem) / ${keys.length})`,
+                            left: `calc(0.25rem + ${activeIdx} * (100% - 0.5rem) / ${keys.length})`,
+                          }}
+                        />
+                        {keys.map((k) => {
+                          const v = QUIZ_VARIANTS[k];
+                          const Icon = v.icon;
+                          const selected = activeType === k;
+                          return (
+                            <button
+                              key={k}
+                              type="button"
+                              role="radio"
+                              aria-checked={selected}
+                              onClick={() => setActiveType(k)}
+                              className={cn(
+                                "relative z-10 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-[14px] font-semibold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-w-[120px]",
+                                selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                              <span>{v.title.replace(" quiz", "")}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+
 
                   <span
                     className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
