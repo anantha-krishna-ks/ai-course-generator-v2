@@ -1632,9 +1632,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                 <DndContext
                   sensors={outlineSensors}
                   collisionDetection={closestCorners}
+                  onDragStart={handleOutlineDragStart}
                   onDragOver={handleOutlineDragOver}
                   onDragEnd={handleOutlineDragEnd}
+                  onDragCancel={handleOutlineDragCancel}
                 >
+
 
                   <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
                     <div className="space-y-6">
