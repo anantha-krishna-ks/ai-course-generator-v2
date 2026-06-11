@@ -71,29 +71,12 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
 
 
 
-  const defaultCourseQuizConfig = {
-    formative: { enabled: true, questionsPerQuiz: 5, questionTypes: { ...defaultMix } },
-    summative: { enabled: false, questionsPerQuiz: 10, questionTypes: { ...defaultMix, singleChoice: 4, multipleChoice: 3, trueFalse: 2, fillInBlank: 1 } },
-  };
-  const courseQuizConfig = (state as any).courseQuizConfig ?? defaultCourseQuizConfig;
-
-  const renderQuizCard = (scope: "section" | "course") => {
-    const isSection = scope === "section";
-    const scopeWord = isSection ? "section" : "course";
-    const cardTitle = isSection ? "Section quiz" : "Course quiz";
-    const scopeBadge = isSection ? "Applies to every section" : "One per course";
-    const offHelp = isSection
-      ? "Turn on to add an assessment to every section. Pick a quiz type and tune the question mix."
-      : "Turn on to add a single assessment for the whole course. Pick a quiz type and tune the question mix.";
-    const mixScopeLabel = isSection ? "· per section" : "· whole course";
-    const toggleAria = isSection ? "Toggle section quiz" : "Toggle course quiz";
-    const radioGroupLabel = isSection ? "Section quiz type" : "Course quiz type";
-
   return (
     <div className="space-y-4">
 
       {/* Section-level Quiz Configuration */}
       {(() => {
+
 
         const QUIZ_VARIANTS = {
           formative: {
