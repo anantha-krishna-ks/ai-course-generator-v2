@@ -154,6 +154,32 @@ function TopLevelEndDropZone() {
   );
 }
 
+function OutlineGapDropZone({ index }: { index: number }) {
+  const { setNodeRef, isOver } = useDroppable({ id: `outline-top-gap-${index}` });
+  return (
+    <div
+      ref={setNodeRef}
+      role="region"
+      aria-label="Drop here to place as a standalone page"
+      className={cn(
+        "rounded-lg border border-dashed transition-all my-1.5",
+        isOver
+          ? "border-primary bg-primary/10 h-12"
+          : "border-border/40 bg-muted/10 h-6"
+      )}
+    >
+      <div className={cn(
+        "h-full flex items-center justify-center text-[11px] font-medium transition-colors",
+        isOver ? "text-primary" : "text-muted-foreground/70"
+      )}>
+        {isOver ? "Release to place here as standalone page" : "Drop here for standalone"}
+      </div>
+    </div>
+  );
+}
+
+
+
 
 export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null, readOnly = false }: MultiPageCourseCreatorProps) {
   const navigate = useNavigate();
