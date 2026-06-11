@@ -107,9 +107,8 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
               [activeType]: { ...cfg, ...partial },
             },
           });
-        const toggle = () => update({ enabled: !cfg.enabled });
-        const setActiveType = (t: QuizVariantKey) =>
-          onChange({ sectionQuizType: t } as Partial<DocumentPreferencesValue>);
+
+
 
         // Master "section quiz" toggle drives both variants in sync
         const masterEnabled = value.quizConfig.formative.enabled || value.quizConfig.summative.enabled;
