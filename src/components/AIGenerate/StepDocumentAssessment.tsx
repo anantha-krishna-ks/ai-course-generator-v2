@@ -208,8 +208,20 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
               </button>
             </div>
 
-            {masterEnabled && (
-              <>
+            <div
+              className={cn(
+                "grid transition-[grid-template-rows,opacity,margin] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                masterEnabled ? "grid-rows-[1fr] opacity-100 mt-0" : "grid-rows-[0fr] opacity-0 -mt-1"
+              )}
+              aria-hidden={!masterEnabled}
+            >
+              <div
+                className={cn(
+                  "overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform",
+                  masterEnabled ? "translate-y-0" : "-translate-y-1"
+                )}
+              >
+
                 {/* Quiz type selector — card-style radio */}
                 <div className="mt-5">
                   <div className="flex items-center justify-between gap-3 mb-2">
