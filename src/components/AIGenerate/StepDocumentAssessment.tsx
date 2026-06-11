@@ -187,86 +187,97 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
 
             {masterEnabled && (
               <>
-                {/* Quiz type selector */}
-                <div className="mt-5 flex items-center gap-3 flex-wrap">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Quiz type
-                  </span>
-                  {(() => {
-                    const keys = Object.keys(QUIZ_VARIANTS) as QuizVariantKey[];
-                    const activeIdx = keys.indexOf(activeType);
-                    return (
-                      <div
-                        role="radiogroup"
-                        aria-label="Quiz type"
-                        className="relative inline-flex items-center p-1 rounded-full bg-muted/60 ring-1 ring-border/70 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.08)]"
-                      >
-                        {/* Sliding thumb with primary gradient */}
-                        <span
-                          aria-hidden="true"
-                          className="absolute top-1 bottom-1 rounded-full bg-gradient-to-b from-primary to-[hsl(var(--primary)/0.88)] ring-1 ring-primary/50 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.45),inset_0_1px_0_hsl(0_0%_100%/0.25)] transition-all duration-[420ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
-                          style={{
-                            width: `calc((100% - 0.5rem) / ${keys.length})`,
-                            left: `calc(0.25rem + ${activeIdx} * (100% - 0.5rem) / ${keys.length})`,
-                          }}
-                        />
-                        {keys.map((k) => {
-                          const v = QUIZ_VARIANTS[k];
-                          const Icon = v.icon;
-                          const selected = activeType === k;
-                          return (
-                            <button
-                              key={k}
-                              type="button"
-                              role="radio"
-                              aria-checked={selected}
-                              onClick={() => setActiveType(k)}
+                {/* Quiz type selector — card-style radio */}
+                <div className="mt-5">
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Quiz type
+                    </span>
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors"
+                      style={{
+                        backgroundColor: `hsl(${variant.badgeHue} / 0.12)`,
+                        color: `hsl(${variant.badgeHue})`,
+                        boxShadow: `inset 0 0 0 1px hsl(${variant.badgeHue} / 0.3)`,
+                      }}
+                    >
+                      {variant.badge}
+                    </span>
+                  </div>
+                  <div
+                    role="radiogroup"
+                    aria-label="Quiz type"
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                  >
+                    {(Object.keys(QUIZ_VARIANTS) as QuizVariantKey[]).map((k) => {
+                      const v = QUIZ_VARIANTS[k];
+                      const Icon = v.icon;
+                      const selected = activeType === k;
+                      return (
+                        <button
+                          key={k}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          onClick={() => setActiveType(k)}
+                          className={cn(
+                            "group relative flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                            selected
+                              ? "border-primary bg-primary/[0.04] ring-1 ring-primary/40 shadow-[0_2px_10px_-4px_hsl(var(--primary)/0.25)]"
+                              : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+                          )}
+                        >
+                          {/* Icon tile */}
+                          <span
+                            className={cn(
+                              "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300",
+                              selected
+                                ? "bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.85)] text-primary-foreground shadow-[0_4px_12px_-3px_hsl(var(--primary)/0.5),inset_0_1px_0_hsl(0_0%_100%/0.25)]"
+                                : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                            )}
+                            aria-hidden="true"
+                          >
+                            <Icon className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+                          </span>
+
+                          {/* Text */}
+                          <span className="flex flex-col min-w-0 flex-1">
+                            <span
                               className={cn(
-                                "relative z-10 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-[14px] font-semibold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-w-[130px]",
-                                selected
-                                  ? "text-primary-foreground"
-                                  : "text-muted-foreground hover:text-foreground"
+                                "text-[14px] font-semibold leading-tight transition-colors",
+                                selected ? "text-foreground" : "text-foreground"
                               )}
                             >
-                              {/* Radio indicator */}
-                              <span
-                                aria-hidden="true"
-                                className={cn(
-                                  "relative w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors duration-300 shrink-0",
-                                  selected
-                                    ? "border-primary-foreground/90 bg-primary-foreground/15"
-                                    : "border-muted-foreground/40 bg-transparent"
-                                )}
-                              >
-                                <span
-                                  className={cn(
-                                    "w-1.5 h-1.5 rounded-full bg-primary-foreground transition-all duration-300",
-                                    selected ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                                  )}
-                                />
-                              </span>
-                              <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                              <span>{v.title.replace(" quiz", "")}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    );
-                  })()}
+                              {v.title.replace(" quiz", "")}
+                            </span>
+                            <span className="text-[12px] text-muted-foreground leading-snug mt-0.5 truncate">
+                              {v.subtitle}
+                            </span>
+                          </span>
 
-
-
-                  <span
-                    className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                    style={{
-                      backgroundColor: `hsl(${variant.badgeHue} / 0.12)`,
-                      color: `hsl(${variant.badgeHue})`,
-                      boxShadow: `inset 0 0 0 1px hsl(${variant.badgeHue} / 0.3)`,
-                    }}
-                  >
-                    {variant.badge}
-                  </span>
+                          {/* Radio dot */}
+                          <span
+                            aria-hidden="true"
+                            className={cn(
+                              "relative w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300",
+                              selected
+                                ? "border-primary bg-primary"
+                                : "border-muted-foreground/35 bg-background group-hover:border-muted-foreground/60"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "w-2 h-2 rounded-full bg-primary-foreground transition-all duration-300",
+                                selected ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                              )}
+                            />
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+
 
                 {/* Question mix */}
                 {(() => {
