@@ -79,6 +79,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
         const QUIZ_VARIANTS = {
           formative: {
             title: "Formative quiz",
+            subtitle: "Low-stakes check-ins during learning",
             description: "Low-stakes check-ins woven into the learning flow to reinforce concepts as learners progress.",
             icon: GraduationCap,
             badge: "In-flow",
@@ -87,6 +88,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
           },
           summative: {
             title: "Summative quiz",
+            subtitle: "Graded end-of-section assessment",
             description: "End-of-section assessment that evaluates mastery of the material covered.",
             icon: ClipboardCheck,
             badge: "Graded",
