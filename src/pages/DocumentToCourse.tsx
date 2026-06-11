@@ -314,7 +314,7 @@ export default function DocumentToCourse() {
           </div>
 
           {/* Workflow heading — compact, centered */}
-          <div className="mb-4 flex justify-center">
+          <div className="-mt-2 sm:-mt-4 mb-5 flex justify-center">
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
