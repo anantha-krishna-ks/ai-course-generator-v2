@@ -75,7 +75,7 @@ export function StepDocumentAssessment({ state, onChange }: Props) {
     <div className="space-y-4">
 
       {/* Quiz Configuration — Section & Course scopes */}
-      {(["course", "section"] as const).map((scope) => {
+      {(["section", "course"] as const).map((scope) => {
         const isSection = scope === "section";
         const typeKey = isSection ? "sectionQuizType" : "courseQuizType";
         const configKey = isSection ? "quizConfig" : "courseQuizConfig";
