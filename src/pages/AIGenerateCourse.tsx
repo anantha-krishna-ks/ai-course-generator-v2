@@ -320,7 +320,7 @@ export default function AIGenerateCourse() {
                 className="relative w-7 h-7 rounded-full bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.78)] text-primary-foreground flex items-center justify-center shadow-[0_4px_12px_-3px_hsl(var(--primary)/0.5),inset_0_1px_0_hsl(0_0%_100%/0.25)] shrink-0"
                 aria-hidden="true"
               >
-                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                <AISparkles className="w-3.5 h-3.5" />
                 <ArrowRight className="absolute -right-0.5 -bottom-0.5 w-3 h-3 p-[2px] rounded-full bg-background text-primary ring-1 ring-primary/30" aria-hidden="true" focusable="false" />
               </span>
               <div className="flex items-center gap-2 min-w-0">
