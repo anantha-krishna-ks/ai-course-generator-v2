@@ -12,6 +12,7 @@ import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
+import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
