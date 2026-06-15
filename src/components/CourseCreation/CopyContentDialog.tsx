@@ -411,37 +411,100 @@ function OptionCard({
   );
 }
 
+/**
+ * Mini "real" course-outline preview — mirrors the editor sidebar so users
+ * immediately recognize what "Select Section" will copy: the parent section
+ * plus every page nested under it.
+ */
 function SectionIllustration() {
+  const pages = ["Introduction", "Core concepts", "Worked example", "Summary"];
   return (
-    <svg viewBox="0 0 200 110" className="w-3/4 h-auto" aria-hidden="true" focusable="false">
-      <rect x="20" y="14" width="160" height="22" rx="6" className="fill-primary/20" />
-      <rect x="28" y="22" width="60" height="6" rx="3" className="fill-primary" />
-      <rect x="30" y="46" width="140" height="14" rx="4" className="fill-muted-foreground/20" />
-      <rect x="30" y="66" width="140" height="14" rx="4" className="fill-muted-foreground/20" />
-      <rect x="30" y="86" width="100" height="14" rx="4" className="fill-muted-foreground/20" />
-    </svg>
+    <div
+      className="w-[88%] h-[88%] rounded-lg bg-background border border-border shadow-sm overflow-hidden flex flex-col text-left"
+      aria-hidden="true"
+    >
+      {/* fake window chrome */}
+      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/40">
+        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+      </div>
+      {/* highlighted section + its pages */}
+      <div className="flex-1 p-1.5 space-y-1 overflow-hidden">
+        <div className="flex items-center gap-1.5 rounded-md bg-primary/15 ring-1 ring-primary/40 px-1.5 py-1">
+          <ChevronsUpDown className="w-2.5 h-2.5 text-primary rotate-45" aria-hidden="true" focusable="false" />
+          <span className="text-[8px] font-semibold text-primary truncate">Section 2 · Fundamentals</span>
+          <Check className="w-2.5 h-2.5 text-primary ml-auto" aria-hidden="true" focusable="false" />
+        </div>
+        {pages.map((p) => (
+          <div
+            key={p}
+            className="flex items-center gap-1.5 pl-4 pr-1.5 py-0.5 rounded bg-primary/5"
+          >
+            <span className="w-1 h-1 rounded-full bg-primary/60" />
+            <span className="text-[7.5px] text-foreground/80 truncate">{p}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
+/**
+ * Mini "real" course-outline preview for the page-level copy flow —
+ * individual pages get ticked while their parent section is not selected.
+ */
 function PagesIllustration() {
+  const items = [
+    { label: "Introduction", checked: false },
+    { label: "Core concepts", checked: true },
+    { label: "Worked example", checked: false },
+    { label: "Summary", checked: true },
+  ];
   return (
-    <svg viewBox="0 0 200 110" className="w-3/4 h-auto" aria-hidden="true" focusable="false">
-      <rect x="20" y="18" width="50" height="74" rx="6" className="fill-muted-foreground/15" />
-      <rect x="26" y="26" width="38" height="5" rx="2" className="fill-muted-foreground/40" />
-      <rect x="26" y="36" width="30" height="4" rx="2" className="fill-muted-foreground/30" />
-      <rect x="26" y="44" width="34" height="4" rx="2" className="fill-muted-foreground/30" />
-
-      <rect x="75" y="18" width="50" height="74" rx="6" className="fill-primary/20 stroke-primary" strokeWidth="1.5" />
-      <rect x="81" y="26" width="38" height="5" rx="2" className="fill-primary" />
-      <rect x="81" y="36" width="30" height="4" rx="2" className="fill-primary/60" />
-      <rect x="81" y="44" width="34" height="4" rx="2" className="fill-primary/60" />
-      <circle cx="118" cy="86" r="6" className="fill-primary" />
-      <path d="M115 86 L117.5 88.5 L121 84.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-
-      <rect x="130" y="18" width="50" height="74" rx="6" className="fill-muted-foreground/15" />
-      <rect x="136" y="26" width="38" height="5" rx="2" className="fill-muted-foreground/40" />
-      <rect x="136" y="36" width="30" height="4" rx="2" className="fill-muted-foreground/30" />
-      <rect x="136" y="44" width="34" height="4" rx="2" className="fill-muted-foreground/30" />
-    </svg>
+    <div
+      className="w-[88%] h-[88%] rounded-lg bg-background border border-border shadow-sm overflow-hidden flex flex-col text-left"
+      aria-hidden="true"
+    >
+      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/40">
+        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+      </div>
+      <div className="flex-1 p-1.5 space-y-1 overflow-hidden">
+        <div className="flex items-center gap-1.5 px-1.5 py-1 rounded-md bg-muted/40">
+          <ChevronsUpDown className="w-2.5 h-2.5 text-muted-foreground rotate-45" aria-hidden="true" focusable="false" />
+          <span className="text-[8px] font-semibold text-muted-foreground truncate">Section 2 · Fundamentals</span>
+        </div>
+        {items.map((p) => (
+          <div
+            key={p.label}
+            className={cn(
+              "flex items-center gap-1.5 pl-4 pr-1.5 py-0.5 rounded",
+              p.checked && "bg-primary/10"
+            )}
+          >
+            <span
+              className={cn(
+                "w-2 h-2 rounded-[3px] border flex items-center justify-center shrink-0",
+                p.checked ? "bg-primary border-primary" : "border-muted-foreground/40 bg-background"
+              )}
+            >
+              {p.checked && (
+                <Check className="w-1.5 h-1.5 text-primary-foreground" strokeWidth={4} aria-hidden="true" focusable="false" />
+              )}
+            </span>
+            <span
+              className={cn(
+                "text-[7.5px] truncate",
+                p.checked ? "text-foreground font-medium" : "text-foreground/70"
+              )}
+            >
+              {p.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
