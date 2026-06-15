@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -69,6 +69,7 @@ import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferences
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import { CourseStatusBadge } from "@/components/Course/CourseStatusBadge";
+import { CopyContentDialog } from "./CopyContentDialog";
 
 interface CourseItem {
   id: string;
@@ -201,6 +202,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     return !sessionStorage.getItem("multipage-tour-dismissed");
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showCopyContentDialog, setShowCopyContentDialog] = useState(false);
   const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [showScormDialog, setShowScormDialog] = useState(false);
   const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
@@ -1657,10 +1659,24 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                         <span className="text-xs text-muted-foreground">Single learning unit to explain topics</span>
                       </div>
                     </DropdownMenuItem>
+                    <div className="my-2 h-px bg-border" aria-hidden="true" />
+                    <DropdownMenuItem
+                      onClick={() => setShowCopyContentDialog(true)}
+                      className="cursor-pointer flex items-start gap-3 px-3 py-3 rounded-md hover:!bg-muted focus:!bg-muted focus:!text-foreground transition-colors"
+                    >
+                      <div className="w-9 h-9 rounded-lg border border-primary/30 bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <CopyPlus className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-semibold text-foreground">Copy Content</span>
+                        <span className="text-xs text-muted-foreground">Pull a section or pages from another course.</span>
+                      </div>
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 )}
               </div>
+
 
               {/* Outline Items */}
               {(items.length > 0 || pendingTopAdds.length > 0) && (
@@ -2023,6 +2039,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       <ScormPreferencesDialog
         open={showScormDialog}
         onOpenChange={setShowScormDialog}
+      />
+
+      <CopyContentDialog
+        open={showCopyContentDialog}
+        onOpenChange={setShowCopyContentDialog}
       />
 
       {readOnly && (
