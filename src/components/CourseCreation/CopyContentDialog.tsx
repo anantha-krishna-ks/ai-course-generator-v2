@@ -187,10 +187,18 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                     role="combobox"
                     aria-expanded={pickerOpen}
                     aria-label="Select course"
-                    className="w-full justify-between rounded-full h-12 px-4 text-left font-normal"
+                    className="w-full justify-between rounded-full h-12 px-3 text-left font-normal"
                   >
                     <span className="flex items-center gap-2 min-w-0">
-                      <Search className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                      {course ? (
+                        <img
+                          src={course.thumbnail}
+                          alt=""
+                          className="w-8 h-8 rounded-full object-cover shrink-0"
+                        />
+                      ) : (
+                        <Search className="w-4 h-4 text-muted-foreground shrink-0 ml-1" aria-hidden="true" focusable="false" />
+                      )}
                       <span className={cn("truncate", !course && "text-muted-foreground")}>
                         {course ? course.title : "Search courses…"}
                       </span>
