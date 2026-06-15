@@ -299,7 +299,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                 </p>
               </div>
 
-              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-10">
                 <div className="order-1">
                   <OptionCard
                     disabled={!course}
