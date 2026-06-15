@@ -382,7 +382,7 @@ function OptionCard({
       aria-label={title}
       aria-pressed={selected}
       className={cn(
-        "group relative flex flex-col items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all overflow-hidden",
+        "group relative h-full w-full flex flex-col items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all overflow-hidden",
         disabled
           ? "border-border bg-muted/30 opacity-60 cursor-not-allowed"
           : selected
