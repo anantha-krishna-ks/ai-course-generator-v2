@@ -673,7 +673,7 @@ export default function CourseBrandingPage() {
         </header>
 
         <main className="w-full px-6 lg:px-10 py-6">
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-start">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.25fr)] items-start">
             {/* Editor column */}
               <nav aria-label="Section navigation" className="relative space-y-5 lg:pl-10">
                 {/* Connecting rail behind markers (desktop only) */}
