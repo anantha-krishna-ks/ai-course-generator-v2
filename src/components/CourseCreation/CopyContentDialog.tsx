@@ -200,7 +200,13 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                     role="combobox"
                     aria-expanded={pickerOpen}
                     aria-label="Select course"
-                    className="w-full justify-between rounded-full h-12 px-3 text-left font-normal"
+                    className={cn(
+                      "w-full justify-between rounded-full h-12 px-3 text-left font-normal transition-all",
+                      "border-2 border-border bg-card shadow-sm",
+                      "hover:border-primary/50 hover:shadow-md hover:bg-card",
+                      pickerOpen && "border-primary ring-4 ring-primary/15 shadow-md",
+                      course && !pickerOpen && "border-primary/40"
+                    )}
                   >
                     <span className="flex items-center gap-2 min-w-0">
                       {course ? (
