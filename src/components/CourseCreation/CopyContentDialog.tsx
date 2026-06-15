@@ -120,6 +120,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
           setSourceType("my");
           setCourse(null);
           setPickerOpen(false);
+          setMode(null);
         }
       }}
     >
