@@ -343,12 +343,14 @@ function OptionCard({
   illustration,
   onClick,
   disabled,
+  selected,
 }: {
   title: string;
   description: string;
   illustration: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
+  selected?: boolean;
 }) {
   return (
     <button
@@ -356,17 +358,25 @@ function OptionCard({
       onClick={onClick}
       disabled={disabled}
       aria-label={title}
+      aria-pressed={selected}
       className={cn(
-        "group relative flex flex-col items-start gap-4 rounded-2xl border p-5 text-left transition-all overflow-hidden",
+        "group relative flex flex-col items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all overflow-hidden",
         disabled
           ? "border-border bg-muted/30 opacity-60 cursor-not-allowed"
-          : "border-border bg-card hover:border-primary hover:shadow-lg hover:-translate-y-0.5"
+          : selected
+            ? "border-primary bg-primary/5 ring-4 ring-primary/15 shadow-md"
+            : "border-border bg-card hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5"
       )}
     >
+      {selected && !disabled && (
+        <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
+          <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </div>
+      )}
       <div
         className={cn(
           "w-full aspect-[16/9] rounded-xl flex items-center justify-center",
-          disabled ? "bg-muted" : "bg-primary/5"
+          disabled ? "bg-muted" : selected ? "bg-primary/10" : "bg-primary/5"
         )}
         aria-hidden="true"
       >
