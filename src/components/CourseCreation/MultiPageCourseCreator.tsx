@@ -202,6 +202,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
     return !sessionStorage.getItem("multipage-tour-dismissed");
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showCopyContentDialog, setShowCopyContentDialog] = useState(false);
   const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [showScormDialog, setShowScormDialog] = useState(false);
   const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
