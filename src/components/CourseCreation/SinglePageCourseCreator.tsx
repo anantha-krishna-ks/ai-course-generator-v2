@@ -111,12 +111,23 @@ function SortableOutlineWrapper({ id, children }: { id: string; children: (liste
 
 export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptions = null, initialRestoreState = null }: SinglePageCourseCreatorProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
+  const courseId = routeCourseIdAlt ?? routeCourseId ?? "draft";
+  const isEditCoursePage =
+    location.pathname.startsWith("/edit-course") || initialRestoreState != null;
+  const isSharedCourse = new URLSearchParams(location.search).get("shared") === "1";
   const { toast } = useToast();
   const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
   const [showTour, setShowTour] = useState(!initialRestoreState);
   const [tourStep, setTourStep] = useState(0);
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
   const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
+  const [showCloneDialog, setShowCloneDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showTokenDialog, setShowTokenDialog] = useState(false);
+  const [showScormDialog, setShowScormDialog] = useState(false);
+  const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
 
   // Course outline items
   const [items, setItems] = useState<CourseItem[]>(initialRestoreState?.items ?? []);
