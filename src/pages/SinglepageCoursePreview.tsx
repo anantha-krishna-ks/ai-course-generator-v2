@@ -679,6 +679,7 @@ const SinglepageCoursePreview = () => {
                 isCompactView ? "px-3 py-5" : "px-8 sm:px-12 py-10"
               )}>
                 <div className="max-w-3xl mx-auto">
+                  <CourseBrandingLogo courseId={data.courseId} slot="intro" />
                   <h1 className={cn(
                     "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
                     isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"
