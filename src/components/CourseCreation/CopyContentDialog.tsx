@@ -303,7 +303,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 sm:gap-5 items-stretch">
-                <div className="order-1 sm:order-none">
+                <div className="order-1 sm:order-none h-full">
                   <OptionCard
                     disabled={!course}
                     selected={mode === "sections"}
@@ -326,7 +326,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                   <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
                 </div>
 
-                <div className="order-3 sm:order-none">
+                <div className="order-3 sm:order-none h-full">
                   <OptionCard
                     disabled={!course}
                     selected={mode === "pages"}
@@ -382,7 +382,7 @@ function OptionCard({
       aria-label={title}
       aria-pressed={selected}
       className={cn(
-        "group relative flex flex-col items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all overflow-hidden",
+        "group relative h-full w-full flex flex-col items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all overflow-hidden",
         disabled
           ? "border-border bg-muted/30 opacity-60 cursor-not-allowed"
           : selected
@@ -397,7 +397,7 @@ function OptionCard({
       )}
       <div
         className={cn(
-          "w-full aspect-[16/9] rounded-xl flex items-center justify-center",
+          "w-full aspect-[16/9] shrink-0 rounded-xl flex items-center justify-center overflow-hidden",
           disabled ? "bg-muted" : selected ? "bg-primary/10" : "bg-primary/5"
         )}
         aria-hidden="true"
