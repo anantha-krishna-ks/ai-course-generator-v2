@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import defaultLogo from "@/assets/logo.png";
@@ -190,6 +191,100 @@ function ColorField({ label, value, onChange, helper }: { label: string; value: 
     </div>
   );
 }
+
+function IntroductionPreview({
+  title,
+  logo,
+  position,
+  primary,
+  cta,
+}: {
+  title: string;
+  logo: string | null;
+  position: LogoPosition;
+  primary: string;
+  cta: string;
+}) {
+  const introTint = hexToRgba(primary, 0.1);
+  const ctaText = readableTextColor(cta);
+  const displayedLogo = logo ?? defaultLogo;
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/40">
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Introduction</span>
+        <span className="text-[10px] text-muted-foreground">Live</span>
+      </div>
+
+      {/* Notebook-style intro panel mirroring /edit-course */}
+      <div className="relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${hexToRgba(primary, 0.18)} 0%, ${introTint} 60%, ${hexToRgba(primary, 0.16)} 100%)` }}>
+        {/* Decorative book elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-l from-foreground/[0.06] to-transparent" />
+          <div className="absolute right-2 top-0 bottom-0 w-px bg-foreground/[0.08]" />
+          <div className="absolute top-0 right-0 w-8 h-8">
+            <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor" aria-hidden="true" focusable="false" role="presentation">
+              <path d="M48 0 L48 48 L0 0 Z" />
+            </svg>
+          </div>
+          <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation">
+            <defs>
+              <pattern id="branding-ruled-lines" width="100%" height="22" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="21" x2="100%" y2="21" stroke="currentColor" strokeWidth="1" className="text-foreground" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#branding-ruled-lines)" />
+          </svg>
+          <div className="absolute left-8 top-0 bottom-0 w-px bg-destructive/15" />
+          <div className="absolute top-0 right-6 w-4 flex flex-col items-center drop-shadow-md">
+            <div className="w-full h-14 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15" style={{ background: `linear-gradient(to bottom, ${hexToRgba(primary, 0.3)}, ${hexToRgba(primary, 0.15)})` }} />
+            <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none" aria-hidden="true" focusable="false" role="presentation">
+              <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill={hexToRgba(primary, 0.18)} />
+            </svg>
+          </div>
+        </div>
+
+        {/* Logo at chosen position */}
+        <div className={`relative z-10 flex px-5 pt-4 ${POSITION_CLASS[position]}`}>
+          <div className="h-9 max-w-[120px] flex items-center rounded-md bg-white/85 backdrop-blur px-2 py-1 shadow-sm">
+            <img src={displayedLogo} alt="Logo preview" className="max-h-7 max-w-full object-contain" />
+          </div>
+        </div>
+
+        {/* Course title + content (mirrors editor) */}
+        <div className="relative z-10 px-5 pt-4 pb-6 pl-12">
+          <h3 className="text-xl sm:text-2xl font-bold text-foreground leading-tight break-words">
+            {title}
+          </h3>
+          <div className="mt-2">
+            <span className="inline-block px-2 py-0.5 text-[10px] text-muted-foreground bg-background/80 rounded border border-border">
+              {title.length}/ 275
+            </span>
+          </div>
+          <div className="mt-3 mb-4">
+            <div className="h-1 rounded-full w-full" style={{ backgroundColor: hexToRgba(primary, 0.35) }} />
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold" style={{ color: primary }}>Welcome to the Course</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              This comprehensive course is designed to provide you with in-depth knowledge and practical skills. Through carefully structured modules and engaging content, you'll gain expertise in key concepts and real-world applications.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="mt-4 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs font-medium shadow-sm transition-transform hover:scale-[1.02]"
+            style={{ backgroundColor: cta, color: ctaText }}
+          >
+            Start Course
+          </button>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 
 function PreviewCard({
   title,
@@ -635,30 +730,34 @@ export default function CourseBrandingPage() {
                   <p className="text-xs text-muted-foreground mt-1">All changes reflect instantly.</p>
                 </div>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <PreviewCard
-                  badge="Introduction"
-                  title={courseTitle}
-                  logo={branding.introLogo}
-                  position={branding.introPosition}
-                  primary={branding.primaryColor}
-                  cta={branding.ctaColor}
-                  heroImage={introHero}
-                  ctaLabel="Start Course"
-                  subtitle="Welcome — your branded course introduction."
-                />
-                <PreviewCard
-                  badge="Section / Page"
-                  title="Lesson Title"
-                  logo={branding.contentLogo}
-                  position={branding.contentPosition}
-                  primary={branding.primaryColor}
-                  cta={branding.ctaColor}
-                  heroImage={sectionHero}
-                  ctaLabel="Next"
-                  subtitle="Section header on every content page."
-                />
-              </div>
+              <Tabs defaultValue="introduction" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="introduction">Introduction</TabsTrigger>
+                  <TabsTrigger value="section">Section / Page</TabsTrigger>
+                </TabsList>
+                <TabsContent value="introduction" className="mt-3">
+                  <IntroductionPreview
+                    title={courseTitle}
+                    logo={branding.introLogo}
+                    position={branding.introPosition}
+                    primary={branding.primaryColor}
+                    cta={branding.ctaColor}
+                  />
+                </TabsContent>
+                <TabsContent value="section" className="mt-3">
+                  <PreviewCard
+                    badge="Section / Page"
+                    title="Lesson Title"
+                    logo={branding.contentLogo}
+                    position={branding.contentPosition}
+                    primary={branding.primaryColor}
+                    cta={branding.ctaColor}
+                    heroImage={sectionHero}
+                    ctaLabel="Next"
+                    subtitle="Section header on every content page."
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </main>
