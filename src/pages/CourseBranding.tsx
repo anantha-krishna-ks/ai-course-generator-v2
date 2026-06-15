@@ -1078,13 +1078,23 @@ export default function CourseBrandingPage() {
                   />
                 </TabsContent>
                 <TabsContent value="section" className="mt-3">
-                  <SectionPagePreview
-                    courseTitle={courseTitle}
-                    logo={branding.contentLogo}
-                    position={branding.contentPosition}
-                    primary={branding.primaryColor}
-                    cta={branding.ctaColor}
-                  />
+                  {layout === "single-page" ? (
+                    <SinglePageSectionPreview
+                      courseTitle={courseTitle}
+                      logo={branding.contentLogo}
+                      position={branding.contentPosition}
+                      primary={branding.primaryColor}
+                      cta={branding.ctaColor}
+                    />
+                  ) : (
+                    <SectionPagePreview
+                      courseTitle={courseTitle}
+                      logo={branding.contentLogo}
+                      position={branding.contentPosition}
+                      primary={branding.primaryColor}
+                      cta={branding.ctaColor}
+                    />
+                  )}
                 </TabsContent>
 
               </Tabs>
