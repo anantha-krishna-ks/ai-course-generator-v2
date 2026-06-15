@@ -350,6 +350,9 @@ function SectionPageHeading({ index, title }: { index: number; title: string }) 
       </h2>
     </div>
   );
+}
+
+
 
 interface CourseOption {
   id: string;
