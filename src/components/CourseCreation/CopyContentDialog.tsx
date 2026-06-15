@@ -299,8 +299,8 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                 </p>
               </div>
 
-              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-10">
-                <div className="order-1">
+              <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 sm:gap-5 items-stretch">
+                <div className="order-1 sm:order-none">
                   <OptionCard
                     disabled={!course}
                     selected={mode === "sections"}
@@ -311,19 +311,19 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                   />
                 </div>
 
-                {/* Mobile OR (between cards) */}
+                {/* OR divider */}
                 <div
-                  className="order-2 sm:hidden flex items-center gap-3"
+                  className="order-2 sm:order-none flex sm:flex-col items-center justify-center gap-3 sm:gap-2 sm:self-stretch px-1 sm:px-0"
                   aria-hidden="true"
                 >
-                  <span className="h-px flex-1 bg-border" />
-                  <span className="px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground">
+                  <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
+                  <span className="inline-flex h-7 min-w-[2.35rem] items-center justify-center rounded-full bg-background border border-border px-2 text-[10px] font-bold tracking-[0.15em] text-muted-foreground shadow-sm [text-indent:0.15em]">
                     OR
                   </span>
-                  <span className="h-px flex-1 bg-border" />
+                  <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
                 </div>
 
-                <div className="order-3 sm:order-2">
+                <div className="order-3 sm:order-none">
                   <OptionCard
                     disabled={!course}
                     selected={mode === "pages"}
@@ -334,17 +334,6 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                   />
                 </div>
 
-                {/* Desktop OR (centered between cards) */}
-                <div
-                  className="hidden sm:block absolute top-2 bottom-2 left-1/2 w-px -translate-x-1/2 bg-border pointer-events-none"
-                  aria-hidden="true"
-                />
-                <span
-                  className="hidden sm:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center h-7 min-w-[2.25rem] px-2 rounded-full bg-background border border-border text-[10px] font-bold tracking-[0.15em] text-muted-foreground shadow-sm pointer-events-none [text-indent:0.15em]"
-                  aria-hidden="true"
-                >
-                  OR
-                </span>
               </div>
             </section>
           </div>
