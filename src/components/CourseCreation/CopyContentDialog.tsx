@@ -70,6 +70,9 @@ type PreviewBlockData =
   | { kind: "list"; items: string[] }
   | { kind: "callout"; text: string }
   | { kind: "image"; src: string; alt: string; caption?: string }
+  | { kind: "video"; src: string; poster?: string; caption?: string }
+  | { kind: "audio"; src: string; label: string }
+  | { kind: "doc"; name: string; meta?: string }
   | {
       kind: "quiz";
       questions: {
@@ -86,6 +89,30 @@ const PREVIEW_IMAGES = [
   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&auto=format&fit=crop",
+];
+
+const PREVIEW_VIDEOS = [
+  {
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&auto=format&fit=crop",
+    caption: "Short walkthrough of the key ideas covered on this page.",
+  },
+  {
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    poster: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=1200&auto=format&fit=crop",
+    caption: "Watch the worked example before attempting the exercise.",
+  },
+];
+
+const PREVIEW_AUDIOS = [
+  { src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", label: "Narrated summary · 2 min" },
+  { src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", label: "Audio walkthrough · 3 min" },
+];
+
+const PREVIEW_DOCS = [
+  { name: "Reference handout.pdf", meta: "PDF · 2 pages · 280 KB" },
+  { name: "Worksheet template.docx", meta: "Word · 1 page · 64 KB" },
+  { name: "Data exhibit.xlsx", meta: "Excel · 3 sheets · 112 KB" },
 ];
 
 const PREVIEW_PARAGRAPHS = [
@@ -138,6 +165,9 @@ function getPreviewBlocks(page: { id: string; title: string; excerpt: string }):
       },
     ];
   }
+  const video = PREVIEW_VIDEOS[h % PREVIEW_VIDEOS.length];
+  const audio = PREVIEW_AUDIOS[h % PREVIEW_AUDIOS.length];
+  const doc = PREVIEW_DOCS[h % PREVIEW_DOCS.length];
   const blocks: PreviewBlockData[] = [
     { kind: "paragraph", text: page.excerpt },
     { kind: "heading", text: page.title },
@@ -150,6 +180,9 @@ function getPreviewBlocks(page: { id: string; title: string; excerpt: string }):
     },
     { kind: "callout", text: PREVIEW_CALLOUTS[h % PREVIEW_CALLOUTS.length] },
     { kind: "list", items: PREVIEW_LISTS[h % PREVIEW_LISTS.length] },
+    { kind: "video", src: video.src, poster: video.poster, caption: video.caption },
+    { kind: "audio", src: audio.src, label: audio.label },
+    { kind: "doc", name: doc.name, meta: doc.meta },
   ];
   return blocks;
 }
