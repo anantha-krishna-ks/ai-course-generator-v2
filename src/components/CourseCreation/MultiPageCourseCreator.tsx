@@ -69,6 +69,7 @@ import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferences
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import { CourseStatusBadge } from "@/components/Course/CourseStatusBadge";
+import { CopyContentDialog } from "./CopyContentDialog";
 
 interface CourseItem {
   id: string;
