@@ -216,69 +216,107 @@ function IntroductionPreview({
         <span className="text-[10px] text-muted-foreground">Live</span>
       </div>
 
-      {/* Notebook-style intro panel mirroring /edit-course */}
-      <div className="relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${hexToRgba(primary, 0.18)} 0%, ${introTint} 60%, ${hexToRgba(primary, 0.16)} 100%)` }}>
-        {/* Decorative book elements */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-l from-foreground/[0.06] to-transparent" />
-          <div className="absolute right-2 top-0 bottom-0 w-px bg-foreground/[0.08]" />
-          <div className="absolute top-0 right-0 w-8 h-8">
-            <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor" aria-hidden="true" focusable="false" role="presentation">
-              <path d="M48 0 L48 48 L0 0 Z" />
+      {/* Side-by-side editor preview: left = notebook intro, right = course outline */}
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+        {/* LEFT: Notebook-style intro panel mirroring /edit-course */}
+        <div className="relative overflow-hidden border-b md:border-b-0 md:border-r border-border" style={{ background: `linear-gradient(135deg, ${hexToRgba(primary, 0.18)} 0%, ${introTint} 60%, ${hexToRgba(primary, 0.16)} 100%)` }}>
+          <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-l from-foreground/[0.06] to-transparent" />
+            <div className="absolute right-2 top-0 bottom-0 w-px bg-foreground/[0.08]" />
+            <div className="absolute top-0 right-0 w-8 h-8">
+              <svg viewBox="0 0 48 48" className="w-full h-full text-foreground/[0.06]" fill="currentColor" aria-hidden="true" focusable="false" role="presentation">
+                <path d="M48 0 L48 48 L0 0 Z" />
+              </svg>
+            </div>
+            <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation">
+              <defs>
+                <pattern id="branding-ruled-lines" width="100%" height="22" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="21" x2="100%" y2="21" stroke="currentColor" strokeWidth="1" className="text-foreground" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#branding-ruled-lines)" />
             </svg>
+            <div className="absolute left-8 top-0 bottom-0 w-px bg-destructive/15" />
+            <div className="absolute top-0 right-6 w-4 flex flex-col items-center drop-shadow-md">
+              <div className="w-full h-14" style={{ background: `linear-gradient(to bottom, ${hexToRgba(primary, 0.3)}, ${hexToRgba(primary, 0.15)})` }} />
+              <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none" aria-hidden="true" focusable="false" role="presentation">
+                <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill={hexToRgba(primary, 0.18)} />
+              </svg>
+            </div>
           </div>
-          <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation">
-            <defs>
-              <pattern id="branding-ruled-lines" width="100%" height="22" patternUnits="userSpaceOnUse">
-                <line x1="0" y1="21" x2="100%" y2="21" stroke="currentColor" strokeWidth="1" className="text-foreground" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#branding-ruled-lines)" />
-          </svg>
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-destructive/15" />
-          <div className="absolute top-0 right-6 w-4 flex flex-col items-center drop-shadow-md">
-            <div className="w-full h-14 bg-gradient-to-b from-primary/25 via-primary/20 to-primary/15" style={{ background: `linear-gradient(to bottom, ${hexToRgba(primary, 0.3)}, ${hexToRgba(primary, 0.15)})` }} />
-            <svg viewBox="0 0 24 12" className="w-full" preserveAspectRatio="none" aria-hidden="true" focusable="false" role="presentation">
-              <path d="M0 0 L12 8 L24 0 L24 0 L0 0 Z" fill={hexToRgba(primary, 0.18)} />
-            </svg>
+
+          {/* Logo at chosen position */}
+          <div className={`relative z-10 flex px-4 pt-4 ${POSITION_CLASS[position]}`}>
+            <div className="h-8 max-w-[110px] flex items-center rounded-md bg-white/85 backdrop-blur px-2 py-1 shadow-sm">
+              <img src={displayedLogo} alt="Logo preview" className="max-h-6 max-w-full object-contain" />
+            </div>
+          </div>
+
+          <div className="relative z-10 px-4 pt-3 pb-5 pl-10">
+            <h3 className="text-base sm:text-lg font-bold text-foreground leading-tight break-words">
+              {title}
+            </h3>
+            <div className="mt-2">
+              <span className="inline-block px-1.5 py-0.5 text-[9px] text-muted-foreground bg-background/80 rounded border border-border">
+                {title.length}/ 275
+              </span>
+            </div>
+            <div className="mt-2 mb-3">
+              <div className="h-1 rounded-full w-full" style={{ backgroundColor: hexToRgba(primary, 0.35) }} />
+            </div>
+
+            <div className="space-y-1.5">
+              <h4 className="text-xs font-semibold" style={{ color: primary }}>Welcome to the Course</h4>
+              <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-4">
+                This comprehensive course is designed to provide you with in-depth knowledge and practical skills. Through carefully structured modules and engaging content, you'll gain expertise in key concepts and real-world applications.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="mt-3 inline-flex items-center justify-center rounded-full px-3 py-1 text-[11px] font-medium shadow-sm transition-transform hover:scale-[1.02]"
+              style={{ backgroundColor: cta, color: ctaText }}
+            >
+              Start Course
+            </button>
           </div>
         </div>
 
-        {/* Logo at chosen position */}
-        <div className={`relative z-10 flex px-5 pt-4 ${POSITION_CLASS[position]}`}>
-          <div className="h-9 max-w-[120px] flex items-center rounded-md bg-white/85 backdrop-blur px-2 py-1 shadow-sm">
-            <img src={displayedLogo} alt="Logo preview" className="max-h-7 max-w-full object-contain" />
-          </div>
-        </div>
-
-        {/* Course title + content (mirrors editor) */}
-        <div className="relative z-10 px-5 pt-4 pb-6 pl-12">
-          <h3 className="text-xl sm:text-2xl font-bold text-foreground leading-tight break-words">
-            {title}
-          </h3>
-          <div className="mt-2">
-            <span className="inline-block px-2 py-0.5 text-[10px] text-muted-foreground bg-background/80 rounded border border-border">
-              {title.length}/ 275
+        {/* RIGHT: Course Outline mock mirroring /edit-course right panel */}
+        <div className="bg-background p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Course Outline</h4>
+            <span
+              className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium"
+              style={{ borderColor: hexToRgba(primary, 0.4), color: primary, backgroundColor: hexToRgba(primary, 0.08) }}
+            >
+              + Add item
             </span>
-          </div>
-          <div className="mt-3 mb-4">
-            <div className="h-1 rounded-full w-full" style={{ backgroundColor: hexToRgba(primary, 0.35) }} />
           </div>
 
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold" style={{ color: primary }}>Welcome to the Course</h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              This comprehensive course is designed to provide you with in-depth knowledge and practical skills. Through carefully structured modules and engaging content, you'll gain expertise in key concepts and real-world applications.
-            </p>
+            {OUTLINE_PREVIEW.map((sec, sIdx) => (
+              <div key={sec.title} className="rounded-lg border border-border bg-card overflow-hidden">
+                <div className="flex items-center gap-2 px-2.5 py-2 bg-muted/40 border-b border-border">
+                  <span
+                    className="flex items-center justify-center w-5 h-5 rounded text-[10px] font-semibold"
+                    style={{ backgroundColor: hexToRgba(primary, 0.15), color: primary }}
+                  >
+                    {sIdx + 1}
+                  </span>
+                  <span className="text-[11px] font-semibold text-foreground truncate">{sec.title}</span>
+                </div>
+                <ul className="divide-y divide-border">
+                  {sec.pages.map((p, pIdx) => (
+                    <li key={p} className="flex items-center gap-2 px-3 py-1.5">
+                      <span className="text-[10px] text-muted-foreground w-6">{sIdx + 1}.{pIdx + 1}</span>
+                      <span className="text-[11px] text-foreground truncate flex-1">{p}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-
-          <button
-            type="button"
-            className="mt-4 inline-flex items-center justify-center rounded-full px-4 py-1.5 text-xs font-medium shadow-sm transition-transform hover:scale-[1.02]"
-            style={{ backgroundColor: cta, color: ctaText }}
-          >
-            Start Course
-          </button>
         </div>
       </div>
     </Card>
