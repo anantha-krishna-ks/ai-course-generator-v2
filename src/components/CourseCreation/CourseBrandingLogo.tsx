@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import defaultLogo from "@/assets/logo.png";
 import {
   courseBrandingStore,
   CourseBranding,
