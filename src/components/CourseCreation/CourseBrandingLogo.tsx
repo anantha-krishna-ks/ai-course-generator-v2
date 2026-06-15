@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import defaultLogo from "@/assets/logo.png";
 import {
   courseBrandingStore,
   CourseBranding,
@@ -47,9 +48,9 @@ export function CourseBrandingLogo({
     return () => window.removeEventListener("courseBrandingChanged", handler as EventListener);
   }, [courseId]);
 
-  const logo = slot === "intro" ? branding.introLogo : branding.contentLogo;
+  const customLogo = slot === "intro" ? branding.introLogo : branding.contentLogo;
   const position = slot === "intro" ? branding.introPosition : branding.contentPosition;
-  if (!logo) return null;
+  const logo = customLogo ?? defaultLogo;
 
   const h = maxHeight ?? (slot === "intro" ? 48 : 36);
 
