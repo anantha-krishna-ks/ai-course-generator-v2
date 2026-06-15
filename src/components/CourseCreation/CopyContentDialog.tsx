@@ -953,6 +953,7 @@ function ReviewPanel({
                           />
                         )}
                         <AccordionTrigger
+                          onClick={() => onSectionChange(s.id)}
                           className={cn(
                             "px-3.5 py-2.5 hover:no-underline gap-2 transition-colors",
                             active ? "bg-primary/[0.04]" : "hover:bg-muted/50"
