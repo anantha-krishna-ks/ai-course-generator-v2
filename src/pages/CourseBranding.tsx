@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Upload, Image as ImageIcon, AlertTriangle, Info, Palette, RotateCcw, Save, LayoutTemplate, Check, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -470,6 +470,151 @@ function SectionPagePreview({
   );
 }
 
+function SinglePageSectionPreview({
+  courseTitle,
+  logo,
+  position,
+  primary,
+  cta,
+}: {
+  courseTitle: string;
+  logo: string | null;
+  position: LogoPosition;
+  primary: string;
+  cta: string;
+}) {
+  const primaryText = readableTextColor(primary);
+  const ctaText = readableTextColor(cta);
+  const displayedLogo = logo ?? defaultLogo;
+  const progress = 22;
+  const activeSec = 0;
+  const activePage = 0;
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/40">
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Section / Page · Single Page</span>
+        <span className="text-[10px] text-muted-foreground">Live</span>
+      </div>
+
+      <div className="grid grid-cols-[minmax(0,185px)_minmax(0,1fr)] bg-background min-h-[420px]">
+        {/* LEFT: Sidebar with all sections + pages always expanded (single-page outline) */}
+        <div className="flex flex-col border-r border-border">
+          <div className="p-3 space-y-2" style={{ backgroundColor: primary, color: primaryText }}>
+            <span className="text-[8px] uppercase tracking-wider font-semibold opacity-80">Outline</span>
+            <h3 className="text-[11px] font-bold leading-tight line-clamp-2">{courseTitle}</h3>
+            <div className="space-y-1">
+              <div className="w-full h-1 rounded-full overflow-hidden" style={{ backgroundColor: hexToRgba(primaryText === "#FFFFFF" ? "#FFFFFF" : "#000000", 0.2) }}>
+                <div className="h-full rounded-full transition-all" style={{ width: `${progress}%`, backgroundColor: primaryText }} />
+              </div>
+              <span className="text-[8px] uppercase tracking-wider font-semibold opacity-80">{progress}% Scrolled</span>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-hidden py-1.5">
+            {OUTLINE_PREVIEW.map((sec, sIdx) => (
+              <div key={sec.title} className="mb-1">
+                <div className="flex items-center gap-1.5 px-2 py-1">
+                  <span
+                    className="flex items-center justify-center w-3.5 h-3.5 rounded text-[8px] font-bold"
+                    style={{ backgroundColor: hexToRgba(primary, 0.15), color: primary }}
+                  >
+                    {sIdx + 1}
+                  </span>
+                  <span className="text-[9px] font-semibold text-foreground truncate flex-1">{sec.title}</span>
+                </div>
+                <ul>
+                  {sec.pages.map((p, pIdx) => {
+                    const isActive = sIdx === activeSec && pIdx === activePage;
+                    return (
+                      <li
+                        key={p}
+                        className="flex items-center gap-1.5 pl-6 pr-2 py-1 text-[9px] leading-tight transition-colors"
+                        style={
+                          isActive
+                            ? { backgroundColor: hexToRgba(primary, 0.12), color: primary, fontWeight: 600, borderLeft: `2px solid ${primary}` }
+                            : { color: "hsl(var(--muted-foreground))" }
+                        }
+                      >
+                        <span className="truncate flex-1">{p}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Continuous scroll of all sections & pages stacked */}
+        <div className="flex flex-col">
+          <div className={`flex px-4 pt-3 ${POSITION_CLASS[position]}`}>
+            <div className="h-7 max-w-[110px] flex items-center rounded-md border border-border bg-white px-2 py-1 shadow-sm">
+              <img src={displayedLogo} alt="Logo preview" className="max-h-5 max-w-full object-contain" />
+            </div>
+          </div>
+
+          <div className="px-4 pb-4 pt-2 space-y-4">
+            {OUTLINE_PREVIEW.slice(0, 2).map((sec, sIdx) => (
+              <div key={sec.title} className="space-y-2">
+                {/* Section heading */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className="flex items-center justify-center w-5 h-5 rounded text-[9px] font-bold"
+                    style={{ backgroundColor: hexToRgba(primary, 0.15), color: primary }}
+                  >
+                    {sIdx + 1}
+                  </span>
+                  <h3 className="text-sm font-bold text-foreground leading-tight">{sec.title}</h3>
+                </div>
+                <div className="w-10 h-[2px] rounded-full" style={{ backgroundColor: primary }} />
+
+                {/* Pages stacked under each section */}
+                {sec.pages.map((p, pIdx) => (
+                  <div key={p} className="pl-7 space-y-1.5 pt-1.5">
+                    <span className="text-[9px] text-muted-foreground italic">
+                      {sIdx + 1}.{pIdx + 1} {p}
+                    </span>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2">
+                      In this part, you'll explore the key ideas with structured examples and an exercise to reinforce learning.
+                    </p>
+                    {pIdx === 0 && sIdx === 0 && (
+                      <div className="aspect-video rounded-md overflow-hidden border border-border bg-muted/40">
+                        <img src={sectionHero} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex gap-1.5 pt-0.5">
+                      <span className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: hexToRgba(primary, 0.25) }} />
+                      <span className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: hexToRgba(primary, 0.15) }} />
+                      <span className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: hexToRgba(primary, 0.1) }} />
+                    </div>
+                  </div>
+                ))}
+
+                {sIdx < 1 && <div className="border-t border-dashed border-border/60 mt-3" aria-hidden="true" />}
+              </div>
+            ))}
+
+            {/* Bottom CTA — continuous scroll ends here */}
+            <div className="pt-2 flex items-center justify-between border-t border-border/60">
+              <span className="text-[10px] text-muted-foreground">Keep scrolling to continue</span>
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-medium shadow-sm"
+                style={{ backgroundColor: cta, color: ctaText }}
+              >
+                Finish Course
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+
+
 
 
 function PreviewCard({
@@ -541,6 +686,8 @@ function PreviewCard({
 export default function CourseBrandingPage() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const layout = searchParams.get("layout") === "single-page" ? "single-page" : "multi-page";
   const { toast } = useToast();
 
   const courseTitle = useMemo(() => {
@@ -931,13 +1078,23 @@ export default function CourseBrandingPage() {
                   />
                 </TabsContent>
                 <TabsContent value="section" className="mt-3">
-                  <SectionPagePreview
-                    courseTitle={courseTitle}
-                    logo={branding.contentLogo}
-                    position={branding.contentPosition}
-                    primary={branding.primaryColor}
-                    cta={branding.ctaColor}
-                  />
+                  {layout === "single-page" ? (
+                    <SinglePageSectionPreview
+                      courseTitle={courseTitle}
+                      logo={branding.contentLogo}
+                      position={branding.contentPosition}
+                      primary={branding.primaryColor}
+                      cta={branding.ctaColor}
+                    />
+                  ) : (
+                    <SectionPagePreview
+                      courseTitle={courseTitle}
+                      logo={branding.contentLogo}
+                      position={branding.contentPosition}
+                      primary={branding.primaryColor}
+                      cta={branding.ctaColor}
+                    />
+                  )}
                 </TabsContent>
 
               </Tabs>
