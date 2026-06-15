@@ -572,14 +572,12 @@ function SinglePageMockPreview({
                   <img src={displayedLogo} alt="Logo preview" className="max-h-5 max-w-full object-contain" />
                 </div>
               </div>
-              {focus === "intro" && (
-                <div className="px-4 pb-4 pt-2">
-                  <h3 className="text-sm font-bold text-foreground leading-tight break-words">
-                    {courseTitle}
-                  </h3>
-                  <p className="text-[9px] text-muted-foreground mt-1">Single-page course</p>
-                </div>
-              )}
+              <div className="px-4 pb-4 pt-2">
+                <h3 className="text-sm font-bold text-foreground leading-tight break-words">
+                  {courseTitle}
+                </h3>
+                <p className="text-[9px] text-muted-foreground mt-1">Single-page course</p>
+              </div>
             </div>
 
             {/* Stacked content */}
