@@ -70,6 +70,9 @@ type PreviewBlockData =
   | { kind: "list"; items: string[] }
   | { kind: "callout"; text: string }
   | { kind: "image"; src: string; alt: string; caption?: string }
+  | { kind: "video"; src: string; poster?: string; caption?: string }
+  | { kind: "audio"; src: string; label: string }
+  | { kind: "doc"; name: string; meta?: string }
   | {
       kind: "quiz";
       questions: {
@@ -86,6 +89,30 @@ const PREVIEW_IMAGES = [
   "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&auto=format&fit=crop",
+];
+
+const PREVIEW_VIDEOS = [
+  {
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&auto=format&fit=crop",
+    caption: "Short walkthrough of the key ideas covered on this page.",
+  },
+  {
+    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    poster: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=1200&auto=format&fit=crop",
+    caption: "Watch the worked example before attempting the exercise.",
+  },
+];
+
+const PREVIEW_AUDIOS = [
+  { src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", label: "Narrated summary · 2 min" },
+  { src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", label: "Audio walkthrough · 3 min" },
+];
+
+const PREVIEW_DOCS = [
+  { name: "Reference handout.pdf", meta: "PDF · 2 pages · 280 KB" },
+  { name: "Worksheet template.docx", meta: "Word · 1 page · 64 KB" },
+  { name: "Data exhibit.xlsx", meta: "Excel · 3 sheets · 112 KB" },
 ];
 
 const PREVIEW_PARAGRAPHS = [
@@ -138,6 +165,9 @@ function getPreviewBlocks(page: { id: string; title: string; excerpt: string }):
       },
     ];
   }
+  const video = PREVIEW_VIDEOS[h % PREVIEW_VIDEOS.length];
+  const audio = PREVIEW_AUDIOS[h % PREVIEW_AUDIOS.length];
+  const doc = PREVIEW_DOCS[h % PREVIEW_DOCS.length];
   const blocks: PreviewBlockData[] = [
     { kind: "paragraph", text: page.excerpt },
     { kind: "heading", text: page.title },
@@ -150,6 +180,9 @@ function getPreviewBlocks(page: { id: string; title: string; excerpt: string }):
     },
     { kind: "callout", text: PREVIEW_CALLOUTS[h % PREVIEW_CALLOUTS.length] },
     { kind: "list", items: PREVIEW_LISTS[h % PREVIEW_LISTS.length] },
+    { kind: "video", src: video.src, poster: video.poster, caption: video.caption },
+    { kind: "audio", src: audio.src, label: audio.label },
+    { kind: "doc", name: doc.name, meta: doc.meta },
   ];
   return blocks;
 }
@@ -196,67 +229,114 @@ function PreviewBlockRenderer({ block: b }: { block: PreviewBlockData }) {
       </figure>
     );
   }
-  // quiz
-  return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
-          <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
-        </span>
-        Quiz preview
+  if (b.kind === "video") {
+    return (
+      <figure className="rounded-xl overflow-hidden border border-border bg-black">
+        <video
+          src={b.src}
+          poster={b.poster}
+          controls
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
+          className="w-full h-auto block bg-black"
+        />
+        {b.caption && (
+          <figcaption className="px-3 py-2 text-[12px] text-muted-foreground bg-card border-t border-border">
+            {b.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+  if (b.kind === "audio") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 text-primary shrink-0">
+          <Sparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[12.5px] font-medium text-foreground truncate">{b.label}</div>
+          <audio src={b.src} controls className="mt-1.5 w-full h-8" />
+        </div>
       </div>
-      <ol className="space-y-5">
-        {b.questions.map((q, qi) => (
-          <li key={qi} className="space-y-2">
-            <div className="text-[14px] font-medium text-foreground leading-snug">
-              <span className="text-muted-foreground tabular-nums mr-1.5">{qi + 1}.</span>
-              {q.q}
-            </div>
-            <ul className="space-y-1.5">
-              {q.options.map((opt, oi) => {
-                const correct = oi === q.answerIdx;
-                return (
-                  <li
-                    key={oi}
-                    className={cn(
-                      "flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px]",
-                      correct
-                        ? "border-emerald-500/30 bg-emerald-500/[0.06] text-foreground"
-                        : "border-border bg-background text-foreground/80"
-                    )}
-                  >
-                    <span
+    );
+  }
+  if (b.kind === "doc") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-foreground/[0.06] text-foreground shrink-0">
+          <FileText className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-medium text-foreground truncate">{b.name}</div>
+          {b.meta && <div className="text-[11.5px] text-muted-foreground truncate">{b.meta}</div>}
+        </div>
+      </div>
+    );
+  }
+  if (b.kind === "quiz") {
+    return (
+      <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
+            <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+          </span>
+          Quiz preview
+        </div>
+        <ol className="space-y-5">
+          {b.questions.map((q, qi) => (
+            <li key={qi} className="space-y-2">
+              <div className="text-[14px] font-medium text-foreground leading-snug">
+                <span className="text-muted-foreground tabular-nums mr-1.5">{qi + 1}.</span>
+                {q.q}
+              </div>
+              <ul className="space-y-1.5">
+                {q.options.map((opt, oi) => {
+                  const correct = oi === q.answerIdx;
+                  return (
+                    <li
+                      key={oi}
                       className={cn(
-                        "inline-flex items-center justify-center w-4 h-4 rounded-full border shrink-0",
+                        "flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px]",
                         correct
-                          ? "border-emerald-500 bg-emerald-500 text-white"
-                          : "border-border bg-card"
+                          ? "border-emerald-500/30 bg-emerald-500/[0.06] text-foreground"
+                          : "border-border bg-background text-foreground/80"
                       )}
-                      aria-hidden="true"
                     >
-                      {correct && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
-                    </span>
-                    <span className="flex-1">{opt}</span>
-                    {correct && (
-                      <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                        Correct
+                      <span
+                        className={cn(
+                          "inline-flex items-center justify-center w-4 h-4 rounded-full border shrink-0",
+                          correct
+                            ? "border-emerald-500 bg-emerald-500 text-white"
+                            : "border-border bg-card"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {correct && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
                       </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-            {q.explanation && (
-              <p className="text-[12.5px] text-muted-foreground leading-relaxed pl-1">
-                <span className="font-semibold text-foreground/80">Why: </span>
-                {q.explanation}
-              </p>
-            )}
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
+                      <span className="flex-1">{opt}</span>
+                      {correct && (
+                        <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                          Correct
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              {q.explanation && (
+                <p className="text-[12.5px] text-muted-foreground leading-relaxed pl-1">
+                  <span className="font-semibold text-foreground/80">Why: </span>
+                  {q.explanation}
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+  return null;
 }
 
 interface CourseOption {
