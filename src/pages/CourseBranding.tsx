@@ -929,18 +929,15 @@ export default function CourseBrandingPage() {
                   />
                 </TabsContent>
                 <TabsContent value="section" className="mt-3">
-                  <PreviewCard
-                    badge="Section / Page"
-                    title="Lesson Title"
+                  <SectionPagePreview
+                    courseTitle={courseTitle}
                     logo={branding.contentLogo}
                     position={branding.contentPosition}
                     primary={branding.primaryColor}
                     cta={branding.ctaColor}
-                    heroImage={sectionHero}
-                    ctaLabel="Next"
-                    subtitle="Section header on every content page."
                   />
                 </TabsContent>
+
               </Tabs>
             </div>
           </div>
