@@ -9,6 +9,7 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import type { SinglePageRestoreState } from "@/components/CourseCreation/SinglePageCourseCreator";
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 
 interface CourseItem {
   id: string;
@@ -37,6 +38,7 @@ interface PreviewState {
   sectionImages?: Record<string, string | null>;
   returnState?: SinglePageRestoreState;
   fontId?: string;
+  courseId?: string;
 }
 
 const DEMO_VIDEO_URL = "/demo/Motion_Video.mp4";
@@ -460,6 +462,7 @@ const SinglepageCoursePreview = () => {
 
         sections.push(
           <div key={item.id} id={`preview-item-${item.id}`} className="space-y-3 scroll-mt-4">
+            <CourseBrandingLogo courseId={data.courseId} slot="content" />
             {/* Section header */}
             <button
               className={cn(
@@ -529,6 +532,7 @@ const SinglepageCoursePreview = () => {
         const pageBlocks = data.pageBlocksMap[item.id] || [];
         sections.push(
           <div key={item.id} id={`preview-item-${item.id}`} className="space-y-4 scroll-mt-4">
+            <CourseBrandingLogo courseId={data.courseId} slot="content" />
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-primary/60 flex-shrink-0" aria-hidden="true" />
               <h2 className="text-base font-semibold text-foreground">{item.title || "Untitled"}</h2>
@@ -677,6 +681,7 @@ const SinglepageCoursePreview = () => {
                 isCompactView ? "px-3 py-5" : "px-8 sm:px-12 py-10"
               )}>
                 <div className="max-w-3xl mx-auto">
+                  <CourseBrandingLogo courseId={data.courseId} slot="intro" />
                   <h1 className={cn(
                     "font-semibold text-foreground leading-[1.1] tracking-tight break-words",
                     isCompactView ? "text-lg" : "text-2xl sm:text-3xl lg:text-4xl"

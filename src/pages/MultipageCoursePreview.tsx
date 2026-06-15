@@ -12,6 +12,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 
 interface CourseItem {
@@ -978,6 +979,7 @@ const MultipageCoursePreview = () => {
                 isCompactView ? "px-6 py-10" : "px-8 sm:px-12 lg:px-16 py-10"
               )}>
                 <div className="space-y-5">
+                  <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="intro" />
                   <h1 className={cn(
                     "font-semibold text-foreground leading-[1.1] tracking-tight",
                     isCompactView ? "text-2xl" : "text-3xl sm:text-4xl lg:text-5xl"
@@ -1214,8 +1216,9 @@ const MultipageCoursePreview = () => {
             )}>
               {currentPage ? (
                 <>
-                  {/* Page indicator */}
-                  <div className="space-y-2 sm:space-y-3">
+                   {/* Page indicator */}
+                   <div className="space-y-2 sm:space-y-3">
+                     <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="content" />
                     <span className="text-xs text-muted-foreground italic">
                       Page {currentIndex + 1} of {totalPages}
                     </span>

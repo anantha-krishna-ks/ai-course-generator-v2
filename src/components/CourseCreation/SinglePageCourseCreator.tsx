@@ -763,6 +763,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         sectionImages,
         returnState,
         fontId,
+        courseId,
       },
     });
   }, [navigate, title, items, contentBlocks, pageBlocksMap, sectionImages, aiOptions, fontId]);
