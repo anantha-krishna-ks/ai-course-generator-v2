@@ -61,6 +61,17 @@ interface CourseOption {
   thumbnail: string;
 }
 
+interface MockPage {
+  id: string;
+  title: string;
+  excerpt: string;
+}
+interface MockSection {
+  id: string;
+  title: string;
+  pages: MockPage[];
+}
+
 const MY_COURSES: CourseOption[] = [
   { id: "c1", title: "Carbon Accounting-ACCA", meta: "12 pages · 4 sections", thumbnail: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=400&h=300&fit=crop" },
   { id: "c2", title: "Budgeting in Management", meta: "8 pages · 3 sections", thumbnail: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop" },
@@ -79,7 +90,54 @@ const SHARED_COURSES: CourseOption[] = [
   { id: "s5", title: "Risk Assessment & Control", meta: "9 pages · 3 sections", thumbnail: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=300&fit=crop" },
 ];
 
+/** Deterministic mock course outline derived from a course id so each course
+ * has stable sections / pages / sample content for the live preview. */
+function buildMockCourse(courseId: string): { sections: MockSection[]; rootPages: MockPage[] } {
+  const seed = courseId.charCodeAt(courseId.length - 1) || 3;
+  const sectionTitles = [
+    "Getting started",
+    "Core fundamentals",
+    "Practical application",
+    "Advanced topics",
+    "Case studies",
+  ];
+  const pageTitles = [
+    ["Welcome & overview", "How this course works", "What you'll learn"],
+    ["Key concepts", "Frameworks & models", "Worked example", "Common pitfalls"],
+    ["Hands-on walkthrough", "Try it yourself", "Solution review"],
+    ["Industry deep-dive", "Regulatory landscape", "Tooling & automation"],
+    ["Mini case: Acme Co.", "Mini case: Globex"],
+  ];
+  const excerpts = [
+    "This page introduces the topic with a clear, learner-friendly framing and outlines what comes next.",
+    "We break the concept down into digestible building blocks, with diagrams and short examples throughout.",
+    "Apply what you learned in a guided exercise, then compare your answer against the model solution.",
+    "A focused look at how this plays out in the real world, with current data and credible references.",
+  ];
+  const sectionCount = 3 + (seed % 2); // 3 or 4
+  const sections: MockSection[] = Array.from({ length: sectionCount }, (_, i) => {
+    const titles = pageTitles[i % pageTitles.length];
+    return {
+      id: `${courseId}-s${i + 1}`,
+      title: sectionTitles[i % sectionTitles.length],
+      pages: titles.map((t, j) => ({
+        id: `${courseId}-s${i + 1}-p${j + 1}`,
+        title: t,
+        excerpt: excerpts[(i + j) % excerpts.length],
+      })),
+    };
+  });
+  const rootPages: MockPage[] = [
+    { id: `${courseId}-rp1`, title: "Course primer", excerpt: excerpts[0] },
+    { id: `${courseId}-rp2`, title: "Quick reference sheet", excerpt: excerpts[1] },
+    { id: `${courseId}-rp3`, title: "Final recap", excerpt: excerpts[2] },
+    { id: `${courseId}-rp4`, title: "Resources & links", excerpt: excerpts[3] },
+  ];
+  return { sections, rootPages };
+}
+
 type SourceType = "my" | "shared";
+type Step = "config" | "review";
 
 interface CopyContentDialogProps {
   open: boolean;
@@ -88,6 +146,8 @@ interface CopyContentDialogProps {
     course: CourseOption;
     mode: "sections" | "pages";
     sourceType: SourceType;
+    selectedSectionId?: string;
+    selectedPageIds: string[];
   }) => void;
 }
 
