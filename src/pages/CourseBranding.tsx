@@ -192,6 +192,13 @@ function ColorField({ label, value, onChange, helper }: { label: string; value: 
   );
 }
 
+const OUTLINE_PREVIEW: { title: string; pages: string[] }[] = [
+  { title: "Introduction & Overview", pages: ["Course Welcome", "Learning Objectives"] },
+  { title: "Core Concepts", pages: ["Fundamental Principles", "Key Terminology", "Practical Applications"] },
+  { title: "Advanced Topics", pages: ["Case Studies", "Best Practices"] },
+  { title: "Assessment & Review", pages: ["Summary", "Final Assessment Quiz"] },
+];
+
 function IntroductionPreview({
   title,
   logo,
