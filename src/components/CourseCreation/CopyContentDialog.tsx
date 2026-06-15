@@ -125,7 +125,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       }}
     >
       <DialogContent
-        className="p-0 gap-0 w-[95vw] h-auto max-h-[92dvh] max-w-3xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden"
+        className="p-0 gap-0 w-[95vw] h-auto max-h-[92dvh] max-w-4xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden"
       >
         {/* Header — matches PageEditorDialog */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
@@ -146,7 +146,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
         </DialogDescription>
 
         <div className="flex-1 overflow-y-auto pretty-scrollbar">
-          <div className="mx-auto w-full max-w-3xl px-6 sm:px-10 py-8 space-y-8">
+          <div className="mx-auto w-full max-w-4xl px-6 sm:px-10 py-8 space-y-8">
             {/* Step 1: Type of course */}
             <section className="space-y-3">
               <div>
@@ -299,7 +299,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                 </p>
               </div>
 
-              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-10">
                 <div className="order-1">
                   <OptionCard
                     disabled={!course}
@@ -336,16 +336,14 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
 
                 {/* Desktop OR (centered between cards) */}
                 <div
-                  className="hidden sm:flex absolute inset-y-0 left-1/2 -translate-x-1/2 items-center pointer-events-none"
+                  className="hidden sm:flex absolute inset-y-2 left-1/2 -translate-x-1/2 flex-col items-center pointer-events-none"
                   aria-hidden="true"
                 >
-                  <div className="flex flex-col items-center">
-                    <span className="w-px h-16 bg-gradient-to-b from-transparent to-border" />
-                    <span className="my-2 px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground shadow-sm">
-                      OR
-                    </span>
-                    <span className="w-px h-16 bg-gradient-to-b from-border to-transparent" />
-                  </div>
+                  <span className="w-px flex-1 bg-gradient-to-b from-transparent to-border" />
+                  <span className="my-2 px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.18em] text-muted-foreground shadow-sm">
+                    OR
+                  </span>
+                  <span className="w-px flex-1 bg-gradient-to-b from-border to-transparent" />
                 </div>
               </div>
             </section>
