@@ -686,6 +686,8 @@ function PreviewCard({
 export default function CourseBrandingPage() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const layout = searchParams.get("layout") === "single-page" ? "single-page" : "multi-page";
   const { toast } = useToast();
 
   const courseTitle = useMemo(() => {
