@@ -11,6 +11,7 @@ import {
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
+import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
