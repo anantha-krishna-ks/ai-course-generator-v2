@@ -499,7 +499,8 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       const first = mockCourse.sections[0];
       setSelectedSectionId(first.id);
       setSelectedPageIds(first.pages.map((p) => p.id));
-      setPreviewPageId(first.pages[0]?.id ?? null);
+      // In section mode, default to the section overview (no specific page).
+      setPreviewPageId(null);
     } else {
       const initial = mockCourse.rootPages.slice(0, 2).map((p) => p.id);
       setSelectedPageIds(initial);
@@ -514,7 +515,8 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
     const section = mockCourse.sections.find((s) => s.id === sectionId);
     const ids = section?.pages.map((p) => p.id) ?? [];
     setSelectedPageIds(ids);
-    setPreviewPageId(ids[0] ?? null);
+    // Selecting a section shows the section overview, not a specific page.
+    setPreviewPageId(null);
   };
 
   const togglePage = (pageId: string) => {
@@ -522,8 +524,10 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       const next = prev.includes(pageId)
         ? prev.filter((id) => id !== pageId)
         : [...prev, pageId];
-      if (!next.includes(previewPageId ?? "")) {
-        setPreviewPageId(next[0] ?? null);
+      if (previewPageId && !next.includes(previewPageId)) {
+        // Active page got unchecked — in section mode fall back to overview,
+        // in pages mode fall back to the first remaining selected page.
+        setPreviewPageId(mode === "sections" ? null : next[0] ?? null);
       }
       return next;
     });
