@@ -518,11 +518,25 @@ function SectionIllustration() {
 }
 
 /**
- * Same sidebar metaphor — but here individual pages get ticked via
- * checkboxes while the parent section stays unselected, conveying that
- * only chosen pages will be copied.
+ * Sibling preview to SectionIllustration — represents "individual pages"
+ * as standalone pages that live OUTSIDE any section (top-level items in
+ * the outline), each ticked via its own checkbox. A collapsed section is
+ * shown alongside them so the contrast (root-level pages vs. section)
+ * is obvious at a glance.
  */
 function PagesIllustration() {
+  type Row =
+    | { kind: "section"; idx: string; title: string }
+    | { kind: "page"; idx: string; title: string; checked: boolean };
+
+  const rows: Row[] = [
+    { kind: "section", idx: "01", title: "Getting started" },
+    { kind: "page", idx: "02", title: "Quick reference", checked: true },
+    { kind: "section", idx: "03", title: "Fundamentals" },
+    { kind: "page", idx: "04", title: "Cheat sheet", checked: false },
+    { kind: "page", idx: "05", title: "Final recap", checked: true },
+  ];
+
   const sections = [
     { idx: "01", title: "Getting started", open: false, pages: [] as { n: string; title: string; checked: boolean }[] },
     {
