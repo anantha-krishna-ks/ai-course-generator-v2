@@ -610,106 +610,170 @@ function ReviewPanel({
 
         <ScrollArea className="flex-1">
           <div className="p-4 space-y-5">
-            {mode === "sections" && (
+            {mode === "sections" ? (
               <div className="space-y-2">
-                <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground px-1">
-                  Sections
+                <div className="flex items-center justify-between px-1">
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Sections
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">
+                    {selectedPageIds.length} page{selectedPageIds.length === 1 ? "" : "s"} selected
+                  </div>
                 </div>
-                <RadioGroup
+                <Accordion
+                  type="single"
+                  collapsible
                   value={selectedSectionId ?? undefined}
-                  onValueChange={onSectionChange}
-                  className="space-y-1.5"
+                  onValueChange={(v) => v && onSectionChange(v)}
+                  className="space-y-2"
                 >
                   {mockCourse.sections.map((s, i) => {
                     const active = s.id === selectedSectionId;
+                    const sectionSelectedCount = s.pages.filter((p) =>
+                      selectedPageIds.includes(p.id)
+                    ).length;
                     return (
-                      <label
+                      <AccordionItem
                         key={s.id}
-                        htmlFor={`sec-${s.id}`}
+                        value={s.id}
                         className={cn(
-                          "flex items-center gap-2.5 rounded-xl border px-3 py-2.5 cursor-pointer transition-colors",
+                          "rounded-xl border bg-card overflow-hidden transition-colors",
                           active
                             ? "border-primary bg-primary/5 ring-2 ring-primary/15"
-                            : "border-border bg-card hover:border-foreground/30"
+                            : "border-border hover:border-foreground/30"
                         )}
                       >
-                        <RadioGroupItem id={`sec-${s.id}`} value={s.id} />
-                        <Folder className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                        <span className="text-xs font-mono text-muted-foreground shrink-0">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span className="text-sm font-medium text-foreground truncate flex-1">
-                          {s.title}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground shrink-0">
-                          {s.pages.length} pages
-                        </span>
-                      </label>
+                        <AccordionTrigger className="px-3 py-2.5 hover:no-underline [&[data-state=open]>svg]:rotate-180">
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <Folder className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                            <span className="text-xs font-mono text-muted-foreground shrink-0">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span className="text-sm font-medium text-foreground truncate flex-1 text-left">
+                              {s.title}
+                            </span>
+                            <span className="text-[11px] text-muted-foreground shrink-0 mr-2">
+                              {active && sectionSelectedCount > 0
+                                ? `${sectionSelectedCount}/${s.pages.length}`
+                                : `${s.pages.length} pages`}
+                            </span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3 px-3 pt-1">
+                          <ul className="space-y-1.5 border-l-2 border-primary/20 pl-3 ml-1.5">
+                            {s.pages.map((p, pi) => {
+                              const checked = selectedPageIds.includes(p.id);
+                              const isPreview = p.id === previewPageId;
+                              return (
+                                <li key={p.id}>
+                                  <div
+                                    className={cn(
+                                      "flex items-center gap-2.5 rounded-lg border px-2.5 py-1.5 transition-colors",
+                                      checked
+                                        ? "border-primary/50 bg-primary/5"
+                                        : "border-border bg-background hover:border-foreground/30",
+                                      isPreview && "ring-2 ring-primary/30"
+                                    )}
+                                  >
+                                    <Checkbox
+                                      id={`pg-${p.id}`}
+                                      checked={checked}
+                                      onCheckedChange={() => onTogglePage(p.id)}
+                                      aria-label={`Select ${p.title}`}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => onPreviewPage(p.id)}
+                                      className="flex-1 min-w-0 flex items-center gap-2 text-left"
+                                      aria-label={`Preview ${p.title}`}
+                                    >
+                                      <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                                      <span className="text-xs font-mono text-muted-foreground shrink-0">
+                                        {String(pi + 1).padStart(2, "0")}
+                                      </span>
+                                      <span className="text-sm text-foreground truncate">{p.title}</span>
+                                    </button>
+                                    {isPreview && checked && (
+                                      <Eye className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+                                    )}
+                                  </div>
+                                </li>
+                              );
+                            })}
+                            {s.pages.length === 0 && (
+                              <li className="text-xs text-muted-foreground px-1 py-2 text-center">
+                                No pages in this section.
+                              </li>
+                            )}
+                          </ul>
+                        </AccordionContent>
+                      </AccordionItem>
                     );
                   })}
-                </RadioGroup>
+                </Accordion>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Individual pages
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">
+                    {selectedPageIds.length}/{pagePool.length}
+                  </div>
+                </div>
+                <ul className="space-y-1.5">
+                  {pagePool.map((p, i) => {
+                    const checked = selectedPageIds.includes(p.id);
+                    const isPreview = p.id === previewPageId;
+                    return (
+                      <li key={p.id}>
+                        <div
+                          className={cn(
+                            "flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-colors",
+                            checked
+                              ? "border-primary/50 bg-primary/5"
+                              : "border-border bg-card hover:border-foreground/30",
+                            isPreview && "ring-2 ring-primary/30"
+                          )}
+                        >
+                          <Checkbox
+                            id={`pg-${p.id}`}
+                            checked={checked}
+                            onCheckedChange={() => onTogglePage(p.id)}
+                            aria-label={`Select ${p.title}`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => onPreviewPage(p.id)}
+                            className="flex-1 min-w-0 flex items-center gap-2 text-left"
+                            aria-label={`Preview ${p.title}`}
+                          >
+                            <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                            <span className="text-xs font-mono text-muted-foreground shrink-0">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <span className="text-sm text-foreground truncate">{p.title}</span>
+                          </button>
+                          {isPreview && checked && (
+                            <Eye className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                  {pagePool.length === 0 && (
+                    <li className="text-xs text-muted-foreground px-1 py-4 text-center">
+                      No pages available.
+                    </li>
+                  )}
+                </ul>
               </div>
             )}
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  {mode === "sections" ? "Pages in section" : "Individual pages"}
-                </div>
-                <div className="text-[11px] text-muted-foreground">
-                  {selectedPageIds.length}/{pagePool.length}
-                </div>
-              </div>
-              <ul className="space-y-1.5">
-                {pagePool.map((p, i) => {
-                  const checked = selectedPageIds.includes(p.id);
-                  const isPreview = p.id === previewPageId;
-                  return (
-                    <li key={p.id}>
-                      <div
-                        className={cn(
-                          "flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-colors",
-                          checked
-                            ? "border-primary/50 bg-primary/5"
-                            : "border-border bg-card hover:border-foreground/30",
-                          isPreview && "ring-2 ring-primary/30"
-                        )}
-                      >
-                        <Checkbox
-                          id={`pg-${p.id}`}
-                          checked={checked}
-                          onCheckedChange={() => onTogglePage(p.id)}
-                          aria-label={`Select ${p.title}`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => onPreviewPage(p.id)}
-                          className="flex-1 min-w-0 flex items-center gap-2 text-left"
-                          aria-label={`Preview ${p.title}`}
-                        >
-                          <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                          <span className="text-xs font-mono text-muted-foreground shrink-0">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span className="text-sm text-foreground truncate">{p.title}</span>
-                        </button>
-                        {isPreview && checked && (
-                          <Eye className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-                {pagePool.length === 0 && (
-                  <li className="text-xs text-muted-foreground px-1 py-4 text-center">
-                    No pages available.
-                  </li>
-                )}
-              </ul>
-            </div>
           </div>
         </ScrollArea>
       </div>
+
 
       {/* RIGHT: live preview */}
       <div className="flex flex-col min-h-0 bg-background">
