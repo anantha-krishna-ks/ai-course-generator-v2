@@ -326,7 +326,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                   <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
                 </div>
 
-                <div className="order-3 sm:order-none">
+                <div className="order-3 sm:order-none h-full">
                   <OptionCard
                     disabled={!course}
                     selected={mode === "pages"}
