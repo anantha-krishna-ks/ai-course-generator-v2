@@ -332,9 +332,6 @@ function SectionIllustration() {
       <rect x="30" y="46" width="140" height="14" rx="4" className="fill-muted-foreground/20" />
       <rect x="30" y="66" width="140" height="14" rx="4" className="fill-muted-foreground/20" />
       <rect x="30" y="86" width="100" height="14" rx="4" className="fill-muted-foreground/20" />
-      <g className="text-primary">
-        <Layers />
-      </g>
     </svg>
   );
 }
