@@ -1216,8 +1216,9 @@ const MultipageCoursePreview = () => {
             )}>
               {currentPage ? (
                 <>
-                  {/* Page indicator */}
-                  <div className="space-y-2 sm:space-y-3">
+                   {/* Page indicator */}
+                   <div className="space-y-2 sm:space-y-3">
+                     <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="content" />
                     <span className="text-xs text-muted-foreground italic">
                       Page {currentIndex + 1} of {totalPages}
                     </span>
