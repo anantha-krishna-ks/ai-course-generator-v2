@@ -532,6 +532,7 @@ const SinglepageCoursePreview = () => {
         const pageBlocks = data.pageBlocksMap[item.id] || [];
         sections.push(
           <div key={item.id} id={`preview-item-${item.id}`} className="space-y-4 scroll-mt-4">
+            <CourseBrandingLogo courseId={data.courseId} slot="content" />
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-primary/60 flex-shrink-0" aria-hidden="true" />
               <h2 className="text-base font-semibold text-foreground">{item.title || "Untitled"}</h2>
