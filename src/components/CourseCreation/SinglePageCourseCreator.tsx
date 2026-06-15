@@ -1505,6 +1505,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       <GuidedTour steps={tourSteps} isOpen={showTour} onClose={() => { setShowTour(false); setTourStep(-1); }} onStepChange={setTourStep} />
 
       <GenerateExportDialog open={showExportDialog} onOpenChange={setShowExportDialog} courseTitle={title} />
+
+      <CloneCourseDialog open={showCloneDialog} onOpenChange={setShowCloneDialog} courseTitle={title} />
+      <DeleteCourseDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} courseTitle={title} />
+      <TokenConsumptionDialog open={showTokenDialog} onOpenChange={setShowTokenDialog} />
+      <ScormPreferencesDialog open={showScormDialog} onOpenChange={setShowScormDialog} />
+      <CollaboratorsDrawer open={showCollaboratorsDrawer} onOpenChange={setShowCollaboratorsDrawer} courseId={courseId} />
     </div>
   );
 }
