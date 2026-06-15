@@ -339,6 +339,18 @@ function PreviewBlockRenderer({ block: b }: { block: PreviewBlockData }) {
   return null;
 }
 
+function SectionPageHeading({ index, title }: { index: number; title: string }) {
+  return (
+    <div className="flex items-center gap-2 pt-2">
+      <span className="text-[11px] font-mono text-muted-foreground tabular-nums">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <h2 className="text-[20px] font-semibold tracking-tight text-foreground">
+        {title}
+      </h2>
+    </div>
+  );
+
 interface CourseOption {
   id: string;
   title: string;
