@@ -979,7 +979,7 @@ const MultipageCoursePreview = () => {
                 isCompactView ? "px-6 py-10" : "px-8 sm:px-12 lg:px-16 py-10"
               )}>
                 <div className="space-y-5">
-                  <CourseBrandingLogo courseId={(data ?? previewState)?.courseId} slot="intro" />
+                  <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="intro" />
                   <h1 className={cn(
                     "font-semibold text-foreground leading-[1.1] tracking-tight",
                     isCompactView ? "text-2xl" : "text-3xl sm:text-4xl lg:text-5xl"
