@@ -33,13 +33,19 @@ const PopoverContent = React.forwardRef<
 ));
 PopoverContent.displayName = "InlinePopoverContent";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import {
+  ArrowLeft,
+  BookOpen,
   Check,
   ChevronDown,
   ChevronsUpDown,
   CopyPlus,
+  Eye,
   FileText,
   Folder,
   Search,
