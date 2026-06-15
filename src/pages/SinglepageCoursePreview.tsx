@@ -37,6 +37,7 @@ interface PreviewState {
   sectionImages?: Record<string, string | null>;
   returnState?: SinglePageRestoreState;
   fontId?: string;
+  courseId?: string;
 }
 
 const DEMO_VIDEO_URL = "/demo/Motion_Video.mp4";
