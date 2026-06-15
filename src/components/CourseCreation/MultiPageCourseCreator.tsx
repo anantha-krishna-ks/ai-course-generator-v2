@@ -12,6 +12,7 @@ import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
+import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
@@ -1321,6 +1322,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           {/* Content */}
           <ScrollArea className="relative z-10 flex-1 min-h-[300px] [&_[data-radix-scroll-area-thumb]]:!bg-muted-foreground/50 [&_[data-radix-scroll-area-thumb]:hover]:!bg-muted-foreground/70">
             <div className="p-6 sm:p-8 lg:py-10 lg:pr-10 lg:pl-16">
+              {/* Course branding logo (intro) */}
+              <CourseBrandingLogo courseId={courseId} slot="intro" />
+
               {/* Course Title */}
               <div className="relative group" data-tour="course-heading">
                 <textarea

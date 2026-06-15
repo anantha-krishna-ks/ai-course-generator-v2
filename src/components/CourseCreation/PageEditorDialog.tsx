@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import emptyPagesImg from "@/assets/empty-pages.png";
+import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -1079,6 +1080,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onDrop={handleContentDrop}
             >
             <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
+              {/* Course branding logo (content) */}
+              <CourseBrandingLogo courseId={courseId} slot="content" />
               {isCurrentSection ? (
                 <>
                   <span className="text-sm text-muted-foreground block mb-2">Section title</span>

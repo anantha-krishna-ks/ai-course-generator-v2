@@ -11,6 +11,7 @@ import {
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
+import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
@@ -1227,6 +1228,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 overflow-y-auto" style={{ fontFamily: getFontStack(fontId) }}>
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            {/* Course branding logo (intro) */}
+            <CourseBrandingLogo courseId={courseId} slot="intro" />
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">
               <label htmlFor="course-title-input" className="sr-only">Course title</label>
@@ -1313,6 +1316,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               if (item.type === "section") {
                 return (
                   <div key={item.id} id={`item-${item.id}`} className="mt-12">
+                    {/* Course branding logo (content) */}
+                    <CourseBrandingLogo courseId={courseId} slot="content" />
                     {/* Section divider label */}
                     <div className="flex items-center gap-3 mb-6">
                       <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-primary-foreground border border-primary/30 rounded-full bg-primary">
@@ -1407,6 +1412,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               // Page item (top-level or child)
               return (
                 <div key={item.id} id={`item-${item.id}`} className={cn("mt-10", parentId && "ml-4 pl-4 border-l-2 border-primary/20")}>
+                  {/* Course branding logo (content) */}
+                  {!parentId && <CourseBrandingLogo courseId={courseId} slot="content" />}
                   <div className="flex items-center gap-3 mb-4">
                     <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full bg-muted/30">
                       <FileText className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
