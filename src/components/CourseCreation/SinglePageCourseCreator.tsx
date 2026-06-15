@@ -890,7 +890,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                     <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
                     SCORM preferences
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate(`/edit-course/${courseId}/branding`)} className="gap-2 cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate(`/edit-course/${courseId}/branding?layout=single-page`)} className="gap-2 cursor-pointer">
                     <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Branding
                   </DropdownMenuItem>
