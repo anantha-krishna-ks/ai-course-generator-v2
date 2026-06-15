@@ -1,15 +1,22 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Eye, Wand2, Plus, X, Undo2,
   FileStack, Layers, HelpCircle, Sparkles, Type, ImageIcon, Video, FileText as DocIcon,
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
   Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen, Download,
+  MoreVertical, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, CaseSensitive, Palette,
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
+import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
+import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
+import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
+import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
+import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent,
 } from "@dnd-kit/core";
@@ -20,7 +27,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -38,7 +47,7 @@ import { ContentBlocksPanel, resolveTemplateDropData } from "./ContentBlocksPane
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { ImageBlock } from "./ImageBlock";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
-import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack } from "./FontSelectorDropdown";
+import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, FONT_OPTIONS } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 
 export interface SinglePageRestoreState {
