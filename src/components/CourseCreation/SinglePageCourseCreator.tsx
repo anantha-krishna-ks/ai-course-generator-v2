@@ -1316,6 +1316,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               if (item.type === "section") {
                 return (
                   <div key={item.id} id={`item-${item.id}`} className="mt-12">
+                    {/* Course branding logo (content) */}
+                    <CourseBrandingLogo courseId={courseId} slot="content" />
                     {/* Section divider label */}
                     <div className="flex items-center gap-3 mb-6">
                       <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-primary-foreground border border-primary/30 rounded-full bg-primary">
