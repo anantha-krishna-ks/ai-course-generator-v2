@@ -39,9 +39,11 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Check,
   ChevronsUpDown,
+  CopyPlus,
   Search,
   Users,
   User,
+  X,
 } from "lucide-react";
 
 interface CourseOption {
