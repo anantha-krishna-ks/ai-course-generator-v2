@@ -462,6 +462,7 @@ const SinglepageCoursePreview = () => {
 
         sections.push(
           <div key={item.id} id={`preview-item-${item.id}`} className="space-y-3 scroll-mt-4">
+            <CourseBrandingLogo courseId={data.courseId} slot="content" />
             {/* Section header */}
             <button
               className={cn(
