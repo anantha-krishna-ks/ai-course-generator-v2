@@ -1136,7 +1136,37 @@ function PreviewContent({
   previewPage: MockPage | null;
   onPickPage: (id: string) => void;
 }) {
+  // When a section is active but the user has unchecked every page, render a
+  // section overview so the right side still previews real content.
   if (selectedPages.length === 0) {
+    if (mode === "sections" && section) {
+      return (
+        <article className="mx-auto max-w-2xl space-y-6">
+          <header className="space-y-2 pb-4 border-b border-border">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              Section
+            </div>
+            <h1 className="text-[26px] font-semibold tracking-tight text-foreground leading-tight">
+              {section.title}
+            </h1>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              <span>
+                {section.pages.length} page{section.pages.length === 1 ? "" : "s"} in this section
+              </span>
+            </div>
+          </header>
+          <div className="space-y-6">
+            {section.pages.flatMap((p, i) => [
+              <SectionPageHeading key={`h-${p.id}`} index={i} title={p.title} />,
+              ...getPreviewBlocks(p).map((b, bi) => (
+                <PreviewBlockRenderer key={`${p.id}-${bi}`} block={b} />
+              )),
+            ])}
+          </div>
+        </article>
+      );
+    }
     return (
       <div className="h-full min-h-[260px] flex flex-col items-center justify-center text-center gap-2 text-muted-foreground">
         <BookOpen className="w-8 h-8" aria-hidden="true" focusable="false" />
