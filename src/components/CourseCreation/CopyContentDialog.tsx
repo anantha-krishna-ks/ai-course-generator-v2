@@ -125,7 +125,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       }}
     >
       <DialogContent
-        className="p-0 gap-0 w-[95vw] h-auto max-h-[92dvh] max-w-3xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden"
+        className="p-0 gap-0 w-[95vw] h-auto max-h-[92dvh] max-w-4xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden"
       >
         {/* Header — matches PageEditorDialog */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
