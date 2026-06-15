@@ -559,8 +559,13 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       ? activeSection?.pages ?? []
       : mockCourse?.rootPages ?? [];
   const selectedPages = pagePool.filter((p) => selectedPageIds.includes(p.id));
+  // In sections mode we keep previewPage null until the user explicitly picks
+  // a page (so the section overview is shown by default). In pages mode we
+  // fall back to the first selected page.
   const previewPage =
-    selectedPages.find((p) => p.id === previewPageId) ?? selectedPages[0] ?? null;
+    mode === "sections"
+      ? pagePool.find((p) => p.id === previewPageId) ?? null
+      : selectedPages.find((p) => p.id === previewPageId) ?? selectedPages[0] ?? null;
 
 
 
