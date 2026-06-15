@@ -299,7 +299,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <OptionCard
                   disabled={!course}
                   selected={mode === "sections"}
@@ -316,6 +316,30 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                   onClick={() => setMode("pages")}
                   illustration={<PagesIllustration />}
                 />
+
+                {/* OR divider */}
+                <div
+                  className="hidden sm:flex absolute inset-y-0 left-1/2 -translate-x-1/2 items-center pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="w-px flex-1 bg-gradient-to-b from-transparent via-border to-transparent h-16" />
+                    <span className="px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground shadow-sm">
+                      OR
+                    </span>
+                    <span className="w-px flex-1 bg-gradient-to-b from-border via-border to-transparent h-16" />
+                  </div>
+                </div>
+                <div
+                  className="sm:hidden flex items-center gap-3 -my-1"
+                  aria-hidden="true"
+                >
+                  <span className="h-px flex-1 bg-border" />
+                  <span className="px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground">
+                    OR
+                  </span>
+                  <span className="h-px flex-1 bg-border" />
+                </div>
               </div>
             </section>
           </div>
