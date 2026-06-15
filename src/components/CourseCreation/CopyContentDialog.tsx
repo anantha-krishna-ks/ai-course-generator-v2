@@ -499,7 +499,8 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       const first = mockCourse.sections[0];
       setSelectedSectionId(first.id);
       setSelectedPageIds(first.pages.map((p) => p.id));
-      setPreviewPageId(first.pages[0]?.id ?? null);
+      // In section mode, default to the section overview (no specific page).
+      setPreviewPageId(null);
     } else {
       const initial = mockCourse.rootPages.slice(0, 2).map((p) => p.id);
       setSelectedPageIds(initial);
@@ -514,7 +515,8 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
     const section = mockCourse.sections.find((s) => s.id === sectionId);
     const ids = section?.pages.map((p) => p.id) ?? [];
     setSelectedPageIds(ids);
-    setPreviewPageId(ids[0] ?? null);
+    // Selecting a section shows the section overview, not a specific page.
+    setPreviewPageId(null);
   };
 
   const togglePage = (pageId: string) => {
@@ -522,8 +524,10 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       const next = prev.includes(pageId)
         ? prev.filter((id) => id !== pageId)
         : [...prev, pageId];
-      if (!next.includes(previewPageId ?? "")) {
-        setPreviewPageId(next[0] ?? null);
+      if (previewPageId && !next.includes(previewPageId)) {
+        // Active page got unchecked — in section mode fall back to overview,
+        // in pages mode fall back to the first remaining selected page.
+        setPreviewPageId(mode === "sections" ? null : next[0] ?? null);
       }
       return next;
     });
@@ -555,8 +559,13 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       ? activeSection?.pages ?? []
       : mockCourse?.rootPages ?? [];
   const selectedPages = pagePool.filter((p) => selectedPageIds.includes(p.id));
+  // In sections mode we keep previewPage null until the user explicitly picks
+  // a page (so the section overview is shown by default). In pages mode we
+  // fall back to the first selected page.
   const previewPage =
-    selectedPages.find((p) => p.id === previewPageId) ?? selectedPages[0] ?? null;
+    mode === "sections"
+      ? pagePool.find((p) => p.id === previewPageId) ?? null
+      : selectedPages.find((p) => p.id === previewPageId) ?? selectedPages[0] ?? null;
 
 
 
@@ -1153,9 +1162,39 @@ function PreviewContent({
   previewPage: MockPage | null;
   onPickPage: (id: string) => void;
 }) {
-  // SECTION MODE — mirror the section-editor layout from PageEditorDialog:
-  // title, section image, introduction, and the pages within this section.
+  // SECTION MODE
   if (mode === "sections" && section) {
+    // A page inside the section is being previewed → show its full content.
+    if (previewPage) {
+      return (
+        <article className="mx-auto max-w-2xl space-y-6">
+          <button
+            type="button"
+            onClick={() => onPickPage(section.id)}
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors rounded-md px-2 py-1 -ml-2 hover:bg-muted"
+            aria-label={`Back to ${section.title} section overview`}
+          >
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Back to section
+          </button>
+          <header className="space-y-2 pb-4 border-b border-border">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              {section.title}
+            </div>
+            <h1 className="text-[26px] font-semibold tracking-tight text-foreground leading-tight">
+              {previewPage.title}
+            </h1>
+          </header>
+          <div className="space-y-6">
+            {getPreviewBlocks(previewPage).map((b, i) => (
+              <PreviewBlockRenderer key={i} block={b} />
+            ))}
+          </div>
+        </article>
+      );
+    }
+
+    // Section overview — mirror the section-editor layout.
     const h = hashString(section.id);
     const sectionImage = PREVIEW_IMAGES[h % PREVIEW_IMAGES.length];
     const sectionIntro =
@@ -1164,7 +1203,6 @@ function PreviewContent({
 
     return (
       <article className="mx-auto max-w-[760px] space-y-5">
-        {/* Section title */}
         <div>
           <span className="text-sm text-muted-foreground block mb-2">
             Section title
@@ -1174,17 +1212,10 @@ function PreviewContent({
           </h1>
         </div>
 
-        {/* Section image */}
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <ImageIcon
-              className="w-4 h-4 text-primary"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <span className="text-sm font-medium text-muted-foreground">
-              Section Image
-            </span>
+            <ImageIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            <span className="text-sm font-medium text-muted-foreground">Section Image</span>
           </div>
           <figure className="rounded-xl overflow-hidden border border-border bg-muted">
             <img
@@ -1196,17 +1227,10 @@ function PreviewContent({
           </figure>
         </div>
 
-        {/* Introduction */}
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <BookOpen
-              className="w-4 h-4 text-primary"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <span className="text-sm font-medium text-muted-foreground">
-              Introduction
-            </span>
+            <BookOpen className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            <span className="text-sm font-medium text-muted-foreground">Introduction</span>
           </div>
           <div className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 leading-relaxed [overflow-wrap:anywhere]">
             {sectionIntro}
@@ -1215,7 +1239,6 @@ function PreviewContent({
 
         <div className="border-t border-dashed border-border my-6" aria-hidden="true" />
 
-        {/* Pages in this section */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-muted-foreground">
@@ -1230,19 +1253,15 @@ function PreviewContent({
             <div className="space-y-2">
               {section.pages.map((child, idx) => {
                 const isSelected = selectedPages.some((p) => p.id === child.id);
-                const isActive = previewPage?.id === child.id;
                 return (
                   <button
                     key={child.id}
                     type="button"
                     onClick={() => onPickPage(child.id)}
                     aria-label={`Preview ${child.title}`}
-                    aria-pressed={isActive}
                     className={cn(
                       "w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors group",
-                      isActive
-                        ? "border-primary bg-primary/[0.06]"
-                        : isSelected
+                      isSelected
                         ? "border-border bg-card hover:bg-muted/50"
                         : "border-dashed border-border bg-card/40 hover:bg-muted/40"
                     )}
@@ -1276,7 +1295,7 @@ function PreviewContent({
                       </span>
                     )}
                     <ChevronRight
-                      className="w-4 h-4 text-muted-foreground shrink-0"
+                      className="w-4 h-4 text-muted-foreground shrink-0 group-hover:text-foreground transition-colors"
                       aria-hidden="true"
                       focusable="false"
                     />
@@ -1290,19 +1309,6 @@ function PreviewContent({
             </p>
           )}
         </div>
-
-        {/* Active page content (when a page is picked from the list above) */}
-        {previewPage && (
-          <div className="pt-6 mt-6 border-t border-border space-y-6">
-            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-              <Eye className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              Page preview · {previewPage.title}
-            </div>
-            {getPreviewBlocks(previewPage).map((b, i) => (
-              <PreviewBlockRenderer key={i} block={b} />
-            ))}
-          </div>
-        )}
       </article>
     );
   }
