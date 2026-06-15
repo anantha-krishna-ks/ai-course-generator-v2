@@ -1153,37 +1153,161 @@ function PreviewContent({
   previewPage: MockPage | null;
   onPickPage: (id: string) => void;
 }) {
-  // When a section is active but the user has unchecked every page, render a
-  // section overview so the right side still previews real content.
-  if (selectedPages.length === 0) {
-    if (mode === "sections" && section) {
-      return (
-        <article className="mx-auto max-w-2xl space-y-6">
-          <header className="space-y-2 pb-4 border-b border-border">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
-              Section
-            </div>
-            <h1 className="text-[26px] font-semibold tracking-tight text-foreground leading-tight">
-              {section.title}
-            </h1>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              <span>
-                {section.pages.length} page{section.pages.length === 1 ? "" : "s"} in this section
-              </span>
-            </div>
-          </header>
-          <div className="space-y-6">
-            {section.pages.flatMap((p, i) => [
-              <SectionPageHeading key={`h-${p.id}`} index={i} title={p.title} />,
-              ...getPreviewBlocks(p).map((b, bi) => (
-                <PreviewBlockRenderer key={`${p.id}-${bi}`} block={b} />
-              )),
-            ])}
+  // SECTION MODE — mirror the section-editor layout from PageEditorDialog:
+  // title, section image, introduction, and the pages within this section.
+  if (mode === "sections" && section) {
+    const h = hashString(section.id);
+    const sectionImage = PREVIEW_IMAGES[h % PREVIEW_IMAGES.length];
+    const sectionIntro =
+      PREVIEW_PARAGRAPHS[h % PREVIEW_PARAGRAPHS.length] +
+      " This section sets the foundation for what comes next.";
+
+    return (
+      <article className="mx-auto max-w-[760px] space-y-5">
+        {/* Section title */}
+        <div>
+          <span className="text-sm text-muted-foreground block mb-2">
+            Section title
+          </span>
+          <h1 className="text-3xl font-bold text-foreground leading-tight [overflow-wrap:anywhere]">
+            {section.title}
+          </h1>
+        </div>
+
+        {/* Section image */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <ImageIcon
+              className="w-4 h-4 text-primary"
+              aria-hidden="true"
+              focusable="false"
+            />
+            <span className="text-sm font-medium text-muted-foreground">
+              Section Image
+            </span>
           </div>
-        </article>
-      );
-    }
+          <figure className="rounded-xl overflow-hidden border border-border bg-muted">
+            <img
+              src={sectionImage}
+              alt={`Cover for ${section.title}`}
+              className="w-full aspect-[16/9] object-cover block"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+
+        {/* Introduction */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpen
+              className="w-4 h-4 text-primary"
+              aria-hidden="true"
+              focusable="false"
+            />
+            <span className="text-sm font-medium text-muted-foreground">
+              Introduction
+            </span>
+          </div>
+          <div className="w-full text-sm text-foreground bg-muted/30 border border-border rounded-lg px-3.5 py-4 leading-relaxed [overflow-wrap:anywhere]">
+            {sectionIntro}
+          </div>
+        </div>
+
+        <div className="border-t border-dashed border-border my-6" aria-hidden="true" />
+
+        {/* Pages in this section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-muted-foreground">
+              Pages in this section
+            </span>
+            <span className="text-[11px] text-muted-foreground tabular-nums">
+              {selectedPages.length}
+              <span className="text-muted-foreground/70"> of {section.pages.length} selected</span>
+            </span>
+          </div>
+          {section.pages.length > 0 ? (
+            <div className="space-y-2">
+              {section.pages.map((child, idx) => {
+                const isSelected = selectedPages.some((p) => p.id === child.id);
+                const isActive = previewPage?.id === child.id;
+                return (
+                  <button
+                    key={child.id}
+                    type="button"
+                    onClick={() => onPickPage(child.id)}
+                    aria-label={`Preview ${child.title}`}
+                    aria-pressed={isActive}
+                    className={cn(
+                      "w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors group",
+                      isActive
+                        ? "border-primary bg-primary/[0.06]"
+                        : isSelected
+                        ? "border-border bg-card hover:bg-muted/50"
+                        : "border-dashed border-border bg-card/40 hover:bg-muted/40"
+                    )}
+                  >
+                    <span className="text-xs text-muted-foreground font-medium w-6 tabular-nums">
+                      {idx + 1}.
+                    </span>
+                    <FileText
+                      className={cn(
+                        "w-4 h-4 shrink-0",
+                        isSelected ? "text-foreground" : "text-muted-foreground"
+                      )}
+                      aria-hidden="true"
+                      focusable="false"
+                    />
+                    <span
+                      className={cn(
+                        "text-sm flex-1 truncate",
+                        isSelected ? "text-foreground" : "text-muted-foreground"
+                      )}
+                    >
+                      {child.title || "Untitled page"}
+                    </span>
+                    {isSelected ? (
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground shrink-0">
+                        <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true" focusable="false" />
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground shrink-0">
+                        Not copied
+                      </span>
+                    )}
+                    <ChevronRight
+                      className="w-4 h-4 text-muted-foreground shrink-0"
+                      aria-hidden="true"
+                      focusable="false"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground py-6 text-center">
+              No pages in this section yet.
+            </p>
+          )}
+        </div>
+
+        {/* Active page content (when a page is picked from the list above) */}
+        {previewPage && (
+          <div className="pt-6 mt-6 border-t border-border space-y-6">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+              <Eye className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              Page preview · {previewPage.title}
+            </div>
+            {getPreviewBlocks(previewPage).map((b, i) => (
+              <PreviewBlockRenderer key={i} block={b} />
+            ))}
+          </div>
+        )}
+      </article>
+    );
+  }
+
+  if (selectedPages.length === 0) {
     return (
       <div className="h-full min-h-[260px] flex flex-col items-center justify-center text-center gap-2 text-muted-foreground">
         <BookOpen className="w-8 h-8" aria-hidden="true" focusable="false" />
