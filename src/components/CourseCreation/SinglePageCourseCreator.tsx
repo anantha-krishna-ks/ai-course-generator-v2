@@ -1412,6 +1412,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               // Page item (top-level or child)
               return (
                 <div key={item.id} id={`item-${item.id}`} className={cn("mt-10", parentId && "ml-4 pl-4 border-l-2 border-primary/20")}>
+                  {/* Course branding logo (content) */}
+                  {!parentId && <CourseBrandingLogo courseId={courseId} slot="content" />}
                   <div className="flex items-center gap-3 mb-4">
                     <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-muted-foreground border border-border rounded-full bg-muted/30">
                       <FileText className="w-3 h-3 mr-1.5" aria-hidden="true" focusable="false" />
