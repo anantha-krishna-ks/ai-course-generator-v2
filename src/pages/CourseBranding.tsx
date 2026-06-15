@@ -364,7 +364,7 @@ function SectionPagePreview({
         <span className="text-[10px] text-muted-foreground">Live</span>
       </div>
 
-      <div className="grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] bg-background min-h-[380px]">
+      <div className="grid grid-cols-[minmax(0,185px)_minmax(0,1fr)] bg-background min-h-[380px]">
         {/* LEFT: Sidebar navigation */}
         <div className="flex flex-col border-r border-border">
           {/* Course title card (primary colored) */}
