@@ -1065,38 +1065,35 @@ function PreviewContent({
     );
   }
 
+  const blocks = previewPage ? getPreviewBlocks(previewPage) : [];
+  const pageIndex = previewPage
+    ? Math.max(0, selectedPages.findIndex((p) => p.id === previewPage.id))
+    : 0;
+
   return (
     <article className="mx-auto max-w-2xl space-y-6">
       <header className="space-y-2 pb-4 border-b border-border">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           {mode === "sections" && section ? section.title : "Individual pages"}
         </div>
         {previewPage && (
-          <h1 className="text-2xl font-bold text-foreground leading-tight">
+          <h1 className="text-[26px] font-semibold tracking-tight text-foreground leading-tight">
             {previewPage.title}
           </h1>
         )}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
           <span>
-            Page {Math.max(1, selectedPages.findIndex((p) => p.id === previewPage?.id) + 1)} of {selectedPages.length}
+            Page {pageIndex + 1} of {selectedPages.length}
           </span>
         </div>
       </header>
 
       {previewPage && (
-        <div className="space-y-4">
-          <div className="aspect-[16/9] rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-muted border border-border flex items-center justify-center">
-            <BookOpen className="w-10 h-10 text-primary/40" aria-hidden="true" focusable="false" />
-          </div>
-          <p className="text-base text-foreground leading-relaxed">
-            {previewPage.excerpt}
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            This is a sample of how "{previewPage.title}" will appear once copied
-            into your course. Formatting, media, and interactive blocks are
-            preserved during the copy.
-          </p>
+        <div className="space-y-6">
+          {blocks.map((b, i) => (
+            <PreviewBlockRenderer key={i} block={b} />
+          ))}
         </div>
       )}
 
