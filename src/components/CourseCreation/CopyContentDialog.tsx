@@ -299,23 +299,54 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <OptionCard
-                  disabled={!course}
-                  selected={mode === "sections"}
-                  title="Select Section"
-                  description="Bring over an entire section with all its pages."
-                  onClick={() => setMode("sections")}
-                  illustration={<SectionIllustration />}
-                />
-                <OptionCard
-                  disabled={!course}
-                  selected={mode === "pages"}
-                  title="Select Individual Pages"
-                  description="Cherry-pick specific pages to copy in."
-                  onClick={() => setMode("pages")}
-                  illustration={<PagesIllustration />}
-                />
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="order-1">
+                  <OptionCard
+                    disabled={!course}
+                    selected={mode === "sections"}
+                    title="Select Section"
+                    description="Bring over an entire section with all its pages."
+                    onClick={() => setMode("sections")}
+                    illustration={<SectionIllustration />}
+                  />
+                </div>
+
+                {/* Mobile OR (between cards) */}
+                <div
+                  className="order-2 sm:hidden flex items-center gap-3"
+                  aria-hidden="true"
+                >
+                  <span className="h-px flex-1 bg-border" />
+                  <span className="px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground">
+                    OR
+                  </span>
+                  <span className="h-px flex-1 bg-border" />
+                </div>
+
+                <div className="order-3 sm:order-2">
+                  <OptionCard
+                    disabled={!course}
+                    selected={mode === "pages"}
+                    title="Select Individual Pages"
+                    description="Cherry-pick specific pages to copy in."
+                    onClick={() => setMode("pages")}
+                    illustration={<PagesIllustration />}
+                  />
+                </div>
+
+                {/* Desktop OR (centered between cards) */}
+                <div
+                  className="hidden sm:flex absolute inset-y-0 left-1/2 -translate-x-1/2 items-center pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <div className="flex flex-col items-center">
+                    <span className="w-px h-16 bg-gradient-to-b from-transparent to-border" />
+                    <span className="my-2 px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground shadow-sm">
+                      OR
+                    </span>
+                    <span className="w-px h-16 bg-gradient-to-b from-border to-transparent" />
+                  </div>
+                </div>
               </div>
             </section>
           </div>
