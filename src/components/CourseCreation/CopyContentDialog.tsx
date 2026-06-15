@@ -397,7 +397,7 @@ function OptionCard({
       )}
       <div
         className={cn(
-          "w-full aspect-[16/9] rounded-xl flex items-center justify-center",
+          "w-full aspect-[16/9] shrink-0 rounded-xl flex items-center justify-center overflow-hidden",
           disabled ? "bg-muted" : selected ? "bg-primary/10" : "bg-primary/5"
         )}
         aria-hidden="true"
