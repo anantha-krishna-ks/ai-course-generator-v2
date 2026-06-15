@@ -330,6 +330,145 @@ function IntroductionPreview({
   );
 }
 
+function SectionPagePreview({
+  courseTitle,
+  logo,
+  position,
+  primary,
+  cta,
+}: {
+  courseTitle: string;
+  logo: string | null;
+  position: LogoPosition;
+  primary: string;
+  cta: string;
+}) {
+  const primaryText = readableTextColor(primary);
+  const ctaText = readableTextColor(cta);
+  const displayedLogo = logo ?? defaultLogo;
+  const progress = 22;
+  // Active page: section 1, page 1
+  const activeSec = 0;
+  const activePage = 0;
+
+  // Flatten page numbering for "Page X of Y"
+  const totalPages = OUTLINE_PREVIEW.reduce((acc, s) => acc + s.pages.length, 0);
+  const currentPageNum =
+    OUTLINE_PREVIEW.slice(0, activeSec).reduce((acc, s) => acc + s.pages.length, 0) + activePage + 1;
+  const currentPageTitle = OUTLINE_PREVIEW[activeSec].pages[activePage];
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/40">
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Section / Page</span>
+        <span className="text-[10px] text-muted-foreground">Live</span>
+      </div>
+
+      <div className="grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] bg-background min-h-[380px]">
+        {/* LEFT: Sidebar navigation */}
+        <div className="flex flex-col border-r border-border">
+          {/* Course title card (primary colored) */}
+          <div className="p-3 space-y-2" style={{ backgroundColor: primary, color: primaryText }}>
+            <div className={`flex ${POSITION_CLASS[position]}`}>
+              <div className="h-6 max-w-[80px] flex items-center rounded bg-white/85 px-1.5 py-0.5">
+                <img src={displayedLogo} alt="Logo preview" className="max-h-4 max-w-full object-contain" />
+              </div>
+            </div>
+            <h3 className="text-[11px] font-bold leading-tight line-clamp-2">{courseTitle}</h3>
+            <div className="space-y-1">
+              <div className="w-full h-1 rounded-full overflow-hidden" style={{ backgroundColor: hexToRgba(primaryText === "#FFFFFF" ? "#FFFFFF" : "#000000", 0.2) }}>
+                <div className="h-full rounded-full transition-all" style={{ width: `${progress}%`, backgroundColor: primaryText }} />
+              </div>
+              <span className="text-[8px] uppercase tracking-wider font-semibold opacity-80">{progress}% Complete</span>
+            </div>
+          </div>
+
+          {/* Outline list */}
+          <div className="flex-1 overflow-hidden py-1.5">
+            {OUTLINE_PREVIEW.map((sec, sIdx) => (
+              <div key={sec.title} className="mb-1">
+                <div className="flex items-center gap-1.5 px-2 py-1">
+                  <span
+                    className="flex items-center justify-center w-3.5 h-3.5 rounded text-[8px] font-bold"
+                    style={{ backgroundColor: hexToRgba(primary, 0.15), color: primary }}
+                  >
+                    {sIdx + 1}
+                  </span>
+                  <span className="text-[9px] font-semibold text-foreground truncate flex-1">{sec.title}</span>
+                </div>
+                <ul>
+                  {sec.pages.map((p, pIdx) => {
+                    const isActive = sIdx === activeSec && pIdx === activePage;
+                    return (
+                      <li
+                        key={p}
+                        className="flex items-center gap-1.5 pl-6 pr-2 py-1 text-[9px] leading-tight transition-colors"
+                        style={
+                          isActive
+                            ? { backgroundColor: hexToRgba(primary, 0.12), color: primary, fontWeight: 600, borderLeft: `2px solid ${primary}` }
+                            : { color: "hsl(var(--muted-foreground))" }
+                        }
+                      >
+                        <span className="truncate flex-1">{p}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Content area */}
+        <div className="flex flex-col p-4">
+          <div className="space-y-1.5">
+            <span className="text-[9px] text-muted-foreground italic">
+              Page {currentPageNum} of {totalPages}
+            </span>
+            <h3 className="text-sm font-bold text-foreground leading-tight">{currentPageTitle}</h3>
+            <div className="w-10 h-[2px] rounded-full" style={{ backgroundColor: primary }} />
+          </div>
+
+          <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed line-clamp-4">
+            Welcome to this course! In this module, you will learn the foundational concepts that will guide your understanding throughout the program.
+          </p>
+
+          {/* Mock content blocks */}
+          <div className="mt-3 space-y-2 flex-1">
+            <div className="aspect-video rounded-md overflow-hidden border border-border bg-muted/40 flex items-center justify-center">
+              <img src={sectionHero} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+            </div>
+            <div className="flex gap-1.5">
+              <span className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: hexToRgba(primary, 0.25) }} />
+              <span className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: hexToRgba(primary, 0.15) }} />
+              <span className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: hexToRgba(primary, 0.1) }} />
+            </div>
+          </div>
+
+          {/* Prev / Next */}
+          <div className="mt-3 pt-2.5 border-t border-border/60 flex items-center justify-between">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="w-3 h-3" aria-hidden="true" focusable="false" />
+              Previous
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-full px-3 py-1 text-[10px] font-medium shadow-sm"
+              style={{ backgroundColor: cta, color: ctaText }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+
 
 function PreviewCard({
   title,
