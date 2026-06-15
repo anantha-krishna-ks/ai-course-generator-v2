@@ -284,63 +284,59 @@ function PreviewBlockRenderer({ block: b }: { block: PreviewBlockData }) {
           Quiz preview
         </div>
         <ol className="space-y-5">
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
-          <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
-        </span>
-        Quiz preview
-      </div>
-      <ol className="space-y-5">
-        {b.questions.map((q, qi) => (
-          <li key={qi} className="space-y-2">
-            <div className="text-[14px] font-medium text-foreground leading-snug">
-              <span className="text-muted-foreground tabular-nums mr-1.5">{qi + 1}.</span>
-              {q.q}
-            </div>
-            <ul className="space-y-1.5">
-              {q.options.map((opt, oi) => {
-                const correct = oi === q.answerIdx;
-                return (
-                  <li
-                    key={oi}
-                    className={cn(
-                      "flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px]",
-                      correct
-                        ? "border-emerald-500/30 bg-emerald-500/[0.06] text-foreground"
-                        : "border-border bg-background text-foreground/80"
-                    )}
-                  >
-                    <span
+          {b.questions.map((q, qi) => (
+            <li key={qi} className="space-y-2">
+              <div className="text-[14px] font-medium text-foreground leading-snug">
+                <span className="text-muted-foreground tabular-nums mr-1.5">{qi + 1}.</span>
+                {q.q}
+              </div>
+              <ul className="space-y-1.5">
+                {q.options.map((opt, oi) => {
+                  const correct = oi === q.answerIdx;
+                  return (
+                    <li
+                      key={oi}
                       className={cn(
-                        "inline-flex items-center justify-center w-4 h-4 rounded-full border shrink-0",
+                        "flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px]",
                         correct
-                          ? "border-emerald-500 bg-emerald-500 text-white"
-                          : "border-border bg-card"
+                          ? "border-emerald-500/30 bg-emerald-500/[0.06] text-foreground"
+                          : "border-border bg-background text-foreground/80"
                       )}
-                      aria-hidden="true"
                     >
-                      {correct && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
-                    </span>
-                    <span className="flex-1">{opt}</span>
-                    {correct && (
-                      <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                        Correct
+                      <span
+                        className={cn(
+                          "inline-flex items-center justify-center w-4 h-4 rounded-full border shrink-0",
+                          correct
+                            ? "border-emerald-500 bg-emerald-500 text-white"
+                            : "border-border bg-card"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {correct && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
                       </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-            {q.explanation && (
-              <p className="text-[12.5px] text-muted-foreground leading-relaxed pl-1">
-                <span className="font-semibold text-foreground/80">Why: </span>
-                {q.explanation}
-              </p>
-            )}
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
+                      <span className="flex-1">{opt}</span>
+                      {correct && (
+                        <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                          Correct
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+              {q.explanation && (
+                <p className="text-[12.5px] text-muted-foreground leading-relaxed pl-1">
+                  <span className="font-semibold text-foreground/80">Why: </span>
+                  {q.explanation}
+                </p>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+  return null;
 }
 
 interface CourseOption {
