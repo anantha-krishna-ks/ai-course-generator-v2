@@ -1228,6 +1228,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 overflow-y-auto" style={{ fontFamily: getFontStack(fontId) }}>
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            {/* Course branding logo (intro) */}
+            <CourseBrandingLogo courseId={courseId} slot="intro" />
             {/* Course Title */}
             <div className="relative group" data-tour="course-heading">
               <label htmlFor="course-title-input" className="sr-only">Course title</label>
