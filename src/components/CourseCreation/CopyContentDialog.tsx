@@ -301,16 +301,18 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <OptionCard
                   disabled={!course}
+                  selected={mode === "sections"}
                   title="Select Section"
                   description="Bring over an entire section with all its pages."
-                  onClick={() => handleSelectMode("sections")}
+                  onClick={() => setMode("sections")}
                   illustration={<SectionIllustration />}
                 />
                 <OptionCard
                   disabled={!course}
+                  selected={mode === "pages"}
                   title="Select Individual Pages"
                   description="Cherry-pick specific pages to copy in."
-                  onClick={() => handleSelectMode("pages")}
+                  onClick={() => setMode("pages")}
                   illustration={<PagesIllustration />}
                 />
               </div>
@@ -321,6 +323,13 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
         <div className="px-6 sm:px-10 py-4 border-t border-border flex items-center justify-end gap-2 shrink-0 bg-background">
           <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-full">
             Cancel
+          </Button>
+          <Button
+            onClick={handleContinue}
+            disabled={!course || !mode}
+            className="rounded-full px-6"
+          >
+            Continue
           </Button>
         </div>
       </DialogContent>
