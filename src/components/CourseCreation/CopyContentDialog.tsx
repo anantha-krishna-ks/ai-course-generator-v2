@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -39,9 +38,11 @@ import { useToast } from "@/hooks/use-toast";
 import {
   Check,
   ChevronsUpDown,
+  CopyPlus,
   Search,
   Users,
   User,
+  X,
 } from "lucide-react";
 
 interface CourseOption {
@@ -120,14 +121,25 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       }}
     >
       <DialogContent
-        className="p-0 gap-0 w-[98vw] h-[96dvh] max-w-7xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl"
+        className="p-0 gap-0 w-[98vw] h-[96dvh] max-w-7xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden"
       >
-        <DialogHeader className="px-6 sm:px-10 py-5 border-b border-border shrink-0">
-          <DialogTitle className="text-xl font-semibold">Copy Content</DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            Pull a section or pages from another course into your outline.
-          </DialogDescription>
-        </DialogHeader>
+        {/* Header — matches PageEditorDialog */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
+          <div className="flex items-center gap-2.5">
+            <CopyPlus className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+            <DialogTitle className="text-sm font-medium text-foreground">Copy Content</DialogTitle>
+          </div>
+          <button
+            onClick={() => onOpenChange(false)}
+            aria-label="Close"
+            className="p-2.5 rounded-md hover:bg-muted transition-colors"
+          >
+            <X className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
+          </button>
+        </div>
+        <DialogDescription className="sr-only">
+          Pull a section or pages from another course into your outline.
+        </DialogDescription>
 
         <div className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-3xl px-6 sm:px-10 py-8 space-y-8">
