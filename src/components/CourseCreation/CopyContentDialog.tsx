@@ -229,10 +229,61 @@ function PreviewBlockRenderer({ block: b }: { block: PreviewBlockData }) {
       </figure>
     );
   }
-  // quiz
-  return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+  if (b.kind === "video") {
+    return (
+      <figure className="rounded-xl overflow-hidden border border-border bg-black">
+        <video
+          src={b.src}
+          poster={b.poster}
+          controls
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
+          className="w-full h-auto block bg-black"
+        />
+        {b.caption && (
+          <figcaption className="px-3 py-2 text-[12px] text-muted-foreground bg-card border-t border-border">
+            {b.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+  if (b.kind === "audio") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 text-primary shrink-0">
+          <Sparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[12.5px] font-medium text-foreground truncate">{b.label}</div>
+          <audio src={b.src} controls className="mt-1.5 w-full h-8" />
+        </div>
+      </div>
+    );
+  }
+  if (b.kind === "doc") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+        <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-foreground/[0.06] text-foreground shrink-0">
+          <FileText className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-medium text-foreground truncate">{b.name}</div>
+          {b.meta && <div className="text-[11.5px] text-muted-foreground truncate">{b.meta}</div>}
+        </div>
+      </div>
+    );
+  }
+  if (b.kind === "quiz") {
+    return (
+      <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
+            <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+          </span>
+          Quiz preview
+        </div>
+        <ol className="space-y-5">
         <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
           <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
         </span>
