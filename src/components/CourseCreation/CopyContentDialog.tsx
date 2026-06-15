@@ -303,7 +303,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 sm:gap-5 items-stretch">
-                <div className="order-1 sm:order-none">
+                <div className="order-1 sm:order-none h-full">
                   <OptionCard
                     disabled={!course}
                     selected={mode === "sections"}
