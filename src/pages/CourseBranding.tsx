@@ -1124,22 +1124,34 @@ export default function CourseBrandingPage() {
                   <TabsTrigger value="section">Section / Page</TabsTrigger>
                 </TabsList>
                 <TabsContent value="introduction" className="mt-3">
-                  <IntroductionPreview
-                    title={courseTitle}
-                    logo={branding.introLogo}
-                    position={branding.introPosition}
-                    primary={branding.primaryColor}
-                    cta={branding.ctaColor}
-                  />
+                  {layout === "single-page" ? (
+                    <SinglePageMockPreview
+                      courseTitle={courseTitle}
+                      logo={branding.introLogo}
+                      position={branding.introPosition}
+                      primary={branding.primaryColor}
+                      cta={branding.ctaColor}
+                      focus="intro"
+                    />
+                  ) : (
+                    <IntroductionPreview
+                      title={courseTitle}
+                      logo={branding.introLogo}
+                      position={branding.introPosition}
+                      primary={branding.primaryColor}
+                      cta={branding.ctaColor}
+                    />
+                  )}
                 </TabsContent>
                 <TabsContent value="section" className="mt-3">
                   {layout === "single-page" ? (
-                    <SinglePageSectionPreview
+                    <SinglePageMockPreview
                       courseTitle={courseTitle}
                       logo={branding.contentLogo}
                       position={branding.contentPosition}
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
+                      focus="section"
                     />
                   ) : (
                     <SectionPagePreview
@@ -1151,6 +1163,7 @@ export default function CourseBrandingPage() {
                     />
                   )}
                 </TabsContent>
+
 
               </Tabs>
             </div>
