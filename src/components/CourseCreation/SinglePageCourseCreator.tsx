@@ -1506,11 +1506,30 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
       <GenerateExportDialog open={showExportDialog} onOpenChange={setShowExportDialog} courseTitle={title} />
 
-      <CloneCourseDialog open={showCloneDialog} onOpenChange={setShowCloneDialog} courseTitle={title} />
-      <DeleteCourseDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog} courseTitle={title} />
-      <TokenConsumptionDialog open={showTokenDialog} onOpenChange={setShowTokenDialog} />
+      <TokenConsumptionDialog open={showTokenDialog} onClose={() => setShowTokenDialog(false)} imageVersionHistory={[]} />
       <ScormPreferencesDialog open={showScormDialog} onOpenChange={setShowScormDialog} />
-      <CollaboratorsDrawer open={showCollaboratorsDrawer} onOpenChange={setShowCollaboratorsDrawer} courseId={courseId} />
+      <CollaboratorsDrawer open={showCollaboratorsDrawer} onOpenChange={setShowCollaboratorsDrawer} courseId={courseId} courseTitle={title} />
+      {isEditCoursePage && (
+        <>
+          <CloneCourseDialog
+            open={showCloneDialog}
+            onClose={setShowCloneDialog}
+            currentTitle={title}
+            onClone={(newTitle) => {
+              toast({ title: "Course cloned", description: `"${newTitle}" created from "${title}".` });
+            }}
+          />
+          <DeleteCourseDialog
+            open={showDeleteDialog}
+            onClose={setShowDeleteDialog}
+            courseTitle={title}
+            onDelete={() => {
+              toast({ title: "Course deleted", description: `"${title}" has been deleted.`, variant: "destructive" });
+              navigate("/dashboard");
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
