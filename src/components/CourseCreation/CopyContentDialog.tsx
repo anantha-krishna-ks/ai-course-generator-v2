@@ -87,6 +87,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   const [sourceType, setSourceType] = useState<SourceType>("my");
   const [course, setCourse] = useState<CourseOption | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [mode, setMode] = useState<"sections" | "pages" | null>(null);
 
   const courses = useMemo(
     () => (sourceType === "my" ? MY_COURSES : SHARED_COURSES),
@@ -96,10 +97,11 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   const handleTypeChange = (t: SourceType) => {
     setSourceType(t);
     setCourse(null);
+    setMode(null);
   };
 
-  const handleSelectMode = (mode: "sections" | "pages") => {
-    if (!course) return;
+  const handleContinue = () => {
+    if (!course || !mode) return;
     onSelect?.({ course, mode, sourceType });
     toast({
       title: mode === "sections" ? "Section picker" : "Page picker",
@@ -107,6 +109,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
     });
     onOpenChange(false);
   };
+
 
   return (
     <Dialog
