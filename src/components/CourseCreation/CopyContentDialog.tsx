@@ -157,11 +157,33 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   const [course, setCourse] = useState<CourseOption | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [mode, setMode] = useState<"sections" | "pages" | null>(null);
+  const [step, setStep] = useState<Step>("config");
+
+  // Selection state for the review step
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [selectedPageIds, setSelectedPageIds] = useState<string[]>([]);
+  const [previewPageId, setPreviewPageId] = useState<string | null>(null);
 
   const courses = useMemo(
     () => (sourceType === "my" ? MY_COURSES : SHARED_COURSES),
     [sourceType]
   );
+
+  const mockCourse = useMemo(
+    () => (course ? buildMockCourse(course.id) : null),
+    [course]
+  );
+
+  const resetAll = () => {
+    setSourceType("my");
+    setCourse(null);
+    setPickerOpen(false);
+    setMode(null);
+    setStep("config");
+    setSelectedSectionId(null);
+    setSelectedPageIds([]);
+    setPreviewPageId(null);
+  };
 
   const handleTypeChange = (t: SourceType) => {
     setSourceType(t);
@@ -170,14 +192,70 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   };
 
   const handleContinue = () => {
+    if (!course || !mode || !mockCourse) return;
+    if (mode === "sections") {
+      const first = mockCourse.sections[0];
+      setSelectedSectionId(first.id);
+      setSelectedPageIds(first.pages.map((p) => p.id));
+      setPreviewPageId(first.pages[0]?.id ?? null);
+    } else {
+      const initial = mockCourse.rootPages.slice(0, 2).map((p) => p.id);
+      setSelectedPageIds(initial);
+      setPreviewPageId(initial[0] ?? null);
+    }
+    setStep("review");
+  };
+
+  const handleSectionChange = (sectionId: string) => {
+    if (!mockCourse) return;
+    setSelectedSectionId(sectionId);
+    const section = mockCourse.sections.find((s) => s.id === sectionId);
+    const ids = section?.pages.map((p) => p.id) ?? [];
+    setSelectedPageIds(ids);
+    setPreviewPageId(ids[0] ?? null);
+  };
+
+  const togglePage = (pageId: string) => {
+    setSelectedPageIds((prev) => {
+      const next = prev.includes(pageId)
+        ? prev.filter((id) => id !== pageId)
+        : [...prev, pageId];
+      if (!next.includes(previewPageId ?? "")) {
+        setPreviewPageId(next[0] ?? null);
+      }
+      return next;
+    });
+  };
+
+  const handleCopy = () => {
     if (!course || !mode) return;
-    onSelect?.({ course, mode, sourceType });
+    onSelect?.({
+      course,
+      mode,
+      sourceType,
+      selectedSectionId: selectedSectionId ?? undefined,
+      selectedPageIds,
+    });
     toast({
-      title: mode === "sections" ? "Section picker" : "Page picker",
-      description: `Pick ${mode} from "${course.title}" to copy into this course.`,
+      title: "Content queued to copy",
+      description:
+        mode === "sections"
+          ? `${selectedPageIds.length} page(s) from selected section will be copied.`
+          : `${selectedPageIds.length} page(s) will be copied.`,
     });
     onOpenChange(false);
   };
+
+  // Resolve preview data
+  const activeSection = mockCourse?.sections.find((s) => s.id === selectedSectionId) ?? null;
+  const pagePool: MockPage[] =
+    mode === "sections"
+      ? activeSection?.pages ?? []
+      : mockCourse?.rootPages ?? [];
+  const selectedPages = pagePool.filter((p) => selectedPageIds.includes(p.id));
+  const previewPage =
+    selectedPages.find((p) => p.id === previewPageId) ?? selectedPages[0] ?? null;
+
 
 
   return (
