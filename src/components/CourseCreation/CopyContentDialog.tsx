@@ -415,98 +415,205 @@ function OptionCard({
 }
 
 /**
- * Mini "real" course-outline preview — mirrors the editor sidebar so users
- * immediately recognize what "Select Section" will copy: the parent section
- * plus every page nested under it.
+ * Mini course-outline preview that mirrors the real editor sidebar
+ * (sections with chevrons + nested page rows with file icons + numeric
+ * indices). Renders the whole "Section 02" container as the selection so
+ * users immediately recognize that the parent and every child are copied.
  */
 function SectionIllustration() {
-  const pages = ["Introduction", "Core concepts", "Worked example", "Summary"];
+  const sections = [
+    { idx: "01", title: "Getting started", pages: 3, open: false, active: false },
+    {
+      idx: "02",
+      title: "Fundamentals",
+      open: true,
+      active: true,
+      pages: [
+        { n: "01", title: "Introduction" },
+        { n: "02", title: "Core concepts" },
+        { n: "03", title: "Worked example" },
+        { n: "04", title: "Summary" },
+      ],
+    },
+    { idx: "03", title: "Advanced topics", pages: 5, open: false, active: false },
+  ] as const;
+
   return (
     <div
-      className="w-[88%] h-[88%] rounded-lg bg-background border border-border shadow-sm overflow-hidden flex flex-col text-left"
+      className="w-[92%] h-[92%] rounded-lg bg-background border border-border shadow-sm overflow-hidden flex text-left"
       aria-hidden="true"
     >
-      {/* fake window chrome */}
-      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/40">
-        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-      </div>
-      {/* highlighted section + its pages */}
-      <div className="flex-1 p-1.5 space-y-1 overflow-hidden">
-        <div className="flex items-center gap-1.5 rounded-md bg-primary/15 ring-1 ring-primary/40 px-1.5 py-1">
-          <ChevronsUpDown className="w-2.5 h-2.5 text-primary rotate-45" aria-hidden="true" focusable="false" />
-          <span className="text-[8px] font-semibold text-primary truncate">Section 2 · Fundamentals</span>
-          <Check className="w-2.5 h-2.5 text-primary ml-auto" aria-hidden="true" focusable="false" />
+      {/* Sidebar (mimics outline panel) */}
+      <div className="w-full flex flex-col">
+        <div className="flex items-center justify-between px-2 py-1 border-b border-border bg-muted/40">
+          <span className="text-[7px] font-semibold tracking-wider text-muted-foreground uppercase">Outline</span>
+          <span className="flex gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+          </span>
         </div>
-        {pages.map((p) => (
-          <div
-            key={p}
-            className="flex items-center gap-1.5 pl-4 pr-1.5 py-0.5 rounded bg-primary/5"
-          >
-            <span className="w-1 h-1 rounded-full bg-primary/60" />
-            <span className="text-[7.5px] text-foreground/80 truncate">{p}</span>
-          </div>
-        ))}
+        <div className="flex-1 p-1 space-y-0.5 overflow-hidden">
+          {sections.map((s) => (
+            <React.Fragment key={s.idx}>
+              <div
+                className={cn(
+                  "flex items-center gap-1 rounded px-1 py-1",
+                  s.active && "bg-primary/15 ring-1 ring-primary/40"
+                )}
+              >
+                <ChevronDown
+                  className={cn(
+                    "w-2 h-2 shrink-0 transition-transform",
+                    s.active ? "text-primary" : "text-muted-foreground/60",
+                    !s.open && "-rotate-90"
+                  )}
+                  aria-hidden="true"
+                  focusable="false"
+                />
+                <Folder
+                  className={cn("w-2 h-2 shrink-0", s.active ? "text-primary" : "text-muted-foreground/60")}
+                  aria-hidden="true"
+                  focusable="false"
+                />
+                <span
+                  className={cn(
+                    "text-[7px] font-mono shrink-0",
+                    s.active ? "text-primary" : "text-muted-foreground/60"
+                  )}
+                >
+                  {s.idx}
+                </span>
+                <span
+                  className={cn(
+                    "text-[7.5px] font-semibold truncate",
+                    s.active ? "text-primary" : "text-foreground/70"
+                  )}
+                >
+                  {s.title}
+                </span>
+                {s.active && (
+                  <span className="ml-auto inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-primary">
+                    <Check className="w-1.5 h-1.5 text-primary-foreground" strokeWidth={4} aria-hidden="true" focusable="false" />
+                  </span>
+                )}
+              </div>
+              {s.open && Array.isArray(s.pages) &&
+                s.pages.map((p) => (
+                  <div
+                    key={p.n}
+                    className="flex items-center gap-1 pl-4 pr-1 py-0.5 rounded bg-primary/5"
+                  >
+                    <FileText className="w-2 h-2 text-primary/70 shrink-0" aria-hidden="true" focusable="false" />
+                    <span className="text-[6.5px] font-mono text-primary/70 shrink-0">{p.n}</span>
+                    <span className="text-[7px] text-foreground/80 truncate">{p.title}</span>
+                  </div>
+                ))}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 /**
- * Mini "real" course-outline preview for the page-level copy flow —
- * individual pages get ticked while their parent section is not selected.
+ * Same sidebar metaphor — but here individual pages get ticked via
+ * checkboxes while the parent section stays unselected, conveying that
+ * only chosen pages will be copied.
  */
 function PagesIllustration() {
-  const items = [
-    { label: "Introduction", checked: false },
-    { label: "Core concepts", checked: true },
-    { label: "Worked example", checked: false },
-    { label: "Summary", checked: true },
+  const sections = [
+    { idx: "01", title: "Getting started", open: false, pages: [] as { n: string; title: string; checked: boolean }[] },
+    {
+      idx: "02",
+      title: "Fundamentals",
+      open: true,
+      pages: [
+        { n: "01", title: "Introduction", checked: false },
+        { n: "02", title: "Core concepts", checked: true },
+        { n: "03", title: "Worked example", checked: false },
+        { n: "04", title: "Summary", checked: true },
+      ],
+    },
+    { idx: "03", title: "Advanced topics", open: false, pages: [] as { n: string; title: string; checked: boolean }[] },
   ];
+
   return (
     <div
-      className="w-[88%] h-[88%] rounded-lg bg-background border border-border shadow-sm overflow-hidden flex flex-col text-left"
+      className="w-[92%] h-[92%] rounded-lg bg-background border border-border shadow-sm overflow-hidden flex text-left"
       aria-hidden="true"
     >
-      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-border bg-muted/40">
-        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-      </div>
-      <div className="flex-1 p-1.5 space-y-1 overflow-hidden">
-        <div className="flex items-center gap-1.5 px-1.5 py-1 rounded-md bg-muted/40">
-          <ChevronsUpDown className="w-2.5 h-2.5 text-muted-foreground rotate-45" aria-hidden="true" focusable="false" />
-          <span className="text-[8px] font-semibold text-muted-foreground truncate">Section 2 · Fundamentals</span>
+      <div className="w-full flex flex-col">
+        <div className="flex items-center justify-between px-2 py-1 border-b border-border bg-muted/40">
+          <span className="text-[7px] font-semibold tracking-wider text-muted-foreground uppercase">Outline</span>
+          <span className="flex gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
+          </span>
         </div>
-        {items.map((p) => (
-          <div
-            key={p.label}
-            className={cn(
-              "flex items-center gap-1.5 pl-4 pr-1.5 py-0.5 rounded",
-              p.checked && "bg-primary/10"
-            )}
-          >
-            <span
-              className={cn(
-                "w-2 h-2 rounded-[3px] border flex items-center justify-center shrink-0",
-                p.checked ? "bg-primary border-primary" : "border-muted-foreground/40 bg-background"
-              )}
-            >
-              {p.checked && (
-                <Check className="w-1.5 h-1.5 text-primary-foreground" strokeWidth={4} aria-hidden="true" focusable="false" />
-              )}
-            </span>
-            <span
-              className={cn(
-                "text-[7.5px] truncate",
-                p.checked ? "text-foreground font-medium" : "text-foreground/70"
-              )}
-            >
-              {p.label}
-            </span>
-          </div>
-        ))}
+        <div className="flex-1 p-1 space-y-0.5 overflow-hidden">
+          {sections.map((s) => (
+            <React.Fragment key={s.idx}>
+              <div className="flex items-center gap-1 rounded px-1 py-1">
+                <ChevronDown
+                  className={cn(
+                    "w-2 h-2 shrink-0 text-muted-foreground/60 transition-transform",
+                    !s.open && "-rotate-90"
+                  )}
+                  aria-hidden="true"
+                  focusable="false"
+                />
+                <Folder className="w-2 h-2 shrink-0 text-muted-foreground/60" aria-hidden="true" focusable="false" />
+                <span className="text-[7px] font-mono text-muted-foreground/60 shrink-0">{s.idx}</span>
+                <span className="text-[7.5px] font-semibold text-foreground/70 truncate">{s.title}</span>
+              </div>
+              {s.open &&
+                s.pages.map((p) => (
+                  <div
+                    key={p.n}
+                    className={cn(
+                      "flex items-center gap-1 pl-4 pr-1 py-0.5 rounded",
+                      p.checked && "bg-primary/10 ring-1 ring-primary/30"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "w-2 h-2 rounded-[2px] border flex items-center justify-center shrink-0",
+                        p.checked ? "bg-primary border-primary" : "border-muted-foreground/40 bg-background"
+                      )}
+                    >
+                      {p.checked && (
+                        <Check className="w-1.5 h-1.5 text-primary-foreground" strokeWidth={4} aria-hidden="true" focusable="false" />
+                      )}
+                    </span>
+                    <FileText
+                      className={cn("w-2 h-2 shrink-0", p.checked ? "text-primary" : "text-muted-foreground/60")}
+                      aria-hidden="true"
+                      focusable="false"
+                    />
+                    <span
+                      className={cn(
+                        "text-[6.5px] font-mono shrink-0",
+                        p.checked ? "text-primary" : "text-muted-foreground/60"
+                      )}
+                    >
+                      {p.n}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[7px] truncate",
+                        p.checked ? "text-foreground font-medium" : "text-foreground/70"
+                      )}
+                    >
+                      {p.title}
+                    </span>
+                  </div>
+                ))}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     </div>
   );
