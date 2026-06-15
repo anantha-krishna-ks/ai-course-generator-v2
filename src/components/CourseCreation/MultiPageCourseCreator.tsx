@@ -2041,6 +2041,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         onOpenChange={setShowScormDialog}
       />
 
+      <CopyContentDialog
+        open={showCopyContentDialog}
+        onOpenChange={setShowCopyContentDialog}
+      />
+
       {readOnly && (
         <FinishReviewDialog open={showFinishReviewDialog} onOpenChange={setShowFinishReviewDialog} />
       )}
