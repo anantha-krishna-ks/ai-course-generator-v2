@@ -97,10 +97,16 @@ export function addCopiedSection(courseId: string, section: CopiedSection) {
 
 export function subscribeCourseCopies(cb: () => void): () => void {
   const handler = () => cb();
+  const storageHandler = (e: StorageEvent) => {
+    // Only react when our own key changes — otherwise unrelated
+    // localStorage writes elsewhere in the app cause spurious re-mounts
+    // (e.g. the editor's preview blanking out).
+    if (e.key === null || e.key === STORAGE_KEY) cb();
+  };
   window.addEventListener(EVENT_NAME, handler);
-  window.addEventListener("storage", handler);
+  window.addEventListener("storage", storageHandler);
   return () => {
     window.removeEventListener(EVENT_NAME, handler);
-    window.removeEventListener("storage", handler);
+    window.removeEventListener("storage", storageHandler);
   };
 }
