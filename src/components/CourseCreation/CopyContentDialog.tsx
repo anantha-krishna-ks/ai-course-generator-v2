@@ -518,25 +518,23 @@ function SectionIllustration() {
 }
 
 /**
- * Same sidebar metaphor — but here individual pages get ticked via
- * checkboxes while the parent section stays unselected, conveying that
- * only chosen pages will be copied.
+ * Sibling preview to SectionIllustration — represents "individual pages"
+ * as standalone pages that live OUTSIDE any section (top-level items in
+ * the outline), each ticked via its own checkbox. A collapsed section is
+ * shown alongside them so the contrast (root-level pages vs. section)
+ * is obvious at a glance.
  */
 function PagesIllustration() {
-  const sections = [
-    { idx: "01", title: "Getting started", open: false, pages: [] as { n: string; title: string; checked: boolean }[] },
-    {
-      idx: "02",
-      title: "Fundamentals",
-      open: true,
-      pages: [
-        { n: "01", title: "Introduction", checked: false },
-        { n: "02", title: "Core concepts", checked: true },
-        { n: "03", title: "Worked example", checked: false },
-        { n: "04", title: "Summary", checked: true },
-      ],
-    },
-    { idx: "03", title: "Advanced topics", open: false, pages: [] as { n: string; title: string; checked: boolean }[] },
+  type Row =
+    | { kind: "section"; idx: string; title: string }
+    | { kind: "page"; idx: string; title: string; checked: boolean };
+
+  const rows: Row[] = [
+    { kind: "section", idx: "01", title: "Getting started" },
+    { kind: "page", idx: "02", title: "Quick reference", checked: true },
+    { kind: "section", idx: "03", title: "Fundamentals" },
+    { kind: "page", idx: "04", title: "Cheat sheet", checked: false },
+    { kind: "page", idx: "05", title: "Final recap", checked: true },
   ];
 
   return (
@@ -554,65 +552,60 @@ function PagesIllustration() {
           </span>
         </div>
         <div className="flex-1 p-1 space-y-0.5 overflow-hidden">
-          {sections.map((s) => (
-            <React.Fragment key={s.idx}>
-              <div className="flex items-center gap-1 rounded px-1 py-1">
+          {rows.map((r) =>
+            r.kind === "section" ? (
+              <div key={r.idx} className="flex items-center gap-1 rounded px-1 py-1">
                 <ChevronDown
-                  className={cn(
-                    "w-2 h-2 shrink-0 text-muted-foreground/60 transition-transform",
-                    !s.open && "-rotate-90"
-                  )}
+                  className="w-2 h-2 shrink-0 text-muted-foreground/60 -rotate-90"
                   aria-hidden="true"
                   focusable="false"
                 />
                 <Folder className="w-2 h-2 shrink-0 text-muted-foreground/60" aria-hidden="true" focusable="false" />
-                <span className="text-[7px] font-mono text-muted-foreground/60 shrink-0">{s.idx}</span>
-                <span className="text-[7.5px] font-semibold text-foreground/70 truncate">{s.title}</span>
+                <span className="text-[7px] font-mono text-muted-foreground/60 shrink-0">{r.idx}</span>
+                <span className="text-[7.5px] font-semibold text-foreground/70 truncate">{r.title}</span>
               </div>
-              {s.open &&
-                s.pages.map((p) => (
-                  <div
-                    key={p.n}
-                    className={cn(
-                      "flex items-center gap-1 pl-4 pr-1 py-0.5 rounded",
-                      p.checked && "bg-primary/10 ring-1 ring-primary/30"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "w-2 h-2 rounded-[2px] border flex items-center justify-center shrink-0",
-                        p.checked ? "bg-primary border-primary" : "border-muted-foreground/40 bg-background"
-                      )}
-                    >
-                      {p.checked && (
-                        <Check className="w-1.5 h-1.5 text-primary-foreground" strokeWidth={4} aria-hidden="true" focusable="false" />
-                      )}
-                    </span>
-                    <FileText
-                      className={cn("w-2 h-2 shrink-0", p.checked ? "text-primary" : "text-muted-foreground/60")}
-                      aria-hidden="true"
-                      focusable="false"
-                    />
-                    <span
-                      className={cn(
-                        "text-[6.5px] font-mono shrink-0",
-                        p.checked ? "text-primary" : "text-muted-foreground/60"
-                      )}
-                    >
-                      {p.n}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-[7px] truncate",
-                        p.checked ? "text-foreground font-medium" : "text-foreground/70"
-                      )}
-                    >
-                      {p.title}
-                    </span>
-                  </div>
-                ))}
-            </React.Fragment>
-          ))}
+            ) : (
+              <div
+                key={r.idx}
+                className={cn(
+                  "flex items-center gap-1 px-1 py-1 rounded",
+                  r.checked && "bg-primary/10 ring-1 ring-primary/30"
+                )}
+              >
+                <span
+                  className={cn(
+                    "w-2 h-2 rounded-[2px] border flex items-center justify-center shrink-0",
+                    r.checked ? "bg-primary border-primary" : "border-muted-foreground/40 bg-background"
+                  )}
+                >
+                  {r.checked && (
+                    <Check className="w-1.5 h-1.5 text-primary-foreground" strokeWidth={4} aria-hidden="true" focusable="false" />
+                  )}
+                </span>
+                <FileText
+                  className={cn("w-2 h-2 shrink-0", r.checked ? "text-primary" : "text-muted-foreground/60")}
+                  aria-hidden="true"
+                  focusable="false"
+                />
+                <span
+                  className={cn(
+                    "text-[7px] font-mono shrink-0",
+                    r.checked ? "text-primary" : "text-muted-foreground/60"
+                  )}
+                >
+                  {r.idx}
+                </span>
+                <span
+                  className={cn(
+                    "text-[7.5px] truncate",
+                    r.checked ? "text-foreground font-semibold" : "text-foreground/70"
+                  )}
+                >
+                  {r.title}
+                </span>
+              </div>
+            )
+          )}
         </div>
       </div>
     </div>
