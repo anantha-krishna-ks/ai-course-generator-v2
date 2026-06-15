@@ -417,10 +417,16 @@ function SectionPagePreview({
 
         {/* RIGHT: Content area */}
         <div className="flex flex-col p-4">
+          <div className={`flex mb-2 ${POSITION_CLASS[position]}`}>
+            <div className="h-7 max-w-[110px] flex items-center rounded-md border border-border bg-white px-2 py-1 shadow-sm">
+              <img src={displayedLogo} alt="Logo preview" className="max-h-5 max-w-full object-contain" />
+            </div>
+          </div>
           <div className="space-y-1.5">
             <span className="text-[9px] text-muted-foreground italic">
               Page {currentPageNum} of {totalPages}
             </span>
+
             <h3 className="text-sm font-bold text-foreground leading-tight">{currentPageTitle}</h3>
             <div className="w-10 h-[2px] rounded-full" style={{ backgroundColor: primary }} />
           </div>
