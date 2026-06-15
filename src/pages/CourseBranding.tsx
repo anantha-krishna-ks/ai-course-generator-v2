@@ -369,11 +369,6 @@ function SectionPagePreview({
         <div className="flex flex-col border-r border-border">
           {/* Course title card (primary colored) */}
           <div className="p-3 space-y-2" style={{ backgroundColor: primary, color: primaryText }}>
-            <div className={`flex ${POSITION_CLASS[position]}`}>
-              <div className="h-6 max-w-[80px] flex items-center rounded bg-white/85 px-1.5 py-0.5">
-                <img src={displayedLogo} alt="Logo preview" className="max-h-4 max-w-full object-contain" />
-              </div>
-            </div>
             <h3 className="text-[11px] font-bold leading-tight line-clamp-2">{courseTitle}</h3>
             <div className="space-y-1">
               <div className="w-full h-1 rounded-full overflow-hidden" style={{ backgroundColor: hexToRgba(primaryText === "#FFFFFF" ? "#FFFFFF" : "#000000", 0.2) }}>
@@ -382,6 +377,7 @@ function SectionPagePreview({
               <span className="text-[8px] uppercase tracking-wider font-semibold opacity-80">{progress}% Complete</span>
             </div>
           </div>
+
 
           {/* Outline list */}
           <div className="flex-1 overflow-hidden py-1.5">
