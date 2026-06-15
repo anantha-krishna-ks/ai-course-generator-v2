@@ -102,7 +102,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
       }}
     >
       <DialogContent
-        className="p-0 gap-0 w-screen h-[100dvh] max-w-none sm:max-w-none rounded-none border-0 sm:rounded-none flex flex-col bg-background overflow-hidden"
+        className="p-0 gap-0 w-[95vw] h-[92dvh] max-w-5xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl"
       >
         <DialogHeader className="px-6 sm:px-10 py-5 border-b border-border shrink-0">
           <DialogTitle className="text-xl font-semibold">Copy Content</DialogTitle>
