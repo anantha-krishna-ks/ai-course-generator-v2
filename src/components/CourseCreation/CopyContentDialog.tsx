@@ -336,16 +336,14 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
 
                 {/* Desktop OR (centered between cards) */}
                 <div
-                  className="hidden sm:flex absolute inset-y-0 left-1/2 -translate-x-1/2 items-center pointer-events-none"
+                  className="hidden sm:flex absolute inset-y-2 left-1/2 -translate-x-1/2 flex-col items-center pointer-events-none"
                   aria-hidden="true"
                 >
-                  <div className="flex flex-col items-center">
-                    <span className="w-px h-16 bg-gradient-to-b from-transparent to-border" />
-                    <span className="my-2 px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.15em] text-muted-foreground shadow-sm">
-                      OR
-                    </span>
-                    <span className="w-px h-16 bg-gradient-to-b from-border to-transparent" />
-                  </div>
+                  <span className="w-px flex-1 bg-gradient-to-b from-transparent to-border" />
+                  <span className="my-2 px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold tracking-[0.18em] text-muted-foreground shadow-sm">
+                    OR
+                  </span>
+                  <span className="w-px flex-1 bg-gradient-to-b from-border to-transparent" />
                 </div>
               </div>
             </section>
