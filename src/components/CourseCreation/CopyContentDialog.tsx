@@ -55,10 +55,209 @@ import {
   FileText,
   Folder,
   Search,
+  Sparkles,
   Users,
   User,
   X,
 } from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* Mock content blocks rendered by the live preview                    */
+/* ------------------------------------------------------------------ */
+type PreviewBlockData =
+  | { kind: "heading"; text: string }
+  | { kind: "paragraph"; text: string }
+  | { kind: "list"; items: string[] }
+  | { kind: "callout"; text: string }
+  | { kind: "image"; src: string; alt: string; caption?: string }
+  | {
+      kind: "quiz";
+      questions: {
+        q: string;
+        options: string[];
+        answerIdx: number;
+        explanation?: string;
+      }[];
+    };
+
+const PREVIEW_IMAGES = [
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&auto=format&fit=crop",
+];
+
+const PREVIEW_PARAGRAPHS = [
+  "This page is designed to give learners a structured, hands-on path through the topic. We move from foundational ideas to applied practice, building confidence at each step.",
+  "Every discipline rests on a few load-bearing ideas. Here we unpack the principles the rest of the course will build on, with concrete examples of each in action.",
+  "Theory is useful only if it changes what you do. The next few minutes walk through short scenarios where the principles meet day-to-day decisions.",
+  "A focused look at how this plays out in the real world, with current data, credible references, and a short worked example you can adapt to your own context.",
+];
+
+const PREVIEW_LISTS: string[][] = [
+  ["Clear, bite-sized lessons", "Real-world examples", "Quick checks for understanding"],
+  ["Define success before you begin", "Make decisions traceable", "Review outcomes on a fixed cadence"],
+  ["Scenario 1 — a typical first encounter", "Scenario 2 — a common edge case", "Scenario 3 — a high-stakes variant"],
+  ["Principles you can name and apply", "A shared vocabulary across the course", "A short list of best practices to reuse"],
+];
+
+const PREVIEW_CALLOUTS = [
+  "Set aside ~10 minutes for this page. You can pause and resume anytime.",
+  "Tip: revisit this page whenever a later section feels abstract — the answer is usually a principle from here.",
+  "Allow a few minutes to capture your reasoning as you go — it makes the next section easier.",
+];
+
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function getPreviewBlocks(page: { id: string; title: string; excerpt: string }): PreviewBlockData[] {
+  const h = hashString(page.id);
+  const isQuizPage = /assessment|quiz|recap|final/i.test(page.title);
+  if (isQuizPage) {
+    return [
+      { kind: "paragraph", text: "A short assessment to confirm the key takeaways have landed. Review the questions and answers below." },
+      {
+        kind: "quiz",
+        questions: [
+          {
+            q: `What is the primary focus of "${page.title}"?`,
+            options: ["Entertainment", "Building applied skills", "Data entry", "Social networking"],
+            answerIdx: 1,
+            explanation: "The page is designed to consolidate practical takeaways from the section.",
+          },
+          {
+            q: "Case studies help reinforce concepts with real-world examples.",
+            options: ["True", "False"],
+            answerIdx: 0,
+          },
+        ],
+      },
+    ];
+  }
+  const blocks: PreviewBlockData[] = [
+    { kind: "paragraph", text: page.excerpt },
+    { kind: "heading", text: page.title },
+    { kind: "paragraph", text: PREVIEW_PARAGRAPHS[h % PREVIEW_PARAGRAPHS.length] },
+    {
+      kind: "image",
+      src: PREVIEW_IMAGES[h % PREVIEW_IMAGES.length],
+      alt: `Illustration for ${page.title}`,
+      caption: "A practical, applied approach throughout the page.",
+    },
+    { kind: "callout", text: PREVIEW_CALLOUTS[h % PREVIEW_CALLOUTS.length] },
+    { kind: "list", items: PREVIEW_LISTS[h % PREVIEW_LISTS.length] },
+  ];
+  return blocks;
+}
+
+function PreviewBlockRenderer({ block: b }: { block: PreviewBlockData }) {
+  if (b.kind === "heading") {
+    return (
+      <h2 className="text-[18px] font-semibold tracking-tight text-foreground mt-2">{b.text}</h2>
+    );
+  }
+  if (b.kind === "paragraph") {
+    return (
+      <p className="text-[14.5px] leading-relaxed text-foreground/85 [overflow-wrap:anywhere]">
+        {b.text}
+      </p>
+    );
+  }
+  if (b.kind === "list") {
+    return (
+      <ul className="list-disc pl-5 space-y-1.5 text-[14.5px] leading-relaxed text-foreground/85">
+        {b.items.map((it, j) => (
+          <li key={j}>{it}</li>
+        ))}
+      </ul>
+    );
+  }
+  if (b.kind === "callout") {
+    return (
+      <div className="flex items-start gap-2.5 rounded-xl border border-primary/15 bg-primary/[0.06] px-4 py-3">
+        <Sparkles className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+        <p className="text-[13.5px] leading-relaxed text-foreground">{b.text}</p>
+      </div>
+    );
+  }
+  if (b.kind === "image") {
+    return (
+      <figure className="rounded-xl overflow-hidden border border-border bg-muted">
+        <img src={b.src} alt={b.alt} className="w-full h-auto block" loading="lazy" />
+        {b.caption && (
+          <figcaption className="px-3 py-2 text-[12px] text-muted-foreground bg-card border-t border-border">
+            {b.caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+  // quiz
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-primary/10 text-primary">
+          <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+        </span>
+        Quiz preview
+      </div>
+      <ol className="space-y-5">
+        {b.questions.map((q, qi) => (
+          <li key={qi} className="space-y-2">
+            <div className="text-[14px] font-medium text-foreground leading-snug">
+              <span className="text-muted-foreground tabular-nums mr-1.5">{qi + 1}.</span>
+              {q.q}
+            </div>
+            <ul className="space-y-1.5">
+              {q.options.map((opt, oi) => {
+                const correct = oi === q.answerIdx;
+                return (
+                  <li
+                    key={oi}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px]",
+                      correct
+                        ? "border-emerald-500/30 bg-emerald-500/[0.06] text-foreground"
+                        : "border-border bg-background text-foreground/80"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center w-4 h-4 rounded-full border shrink-0",
+                        correct
+                          ? "border-emerald-500 bg-emerald-500 text-white"
+                          : "border-border bg-card"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {correct && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
+                    </span>
+                    <span className="flex-1">{opt}</span>
+                    {correct && (
+                      <span className="text-[10.5px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                        Correct
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            {q.explanation && (
+              <p className="text-[12.5px] text-muted-foreground leading-relaxed pl-1">
+                <span className="font-semibold text-foreground/80">Why: </span>
+                {q.explanation}
+              </p>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
 
 interface CourseOption {
   id: string;
@@ -866,38 +1065,35 @@ function PreviewContent({
     );
   }
 
+  const blocks = previewPage ? getPreviewBlocks(previewPage) : [];
+  const pageIndex = previewPage
+    ? Math.max(0, selectedPages.findIndex((p) => p.id === previewPage.id))
+    : 0;
+
   return (
     <article className="mx-auto max-w-2xl space-y-6">
       <header className="space-y-2 pb-4 border-b border-border">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
           {mode === "sections" && section ? section.title : "Individual pages"}
         </div>
         {previewPage && (
-          <h1 className="text-2xl font-bold text-foreground leading-tight">
+          <h1 className="text-[26px] font-semibold tracking-tight text-foreground leading-tight">
             {previewPage.title}
           </h1>
         )}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
           <span>
-            Page {Math.max(1, selectedPages.findIndex((p) => p.id === previewPage?.id) + 1)} of {selectedPages.length}
+            Page {pageIndex + 1} of {selectedPages.length}
           </span>
         </div>
       </header>
 
       {previewPage && (
-        <div className="space-y-4">
-          <div className="aspect-[16/9] rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-muted border border-border flex items-center justify-center">
-            <BookOpen className="w-10 h-10 text-primary/40" aria-hidden="true" focusable="false" />
-          </div>
-          <p className="text-base text-foreground leading-relaxed">
-            {previewPage.excerpt}
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            This is a sample of how "{previewPage.title}" will appear once copied
-            into your course. Formatting, media, and interactive blocks are
-            preserved during the copy.
-          </p>
+        <div className="space-y-6">
+          {blocks.map((b, i) => (
+            <PreviewBlockRenderer key={i} block={b} />
+          ))}
         </div>
       )}
 
