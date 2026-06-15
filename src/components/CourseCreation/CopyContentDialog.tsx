@@ -87,6 +87,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   const [sourceType, setSourceType] = useState<SourceType>("my");
   const [course, setCourse] = useState<CourseOption | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [mode, setMode] = useState<"sections" | "pages" | null>(null);
 
   const courses = useMemo(
     () => (sourceType === "my" ? MY_COURSES : SHARED_COURSES),
@@ -96,10 +97,11 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   const handleTypeChange = (t: SourceType) => {
     setSourceType(t);
     setCourse(null);
+    setMode(null);
   };
 
-  const handleSelectMode = (mode: "sections" | "pages") => {
-    if (!course) return;
+  const handleContinue = () => {
+    if (!course || !mode) return;
     onSelect?.({ course, mode, sourceType });
     toast({
       title: mode === "sections" ? "Section picker" : "Page picker",
@@ -107,6 +109,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
     });
     onOpenChange(false);
   };
+
 
   return (
     <Dialog
@@ -117,6 +120,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
           setSourceType("my");
           setCourse(null);
           setPickerOpen(false);
+          setMode(null);
         }
       }}
     >
@@ -298,16 +302,18 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <OptionCard
                   disabled={!course}
+                  selected={mode === "sections"}
                   title="Select Section"
                   description="Bring over an entire section with all its pages."
-                  onClick={() => handleSelectMode("sections")}
+                  onClick={() => setMode("sections")}
                   illustration={<SectionIllustration />}
                 />
                 <OptionCard
                   disabled={!course}
+                  selected={mode === "pages"}
                   title="Select Individual Pages"
                   description="Cherry-pick specific pages to copy in."
-                  onClick={() => handleSelectMode("pages")}
+                  onClick={() => setMode("pages")}
                   illustration={<PagesIllustration />}
                 />
               </div>
@@ -318,6 +324,13 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
         <div className="px-6 sm:px-10 py-4 border-t border-border flex items-center justify-end gap-2 shrink-0 bg-background">
           <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-full">
             Cancel
+          </Button>
+          <Button
+            onClick={handleContinue}
+            disabled={!course || !mode}
+            className="rounded-full px-6"
+          >
+            Continue
           </Button>
         </div>
       </DialogContent>
@@ -331,12 +344,14 @@ function OptionCard({
   illustration,
   onClick,
   disabled,
+  selected,
 }: {
   title: string;
   description: string;
   illustration: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
+  selected?: boolean;
 }) {
   return (
     <button
@@ -344,17 +359,25 @@ function OptionCard({
       onClick={onClick}
       disabled={disabled}
       aria-label={title}
+      aria-pressed={selected}
       className={cn(
-        "group relative flex flex-col items-start gap-4 rounded-2xl border p-5 text-left transition-all overflow-hidden",
+        "group relative flex flex-col items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all overflow-hidden",
         disabled
           ? "border-border bg-muted/30 opacity-60 cursor-not-allowed"
-          : "border-border bg-card hover:border-primary hover:shadow-lg hover:-translate-y-0.5"
+          : selected
+            ? "border-primary bg-primary/5 ring-4 ring-primary/15 shadow-md"
+            : "border-border bg-card hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5"
       )}
     >
+      {selected && !disabled && (
+        <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
+          <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </div>
+      )}
       <div
         className={cn(
           "w-full aspect-[16/9] rounded-xl flex items-center justify-center",
-          disabled ? "bg-muted" : "bg-primary/5"
+          disabled ? "bg-muted" : selected ? "bg-primary/10" : "bg-primary/5"
         )}
         aria-hidden="true"
       >
