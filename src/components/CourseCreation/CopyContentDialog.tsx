@@ -33,13 +33,19 @@ const PopoverContent = React.forwardRef<
 ));
 PopoverContent.displayName = "InlinePopoverContent";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import {
+  ArrowLeft,
+  BookOpen,
   Check,
   ChevronDown,
   ChevronsUpDown,
   CopyPlus,
+  Eye,
   FileText,
   Folder,
   Search,
@@ -53,6 +59,17 @@ interface CourseOption {
   title: string;
   meta: string;
   thumbnail: string;
+}
+
+interface MockPage {
+  id: string;
+  title: string;
+  excerpt: string;
+}
+interface MockSection {
+  id: string;
+  title: string;
+  pages: MockPage[];
 }
 
 const MY_COURSES: CourseOption[] = [
@@ -73,7 +90,54 @@ const SHARED_COURSES: CourseOption[] = [
   { id: "s5", title: "Risk Assessment & Control", meta: "9 pages · 3 sections", thumbnail: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=300&fit=crop" },
 ];
 
+/** Deterministic mock course outline derived from a course id so each course
+ * has stable sections / pages / sample content for the live preview. */
+function buildMockCourse(courseId: string): { sections: MockSection[]; rootPages: MockPage[] } {
+  const seed = courseId.charCodeAt(courseId.length - 1) || 3;
+  const sectionTitles = [
+    "Getting started",
+    "Core fundamentals",
+    "Practical application",
+    "Advanced topics",
+    "Case studies",
+  ];
+  const pageTitles = [
+    ["Welcome & overview", "How this course works", "What you'll learn"],
+    ["Key concepts", "Frameworks & models", "Worked example", "Common pitfalls"],
+    ["Hands-on walkthrough", "Try it yourself", "Solution review"],
+    ["Industry deep-dive", "Regulatory landscape", "Tooling & automation"],
+    ["Mini case: Acme Co.", "Mini case: Globex"],
+  ];
+  const excerpts = [
+    "This page introduces the topic with a clear, learner-friendly framing and outlines what comes next.",
+    "We break the concept down into digestible building blocks, with diagrams and short examples throughout.",
+    "Apply what you learned in a guided exercise, then compare your answer against the model solution.",
+    "A focused look at how this plays out in the real world, with current data and credible references.",
+  ];
+  const sectionCount = 3 + (seed % 2); // 3 or 4
+  const sections: MockSection[] = Array.from({ length: sectionCount }, (_, i) => {
+    const titles = pageTitles[i % pageTitles.length];
+    return {
+      id: `${courseId}-s${i + 1}`,
+      title: sectionTitles[i % sectionTitles.length],
+      pages: titles.map((t, j) => ({
+        id: `${courseId}-s${i + 1}-p${j + 1}`,
+        title: t,
+        excerpt: excerpts[(i + j) % excerpts.length],
+      })),
+    };
+  });
+  const rootPages: MockPage[] = [
+    { id: `${courseId}-rp1`, title: "Course primer", excerpt: excerpts[0] },
+    { id: `${courseId}-rp2`, title: "Quick reference sheet", excerpt: excerpts[1] },
+    { id: `${courseId}-rp3`, title: "Final recap", excerpt: excerpts[2] },
+    { id: `${courseId}-rp4`, title: "Resources & links", excerpt: excerpts[3] },
+  ];
+  return { sections, rootPages };
+}
+
 type SourceType = "my" | "shared";
+type Step = "config" | "review";
 
 interface CopyContentDialogProps {
   open: boolean;
@@ -82,6 +146,8 @@ interface CopyContentDialogProps {
     course: CourseOption;
     mode: "sections" | "pages";
     sourceType: SourceType;
+    selectedSectionId?: string;
+    selectedPageIds: string[];
   }) => void;
 }
 
@@ -91,11 +157,33 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   const [course, setCourse] = useState<CourseOption | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [mode, setMode] = useState<"sections" | "pages" | null>(null);
+  const [step, setStep] = useState<Step>("config");
+
+  // Selection state for the review step
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [selectedPageIds, setSelectedPageIds] = useState<string[]>([]);
+  const [previewPageId, setPreviewPageId] = useState<string | null>(null);
 
   const courses = useMemo(
     () => (sourceType === "my" ? MY_COURSES : SHARED_COURSES),
     [sourceType]
   );
+
+  const mockCourse = useMemo(
+    () => (course ? buildMockCourse(course.id) : null),
+    [course]
+  );
+
+  const resetAll = () => {
+    setSourceType("my");
+    setCourse(null);
+    setPickerOpen(false);
+    setMode(null);
+    setStep("config");
+    setSelectedSectionId(null);
+    setSelectedPageIds([]);
+    setPreviewPageId(null);
+  };
 
   const handleTypeChange = (t: SourceType) => {
     setSourceType(t);
@@ -104,37 +192,106 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
   };
 
   const handleContinue = () => {
+    if (!course || !mode || !mockCourse) return;
+    if (mode === "sections") {
+      const first = mockCourse.sections[0];
+      setSelectedSectionId(first.id);
+      setSelectedPageIds(first.pages.map((p) => p.id));
+      setPreviewPageId(first.pages[0]?.id ?? null);
+    } else {
+      const initial = mockCourse.rootPages.slice(0, 2).map((p) => p.id);
+      setSelectedPageIds(initial);
+      setPreviewPageId(initial[0] ?? null);
+    }
+    setStep("review");
+  };
+
+  const handleSectionChange = (sectionId: string) => {
+    if (!mockCourse) return;
+    setSelectedSectionId(sectionId);
+    const section = mockCourse.sections.find((s) => s.id === sectionId);
+    const ids = section?.pages.map((p) => p.id) ?? [];
+    setSelectedPageIds(ids);
+    setPreviewPageId(ids[0] ?? null);
+  };
+
+  const togglePage = (pageId: string) => {
+    setSelectedPageIds((prev) => {
+      const next = prev.includes(pageId)
+        ? prev.filter((id) => id !== pageId)
+        : [...prev, pageId];
+      if (!next.includes(previewPageId ?? "")) {
+        setPreviewPageId(next[0] ?? null);
+      }
+      return next;
+    });
+  };
+
+  const handleCopy = () => {
     if (!course || !mode) return;
-    onSelect?.({ course, mode, sourceType });
+    onSelect?.({
+      course,
+      mode,
+      sourceType,
+      selectedSectionId: selectedSectionId ?? undefined,
+      selectedPageIds,
+    });
     toast({
-      title: mode === "sections" ? "Section picker" : "Page picker",
-      description: `Pick ${mode} from "${course.title}" to copy into this course.`,
+      title: "Content queued to copy",
+      description:
+        mode === "sections"
+          ? `${selectedPageIds.length} page(s) from selected section will be copied.`
+          : `${selectedPageIds.length} page(s) will be copied.`,
     });
     onOpenChange(false);
   };
 
+  // Resolve preview data
+  const activeSection = mockCourse?.sections.find((s) => s.id === selectedSectionId) ?? null;
+  const pagePool: MockPage[] =
+    mode === "sections"
+      ? activeSection?.pages ?? []
+      : mockCourse?.rootPages ?? [];
+  const selectedPages = pagePool.filter((p) => selectedPageIds.includes(p.id));
+  const previewPage =
+    selectedPages.find((p) => p.id === previewPageId) ?? selectedPages[0] ?? null;
+
+
+
+  const isReview = step === "review";
 
   return (
     <Dialog
       open={open}
       onOpenChange={(o) => {
         onOpenChange(o);
-        if (!o) {
-          setSourceType("my");
-          setCourse(null);
-          setPickerOpen(false);
-          setMode(null);
-        }
+        if (!o) resetAll();
       }}
     >
       <DialogContent
-        className="p-0 gap-0 w-[95vw] h-auto max-h-[92dvh] max-w-4xl sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden"
+        className={cn(
+          "p-0 gap-0 h-auto max-h-[92dvh] sm:rounded-2xl rounded-2xl border border-border flex flex-col bg-background overflow-hidden shadow-2xl [&>button]:hidden transition-[max-width] duration-300",
+          isReview ? "w-[97vw] max-w-[1280px]" : "w-[95vw] max-w-4xl"
+        )}
       >
-        {/* Header — matches PageEditorDialog */}
+        {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border shrink-0 shadow-[0_1px_2px_0_hsl(var(--foreground)/0.03),0_2px_6px_-1px_hsl(var(--foreground)/0.04)] z-10">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            {isReview && (
+              <button
+                onClick={() => setStep("config")}
+                aria-label="Back to selection"
+                className="p-1.5 -ml-1 rounded-md hover:bg-muted transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+              </button>
+            )}
             <CopyPlus className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-            <DialogTitle className="text-sm font-medium text-foreground">Copy Content</DialogTitle>
+            <DialogTitle className="text-sm font-medium text-foreground truncate">
+              {isReview
+                ? `Copy from "${course?.title ?? ""}"`
+                : "Copy Content"}
+            </DialogTitle>
           </div>
           <button
             onClick={() => onOpenChange(false)}
@@ -145,219 +302,534 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
           </button>
         </div>
         <DialogDescription className="sr-only">
-          Pull a section or pages from another course into your outline.
+          {isReview
+            ? "Review selected content and live preview before copying."
+            : "Pull a section or pages from another course into your outline."}
         </DialogDescription>
 
-        <div className="flex-1 overflow-y-auto pretty-scrollbar">
-          <div className="mx-auto w-full max-w-4xl px-6 sm:px-10 py-8 space-y-8">
-            {/* Step 1: Type of course */}
-            <section className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">
-                  Type of course <span className="text-destructive">*</span>
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Choose where to pull content from.
-                </p>
-              </div>
-              <div
-                role="radiogroup"
-                aria-label="Type of course"
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-              >
-                {[
-                  { id: "my" as const, label: "My Courses", desc: "Courses you own", Icon: User },
-                  { id: "shared" as const, label: "Shared Courses", desc: "Shared with you", Icon: Users },
-                ].map(({ id, label, desc, Icon }) => {
-                  const active = sourceType === id;
-                  return (
-                    <button
-                      key={id}
-                      role="radio"
-                      aria-checked={active}
-                      onClick={() => handleTypeChange(id)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-2xl border p-4 text-left transition-all",
-                        active
-                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                          : "border-border bg-card hover:border-foreground/30"
-                      )}
-                    >
-                      <div
+        {!isReview && (
+          <div className="flex-1 overflow-y-auto pretty-scrollbar">
+            <div className="mx-auto w-full max-w-4xl px-6 sm:px-10 py-8 space-y-8">
+              {/* Step 1: Type of course */}
+              <section className="space-y-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Type of course <span className="text-destructive">*</span>
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Choose where to pull content from.
+                  </p>
+                </div>
+                <div
+                  role="radiogroup"
+                  aria-label="Type of course"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                >
+                  {[
+                    { id: "my" as const, label: "My Courses", desc: "Courses you own", Icon: User },
+                    { id: "shared" as const, label: "Shared Courses", desc: "Shared with you", Icon: Users },
+                  ].map(({ id, label, desc, Icon }) => {
+                    const active = sourceType === id;
+                    return (
+                      <button
+                        key={id}
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => handleTypeChange(id)}
                         className={cn(
-                          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
-                          active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                          "flex items-center gap-3 rounded-2xl border p-4 text-left transition-all",
+                          active
+                            ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                            : "border-border bg-card hover:border-foreground/30"
                         )}
                       >
-                        <Icon className="w-5 h-5" aria-hidden="true" focusable="false" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-foreground">{label}</div>
-                        <div className="text-xs text-muted-foreground">{desc}</div>
-                      </div>
-                      {active && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
+                        <div
+                          className={cn(
+                            "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
+                            active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          <Icon className="w-5 h-5" aria-hidden="true" focusable="false" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold text-foreground">{label}</div>
+                          <div className="text-xs text-muted-foreground">{desc}</div>
+                        </div>
+                        {active && <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
 
-            {/* Step 2: Course picker */}
-            <section className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">
-                  Select course <span className="text-destructive">*</span>
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Search and pick the source course.
-                </p>
-              </div>
-              <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={pickerOpen}
-                    aria-label="Select course"
+              {/* Step 2: Course picker */}
+              <section className="space-y-3">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Select course <span className="text-destructive">*</span>
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Search and pick the source course.
+                  </p>
+                </div>
+                <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={pickerOpen}
+                      aria-label="Select course"
+                      className={cn(
+                        "w-full justify-between rounded-full h-12 px-3 text-left font-normal transition-all",
+                        "border-2 border-border bg-card shadow-sm",
+                        "hover:border-primary/50 hover:shadow-md hover:bg-card",
+                        pickerOpen && "border-primary ring-4 ring-primary/15 shadow-md",
+                        course && !pickerOpen && "border-primary/40"
+                      )}
+                    >
+                      <span className="flex items-center gap-2 min-w-0">
+                        {course ? (
+                          <img
+                            src={course.thumbnail}
+                            alt=""
+                            className="w-8 h-8 rounded-full object-cover shrink-0"
+                          />
+                        ) : (
+                          <Search className="w-4 h-4 text-muted-foreground shrink-0 ml-1" aria-hidden="true" focusable="false" />
+                        )}
+                        <span className={cn("truncate", !course && "text-muted-foreground")}>
+                          {course ? course.title : "Search courses…"}
+                        </span>
+                      </span>
+                      <ChevronsUpDown className="w-4 h-4 text-muted-foreground shrink-0 ml-2" aria-hidden="true" focusable="false" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="start"
+                    className="p-0 w-[--radix-popover-trigger-width] max-w-[calc(100vw-2rem)]"
+                  >
+                    <Command>
+                      <CommandInput placeholder="Search courses…" />
+                      <CommandList>
+                        <CommandEmpty>No courses found.</CommandEmpty>
+                        <CommandGroup heading={sourceType === "my" ? "My Courses" : "Shared Courses"}>
+                          {courses.map((c) => (
+                            <CommandItem
+                              key={c.id}
+                              value={c.title}
+                              onSelect={() => {
+                                setCourse(c);
+                                setPickerOpen(false);
+                              }}
+                              className="flex items-center gap-3 py-2.5"
+                            >
+                              <img
+                                src={c.thumbnail}
+                                alt=""
+                                className="w-10 h-10 rounded-lg object-cover shrink-0 border border-border"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium truncate">{c.title}</div>
+                                <div className="text-xs text-muted-foreground truncate">{c.meta}</div>
+                              </div>
+                              {course?.id === c.id && (
+                                <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                              )}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </section>
+
+              {/* Step 3: Options */}
+              <section className="space-y-3">
+                <div>
+                  <h3
                     className={cn(
-                      "w-full justify-between rounded-full h-12 px-3 text-left font-normal transition-all",
-                      "border-2 border-border bg-card shadow-sm",
-                      "hover:border-primary/50 hover:shadow-md hover:bg-card",
-                      pickerOpen && "border-primary ring-4 ring-primary/15 shadow-md",
-                      course && !pickerOpen && "border-primary/40"
+                      "text-sm font-semibold",
+                      course ? "text-foreground" : "text-muted-foreground"
                     )}
                   >
-                    <span className="flex items-center gap-2 min-w-0">
-                      {course ? (
-                        <img
-                          src={course.thumbnail}
-                          alt=""
-                          className="w-8 h-8 rounded-full object-cover shrink-0"
-                        />
-                      ) : (
-                        <Search className="w-4 h-4 text-muted-foreground shrink-0 ml-1" aria-hidden="true" focusable="false" />
-                      )}
-                      <span className={cn("truncate", !course && "text-muted-foreground")}>
-                        {course ? course.title : "Search courses…"}
-                      </span>
+                    What would you like to copy?
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {course
+                      ? `From "${course.title}"`
+                      : "Select a course to enable these options."}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 sm:gap-5 items-stretch">
+                  <div className="order-1 sm:order-none h-full">
+                    <OptionCard
+                      disabled={!course}
+                      selected={mode === "sections"}
+                      title="Select Section"
+                      description="Bring over an entire section with all its pages."
+                      onClick={() => setMode("sections")}
+                      illustration={<SectionIllustration />}
+                    />
+                  </div>
+
+                  {/* OR divider */}
+                  <div
+                    className="order-2 sm:order-none flex sm:flex-col items-center justify-center gap-3 sm:gap-2 sm:self-stretch px-1 sm:px-0"
+                    aria-hidden="true"
+                  >
+                    <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
+                    <span className="inline-flex h-7 min-w-[2.35rem] items-center justify-center rounded-full bg-background border border-border px-2 text-[10px] font-bold tracking-[0.15em] text-muted-foreground shadow-sm [text-indent:0.15em]">
+                      OR
                     </span>
-                    <ChevronsUpDown className="w-4 h-4 text-muted-foreground shrink-0 ml-2" aria-hidden="true" focusable="false" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  align="start"
-                  className="p-0 w-[--radix-popover-trigger-width] max-w-[calc(100vw-2rem)]"
-                >
-                  <Command>
-                    <CommandInput placeholder="Search courses…" />
-                    <CommandList>
-                      <CommandEmpty>No courses found.</CommandEmpty>
-                      <CommandGroup heading={sourceType === "my" ? "My Courses" : "Shared Courses"}>
-                        {courses.map((c) => (
-                          <CommandItem
-                            key={c.id}
-                            value={c.title}
-                            onSelect={() => {
-                              setCourse(c);
-                              setPickerOpen(false);
-                            }}
-                            className="flex items-center gap-3 py-2.5"
-                          >
-                            <img
-                              src={c.thumbnail}
-                              alt=""
-                              className="w-10 h-10 rounded-lg object-cover shrink-0 border border-border"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium truncate">{c.title}</div>
-                              <div className="text-xs text-muted-foreground truncate">{c.meta}</div>
-                            </div>
-                            {course?.id === c.id && (
-                              <Check className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                            )}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </section>
+                    <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
+                  </div>
 
-            {/* Step 3: Options */}
-            <section className="space-y-3">
-              <div>
-                <h3
-                  className={cn(
-                    "text-sm font-semibold",
-                    course ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  What would you like to copy?
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  {course
-                    ? `From "${course.title}"`
-                    : "Select a course to enable these options."}
-                </p>
-              </div>
+                  <div className="order-3 sm:order-none h-full">
+                    <OptionCard
+                      disabled={!course}
+                      selected={mode === "pages"}
+                      title="Select Individual Pages"
+                      description="Cherry-pick specific pages to copy in."
+                      onClick={() => setMode("pages")}
+                      illustration={<PagesIllustration />}
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-4 sm:gap-5 items-stretch">
-                <div className="order-1 sm:order-none h-full">
-                  <OptionCard
-                    disabled={!course}
-                    selected={mode === "sections"}
-                    title="Select Section"
-                    description="Bring over an entire section with all its pages."
-                    onClick={() => setMode("sections")}
-                    illustration={<SectionIllustration />}
-                  />
                 </div>
-
-                {/* OR divider */}
-                <div
-                  className="order-2 sm:order-none flex sm:flex-col items-center justify-center gap-3 sm:gap-2 sm:self-stretch px-1 sm:px-0"
-                  aria-hidden="true"
-                >
-                  <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
-                  <span className="inline-flex h-7 min-w-[2.35rem] items-center justify-center rounded-full bg-background border border-border px-2 text-[10px] font-bold tracking-[0.15em] text-muted-foreground shadow-sm [text-indent:0.15em]">
-                    OR
-                  </span>
-                  <span className="h-px sm:h-auto sm:w-px flex-1 min-w-8 sm:min-w-0 sm:min-h-8 bg-border" />
-                </div>
-
-                <div className="order-3 sm:order-none h-full">
-                  <OptionCard
-                    disabled={!course}
-                    selected={mode === "pages"}
-                    title="Select Individual Pages"
-                    description="Cherry-pick specific pages to copy in."
-                    onClick={() => setMode("pages")}
-                    illustration={<PagesIllustration />}
-                  />
-                </div>
-
-              </div>
-            </section>
+              </section>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="px-6 sm:px-10 py-4 border-t border-border flex items-center justify-end gap-2 shrink-0 bg-background">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-full">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleContinue}
-            disabled={!course || !mode}
-            className="rounded-full px-6"
-          >
-            Continue
-          </Button>
+        {isReview && mockCourse && course && (
+          <ReviewPanel
+            mode={mode!}
+            course={course}
+            mockCourse={mockCourse}
+            selectedSectionId={selectedSectionId}
+            selectedPageIds={selectedPageIds}
+            previewPage={previewPage}
+            previewPageId={previewPageId}
+            onSectionChange={handleSectionChange}
+            onTogglePage={togglePage}
+            onPreviewPage={setPreviewPageId}
+          />
+        )}
+
+        <div className="px-6 sm:px-10 py-4 border-t border-border flex items-center justify-between gap-2 shrink-0 bg-background">
+          <div className="text-xs text-muted-foreground">
+            {isReview
+              ? `${selectedPageIds.length} page${selectedPageIds.length === 1 ? "" : "s"} selected`
+              : ""}
+          </div>
+          <div className="flex items-center gap-2">
+            {isReview && (
+              <Button variant="ghost" onClick={() => setStep("config")} className="rounded-full">
+                Back
+              </Button>
+            )}
+            <Button variant="ghost" onClick={() => onOpenChange(false)} className="rounded-full">
+              Cancel
+            </Button>
+            {!isReview ? (
+              <Button
+                onClick={handleContinue}
+                disabled={!course || !mode}
+                className="rounded-full px-6"
+              >
+                Continue
+              </Button>
+            ) : (
+              <Button
+                onClick={handleCopy}
+                disabled={selectedPageIds.length === 0}
+                className="rounded-full px-6"
+              >
+                Copy to course
+              </Button>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/* Review step — left config panel + right live preview                */
+/* ------------------------------------------------------------------ */
+function ReviewPanel({
+  mode,
+  course,
+  mockCourse,
+  selectedSectionId,
+  selectedPageIds,
+  previewPage,
+  previewPageId,
+  onSectionChange,
+  onTogglePage,
+  onPreviewPage,
+}: {
+  mode: "sections" | "pages";
+  course: CourseOption;
+  mockCourse: { sections: MockSection[]; rootPages: MockPage[] };
+  selectedSectionId: string | null;
+  selectedPageIds: string[];
+  previewPage: MockPage | null;
+  previewPageId: string | null;
+  onSectionChange: (id: string) => void;
+  onTogglePage: (id: string) => void;
+  onPreviewPage: (id: string) => void;
+}) {
+  const activeSection = mockCourse.sections.find((s) => s.id === selectedSectionId) ?? null;
+  const pagePool: MockPage[] =
+    mode === "sections" ? activeSection?.pages ?? [] : mockCourse.rootPages;
+
+  return (
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] min-h-0 overflow-hidden">
+      {/* LEFT: configuration */}
+      <div className="border-b lg:border-b-0 lg:border-r border-border bg-muted/20 flex flex-col min-h-0">
+        <div className="px-5 py-4 border-b border-border bg-background/50">
+          <h3 className="text-sm font-semibold text-foreground">
+            {mode === "sections" ? "Choose section & pages" : "Choose pages"}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {mode === "sections"
+              ? "Pick one section, then refine which pages to copy."
+              : "Select the individual pages you'd like to copy."}
+          </p>
+        </div>
+
+        <ScrollArea className="flex-1">
+          <div className="p-4 space-y-5">
+            {mode === "sections" && (
+              <div className="space-y-2">
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground px-1">
+                  Sections
+                </div>
+                <RadioGroup
+                  value={selectedSectionId ?? undefined}
+                  onValueChange={onSectionChange}
+                  className="space-y-1.5"
+                >
+                  {mockCourse.sections.map((s, i) => {
+                    const active = s.id === selectedSectionId;
+                    return (
+                      <label
+                        key={s.id}
+                        htmlFor={`sec-${s.id}`}
+                        className={cn(
+                          "flex items-center gap-2.5 rounded-xl border px-3 py-2.5 cursor-pointer transition-colors",
+                          active
+                            ? "border-primary bg-primary/5 ring-2 ring-primary/15"
+                            : "border-border bg-card hover:border-foreground/30"
+                        )}
+                      >
+                        <RadioGroupItem id={`sec-${s.id}`} value={s.id} />
+                        <Folder className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                        <span className="text-xs font-mono text-muted-foreground shrink-0">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="text-sm font-medium text-foreground truncate flex-1">
+                          {s.title}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground shrink-0">
+                          {s.pages.length} pages
+                        </span>
+                      </label>
+                    );
+                  })}
+                </RadioGroup>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {mode === "sections" ? "Pages in section" : "Individual pages"}
+                </div>
+                <div className="text-[11px] text-muted-foreground">
+                  {selectedPageIds.length}/{pagePool.length}
+                </div>
+              </div>
+              <ul className="space-y-1.5">
+                {pagePool.map((p, i) => {
+                  const checked = selectedPageIds.includes(p.id);
+                  const isPreview = p.id === previewPageId;
+                  return (
+                    <li key={p.id}>
+                      <div
+                        className={cn(
+                          "flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-colors",
+                          checked
+                            ? "border-primary/50 bg-primary/5"
+                            : "border-border bg-card hover:border-foreground/30",
+                          isPreview && "ring-2 ring-primary/30"
+                        )}
+                      >
+                        <Checkbox
+                          id={`pg-${p.id}`}
+                          checked={checked}
+                          onCheckedChange={() => onTogglePage(p.id)}
+                          aria-label={`Select ${p.title}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => onPreviewPage(p.id)}
+                          className="flex-1 min-w-0 flex items-center gap-2 text-left"
+                          aria-label={`Preview ${p.title}`}
+                        >
+                          <FileText className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                          <span className="text-xs font-mono text-muted-foreground shrink-0">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className="text-sm text-foreground truncate">{p.title}</span>
+                        </button>
+                        {isPreview && checked && (
+                          <Eye className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+                {pagePool.length === 0 && (
+                  <li className="text-xs text-muted-foreground px-1 py-4 text-center">
+                    No pages available.
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* RIGHT: live preview */}
+      <div className="flex flex-col min-h-0 bg-background">
+        <div className="px-5 py-3 border-b border-border flex items-center justify-between bg-background/50">
+          <div className="flex items-center gap-2 min-w-0">
+            <Eye className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+            <span className="text-sm font-semibold text-foreground truncate">Live preview</span>
+          </div>
+          <span className="text-[11px] text-muted-foreground truncate">
+            {course.title}
+          </span>
+        </div>
+        <ScrollArea className="flex-1">
+          <div className="p-6 lg:p-10">
+            <PreviewContent
+              mode={mode}
+              section={activeSection}
+              selectedPages={pagePool.filter((p) => selectedPageIds.includes(p.id))}
+              previewPage={previewPage}
+              onPickPage={onPreviewPage}
+            />
+          </div>
+        </ScrollArea>
+      </div>
+    </div>
+  );
+}
+
+function PreviewContent({
+  mode,
+  section,
+  selectedPages,
+  previewPage,
+  onPickPage,
+}: {
+  mode: "sections" | "pages";
+  section: MockSection | null;
+  selectedPages: MockPage[];
+  previewPage: MockPage | null;
+  onPickPage: (id: string) => void;
+}) {
+  if (selectedPages.length === 0) {
+    return (
+      <div className="h-full min-h-[260px] flex flex-col items-center justify-center text-center gap-2 text-muted-foreground">
+        <BookOpen className="w-8 h-8" aria-hidden="true" focusable="false" />
+        <p className="text-sm">Select at least one page to preview.</p>
+      </div>
+    );
+  }
+
+  return (
+    <article className="mx-auto max-w-2xl space-y-6">
+      <header className="space-y-2 pb-4 border-b border-border">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-primary">
+          {mode === "sections" && section ? section.title : "Individual pages"}
+        </div>
+        {previewPage && (
+          <h1 className="text-2xl font-bold text-foreground leading-tight">
+            {previewPage.title}
+          </h1>
+        )}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          <span>
+            Page {Math.max(1, selectedPages.findIndex((p) => p.id === previewPage?.id) + 1)} of {selectedPages.length}
+          </span>
+        </div>
+      </header>
+
+      {previewPage && (
+        <div className="space-y-4">
+          <div className="aspect-[16/9] rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-muted border border-border flex items-center justify-center">
+            <BookOpen className="w-10 h-10 text-primary/40" aria-hidden="true" focusable="false" />
+          </div>
+          <p className="text-base text-foreground leading-relaxed">
+            {previewPage.excerpt}
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            This is a sample of how "{previewPage.title}" will appear once copied
+            into your course. Formatting, media, and interactive blocks are
+            preserved during the copy.
+          </p>
+        </div>
+      )}
+
+      {selectedPages.length > 1 && (
+        <nav
+          aria-label="Selected pages"
+          className="pt-6 border-t border-border space-y-2"
+        >
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Pages in this preview
+          </div>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {selectedPages.map((p, i) => {
+              const active = p.id === previewPage?.id;
+              return (
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    onClick={() => onPickPage(p.id)}
+                    aria-label={`Preview ${p.title}`}
+                    aria-pressed={active}
+                    className={cn(
+                      "w-full flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-colors",
+                      active
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card hover:border-foreground/30"
+                    )}
+                  >
+                    <span className="text-[11px] font-mono text-muted-foreground shrink-0">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                    <span className="text-sm text-foreground truncate">{p.title}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      )}
+    </article>
+  );
+}
+
 
 function OptionCard({
   title,
