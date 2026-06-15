@@ -146,7 +146,7 @@ export function CopyContentDialog({ open, onOpenChange, onSelect }: CopyContentD
         </DialogDescription>
 
         <div className="flex-1 overflow-y-auto pretty-scrollbar">
-          <div className="mx-auto w-full max-w-3xl px-6 sm:px-10 py-8 space-y-8">
+          <div className="mx-auto w-full max-w-4xl px-6 sm:px-10 py-8 space-y-8">
             {/* Step 1: Type of course */}
             <section className="space-y-3">
               <div>
