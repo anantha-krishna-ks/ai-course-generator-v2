@@ -1080,6 +1080,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onDrop={handleContentDrop}
             >
             <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
+              {/* Course branding logo (content) */}
+              <CourseBrandingLogo courseId={courseId} slot="content" />
               {isCurrentSection ? (
                 <>
                   <span className="text-sm text-muted-foreground block mb-2">Section title</span>
