@@ -730,30 +730,34 @@ export default function CourseBrandingPage() {
                   <p className="text-xs text-muted-foreground mt-1">All changes reflect instantly.</p>
                 </div>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <PreviewCard
-                  badge="Introduction"
-                  title={courseTitle}
-                  logo={branding.introLogo}
-                  position={branding.introPosition}
-                  primary={branding.primaryColor}
-                  cta={branding.ctaColor}
-                  heroImage={introHero}
-                  ctaLabel="Start Course"
-                  subtitle="Welcome — your branded course introduction."
-                />
-                <PreviewCard
-                  badge="Section / Page"
-                  title="Lesson Title"
-                  logo={branding.contentLogo}
-                  position={branding.contentPosition}
-                  primary={branding.primaryColor}
-                  cta={branding.ctaColor}
-                  heroImage={sectionHero}
-                  ctaLabel="Next"
-                  subtitle="Section header on every content page."
-                />
-              </div>
+              <Tabs defaultValue="introduction" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="introduction">Introduction</TabsTrigger>
+                  <TabsTrigger value="section">Section / Page</TabsTrigger>
+                </TabsList>
+                <TabsContent value="introduction" className="mt-3">
+                  <IntroductionPreview
+                    title={courseTitle}
+                    logo={branding.introLogo}
+                    position={branding.introPosition}
+                    primary={branding.primaryColor}
+                    cta={branding.ctaColor}
+                  />
+                </TabsContent>
+                <TabsContent value="section" className="mt-3">
+                  <PreviewCard
+                    badge="Section / Page"
+                    title="Lesson Title"
+                    logo={branding.contentLogo}
+                    position={branding.contentPosition}
+                    primary={branding.primaryColor}
+                    cta={branding.ctaColor}
+                    heroImage={sectionHero}
+                    ctaLabel="Next"
+                    subtitle="Section header on every content page."
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </main>
