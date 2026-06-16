@@ -293,7 +293,7 @@ function IntroductionPreview({
         </div>
 
         {/* RIGHT: Course Outline mock mirroring /edit-course right panel */}
-        <div className="bg-background p-4">
+        <div className="bg-background p-4" style={bgStyle}>
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Course Outline</h4>
             <span
