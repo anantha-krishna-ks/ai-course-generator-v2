@@ -582,19 +582,37 @@ function BlockPreview({ id }: { id: string }) {
     case "flashcards":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { bg: "#E0F2FE", fg: "#0C4A6E", t: "Term" },
-              { bg: "#FEF3C7", fg: "#713F12", t: "Definition" },
-            ].map((c, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-dashed border-foreground/30 shadow-[0_4px_14px_-4px_rgba(0,0,0,0.12)] aspect-[4/3] flex items-center justify-center text-[10px] font-semibold"
-                style={{ background: c.bg, color: c.fg }}
-              >
-                {c.t}
+          <div className="flex items-center justify-center gap-3 py-2">
+            {/* Front UNO-style card */}
+            <div
+              className="relative w-[88px] h-[124px] rounded-xl p-[6px] shadow-[0_8px_20px_-6px_rgba(0,0,0,0.28)] -rotate-[8deg]"
+              style={{ background: "linear-gradient(135deg,#0EA5E9,#0369A1)" }}
+            >
+              <div className="w-full h-full rounded-[8px] bg-white relative overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-[5px] rounded-[6px] border border-[#0EA5E9]/30" />
+                <span className="absolute top-1.5 left-2 text-[8px] font-bold tracking-wider" style={{ color: "#0C4A6E" }}>A</span>
+                <span className="absolute bottom-1.5 right-2 text-[8px] font-bold tracking-wider rotate-180" style={{ color: "#0C4A6E" }}>A</span>
+                <div className="text-center px-1">
+                  <div className="text-[7px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: "#0EA5E9" }}>Term</div>
+                  <div className="text-[10px] font-bold leading-tight" style={{ color: "#0C4A6E" }}>Photosynthesis</div>
+                </div>
               </div>
-            ))}
+            </div>
+            {/* Back UNO-style card */}
+            <div
+              className="relative w-[88px] h-[124px] rounded-xl p-[6px] shadow-[0_8px_20px_-6px_rgba(0,0,0,0.28)] rotate-[8deg]"
+              style={{ background: "linear-gradient(135deg,#F59E0B,#B45309)" }}
+            >
+              <div className="w-full h-full rounded-[8px] bg-white relative overflow-hidden flex items-center justify-center">
+                <div className="absolute inset-[5px] rounded-[6px] border border-[#F59E0B]/35" />
+                <span className="absolute top-1.5 left-2 text-[8px] font-bold tracking-wider" style={{ color: "#713F12" }}>B</span>
+                <span className="absolute bottom-1.5 right-2 text-[8px] font-bold tracking-wider rotate-180" style={{ color: "#713F12" }}>B</span>
+                <div className="text-center px-1">
+                  <div className="text-[7px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: "#F59E0B" }}>Def.</div>
+                  <div className="text-[7.5px] font-medium leading-tight" style={{ color: "#713F12" }}>Plants convert light into energy</div>
+                </div>
+              </div>
+            </div>
           </div>
           <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5 flex items-center gap-1">
             <RefreshCw className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
@@ -1059,12 +1077,26 @@ function BlockThumbnail({ id }: { id: string }) {
     case "flashcards":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
-            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#E0F2FE" }}>
-              <span className="text-[3.5px] font-semibold" style={{ color: "#0C4A6E" }}>Term</span>
+          <div className={cn(miniCard, "p-[4px] flex items-center justify-center gap-[5px] h-[44px]")}>
+            {/* Front card (UNO-style) */}
+            <div
+              className="relative w-[22px] h-[34px] rounded-[3px] p-[1.5px] shadow-[0_1px_2px_rgba(0,0,0,0.2)] -rotate-[8deg]"
+              style={{ background: "linear-gradient(135deg,#0EA5E9,#0369A1)" }}
+            >
+              <div className="w-full h-full rounded-[2px] bg-white flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-[1.5px] rounded-[1.5px] border border-[#0EA5E9]/30" />
+                <span className="text-[3px] font-bold tracking-wide" style={{ color: "#0C4A6E" }}>TERM</span>
+              </div>
             </div>
-            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#FEF3C7" }}>
-              <span className="text-[3.5px] font-semibold" style={{ color: "#713F12" }}>Def.</span>
+            {/* Back card */}
+            <div
+              className="relative w-[22px] h-[34px] rounded-[3px] p-[1.5px] shadow-[0_1px_2px_rgba(0,0,0,0.2)] rotate-[8deg]"
+              style={{ background: "linear-gradient(135deg,#F59E0B,#B45309)" }}
+            >
+              <div className="w-full h-full rounded-[2px] bg-white flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-[1.5px] rounded-[1.5px] border border-[#F59E0B]/35" />
+                <span className="text-[3px] font-bold tracking-wide" style={{ color: "#713F12" }}>DEF</span>
+              </div>
             </div>
           </div>
         </div>
