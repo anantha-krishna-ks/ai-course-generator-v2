@@ -681,6 +681,7 @@ function CardEditor({
           ))}
         </div>
       </div>
+      </div>
     </div>
   );
 }
