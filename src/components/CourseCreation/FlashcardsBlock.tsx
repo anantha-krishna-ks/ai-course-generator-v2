@@ -113,9 +113,13 @@ function defaultSide(side: FCSide): FCSideData {
     textAlign: "center",
     formatting: {},
     imageUrl: "",
-    imageZoom: 1,
+    imageZoom: 100,
     imagePosX: 50,
     imagePosY: 50,
+    imageFit: "cover",
+    imageFlipH: false,
+    imageFlipV: false,
+    imageRotation: 0,
   };
 }
 
