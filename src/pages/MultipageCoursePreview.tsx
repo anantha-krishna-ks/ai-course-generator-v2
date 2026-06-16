@@ -64,6 +64,7 @@ const MultipageCoursePreview = () => {
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [completed, setCompleted] = useState(false);
   const completionRef = useRef<HTMLDivElement | null>(null);
+  const contentBgStyle = useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""));
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
