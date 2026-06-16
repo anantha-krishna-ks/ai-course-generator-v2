@@ -754,26 +754,28 @@ export default function CourseBrandingPage() {
   const [branding, setBranding] = useState<CourseBranding>(DEFAULT_COURSE_BRANDING);
   const [introWarn, setIntroWarn] = useState(false);
   const [contentWarn, setContentWarn] = useState(false);
-  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color">("intro");
+  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color" | "background">("intro");
 
   const introRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const colorRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (courseId) setBranding(courseBrandingStore.get(courseId));
   }, [courseId]);
 
   useEffect(() => {
-    const sections: Array<["intro" | "content" | "color", React.RefObject<HTMLDivElement>]> = [
+    const sections: Array<["intro" | "content" | "color" | "background", React.RefObject<HTMLDivElement>]> = [
       ["intro", introRef],
       ["content", contentRef],
       ["color", colorRef],
+      ["background", backgroundRef],
     ];
 
     const computeActive = () => {
       const offset = 160; // header + breathing room
-      let current: "intro" | "content" | "color" = "intro";
+      let current: "intro" | "content" | "color" | "background" = "intro";
       for (const [key, ref] of sections) {
         const el = ref.current;
         if (!el) continue;
@@ -797,7 +799,7 @@ export default function CourseBrandingPage() {
   }, []);
 
 
-  const scrollToSection = (key: "intro" | "content" | "color") => {
+  const scrollToSection = (key: "intro" | "content" | "color" | "background") => {
     const map = { intro: introRef, content: contentRef, color: colorRef };
     map[key].current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
