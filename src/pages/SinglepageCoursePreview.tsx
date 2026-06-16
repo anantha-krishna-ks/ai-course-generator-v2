@@ -11,6 +11,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
+import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 
 interface CourseItem {
   id: string;
