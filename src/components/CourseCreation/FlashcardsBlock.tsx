@@ -49,6 +49,8 @@ export interface FCFormatting {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
+}
+
 export type FCFitMode = "contain" | "cover" | "fill";
 
 export interface FCSideData {
@@ -65,18 +67,6 @@ export interface FCSideData {
   imageFlipH: boolean;
   imageFlipV: boolean;
   imageRotation: number; // 0|90|180|270
-}
-
-export interface FCSideData {
-  contentType: FCContentType;
-  text: string;
-  textColor: string;
-  textAlign: FCAlignment;
-  formatting: FCFormatting;
-  imageUrl: string;
-  imageZoom: number; // 1..3
-  imagePosX: number; // 0..100
-  imagePosY: number; // 0..100
 }
 
 export interface FCCard {
