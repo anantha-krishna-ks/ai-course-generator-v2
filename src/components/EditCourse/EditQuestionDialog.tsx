@@ -474,9 +474,28 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
 
               {/* Question Text */}
               <div className="space-y-2">
-                <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Question
-                </Label>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <Label htmlFor="question" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Question
+                  </Label>
+                  <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-full pl-2.5 pr-1 py-1 shadow-sm">
+                    <MessageSquareText className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                    <span className="text-[11px] font-medium text-muted-foreground">Feedback</span>
+                    <Select value={feedbackMode} onValueChange={(v) => setFeedbackMode(v as FeedbackMode)}>
+                      <SelectTrigger
+                        aria-label="Feedback mode"
+                        className="h-7 px-2.5 text-xs font-medium rounded-full border-0 bg-primary/[0.06] text-primary hover:bg-primary/10 focus:ring-1 focus:ring-primary/30 focus:ring-offset-0 gap-1.5 [&>svg]:opacity-70"
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent align="end">
+                        <SelectItem value="any">Any Response</SelectItem>
+                        <SelectItem value="correct_incorrect">Correct / Incorrect</SelectItem>
+                        {type !== "FIB" && <SelectItem value="by_choice">By Choice</SelectItem>}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
                 <Textarea
                   id="question"
                   value={questionText}
