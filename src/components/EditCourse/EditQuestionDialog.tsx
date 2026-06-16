@@ -621,19 +621,77 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 </div>
               )}
 
-              {/* General Explanation */}
+              {/* Feedback */}
               <div className="space-y-2">
-                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Explanation
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Feedback
                 </Label>
-                <Textarea
-                  id="explanation"
-                  value={explanation}
-                  onChange={(e) => setExplanation(e.target.value)}
-                  placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
-                />
+                <Select value={feedbackMode} onValueChange={(v) => setFeedbackMode(v as FeedbackMode)}>
+                  <SelectTrigger aria-label="Feedback mode" className="rounded-xl bg-white border border-gray-300 h-10 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Response</SelectItem>
+                    <SelectItem value="correct_incorrect">Correct / Incorrect</SelectItem>
+                    {type !== "FIB" && <SelectItem value="by_choice">By Choice</SelectItem>}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground/70">
+                  {feedbackMode === "any" && "Show a single explanation to learners regardless of their response."}
+                  {feedbackMode === "correct_incorrect" && "Show distinct feedback for correct vs. incorrect responses."}
+                  {feedbackMode === "by_choice" && "Show a unique explanation for each option the learner selects."}
+                </p>
               </div>
+
+              {feedbackMode === "any" && (
+                <div className="space-y-2">
+                  <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Explanation
+                  </Label>
+                  <Textarea
+                    id="explanation"
+                    value={explanation}
+                    onChange={(e) => setExplanation(e.target.value)}
+                    placeholder="Explain the answer. Shown to learners after they respond."
+                    className="min-h-[72px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
+                  />
+                </div>
+              )}
+
+              {feedbackMode === "correct_incorrect" && (
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="correct-fb" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <Check className="w-3 h-3 text-primary" /> Correct Answer Feedback
+                    </Label>
+                    <Textarea
+                      id="correct-fb"
+                      value={correctFeedback}
+                      onChange={(e) => setCorrectFeedback(e.target.value)}
+                      placeholder="Enter correct answer feedback…"
+                      className="min-h-[64px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="incorrect-fb" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Incorrect Answer Feedback
+                    </Label>
+                    <Textarea
+                      id="incorrect-fb"
+                      value={incorrectFeedback}
+                      onChange={(e) => setIncorrectFeedback(e.target.value)}
+                      placeholder="Enter incorrect answer feedback…"
+                      className="min-h-[64px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {feedbackMode === "by_choice" && type !== "FIB" && (
+                <p className="text-[11px] text-muted-foreground/70 -mt-2">
+                  Per-option explanations are shown inline under each answer choice above.
+                </p>
+              )}
             </div>
           </ScrollArea>
         </div>
