@@ -488,6 +488,7 @@ function SinglePageMockPreview({
   primary,
   cta,
   focus,
+  bgStyle,
 }: {
   courseTitle: string;
   logo: string | null;
@@ -495,6 +496,7 @@ function SinglePageMockPreview({
   primary: string;
   cta: string;
   focus: "intro" | "section";
+  bgStyle?: React.CSSProperties;
 }) {
   const primaryText = readableTextColor(primary);
   const ctaText = readableTextColor(cta);
