@@ -339,12 +339,14 @@ function SectionPagePreview({
   position,
   primary,
   cta,
+  bgStyle,
 }: {
   courseTitle: string;
   logo: string | null;
   position: LogoPosition;
   primary: string;
   cta: string;
+  bgStyle?: React.CSSProperties;
 }) {
   const primaryText = readableTextColor(primary);
   const ctaText = readableTextColor(cta);
