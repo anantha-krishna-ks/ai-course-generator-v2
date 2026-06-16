@@ -441,6 +441,15 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
                   {isFlipped ? "Flip to front" : "Flip to back"}
                 </Button>
               </div>
+              </div>
+
+              {/* Trailing drop indicator (after last card) */}
+              {showIndicatorAfter && (
+                <div
+                  aria-hidden="true"
+                  className="self-stretch -mr-2 ml-2 w-[3px] rounded-full bg-primary opacity-100 shadow-[0_0_12px_hsl(var(--primary)/0.6)] transition-all duration-200 ease-out"
+                />
+              )}
             </div>
           );
         })}
