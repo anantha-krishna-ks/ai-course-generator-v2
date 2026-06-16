@@ -671,12 +671,10 @@ export function FlashcardsPreview({ content }: { content: string }) {
   return (
     <div className={cn("w-full flex flex-wrap gap-4", alignmentClass)}>
       {data.cards.map((card, idx) => {
-        const widthPct =
-          data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
         const isFlipped = !!flipped[card.id];
         const toggle = () => setFlipped((f) => ({ ...f, [card.id]: !f[card.id] }));
         return (
-          <div key={card.id} style={{ width: widthPct, minWidth: 200 }}>
+          <div key={card.id} style={{ width: 200 }}>
             <div className="fc-perspective">
               <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
                 <FlashcardFace
