@@ -20,7 +20,7 @@ import {
   hexToRgba,
   readableTextColor,
 } from "@/services/courseBrandingStore";
-import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
+import { CONTENT_BACKGROUNDS, getContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { mockCourseData } from "@/data/mockCourseData";
 
 const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
@@ -206,12 +206,14 @@ function IntroductionPreview({
   position,
   primary,
   cta,
+  bgStyle,
 }: {
   title: string;
   logo: string | null;
   position: LogoPosition;
   primary: string;
   cta: string;
+  bgStyle?: React.CSSProperties;
 }) {
   const introTint = hexToRgba(primary, 0.1);
   const ctaText = readableTextColor(cta);
@@ -291,7 +293,7 @@ function IntroductionPreview({
         </div>
 
         {/* RIGHT: Course Outline mock mirroring /edit-course right panel */}
-        <div className="bg-background p-4">
+        <div className="bg-background p-4" style={bgStyle}>
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Course Outline</h4>
             <span
@@ -337,12 +339,14 @@ function SectionPagePreview({
   position,
   primary,
   cta,
+  bgStyle,
 }: {
   courseTitle: string;
   logo: string | null;
   position: LogoPosition;
   primary: string;
   cta: string;
+  bgStyle?: React.CSSProperties;
 }) {
   const primaryText = readableTextColor(primary);
   const ctaText = readableTextColor(cta);
@@ -417,7 +421,7 @@ function SectionPagePreview({
         </div>
 
         {/* RIGHT: Content area */}
-        <div className="flex flex-col p-4">
+        <div className="flex flex-col p-4" style={bgStyle}>
           <div className={`flex mb-2 ${POSITION_CLASS[position]}`}>
             <div className="h-7 max-w-[110px] flex items-center rounded-md border border-border bg-white px-2 py-1 shadow-sm">
               <img src={displayedLogo} alt="Logo preview" className="max-h-5 max-w-full object-contain" />
@@ -484,6 +488,7 @@ function SinglePageMockPreview({
   primary,
   cta,
   focus,
+  bgStyle,
 }: {
   courseTitle: string;
   logo: string | null;
@@ -491,6 +496,7 @@ function SinglePageMockPreview({
   primary: string;
   cta: string;
   focus: "intro" | "section";
+  bgStyle?: React.CSSProperties;
 }) {
   const primaryText = readableTextColor(primary);
   const ctaText = readableTextColor(cta);
@@ -582,7 +588,7 @@ function SinglePageMockPreview({
             </div>
 
             {/* Stacked content */}
-            <div className="px-4 py-3 space-y-3">
+            <div className="px-4 py-3 space-y-3" style={bgStyle}>
               {/* Intro block — highlighted on Introduction tab */}
               <div
                 className="rounded-md p-2.5 transition-colors"
@@ -1239,6 +1245,7 @@ export default function CourseBrandingPage() {
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
                       focus="intro"
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   ) : (
                     <IntroductionPreview
@@ -1247,6 +1254,7 @@ export default function CourseBrandingPage() {
                       position={branding.introPosition}
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   )}
                 </TabsContent>
@@ -1259,6 +1267,7 @@ export default function CourseBrandingPage() {
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
                       focus="section"
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   ) : (
                     <SectionPagePreview
@@ -1267,9 +1276,11 @@ export default function CourseBrandingPage() {
                       position={branding.contentPosition}
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   )}
                 </TabsContent>
+
 
 
               </Tabs>
