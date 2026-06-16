@@ -5,6 +5,7 @@ import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndic
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
+import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -130,6 +131,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const navigate = useNavigate();
   const { toast } = useToast();
   const courseId = routeCourseId ?? routeId ?? "draft";
+  const contentBgStyle = useCourseContentBackgroundStyle(courseId);
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
@@ -1073,12 +1075,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
           {/* Main Content Area */}
             <div
-              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver ? "bg-primary/5" : "bg-[#ffffff]")}
+              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver ? "bg-primary/5" : "bg-background")}
+              style={isDragOver ? undefined : contentBgStyle}
               onDragOver={handleEditorDragOver}
               onDragEnter={handleEditorDragEnter}
               onDragLeave={handleEditorDragLeave}
               onDrop={handleContentDrop}
             >
+
             <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
               {/* Course branding logo (content) */}
               <CourseBrandingLogo courseId={courseId} slot="content" />

@@ -20,6 +20,7 @@ import {
   hexToRgba,
   readableTextColor,
 } from "@/services/courseBrandingStore";
+import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
 import { mockCourseData } from "@/data/mockCourseData";
 
 const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
@@ -753,26 +754,28 @@ export default function CourseBrandingPage() {
   const [branding, setBranding] = useState<CourseBranding>(DEFAULT_COURSE_BRANDING);
   const [introWarn, setIntroWarn] = useState(false);
   const [contentWarn, setContentWarn] = useState(false);
-  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color">("intro");
+  const [activeSection, setActiveSection] = useState<"intro" | "content" | "color" | "background">("intro");
 
   const introRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const colorRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (courseId) setBranding(courseBrandingStore.get(courseId));
   }, [courseId]);
 
   useEffect(() => {
-    const sections: Array<["intro" | "content" | "color", React.RefObject<HTMLDivElement>]> = [
+    const sections: Array<["intro" | "content" | "color" | "background", React.RefObject<HTMLDivElement>]> = [
       ["intro", introRef],
       ["content", contentRef],
       ["color", colorRef],
+      ["background", backgroundRef],
     ];
 
     const computeActive = () => {
       const offset = 160; // header + breathing room
-      let current: "intro" | "content" | "color" = "intro";
+      let current: "intro" | "content" | "color" | "background" = "intro";
       for (const [key, ref] of sections) {
         const el = ref.current;
         if (!el) continue;
@@ -796,8 +799,8 @@ export default function CourseBrandingPage() {
   }, []);
 
 
-  const scrollToSection = (key: "intro" | "content" | "color") => {
-    const map = { intro: introRef, content: contentRef, color: colorRef };
+  const scrollToSection = (key: "intro" | "content" | "color" | "background") => {
+    const map = { intro: introRef, content: contentRef, color: colorRef, background: backgroundRef };
     map[key].current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -828,7 +831,14 @@ export default function CourseBrandingPage() {
         branding.primaryColor !== DEFAULT_COURSE_BRANDING.primaryColor ||
         branding.ctaColor !== DEFAULT_COURSE_BRANDING.ctaColor,
     },
+    {
+      key: "background" as const,
+      label: "Content Background",
+      icon: LayoutTemplate,
+      done: branding.contentBackground !== DEFAULT_COURSE_BRANDING.contentBackground,
+    },
   ];
+
 
 
 
@@ -904,7 +914,7 @@ export default function CourseBrandingPage() {
                 const Icon = item.icon;
                 const isActive = activeSection === item.key;
                 const isDone = item.done;
-                const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
+                const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : item.key === "color" ? colorRef : backgroundRef;
 
                 return (
                   <div key={item.key} className="relative">
@@ -996,7 +1006,9 @@ export default function CourseBrandingPage() {
                             ? "Logo & position on the course introduction page."
                             : item.key === "content"
                             ? "Displayed on all sections & lesson pages."
-                            : "Brand primary & call-to-action button color."}
+                            : item.key === "color"
+                            ? "Brand primary & call-to-action button color."
+                            : "Background applied to outline, editor and preview content."}
                         </p>
                       </div>
                       {isDone && (
@@ -1098,6 +1110,84 @@ export default function CourseBrandingPage() {
                               helper="Start, Next, Submit buttons. Text color auto-adjusts for contrast."
                             />
                           </>
+                        )}
+
+                        {item.key === "background" && (
+                          <div className="space-y-4">
+                            <p className="text-xs text-muted-foreground">
+                              Applied behind the Course Outline, Page Editor and Preview content. Pick a light palette tone or a premium texture.
+                            </p>
+
+                            <div>
+                              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Light Palettes</Label>
+                              <div className="mt-2 grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+                                {CONTENT_BACKGROUNDS.filter((b) => b.category === "color").map((bg) => {
+                                  const selected = branding.contentBackground === bg.id;
+                                  return (
+                                    <button
+                                      key={bg.id}
+                                      type="button"
+                                      onClick={() => update("contentBackground", bg.id)}
+                                      aria-label={`Use ${bg.label} background`}
+                                      aria-pressed={selected}
+                                      className={`group relative aspect-square rounded-xl border transition-all overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                                        selected
+                                          ? "border-primary ring-2 ring-primary/30 shadow-md"
+                                          : "border-border hover:border-primary/40"
+                                      }`}
+                                      style={bg.swatchStyle}
+                                    >
+                                      {selected && (
+                                        <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow">
+                                          <Check className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+                                        </span>
+                                      )}
+                                      <span className="sr-only">{bg.label}</span>
+                                      <span className="absolute inset-x-0 bottom-0 text-[10px] font-medium text-foreground/70 bg-background/70 backdrop-blur-sm py-0.5 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {bg.label}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex items-center gap-2 mb-2">
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Premium Textures</Label>
+                                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20">Premium</span>
+                              </div>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                {CONTENT_BACKGROUNDS.filter((b) => b.category === "texture").map((bg) => {
+                                  const selected = branding.contentBackground === bg.id;
+                                  return (
+                                    <button
+                                      key={bg.id}
+                                      type="button"
+                                      onClick={() => update("contentBackground", bg.id)}
+                                      aria-label={`Use ${bg.label} textured background`}
+                                      aria-pressed={selected}
+                                      className={`group relative h-20 rounded-xl border transition-all overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                                        selected
+                                          ? "border-primary ring-2 ring-primary/30 shadow-md"
+                                          : "border-border hover:border-primary/40"
+                                      }`}
+                                      style={bg.swatchStyle}
+                                    >
+                                      {selected && (
+                                        <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow">
+                                          <Check className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+                                        </span>
+                                      )}
+                                      <span className="absolute inset-x-0 bottom-0 text-[10px] font-medium text-foreground/80 bg-background/80 backdrop-blur-sm py-1 text-center">
+                                        {bg.label}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
                         )}
                       </div>
                     </Card>

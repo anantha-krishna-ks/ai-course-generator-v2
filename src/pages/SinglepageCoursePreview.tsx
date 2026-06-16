@@ -10,6 +10,7 @@ import type { SinglePageRestoreState } from "@/components/CourseCreation/SingleP
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
+import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 
 interface CourseItem {
   id: string;
@@ -61,6 +62,7 @@ const SinglepageCoursePreview = () => {
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const completionRef = useRef<HTMLDivElement | null>(null);
+  const contentBgStyle = useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""));
 
   const handleFinish = () => {
     setCompleted(true);
@@ -694,10 +696,13 @@ const SinglepageCoursePreview = () => {
             </div>
 
             {/* All content */}
-            <div className={cn(
-              "flex-1",
-              isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
-            )}>
+            <div
+              className={cn(
+                "flex-1",
+                isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
+              )}
+              style={contentBgStyle}
+            >
               <div className="max-w-3xl mx-auto space-y-6">
                 {renderSinglePageContent()}
 

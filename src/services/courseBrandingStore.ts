@@ -10,6 +10,8 @@ export interface CourseBranding {
   contentPosition: LogoPosition;
   primaryColor: string; // hex e.g. #3B82F6
   ctaColor: string; // hex
+  /** Preset id for content surface background. See contentBackgrounds.ts */
+  contentBackground: string;
 }
 
 export const DEFAULT_COURSE_BRANDING: CourseBranding = {
@@ -19,6 +21,7 @@ export const DEFAULT_COURSE_BRANDING: CourseBranding = {
   contentPosition: "top-left",
   primaryColor: "#3B82F6",
   ctaColor: "#3B82F6",
+  contentBackground: "default",
 };
 
 const key = (courseId: string) => `course_branding:${courseId}`;

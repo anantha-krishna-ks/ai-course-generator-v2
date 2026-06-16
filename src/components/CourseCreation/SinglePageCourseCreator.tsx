@@ -12,6 +12,7 @@ import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { AIHeaderButton } from "./AIHeaderButton";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
+import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
@@ -115,6 +116,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const location = useLocation();
   const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
   const courseId = routeCourseIdAlt ?? routeCourseId ?? "draft";
+  const contentBgStyle = useCourseContentBackgroundStyle(courseId);
   const isEditCoursePage =
     location.pathname.startsWith("/edit-course") || initialRestoreState != null;
   const isSharedCourse = new URLSearchParams(location.search).get("shared") === "1";
@@ -1227,7 +1229,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
         )}
 
         {/* Main Content Area */}
-        <main className="flex-1 min-w-0 overflow-y-auto" style={{ fontFamily: getFontStack(fontId) }}>
+        <main className="flex-1 min-w-0 overflow-y-auto" style={{ fontFamily: getFontStack(fontId), ...contentBgStyle }}>
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             {/* Course branding logo (intro) */}
             <CourseBrandingLogo courseId={courseId} slot="intro" />

@@ -13,6 +13,7 @@ import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
+import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 
 interface CourseItem {
@@ -63,6 +64,7 @@ const MultipageCoursePreview = () => {
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [completed, setCompleted] = useState(false);
   const completionRef = useRef<HTMLDivElement | null>(null);
+  const contentBgStyle = useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""));
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
@@ -1206,14 +1208,18 @@ const MultipageCoursePreview = () => {
           )}
 
           {/* Content area */}
-          <div className={cn(
-            "flex-1 overflow-auto",
-            isCompactView && "pb-20" // space for bottom bar
-          )}>
+          <div
+            className={cn(
+              "flex-1 overflow-auto",
+              isCompactView && "pb-20" // space for bottom bar
+            )}
+            style={contentBgStyle}
+          >
             <div className={cn(
               "max-w-3xl mx-auto space-y-6 sm:space-y-8",
               isCompactView ? "px-5 py-6" : "px-8 sm:px-12 py-10"
             )}>
+
               {currentPage ? (
                 <>
                    {/* Page indicator */}
