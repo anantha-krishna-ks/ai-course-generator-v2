@@ -422,14 +422,16 @@ function FlashcardFace({
       style={{ background: bg, color: fg }}
     >
       {side.contentType === "image" && side.imageUrl ? (
-        <div className="w-full h-full overflow-hidden">
+        <div className="w-full h-full overflow-hidden flex items-center justify-center bg-muted/30">
           <img
             src={side.imageUrl}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full"
             style={{
-              transform: `scale(${side.imageZoom})`,
-              transformOrigin: `${side.imagePosX}% ${side.imagePosY}%`,
+              objectFit: side.imageFit,
+              objectPosition: `${side.imagePosX}% ${side.imagePosY}%`,
+              transform: `scale(${(side.imageZoom ?? 100) / 100}) scaleX(${side.imageFlipH ? -1 : 1}) scaleY(${side.imageFlipV ? -1 : 1}) rotate(${side.imageRotation ?? 0}deg)`,
+              transition: "transform 0.2s ease",
             }}
             draggable={false}
           />
