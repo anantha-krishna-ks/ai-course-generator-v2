@@ -92,6 +92,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
   { id: "vertical-tabs", label: "Vertical Tabs", icon: LayoutPanelLeft, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "vertical-tabs", description: "Organise content into a list of tabs stacked along the left" },
   { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
+  { id: "flashcards", label: "Flashcards", icon: Layers, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "flashcards", variant: "flashcards", description: "Two-sided cards learners flip to reveal answers, definitions or images" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
