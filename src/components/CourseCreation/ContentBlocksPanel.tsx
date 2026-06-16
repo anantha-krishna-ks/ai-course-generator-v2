@@ -1059,12 +1059,26 @@ function BlockThumbnail({ id }: { id: string }) {
     case "flashcards":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
-            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#E0F2FE" }}>
-              <span className="text-[3.5px] font-semibold" style={{ color: "#0C4A6E" }}>Term</span>
+          <div className={cn(miniCard, "p-[4px] flex items-center justify-center gap-[5px] h-[44px]")}>
+            {/* Front card (UNO-style) */}
+            <div
+              className="relative w-[22px] h-[34px] rounded-[3px] p-[1.5px] shadow-[0_1px_2px_rgba(0,0,0,0.2)] -rotate-[8deg]"
+              style={{ background: "linear-gradient(135deg,#0EA5E9,#0369A1)" }}
+            >
+              <div className="w-full h-full rounded-[2px] bg-white flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-[1.5px] rounded-[1.5px] border border-[#0EA5E9]/30" />
+                <span className="text-[3px] font-bold tracking-wide" style={{ color: "#0C4A6E" }}>TERM</span>
+              </div>
             </div>
-            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#FEF3C7" }}>
-              <span className="text-[3.5px] font-semibold" style={{ color: "#713F12" }}>Def.</span>
+            {/* Back card */}
+            <div
+              className="relative w-[22px] h-[34px] rounded-[3px] p-[1.5px] shadow-[0_1px_2px_rgba(0,0,0,0.2)] rotate-[8deg]"
+              style={{ background: "linear-gradient(135deg,#F59E0B,#B45309)" }}
+            >
+              <div className="w-full h-full rounded-[2px] bg-white flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-[1.5px] rounded-[1.5px] border border-[#F59E0B]/35" />
+                <span className="text-[3px] font-bold tracking-wide" style={{ color: "#713F12" }}>DEF</span>
+              </div>
             </div>
           </div>
         </div>
