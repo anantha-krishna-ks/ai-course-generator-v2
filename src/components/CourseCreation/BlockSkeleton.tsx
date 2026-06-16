@@ -36,6 +36,9 @@ const variantIcon: Record<BlockSkeletonVariant, React.ComponentType<React.SVGAtt
   quiz: HelpCircle,
   "image-description": ImageIcon,
   "video-description": Video,
+  hotspot: MousePointerClick,
+  tabs: LayoutPanelTop,
+  flashcards: Layers,
   generic: Loader2,
 };
 
@@ -48,6 +51,9 @@ const variantLabel: Record<BlockSkeletonVariant, string> = {
   quiz: "quiz",
   "image-description": "image + description",
   "video-description": "video + description",
+  hotspot: "hotspot",
+  tabs: "tabs",
+  flashcards: "flashcards",
   generic: "block",
 };
 
@@ -71,6 +77,9 @@ const variantMinHeight: Record<BlockSkeletonVariant, string> = {
   quiz: "11rem",
   "image-description": "16rem",
   "video-description": "16rem",
+  hotspot: "16rem",
+  tabs: "12rem",
+  flashcards: "14rem",
   generic: "8rem",
 };
 
