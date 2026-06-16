@@ -1207,14 +1207,18 @@ const MultipageCoursePreview = () => {
           )}
 
           {/* Content area */}
-          <div className={cn(
-            "flex-1 overflow-auto",
-            isCompactView && "pb-20" // space for bottom bar
-          )}>
+          <div
+            className={cn(
+              "flex-1 overflow-auto",
+              isCompactView && "pb-20" // space for bottom bar
+            )}
+            style={useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""))}
+          >
             <div className={cn(
               "max-w-3xl mx-auto space-y-6 sm:space-y-8",
               isCompactView ? "px-5 py-6" : "px-8 sm:px-12 py-10"
             )}>
+
               {currentPage ? (
                 <>
                    {/* Page indicator */}
