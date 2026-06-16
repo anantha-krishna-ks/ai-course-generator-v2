@@ -1125,14 +1125,14 @@ export default function CourseBrandingPage() {
                   <TabsList className="relative grid w-full grid-cols-2 rounded-full bg-background/80 backdrop-blur-sm p-1 h-auto gap-1 border-0">
                     <TabsTrigger
                       value="introduction"
-                      className="group rounded-full gap-2 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
+                      className="group rounded-full gap-2 py-2 text-sm font-medium text-muted-foreground transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
                     >
                       <BookOpen className="h-4 w-4 transition-transform duration-300 group-data-[state=active]:scale-110" aria-hidden="true" focusable="false" />
                       Introduction
                     </TabsTrigger>
                     <TabsTrigger
                       value="section"
-                      className="group rounded-full gap-2 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
+                      className="group rounded-full gap-2 py-2 text-sm font-medium text-muted-foreground transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
                     >
                       <FileText className="h-4 w-4 transition-transform duration-300 group-data-[state=active]:scale-110" aria-hidden="true" focusable="false" />
                       Section / Page
@@ -1140,7 +1140,7 @@ export default function CourseBrandingPage() {
                   </TabsList>
                 </div>
 
-                <TabsContent value="introduction" className="mt-3">
+                <TabsContent value="introduction" className="mt-3 data-[state=active]:animate-[fade-in_0.5s_cubic-bezier(0.22,1,0.36,1)] data-[state=inactive]:animate-[fade-out_0.25s_cubic-bezier(0.4,0,0.2,1)]">
                   {layout === "single-page" ? (
                     <SinglePageMockPreview
                       courseTitle={courseTitle}
@@ -1160,7 +1160,7 @@ export default function CourseBrandingPage() {
                     />
                   )}
                 </TabsContent>
-                <TabsContent value="section" className="mt-3">
+                <TabsContent value="section" className="mt-3 data-[state=active]:animate-[fade-in_0.5s_cubic-bezier(0.22,1,0.36,1)] data-[state=inactive]:animate-[fade-out_0.25s_cubic-bezier(0.4,0,0.2,1)]">
                   {layout === "single-page" ? (
                     <SinglePageMockPreview
                       courseTitle={courseTitle}
