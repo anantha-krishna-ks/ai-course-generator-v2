@@ -914,7 +914,7 @@ export default function CourseBrandingPage() {
                 const Icon = item.icon;
                 const isActive = activeSection === item.key;
                 const isDone = item.done;
-                const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : colorRef;
+                const cardRef = item.key === "intro" ? introRef : item.key === "content" ? contentRef : item.key === "color" ? colorRef : backgroundRef;
 
                 return (
                   <div key={item.key} className="relative">
