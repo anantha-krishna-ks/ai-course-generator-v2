@@ -1160,7 +1160,7 @@ export default function CourseBrandingPage() {
                     />
                   )}
                 </TabsContent>
-                <TabsContent value="section" className="mt-3">
+                <TabsContent value="section" className="mt-3 data-[state=active]:animate-[fade-in_0.5s_cubic-bezier(0.22,1,0.36,1)] data-[state=inactive]:animate-[fade-out_0.25s_cubic-bezier(0.4,0,0.2,1)]">
                   {layout === "single-page" ? (
                     <SinglePageMockPreview
                       courseTitle={courseTitle}
