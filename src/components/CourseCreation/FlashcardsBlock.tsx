@@ -166,7 +166,11 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
-  const dragIndex = useRef<number | null>(null);
+
+  // Drag state — handle-initiated, with live drop indicator
+  const dragEnabled = useRef(false);
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
+  const [dropTarget, setDropTarget] = useState<number | null>(null); // insertion index 0..cards.length
 
   const persist = useCallback(
     (next: FCData) => onChange(JSON.stringify(next)),
@@ -201,13 +205,15 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
     persist({ ...data, cards: data.cards.filter((c) => c.id !== id) });
   };
 
-  const reorder = (from: number, to: number) => {
-    if (from === to) return;
+  const moveCard = (from: number, insertAt: number) => {
+    if (from === insertAt || from === insertAt - 1) return;
     const next = [...data.cards];
     const [moved] = next.splice(from, 1);
-    next.splice(to, 0, moved);
+    const target = from < insertAt ? insertAt - 1 : insertAt;
+    next.splice(target, 0, moved);
     persist({ ...data, cards: next });
   };
+
 
   const alignmentClass =
     data.alignment === "left" ? "justify-start" : data.alignment === "right" ? "justify-end" : "justify-center";
