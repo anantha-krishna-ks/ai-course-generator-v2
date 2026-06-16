@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Plus,
+  Minus,
   Trash2,
   Copy,
   GripVertical,
@@ -13,18 +14,29 @@ import {
   AlignCenter,
   AlignRight,
   Palette,
-  Grid2x2,
-  Grid3x3,
-  Square,
   Upload,
   RefreshCw,
   X,
+  Maximize,
+  RectangleHorizontal,
+  FlipHorizontal,
+  FlipVertical,
+  RotateCw,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import "@/styles/flashcards.css";
+
 
 const MAX_CARDS = 6;
 const MAX_IMAGE_MB = 5;
