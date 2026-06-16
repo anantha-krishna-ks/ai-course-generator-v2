@@ -1112,12 +1112,14 @@ export default function CourseBrandingPage() {
 
             {/* Preview column */}
             <div className="space-y-3 xl:sticky xl:top-24 xl:self-start">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-baseline gap-2 flex-wrap">
                   <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Live Preview</h2>
-                  <p className="text-xs text-muted-foreground mt-1">All changes reflect instantly.</p>
+                  <span aria-hidden="true" className="text-muted-foreground">·</span>
+                  <p className="text-xs text-muted-foreground">All changes reflect instantly.</p>
                 </div>
               </div>
+
               <Tabs defaultValue="introduction" className="w-full">
                 <div className="relative rounded-full p-[1.5px] bg-gradient-to-r from-primary/40 via-primary/10 to-primary/40 shadow-sm">
                   <TabsList className="relative grid w-full grid-cols-2 rounded-full bg-background/80 backdrop-blur-sm p-1 h-auto gap-1 border-0">
