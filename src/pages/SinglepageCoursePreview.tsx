@@ -10,6 +10,7 @@ import type { SinglePageRestoreState } from "@/components/CourseCreation/SingleP
 import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
+import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 
 interface CourseItem {
   id: string;
