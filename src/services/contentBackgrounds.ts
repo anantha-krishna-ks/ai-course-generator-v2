@@ -113,21 +113,24 @@ export const CONTENT_BACKGROUNDS: ContentBackgroundPreset[] = [
     },
   },
   {
-    id: "mesh-gradient",
-    label: "Mesh Gradient",
+    id: "silk-waves",
+    label: "Silk Waves",
     category: "texture",
+    // Subtle SVG wave pattern — light, premium, calm.
     swatchStyle: {
-      backgroundColor: "#F5F7FF",
+      backgroundColor: "#FBFCFE",
       backgroundImage:
-        "radial-gradient(at 10% 90%, #c7d2fe 0%, transparent 45%), radial-gradient(at 90% 10%, #a7f3d0 0%, transparent 45%), radial-gradient(at 50% 50%, #fbcfe8 0%, transparent 55%)",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'><path d='M0 40 C 30 10, 60 70, 120 40' fill='none' stroke='%233B82F6' stroke-opacity='0.10' stroke-width='1.2'/><path d='M0 52 C 30 22, 60 82, 120 52' fill='none' stroke='%236366F1' stroke-opacity='0.08' stroke-width='1.2'/></svg>\")",
+      backgroundSize: "120px 60px",
     },
     style: {
-      backgroundColor: "#F5F7FF",
+      backgroundColor: "#FBFCFE",
       backgroundImage:
-        "radial-gradient(at 10% 90%, #c7d2fe 0%, transparent 45%), radial-gradient(at 90% 10%, #a7f3d0 0%, transparent 45%), radial-gradient(at 50% 50%, #fbcfe8 0%, transparent 55%)",
-      backgroundAttachment: "local",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='80' viewBox='0 0 160 80'><path d='M0 54 C 40 14, 80 94, 160 54' fill='none' stroke='%233B82F6' stroke-opacity='0.09' stroke-width='1.25'/><path d='M0 68 C 40 28, 80 108, 160 68' fill='none' stroke='%236366F1' stroke-opacity='0.07' stroke-width='1.25'/></svg>\")",
+      backgroundSize: "160px 80px",
     },
   },
+
 
 ];
 
