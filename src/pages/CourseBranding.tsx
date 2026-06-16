@@ -206,12 +206,14 @@ function IntroductionPreview({
   position,
   primary,
   cta,
+  bgStyle,
 }: {
   title: string;
   logo: string | null;
   position: LogoPosition;
   primary: string;
   cta: string;
+  bgStyle?: React.CSSProperties;
 }) {
   const introTint = hexToRgba(primary, 0.1);
   const ctaText = readableTextColor(cta);
