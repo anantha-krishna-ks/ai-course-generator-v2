@@ -62,6 +62,7 @@ const SinglepageCoursePreview = () => {
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const completionRef = useRef<HTMLDivElement | null>(null);
+  const contentBgStyle = useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""));
 
   const handleFinish = () => {
     setCompleted(true);
