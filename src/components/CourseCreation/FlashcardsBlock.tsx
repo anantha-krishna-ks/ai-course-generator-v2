@@ -195,34 +195,8 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border/60 bg-muted/30 flex-wrap">
         <div className="flex items-center gap-1">
-          {/* Grid */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 rounded-full px-3 gap-1.5 text-xs" aria-label="Cards per row">
-                {data.gridCols === 1 ? <Square className="w-3.5 h-3.5" aria-hidden="true" /> : data.gridCols === 2 ? <Grid2x2 className="w-3.5 h-3.5" aria-hidden="true" /> : <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />}
-                {data.gridCols} per row
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-40 p-1" align="start">
-              {[1, 2, 3].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => persist({ ...data, gridCols: n as 1 | 2 | 3 })}
-                  className={cn(
-                    "w-full text-left px-2 py-1.5 rounded text-xs hover:bg-muted flex items-center gap-2",
-                    data.gridCols === n && "bg-muted font-medium"
-                  )}
-                >
-                  {n === 1 ? <Square className="w-3.5 h-3.5" /> : n === 2 ? <Grid2x2 className="w-3.5 h-3.5" /> : <Grid3x3 className="w-3.5 h-3.5" />}
-                  {n} card{n > 1 ? "s" : ""} per row
-                </button>
-              ))}
-            </PopoverContent>
-          </Popover>
-
           {/* Alignment */}
-          <div className="flex items-center gap-0.5 border-l border-border/60 ml-1 pl-2">
+          <div className="flex items-center gap-0.5">
             {(["left", "center", "right"] as FCAlignment[]).map((a) => {
               const Icon = a === "left" ? AlignLeft : a === "right" ? AlignRight : AlignCenter;
               return (
@@ -258,11 +232,9 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
         </Button>
       </div>
 
-      {/* Cards grid */}
+      {/* Cards grid — UNO-card sized, auto-wrap, same size regardless of count */}
       <div className={cn("p-4 flex flex-wrap gap-4", alignmentClass)}>
         {data.cards.map((card, idx) => {
-          const widthPct =
-            data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
           const isFlipped = !!flipped[card.id];
           const fg = card.front.textColor || getFg(card.color);
           const isEditing = editingCardId === card.id;
@@ -270,7 +242,7 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
           return (
             <div
               key={card.id}
-              style={{ width: widthPct, minWidth: 200 }}
+              style={{ width: 200 }}
               draggable
               onDragStart={() => (dragIndex.current = idx)}
               onDragOver={(e) => e.preventDefault()}
@@ -699,12 +671,10 @@ export function FlashcardsPreview({ content }: { content: string }) {
   return (
     <div className={cn("w-full flex flex-wrap gap-4", alignmentClass)}>
       {data.cards.map((card, idx) => {
-        const widthPct =
-          data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
         const isFlipped = !!flipped[card.id];
         const toggle = () => setFlipped((f) => ({ ...f, [card.id]: !f[card.id] }));
         return (
-          <div key={card.id} style={{ width: widthPct, minWidth: 200 }}>
+          <div key={card.id} style={{ width: 200 }}>
             <div className="fc-perspective">
               <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
                 <FlashcardFace
