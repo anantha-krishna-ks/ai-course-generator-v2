@@ -1,0 +1,665 @@
+import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  Plus,
+  Trash2,
+  Copy,
+  GripVertical,
+  Type as TypeIcon,
+  Image as ImageIcon,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Palette,
+  Grid2x2,
+  Grid3x3,
+  Square,
+  Upload,
+  RefreshCw,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import "@/styles/flashcards.css";
+
+const MAX_CARDS = 6;
+const MAX_IMAGE_MB = 5;
+
+export type FCSide = "front" | "back";
+export type FCAlignment = "left" | "center" | "right";
+export type FCContentType = "text" | "image";
+
+export interface FCFormatting {
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+}
+
+export interface FCSideData {
+  contentType: FCContentType;
+  text: string;
+  textColor: string;
+  textAlign: FCAlignment;
+  formatting: FCFormatting;
+  imageUrl: string;
+  imageZoom: number; // 1..3
+  imagePosX: number; // 0..100
+  imagePosY: number; // 0..100
+}
+
+export interface FCCard {
+  id: string;
+  color: string; // background color (light + bright modern palette)
+  front: FCSideData;
+  back: FCSideData;
+}
+
+export interface FCData {
+  cards: FCCard[];
+  gridCols: 1 | 2 | 3;
+  alignment: FCAlignment;
+}
+
+/** Light pastel + modern bright palette — text is always rendered using a contrast-checked color */
+export const CARD_COLORS: { id: string; bg: string; fg: string; label: string }[] = [
+  { id: "ivory", bg: "#FFFFFF", fg: "#1F2937", label: "Ivory" },
+  { id: "sky", bg: "#E0F2FE", fg: "#0C4A6E", label: "Sky" },
+  { id: "mint", bg: "#DCFCE7", fg: "#14532D", label: "Mint" },
+  { id: "butter", bg: "#FEF3C7", fg: "#713F12", label: "Butter" },
+  { id: "blush", bg: "#FFE4E6", fg: "#881337", label: "Blush" },
+  { id: "lavender", bg: "#EDE9FE", fg: "#4C1D95", label: "Lavender" },
+  { id: "coral", bg: "#FB7185", fg: "#FFFFFF", label: "Coral" },
+  { id: "indigo", bg: "#4F46E5", fg: "#FFFFFF", label: "Indigo" },
+  { id: "emerald", bg: "#059669", fg: "#FFFFFF", label: "Emerald" },
+  { id: "amber", bg: "#F59E0B", fg: "#1F2937", label: "Amber" },
+];
+
+function getFg(bg: string): string {
+  const found = CARD_COLORS.find((c) => c.bg.toLowerCase() === bg.toLowerCase());
+  return found?.fg ?? "#1F2937";
+}
+
+function uid() {
+  return `fc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function defaultSide(side: FCSide): FCSideData {
+  return {
+    contentType: "text",
+    text: side === "front" ? "Front of card" : "Back of card",
+    textColor: "",
+    textAlign: "center",
+    formatting: {},
+    imageUrl: "",
+    imageZoom: 1,
+    imagePosX: 50,
+    imagePosY: 50,
+  };
+}
+
+function defaultCard(): FCCard {
+  return {
+    id: uid(),
+    color: CARD_COLORS[0].bg,
+    front: defaultSide("front"),
+    back: defaultSide("back"),
+  };
+}
+
+function parseContent(raw: string): FCData {
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
+      return {
+        cards: parsed.cards.slice(0, MAX_CARDS).map((c: any) => ({
+          id: c.id || uid(),
+          color: c.color || CARD_COLORS[0].bg,
+          front: { ...defaultSide("front"), ...(c.front || {}), formatting: { ...(c.front?.formatting || {}) } },
+          back: { ...defaultSide("back"), ...(c.back || {}), formatting: { ...(c.back?.formatting || {}) } },
+        })),
+        gridCols: (parsed.gridCols === 1 || parsed.gridCols === 3 ? parsed.gridCols : 2) as 1 | 2 | 3,
+        alignment: (["left", "center", "right"].includes(parsed.alignment) ? parsed.alignment : "center") as FCAlignment,
+      };
+    }
+  } catch {
+    /* noop */
+  }
+  return {
+    cards: [defaultCard(), defaultCard()],
+    gridCols: 2,
+    alignment: "center",
+  };
+}
+
+interface FlashcardsBlockProps {
+  content: string;
+  onChange: (content: string) => void;
+}
+
+export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
+  const data = useMemo(() => parseContent(content), [content]);
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({});
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
+  const dragIndex = useRef<number | null>(null);
+
+  const persist = useCallback(
+    (next: FCData) => onChange(JSON.stringify(next)),
+    [onChange]
+  );
+
+  const updateCard = (id: string, mut: (c: FCCard) => FCCard) => {
+    persist({ ...data, cards: data.cards.map((c) => (c.id === id ? mut(c) : c)) });
+  };
+
+  const addCard = () => {
+    if (data.cards.length >= MAX_CARDS) return;
+    persist({ ...data, cards: [...data.cards, defaultCard()] });
+  };
+
+  const duplicateCard = (id: string) => {
+    if (data.cards.length >= MAX_CARDS) return;
+    const idx = data.cards.findIndex((c) => c.id === id);
+    if (idx < 0) return;
+    const copy = { ...data.cards[idx], id: uid() };
+    const next = [...data.cards];
+    next.splice(idx + 1, 0, copy);
+    persist({ ...data, cards: next });
+  };
+
+  const deleteCard = (id: string) => {
+    if (data.cards.length <= 1) {
+      // keep at least one
+      persist({ ...data, cards: [defaultCard()] });
+      return;
+    }
+    persist({ ...data, cards: data.cards.filter((c) => c.id !== id) });
+  };
+
+  const reorder = (from: number, to: number) => {
+    if (from === to) return;
+    const next = [...data.cards];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    persist({ ...data, cards: next });
+  };
+
+  const alignmentClass =
+    data.alignment === "left" ? "justify-start" : data.alignment === "right" ? "justify-end" : "justify-center";
+
+  return (
+    <div className="w-full rounded-xl border border-border/60 bg-background overflow-hidden">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border/60 bg-muted/30 flex-wrap">
+        <div className="flex items-center gap-1">
+          {/* Grid */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 rounded-full px-3 gap-1.5 text-xs" aria-label="Cards per row">
+                {data.gridCols === 1 ? <Square className="w-3.5 h-3.5" aria-hidden="true" /> : data.gridCols === 2 ? <Grid2x2 className="w-3.5 h-3.5" aria-hidden="true" /> : <Grid3x3 className="w-3.5 h-3.5" aria-hidden="true" />}
+                {data.gridCols} per row
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-40 p-1" align="start">
+              {[1, 2, 3].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => persist({ ...data, gridCols: n as 1 | 2 | 3 })}
+                  className={cn(
+                    "w-full text-left px-2 py-1.5 rounded text-xs hover:bg-muted flex items-center gap-2",
+                    data.gridCols === n && "bg-muted font-medium"
+                  )}
+                >
+                  {n === 1 ? <Square className="w-3.5 h-3.5" /> : n === 2 ? <Grid2x2 className="w-3.5 h-3.5" /> : <Grid3x3 className="w-3.5 h-3.5" />}
+                  {n} card{n > 1 ? "s" : ""} per row
+                </button>
+              ))}
+            </PopoverContent>
+          </Popover>
+
+          {/* Alignment */}
+          <div className="flex items-center gap-0.5 border-l border-border/60 ml-1 pl-2">
+            {(["left", "center", "right"] as FCAlignment[]).map((a) => {
+              const Icon = a === "left" ? AlignLeft : a === "right" ? AlignRight : AlignCenter;
+              return (
+                <Tooltip key={a}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={data.alignment === a ? "secondary" : "ghost"}
+                      size="icon"
+                      className="h-7 w-7 rounded-full"
+                      onClick={() => persist({ ...data, alignment: a })}
+                      aria-label={`Align cards ${a}`}
+                    >
+                      <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{`Align ${a}`}</TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </div>
+        </div>
+
+        <Button
+          size="sm"
+          variant="default"
+          className="h-8 rounded-full gap-1.5 text-xs"
+          onClick={addCard}
+          disabled={data.cards.length >= MAX_CARDS}
+          aria-label="Add flashcard"
+        >
+          <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+          Add card {data.cards.length >= MAX_CARDS ? "(max 6)" : ""}
+        </Button>
+      </div>
+
+      {/* Cards grid */}
+      <div className={cn("p-4 flex flex-wrap gap-4", alignmentClass)}>
+        {data.cards.map((card, idx) => {
+          const widthPct =
+            data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
+          const isFlipped = !!flipped[card.id];
+          const fg = card.front.textColor || getFg(card.color);
+
+          return (
+            <div
+              key={card.id}
+              style={{ width: widthPct, minWidth: 200 }}
+              draggable
+              onDragStart={() => (dragIndex.current = idx)}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={() => {
+                if (dragIndex.current !== null) reorder(dragIndex.current, idx);
+                dragIndex.current = null;
+              }}
+              className="group/card"
+            >
+              {/* Card actions row */}
+              <div className="flex items-center justify-between mb-1.5 px-1 opacity-60 group-hover/card:opacity-100 transition-opacity">
+                <span
+                  role="button"
+                  tabIndex={0}
+                  className="inline-flex items-center text-[10px] text-muted-foreground cursor-grab active:cursor-grabbing gap-1"
+                  aria-label={`Reorder card ${idx + 1}`}
+                >
+                  <GripVertical className="w-3 h-3" aria-hidden="true" />
+                  Card {idx + 1}
+                </span>
+                <div className="flex items-center gap-0.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 rounded-full" onClick={() => duplicateCard(card.id)} disabled={data.cards.length >= MAX_CARDS} aria-label="Duplicate card">
+                        <Copy className="w-3 h-3" aria-hidden="true" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Duplicate</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="icon" variant="ghost" className="h-6 w-6 rounded-full text-destructive hover:text-destructive" onClick={() => deleteCard(card.id)} aria-label="Delete card">
+                        <Trash2 className="w-3 h-3" aria-hidden="true" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+
+              {/* Flippable card */}
+              <div className="fc-perspective">
+                <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
+                  <FlashcardFace
+                    side={card.front}
+                    bg={card.color}
+                    defaultFg={fg}
+                    onClick={() => setEditingCardId(card.id)}
+                    label={`Card ${idx + 1} front — click to edit`}
+                  />
+                  <FlashcardFace
+                    side={card.back}
+                    bg={card.color}
+                    defaultFg={getFg(card.color)}
+                    onClick={() => setEditingCardId(card.id)}
+                    label={`Card ${idx + 1} back — click to edit`}
+                    isBack
+                  />
+                </div>
+              </div>
+
+              {/* Flip control */}
+              <div className="flex items-center justify-center mt-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 rounded-full gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+                  onClick={() => setFlipped((f) => ({ ...f, [card.id]: !f[card.id] }))}
+                  aria-label={isFlipped ? "Flip to front" : "Flip to back"}
+                >
+                  <RefreshCw className="w-3 h-3" aria-hidden="true" />
+                  {isFlipped ? "Flip to front" : "Flip to back"}
+                </Button>
+              </div>
+
+              {editingCardId === card.id && (
+                <CardEditor
+                  card={card}
+                  side={isFlipped ? "back" : "front"}
+                  onClose={() => setEditingCardId(null)}
+                  onChange={(mut) => updateCard(card.id, mut)}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FlashcardFace({
+  side,
+  bg,
+  defaultFg,
+  onClick,
+  label,
+  isBack,
+}: {
+  side: FCSideData;
+  bg: string;
+  defaultFg: string;
+  onClick: () => void;
+  label: string;
+  isBack?: boolean;
+}) {
+  const fg = side.textColor || defaultFg;
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      aria-label={label}
+      className={cn(
+        "fc-face rounded-2xl shadow-[0_4px_20px_-6px_rgba(0,0,0,0.15)] border border-dashed border-foreground/25 overflow-hidden cursor-pointer transition-shadow hover:shadow-[0_8px_28px_-6px_rgba(0,0,0,0.22)]",
+        isBack && "fc-back"
+      )}
+      style={{ background: bg, color: fg }}
+    >
+      {side.contentType === "image" && side.imageUrl ? (
+        <div className="w-full h-full overflow-hidden">
+          <img
+            src={side.imageUrl}
+            alt=""
+            className="w-full h-full object-cover"
+            style={{
+              transform: `scale(${side.imageZoom})`,
+              transformOrigin: `${side.imagePosX}% ${side.imagePosY}%`,
+            }}
+            draggable={false}
+          />
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "w-full h-full flex p-5",
+            side.textAlign === "left" && "justify-start text-left",
+            side.textAlign === "center" && "justify-center text-center",
+            side.textAlign === "right" && "justify-end text-right",
+            "items-center"
+          )}
+        >
+          <p
+            className={cn(
+              "text-base leading-snug whitespace-pre-wrap break-words [overflow-wrap:anywhere]",
+              side.formatting.bold && "font-bold",
+              side.formatting.italic && "italic",
+              side.formatting.underline && "underline"
+            )}
+            style={{ color: fg }}
+          >
+            {side.text || (isBack ? "Back of card" : "Front of card")}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CardEditor({
+  card,
+  side,
+  onChange,
+  onClose,
+}: {
+  card: FCCard;
+  side: FCSide;
+  onChange: (mut: (c: FCCard) => FCCard) => void;
+  onClose: () => void;
+}) {
+  const data = card[side];
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const update = (patch: Partial<FCSideData>) => {
+    onChange((c) => ({ ...c, [side]: { ...c[side], ...patch } }));
+  };
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > MAX_IMAGE_MB * 1024 * 1024) return;
+    const reader = new FileReader();
+    reader.onload = () => update({ contentType: "image", imageUrl: String(reader.result || "") });
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div className="mt-2 rounded-xl border border-border/70 bg-card p-3 space-y-3 shadow-sm" role="dialog" aria-label={`Edit ${side}`}>
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Editing {side}
+        </span>
+        <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={onClose}>Done</Button>
+      </div>
+
+      {/* Content type tabs */}
+      <div className="flex items-center gap-1 p-0.5 rounded-full bg-muted/60 w-fit">
+        <button
+          type="button"
+          onClick={() => update({ contentType: "text" })}
+          className={cn("text-xs px-3 py-1 rounded-full inline-flex items-center gap-1", data.contentType === "text" && "bg-background shadow-sm")}
+        >
+          <TypeIcon className="w-3 h-3" aria-hidden="true" /> Text
+        </button>
+        <button
+          type="button"
+          onClick={() => update({ contentType: "image" })}
+          className={cn("text-xs px-3 py-1 rounded-full inline-flex items-center gap-1", data.contentType === "image" && "bg-background shadow-sm")}
+        >
+          <ImageIcon className="w-3 h-3" aria-hidden="true" /> Image
+        </button>
+      </div>
+
+      {data.contentType === "text" ? (
+        <>
+          <textarea
+            value={data.text}
+            onChange={(e) => update({ text: e.target.value })}
+            placeholder={`Enter ${side} text…`}
+            className="w-full text-sm rounded-lg border border-border bg-background px-3 py-2 min-h-[72px] focus:outline-none focus:ring-2 focus:ring-primary/30"
+            aria-label={`${side} text`}
+          />
+          <div className="flex items-center gap-1 flex-wrap">
+            <Tooltip><TooltipTrigger asChild>
+              <Button size="icon" variant={data.formatting.bold ? "secondary" : "ghost"} className="h-7 w-7 rounded-full" onClick={() => update({ formatting: { ...data.formatting, bold: !data.formatting.bold } })} aria-label="Bold">
+                <Bold className="w-3 h-3" aria-hidden="true" />
+              </Button>
+            </TooltipTrigger><TooltipContent>Bold</TooltipContent></Tooltip>
+            <Tooltip><TooltipTrigger asChild>
+              <Button size="icon" variant={data.formatting.italic ? "secondary" : "ghost"} className="h-7 w-7 rounded-full" onClick={() => update({ formatting: { ...data.formatting, italic: !data.formatting.italic } })} aria-label="Italic">
+                <Italic className="w-3 h-3" aria-hidden="true" />
+              </Button>
+            </TooltipTrigger><TooltipContent>Italic</TooltipContent></Tooltip>
+            <Tooltip><TooltipTrigger asChild>
+              <Button size="icon" variant={data.formatting.underline ? "secondary" : "ghost"} className="h-7 w-7 rounded-full" onClick={() => update({ formatting: { ...data.formatting, underline: !data.formatting.underline } })} aria-label="Underline">
+                <Underline className="w-3 h-3" aria-hidden="true" />
+              </Button>
+            </TooltipTrigger><TooltipContent>Underline</TooltipContent></Tooltip>
+            <div className="w-px h-5 bg-border mx-1" />
+            {(["left", "center", "right"] as FCAlignment[]).map((a) => {
+              const Icon = a === "left" ? AlignLeft : a === "right" ? AlignRight : AlignCenter;
+              return (
+                <Button
+                  key={a}
+                  size="icon"
+                  variant={data.textAlign === a ? "secondary" : "ghost"}
+                  className="h-7 w-7 rounded-full"
+                  onClick={() => update({ textAlign: a })}
+                  aria-label={`Align text ${a}`}
+                >
+                  <Icon className="w-3 h-3" aria-hidden="true" />
+                </Button>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <>
+          {data.imageUrl ? (
+            <div className="space-y-2">
+              <div className="rounded-lg overflow-hidden border border-border h-32 bg-muted">
+                <img
+                  src={data.imageUrl}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  style={{
+                    transform: `scale(${data.imageZoom})`,
+                    transformOrigin: `${data.imagePosX}% ${data.imagePosY}%`,
+                  }}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-[11px]">
+                <label className="flex flex-col gap-1">
+                  Zoom
+                  <input type="range" min={1} max={3} step={0.1} value={data.imageZoom} onChange={(e) => update({ imageZoom: parseFloat(e.target.value) })} aria-label="Image zoom" />
+                </label>
+                <label className="flex flex-col gap-1">
+                  X
+                  <input type="range" min={0} max={100} value={data.imagePosX} onChange={(e) => update({ imagePosX: parseInt(e.target.value, 10) })} aria-label="Image horizontal position" />
+                </label>
+                <label className="flex flex-col gap-1">
+                  Y
+                  <input type="range" min={0} max={100} value={data.imagePosY} onChange={(e) => update({ imagePosY: parseInt(e.target.value, 10) })} aria-label="Image vertical position" />
+                </label>
+              </div>
+              <Button size="sm" variant="outline" className="h-7 rounded-full gap-1.5 text-xs" onClick={() => fileRef.current?.click()}>
+                <Upload className="w-3 h-3" aria-hidden="true" /> Replace image
+              </Button>
+            </div>
+          ) : (
+            <Button size="sm" variant="outline" className="h-9 rounded-full gap-1.5 text-xs w-full" onClick={() => fileRef.current?.click()}>
+              <Upload className="w-3.5 h-3.5" aria-hidden="true" /> Upload image
+            </Button>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
+          />
+        </>
+      )}
+
+      {/* Card color */}
+      <div className="pt-1">
+        <div className="text-[11px] font-medium text-muted-foreground mb-1.5 flex items-center gap-1">
+          <Palette className="w-3 h-3" aria-hidden="true" /> Card color
+        </div>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {CARD_COLORS.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              aria-label={`${c.label} card color`}
+              onClick={() => onChange((cc) => ({ ...cc, color: c.bg }))}
+              className={cn(
+                "w-6 h-6 rounded-full border-2 transition-transform",
+                card.color.toLowerCase() === c.bg.toLowerCase() ? "border-foreground scale-110" : "border-border"
+              )}
+              style={{ background: c.bg }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================================
+ * Read-only preview (used in Course Preview pages)
+ * ========================================================================= */
+export function FlashcardsPreview({ content }: { content: string }) {
+  const data = useMemo(() => parseContent(content), [content]);
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({});
+
+  const alignmentClass =
+    data.alignment === "left" ? "justify-start" : data.alignment === "right" ? "justify-end" : "justify-center";
+
+  return (
+    <div className={cn("w-full flex flex-wrap gap-4", alignmentClass)}>
+      {data.cards.map((card, idx) => {
+        const widthPct =
+          data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
+        const isFlipped = !!flipped[card.id];
+        const toggle = () => setFlipped((f) => ({ ...f, [card.id]: !f[card.id] }));
+        return (
+          <div key={card.id} style={{ width: widthPct, minWidth: 200 }}>
+            <div className="fc-perspective">
+              <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
+                <FlashcardFace
+                  side={card.front}
+                  bg={card.color}
+                  defaultFg={getFg(card.color)}
+                  onClick={toggle}
+                  label={`Card ${idx + 1} front — click to flip`}
+                />
+                <FlashcardFace
+                  side={card.back}
+                  bg={card.color}
+                  defaultFg={getFg(card.color)}
+                  onClick={toggle}
+                  label={`Card ${idx + 1} back — click to flip`}
+                  isBack
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-center mt-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 rounded-full gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+                onClick={toggle}
+                aria-label={isFlipped ? "Flip to front" : "Click to flip"}
+              >
+                <RefreshCw className="w-3 h-3" aria-hidden="true" />
+                {isFlipped ? "Flip to front" : "Click to flip"}
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
