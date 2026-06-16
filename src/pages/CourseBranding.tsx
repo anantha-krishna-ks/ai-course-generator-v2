@@ -1006,7 +1006,9 @@ export default function CourseBrandingPage() {
                             ? "Logo & position on the course introduction page."
                             : item.key === "content"
                             ? "Displayed on all sections & lesson pages."
-                            : "Brand primary & call-to-action button color."}
+                            : item.key === "color"
+                            ? "Brand primary & call-to-action button color."
+                            : "Background applied to outline, editor and preview content."}
                         </p>
                       </div>
                       {isDone && (
