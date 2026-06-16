@@ -579,6 +579,29 @@ function BlockPreview({ id }: { id: string }) {
           <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Click headings to expand each panel</p>
         </div>
       );
+    case "flashcards":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { bg: "#E0F2FE", fg: "#0C4A6E", t: "Term" },
+              { bg: "#FEF3C7", fg: "#713F12", t: "Definition" },
+            ].map((c, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-dashed border-foreground/30 shadow-[0_4px_14px_-4px_rgba(0,0,0,0.12)] aspect-[4/3] flex items-center justify-center text-[10px] font-semibold"
+                style={{ background: c.bg, color: c.fg }}
+              >
+                {c.t}
+              </div>
+            ))}
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5 flex items-center gap-1">
+            <RefreshCw className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+            Click cards to flip front ↔ back
+          </p>
+        </div>
+      );
       default:
       return null;
   }
