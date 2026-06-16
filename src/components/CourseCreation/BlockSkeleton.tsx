@@ -10,6 +10,9 @@ export type BlockSkeletonVariant =
   | "quiz"
   | "image-description"
   | "video-description"
+  | "hotspot"
+  | "tabs"
+  | "flashcards"
   | "generic";
 
 export type BlockSkeletonAction = "adding" | "duplicating" | "deleting" | "drop" | "uploading" | "replacing" | "removing" | "ai-processing";
