@@ -261,44 +261,101 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
       </div>
 
       {/* Cards grid — UNO-card sized, auto-wrap, same size regardless of count */}
-      <div className={cn("p-4 flex flex-wrap gap-4", alignmentClass)}>
+      <div
+        className={cn("p-4 flex flex-wrap gap-4 items-start", alignmentClass)}
+        onDragOver={(e) => {
+          if (draggingIdx === null) return;
+          e.preventDefault();
+          if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+        }}
+        onDrop={(e) => {
+          if (draggingIdx === null) return;
+          e.preventDefault();
+          // If no card-level target was set, drop at end
+          const target = dropTarget ?? data.cards.length;
+          moveCard(draggingIdx, target);
+          setDraggingIdx(null);
+          setDropTarget(null);
+          dragEnabled.current = false;
+        }}
+      >
         {data.cards.map((card, idx) => {
           const isFlipped = !!flipped[card.id];
           const fg = card.front.textColor || getFg(card.color);
           const isEditing = editingCardId === card.id;
+          const isDragging = draggingIdx === idx;
+          const showIndicatorBefore = dropTarget === idx && draggingIdx !== null && draggingIdx !== idx && draggingIdx !== idx - 1;
+          const showIndicatorAfter = dropTarget === idx + 1 && idx === data.cards.length - 1 && draggingIdx !== null && draggingIdx !== idx && draggingIdx !== idx + 1;
 
           return (
-            <div
-              key={card.id}
-              style={{ width: 240 }}
-              draggable
-              onDragStart={() => (dragIndex.current = idx)}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={() => {
-                if (dragIndex.current !== null) reorder(dragIndex.current, idx);
-                dragIndex.current = null;
-              }}
-              className="group/card"
-            >
-              {/* Card actions row */}
+            <div key={card.id} className="relative flex items-stretch">
+              {/* Drop indicator — left side */}
               <div
+                aria-hidden="true"
                 className={cn(
-                  "flex items-center justify-between mb-1.5 px-1 transition-opacity",
-                  isEditing ? "opacity-100" : "opacity-60 group-hover/card:opacity-100"
+                  "self-stretch -ml-2 mr-2 w-[3px] rounded-full bg-primary transition-all duration-200 ease-out",
+                  showIndicatorBefore ? "opacity-100 scale-y-100 shadow-[0_0_12px_hsl(var(--primary)/0.6)]" : "opacity-0 scale-y-50"
+                )}
+                style={{ transformOrigin: "center" }}
+              />
+
+              <div
+                style={{ width: 240 }}
+                draggable={dragEnabled.current}
+                onDragStart={(e) => {
+                  if (!dragEnabled.current) {
+                    e.preventDefault();
+                    return;
+                  }
+                  setDraggingIdx(idx);
+                  if (e.dataTransfer) {
+                    e.dataTransfer.effectAllowed = "move";
+                    try { e.dataTransfer.setData("text/plain", String(idx)); } catch {}
+                  }
+                }}
+                onDragOver={(e) => {
+                  if (draggingIdx === null) return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const before = e.clientX < rect.left + rect.width / 2;
+                  setDropTarget(before ? idx : idx + 1);
+                }}
+                onDragEnd={() => {
+                  setDraggingIdx(null);
+                  setDropTarget(null);
+                  dragEnabled.current = false;
+                }}
+                className={cn(
+                  "group/card transition-all duration-200 ease-out",
+                  isDragging && "opacity-40 scale-[0.96] rotate-[-1.5deg]"
                 )}
               >
-                <span
-                  role="button"
-                  tabIndex={0}
+                {/* Card actions row */}
+                <div
                   className={cn(
-                    "inline-flex items-center text-[10px] cursor-grab active:cursor-grabbing gap-1 px-1.5 py-0.5 rounded-full transition-colors",
-                    isEditing ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground"
+                    "flex items-center justify-between mb-1.5 px-1 transition-opacity",
+                    isEditing ? "opacity-100" : "opacity-60 group-hover/card:opacity-100"
                   )}
-                  aria-label={`Reorder card ${idx + 1}`}
                 >
-                  <GripVertical className="w-3 h-3" aria-hidden="true" />
-                  Card {idx + 1}
-                </span>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    draggable={false}
+                    onMouseDown={() => { dragEnabled.current = true; }}
+                    onMouseUp={() => { if (draggingIdx === null) dragEnabled.current = false; }}
+                    onTouchStart={() => { dragEnabled.current = true; }}
+                    className={cn(
+                      "inline-flex items-center text-[10px] cursor-grab active:cursor-grabbing gap-1 px-1.5 py-0.5 rounded-full transition-colors select-none",
+                      isEditing ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                    aria-label={`Drag handle for card ${idx + 1}`}
+                    title="Drag to reorder"
+                  >
+                    <GripVertical className="w-3 h-3" aria-hidden="true" />
+                    Card {idx + 1}
+                  </span>
+
                 <div className="flex items-center gap-0.5">
                   <Tooltip>
                     <TooltipTrigger asChild>
