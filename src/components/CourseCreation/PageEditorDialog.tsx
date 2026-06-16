@@ -1075,12 +1075,14 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
 
           {/* Main Content Area */}
             <div
-              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver ? "bg-primary/5" : "bg-[#ffffff]")}
+              className={cn("flex-1 min-w-0 overflow-y-auto", isDragOver ? "bg-primary/5" : "bg-background")}
+              style={isDragOver ? undefined : contentBgStyle}
               onDragOver={handleEditorDragOver}
               onDragEnter={handleEditorDragEnter}
               onDragLeave={handleEditorDragLeave}
               onDrop={handleContentDrop}
             >
+
             <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
               {/* Course branding logo (content) */}
               <CourseBrandingLogo courseId={courseId} slot="content" />
