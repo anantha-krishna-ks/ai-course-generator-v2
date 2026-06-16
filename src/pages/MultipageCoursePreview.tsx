@@ -1213,7 +1213,7 @@ const MultipageCoursePreview = () => {
               "flex-1 overflow-auto",
               isCompactView && "pb-20" // space for bottom bar
             )}
-            style={useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""))}
+            style={contentBgStyle}
           >
             <div className={cn(
               "max-w-3xl mx-auto space-y-6 sm:space-y-8",
