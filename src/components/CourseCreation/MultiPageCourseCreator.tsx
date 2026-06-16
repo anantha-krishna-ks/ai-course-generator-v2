@@ -1607,8 +1607,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         </div>
 
         {/* Right Panel - Course Outline */}
-        <div className="lg:w-[60%] bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto">
+        <div
+          className="lg:w-[60%] bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto"
+          style={contentBgStyle}
+        >
             <div className="p-6 sm:p-10">
+
               {/* Header row: Course outline + Add item */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
