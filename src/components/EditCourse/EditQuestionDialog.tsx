@@ -373,10 +373,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                       <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
                     </button>
                   )}
+                  {options.length > 2 && (
                     <button
                       type="button"
                       onClick={() => handleRemoveOption(index)}
                       className="p-1.5 rounded-lg text-muted-foreground/20 hover:text-destructive hover:bg-destructive/10 transition-all duration-150 opacity-0 group-hover:opacity-100"
+                      aria-label="Remove option"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
