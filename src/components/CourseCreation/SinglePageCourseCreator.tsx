@@ -116,6 +116,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const location = useLocation();
   const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
   const courseId = routeCourseIdAlt ?? routeCourseId ?? "draft";
+  const contentBgStyle = useCourseContentBackgroundStyle(courseId);
   const isEditCoursePage =
     location.pathname.startsWith("/edit-course") || initialRestoreState != null;
   const isSharedCourse = new URLSearchParams(location.search).get("shared") === "1";
