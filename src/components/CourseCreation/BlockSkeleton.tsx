@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ImageIcon, Video, Mic, FileText, Type, HelpCircle, Loader2, Sparkles } from "lucide-react";
+import { ImageIcon, Video, Mic, FileText, Type, HelpCircle, Loader2, Sparkles, MousePointerClick, LayoutPanelTop, Layers } from "lucide-react";
 
 export type BlockSkeletonVariant =
   | "text"
