@@ -1056,6 +1056,19 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "flashcards":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
+            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#E0F2FE" }}>
+              <span className="text-[3.5px] font-semibold" style={{ color: "#0C4A6E" }}>Term</span>
+            </div>
+            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#FEF3C7" }}>
+              <span className="text-[3.5px] font-semibold" style={{ color: "#713F12" }}>Def.</span>
+            </div>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
