@@ -242,7 +242,7 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
           return (
             <div
               key={card.id}
-              style={{ width: 200 }}
+              style={{ width: 240 }}
               draggable
               onDragStart={() => (dragIndex.current = idx)}
               onDragOver={(e) => e.preventDefault()}
@@ -674,7 +674,7 @@ export function FlashcardsPreview({ content }: { content: string }) {
         const isFlipped = !!flipped[card.id];
         const toggle = () => setFlipped((f) => ({ ...f, [card.id]: !f[card.id] }));
         return (
-          <div key={card.id} style={{ width: 200 }}>
+          <div key={card.id} style={{ width: 240 }}>
             <div className="fc-perspective">
               <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
                 <FlashcardFace
