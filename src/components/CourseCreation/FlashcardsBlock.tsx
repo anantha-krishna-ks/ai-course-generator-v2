@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Plus,
+  Minus,
   Trash2,
   Copy,
   GripVertical,
@@ -13,18 +14,29 @@ import {
   AlignCenter,
   AlignRight,
   Palette,
-  Grid2x2,
-  Grid3x3,
-  Square,
   Upload,
   RefreshCw,
   X,
+  Maximize,
+  RectangleHorizontal,
+  FlipHorizontal,
+  FlipVertical,
+  RotateCw,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import "@/styles/flashcards.css";
+
 
 const MAX_CARDS = 6;
 const MAX_IMAGE_MB = 5;
@@ -39,6 +51,8 @@ export interface FCFormatting {
   underline?: boolean;
 }
 
+export type FCFitMode = "contain" | "cover" | "fill";
+
 export interface FCSideData {
   contentType: FCContentType;
   text: string;
@@ -46,9 +60,13 @@ export interface FCSideData {
   textAlign: FCAlignment;
   formatting: FCFormatting;
   imageUrl: string;
-  imageZoom: number; // 1..3
+  imageZoom: number; // 50..200 (%)
   imagePosX: number; // 0..100
   imagePosY: number; // 0..100
+  imageFit: FCFitMode;
+  imageFlipH: boolean;
+  imageFlipV: boolean;
+  imageRotation: number; // 0|90|180|270
 }
 
 export interface FCCard {
@@ -95,9 +113,13 @@ function defaultSide(side: FCSide): FCSideData {
     textAlign: "center",
     formatting: {},
     imageUrl: "",
-    imageZoom: 1,
+    imageZoom: 100,
     imagePosX: 50,
     imagePosY: 50,
+    imageFit: "cover",
+    imageFlipH: false,
+    imageFlipV: false,
+    imageRotation: 0,
   };
 }
 
@@ -400,14 +422,16 @@ function FlashcardFace({
       style={{ background: bg, color: fg }}
     >
       {side.contentType === "image" && side.imageUrl ? (
-        <div className="w-full h-full overflow-hidden">
+        <div className="w-full h-full overflow-hidden flex items-center justify-center bg-muted/30">
           <img
             src={side.imageUrl}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full"
             style={{
-              transform: `scale(${side.imageZoom})`,
-              transformOrigin: `${side.imagePosX}% ${side.imagePosY}%`,
+              objectFit: side.imageFit,
+              objectPosition: `${side.imagePosX}% ${side.imagePosY}%`,
+              transform: `scale(${(side.imageZoom ?? 100) / 100}) scaleX(${side.imageFlipH ? -1 : 1}) scaleY(${side.imageFlipV ? -1 : 1}) rotate(${side.imageRotation ?? 0}deg)`,
+              transition: "transform 0.2s ease",
             }}
             draggable={false}
           />
@@ -594,35 +618,225 @@ function CardEditor({
       ) : (
         <>
           {data.imageUrl ? (
-            <div className="space-y-2">
-              <div className="rounded-lg overflow-hidden border border-border h-32 bg-muted">
+            <div className="space-y-2.5">
+              {/* Preview */}
+              <div className="rounded-lg overflow-hidden border border-border h-36 bg-muted/40 flex items-center justify-center">
                 <img
                   src={data.imageUrl}
                   alt=""
-                  className="w-full h-full object-cover"
+                  className="w-full h-full"
                   style={{
-                    transform: `scale(${data.imageZoom})`,
-                    transformOrigin: `${data.imagePosX}% ${data.imagePosY}%`,
+                    objectFit: data.imageFit,
+                    objectPosition: `${data.imagePosX}% ${data.imagePosY}%`,
+                    transform: `scale(${(data.imageZoom ?? 100) / 100}) scaleX(${data.imageFlipH ? -1 : 1}) scaleY(${data.imageFlipV ? -1 : 1}) rotate(${data.imageRotation ?? 0}deg)`,
+                    transition: "transform 0.2s ease",
                   }}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-2 text-[11px]">
-                <label className="flex flex-col gap-1">
-                  Zoom
-                  <input type="range" min={1} max={3} step={0.1} value={data.imageZoom} onChange={(e) => update({ imageZoom: parseFloat(e.target.value) })} aria-label="Image zoom" />
+
+              {/* Toolbar — mirrors ImageBlock features, scoped to a card face */}
+              <div className="flex items-center gap-1 p-1.5 rounded-lg border border-border bg-background">
+                {/* Zoom */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => update({ imageZoom: Math.max(50, (data.imageZoom ?? 100) - 10) })}
+                      className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      aria-label="Zoom out"
+                    >
+                      <Minus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Zoom out</TooltipContent>
+                </Tooltip>
+                <Slider
+                  value={[data.imageZoom ?? 100]}
+                  onValueChange={([v]) => update({ imageZoom: v })}
+                  min={50}
+                  max={200}
+                  step={5}
+                  className="flex-1"
+                  aria-label="Image zoom"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => update({ imageZoom: Math.min(200, (data.imageZoom ?? 100) + 10) })}
+                      className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      aria-label="Zoom in"
+                    >
+                      <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Zoom in</TooltipContent>
+                </Tooltip>
+                <span className="text-[10px] tabular-nums text-muted-foreground w-9 text-right pr-1">
+                  {data.imageZoom ?? 100}%
+                </span>
+              </div>
+
+              {/* Fit + Flip + Rotate + Delete */}
+              <div className="flex items-center gap-1 p-1.5 rounded-lg border border-border bg-background">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      aria-label={`Fit mode: ${data.imageFit}`}
+                    >
+                      {data.imageFit === "contain" ? (
+                        <Maximize className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      ) : (
+                        <RectangleHorizontal className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      )}
+                      <span className="capitalize">
+                        {data.imageFit === "contain" ? "Fit" : data.imageFit === "cover" ? "Fill" : "Stretch"}
+                      </span>
+                      <ChevronDown className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-[120px]">
+                    <DropdownMenuItem onClick={() => update({ imageFit: "contain" })} className={cn(data.imageFit === "contain" && "bg-primary/10")}>
+                      <Maximize className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Fit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => update({ imageFit: "cover" })} className={cn(data.imageFit === "cover" && "bg-primary/10")}>
+                      <RectangleHorizontal className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Fill
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => update({ imageFit: "fill" })} className={cn(data.imageFit === "fill" && "bg-primary/10")}>
+                      <RectangleHorizontal className="w-3.5 h-3.5 mr-2" aria-hidden="true" focusable="false" /> Stretch
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <div className="w-px h-4 bg-border mx-0.5" aria-hidden="true" />
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => update({ imageFlipH: !data.imageFlipH })}
+                      className={cn(
+                        "p-1 rounded-md transition-colors",
+                        data.imageFlipH ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      )}
+                      aria-label="Flip horizontal"
+                    >
+                      <FlipHorizontal className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Flip horizontal</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => update({ imageFlipV: !data.imageFlipV })}
+                      className={cn(
+                        "p-1 rounded-md transition-colors",
+                        data.imageFlipV ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      )}
+                      aria-label="Flip vertical"
+                    >
+                      <FlipVertical className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Flip vertical</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => update({ imageRotation: ((data.imageRotation ?? 0) + 90) % 360 })}
+                      className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      aria-label="Rotate 90 degrees"
+                    >
+                      <RotateCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Rotate 90°</TooltipContent>
+                </Tooltip>
+
+                <div className="flex-1" />
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      aria-label="Replace image"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Replace</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      onClick={() => update({ imageUrl: "" })}
+                      className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      aria-label="Remove image"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>Remove</TooltipContent>
+                </Tooltip>
+              </div>
+
+              {/* Focal point — X / Y */}
+              <div className="grid grid-cols-2 gap-2 p-2 rounded-lg border border-border bg-background">
+                <label className="flex flex-col gap-1 text-[10px] font-medium text-muted-foreground">
+                  Focal X
+                  <Slider
+                    value={[data.imagePosX]}
+                    onValueChange={([v]) => update({ imagePosX: v })}
+                    min={0}
+                    max={100}
+                    step={1}
+                    aria-label="Image horizontal focal point"
+                  />
                 </label>
-                <label className="flex flex-col gap-1">
-                  X
-                  <input type="range" min={0} max={100} value={data.imagePosX} onChange={(e) => update({ imagePosX: parseInt(e.target.value, 10) })} aria-label="Image horizontal position" />
-                </label>
-                <label className="flex flex-col gap-1">
-                  Y
-                  <input type="range" min={0} max={100} value={data.imagePosY} onChange={(e) => update({ imagePosY: parseInt(e.target.value, 10) })} aria-label="Image vertical position" />
+                <label className="flex flex-col gap-1 text-[10px] font-medium text-muted-foreground">
+                  Focal Y
+                  <Slider
+                    value={[data.imagePosY]}
+                    onValueChange={([v]) => update({ imagePosY: v })}
+                    min={0}
+                    max={100}
+                    step={1}
+                    aria-label="Image vertical focal point"
+                  />
                 </label>
               </div>
-              <Button size="sm" variant="outline" className="h-7 rounded-full gap-1.5 text-xs" onClick={() => fileRef.current?.click()}>
-                <Upload className="w-3 h-3" aria-hidden="true" /> Replace image
-              </Button>
+
+              {/* Reset */}
+              <div className="flex items-center justify-end">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 rounded-full gap-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+                  onClick={() =>
+                    update({
+                      imageZoom: 100,
+                      imagePosX: 50,
+                      imagePosY: 50,
+                      imageFit: "cover",
+                      imageFlipH: false,
+                      imageFlipV: false,
+                      imageRotation: 0,
+                    })
+                  }
+                  aria-label="Reset image adjustments"
+                >
+                  <RefreshCw className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  Reset
+                </Button>
+              </div>
             </div>
           ) : (
             <Button size="sm" variant="outline" className="h-9 rounded-full gap-1.5 text-xs w-full" onClick={() => fileRef.current?.click()}>
