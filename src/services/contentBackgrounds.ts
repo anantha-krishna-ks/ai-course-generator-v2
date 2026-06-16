@@ -114,20 +114,23 @@ export const CONTENT_BACKGROUNDS: ContentBackgroundPreset[] = [
   },
   {
     id: "silk-waves",
-    label: "Silk Waves",
+    label: "Azure Silk",
     category: "texture",
-    // Subtle SVG wave pattern — light, premium, calm.
+    // Large flowing soft blue waves — premium, subtle, full-bleed.
     swatchStyle: {
-      backgroundColor: "#FBFCFE",
+      backgroundColor: "#F4F8FF",
       backgroundImage:
-        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'><path d='M0 40 C 30 10, 60 70, 120 40' fill='none' stroke='%233B82F6' stroke-opacity='0.10' stroke-width='1.2'/><path d='M0 52 C 30 22, 60 82, 120 52' fill='none' stroke='%236366F1' stroke-opacity='0.08' stroke-width='1.2'/></svg>\")",
-      backgroundSize: "120px 60px",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='100' viewBox='0 0 160 100' preserveAspectRatio='none'><defs><linearGradient id='g1' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23DCE9FF'/><stop offset='100%' stop-color='%23F4F8FF'/></linearGradient></defs><rect width='160' height='100' fill='url(%23g1)'/><path d='M-10 70 C 40 30, 90 95, 180 55 L180 100 L-10 100 Z' fill='%23BFD6F6' fill-opacity='0.35'/><path d='M-10 85 C 50 55, 110 110, 180 75 L180 100 L-10 100 Z' fill='%23A9C7F0' fill-opacity='0.25'/></svg>\")",
+      backgroundSize: "cover",
     },
     style: {
-      backgroundColor: "#FBFCFE",
+      backgroundColor: "#F4F8FF",
       backgroundImage:
-        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='80' viewBox='0 0 160 80'><path d='M0 54 C 40 14, 80 94, 160 54' fill='none' stroke='%233B82F6' stroke-opacity='0.09' stroke-width='1.25'/><path d='M0 68 C 40 28, 80 108, 160 68' fill='none' stroke='%236366F1' stroke-opacity='0.07' stroke-width='1.25'/></svg>\")",
-      backgroundSize: "160px 80px",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900' viewBox='0 0 1600 900' preserveAspectRatio='xMidYMid slice'><defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23EAF2FF'/><stop offset='55%' stop-color='%23F6FAFF'/><stop offset='100%' stop-color='%23E6EFFC'/></linearGradient></defs><rect width='1600' height='900' fill='url(%23bg)'/><path d='M0 220 C 380 60, 760 360, 1240 180 C 1420 110, 1520 150, 1600 130 L1600 0 L0 0 Z' fill='%23D6E5F8' fill-opacity='0.55'/><path d='M0 320 C 300 180, 720 460, 1100 300 C 1340 200, 1480 280, 1600 250 L1600 120 L0 140 Z' fill='%23C7DAF1' fill-opacity='0.35'/><path d='M0 760 C 320 600, 700 880, 1080 720 C 1320 620, 1480 700, 1600 680 L1600 900 L0 900 Z' fill='%23CFDEF2' fill-opacity='0.55'/><path d='M0 820 C 380 700, 820 940, 1200 800 C 1380 740, 1500 770, 1600 760 L1600 900 L0 900 Z' fill='%23BBD0EC' fill-opacity='0.4'/><path d='M0 600 C 400 520, 800 700, 1200 580 C 1400 520, 1520 560, 1600 545' fill='none' stroke='%23B5CDEB' stroke-opacity='0.35' stroke-width='1.2'/><path d='M0 500 C 400 420, 800 600, 1200 480 C 1400 420, 1520 460, 1600 445' fill='none' stroke='%23B5CDEB' stroke-opacity='0.25' stroke-width='1.2'/></svg>\")",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundAttachment: "local",
     },
   },
 
