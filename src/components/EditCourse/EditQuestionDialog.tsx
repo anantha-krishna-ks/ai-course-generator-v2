@@ -15,6 +15,8 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+type FeedbackMode = "any" | "correct_incorrect" | "by_choice";
+
 interface Question {
   id: number;
   type: "SCQ" | "MCQ" | "TrueFalse" | "FIB";
@@ -23,6 +25,9 @@ interface Question {
   answer: string;
   explanation: string;
   optionExplanations?: string[];
+  feedbackMode?: FeedbackMode;
+  correctFeedback?: string;
+  incorrectFeedback?: string;
 }
 
 interface EditQuestionDialogProps {
