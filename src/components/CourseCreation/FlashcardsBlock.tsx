@@ -232,11 +232,9 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
         </Button>
       </div>
 
-      {/* Cards grid */}
+      {/* Cards grid — UNO-card sized, auto-wrap, same size regardless of count */}
       <div className={cn("p-4 flex flex-wrap gap-4", alignmentClass)}>
         {data.cards.map((card, idx) => {
-          const widthPct =
-            data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
           const isFlipped = !!flipped[card.id];
           const fg = card.front.textColor || getFg(card.color);
           const isEditing = editingCardId === card.id;
@@ -244,7 +242,7 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
           return (
             <div
               key={card.id}
-              style={{ width: widthPct, minWidth: 200 }}
+              style={{ width: 200 }}
               draggable
               onDragStart={() => (dragIndex.current = idx)}
               onDragOver={(e) => e.preventDefault()}
