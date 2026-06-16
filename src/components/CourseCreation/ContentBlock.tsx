@@ -529,6 +529,9 @@ export function ContentBlock({
             <TabsBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "hotspot" ? (
             <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
+          ) : type === "flashcards" ? (
+            <FlashcardsBlock content={content} onChange={onChange} />
+
           ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (
