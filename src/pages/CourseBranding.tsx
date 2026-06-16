@@ -421,7 +421,7 @@ function SectionPagePreview({
         </div>
 
         {/* RIGHT: Content area */}
-        <div className="flex flex-col p-4">
+        <div className="flex flex-col p-4" style={bgStyle}>
           <div className={`flex mb-2 ${POSITION_CLASS[position]}`}>
             <div className="h-7 max-w-[110px] flex items-center rounded-md border border-border bg-white px-2 py-1 shadow-sm">
               <img src={displayedLogo} alt="Logo preview" className="max-h-5 max-w-full object-contain" />
