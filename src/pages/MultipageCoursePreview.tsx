@@ -1022,11 +1022,13 @@ const MultipageCoursePreview = () => {
               </div>
             </div>
 
-            {/* Right: Course outline */}
-            <div className={cn(
-              "border-l bg-card flex-shrink-0 overflow-auto",
-              isCompactView ? "w-full border-l-0 border-t" : "w-full lg:w-[60%]"
-            )}>
+            <div
+              className={cn(
+                "border-l bg-card flex-shrink-0 overflow-auto",
+                isCompactView ? "w-full border-l-0 border-t" : "w-full lg:w-[60%]"
+              )}
+              style={contentBgStyle}
+            >
               <ScrollArea className="h-full">
                 <div className={cn("p-6 space-y-1", isCompactView && "p-4")}>
                   <div className="mb-4">
