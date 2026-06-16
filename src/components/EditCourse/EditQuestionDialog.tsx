@@ -566,20 +566,22 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         <span className="font-normal normal-case tracking-normal ml-1.5 text-muted-foreground/50">— select all correct</span>
                       )}
                     </Label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (expandedExplanations.size > 0) {
-                          setExpandedExplanations(new Set());
-                        } else {
-                          setExpandedExplanations(new Set(options.map((_, i) => i)));
-                        }
-                      }}
-                      className="text-[11px] text-muted-foreground/40 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-muted/60"
-                    >
-                      <Lightbulb className="w-3 h-3" />
-                      {expandedExplanations.size > 0 ? "Collapse all" : "Expand all"}
-                    </button>
+                    {feedbackMode !== "by_choice" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (expandedExplanations.size > 0) {
+                            setExpandedExplanations(new Set());
+                          } else {
+                            setExpandedExplanations(new Set(options.map((_, i) => i)));
+                          }
+                        }}
+                        className="text-[11px] text-muted-foreground/40 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-muted/60"
+                      >
+                        <Lightbulb className="w-3 h-3" />
+                        {expandedExplanations.size > 0 ? "Collapse all" : "Expand all"}
+                      </button>
+                    )}
                   </div>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={optionIds} strategy={verticalListSortingStrategy}>
