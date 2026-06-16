@@ -354,23 +354,25 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/30 font-medium"
                 />
                 <div className="flex items-center gap-0.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => toggleExplanation(index)}
-                    className={cn(
-                      "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
-                      isExpanded
-                        ? "bg-primary/10 text-primary"
-                        : hasExplanation
-                          ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
-                          : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
-                    )}
-                    title="Add rationale for this option"
-                  >
-                    <Lightbulb className="w-3.5 h-3.5" />
-                    <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
-                  </button>
-                  {options.length > 2 && (
+                  {!byChoice && (
+                    <button
+                      type="button"
+                      onClick={() => toggleExplanation(index)}
+                      className={cn(
+                        "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
+                        isExpanded
+                          ? "bg-primary/10 text-primary"
+                          : hasExplanation
+                            ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
+                            : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
+                      )}
+                      title="Add rationale for this option"
+                      aria-label="Toggle option rationale"
+                    >
+                      <Lightbulb className="w-3.5 h-3.5" />
+                      <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    </button>
+                  )}
                     <button
                       type="button"
                       onClick={() => handleRemoveOption(index)}
