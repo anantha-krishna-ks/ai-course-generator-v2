@@ -588,7 +588,7 @@ function SinglePageMockPreview({
             </div>
 
             {/* Stacked content */}
-            <div className="px-4 py-3 space-y-3">
+            <div className="px-4 py-3 space-y-3" style={bgStyle}>
               {/* Intro block — highlighted on Introduction tab */}
               <div
                 className="rounded-md p-2.5 transition-colors"
