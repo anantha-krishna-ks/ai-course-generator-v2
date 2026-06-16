@@ -76,7 +76,7 @@ interface CourseItem {
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards";
   content: string;
   variant?: string;
   font?: string;
@@ -84,7 +84,7 @@ interface PageContentBlock {
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards";
   content: string;
   variant?: string;
   font?: string;
@@ -399,7 +399,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     }
   };
 
-  const addBlockToItem = useCallback((itemId: string, type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs", atIndex?: number, variant?: string) => {
+  const addBlockToItem = useCallback((itemId: string, type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards", atIndex?: number, variant?: string) => {
     const id = `block-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const defaultContent = getVariantContent(type, variant);
     setPageBlocksMap((prev) => {
