@@ -535,7 +535,11 @@ function CardEditor({
       </div>
 
       {/* Body */}
-      <div className="p-4 space-y-3.5 max-h-[460px] overflow-y-auto thin-scrollbar">
+      <div
+        className="p-4 space-y-3.5 max-h-[min(70vh,560px)] overflow-y-auto overscroll-contain thin-scrollbar"
+        onWheelCapture={(e) => e.stopPropagation()}
+        onTouchMoveCapture={(e) => e.stopPropagation()}
+      >
         {/* Content type tabs — Apple-style sliding pill */}
         <div className="relative flex items-center bg-foreground/[0.06] border border-border/50 rounded-lg p-[3px]">
           <div
