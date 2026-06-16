@@ -11,6 +11,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
+import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 
 interface CourseItem {
   id: string;
@@ -21,13 +22,13 @@ interface CourseItem {
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "flashcards";
   content: string;
 }
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "flashcards";
   content: string;
 }
 
@@ -393,6 +394,9 @@ const SinglepageCoursePreview = () => {
             </div>
           );
         } catch { return null; }
+      }
+      case "flashcards": {
+        return <FlashcardsPreview content={block.content || ""} />;
       }
       case "audio": {
         const audioSrc = block.content || DEMO_AUDIO_URL;

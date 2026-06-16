@@ -26,6 +26,9 @@ import {
   LayoutPanelLeft,
   Rows3,
   ChevronDown,
+  Layers,
+  RefreshCw,
+
 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,7 +48,7 @@ interface BlockItem {
   icon: React.ComponentType<{ className?: string }>;
   category: string;
   categoryLabel: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards";
   variant?: string;
   locked?: boolean;
   isQuizGenerator?: boolean;
@@ -53,7 +56,7 @@ interface BlockItem {
 }
 
 interface ContentBlocksPanelProps {
-  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs", variant?: string) => void;
+  onAddBlock: (type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards", variant?: string) => void;
   onOpenQuizGenerator?: () => void;
   aiEnabled?: boolean;
 }
@@ -89,13 +92,14 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
   { id: "vertical-tabs", label: "Vertical Tabs", icon: LayoutPanelLeft, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "vertical-tabs", description: "Organise content into a list of tabs stacked along the left" },
   { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
+  { id: "flashcards", label: "Flashcards", icon: Layers, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "flashcards", variant: "flashcards", description: "Two-sided cards learners flip to reveal answers, definitions or images" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
 export function resolveTemplateDropData(
   templateId: string,
   categoryId: string
-): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs"; variant?: string } | null {
+): { type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards"; variant?: string } | null {
   const block = ALL_BLOCKS.find((b) => b.id === templateId);
   if (!block || block.isQuizGenerator) return null;
   return { type: block.type, variant: block.variant };
@@ -575,6 +579,29 @@ function BlockPreview({ id }: { id: string }) {
           <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Click headings to expand each panel</p>
         </div>
       );
+    case "flashcards":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { bg: "#E0F2FE", fg: "#0C4A6E", t: "Term" },
+              { bg: "#FEF3C7", fg: "#713F12", t: "Definition" },
+            ].map((c, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-dashed border-foreground/30 shadow-[0_4px_14px_-4px_rgba(0,0,0,0.12)] aspect-[4/3] flex items-center justify-center text-[10px] font-semibold"
+                style={{ background: c.bg, color: c.fg }}
+              >
+                {c.t}
+              </div>
+            ))}
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5 flex items-center gap-1">
+            <RefreshCw className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+            Click cards to flip front ↔ back
+          </p>
+        </div>
+      );
       default:
       return null;
   }
@@ -1026,6 +1053,19 @@ function BlockThumbnail({ id }: { id: string }) {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      );
+    case "flashcards":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] flex gap-[3px]")}>
+            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#E0F2FE" }}>
+              <span className="text-[3.5px] font-semibold" style={{ color: "#0C4A6E" }}>Term</span>
+            </div>
+            <div className="flex-1 rounded-[3px] border border-dashed border-foreground/30 aspect-[4/3] flex items-center justify-center" style={{ background: "#FEF3C7" }}>
+              <span className="text-[3.5px] font-semibold" style={{ color: "#713F12" }}>Def.</span>
+            </div>
           </div>
         </div>
       );

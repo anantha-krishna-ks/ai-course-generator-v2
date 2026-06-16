@@ -53,7 +53,8 @@ type NestedChildType =
   | "image-description"
   | "video-description"
   | "hotspot"
-  | "tabs";
+  | "tabs"
+  | "flashcards";
 
 interface NestedChild {
   id: string;
@@ -122,6 +123,7 @@ function getVariantContent(type: NestedChildType, variant?: string): string {
   if (type === "quiz") return "";
   if (type === "hotspot") return "";
   if (type === "tabs") return "";
+  if (type === "flashcards") return "";
   // text fallthrough — but we explicitly forbid nesting another any-block-layout
   if (type === "text" && variant === "any-block-layout") {
     return "<p>Nested layouts are not allowed.</p>";

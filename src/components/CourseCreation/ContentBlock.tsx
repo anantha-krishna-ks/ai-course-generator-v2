@@ -32,6 +32,7 @@ import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
 import { HotspotBlock } from "./HotspotBlock";
 import { TabsBlock } from "./TabsBlock";
 import { AccordionBlock } from "./AccordionBlock";
+import { FlashcardsBlock } from "./FlashcardsBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -149,7 +150,7 @@ function encodeContentColumns(layout: ContentLayoutType, columns: string[]): str
 
 interface ContentBlockProps {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards";
   content: string;
   onChange: (content: string) => void;
   onDelete: () => void;
@@ -158,7 +159,7 @@ interface ContentBlockProps {
   aiEnabled?: boolean;
   readOnly?: boolean;
   variant?: string;
-  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs", newContent: string, newVariant?: string) => void;
+  onTypeChange?: (newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards", newContent: string, newVariant?: string) => void;
   /** Per-block font override id. When undefined, the block inherits the course-level font. */
   font?: string;
   /** Update the per-block font override. Pass undefined to revert to course default. */
@@ -528,6 +529,9 @@ export function ContentBlock({
             <TabsBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "hotspot" ? (
             <HotspotBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
+          ) : type === "flashcards" ? (
+            <FlashcardsBlock content={content} onChange={onChange} />
+
           ) : type === "image-description" ? (
             <ImageDescriptionBlock content={content} onChange={onChange} aiEnabled={aiEnabled} />
           ) : type === "quiz" ? (

@@ -15,6 +15,7 @@ import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
+import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 
 interface CourseItem {
   id: string;
@@ -26,7 +27,7 @@ interface CourseItem {
 
 interface PageContentBlock {
   id: string;
-  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs";
+  type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards";
   content: string;
   variant?: string;
 }
@@ -665,6 +666,9 @@ const MultipageCoursePreview = () => {
           return <VerticalTextTabsPreview content={block.content || ""} isMobile={isMobileView} />;
         }
         return <TabsPreview content={block.content || ""} />;
+      }
+      case "flashcards": {
+        return <FlashcardsPreview content={block.content || ""} />;
       }
       case "audio": {
         const audioSrc = block.content || DEMO_AUDIO_URL;
