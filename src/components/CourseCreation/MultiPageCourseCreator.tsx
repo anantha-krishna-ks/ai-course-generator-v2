@@ -189,6 +189,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const location = useLocation();
   const { id: routeCourseId, courseId: routeCourseIdAlt } = useParams<{ id?: string; courseId?: string }>();
   const courseId = routeCourseIdAlt ?? routeCourseId ?? "draft";
+  const contentBgStyle = useCourseContentBackgroundStyle(courseId);
   // Show More menu on the edit-course route, OR on any creator route when an existing
   // course is being loaded (initialRestoreState present). Hide for brand-new blank courses.
   const isEditCoursePage =
