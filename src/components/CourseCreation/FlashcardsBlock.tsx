@@ -512,29 +512,40 @@ function CardEditor({
 
       {/* Body */}
       <div className="p-4 space-y-3.5 max-h-[460px] overflow-y-auto thin-scrollbar">
-        {/* Content type tabs */}
-        <div className="flex items-center gap-1 p-0.5 rounded-full bg-muted/60 w-full">
+        {/* Content type tabs — Apple-style sliding pill */}
+        <div className="relative flex items-center bg-foreground/[0.06] border border-border/50 rounded-lg p-[3px]">
+          <div
+            className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+            style={{
+              width: "calc(50% - 3px)",
+              left: data.contentType === "text" ? "3px" : "calc(50%)",
+            }}
+            aria-hidden="true"
+          />
           <button
             type="button"
             onClick={() => update({ contentType: "text" })}
             className={cn(
-              "flex-1 text-xs px-3 py-1.5 rounded-full inline-flex items-center justify-center gap-1.5 transition-colors",
-              data.contentType === "text" ? "bg-background shadow-sm font-medium text-foreground" : "text-muted-foreground"
+              "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-md transition-colors duration-300",
+              data.contentType === "text" ? "text-foreground" : "text-muted-foreground hover:text-muted-foreground"
             )}
           >
-            <TypeIcon className="w-3 h-3" aria-hidden="true" /> Text
+            <TypeIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+            Text
           </button>
           <button
             type="button"
             onClick={() => update({ contentType: "image" })}
             className={cn(
-              "flex-1 text-xs px-3 py-1.5 rounded-full inline-flex items-center justify-center gap-1.5 transition-colors",
-              data.contentType === "image" ? "bg-background shadow-sm font-medium text-foreground" : "text-muted-foreground"
+              "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-md transition-colors duration-300",
+              data.contentType === "image" ? "text-foreground" : "text-muted-foreground hover:text-muted-foreground"
             )}
           >
-            <ImageIcon className="w-3 h-3" aria-hidden="true" /> Image
+            <ImageIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+            Image
           </button>
         </div>
+
 
 
       {data.contentType === "text" ? (
