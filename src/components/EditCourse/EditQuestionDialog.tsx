@@ -70,6 +70,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   const [explanation, setExplanation] = useState("");
   const [optionExplanations, setOptionExplanations] = useState<string[]>([]);
   const [expandedExplanations, setExpandedExplanations] = useState<Set<number>>(new Set());
+  const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>("any");
+  const [correctFeedback, setCorrectFeedback] = useState("");
+  const [incorrectFeedback, setIncorrectFeedback] = useState("");
 
   useEffect(() => {
     if (question) {
@@ -81,6 +84,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       setExplanation(question.explanation || "");
       setOptionExplanations(question.optionExplanations || new Array(opts.length).fill(""));
       setExpandedExplanations(new Set());
+      setFeedbackMode(question.feedbackMode || "any");
+      setCorrectFeedback(question.correctFeedback || "");
+      setIncorrectFeedback(question.incorrectFeedback || "");
     }
   }, [question]);
 
