@@ -395,6 +395,9 @@ const SinglepageCoursePreview = () => {
           );
         } catch { return null; }
       }
+      case "flashcards": {
+        return <FlashcardsPreview content={block.content || ""} />;
+      }
       case "audio": {
         const audioSrc = block.content || DEMO_AUDIO_URL;
         return (
