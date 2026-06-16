@@ -32,6 +32,7 @@ import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
 import { HotspotBlock } from "./HotspotBlock";
 import { TabsBlock } from "./TabsBlock";
 import { AccordionBlock } from "./AccordionBlock";
+import { FlashcardsBlock } from "./FlashcardsBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
