@@ -15,6 +15,8 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+type FeedbackMode = "any" | "correct_incorrect" | "by_choice";
+
 interface Question {
   id: number;
   type: "SCQ" | "MCQ" | "TrueFalse" | "FIB";
@@ -23,6 +25,9 @@ interface Question {
   answer: string;
   explanation: string;
   optionExplanations?: string[];
+  feedbackMode?: FeedbackMode;
+  correctFeedback?: string;
+  incorrectFeedback?: string;
 }
 
 interface EditQuestionDialogProps {
@@ -65,6 +70,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   const [explanation, setExplanation] = useState("");
   const [optionExplanations, setOptionExplanations] = useState<string[]>([]);
   const [expandedExplanations, setExpandedExplanations] = useState<Set<number>>(new Set());
+  const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>("any");
+  const [correctFeedback, setCorrectFeedback] = useState("");
+  const [incorrectFeedback, setIncorrectFeedback] = useState("");
 
   useEffect(() => {
     if (question) {
@@ -76,6 +84,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       setExplanation(question.explanation || "");
       setOptionExplanations(question.optionExplanations || new Array(opts.length).fill(""));
       setExpandedExplanations(new Set());
+      setFeedbackMode(question.feedbackMode || "any");
+      setCorrectFeedback(question.correctFeedback || "");
+      setIncorrectFeedback(question.incorrectFeedback || "");
     }
   }, [question]);
 
@@ -195,8 +206,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       return;
     }
 
-    if (!explanation.trim()) {
+    if (feedbackMode === "any" && !explanation.trim()) {
       toast({ variant: "destructive", title: "Explanation Required", description: "Please provide an explanation for this question." });
+      return;
+    }
+    if (feedbackMode === "correct_incorrect" && (!correctFeedback.trim() || !incorrectFeedback.trim())) {
+      toast({ variant: "destructive", title: "Feedback Required", description: "Please provide both correct and incorrect answer feedback." });
       return;
     }
 
@@ -208,6 +223,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       answer: answer.trim(),
       explanation: explanation.trim(),
       optionExplanations: optionExplanations.filter((_, i) => options[i]?.trim()),
+      feedbackMode,
+      correctFeedback: correctFeedback.trim(),
+      incorrectFeedback: incorrectFeedback.trim(),
     };
 
     onSave(updatedQuestion);
@@ -291,7 +309,8 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
   /** Render a single option card */
   const renderOptionRow = (index: number, option: string, selector: React.ReactNode) => {
     const isCorrect = isOptionCorrect(index) && option.trim();
-    const isExpanded = expandedExplanations.has(index);
+    const byChoice = feedbackMode === "by_choice";
+    const isExpanded = byChoice || expandedExplanations.has(index);
     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
 
     return (
@@ -335,27 +354,31 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/30 font-medium"
                 />
                 <div className="flex items-center gap-0.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => toggleExplanation(index)}
-                    className={cn(
-                      "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
-                      isExpanded
-                        ? "bg-primary/10 text-primary"
-                        : hasExplanation
-                          ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
-                          : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
-                    )}
-                    title="Add rationale for this option"
-                  >
-                    <Lightbulb className="w-3.5 h-3.5" />
-                    <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
-                  </button>
+                  {!byChoice && (
+                    <button
+                      type="button"
+                      onClick={() => toggleExplanation(index)}
+                      className={cn(
+                        "p-1.5 rounded-lg transition-all duration-150 flex items-center gap-0.5",
+                        isExpanded
+                          ? "bg-primary/10 text-primary"
+                          : hasExplanation
+                            ? "text-primary/50 hover:bg-primary/10 hover:text-primary"
+                            : "text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted"
+                      )}
+                      title="Add rationale for this option"
+                      aria-label="Toggle option rationale"
+                    >
+                      <Lightbulb className="w-3.5 h-3.5" />
+                      <ChevronDown className={cn("w-2.5 h-2.5 transition-transform duration-200", isExpanded && "rotate-180")} />
+                    </button>
+                  )}
                   {options.length > 2 && (
                     <button
                       type="button"
                       onClick={() => handleRemoveOption(index)}
                       className="p-1.5 rounded-lg text-muted-foreground/20 hover:text-destructive hover:bg-destructive/10 transition-all duration-150 opacity-0 group-hover:opacity-100"
+                      aria-label="Remove option"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -543,20 +566,22 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                         <span className="font-normal normal-case tracking-normal ml-1.5 text-muted-foreground/50">— select all correct</span>
                       )}
                     </Label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (expandedExplanations.size > 0) {
-                          setExpandedExplanations(new Set());
-                        } else {
-                          setExpandedExplanations(new Set(options.map((_, i) => i)));
-                        }
-                      }}
-                      className="text-[11px] text-muted-foreground/40 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-muted/60"
-                    >
-                      <Lightbulb className="w-3 h-3" />
-                      {expandedExplanations.size > 0 ? "Collapse all" : "Expand all"}
-                    </button>
+                    {feedbackMode !== "by_choice" && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (expandedExplanations.size > 0) {
+                            setExpandedExplanations(new Set());
+                          } else {
+                            setExpandedExplanations(new Set(options.map((_, i) => i)));
+                          }
+                        }}
+                        className="text-[11px] text-muted-foreground/40 hover:text-muted-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-muted/60"
+                      >
+                        <Lightbulb className="w-3 h-3" />
+                        {expandedExplanations.size > 0 ? "Collapse all" : "Expand all"}
+                      </button>
+                    )}
                   </div>
                   <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={optionIds} strategy={verticalListSortingStrategy}>
@@ -596,19 +621,77 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 </div>
               )}
 
-              {/* General Explanation */}
+              {/* Feedback */}
               <div className="space-y-2">
-                <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Explanation
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Feedback
                 </Label>
-                <Textarea
-                  id="explanation"
-                  value={explanation}
-                  onChange={(e) => setExplanation(e.target.value)}
-                  placeholder="Explain why this is the correct answer. Shown to learners after they respond."
-                  className="min-h-[72px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
-                />
+                <Select value={feedbackMode} onValueChange={(v) => setFeedbackMode(v as FeedbackMode)}>
+                  <SelectTrigger aria-label="Feedback mode" className="rounded-xl bg-white border border-gray-300 h-10 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Response</SelectItem>
+                    <SelectItem value="correct_incorrect">Correct / Incorrect</SelectItem>
+                    {type !== "FIB" && <SelectItem value="by_choice">By Choice</SelectItem>}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground/70">
+                  {feedbackMode === "any" && "Show a single explanation to learners regardless of their response."}
+                  {feedbackMode === "correct_incorrect" && "Show distinct feedback for correct vs. incorrect responses."}
+                  {feedbackMode === "by_choice" && "Show a unique explanation for each option the learner selects."}
+                </p>
               </div>
+
+              {feedbackMode === "any" && (
+                <div className="space-y-2">
+                  <Label htmlFor="explanation" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Explanation
+                  </Label>
+                  <Textarea
+                    id="explanation"
+                    value={explanation}
+                    onChange={(e) => setExplanation(e.target.value)}
+                    placeholder="Explain the answer. Shown to learners after they respond."
+                    className="min-h-[72px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
+                  />
+                </div>
+              )}
+
+              {feedbackMode === "correct_incorrect" && (
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="correct-fb" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <Check className="w-3 h-3 text-primary" /> Correct Answer Feedback
+                    </Label>
+                    <Textarea
+                      id="correct-fb"
+                      value={correctFeedback}
+                      onChange={(e) => setCorrectFeedback(e.target.value)}
+                      placeholder="Enter correct answer feedback…"
+                      className="min-h-[64px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="incorrect-fb" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Incorrect Answer Feedback
+                    </Label>
+                    <Textarea
+                      id="incorrect-fb"
+                      value={incorrectFeedback}
+                      onChange={(e) => setIncorrectFeedback(e.target.value)}
+                      placeholder="Enter incorrect answer feedback…"
+                      className="min-h-[64px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {feedbackMode === "by_choice" && type !== "FIB" && (
+                <p className="text-[11px] text-muted-foreground/70 -mt-2">
+                  Per-option explanations are shown inline under each answer choice above.
+                </p>
+              )}
             </div>
           </ScrollArea>
         </div>
