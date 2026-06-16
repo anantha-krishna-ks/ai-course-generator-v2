@@ -800,7 +800,7 @@ export default function CourseBrandingPage() {
 
 
   const scrollToSection = (key: "intro" | "content" | "color" | "background") => {
-    const map = { intro: introRef, content: contentRef, color: colorRef };
+    const map = { intro: introRef, content: contentRef, color: colorRef, background: backgroundRef };
     map[key].current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -831,7 +831,14 @@ export default function CourseBrandingPage() {
         branding.primaryColor !== DEFAULT_COURSE_BRANDING.primaryColor ||
         branding.ctaColor !== DEFAULT_COURSE_BRANDING.ctaColor,
     },
+    {
+      key: "background" as const,
+      label: "Content Background",
+      icon: LayoutTemplate,
+      done: branding.contentBackground !== DEFAULT_COURSE_BRANDING.contentBackground,
+    },
   ];
+
 
 
 
