@@ -696,10 +696,13 @@ const SinglepageCoursePreview = () => {
             </div>
 
             {/* All content */}
-            <div className={cn(
-              "flex-1",
-              isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
-            )}>
+            <div
+              className={cn(
+                "flex-1",
+                isCompactView ? "px-3 py-4" : "px-8 sm:px-12 py-10"
+              )}
+              style={contentBgStyle}
+            >
               <div className="max-w-3xl mx-auto space-y-6">
                 {renderSinglePageContent()}
 
