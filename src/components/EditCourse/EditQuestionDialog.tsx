@@ -640,27 +640,8 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                 </div>
               )}
 
-              {/* Feedback */}
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Feedback
-                </Label>
-                <Select value={feedbackMode} onValueChange={(v) => setFeedbackMode(v as FeedbackMode)}>
-                  <SelectTrigger aria-label="Feedback mode" className="rounded-xl bg-white border border-gray-300 h-10 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any Response</SelectItem>
-                    <SelectItem value="correct_incorrect">Correct / Incorrect</SelectItem>
-                    {type !== "FIB" && <SelectItem value="by_choice">By Choice</SelectItem>}
-                  </SelectContent>
-                </Select>
-                <p className="text-[11px] text-muted-foreground/70">
-                  {feedbackMode === "any" && "Show a single explanation to learners regardless of their response."}
-                  {feedbackMode === "correct_incorrect" && "Show distinct feedback for correct vs. incorrect responses."}
-                  {feedbackMode === "by_choice" && "Show a unique explanation for each option the learner selects."}
-                </p>
-              </div>
+
+
 
               {feedbackMode === "any" && (
                 <div className="space-y-2">
