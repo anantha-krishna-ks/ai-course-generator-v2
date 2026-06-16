@@ -264,6 +264,7 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
             data.gridCols === 1 ? "100%" : data.gridCols === 2 ? "calc(50% - 0.5rem)" : "calc(33.333% - 0.667rem)";
           const isFlipped = !!flipped[card.id];
           const fg = card.front.textColor || getFg(card.color);
+          const isEditing = editingCardId === card.id;
 
           return (
             <div
@@ -279,11 +280,19 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
               className="group/card"
             >
               {/* Card actions row */}
-              <div className="flex items-center justify-between mb-1.5 px-1 opacity-60 group-hover/card:opacity-100 transition-opacity">
+              <div
+                className={cn(
+                  "flex items-center justify-between mb-1.5 px-1 transition-opacity",
+                  isEditing ? "opacity-100" : "opacity-60 group-hover/card:opacity-100"
+                )}
+              >
                 <span
                   role="button"
                   tabIndex={0}
-                  className="inline-flex items-center text-[10px] text-muted-foreground cursor-grab active:cursor-grabbing gap-1"
+                  className={cn(
+                    "inline-flex items-center text-[10px] cursor-grab active:cursor-grabbing gap-1 px-1.5 py-0.5 rounded-full transition-colors",
+                    isEditing ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground"
+                  )}
                   aria-label={`Reorder card ${idx + 1}`}
                 >
                   <GripVertical className="w-3 h-3" aria-hidden="true" />
@@ -309,26 +318,57 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
                 </div>
               </div>
 
-              {/* Flippable card */}
-              <div className="fc-perspective">
-                <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
-                  <FlashcardFace
-                    side={card.front}
-                    bg={card.color}
-                    defaultFg={fg}
-                    onClick={() => setEditingCardId(card.id)}
-                    label={`Card ${idx + 1} front — click to edit`}
+              {/* Flippable card — anchors the editor popover */}
+              <Popover
+                open={isEditing}
+                onOpenChange={(o) => setEditingCardId(o ? card.id : null)}
+              >
+                <PopoverTrigger asChild>
+                  <div
+                    className={cn(
+                      "fc-perspective rounded-2xl transition-all",
+                      isEditing &&
+                        "ring-2 ring-primary ring-offset-2 ring-offset-background shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.45)]"
+                    )}
+                  >
+                    <div className={cn("fc-flipper", isFlipped && "fc-flipped")}>
+                      <FlashcardFace
+                        side={card.front}
+                        bg={card.color}
+                        defaultFg={fg}
+                        onClick={() => setEditingCardId(card.id)}
+                        label={`Card ${idx + 1} front — click to edit`}
+                      />
+                      <FlashcardFace
+                        side={card.back}
+                        bg={card.color}
+                        defaultFg={getFg(card.color)}
+                        onClick={() => setEditingCardId(card.id)}
+                        label={`Card ${idx + 1} back — click to edit`}
+                        isBack
+                      />
+                    </div>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="right"
+                  align="start"
+                  sideOffset={14}
+                  collisionPadding={16}
+                  className="w-[320px] p-0 rounded-2xl border border-border/70 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] overflow-hidden bg-card"
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <CardEditor
+                    card={card}
+                    cardIndex={idx}
+                    side={isFlipped ? "back" : "front"}
+                    onFlipSide={() => setFlipped((f) => ({ ...f, [card.id]: !f[card.id] }))}
+                    onClose={() => setEditingCardId(null)}
+                    onChange={(mut) => updateCard(card.id, mut)}
                   />
-                  <FlashcardFace
-                    side={card.back}
-                    bg={card.color}
-                    defaultFg={getFg(card.color)}
-                    onClick={() => setEditingCardId(card.id)}
-                    label={`Card ${idx + 1} back — click to edit`}
-                    isBack
-                  />
-                </div>
-              </div>
+                </PopoverContent>
+              </Popover>
 
               {/* Flip control */}
               <div className="flex items-center justify-center mt-2">
@@ -343,21 +383,13 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
                   {isFlipped ? "Flip to front" : "Flip to back"}
                 </Button>
               </div>
-
-              {editingCardId === card.id && (
-                <CardEditor
-                  card={card}
-                  side={isFlipped ? "back" : "front"}
-                  onClose={() => setEditingCardId(null)}
-                  onChange={(mut) => updateCard(card.id, mut)}
-                />
-              )}
             </div>
           );
         })}
       </div>
     </div>
   );
+
 }
 
 function FlashcardFace({
