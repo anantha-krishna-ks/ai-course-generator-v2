@@ -301,7 +301,7 @@ export function FlashcardsBlock({ content, onChange }: FlashcardsBlockProps) {
 
               <div
                 style={{ width: 240 }}
-                draggable={dragEnabled.current}
+                draggable
                 onDragStart={(e) => {
                   if (!dragEnabled.current) {
                     e.preventDefault();
