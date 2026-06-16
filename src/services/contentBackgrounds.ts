@@ -113,18 +113,22 @@ export const CONTENT_BACKGROUNDS: ContentBackgroundPreset[] = [
     },
   },
   {
-    id: "warm-gradient",
-    label: "Warm Glow",
+    id: "mesh-gradient",
+    label: "Mesh Gradient",
     category: "texture",
     swatchStyle: {
+      backgroundColor: "#F5F7FF",
       backgroundImage:
-        "linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #fde68a 100%)",
+        "radial-gradient(at 10% 90%, #c7d2fe 0%, transparent 45%), radial-gradient(at 90% 10%, #a7f3d0 0%, transparent 45%), radial-gradient(at 50% 50%, #fbcfe8 0%, transparent 55%)",
     },
     style: {
+      backgroundColor: "#F5F7FF",
       backgroundImage:
-        "linear-gradient(135deg, #fff7ed 0%, #fef3c7 50%, #fde68a 100%)",
+        "radial-gradient(at 10% 90%, #c7d2fe 0%, transparent 45%), radial-gradient(at 90% 10%, #a7f3d0 0%, transparent 45%), radial-gradient(at 50% 50%, #fbcfe8 0%, transparent 55%)",
+      backgroundAttachment: "local",
     },
   },
+
 ];
 
 export function getContentBackgroundStyle(

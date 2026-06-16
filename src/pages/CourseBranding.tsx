@@ -1160,9 +1160,9 @@ export default function CourseBrandingPage() {
 
                             <div>
                               <div className="flex items-center gap-2 mb-2">
-                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Premium Textures</Label>
-                                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20">Premium</span>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Textures</Label>
                               </div>
+
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                 {CONTENT_BACKGROUNDS.filter((b) => b.category === "texture").map((bg) => {
                                   const selected = branding.contentBackground === bg.id;
