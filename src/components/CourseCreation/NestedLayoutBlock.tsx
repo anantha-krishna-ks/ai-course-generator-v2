@@ -53,7 +53,8 @@ type NestedChildType =
   | "image-description"
   | "video-description"
   | "hotspot"
-  | "tabs";
+  | "tabs"
+  | "flashcards";
 
 interface NestedChild {
   id: string;
