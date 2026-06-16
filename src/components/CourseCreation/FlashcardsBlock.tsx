@@ -468,12 +468,16 @@ function FlashcardFace({
 
 function CardEditor({
   card,
+  cardIndex,
   side,
+  onFlipSide,
   onChange,
   onClose,
 }: {
   card: FCCard;
+  cardIndex: number;
   side: FCSide;
+  onFlipSide: () => void;
   onChange: (mut: (c: FCCard) => FCCard) => void;
   onClose: () => void;
 }) {
@@ -493,31 +497,72 @@ function CardEditor({
   };
 
   return (
-    <div className="mt-2 rounded-xl border border-border/70 bg-card p-3 space-y-3 shadow-sm" role="dialog" aria-label={`Edit ${side}`}>
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Editing {side}
-        </span>
-        <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={onClose}>Done</Button>
+    <div role="dialog" aria-label={`Edit card ${cardIndex + 1} ${side}`} className="flex flex-col">
+      {/* Header — clearly identifies which card is being edited */}
+      <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-border/60 bg-gradient-to-b from-muted/40 to-transparent">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span
+            className="w-7 h-7 rounded-lg border border-border/80 shadow-inner shrink-0"
+            style={{ background: card.color }}
+            aria-hidden="true"
+          />
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground leading-none">
+              Editing
+            </p>
+            <p className="text-sm font-semibold text-foreground leading-tight truncate">
+              Card {cardIndex + 1} <span className="text-muted-foreground font-normal">·</span>{" "}
+              <span className="capitalize">{side}</span>
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7 rounded-full"
+                onClick={onFlipSide}
+                aria-label={`Flip to ${side === "front" ? "back" : "front"}`}
+              >
+                <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Flip to {side === "front" ? "back" : "front"}</TooltipContent>
+          </Tooltip>
+          <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full" onClick={onClose} aria-label="Close editor">
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
+          </Button>
+        </div>
       </div>
 
-      {/* Content type tabs */}
-      <div className="flex items-center gap-1 p-0.5 rounded-full bg-muted/60 w-fit">
-        <button
-          type="button"
-          onClick={() => update({ contentType: "text" })}
-          className={cn("text-xs px-3 py-1 rounded-full inline-flex items-center gap-1", data.contentType === "text" && "bg-background shadow-sm")}
-        >
-          <TypeIcon className="w-3 h-3" aria-hidden="true" /> Text
-        </button>
-        <button
-          type="button"
-          onClick={() => update({ contentType: "image" })}
-          className={cn("text-xs px-3 py-1 rounded-full inline-flex items-center gap-1", data.contentType === "image" && "bg-background shadow-sm")}
-        >
-          <ImageIcon className="w-3 h-3" aria-hidden="true" /> Image
-        </button>
-      </div>
+      {/* Body */}
+      <div className="p-4 space-y-3.5 max-h-[460px] overflow-y-auto thin-scrollbar">
+        {/* Content type tabs */}
+        <div className="flex items-center gap-1 p-0.5 rounded-full bg-muted/60 w-full">
+          <button
+            type="button"
+            onClick={() => update({ contentType: "text" })}
+            className={cn(
+              "flex-1 text-xs px-3 py-1.5 rounded-full inline-flex items-center justify-center gap-1.5 transition-colors",
+              data.contentType === "text" ? "bg-background shadow-sm font-medium text-foreground" : "text-muted-foreground"
+            )}
+          >
+            <TypeIcon className="w-3 h-3" aria-hidden="true" /> Text
+          </button>
+          <button
+            type="button"
+            onClick={() => update({ contentType: "image" })}
+            className={cn(
+              "flex-1 text-xs px-3 py-1.5 rounded-full inline-flex items-center justify-center gap-1.5 transition-colors",
+              data.contentType === "image" ? "bg-background shadow-sm font-medium text-foreground" : "text-muted-foreground"
+            )}
+          >
+            <ImageIcon className="w-3 h-3" aria-hidden="true" /> Image
+          </button>
+        </div>
+
 
       {data.contentType === "text" ? (
         <>
