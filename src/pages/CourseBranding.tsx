@@ -20,7 +20,7 @@ import {
   hexToRgba,
   readableTextColor,
 } from "@/services/courseBrandingStore";
-import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
+import { CONTENT_BACKGROUNDS, getContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { mockCourseData } from "@/data/mockCourseData";
 
 const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
