@@ -206,8 +206,12 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       return;
     }
 
-    if (!explanation.trim()) {
+    if (feedbackMode === "any" && !explanation.trim()) {
       toast({ variant: "destructive", title: "Explanation Required", description: "Please provide an explanation for this question." });
+      return;
+    }
+    if (feedbackMode === "correct_incorrect" && (!correctFeedback.trim() || !incorrectFeedback.trim())) {
+      toast({ variant: "destructive", title: "Feedback Required", description: "Please provide both correct and incorrect answer feedback." });
       return;
     }
 
@@ -219,6 +223,9 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
       answer: answer.trim(),
       explanation: explanation.trim(),
       optionExplanations: optionExplanations.filter((_, i) => options[i]?.trim()),
+      feedbackMode,
+      correctFeedback: correctFeedback.trim(),
+      incorrectFeedback: incorrectFeedback.trim(),
     };
 
     onSave(updatedQuestion);
