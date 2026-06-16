@@ -1119,9 +1119,9 @@ export default function CourseBrandingPage() {
                 </div>
               </div>
               <Tabs defaultValue="introduction" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="introduction">Introduction</TabsTrigger>
-                  <TabsTrigger value="section">Section / Page</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 rounded-full border border-border bg-muted/40 p-1 shadow-sm h-auto">
+                  <TabsTrigger value="introduction" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border">Introduction</TabsTrigger>
+                  <TabsTrigger value="section" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border">Section / Page</TabsTrigger>
                 </TabsList>
                 <TabsContent value="introduction" className="mt-3">
                   {layout === "single-page" ? (
