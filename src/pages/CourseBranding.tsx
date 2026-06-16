@@ -1119,10 +1119,25 @@ export default function CourseBrandingPage() {
                 </div>
               </div>
               <Tabs defaultValue="introduction" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 rounded-full border border-border bg-muted/40 p-1 shadow-sm h-auto">
-                  <TabsTrigger value="introduction" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border">Introduction</TabsTrigger>
-                  <TabsTrigger value="section" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border">Section / Page</TabsTrigger>
-                </TabsList>
+                <div className="relative rounded-full p-[1.5px] bg-gradient-to-r from-primary/40 via-primary/10 to-primary/40 shadow-sm">
+                  <TabsList className="relative grid w-full grid-cols-2 rounded-full bg-background/80 backdrop-blur-sm p-1 h-auto gap-1 border-0">
+                    <TabsTrigger
+                      value="introduction"
+                      className="group rounded-full gap-2 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
+                    >
+                      <BookOpen className="h-4 w-4 transition-transform duration-300 group-data-[state=active]:scale-110" aria-hidden="true" focusable="false" />
+                      Introduction
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="section"
+                      className="group rounded-full gap-2 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
+                    >
+                      <FileText className="h-4 w-4 transition-transform duration-300 group-data-[state=active]:scale-110" aria-hidden="true" focusable="false" />
+                      Section / Page
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
                 <TabsContent value="introduction" className="mt-3">
                   {layout === "single-page" ? (
                     <SinglePageMockPreview
