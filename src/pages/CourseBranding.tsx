@@ -1245,6 +1245,7 @@ export default function CourseBrandingPage() {
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
                       focus="intro"
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   ) : (
                     <IntroductionPreview
@@ -1253,6 +1254,7 @@ export default function CourseBrandingPage() {
                       position={branding.introPosition}
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   )}
                 </TabsContent>
@@ -1265,6 +1267,7 @@ export default function CourseBrandingPage() {
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
                       focus="section"
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   ) : (
                     <SectionPagePreview
@@ -1273,9 +1276,11 @@ export default function CourseBrandingPage() {
                       position={branding.contentPosition}
                       primary={branding.primaryColor}
                       cta={branding.ctaColor}
+                      bgStyle={getContentBackgroundStyle(branding.contentBackground)}
                     />
                   )}
                 </TabsContent>
+
 
 
               </Tabs>
