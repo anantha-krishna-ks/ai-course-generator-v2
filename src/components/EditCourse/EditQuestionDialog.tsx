@@ -354,7 +354,7 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 h-auto p-0 text-sm placeholder:text-muted-foreground/30 font-medium"
                 />
                 <div className="flex items-center gap-0.5 shrink-0">
-                  {!byChoice && (
+                  {!byChoice && feedbackMode !== "any" && (
                     <button
                       type="button"
                       onClick={() => toggleExplanation(index)}
