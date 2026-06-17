@@ -532,36 +532,37 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                       </label>
                     ))}
                   </RadioGroup>
-                  {/* Per-option explanations for True/False — only in by_choice mode */}
-                  {feedbackMode === "by_choice" && ["True", "False"].map((val, index) => {
-                    const isExpanded = expandedExplanations.has(index);
-                    const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
-                    return (
-                      <div key={val}>
-                        <button
-                          type="button"
-                          onClick={() => toggleExplanation(index)}
-                          className={cn(
-                            "text-xs flex items-center gap-1 transition-colors px-1 py-0.5 rounded",
-                            isExpanded || hasExplanation ? "text-primary/60" : "text-muted-foreground/30 hover:text-muted-foreground/50"
-                          )}
-                        >
-                          <Lightbulb className="w-3 h-3" />
-                          Why "{val}" is {answer === val ? "correct" : "incorrect"}
-                          <ChevronDown className={cn("w-2.5 h-2.5 transition-transform", isExpanded && "rotate-180")} />
-                        </button>
-                        {isExpanded && (
-                          <Textarea
-                            value={optionExplanations[index] || ""}
-                            onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
-                            placeholder={`Why "${val}" is the ${answer === val ? "correct" : "incorrect"} answer…`}
-                            className="mt-1.5 min-h-[48px] max-h-[80px] resize-none text-xs bg-white border-border/50 rounded-lg"
-                            rows={2}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
+                  {/* Per-option explanations for True/False — auto-expanded in by_choice mode */}
+                  {feedbackMode === "by_choice" && (
+                    <div className="space-y-2.5 pt-1">
+                      {["True", "False"].map((val, index) => {
+                        const isCorrect = answer === val;
+                        return (
+                          <div
+                            key={val}
+                            className={cn(
+                              "rounded-xl border bg-white px-3.5 py-3 transition-colors",
+                              isCorrect ? "border-primary/30 bg-primary/[0.02]" : "border-border/60"
+                            )}
+                          >
+                            <div className="flex items-center gap-1.5 mb-2">
+                              <Lightbulb className={cn("w-3.5 h-3.5", isCorrect ? "text-primary" : "text-muted-foreground")} />
+                              <span className="text-xs font-semibold text-foreground">
+                                Why "{val}" is {isCorrect ? "correct" : "incorrect"}
+                              </span>
+                            </div>
+                            <Textarea
+                              value={optionExplanations[index] || ""}
+                              onChange={(e) => handleOptionExplanationChange(index, e.target.value)}
+                              placeholder={`Explain why "${val}" is the ${isCorrect ? "correct" : "incorrect"} answer…`}
+                              className="min-h-[56px] max-h-[90px] resize-none text-xs bg-white border-border/50 rounded-lg"
+                              rows={2}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               ) : type === "FIB" ? (
                 <div className="space-y-2">
