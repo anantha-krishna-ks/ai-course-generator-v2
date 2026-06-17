@@ -702,41 +702,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
 
           {/* Body */}
           <div className="px-6 pt-4 pb-6 space-y-5 max-h-[70vh] overflow-y-auto">
-            {/* No. of Questions (min correct) */}
-            <div className="space-y-2.5">
-              <Label
-                htmlFor="pc-no-of-questions"
-                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-              >
-                Pass Criteria — No. of Questions
-              </Label>
-              <div className="rounded-xl border-2 border-border/60 bg-white p-3">
-                <Select
-                  value={String(passCriteria)}
-                  onValueChange={(v) => setPassCriteria(Number(v))}
-                >
-                  <SelectTrigger
-                    id="pc-no-of-questions"
-                    aria-label="Minimum correct answers required"
-                    className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: questions.length }, (_, i) => i + 1).map((n) => (
-                      <SelectItem key={n} value={String(n)}>
-                        {n}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-[11px] text-muted-foreground mt-2">
-                  Minimum correct responses required to pass.
-                </p>
-              </div>
-            </div>
-
-            {/* Require correct answer to continue */}
+            {/* Answer Behavior — Require correct answer */}
             <div className="space-y-2.5">
               <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Answer Behavior
@@ -758,6 +724,77 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                 />
               </div>
             </div>
+
+            {/* Pass Criteria — only when requireCorrect is ON */}
+            {requireCorrect && (
+              <div className="space-y-2.5">
+                <Label
+                  htmlFor="pc-no-of-questions"
+                  className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                >
+                  Pass Criteria — No. of Questions
+                </Label>
+                <div className="rounded-xl border-2 border-border/60 bg-white p-3">
+                  <Select
+                    value={String(passCriteria)}
+                    onValueChange={(v) => setPassCriteria(Number(v))}
+                  >
+                    <SelectTrigger
+                      id="pc-no-of-questions"
+                      aria-label="Minimum correct answers required"
+                      className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: Math.max(questions.length, 1) }, (_, i) => i + 1).map((n) => (
+                        <SelectItem key={n} value={String(n)}>
+                          {n}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    Minimum correct responses required to pass.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Page Navigation — only when requireCorrect is ON */}
+            {requireCorrect && (
+              <div className="space-y-2.5">
+                <Label
+                  htmlFor="pc-fail-nav"
+                  className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                >
+                  Page Navigation
+                </Label>
+                <div className="rounded-xl border-2 border-border/60 bg-white p-3">
+                  <Select
+                    value={failNavigationPage || "__none__"}
+                    onValueChange={(v) => setFailNavigationPage(v === "__none__" ? "" : v)}
+                  >
+                    <SelectTrigger
+                      id="pc-fail-nav"
+                      aria-label="Page to navigate to when learner fails"
+                      className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
+                    >
+                      <SelectValue placeholder="Select page" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Select page</SelectItem>
+                      <SelectItem value="chapter-1">Chapter 1</SelectItem>
+                      <SelectItem value="chapter-2">Chapter 2</SelectItem>
+                      <SelectItem value="chapter-3">Chapter 3</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    Learner will be redirected here if they don't meet the pass criteria.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Retries */}
             <div className="space-y-2.5">
@@ -792,39 +829,36 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
               </div>
             </div>
 
-            {/* Page Navigation */}
+            {/* Reveal Answers */}
             <div className="space-y-2.5">
               <Label
-                htmlFor="pc-fail-nav"
+                htmlFor="pc-reveal-answers"
                 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
               >
-                Page Navigation
+                Reveal Answers
               </Label>
               <div className="rounded-xl border-2 border-border/60 bg-white p-3">
-                <Select
-                  value={failNavigationPage || "__none__"}
-                  onValueChange={(v) => setFailNavigationPage(v === "__none__" ? "" : v)}
-                >
+                <Select value={revealAnswers} onValueChange={setRevealAnswers}>
                   <SelectTrigger
-                    id="pc-fail-nav"
-                    aria-label="Page to navigate to when learner fails"
+                    id="pc-reveal-answers"
+                    aria-label="When to reveal correct answers to learners"
                     className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
                   >
-                    <SelectValue placeholder="Select page" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__none__">Select page</SelectItem>
-                    <SelectItem value="chapter-1">Chapter 1</SelectItem>
-                    <SelectItem value="chapter-2">Chapter 2</SelectItem>
-                    <SelectItem value="chapter-3">Chapter 3</SelectItem>
+                    <SelectItem value="reveal_all">Reveal All Answers</SelectItem>
+                    <SelectItem value="incorrect_with_feedback">Show Incorrect Answers with Feedback</SelectItem>
+                    <SelectItem value="hide_all">Hide All Answers</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-[11px] text-muted-foreground mt-2">
-                  Learner will be redirected here if they don't meet the pass criteria.
+                  Choose what learners see after submitting each question.
                 </p>
               </div>
             </div>
           </div>
+
 
           {/* Footer */}
           <DialogFooter className="px-6 py-3.5 border-t border-border bg-white">
