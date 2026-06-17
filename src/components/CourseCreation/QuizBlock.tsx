@@ -287,14 +287,20 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           </div>
           <div className="flex items-center gap-2">
             {isQuizVariant && questions.length > 0 && (
-              <Button
-                size="sm"
-                onClick={() => setShowPassCriteriaDialog(true)}
-                className="h-7 px-2.5 gap-1.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-full"
-              >
-                <Trophy className="w-3 h-3" aria-hidden="true" focusable="false" />
-                Pass Criteria
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowPassCriteriaDialog(true)}
+                    aria-label="Quiz Settings"
+                    className="h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted"
+                  >
+                    <Settings className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Quiz Settings</TooltipContent>
+              </Tooltip>
             )}
             {questions.length > 0 && (
               <>
