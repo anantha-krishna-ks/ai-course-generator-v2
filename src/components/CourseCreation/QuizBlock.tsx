@@ -75,40 +75,43 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
   // Parse questions + passCriteria + navPage from content (supports legacy array shape)
-  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string } => {
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "" };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
           passCriteria: typeof parsed.passCriteria === "number" ? parsed.passCriteria : 1,
           failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
+          requireCorrect: typeof parsed.requireCorrect === "boolean" ? parsed.requireCorrect : false,
+          retries: typeof parsed.retries === "string" ? parsed.retries : "unlimited",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1, failNavigationPage: "" };
+    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited" };
   };
 
   const initial = parseContent(content);
   const [questions, setQuestionsState] = useState<Question[]>(initial.questions);
   const [passCriteria, setPassCriteriaState] = useState<number>(initial.passCriteria);
   const [failNavigationPage, setFailNavigationPageState] = useState<string>(initial.failNavigationPage);
+  const [requireCorrect, setRequireCorrectState] = useState<boolean>(initial.requireCorrect);
+  const [retries, setRetriesState] = useState<string>(initial.retries);
   const [showPassCriteriaDialog, setShowPassCriteriaDialog] = useState(false);
 
-  const persist = (qs: Question[], pc: number, fnp: string) => {
-    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp }));
+  const persist = (qs: Question[], pc: number, fnp: string, rc: boolean, rt: string) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp, requireCorrect: rc, retries: rt }));
   };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
     setQuestionsState((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
-      // Clamp passCriteria within new range (min 1, max next.length)
       const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
       if (clamped !== passCriteria) setPassCriteriaState(clamped);
-      persist(next, clamped, failNavigationPage);
+      persist(next, clamped, failNavigationPage, requireCorrect, retries);
       return next;
     });
   };
@@ -116,12 +119,22 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const setPassCriteria = (value: number) => {
     const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
     setPassCriteriaState(clamped);
-    persist(questions, clamped, failNavigationPage);
+    persist(questions, clamped, failNavigationPage, requireCorrect, retries);
   };
 
   const setFailNavigationPage = (value: string) => {
     setFailNavigationPageState(value);
-    persist(questions, passCriteria, value);
+    persist(questions, passCriteria, value, requireCorrect, retries);
+  };
+
+  const setRequireCorrect = (value: boolean) => {
+    setRequireCorrectState(value);
+    persist(questions, passCriteria, failNavigationPage, value, retries);
+  };
+
+  const setRetries = (value: string) => {
+    setRetriesState(value);
+    persist(questions, passCriteria, failNavigationPage, requireCorrect, value);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
