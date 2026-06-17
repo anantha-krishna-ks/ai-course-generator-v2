@@ -674,7 +674,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         </DialogContent>
       </Dialog>
 
-      {/* Pass Criteria Dialog */}
+      {/* Quiz Settings Dialog */}
       <Dialog open={showPassCriteriaDialog} onOpenChange={setShowPassCriteriaDialog}>
         <DialogContent
           className="w-[95vw] max-w-[560px] p-0 overflow-hidden rounded-2xl border shadow-2xl gap-0"
@@ -683,24 +683,25 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           {/* Header */}
           <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white space-y-0">
             <div className="pr-8">
-              <DialogTitle className="text-base font-semibold tracking-tight">
-                Pass Criteria
+              <DialogTitle className="text-base font-semibold tracking-tight flex items-center gap-2">
+                <Settings className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                Quiz Settings
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Define the passing rule and where learners go if they don't pass.
+                Configure passing rules, retries, and learner flow.
               </DialogDescription>
             </div>
           </DialogHeader>
 
           {/* Body */}
-          <div className="px-6 pt-4 pb-6 space-y-5">
+          <div className="px-6 pt-4 pb-6 space-y-5 max-h-[70vh] overflow-y-auto">
             {/* No. of Questions (min correct) */}
             <div className="space-y-2.5">
               <Label
                 htmlFor="pc-no-of-questions"
                 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
               >
-                No. of Questions
+                Pass Criteria — No. of Questions
               </Label>
               <div className="rounded-xl border-2 border-border/60 bg-white p-3">
                 <Select
@@ -724,6 +725,62 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                 </Select>
                 <p className="text-[11px] text-muted-foreground mt-2">
                   Minimum correct responses required to pass.
+                </p>
+              </div>
+            </div>
+
+            {/* Require correct answer to continue */}
+            <div className="space-y-2.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Answer Behavior
+              </Label>
+              <div className="rounded-xl border-2 border-border/60 bg-white p-3 flex items-start justify-between gap-4">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground">Require correct answer to continue</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Learners must answer correctly before moving to the next question.
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={requireCorrect}
+                  onCheckedChange={setRequireCorrect}
+                  aria-label="Require correct answer to continue"
+                />
+              </div>
+            </div>
+
+            {/* Retries */}
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="pc-retries"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Retries
+              </Label>
+              <div className="rounded-xl border-2 border-border/60 bg-white p-3">
+                <Select value={retries} onValueChange={setRetries}>
+                  <SelectTrigger
+                    id="pc-retries"
+                    aria-label="Number of quiz retries allowed"
+                    className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="unlimited">Unlimited</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  How many times learners can re-attempt the quiz.
                 </p>
               </div>
             </div>
@@ -775,7 +832,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
               onClick={() => setShowPassCriteriaDialog(false)}
               className="rounded-xl gap-1.5"
             >
-              <Trophy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              <Settings className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Save
             </Button>
           </DialogFooter>
