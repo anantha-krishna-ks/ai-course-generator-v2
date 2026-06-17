@@ -480,10 +480,10 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                   </Label>
                   <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-full pl-2.5 pr-1 py-1 shadow-sm">
                     <MessageSquareText className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
-                    <span className="text-[11px] font-medium text-muted-foreground">Feedback</span>
+                    <span className="text-[11px] font-medium text-muted-foreground">Explanation</span>
                     <Select value={feedbackMode} onValueChange={(v) => setFeedbackMode(v as FeedbackMode)}>
                       <SelectTrigger
-                        aria-label="Feedback mode"
+                        aria-label="Explanation mode"
                         className="h-7 px-2.5 text-xs font-medium rounded-full border-0 bg-primary/[0.06] text-primary hover:bg-primary/10 focus:ring-1 focus:ring-primary/30 focus:ring-offset-0 gap-1.5 [&>svg]:opacity-70"
                       >
                         <SelectValue />

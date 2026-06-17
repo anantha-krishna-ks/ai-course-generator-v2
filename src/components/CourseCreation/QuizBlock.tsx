@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical, MoreHorizontal, Trophy } from "lucide-react";
+import { MessageCircleQuestion, Plus, Sparkles, Edit2, Trash2, ChevronDown, AlertTriangle, RefreshCcw, Copy, GripVertical, MoreHorizontal, Trophy, Settings, CheckCircle2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -74,40 +75,43 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
   // Parse questions + passCriteria + navPage from content (supports legacy array shape)
-  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string } => {
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "" };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
           passCriteria: typeof parsed.passCriteria === "number" ? parsed.passCriteria : 1,
           failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
+          requireCorrect: typeof parsed.requireCorrect === "boolean" ? parsed.requireCorrect : false,
+          retries: typeof parsed.retries === "string" ? parsed.retries : "unlimited",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1, failNavigationPage: "" };
+    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited" };
   };
 
   const initial = parseContent(content);
   const [questions, setQuestionsState] = useState<Question[]>(initial.questions);
   const [passCriteria, setPassCriteriaState] = useState<number>(initial.passCriteria);
   const [failNavigationPage, setFailNavigationPageState] = useState<string>(initial.failNavigationPage);
+  const [requireCorrect, setRequireCorrectState] = useState<boolean>(initial.requireCorrect);
+  const [retries, setRetriesState] = useState<string>(initial.retries);
   const [showPassCriteriaDialog, setShowPassCriteriaDialog] = useState(false);
 
-  const persist = (qs: Question[], pc: number, fnp: string) => {
-    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp }));
+  const persist = (qs: Question[], pc: number, fnp: string, rc: boolean, rt: string) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp, requireCorrect: rc, retries: rt }));
   };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
     setQuestionsState((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
-      // Clamp passCriteria within new range (min 1, max next.length)
       const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
       if (clamped !== passCriteria) setPassCriteriaState(clamped);
-      persist(next, clamped, failNavigationPage);
+      persist(next, clamped, failNavigationPage, requireCorrect, retries);
       return next;
     });
   };
@@ -115,12 +119,22 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const setPassCriteria = (value: number) => {
     const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
     setPassCriteriaState(clamped);
-    persist(questions, clamped, failNavigationPage);
+    persist(questions, clamped, failNavigationPage, requireCorrect, retries);
   };
 
   const setFailNavigationPage = (value: string) => {
     setFailNavigationPageState(value);
-    persist(questions, passCriteria, value);
+    persist(questions, passCriteria, value, requireCorrect, retries);
+  };
+
+  const setRequireCorrect = (value: boolean) => {
+    setRequireCorrectState(value);
+    persist(questions, passCriteria, failNavigationPage, value, retries);
+  };
+
+  const setRetries = (value: string) => {
+    setRetriesState(value);
+    persist(questions, passCriteria, failNavigationPage, requireCorrect, value);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -273,14 +287,20 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           </div>
           <div className="flex items-center gap-2">
             {isQuizVariant && questions.length > 0 && (
-              <Button
-                size="sm"
-                onClick={() => setShowPassCriteriaDialog(true)}
-                className="h-7 px-2.5 gap-1.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-full"
-              >
-                <Trophy className="w-3 h-3" aria-hidden="true" focusable="false" />
-                Pass Criteria
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setShowPassCriteriaDialog(true)}
+                    aria-label="Quiz Settings"
+                    className="h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted"
+                  >
+                    <Settings className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Quiz Settings</TooltipContent>
+              </Tooltip>
             )}
             {questions.length > 0 && (
               <>
@@ -654,7 +674,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         </DialogContent>
       </Dialog>
 
-      {/* Pass Criteria Dialog */}
+      {/* Quiz Settings Dialog */}
       <Dialog open={showPassCriteriaDialog} onOpenChange={setShowPassCriteriaDialog}>
         <DialogContent
           className="w-[95vw] max-w-[560px] p-0 overflow-hidden rounded-2xl border shadow-2xl gap-0"
@@ -663,24 +683,25 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           {/* Header */}
           <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white space-y-0">
             <div className="pr-8">
-              <DialogTitle className="text-base font-semibold tracking-tight">
-                Pass Criteria
+              <DialogTitle className="text-base font-semibold tracking-tight flex items-center gap-2">
+                <Settings className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                Quiz Settings
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Define the passing rule and where learners go if they don't pass.
+                Configure passing rules, retries, and learner flow.
               </DialogDescription>
             </div>
           </DialogHeader>
 
           {/* Body */}
-          <div className="px-6 pt-4 pb-6 space-y-5">
+          <div className="px-6 pt-4 pb-6 space-y-5 max-h-[70vh] overflow-y-auto">
             {/* No. of Questions (min correct) */}
             <div className="space-y-2.5">
               <Label
                 htmlFor="pc-no-of-questions"
                 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
               >
-                No. of Questions
+                Pass Criteria — No. of Questions
               </Label>
               <div className="rounded-xl border-2 border-border/60 bg-white p-3">
                 <Select
@@ -704,6 +725,62 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
                 </Select>
                 <p className="text-[11px] text-muted-foreground mt-2">
                   Minimum correct responses required to pass.
+                </p>
+              </div>
+            </div>
+
+            {/* Require correct answer to continue */}
+            <div className="space-y-2.5">
+              <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Answer Behavior
+              </Label>
+              <div className="rounded-xl border-2 border-border/60 bg-white p-3 flex items-start justify-between gap-4">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground">Require correct answer to continue</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Learners must answer correctly before moving to the next question.
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={requireCorrect}
+                  onCheckedChange={setRequireCorrect}
+                  aria-label="Require correct answer to continue"
+                />
+              </div>
+            </div>
+
+            {/* Retries */}
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="pc-retries"
+                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+              >
+                Retries
+              </Label>
+              <div className="rounded-xl border-2 border-border/60 bg-white p-3">
+                <Select value={retries} onValueChange={setRetries}>
+                  <SelectTrigger
+                    id="pc-retries"
+                    aria-label="Number of quiz retries allowed"
+                    className="w-full h-10 bg-white border-gray-300 rounded-lg text-sm"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="unlimited">Unlimited</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  How many times learners can re-attempt the quiz.
                 </p>
               </div>
             </div>
@@ -755,7 +832,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
               onClick={() => setShowPassCriteriaDialog(false)}
               className="rounded-xl gap-1.5"
             >
-              <Trophy className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              <Settings className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
               Save
             </Button>
           </DialogFooter>
