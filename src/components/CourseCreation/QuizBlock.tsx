@@ -75,10 +75,10 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
   const isQuizVariant = variant === "quiz-block";
   // Parse questions + passCriteria + navPage from content (supports legacy array shape)
-  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string } => {
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited" };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "hide_all" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
@@ -86,12 +86,13 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
           requireCorrect: typeof parsed.requireCorrect === "boolean" ? parsed.requireCorrect : false,
           retries: typeof parsed.retries === "string" ? parsed.retries : "unlimited",
+          revealAnswers: typeof parsed.revealAnswers === "string" ? parsed.revealAnswers : "hide_all",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited" };
+    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "hide_all" };
   };
 
   const initial = parseContent(content);
@@ -100,10 +101,11 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const [failNavigationPage, setFailNavigationPageState] = useState<string>(initial.failNavigationPage);
   const [requireCorrect, setRequireCorrectState] = useState<boolean>(initial.requireCorrect);
   const [retries, setRetriesState] = useState<string>(initial.retries);
+  const [revealAnswers, setRevealAnswersState] = useState<string>(initial.revealAnswers);
   const [showPassCriteriaDialog, setShowPassCriteriaDialog] = useState(false);
 
-  const persist = (qs: Question[], pc: number, fnp: string, rc: boolean, rt: string) => {
-    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp, requireCorrect: rc, retries: rt }));
+  const persist = (qs: Question[], pc: number, fnp: string, rc: boolean, rt: string, ra: string) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp, requireCorrect: rc, retries: rt, revealAnswers: ra }));
   };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
@@ -111,7 +113,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
       const next = typeof updater === "function" ? updater(prev) : updater;
       const clamped = next.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), next.length);
       if (clamped !== passCriteria) setPassCriteriaState(clamped);
-      persist(next, clamped, failNavigationPage, requireCorrect, retries);
+      persist(next, clamped, failNavigationPage, requireCorrect, retries, revealAnswers);
       return next;
     });
   };
@@ -119,22 +121,27 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const setPassCriteria = (value: number) => {
     const clamped = questions.length === 0 ? 1 : Math.min(Math.max(1, value), questions.length);
     setPassCriteriaState(clamped);
-    persist(questions, clamped, failNavigationPage, requireCorrect, retries);
+    persist(questions, clamped, failNavigationPage, requireCorrect, retries, revealAnswers);
   };
 
   const setFailNavigationPage = (value: string) => {
     setFailNavigationPageState(value);
-    persist(questions, passCriteria, value, requireCorrect, retries);
+    persist(questions, passCriteria, value, requireCorrect, retries, revealAnswers);
   };
 
   const setRequireCorrect = (value: boolean) => {
     setRequireCorrectState(value);
-    persist(questions, passCriteria, failNavigationPage, value, retries);
+    persist(questions, passCriteria, failNavigationPage, value, retries, revealAnswers);
   };
 
   const setRetries = (value: string) => {
     setRetriesState(value);
-    persist(questions, passCriteria, failNavigationPage, requireCorrect, value);
+    persist(questions, passCriteria, failNavigationPage, requireCorrect, value, revealAnswers);
+  };
+
+  const setRevealAnswers = (value: string) => {
+    setRevealAnswersState(value);
+    persist(questions, passCriteria, failNavigationPage, requireCorrect, retries, value);
   };
 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
