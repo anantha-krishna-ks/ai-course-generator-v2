@@ -532,8 +532,8 @@ export const EditQuestionDialog = ({ open, onClose, question, onSave, isAddMode 
                       </label>
                     ))}
                   </RadioGroup>
-                  {/* Per-option explanations for True/False */}
-                  {["True", "False"].map((val, index) => {
+                  {/* Per-option explanations for True/False — only in by_choice mode */}
+                  {feedbackMode === "by_choice" && ["True", "False"].map((val, index) => {
                     const isExpanded = expandedExplanations.has(index);
                     const hasExplanation = (optionExplanations[index] || "").trim().length > 0;
                     return (
