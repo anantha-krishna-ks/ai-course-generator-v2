@@ -572,17 +572,29 @@ const MultipageCoursePreview = () => {
           return null;
         }
       }
-      case "quiz":
+      case "quiz": {
+        let questions: unknown[] = [];
+        let settings: Record<string, unknown> | undefined;
         try {
-          const quizContent = block.content || DEMO_QUIZ_CONTENT;
-          const parsed = JSON.parse(quizContent);
-          const questions = Array.isArray(parsed) ? parsed : parsed.questions;
-          if (!Array.isArray(questions)) return null;
-          const settings = Array.isArray(parsed) ? undefined : parsed;
-          return <InteractiveQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
+          const raw = (block.content || "").trim();
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              questions = parsed;
+            } else if (parsed && typeof parsed === "object") {
+              questions = Array.isArray(parsed.questions) ? parsed.questions : [];
+              settings = parsed;
+            }
+          }
         } catch {
-          return null;
+          // fall through to demo
         }
+        if (!Array.isArray(questions) || questions.length === 0) {
+          questions = JSON.parse(DEMO_QUIZ_CONTENT);
+          settings = undefined;
+        }
+        return <InteractiveQuiz questions={questions as never} settings={settings as never} isCompactView={isCompactView} />;
+      }
       case "video": {
         const videoSrc = block.content || DEMO_VIDEO_URL;
         return (

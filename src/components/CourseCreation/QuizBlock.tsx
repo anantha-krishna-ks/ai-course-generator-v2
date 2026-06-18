@@ -78,7 +78,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "hide_all" };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
@@ -86,13 +86,13 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
           requireCorrect: typeof parsed.requireCorrect === "boolean" ? parsed.requireCorrect : false,
           retries: typeof parsed.retries === "string" ? parsed.retries : "unlimited",
-          revealAnswers: typeof parsed.revealAnswers === "string" ? parsed.revealAnswers : "hide_all",
+          revealAnswers: typeof parsed.revealAnswers === "string" ? parsed.revealAnswers : "reveal_all",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "hide_all" };
+    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all" };
   };
 
   const initial = parseContent(content);
