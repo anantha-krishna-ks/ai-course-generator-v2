@@ -338,9 +338,11 @@ const SinglepageCoursePreview = () => {
       case "quiz":
         try {
           const quizContent = block.content || DEMO_QUIZ_CONTENT;
-          const questions = JSON.parse(quizContent);
+          const parsed = JSON.parse(quizContent);
+          const questions = Array.isArray(parsed) ? parsed : parsed.questions;
           if (!Array.isArray(questions)) return null;
-          return <InteractiveQuiz questions={questions} isCompactView={isCompactView} />;
+          const settings = Array.isArray(parsed) ? undefined : parsed;
+          return <InteractiveQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
         } catch { return null; }
       case "video": {
         const videoSrc = block.content || DEMO_VIDEO_URL;
