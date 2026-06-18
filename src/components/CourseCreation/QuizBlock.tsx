@@ -78,7 +78,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "hide_all" };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
@@ -92,7 +92,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "hide_all" };
+    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all" };
   };
 
   const initial = parseContent(content);
