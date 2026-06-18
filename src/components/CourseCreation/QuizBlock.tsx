@@ -86,7 +86,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           failNavigationPage: typeof parsed.failNavigationPage === "string" ? parsed.failNavigationPage : "",
           requireCorrect: typeof parsed.requireCorrect === "boolean" ? parsed.requireCorrect : false,
           retries: typeof parsed.retries === "string" ? parsed.retries : "unlimited",
-          revealAnswers: typeof parsed.revealAnswers === "string" ? parsed.revealAnswers : "hide_all",
+          revealAnswers: typeof parsed.revealAnswers === "string" ? parsed.revealAnswers : "reveal_all",
         };
       }
     } catch {
