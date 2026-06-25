@@ -1,79 +1,111 @@
+# Plan: Publish "Copy From" Feature Documentation to Confluence
 
-## Goal
+Use the connected **Atlassian MCP** to create a new Confluence page documenting the Copy From / Copy Content feature based on the actual implementation in the codebase. No code changes — this is a documentation-publishing task only.
 
-Produce a single, portable **Corporate Design System** document derived from this application's actual tokens, typography, components, and accessibility rules — packaged so you can drop it into any other React + Tailwind + shadcn project (or hand it to a designer/dev for a non-React stack).
+## Steps
 
-## Deliverables
+1. **Discover Confluence target**
+   - `getAccessibleAtlassianResources` → resolve `cloudId`.
+   - `getConfluenceSpaces` → pick the most appropriate space (prefer a Product / Documentation / Engineering space). If multiple plausible, default to the first writable space and note it in the page footer.
 
-1. **`docs/design-system/README.md`** — Human-readable design system spec (the main doc you can share). Includes:
-   - Design principles & corporate tone
-   - Color tokens (light + dark) with HSL + hex + usage
-   - Typography scale (Nunito Sans, heading rhythm, floors)
-   - Spacing, radius, elevation, motion tokens
-   - Component patterns (buttons, inputs, cards, dialogs, tabs, toasts, scrollbars, sidebars)
-   - Accessibility rules (WCAG 2.2 AA implementation)
-   - Do / Don't examples
+2. **Create the page** via `createConfluencePage`
+   - Title: **"Copy From — Feature Documentation (Course Builder)"**
+   - Status: `current`
+   - Body in Confluence storage format (XHTML) with the structure below.
 
-2. **`docs/design-system/tokens/index.css`** — Drop-in CSS with all `:root` and `.dark` variables, base layer, typography floors, scrollbar utilities, focus ring, skip-link, aurora background.
+3. **Confirm** back to the user with the new page URL and ID.
 
-3. **`docs/design-system/tokens/tailwind.config.ts`** — Matching Tailwind config (semantic color mapping, fontFamily, borderRadius, keyframes, animations).
+## Page Outline (Deep Technical)
 
-4. **`docs/design-system/tokens/tokens.json`** — Framework-agnostic token export (Style Dictionary / Figma Tokens compatible) so it can be imported into Figma, iOS, Android, or other web stacks.
+1. **Overview** — What Copy From does: lets authors reuse existing course content (sections, pages, blocks) from My Courses or Shared Courses into the course they are editing. Two complementary surfaces:
+   - **Copy Content dialog** (pull) — inside the editor, opened from the outline toolbar.
+   - **Copy to Course dialog** (push) — from a section/page row's menu, sends that item into another course.
 
-5. **`docs/design-system/COMPONENTS.md`** — Concrete recipes for the recurring patterns in this app: primary/secondary/ghost buttons, form field with label, status badges (success/warning/destructive/info), card surfaces, dialog shell, glass/aurora hero, sidebar shell.
+2. **User Flows**
+   - **Pull flow (Copy Content)**: open dialog → choose **My Courses / Shared Courses** → pick source course (combobox) → choose **Sections** or **Pages** mode → Continue → Review step with live preview, toggle pages, switch active section → Copy.
+   - **Push flow (Copy to)**: from a section/page card menu → pick destination course → (for pages) pick destination section → Copy.
+   - Outcome: destination course's outline updates in real time via a `course-copy-updated` event.
 
-## What the system captures (from this app)
+3. **UI Surfaces & Entry Points**
+   - `MultiPageCourseCreator` toolbar → "Copy Content" button (`showCopyContentDialog`).
+   - `SectionCard` (multipage & singlepage variants) → "Copy section to…".
+   - `PageItemCard` → "Copy page to…".
 
-**Brand & tone** — Corporate, minimal, glassmorphic, rounded; trust-first; subtle motion; strict WCAG 2.2 AA.
+4. **Components**
+   | Component | File | Responsibility |
+   |---|---|---|
+   | `CopyContentDialog` | `src/components/CourseCreation/CopyContentDialog.tsx` | 2-step (config → review) pull dialog with live preview, section/pages mode. |
+   | `CopyToCourseDialog` | `src/components/CourseCreation/CopyToCourseDialog.tsx` | Push dialog: choose destination course (+ section for pages). |
+   | `MultiPageCourseCreator` | `src/components/CourseCreation/MultiPageCourseCreator.tsx` | Hosts Copy Content dialog and consumes `onSelect` payload. |
+   | `SectionCard`, `PageItemCard` | `src/components/CourseCreation/` | Trigger CopyToCourseDialog with `mode`, `itemTitle`, payload. |
 
-**Color palette (light)**
-- background `210 40% 98%`, foreground `222 47% 11%`
-- primary `211 100% 44%` (#0073E6 family), primary-hover, primary-glow
-- semantic: success `142 71% 45%`, warning `38 92% 50%`, destructive `0 84% 60%`, info `211 100% 48%`
-- surfaces: card, popover, muted, accent, border, input, ring
-- sidebar palette (separate scale)
+5. **State & Data Model** (`src/services/courseCopyStore.ts`)
+   - `STORAGE_KEY = "course-copy-store-v1"` in `localStorage`.
+   - `EVENT_NAME = "course-copy-updated"` for cross-component reactivity.
+   - Types: `CopiedPageBlock`, `CopiedPage`, `CopiedSection`, `CourseCopyData { pagesBySection, sections }`.
+   - APIs: `getCourseCopies`, `addCopiedPage`, `addCopiedSection`, `subscribeCourseCopies` (listens to both custom event and cross-tab `storage` event, filtered by key).
+   - Destination outlines merge copies via `buildMockRestoreState` so copied sections become valid copy targets themselves.
 
-**Color palette (dark)** — full parallel set already defined in `index.css`.
+6. **CopyContentDialog Internals**
+   - `SourceType = "my" | "shared"`, `Step = "config" | "review"`, `mode = "sections" | "pages"`.
+   - Selection state: `course`, `selectedSectionId`, `selectedPageIds`, `previewPageId`.
+   - `handleContinue` seeds defaults: sections mode → first section + all its pages (overview preview); pages mode → first 2 root pages.
+   - `togglePage` keeps `previewPageId` valid (falls back to overview in section mode, first page in pages mode).
+   - Review pane renders preview blocks (`heading|paragraph|list|callout|image|video|audio|doc|quiz`).
+   - `onSelect` payload: `{ course, mode, sourceType, selectedSectionId?, selectedPageIds }`.
 
-**Typography**
-- Family: Nunito Sans (sans), font-feature-settings `ss01, cv11`
-- 16px base, line-height 1.55
-- Heading rhythm: H1 clamp 1.625→2rem / 700, H2 clamp 1.375→1.625rem / 700, H3 1.25rem / 600, H4 1.0625rem / 600
-- Tiny-text floor: text-xs → 13px, text-sm → 15px (WCAG-friendly)
-- Inputs floored to 14px (prevents iOS zoom)
+7. **CopyToCourseDialog Internals**
+   - Props: `mode: "page" | "section"`, `itemTitle`, `pagePayload?`, `sectionPayload?`.
+   - Reads destination list from `mockCourseData`; merges with `buildMockRestoreState` so previously copied sections appear as targets.
+   - Section mode requires only `courseId`; page mode requires `courseId` + `sectionId`.
+   - On confirm: dispatches `addCopiedPage` or `addCopiedSection`, then toasts confirmation.
 
-**Radius & elevation**
-- `--radius: 0.75rem` with sm/md/lg derivatives
-- Shadows: `--shadow-subtle`, `--shadow-card`
-- Transition: `--transition-smooth: all 0.2s ease`
+8. **Data Flow Diagram**
 
-**Motion**
-- Keyframes: accordion, shimmer, fade-in, slide-in, scale-in, float, wiggle, pulseGlow, sparkle (spin/float/orbit), aurora drift, comment-anchor flash, flash-highlight
-- Reduced-motion respected via `prefers-reduced-motion`
+```text
+   Source Course               CopyContentDialog / CopyToCourseDialog
+   ─────────────               ──────────────────────────────────────
+   mockCourseData ──► buildMockCourse ──► review/preview
+                                    │
+                                    ▼
+                       addCopiedPage / addCopiedSection
+                                    │
+                                    ▼
+                       localStorage("course-copy-store-v1")
+                                    │
+                            dispatch CustomEvent
+                                    │
+                                    ▼
+                      subscribeCourseCopies → outline re-render
+                                    │
+                                    ▼
+                      buildMockRestoreState merges copies
+                                    │
+                                    ▼
+                          Destination Course Outline
+```
 
-**Accessibility (project rule set)**
-- Single H1 per page, no heading-level skipping
-- `:focus-visible` 2px ring, 2px offset
-- Skip-to-main link
-- Icon-only buttons require `aria-label`
-- Decorative icons: `aria-hidden="true" focusable="false"`
-- All form controls labelled
-- 4.5:1 text contrast; semantic tokens only — no `text-white`/`bg-black`/opacity-modified text
-- Dialog must include `DialogDescription`
-- Prose containers use `overflow-wrap: anywhere` and `word-break: break-word`
+9. **Accessibility**
+   - All triggers are `<button>` with `aria-label`s; icons are `aria-hidden="true" focusable="false"`.
+   - Dialogs include `DialogDescription` (visible or `sr-only`).
+   - Radio cards expose `role="radio"` + `aria-checked`; combobox uses `role="combobox"` + `aria-expanded`.
+   - Selects have associated `<label htmlFor>` and `aria-label` on `SelectTrigger`.
 
-**Utilities**
-- `.thin-scrollbar`, `.pretty-scrollbar`, `.aurora-bg`, `.comment-anchor-flash`, page fade transitions
+10. **Edge Cases & Behaviors**
+    - Closing the dialog calls `resetAll()` — selection is not persisted between opens.
+    - Storage event handler filters by `STORAGE_KEY` to prevent spurious editor preview re-mounts.
+    - Copied page/section IDs are regenerated (`copied-page-…`, `copied-sec-…`) to avoid collisions on destination.
+    - Section mode (push) ignores `sectionId`; page mode disables the section select until a course is picked.
+    - Mock-only persistence today — `courseCopyStore` is `localStorage` based; production replacement should swap the store implementation while keeping the same API.
 
-## Technical notes
+11. **Developer Notes / Extension Points**
+    - To wire to a real backend: replace `addCopiedPage`/`addCopiedSection` with API calls; keep `subscribeCourseCopies` semantics so consumers don't change.
+    - To support cross-org Shared Courses: extend `SourceType` and the `MY_COURSES`/`SHARED_COURSES` mock loaders inside `CopyContentDialog`.
+    - To enable block-level copy: `CopiedPage.blocks` is already in the schema; surface a block picker in the review step.
 
-- All color values stay in **HSL channels** (no `hsl()` wrapper in the token) so Tailwind can compose them with opacity modifiers (`bg-primary/20`).
-- Tokens are defined once in `:root` + `.dark`; components consume only semantic names (`bg-card`, `text-foreground`, `border-border`). No hex in component code.
-- The Tailwind config maps semantic tokens 1:1 to color utilities so downstream apps can use `bg-primary`, `text-muted-foreground`, etc. without changes.
-- `tokens.json` mirrors the same names in a Style-Dictionary-style nested structure (`color.brand.primary.default`, `color.semantic.success`, `radius.lg`, `font.family.sans`, etc.) so non-Tailwind stacks can adopt it.
-- The doc explicitly calls out **Corporate adaptation guidance**: how to reskin the primary hue (single HSL edit), how to tighten radius for more conservative industries, how to swap Nunito Sans for an alternative (e.g., Inter, IBM Plex Sans) while keeping the scale.
+12. **Glossary** — Outline, Section, Page, Block, Destination, Source, Pull vs Push.
 
-## Out of scope
+13. **References (Source)** — file paths listed in section 4 with line anchors for `CopyContentDialog.tsx` (≈1651 lines), `CopyToCourseDialog.tsx`, `courseCopyStore.ts`, plus consumers in `MultiPageCourseCreator.tsx`, `SectionCard.tsx`, `PageItemCard.tsx`.
 
-- Generating Figma libraries (doc will be Figma-Tokens compatible but no plugin push).
-- Rewriting any existing app components — this is a documentation + tokens package only, no behavioral changes.
+## Deliverable
+A single Confluence page (new) containing the above, formatted with headings, tables, a code/ASCII data-flow block, and an info panel for the "mock persistence today" caveat. The chat reply will include the new page URL.
