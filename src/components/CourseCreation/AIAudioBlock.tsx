@@ -41,6 +41,19 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 
+import ariaImg from "@/assets/voices/aria.jpg";
+import sarahImg from "@/assets/voices/sarah.jpg";
+import georgeImg from "@/assets/voices/george.jpg";
+import liamImg from "@/assets/voices/liam.jpg";
+import matildaImg from "@/assets/voices/matilda.jpg";
+import brianImg from "@/assets/voices/brian.jpg";
+import lilyImg from "@/assets/voices/lily.jpg";
+import danielImg from "@/assets/voices/daniel.jpg";
+import charlotteImg from "@/assets/voices/charlotte.jpg";
+import ethanImg from "@/assets/voices/ethan.jpg";
+import sofiaImg from "@/assets/voices/sofia.jpg";
+import hugoImg from "@/assets/voices/hugo.jpg";
+
 // ---------- Voice Library ----------
 
 interface VoiceOption {
@@ -52,21 +65,22 @@ interface VoiceOption {
   category: string;
   accent: string;
   gradient: string;
+  image: string;
 }
 
 const VOICE_LIBRARY: VoiceOption[] = [
-  { id: "aria", name: "Aria", language: "English (US)", gender: "Female", age: "Adult", category: "Narration", accent: "American", gradient: "from-rose-400 to-pink-500" },
-  { id: "sarah", name: "Sarah", language: "English (US)", gender: "Female", age: "Young", category: "Conversational", accent: "American", gradient: "from-fuchsia-400 to-purple-500" },
-  { id: "george", name: "George", language: "English (UK)", gender: "Male", age: "Adult", category: "Narration", accent: "British", gradient: "from-sky-400 to-blue-500" },
-  { id: "liam", name: "Liam", language: "English (US)", gender: "Male", age: "Young", category: "Conversational", accent: "American", gradient: "from-emerald-400 to-teal-500" },
-  { id: "matilda", name: "Matilda", language: "English (AU)", gender: "Female", age: "Adult", category: "Documentary", accent: "Australian", gradient: "from-amber-400 to-orange-500" },
-  { id: "brian", name: "Brian", language: "English (US)", gender: "Male", age: "Senior", category: "Corporate", accent: "American", gradient: "from-indigo-400 to-violet-500" },
-  { id: "lily", name: "Lily", language: "English (UK)", gender: "Female", age: "Young", category: "E-learning", accent: "British", gradient: "from-pink-400 to-rose-500" },
-  { id: "daniel", name: "Daniel", language: "English (UK)", gender: "Male", age: "Adult", category: "Narration", accent: "British", gradient: "from-cyan-400 to-sky-500" },
-  { id: "charlotte", name: "Charlotte", language: "English (US)", gender: "Female", age: "Adult", category: "E-learning", accent: "American", gradient: "from-violet-400 to-fuchsia-500" },
-  { id: "ethan", name: "Ethan", language: "English (US)", gender: "Male", age: "Young", category: "Casual", accent: "American", gradient: "from-teal-400 to-emerald-500" },
-  { id: "sofia", name: "Sofia", language: "Spanish (ES)", gender: "Female", age: "Adult", category: "Narration", accent: "Castilian", gradient: "from-orange-400 to-red-500" },
-  { id: "hugo", name: "Hugo", language: "French (FR)", gender: "Male", age: "Adult", category: "Documentary", accent: "Parisian", gradient: "from-blue-400 to-indigo-500" },
+  { id: "aria", name: "Aria", language: "English (US)", gender: "Female", age: "Adult", category: "Narration", accent: "American", gradient: "from-rose-400 to-pink-500", image: ariaImg },
+  { id: "sarah", name: "Sarah", language: "English (US)", gender: "Female", age: "Young", category: "Conversational", accent: "American", gradient: "from-fuchsia-400 to-purple-500", image: sarahImg },
+  { id: "george", name: "George", language: "English (UK)", gender: "Male", age: "Adult", category: "Narration", accent: "British", gradient: "from-sky-400 to-blue-500", image: georgeImg },
+  { id: "liam", name: "Liam", language: "English (US)", gender: "Male", age: "Young", category: "Conversational", accent: "American", gradient: "from-emerald-400 to-teal-500", image: liamImg },
+  { id: "matilda", name: "Matilda", language: "English (AU)", gender: "Female", age: "Adult", category: "Documentary", accent: "Australian", gradient: "from-amber-400 to-orange-500", image: matildaImg },
+  { id: "brian", name: "Brian", language: "English (US)", gender: "Male", age: "Senior", category: "Corporate", accent: "American", gradient: "from-indigo-400 to-violet-500", image: brianImg },
+  { id: "lily", name: "Lily", language: "English (UK)", gender: "Female", age: "Young", category: "E-learning", accent: "British", gradient: "from-pink-400 to-rose-500", image: lilyImg },
+  { id: "daniel", name: "Daniel", language: "English (UK)", gender: "Male", age: "Adult", category: "Narration", accent: "British", gradient: "from-cyan-400 to-sky-500", image: danielImg },
+  { id: "charlotte", name: "Charlotte", language: "English (US)", gender: "Female", age: "Adult", category: "E-learning", accent: "American", gradient: "from-violet-400 to-fuchsia-500", image: charlotteImg },
+  { id: "ethan", name: "Ethan", language: "English (US)", gender: "Male", age: "Young", category: "Casual", accent: "American", gradient: "from-teal-400 to-emerald-500", image: ethanImg },
+  { id: "sofia", name: "Sofia", language: "Spanish (ES)", gender: "Female", age: "Adult", category: "Narration", accent: "Castilian", gradient: "from-orange-400 to-red-500", image: sofiaImg },
+  { id: "hugo", name: "Hugo", language: "French (FR)", gender: "Male", age: "Adult", category: "Documentary", accent: "Parisian", gradient: "from-blue-400 to-indigo-500", image: hugoImg },
 ];
 
 const DEFAULT_VOICE_ID = "aria";
@@ -616,20 +630,26 @@ function VoiceLibraryDialog({
                     >
                       {/* Top row: avatar + info */}
                       <div className="flex items-start gap-3 p-4">
-                        {/* Gradient avatar with play overlay */}
+                        {/* Circular portrait avatar with play overlay */}
                         <button
                           onClick={() => togglePreview(v.id)}
                           className={cn(
-                            "relative w-14 h-14 rounded-2xl bg-gradient-to-br flex-shrink-0 shadow-sm overflow-hidden group/play",
+                            "relative w-14 h-14 rounded-full flex-shrink-0 shadow-sm overflow-hidden group/play ring-2 ring-background",
+                            "bg-gradient-to-br",
                             v.gradient
                           )}
                           aria-label={isPreviewing ? `Stop sample of ${v.name}` : `Play sample of ${v.name}`}
                         >
-                          <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-semibold group-hover/play:opacity-0 transition-opacity">
-                            {isPreviewing ? "" : v.name.slice(0, 1)}
-                          </span>
+                          <img
+                            src={v.image}
+                            alt={`${v.name} portrait`}
+                            width={56}
+                            height={56}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
                           <span className={cn(
-                            "absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-[1px] transition-opacity",
+                            "absolute inset-0 flex items-center justify-center bg-black/45 backdrop-blur-[1px] transition-opacity",
                             isPreviewing ? "opacity-100" : "opacity-0 group-hover/play:opacity-100"
                           )}>
                             {isPreviewing ? (
