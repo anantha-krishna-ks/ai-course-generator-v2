@@ -739,20 +739,22 @@ function VoiceLibraryDialog({
 }
 
 function WaveformStrip({ active, progress }: { active: boolean; progress: number }) {
-  // Organic-looking pseudo waveform; the played portion glows with the primary color.
-  const bars = 56;
-  // Smooth sine-based heights for a more natural waveform silhouette.
+  // Voice-message style waveform: thin, symmetric bars centered on the midline.
+  const bars = 64;
   const heights = Array.from({ length: bars }, (_, i) => {
     const t = i / bars;
-    const wave =
-      Math.sin(t * Math.PI * 6) * 0.35 +
-      Math.sin(t * Math.PI * 13 + 1.3) * 0.25 +
-      Math.sin(t * Math.PI * 3 + 0.6) * 0.4;
-    return 32 + Math.abs(wave) * 60; // 32% – ~92%
+    // Envelope tapers at both ends, fuller in the middle — like a real voice note.
+    const envelope = Math.sin(t * Math.PI);
+    const detail =
+      Math.sin(t * Math.PI * 9) * 0.35 +
+      Math.sin(t * Math.PI * 17 + 1.7) * 0.25 +
+      Math.sin(t * Math.PI * 4 + 0.4) * 0.4;
+    const h = (0.25 + Math.abs(detail) * 0.75) * (0.5 + envelope * 0.5);
+    return Math.max(0.14, Math.min(1, h));
   });
 
   return (
-    <div className="relative flex items-center gap-[2px] w-full h-full" aria-hidden="true">
+    <div className="relative flex items-center justify-between w-full h-full gap-[2px]" aria-hidden="true">
       {heights.map((h, i) => {
         const played = i / bars <= progress;
         return (
@@ -761,14 +763,14 @@ function WaveformStrip({ active, progress }: { active: boolean; progress: number
             className={cn(
               "flex-1 rounded-full transition-all duration-300 ease-out",
               active && played
-                ? "bg-gradient-to-b from-primary to-primary/70 shadow-[0_0_4px_hsl(var(--primary)/0.6)]"
+                ? "bg-primary"
                 : active
                   ? "bg-foreground/25"
-                  : "bg-foreground/20"
+                  : "bg-foreground/30"
             )}
             style={{
-              height: `${active && played ? Math.min(100, h + 6) : h}%`,
-              animation: active && !played ? `waveform-idle 1.4s ease-in-out ${i * 40}ms infinite` : undefined,
+              height: `${h * 100}%`,
+              animation: active && !played ? `waveform-idle 1.4s ease-in-out ${i * 30}ms infinite` : undefined,
               transformOrigin: "center",
             }}
           />
@@ -776,7 +778,7 @@ function WaveformStrip({ active, progress }: { active: boolean; progress: number
       })}
       <style>{`
         @keyframes waveform-idle {
-          0%, 100% { transform: scaleY(0.85); opacity: 0.7; }
+          0%, 100% { transform: scaleY(0.9); opacity: 0.75; }
           50% { transform: scaleY(1.05); opacity: 1; }
         }
       `}</style>
