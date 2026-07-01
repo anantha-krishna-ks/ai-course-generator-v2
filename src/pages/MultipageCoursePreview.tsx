@@ -513,6 +513,11 @@ const MultipageCoursePreview = () => {
       case "text": {
         const content = block.content || "";
 
+        if (isLayoutUtilityVariant(block.variant)) {
+          return <LayoutUtilityBlock variant={block.variant} content={content} onChange={() => {}} readOnly onContinueClick={goToNext} />;
+        }
+
+
         // Accordion variant (currently stored as a text block) renders as a collapsible panel
         if (block.variant === "accordion") {
           return <AccordionPreview content={content} />;
