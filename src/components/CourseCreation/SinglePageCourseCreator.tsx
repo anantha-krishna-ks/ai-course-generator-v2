@@ -389,6 +389,15 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     if (type === "video-description") {
       return JSON.stringify({ layout: variant === "video-right" ? "video-right" : "video-left", videoUrl: "", description: "" });
     }
+    if (type === "text" && variant && ["divider-line", "divider-numbered", "spacer", "continue-button"].includes(variant)) {
+      const defaults: Record<string, string> = {
+        "divider-line": JSON.stringify({ style: "solid" }),
+        "divider-numbered": JSON.stringify({ number: 1, label: "" }),
+        "spacer": JSON.stringify({ height: 40 }),
+        "continue-button": JSON.stringify({ label: "Continue" }),
+      };
+      return defaults[variant];
+    }
     if (type !== "text") return "";
     switch (variant) {
       case "heading-text": return "<h2>Heading</h2><p>Employee-generated Learning empowers experts to create learning content.</p>";
