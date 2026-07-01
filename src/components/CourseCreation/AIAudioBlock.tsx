@@ -684,16 +684,8 @@ function VoiceLibraryDialog({
 
                       {/* Waveform strip */}
                       <div className="px-4 pb-3">
-                        <div className="relative h-10 rounded-xl bg-gradient-to-b from-muted/40 to-muted/70 border border-border/50 flex items-center px-3 overflow-hidden shadow-inner">
-                          {/* subtle grid line */}
-                          <div className="absolute inset-x-3 top-1/2 -translate-y-px h-px bg-border/60 pointer-events-none" />
+                        <div className="relative h-12 flex items-center px-1">
                           <WaveformStrip active={isPreviewing} progress={isPreviewing ? progress : 0} />
-                          {isPreviewing && (
-                            <span
-                              className="absolute top-1 bottom-1 w-[2px] rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))] pointer-events-none transition-[left] duration-75"
-                              style={{ left: `calc(12px + (100% - 24px) * ${progress})` }}
-                            />
-                          )}
                         </div>
                       </div>
 
