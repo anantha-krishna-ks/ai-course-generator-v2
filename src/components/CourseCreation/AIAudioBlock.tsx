@@ -456,18 +456,18 @@ interface VoiceLibraryDialogProps {
   onOpenChange: (open: boolean) => void;
   voices: VoiceOption[];
   currentVoiceId: string;
-  favourites: string[];
-  onToggleFavourite: (id: string) => void;
+  favourites: string[]; // kept for API compatibility, unused
+  onToggleFavourite: (id: string) => void; // kept for API compatibility, unused
   onSelect: (id: string) => void;
 }
+
+const PREVIEW_DURATION_MS = 2600;
 
 function VoiceLibraryDialog({
   open,
   onOpenChange,
   voices,
   currentVoiceId,
-  favourites,
-  onToggleFavourite,
   onSelect,
 }: VoiceLibraryDialogProps) {
   const [search, setSearch] = useState("");
@@ -475,13 +475,26 @@ function VoiceLibraryDialog({
   const [genderFilter, setGenderFilter] = useState<string>("all");
   const [ageFilter, setAgeFilter] = useState<string>("all");
   const [previewingId, setPreviewingId] = useState<string | null>(null);
-  const [previewingTimer, setPreviewingTimer] = useState<number | null>(null);
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number>(0);
+
+  const stopPreview = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    setPreviewingId(null);
+    setProgress(0);
+  };
 
   useEffect(() => {
     return () => {
-      if (previewingTimer) window.clearTimeout(previewingTimer);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [previewingTimer]);
+  }, []);
+
+  useEffect(() => {
+    if (!open) stopPreview();
+  }, [open]);
 
   const languages = useMemo(
     () => Array.from(new Set(voices.map((v) => v.language))),
@@ -489,7 +502,7 @@ function VoiceLibraryDialog({
   );
 
   const filtered = useMemo(() => {
-    const list = voices.filter((v) => {
+    return voices.filter((v) => {
       if (langFilter !== "all" && v.language !== langFilter) return false;
       if (genderFilter !== "all" && v.gender !== genderFilter) return false;
       if (ageFilter !== "all" && v.age !== ageFilter) return false;
@@ -504,48 +517,51 @@ function VoiceLibraryDialog({
       }
       return true;
     });
-    // Favourites first
-    return list.sort((a, b) => {
-      const af = favourites.includes(a.id) ? 0 : 1;
-      const bf = favourites.includes(b.id) ? 0 : 1;
-      return af - bf;
-    });
-  }, [voices, langFilter, genderFilter, ageFilter, search, favourites]);
+  }, [voices, langFilter, genderFilter, ageFilter, search]);
 
   const togglePreview = (id: string) => {
-    if (previewingTimer) window.clearTimeout(previewingTimer);
     if (previewingId === id) {
-      setPreviewingId(null);
+      stopPreview();
       return;
     }
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     setPreviewingId(id);
-    // Simulated 2s sample playback
-    const t = window.setTimeout(() => setPreviewingId(null), 2000);
-    setPreviewingTimer(t);
+    setProgress(0);
+    startRef.current = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - startRef.current) / PREVIEW_DURATION_MS);
+      setProgress(p);
+      if (p < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        stopPreview();
+      }
+    };
+    rafRef.current = requestAnimationFrame(tick);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl p-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/50">
-          <DialogTitle className="flex items-center gap-2">
-            <Volume2 className="w-5 h-5 text-primary" />
+      <DialogContent className="max-w-2xl p-0 overflow-hidden gap-0">
+        <DialogHeader className="px-6 pt-6 pb-4">
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <Volume2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
             Voice Library
           </DialogTitle>
-          <DialogDescription>
-            Preview and choose from {voices.length}+ AI voices. Save favourites for quick access.
+          <DialogDescription className="text-xs">
+            Tap any voice to hear a sample. Pick the one that fits your course.
           </DialogDescription>
         </DialogHeader>
 
         {/* Filters */}
-        <div className="px-6 py-3 border-b border-border/50 bg-muted/20 space-y-2.5">
+        <div className="px-6 pb-3 space-y-2.5">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, style, or accent…"
-              className="pl-9 h-9"
+              className="pl-9 h-9 rounded-full bg-muted/40 border-transparent focus-visible:bg-background focus-visible:border-input"
               aria-label="Search voices"
             />
           </div>
@@ -569,90 +585,132 @@ function VoiceLibraryDialog({
           </div>
         </div>
 
-        {/* Voice grid */}
-        <ScrollArea className="max-h-[420px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-4">
-            {filtered.length === 0 && (
-              <p className="col-span-full text-center text-sm text-muted-foreground py-10">
-                No voices match those filters.
-              </p>
-            )}
-            {filtered.map((v) => {
-              const isFav = favourites.includes(v.id);
-              const isCurrent = v.id === currentVoiceId;
-              const isPreviewing = previewingId === v.id;
-              return (
-                <div
-                  key={v.id}
-                  className={cn(
-                    "group relative rounded-xl border p-3 transition-all bg-background",
-                    isCurrent
-                      ? "border-primary/50 ring-2 ring-primary/20 shadow-sm"
-                      : "border-border/60 hover:border-primary/30 hover:shadow-sm"
-                  )}
-                >
-                  <div className="flex items-center gap-3">
+        {/* Voice list */}
+        <div className="border-t border-border/60">
+          <ScrollArea className="max-h-[440px]">
+            <ul className="divide-y divide-border/50">
+              {filtered.length === 0 && (
+                <li className="text-center text-sm text-muted-foreground py-12">
+                  No voices match those filters.
+                </li>
+              )}
+              {filtered.map((v) => {
+                const isCurrent = v.id === currentVoiceId;
+                const isPreviewing = previewingId === v.id;
+                return (
+                  <li
+                    key={v.id}
+                    className={cn(
+                      "group relative flex items-center gap-3 px-6 py-3 transition-colors",
+                      isCurrent ? "bg-primary/5" : "hover:bg-muted/40"
+                    )}
+                  >
+                    {/* Play sample */}
                     <button
                       onClick={() => togglePreview(v.id)}
                       className={cn(
-                        "relative w-11 h-11 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-sm font-semibold shadow-sm flex-shrink-0 group/avatar",
-                        v.gradient
+                        "relative w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all",
+                        isPreviewing
+                          ? "bg-primary text-primary-foreground shadow-md scale-105"
+                          : "bg-muted text-foreground hover:bg-primary/10 hover:text-primary"
                       )}
-                      aria-label={`Preview ${v.name}`}
+                      aria-label={isPreviewing ? `Stop sample of ${v.name}` : `Play sample of ${v.name}`}
                     >
-                      <span className={cn("transition-opacity", isPreviewing ? "opacity-0" : "opacity-100 group-hover/avatar:opacity-0")}>
-                        {v.name.slice(0, 1)}
-                      </span>
-                      <span className={cn("absolute inset-0 flex items-center justify-center transition-opacity", isPreviewing ? "opacity-100" : "opacity-0 group-hover/avatar:opacity-100")}>
-                        {isPreviewing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-                      </span>
+                      {isPreviewing ? (
+                        <Pause className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      ) : (
+                        <Play className="w-4 h-4 ml-0.5" aria-hidden="true" focusable="false" />
+                      )}
                       {isPreviewing && (
-                        <span className="absolute -inset-1 rounded-full border-2 border-white/40 animate-ping" />
+                        <svg
+                          className="absolute inset-0 -rotate-90"
+                          viewBox="0 0 40 40"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <circle
+                            cx="20"
+                            cy="20"
+                            r="18"
+                            fill="none"
+                            stroke="hsl(var(--primary))"
+                            strokeOpacity="0.25"
+                            strokeWidth="2"
+                          />
+                          <circle
+                            cx="20"
+                            cy="20"
+                            r="18"
+                            fill="none"
+                            stroke="hsl(var(--primary))"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeDasharray={2 * Math.PI * 18}
+                            strokeDashoffset={2 * Math.PI * 18 * (1 - progress)}
+                          />
+                        </svg>
                       )}
                     </button>
+
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-foreground truncate">{v.name}</p>
-                        {isCurrent && (
-                          <Badge variant="secondary" className="text-[9px] h-4 px-1.5 bg-primary/10 text-primary border border-primary/20">
-                            Selected
-                          </Badge>
-                        )}
+                        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                          {v.gender} • {v.age}
+                        </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground truncate">
-                        {v.language} • {v.gender} • {v.age}
+                        {v.language} • {v.category} • {v.accent}
                       </p>
-                      <p className="text-[10px] text-muted-foreground/80 truncate">{v.category} • {v.accent}</p>
+                      {isPreviewing && <WaveformBars />}
                     </div>
-                    <button
-                      onClick={() => onToggleFavourite(v.id)}
-                      className="p-1.5 rounded-md text-muted-foreground hover:bg-muted transition-colors"
-                      aria-label={isFav ? `Unfavourite ${v.name}` : `Favourite ${v.name}`}
-                    >
-                      <Heart className={cn("w-4 h-4 transition-colors", isFav ? "text-rose-500 fill-rose-500" : "text-muted-foreground")} />
-                    </button>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant={isCurrent ? "secondary" : "default"}
-                    onClick={() => onSelect(v.id)}
-                    className="w-full mt-3 h-8 text-xs gap-1.5"
-                  >
+
+                    {/* Action */}
                     {isCurrent ? (
-                      <>
-                        <Check className="w-3.5 h-3.5" /> In use
-                      </>
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-primary px-2.5 py-1 rounded-full bg-primary/10">
+                        <Check className="w-3 h-3" aria-hidden="true" focusable="false" /> Selected
+                      </span>
                     ) : (
-                      "Use this voice"
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          onSelect(v.id);
+                          stopPreview();
+                        }}
+                        className="h-8 px-3 text-xs opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
+                      >
+                        Use voice
+                      </Button>
                     )}
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
-        </ScrollArea>
+                  </li>
+                );
+              })}
+            </ul>
+          </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function WaveformBars() {
+  // Purely decorative animated bars while a sample is "playing"
+  return (
+    <div className="flex items-end gap-[2px] h-3 mt-1.5" aria-hidden="true">
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
+        <span
+          key={i}
+          className="w-[2px] bg-primary/70 rounded-full animate-pulse"
+          style={{
+            height: `${30 + ((i * 37) % 70)}%`,
+            animationDelay: `${i * 80}ms`,
+            animationDuration: "900ms",
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -666,7 +724,7 @@ interface FilterSelectProps {
 function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="h-8 text-xs w-auto min-w-[130px] gap-1.5 bg-background" aria-label={label}>
+      <SelectTrigger className="h-8 text-xs w-auto min-w-[130px] gap-1.5 rounded-full bg-muted/40 border-transparent" aria-label={label}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -679,3 +737,4 @@ function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
     </Select>
   );
 }
+
