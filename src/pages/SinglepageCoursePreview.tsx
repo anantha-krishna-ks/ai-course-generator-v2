@@ -25,6 +25,7 @@ interface PageContentBlock {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "flashcards";
   content: string;
+  variant?: string;
 }
 
 interface ContentBlockData {
