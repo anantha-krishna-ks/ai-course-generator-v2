@@ -90,6 +90,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
+  { id: "audio-ai", label: "AI Audio", icon: Sparkles, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "ai-audio", description: "Generate lifelike voiceover narration from a typed script — pick a voice from the AI library" },
   // DOCUMENT
   { id: "doc-upload", label: "Document", icon: FileText, category: "doc", categoryLabel: "DOCUMENT", type: "doc", variant: "doc-upload", description: "Upload a PDF document" },
   // ASSESSMENT
