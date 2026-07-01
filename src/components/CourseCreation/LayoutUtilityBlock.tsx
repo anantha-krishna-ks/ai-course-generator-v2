@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Settings2, Move } from "lucide-react";
+import { ArrowRight, Settings2, MoveVertical } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -65,62 +64,95 @@ export function LayoutUtilityBlock({ variant, content, onChange, readOnly, onCon
   }
 }
 
-/* ---------- Simple Line ---------- */
+/* ---------- Simple Line ----------
+ * Elegant hairline with an optional center ornament. On hover, a discreet
+ * settings pill fades in over the line center.
+ */
+
+type LineStyle = "solid" | "dashed" | "dotted" | "double" | "ornament";
 
 function DividerLine({ content, onChange, readOnly }: Omit<Props, "variant" | "onContinueClick">) {
-  const data = safeParse(content, { style: "solid" as "solid" | "dashed" | "dotted" });
+  const data = safeParse(content, { style: "solid" as LineStyle });
   const set = (patch: Partial<typeof data>) => onChange(JSON.stringify({ ...data, ...patch }));
 
-  const line = (
-    <div className="flex-1 h-0" style={{ borderTopWidth: 1, borderTopStyle: data.style, borderTopColor: "hsl(var(--border))" }} />
-  );
+  const renderLine = (style: LineStyle, className = "") => {
+    if (style === "double") {
+      return (
+        <div className={cn("flex-1 flex flex-col gap-[3px]", className)}>
+          <div className="h-px w-full bg-border" />
+          <div className="h-px w-full bg-border" />
+        </div>
+      );
+    }
+    if (style === "ornament") {
+      return (
+        <div className={cn("flex-1 flex items-center gap-2", className)}>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-border" />
+          <div className="w-1.5 h-1.5 rounded-full bg-border" aria-hidden="true" />
+          <div className="w-2.5 h-2.5 rotate-45 border border-border bg-background" aria-hidden="true" />
+          <div className="w-1.5 h-1.5 rounded-full bg-border" aria-hidden="true" />
+          <div className="flex-1 h-px bg-gradient-to-l from-transparent via-border to-border" />
+        </div>
+      );
+    }
+    return (
+      <div
+        className={cn("flex-1 h-0", className)}
+        style={{ borderTopWidth: 1, borderTopStyle: style, borderTopColor: "hsl(var(--border))" }}
+      />
+    );
+  };
 
   if (readOnly) {
-    return <div className="w-full py-3 flex items-center">{line}</div>;
+    return <div className="w-full py-4 flex items-center">{renderLine(data.style)}</div>;
   }
 
   return (
-    <div className="w-full py-2 flex items-center gap-2 group/util">
-      {line}
+    <div className="w-full py-3 relative group/util">
+      <div className="flex items-center">{renderLine(data.style)}</div>
       <Popover>
         <PopoverTrigger asChild>
           <button
-            className="opacity-0 group-hover/util:opacity-100 transition-opacity h-7 w-7 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted flex items-center justify-center shrink-0"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover/util:opacity-100 transition-all duration-200 h-7 px-2.5 rounded-full border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 hover:shadow-[0_4px_12px_-4px_hsl(var(--primary)/0.35)] flex items-center gap-1.5 text-[11px] font-medium shrink-0"
             aria-label="Line divider settings"
           >
-            <Settings2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            <Settings2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+            <span className="capitalize">{data.style}</span>
           </button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="w-56 p-3 space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">Line style</p>
-          <div className="grid grid-cols-3 gap-2">
-            {(["solid", "dashed", "dotted"] as const).map((s) => (
+        <PopoverContent align="center" className="w-64 p-3 space-y-2.5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Line style</p>
+          <div className="grid grid-cols-1 gap-1.5">
+            {(["solid", "dashed", "dotted", "double", "ornament"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => set({ style: s })}
                 className={cn(
-                  "h-9 rounded-md border text-[11px] capitalize transition-colors",
+                  "group flex items-center gap-3 px-2.5 py-2 rounded-lg border text-[12px] capitalize transition-all",
                   data.style === s
-                    ? "border-primary/50 bg-primary/10 text-primary"
-                    : "border-border hover:bg-muted text-foreground",
+                    ? "border-primary/50 bg-primary/5 text-foreground shadow-[0_1px_2px_hsl(var(--primary)/0.1)]"
+                    : "border-transparent hover:border-border hover:bg-muted/60 text-foreground",
                 )}
+                aria-pressed={data.style === s}
               >
-                <div
-                  className="w-full mt-2"
-                  style={{ borderTopWidth: 1, borderTopStyle: s, borderTopColor: "currentColor" }}
-                />
-                <span className="text-[10px] mt-1 block">{s}</span>
+                <span className="w-14 shrink-0 font-medium">{s}</span>
+                <div className="flex-1 flex items-center min-w-0">{renderLine(s)}</div>
+                {data.style === s && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                )}
               </button>
             ))}
           </div>
         </PopoverContent>
       </Popover>
-      {line}
     </div>
   );
 }
 
-/* ---------- Numbered Divider ---------- */
+/* ---------- Numbered Divider ----------
+ * Milestone marker: gradient line, ornamental dots, elevated pill with a
+ * gradient-numbered chip and inline-editable label.
+ */
 
 function DividerNumbered({ content, onChange, readOnly }: Omit<Props, "variant" | "onContinueClick">) {
   const data = safeParse(content, { number: 1, label: "" });
@@ -136,13 +168,29 @@ function DividerNumbered({ content, onChange, readOnly }: Omit<Props, "variant" 
   const commit = (patch: Partial<{ number: number; label: string }>) =>
     onChange(JSON.stringify({ ...data, ...patch }));
 
+  const sideOrnament = (dir: "l" | "r") => (
+    <div className="flex-1 flex items-center gap-2 min-w-0">
+      {dir === "r" && <div className="w-1 h-1 rounded-full bg-border shrink-0" aria-hidden="true" />}
+      <div
+        className={cn(
+          "flex-1 h-px",
+          dir === "l"
+            ? "bg-gradient-to-r from-transparent via-border/70 to-border"
+            : "bg-gradient-to-l from-transparent via-border/70 to-border",
+        )}
+      />
+      {dir === "l" && <div className="w-1 h-1 rounded-full bg-border shrink-0" aria-hidden="true" />}
+    </div>
+  );
+
   return (
-    <div className="w-full py-4 flex items-center gap-3">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent to-border" />
-      <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-border/70 bg-card shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-xs font-bold flex items-center justify-center shadow-sm shrink-0">
+    <div className="w-full py-5 flex items-center gap-3">
+      {sideOrnament("l")}
+      <div className="flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full border border-border/60 bg-card shadow-[0_2px_8px_-4px_hsl(220_43%_15%/0.12),0_1px_2px_hsl(220_43%_15%/0.04)]">
+        <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-primary via-primary to-primary/70 text-primary-foreground text-xs font-bold flex items-center justify-center shadow-[inset_0_1px_0_hsl(0_0%_100%/0.25),0_2px_6px_-2px_hsl(var(--primary)/0.55)] shrink-0">
+          <span className="absolute inset-0 rounded-full ring-1 ring-inset ring-white/15" aria-hidden="true" />
           {readOnly ? (
-            <span>{Number(num) || 1}</span>
+            <span className="relative">{Number(num) || 1}</span>
           ) : (
             <input
               type="number"
@@ -150,32 +198,35 @@ function DividerNumbered({ content, onChange, readOnly }: Omit<Props, "variant" 
               value={num}
               onChange={(e) => setNum(e.target.value)}
               onBlur={() => commit({ number: Number(num) || 1 })}
-              className="w-6 bg-transparent text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="relative w-7 bg-transparent text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="Section number"
             />
           )}
         </div>
         {readOnly ? (
           label ? (
-            <span className="text-sm font-medium text-foreground pr-1">{label}</span>
+            <span className="text-sm font-semibold text-foreground tracking-tight">{label}</span>
           ) : null
         ) : (
           <input
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             onBlur={() => commit({ label })}
-            placeholder="Add a label…"
-            className="bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground min-w-[8ch] max-w-[24ch]"
+            placeholder="Section label…"
+            className="bg-transparent outline-none text-sm font-semibold tracking-tight text-foreground placeholder:text-muted-foreground placeholder:font-normal min-w-[10ch] max-w-[26ch]"
             aria-label="Divider label"
           />
         )}
       </div>
-      <div className="flex-1 h-px bg-gradient-to-l from-transparent to-border" />
+      {sideOrnament("r")}
     </div>
   );
 }
 
-/* ---------- Spacer ---------- */
+/* ---------- Spacer ----------
+ * Ruler-style spacer with tick marks on both edges. Height chip is centered
+ * and pops on hover. Popover exposes slider + presets.
+ */
 
 function Spacer({ content, onChange, readOnly }: Omit<Props, "variant" | "onContinueClick">) {
   const data = safeParse(content, { height: 40 });
@@ -185,29 +236,41 @@ function Spacer({ content, onChange, readOnly }: Omit<Props, "variant" | "onCont
     return <div aria-hidden="true" style={{ height }} />;
   }
 
+  const tickCount = Math.max(2, Math.min(6, Math.round(height / 24)));
+
   return (
-    <div className="w-full relative group/util">
-      <div
-        style={{ height }}
-        className="w-full rounded-md border border-dashed border-border/70 bg-muted/20 group-hover/util:bg-muted/40 group-hover/util:border-primary/30 transition-colors flex items-center justify-center"
-      >
-        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70 group-hover/util:text-muted-foreground">
-          Space · {height}px
-        </span>
-      </div>
+    <div className="w-full relative group/util my-1">
       <Popover>
         <PopoverTrigger asChild>
           <button
-            className="absolute top-1 right-1 opacity-0 group-hover/util:opacity-100 transition-opacity h-7 w-7 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted flex items-center justify-center"
-            aria-label="Adjust spacing"
+            style={{ height }}
+            className="w-full rounded-lg border border-dashed border-border/60 bg-[linear-gradient(135deg,hsl(var(--muted)/0.15)_0%,hsl(var(--muted)/0.35)_100%)] hover:border-primary/40 hover:bg-[linear-gradient(135deg,hsl(var(--primary)/0.04)_0%,hsl(var(--primary)/0.08)_100%)] transition-all duration-200 flex items-center justify-between px-2 relative overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            aria-label={`Adjust spacing (currently ${height} pixels)`}
           >
-            <Move className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            {/* left ticks */}
+            <div className="flex flex-col justify-between h-full py-1.5 opacity-40 group-hover/util:opacity-80 transition-opacity">
+              {Array.from({ length: tickCount }).map((_, i) => (
+                <span key={i} className="block w-1.5 h-px bg-muted-foreground" aria-hidden="true" />
+              ))}
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background/90 backdrop-blur border border-border/70 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground group-hover/util:text-foreground group-hover/util:border-primary/40 transition-all shadow-sm">
+              <MoveVertical className="w-3 h-3" aria-hidden="true" focusable="false" />
+              {height}px
+            </span>
+            {/* right ticks */}
+            <div className="flex flex-col justify-between h-full py-1.5 opacity-40 group-hover/util:opacity-80 transition-opacity">
+              {Array.from({ length: tickCount }).map((_, i) => (
+                <span key={i} className="block w-1.5 h-px bg-muted-foreground" aria-hidden="true" />
+              ))}
+            </div>
           </button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="w-64 p-3 space-y-3">
+        <PopoverContent align="center" className="w-64 p-3 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-muted-foreground">Height</p>
-            <span className="text-xs font-semibold tabular-nums text-foreground">{height}px</span>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Spacing</p>
+            <span className="text-xs font-semibold tabular-nums text-foreground px-2 py-0.5 rounded-md bg-muted">
+              {height}px
+            </span>
           </div>
           <Slider
             value={[height]}
@@ -217,18 +280,25 @@ function Spacer({ content, onChange, readOnly }: Omit<Props, "variant" | "onCont
             onValueChange={(v) => onChange(JSON.stringify({ height: v[0] }))}
           />
           <div className="grid grid-cols-4 gap-1.5">
-            {[16, 32, 64, 120].map((preset) => (
+            {[
+              { label: "XS", value: 16 },
+              { label: "S", value: 32 },
+              { label: "M", value: 64 },
+              { label: "L", value: 120 },
+            ].map((preset) => (
               <button
-                key={preset}
-                onClick={() => onChange(JSON.stringify({ height: preset }))}
+                key={preset.value}
+                onClick={() => onChange(JSON.stringify({ height: preset.value }))}
                 className={cn(
-                  "h-7 rounded-md border text-[11px] transition-colors",
-                  height === preset
+                  "h-8 rounded-md border text-[11px] font-medium transition-colors flex flex-col items-center justify-center leading-none gap-0.5",
+                  height === preset.value
                     ? "border-primary/50 bg-primary/10 text-primary"
                     : "border-border hover:bg-muted text-foreground",
                 )}
+                aria-label={`${preset.label} spacing (${preset.value} pixels)`}
               >
-                {preset}
+                <span className="font-semibold">{preset.label}</span>
+                <span className="text-[9px] tabular-nums opacity-70">{preset.value}</span>
               </button>
             ))}
           </div>
@@ -238,7 +308,10 @@ function Spacer({ content, onChange, readOnly }: Omit<Props, "variant" | "onCont
   );
 }
 
-/* ---------- Continue Button ---------- */
+/* ---------- Continue Button ----------
+ * Refined pill with soft inner highlight, animated chevron, and inline-
+ * editable label in edit mode.
+ */
 
 function ContinueButton({
   content,
@@ -262,27 +335,30 @@ function ContinueButton({
       onClick();
       return;
     }
-    // Fallback: advance the page in preview by scrolling forward.
     window.scrollBy({ top: window.innerHeight * 0.9, behavior: "smooth" });
   };
 
   if (readOnly) {
     return (
-      <div className="w-full flex justify-center py-3">
+      <div className="w-full flex justify-center py-4">
         <Button
           onClick={handleClick}
-          className="rounded-full px-6 h-11 gap-2 text-sm font-semibold shadow-[0_6px_16px_-6px_hsl(var(--primary)/0.5)] bg-gradient-to-r from-primary to-primary/85 hover:opacity-95"
+          className="group/cta relative rounded-full pl-6 pr-5 h-12 gap-2.5 text-sm font-semibold tracking-tight text-primary-foreground bg-gradient-to-b from-primary to-primary/85 shadow-[0_1px_0_hsl(0_0%_100%/0.2)_inset,0_10px_24px_-10px_hsl(var(--primary)/0.55),0_2px_4px_-2px_hsl(var(--primary)/0.4)] hover:shadow-[0_1px_0_hsl(0_0%_100%/0.25)_inset,0_14px_28px_-10px_hsl(var(--primary)/0.6),0_2px_6px_-2px_hsl(var(--primary)/0.45)] hover:-translate-y-[1px] transition-all duration-200"
         >
+          <span className="absolute inset-x-3 top-0 h-px rounded-full bg-white/25" aria-hidden="true" />
           {label || "Continue"}
-          <ArrowRight className="w-4 h-4" aria-hidden="true" focusable="false" />
+          <span className="w-6 h-6 rounded-full bg-primary-foreground/15 flex items-center justify-center transition-transform duration-200 group-hover/cta:translate-x-0.5">
+            <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          </span>
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex justify-center py-3">
-      <div className="inline-flex items-center gap-2 rounded-full pl-2 pr-1 py-1 bg-gradient-to-r from-primary to-primary/85 shadow-[0_6px_16px_-6px_hsl(var(--primary)/0.5)]">
+    <div className="w-full flex justify-center py-4">
+      <div className="group/cta relative inline-flex items-center gap-1 rounded-full pl-2 pr-1 py-1 bg-gradient-to-b from-primary to-primary/85 shadow-[0_1px_0_hsl(0_0%_100%/0.2)_inset,0_10px_24px_-10px_hsl(var(--primary)/0.55)]">
+        <span className="pointer-events-none absolute inset-x-3 top-0 h-px rounded-full bg-white/25" aria-hidden="true" />
         <input
           ref={inputRef}
           value={label}
@@ -296,9 +372,9 @@ function ContinueButton({
           }}
           placeholder="Continue"
           aria-label="Continue button label"
-          className="bg-transparent outline-none text-sm font-semibold text-primary-foreground placeholder:text-primary-foreground/70 px-3 min-w-[10ch] max-w-[28ch] text-center"
+          className="bg-transparent outline-none text-sm font-semibold tracking-tight text-primary-foreground placeholder:text-primary-foreground/70 px-3 h-9 min-w-[10ch] max-w-[28ch] text-center"
         />
-        <div className="w-9 h-9 rounded-full bg-primary-foreground/15 flex items-center justify-center">
+        <div className="w-9 h-9 rounded-full bg-primary-foreground/15 flex items-center justify-center transition-transform duration-200 group-hover/cta:translate-x-0.5">
           <ArrowRight className="w-4 h-4 text-primary-foreground" aria-hidden="true" focusable="false" />
         </div>
       </div>
