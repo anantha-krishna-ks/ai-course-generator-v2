@@ -26,6 +26,7 @@ import { DescriptionEditor } from "./DescriptionEditor";
 import { ImageBlock } from "./ImageBlock";
 import { AIBlockLoader } from "./AIBlockLoader";
 import { MediaUploadBlock } from "./MediaUploadBlock";
+import { AIAudioBlock } from "./AIAudioBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
 import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
