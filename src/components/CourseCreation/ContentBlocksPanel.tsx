@@ -630,37 +630,58 @@ function BlockPreview({ id }: { id: string }) {
       );
     case "divider-line":
       return (
-        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-4")}>
-            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.6] mb-2">Section one wraps up here…</p>
-            <div className="h-px w-full bg-[hsl(220,13%,85%)] my-2" />
-            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.6] mt-2">A new topic begins next.</p>
+            <p className="text-[9px] font-semibold text-[hsl(220,15%,20%)] mb-1">Chapter One</p>
+            <p className="text-[8px] text-[hsl(220,8%,50%)] leading-[1.6] mb-2.5">Wraps up the introduction to the subject.</p>
+            <div className="flex items-center gap-1.5 my-2.5">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[hsl(220,13%,80%)] to-[hsl(220,13%,80%)]" />
+              <div className="w-[3px] h-[3px] rounded-full bg-[hsl(220,13%,75%)]" />
+              <div className="w-1.5 h-1.5 rotate-45 border border-[hsl(220,13%,75%)] bg-white" />
+              <div className="w-[3px] h-[3px] rounded-full bg-[hsl(220,13%,75%)]" />
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent via-[hsl(220,13%,80%)] to-[hsl(220,13%,80%)]" />
+            </div>
+            <p className="text-[9px] font-semibold text-[hsl(220,15%,20%)] mt-2">Chapter Two</p>
+            <p className="text-[8px] text-[hsl(220,8%,50%)] leading-[1.6]">A new topic begins.</p>
           </div>
         </div>
       );
     case "divider-numbered":
       return (
-        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-4")}>
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[hsl(220,13%,85%)]" />
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full border border-[hsl(220,13%,88%)] bg-white">
-                <div className="w-4 h-4 rounded-full bg-primary text-white text-[8px] font-bold flex items-center justify-center">2</div>
-                <span className="text-[9px] font-medium text-[hsl(220,15%,20%)]">Getting Started</span>
+            <div className="flex items-center gap-2 my-2">
+              <div className="flex items-center gap-1 flex-1">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[hsl(220,13%,80%)]" />
+                <div className="w-[3px] h-[3px] rounded-full bg-[hsl(220,13%,80%)]" />
               </div>
-              <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[hsl(220,13%,85%)]" />
+              <div className="flex items-center gap-1.5 pl-1 pr-2 py-1 rounded-full border border-[hsl(220,13%,88%)] bg-white shadow-[0_1px_3px_-1px_rgba(0,0,0,0.08)]">
+                <div className="w-4 h-4 rounded-full bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.75)] text-white text-[8px] font-bold flex items-center justify-center shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">2</div>
+                <span className="text-[9px] font-semibold tracking-tight text-[hsl(220,15%,20%)]">Getting Started</span>
+              </div>
+              <div className="flex items-center gap-1 flex-1">
+                <div className="w-[3px] h-[3px] rounded-full bg-[hsl(220,13%,80%)]" />
+                <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[hsl(220,13%,80%)]" />
+              </div>
             </div>
+            <p className="text-[8px] text-[hsl(220,8%,50%)] leading-[1.6] mt-2 text-center">A numbered milestone between sections.</p>
           </div>
         </div>
       );
     case "spacer":
       return (
-        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
             <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-1.5 w-4/5" />
-            <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-1.5 w-full" />
-            <div className="my-2 h-8 rounded border border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] flex items-center justify-center">
-              <span className="text-[8px] text-[hsl(220,8%,55%)] uppercase tracking-wider">Space</span>
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-2 w-full" />
+            <div className="my-2 h-9 rounded-lg border border-dashed border-[hsl(220,13%,78%)] bg-gradient-to-br from-[hsl(220,14%,98%)] to-[hsl(220,14%,95%)] flex items-center justify-between px-1.5">
+              <div className="flex flex-col justify-between h-full py-1 opacity-60">
+                {[0, 1, 2].map((i) => <span key={i} className="block w-1 h-px bg-[hsl(220,8%,55%)]" />)}
+              </div>
+              <span className="inline-flex items-center gap-1 px-1.5 py-[2px] rounded-full bg-white border border-[hsl(220,13%,88%)] text-[7px] font-semibold uppercase tracking-wider text-[hsl(220,8%,45%)] shadow-sm">40px</span>
+              <div className="flex flex-col justify-between h-full py-1 opacity-60">
+                {[0, 1, 2].map((i) => <span key={i} className="block w-1 h-px bg-[hsl(220,8%,55%)]" />)}
+              </div>
             </div>
             <div className="h-2 rounded bg-[hsl(220,13%,93%)] w-3/4" />
           </div>
@@ -668,15 +689,20 @@ function BlockPreview({ id }: { id: string }) {
       );
     case "continue-button":
       return (
-        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
-          <div className={cn(card, "p-4 flex items-center justify-center")}>
-            <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-primary text-white shadow-[0_2px_6px_-2px_hsl(var(--primary)/0.6)]">
-              <span className="text-[10px] font-semibold">Continue</span>
-              <ArrowRight className="w-3 h-3" aria-hidden="true" focusable="false" />
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4 flex flex-col items-center gap-2.5")}>
+            <p className="text-[8px] text-[hsl(220,8%,55%)] leading-[1.5] text-center">Ready to move on to the next lesson?</p>
+            <div className="relative inline-flex items-center gap-1.5 rounded-full pl-3 pr-1 py-1 bg-gradient-to-b from-primary to-[hsl(var(--primary)/0.85)] shadow-[0_4px_10px_-3px_hsl(var(--primary)/0.55)]">
+              <span className="absolute inset-x-2 top-0 h-px rounded-full bg-white/30" aria-hidden="true" />
+              <span className="text-[10px] font-semibold tracking-tight text-white">Continue</span>
+              <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                <ArrowRight className="w-2.5 h-2.5 text-white" aria-hidden="true" focusable="false" />
+              </span>
             </div>
           </div>
         </div>
       );
+
       default:
       return null;
   }
