@@ -28,6 +28,10 @@ import {
   ChevronDown,
   Layers,
   RefreshCw,
+  Minus,
+  Hash,
+  MoveVertical,
+  ArrowRight,
 
 
 } from "lucide-react";
@@ -65,6 +69,10 @@ const ALL_BLOCKS: BlockItem[] = [
   // LAYOUT — flexible containers that accept any block type
   { id: "layout-any-block", label: "Single Block", icon: Rows, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout", description: "A flexible container that accepts any block — text, image, video, quiz, and more" },
   { id: "layout-any-block-2", label: "Dual Block", icon: LayoutGrid, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "any-block-layout-2", description: "A two-column container — drop any block into either side" },
+  { id: "divider-line", label: "Simple Line", icon: Minus, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "divider-line", description: "A thin horizontal divider to visually separate sections" },
+  { id: "divider-numbered", label: "Numbered Divider", icon: Hash, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "divider-numbered", description: "A numbered milestone divider with an optional label — perfect for step-by-step sections" },
+  { id: "spacer", label: "Space", icon: MoveVertical, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "spacer", description: "Add adjustable vertical space between blocks for better rhythm" },
+  { id: "continue-button", label: "Continue", icon: ArrowRight, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "continue-button", description: "A primary call-to-action button learners tap to move forward" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
@@ -620,6 +628,55 @@ function BlockPreview({ id }: { id: string }) {
           </p>
         </div>
       );
+    case "divider-line":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.6] mb-2">Section one wraps up here…</p>
+            <div className="h-px w-full bg-[hsl(220,13%,85%)] my-2" />
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.6] mt-2">A new topic begins next.</p>
+          </div>
+        </div>
+      );
+    case "divider-numbered":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[hsl(220,13%,85%)]" />
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full border border-[hsl(220,13%,88%)] bg-white">
+                <div className="w-4 h-4 rounded-full bg-primary text-white text-[8px] font-bold flex items-center justify-center">2</div>
+                <span className="text-[9px] font-medium text-[hsl(220,15%,20%)]">Getting Started</span>
+              </div>
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[hsl(220,13%,85%)]" />
+            </div>
+          </div>
+        </div>
+      );
+    case "spacer":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-1.5 w-4/5" />
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-1.5 w-full" />
+            <div className="my-2 h-8 rounded border border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] flex items-center justify-center">
+              <span className="text-[8px] text-[hsl(220,8%,55%)] uppercase tracking-wider">Space</span>
+            </div>
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] w-3/4" />
+          </div>
+        </div>
+      );
+    case "continue-button":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4 flex items-center justify-center")}>
+            <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-primary text-white shadow-[0_2px_6px_-2px_hsl(var(--primary)/0.6)]">
+              <span className="text-[10px] font-semibold">Continue</span>
+              <ArrowRight className="w-3 h-3" aria-hidden="true" focusable="false" />
+            </div>
+          </div>
+        </div>
+      );
       default:
       return null;
   }
@@ -1097,6 +1154,47 @@ function BlockThumbnail({ id }: { id: string }) {
                 <div className="absolute inset-[1.5px] rounded-[1.5px] border border-[#F59E0B]/35" />
                 <span className="text-[3px] font-bold tracking-wide" style={{ color: "#713F12" }}>DEF</span>
               </div>
+            </div>
+          </div>
+        </div>
+      );
+    case "divider-line":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex items-center justify-center h-[44px]")}>
+            <div className="w-full h-px bg-[hsl(220,13%,80%)]" />
+          </div>
+        </div>
+      );
+    case "divider-numbered":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex items-center justify-center gap-[3px] h-[44px]")}>
+            <div className="flex-1 h-px bg-[hsl(220,13%,85%)]" />
+            <div className="w-[10px] h-[10px] rounded-full bg-primary text-white text-[5px] font-bold flex items-center justify-center">2</div>
+            <div className="flex-1 h-px bg-[hsl(220,13%,85%)]" />
+          </div>
+        </div>
+      );
+    case "spacer":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[2px]")}>
+            <div className="h-[2px] rounded bg-[hsl(220,13%,90%)] w-4/5" />
+            <div className="my-[2px] h-[10px] rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] flex items-center justify-center">
+              <span className="text-[4px] text-[hsl(220,8%,55%)] uppercase tracking-wider">Space</span>
+            </div>
+            <div className="h-[2px] rounded bg-[hsl(220,13%,90%)] w-2/3" />
+          </div>
+        </div>
+      );
+    case "continue-button":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex items-center justify-center h-[44px]")}>
+            <div className="inline-flex items-center gap-[3px] rounded-full px-[6px] py-[3px] bg-primary">
+              <span className="text-[5px] font-semibold text-white">Continue</span>
+              <ArrowRight className="w-[6px] h-[6px] text-white" aria-hidden="true" focusable="false" />
             </div>
           </div>
         </div>

@@ -16,6 +16,7 @@ import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLo
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
+import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 
 interface CourseItem {
   id: string;
@@ -511,6 +512,11 @@ const MultipageCoursePreview = () => {
     switch (block.type) {
       case "text": {
         const content = block.content || "";
+
+        if (isLayoutUtilityVariant(block.variant)) {
+          return <LayoutUtilityBlock variant={block.variant} content={content} onChange={() => {}} readOnly onContinueClick={goToNext} />;
+        }
+
 
         // Accordion variant (currently stored as a text block) renders as a collapsible panel
         if (block.variant === "accordion") {

@@ -33,6 +33,7 @@ import { HotspotBlock } from "./HotspotBlock";
 import { TabsBlock } from "./TabsBlock";
 import { AccordionBlock } from "./AccordionBlock";
 import { FlashcardsBlock } from "./FlashcardsBlock";
+import { LayoutUtilityBlock, isLayoutUtilityVariant } from "./LayoutUtilityBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -383,7 +384,7 @@ export function ContentBlock({
             className="cursor-grab active:cursor-grabbing"
             onClick={undefined}
           />
-          {type === "text" && (
+          {type === "text" && !isLayoutUtilityVariant(variant) && (
             <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
               <PopoverTrigger asChild>
                 <button
@@ -482,7 +483,7 @@ export function ContentBlock({
             onClick={onDelete}
             className="hover:text-destructive"
           />
-          {aiEnabled && (type === "text" || type === "image") && (
+          {aiEnabled && (type === "text" || type === "image") && !isLayoutUtilityVariant(variant) && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
               <Tooltip>
@@ -521,7 +522,9 @@ export function ContentBlock({
           className="w-full"
           style={type === "text" && font ? { fontFamily: getFontStack(font) } : undefined}
         >
-          {type === "video-description" ? (
+          {type === "text" && isLayoutUtilityVariant(variant) ? (
+            <LayoutUtilityBlock variant={variant} content={content} onChange={onChange} readOnly={readOnly} />
+          ) : type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "text" && variant === "accordion" ? (
             <AccordionBlock content={content} onChange={onChange} />

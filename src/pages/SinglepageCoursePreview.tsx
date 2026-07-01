@@ -12,6 +12,7 @@ import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
+import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 
 interface CourseItem {
   id: string;
@@ -24,6 +25,7 @@ interface PageContentBlock {
   id: string;
   type: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "flashcards";
   content: string;
+  variant?: string;
 }
 
 interface ContentBlockData {
@@ -306,6 +308,10 @@ const SinglepageCoursePreview = () => {
     switch (block.type) {
       case "text": {
         const content = block.content || "";
+        if (isLayoutUtilityVariant(block.variant)) {
+          return <LayoutUtilityBlock variant={block.variant} content={content} onChange={() => {}} readOnly />;
+        }
+
         const COL_SEPARATOR = "<!--col-break-->";
         const layoutMatch = content.match(/<!--layout:(\w[\w-]*)-->/);
         const layout = layoutMatch ? layoutMatch[1] : "heading-text";
