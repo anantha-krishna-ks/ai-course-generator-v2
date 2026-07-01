@@ -86,17 +86,17 @@ function DividerLine({ content, onChange, readOnly }: Omit<Props, "variant" | "o
     }
     if (style === "ornament") {
       return (
-        <div className={cn("flex-1 flex items-center gap-3", className)}>
+      <div className={cn("flex-1 flex items-center gap-3", className)}>
           <div
-            className="flex-1 h-0"
-            style={{ borderTopWidth: 1.5, borderTopStyle: "dashed", borderTopColor: "hsl(var(--foreground) / 0.35)" }}
+            className="flex-1 h-0 rounded-full"
+            style={{ borderTopWidth: 2.5, borderTopStyle: "dashed", borderTopColor: "hsl(var(--foreground) / 0.55)" }}
           />
-          <div className="w-1.5 h-1.5 rounded-full bg-foreground/40" aria-hidden="true" />
-          <div className="w-2.5 h-2.5 rotate-45 border-[1.5px] border-foreground/45 bg-background" aria-hidden="true" />
-          <div className="w-1.5 h-1.5 rounded-full bg-foreground/40" aria-hidden="true" />
+          <div className="w-2 h-2 rounded-full bg-foreground/55" aria-hidden="true" />
+          <div className="w-3 h-3 rotate-45 border-[2px] border-foreground/55 bg-background" aria-hidden="true" />
+          <div className="w-2 h-2 rounded-full bg-foreground/55" aria-hidden="true" />
           <div
-            className="flex-1 h-0"
-            style={{ borderTopWidth: 1.5, borderTopStyle: "dashed", borderTopColor: "hsl(var(--foreground) / 0.35)" }}
+            className="flex-1 h-0 rounded-full"
+            style={{ borderTopWidth: 2.5, borderTopStyle: "dashed", borderTopColor: "hsl(var(--foreground) / 0.55)" }}
           />
         </div>
       );
