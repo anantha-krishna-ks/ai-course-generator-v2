@@ -181,16 +181,20 @@ function DividerNumbered({ content, onChange, readOnly }: Omit<Props, "variant" 
 
   const sideOrnament = (dir: "l" | "r") => (
     <div className="flex-1 flex items-center gap-2 min-w-0">
-      {dir === "r" && <div className="w-1 h-1 rounded-full bg-border shrink-0" aria-hidden="true" />}
+      {dir === "r" && (
+        <div className="w-2 h-2 rounded-full bg-foreground/40 ring-2 ring-foreground/10 shrink-0" aria-hidden="true" />
+      )}
       <div
         className={cn(
-          "flex-1 h-px",
+          "flex-1 h-[2.5px] rounded-full",
           dir === "l"
-            ? "bg-gradient-to-r from-transparent via-border/70 to-border"
-            : "bg-gradient-to-l from-transparent via-border/70 to-border",
+            ? "bg-gradient-to-r from-transparent via-foreground/40 to-foreground/60"
+            : "bg-gradient-to-l from-transparent via-foreground/40 to-foreground/60",
         )}
       />
-      {dir === "l" && <div className="w-1 h-1 rounded-full bg-border shrink-0" aria-hidden="true" />}
+      {dir === "l" && (
+        <div className="w-2 h-2 rounded-full bg-foreground/40 ring-2 ring-foreground/10 shrink-0" aria-hidden="true" />
+      )}
     </div>
   );
 
