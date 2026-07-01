@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Mic,
   Play,
   Pause,
   Heart,
@@ -14,9 +13,9 @@ import {
   EyeOff,
   FileText,
   Loader2,
-  X,
   Volume2,
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
