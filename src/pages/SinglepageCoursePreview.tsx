@@ -307,6 +307,10 @@ const SinglepageCoursePreview = () => {
     switch (block.type) {
       case "text": {
         const content = block.content || "";
+        if (isLayoutUtilityVariant(block.variant)) {
+          return <LayoutUtilityBlock variant={block.variant} content={content} onChange={() => {}} readOnly />;
+        }
+
         const COL_SEPARATOR = "<!--col-break-->";
         const layoutMatch = content.match(/<!--layout:(\w[\w-]*)-->/);
         const layout = layoutMatch ? layoutMatch[1] : "heading-text";
