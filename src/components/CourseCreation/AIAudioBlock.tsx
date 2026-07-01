@@ -211,11 +211,11 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-border/70 bg-gradient-to-br from-background via-background to-primary/[0.02] shadow-sm overflow-hidden animate-fade-in">
+    <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40 bg-gradient-to-r from-primary/[0.06] via-primary/[0.03] to-transparent">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm">
-          <AISparkles className="w-4 h-4 text-primary-foreground" />
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+        <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <AISparkles className="w-4 h-4 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -243,7 +243,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
               size="sm"
               onClick={handleAiDraft}
               disabled={isDraftingScript}
-              className="h-7 px-2.5 gap-1.5 text-xs rounded-full bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+              className="h-7 px-2.5 gap-1.5 text-xs rounded-full bg-primary/5 text-primary hover:bg-primary/10 border border-primary/20"
             >
               {isDraftingScript ? (
                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -261,7 +261,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
               setState((s) => ({ ...s, script: next }));
             }}
             placeholder="Type or paste the script you want to narrate. Aim for a natural, spoken tone…"
-            className="min-h-[120px] resize-y text-sm leading-relaxed bg-background/80 border-border/70 focus-visible:ring-primary/25"
+            className="min-h-[120px] resize-y text-sm leading-relaxed bg-background border-border focus-visible:ring-primary/25"
           />
           <div className="flex items-center justify-between text-[11px] text-muted-foreground">
             <span className={cn(state.script.trim().length > 0 && state.script.trim().length < 10 && "text-amber-600")}>
@@ -280,16 +280,18 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
           <button
             type="button"
             onClick={() => setVoiceLibraryOpen(true)}
-            className="group flex-1 flex items-center gap-3 rounded-xl border border-border/70 bg-background/80 hover:border-primary/40 hover:bg-primary/[0.03] px-3 py-2.5 transition-all text-left"
+            className="group flex-1 flex items-center gap-3 rounded-xl border border-border bg-background hover:border-primary/50 hover:bg-primary/[0.03] px-3 py-2.5 transition-colors text-left"
             aria-label="Choose an AI voice"
           >
-            <div
-              className={cn(
-                "w-9 h-9 rounded-full bg-gradient-to-br flex items-center justify-center text-white text-xs font-semibold shadow-sm flex-shrink-0",
-                currentVoice.gradient
-              )}
-            >
-              {currentVoice.name.slice(0, 1)}
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
+              <img
+                src={currentVoice.image}
+                alt={`${currentVoice.name} portrait`}
+                width={40}
+                height={40}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
@@ -305,7 +307,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
             type="button"
             onClick={handleGenerateClick}
             disabled={!canGenerate}
-            className="h-auto min-h-[52px] sm:w-auto w-full px-5 gap-2 rounded-xl bg-gradient-to-br from-primary to-primary/85 hover:from-primary hover:to-primary/95 shadow-sm"
+            className="h-auto min-h-[52px] sm:w-auto w-full px-5 gap-2 rounded-xl"
           >
             {isGenerating ? (
               <>
