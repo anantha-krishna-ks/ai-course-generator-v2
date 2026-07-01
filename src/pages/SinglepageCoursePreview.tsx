@@ -421,6 +421,32 @@ const SinglepageCoursePreview = () => {
         return <FlashcardsPreview content={block.content || ""} />;
       }
       case "audio": {
+        if (block.variant === "ai-audio") {
+          let aiState: { audioUrl?: string; transcript?: string; showTranscriptToLearners?: boolean } = {};
+          try { aiState = JSON.parse(block.content || "{}"); } catch { /* ignore */ }
+          const audioSrc = aiState.audioUrl || DEMO_AUDIO_URL;
+          const showTranscript = aiState.showTranscriptToLearners !== false && !!aiState.transcript;
+          return (
+            <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/[0.04] via-background to-background overflow-hidden">
+              <div className="flex items-center gap-3 px-4 sm:px-5 py-3 border-b border-primary/10">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center"><Music className="w-4 h-4 text-primary-foreground" /></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">AI Narration</p>
+                  <p className="text-xs text-muted-foreground">Generated voiceover</p>
+                </div>
+              </div>
+              <div className="p-4">
+                <audio src={audioSrc} controls className="w-full h-9" aria-label="AI-generated narration" />
+                {showTranscript && (
+                  <details className="mt-3 rounded-lg bg-muted/40 border border-border/40">
+                    <summary className="cursor-pointer select-none px-3 py-2 text-xs font-medium text-foreground">Show transcript</summary>
+                    <p className="px-3 pb-3 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]">{aiState.transcript}</p>
+                  </details>
+                )}
+              </div>
+            </div>
+          );
+        }
         const audioSrc = block.content || DEMO_AUDIO_URL;
         return (
           <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
@@ -434,6 +460,7 @@ const SinglepageCoursePreview = () => {
           </div>
         );
       }
+
       case "doc": {
         const docSrc = block.content || DEMO_PDF_URL;
         return (

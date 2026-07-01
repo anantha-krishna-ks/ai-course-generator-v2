@@ -26,6 +26,7 @@ import { DescriptionEditor } from "./DescriptionEditor";
 import { ImageBlock } from "./ImageBlock";
 import { AIBlockLoader } from "./AIBlockLoader";
 import { MediaUploadBlock } from "./MediaUploadBlock";
+import { AIAudioBlock } from "./AIAudioBlock";
 import { QuizBlock } from "./QuizBlock";
 import { ImageDescriptionBlock } from "./ImageDescriptionBlock";
 import { VideoDescriptionBlock } from "./VideoDescriptionBlock";
@@ -541,8 +542,11 @@ export function ContentBlock({
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "image" ? (
             <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
+          ) : type === "audio" && variant === "ai-audio" ? (
+            <AIAudioBlock content={content} onChange={onChange} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
             <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
+
           ) : textGenerating && type === "text" ? (
             <div className="w-full px-1">
               {colCount > 1 ? (

@@ -90,6 +90,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
+  { id: "audio-ai", label: "AI Audio", icon: Sparkles, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "ai-audio", description: "Generate lifelike voiceover narration from a typed script — pick a voice from the AI library" },
   // DOCUMENT
   { id: "doc-upload", label: "Document", icon: FileText, category: "doc", categoryLabel: "DOCUMENT", type: "doc", variant: "doc-upload", description: "Upload a PDF document" },
   // ASSESSMENT
@@ -400,6 +401,43 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "audio-ai":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            {/* Header row */}
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <Sparkles className="w-3 h-3 text-white" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="flex-1">
+                <div className="h-[6px] w-3/4 rounded-full bg-[hsl(220,15%,25%)]" />
+                <div className="h-[4px] w-1/2 rounded-full bg-[hsl(220,8%,70%)] mt-1" />
+              </div>
+            </div>
+            {/* Script mock */}
+            <div className="rounded-md bg-primary/5 border border-primary/15 p-2 mb-2">
+              <div className="h-[4px] rounded-full bg-primary/25 w-full mb-1" />
+              <div className="h-[4px] rounded-full bg-primary/20 w-11/12 mb-1" />
+              <div className="h-[4px] rounded-full bg-primary/15 w-3/4" />
+            </div>
+            {/* Voice + generate pill */}
+            <div className="flex items-center gap-1.5">
+              <div className="flex-1 flex items-center gap-1.5 rounded-md border border-[hsl(220,13%,91%)] bg-white px-1.5 py-1">
+                <div className="w-4 h-4 rounded-full bg-gradient-to-br from-rose-400 to-pink-500" />
+                <div className="flex-1">
+                  <div className="h-[4px] w-3/4 rounded-full bg-[hsl(220,15%,30%)]" />
+                </div>
+              </div>
+              <div className="h-6 px-2 flex items-center gap-1 rounded-md bg-gradient-to-br from-primary to-primary/80 shadow-sm">
+                <Sparkles className="w-2.5 h-2.5 text-white" aria-hidden="true" focusable="false" />
+                <span className="text-[8px] font-semibold text-white">Generate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
     case "doc-upload":
       return (
         <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
@@ -988,6 +1026,32 @@ function BlockThumbnail({ id }: { id: string }) {
                 ))}
               </div>
               <span className="text-[5px] text-[hsl(220,8%,60%)] shrink-0 tabular-nums">1:24</span>
+            </div>
+          </div>
+        </div>
+      );
+    case "audio-ai":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex flex-col gap-[3px]")}>
+            <div className="flex items-center gap-[3px]">
+              <div className="w-[10px] h-[10px] rounded-[2px] bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <Sparkles className="w-[5px] h-[5px] text-white" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="flex-1 h-[3px] rounded-full bg-[hsl(220,15%,25%)] w-1/2" />
+            </div>
+            <div className="w-full rounded-[2px] bg-primary/10 border border-primary/20 p-[3px] flex flex-col gap-[2px]">
+              <div className="h-[2px] rounded-full bg-primary/30 w-full" />
+              <div className="h-[2px] rounded-full bg-primary/25 w-4/5" />
+            </div>
+            <div className="flex items-center gap-[2px]">
+              <div className="flex-1 h-[8px] rounded-[2px] bg-white border border-[hsl(220,13%,91%)] flex items-center gap-[2px] px-[2px]">
+                <div className="w-[5px] h-[5px] rounded-full bg-gradient-to-br from-rose-400 to-pink-500" />
+                <div className="h-[2px] flex-1 rounded-full bg-[hsl(220,10%,75%)]" />
+              </div>
+              <div className="h-[8px] px-[3px] rounded-[2px] bg-gradient-to-br from-primary to-primary/80 flex items-center">
+                <Sparkles className="w-[4px] h-[4px] text-white" aria-hidden="true" focusable="false" />
+              </div>
             </div>
           </div>
         </div>
