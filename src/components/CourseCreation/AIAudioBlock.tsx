@@ -218,12 +218,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
           <AISparkles className="w-4 h-4 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold text-foreground">AI Audio Narration</p>
-            <Badge variant="secondary" className="text-[10px] h-4 px-1.5 font-medium bg-primary/10 text-primary border border-primary/20">
-              BETA
-            </Badge>
-          </div>
+          <p className="text-sm font-semibold text-foreground">AI Audio Narration</p>
           <p className="text-[11px] text-muted-foreground">
             Type a script, pick a voice, generate lifelike narration.
           </p>
