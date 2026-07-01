@@ -384,7 +384,7 @@ export function ContentBlock({
             className="cursor-grab active:cursor-grabbing"
             onClick={undefined}
           />
-          {type === "text" && (
+          {type === "text" && !isLayoutUtilityVariant(variant) && (
             <Popover open={isLayoutOpen} onOpenChange={setIsLayoutOpen}>
               <PopoverTrigger asChild>
                 <button
