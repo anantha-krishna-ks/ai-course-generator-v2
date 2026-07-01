@@ -774,7 +774,7 @@ interface FilterSelectProps {
 function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="h-8 text-xs w-auto min-w-[130px] gap-1.5 rounded-full bg-muted/40 border-transparent" aria-label={label}>
+      <SelectTrigger className="h-9 text-xs w-auto min-w-[140px] gap-1.5 rounded-full bg-background border border-border shadow-sm hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/15" aria-label={label}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
