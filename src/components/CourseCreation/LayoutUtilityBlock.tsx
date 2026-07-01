@@ -87,11 +87,17 @@ function DividerLine({ content, onChange, readOnly }: Omit<Props, "variant" | "o
     if (style === "ornament") {
       return (
         <div className={cn("flex-1 flex items-center gap-3", className)}>
-          <div className="flex-1 h-[2px] rounded-full bg-gradient-to-r from-transparent via-foreground/30 to-foreground/45" />
-          <div className="w-2 h-2 rounded-full bg-foreground/45" aria-hidden="true" />
-          <div className="w-3.5 h-3.5 rotate-45 border-[1.5px] border-foreground/45 bg-background" aria-hidden="true" />
-          <div className="w-2 h-2 rounded-full bg-foreground/45" aria-hidden="true" />
-          <div className="flex-1 h-[2px] rounded-full bg-gradient-to-l from-transparent via-foreground/30 to-foreground/45" />
+          <div
+            className="flex-1 h-0"
+            style={{ borderTopWidth: 1.5, borderTopStyle: "dashed", borderTopColor: "hsl(var(--foreground) / 0.35)" }}
+          />
+          <div className="w-1.5 h-1.5 rounded-full bg-foreground/40" aria-hidden="true" />
+          <div className="w-2.5 h-2.5 rotate-45 border-[1.5px] border-foreground/45 bg-background" aria-hidden="true" />
+          <div className="w-1.5 h-1.5 rounded-full bg-foreground/40" aria-hidden="true" />
+          <div
+            className="flex-1 h-0"
+            style={{ borderTopWidth: 1.5, borderTopStyle: "dashed", borderTopColor: "hsl(var(--foreground) / 0.35)" }}
+          />
         </div>
       );
     }
