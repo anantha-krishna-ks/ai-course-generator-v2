@@ -731,7 +731,7 @@ function VoiceLibraryDialog({
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
