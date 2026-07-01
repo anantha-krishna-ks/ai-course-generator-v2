@@ -542,7 +542,7 @@ function VoiceLibraryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[95vw] p-0 overflow-hidden gap-0 max-h-[88vh] flex flex-col">
+      <DialogContent className="max-w-4xl w-[95vw] p-0 overflow-hidden gap-0 max-h-[88vh] grid-rows-[auto_auto_minmax(0,1fr)]">
         {/* Header with soft gradient */}
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60 bg-gradient-to-br from-primary/[0.06] via-background to-background">
           <DialogTitle className="flex items-center gap-2.5 text-lg">
@@ -557,14 +557,14 @@ function VoiceLibraryDialog({
         </DialogHeader>
 
         {/* Filters */}
-        <div className="px-6 py-4 space-y-3 border-b border-border/50 bg-background">
+        <div className="px-6 py-4 space-y-3 border-b border-border/60 bg-background">
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, style, or accent…"
-              className="pl-10 h-10 rounded-full bg-muted/50 border-transparent focus-visible:bg-background focus-visible:border-input"
+              className="pl-10 h-10 rounded-full bg-background border-border shadow-sm focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/15"
               aria-label="Search voices"
             />
           </div>
@@ -591,9 +591,10 @@ function VoiceLibraryDialog({
           </div>
         </div>
 
-        {/* Voice grid */}
-        <ScrollArea className="flex-1 min-h-0">
+        {/* Voice grid — scrollable */}
+        <div className="overflow-y-auto thin-scrollbar bg-muted/20">
           <div className="px-6 py-5">
+
             {filtered.length === 0 ? (
               <div className="text-center text-sm text-muted-foreground py-16">
                 No voices match those filters.
@@ -730,7 +731,7 @@ function VoiceLibraryDialog({
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -773,7 +774,7 @@ interface FilterSelectProps {
 function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="h-8 text-xs w-auto min-w-[130px] gap-1.5 rounded-full bg-muted/40 border-transparent" aria-label={label}>
+      <SelectTrigger className="h-9 text-xs w-auto min-w-[140px] gap-1.5 rounded-full bg-background border border-border shadow-sm hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/15" aria-label={label}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
