@@ -1187,8 +1187,10 @@ function BlockThumbnail({ id }: { id: string }) {
     case "divider-line":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-2 flex items-center justify-center h-[44px]")}>
-            <div className="w-full h-px bg-[hsl(220,13%,80%)]" />
+          <div className={cn(miniCard, "p-2 flex items-center justify-center gap-[2px] h-[44px]")}>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[hsl(220,13%,80%)]" />
+            <div className="w-[3px] h-[3px] rotate-45 border border-[hsl(220,13%,75%)] bg-white" />
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[hsl(220,13%,80%)]" />
           </div>
         </div>
       );
@@ -1196,9 +1198,12 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-2 flex items-center justify-center gap-[3px] h-[44px]")}>
-            <div className="flex-1 h-px bg-[hsl(220,13%,85%)]" />
-            <div className="w-[10px] h-[10px] rounded-full bg-primary text-white text-[5px] font-bold flex items-center justify-center">2</div>
-            <div className="flex-1 h-px bg-[hsl(220,13%,85%)]" />
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[hsl(220,13%,82%)]" />
+            <div className="flex items-center gap-[2px] pl-[2px] pr-[3px] py-[1px] rounded-full border border-[hsl(220,13%,88%)] bg-white shadow-[0_0.5px_1px_rgba(0,0,0,0.06)]">
+              <div className="w-[8px] h-[8px] rounded-full bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.75)] text-white text-[4px] font-bold flex items-center justify-center">2</div>
+              <span className="text-[4px] font-semibold text-[hsl(220,15%,20%)]">Step</span>
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[hsl(220,13%,82%)]" />
           </div>
         </div>
       );
@@ -1207,8 +1212,14 @@ function BlockThumbnail({ id }: { id: string }) {
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[2px]")}>
             <div className="h-[2px] rounded bg-[hsl(220,13%,90%)] w-4/5" />
-            <div className="my-[2px] h-[10px] rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] flex items-center justify-center">
-              <span className="text-[4px] text-[hsl(220,8%,55%)] uppercase tracking-wider">Space</span>
+            <div className="my-[2px] h-[10px] rounded-[3px] border border-dashed border-[hsl(220,13%,78%)] bg-gradient-to-br from-[hsl(220,14%,98%)] to-[hsl(220,14%,95%)] flex items-center justify-between px-[3px]">
+              <div className="flex flex-col justify-between h-full py-[1px] opacity-60">
+                {[0,1].map(i => <span key={i} className="block w-[2px] h-px bg-[hsl(220,8%,55%)]" />)}
+              </div>
+              <span className="text-[4px] font-semibold text-[hsl(220,8%,45%)] uppercase tracking-wider">40</span>
+              <div className="flex flex-col justify-between h-full py-[1px] opacity-60">
+                {[0,1].map(i => <span key={i} className="block w-[2px] h-px bg-[hsl(220,8%,55%)]" />)}
+              </div>
             </div>
             <div className="h-[2px] rounded bg-[hsl(220,13%,90%)] w-2/3" />
           </div>
@@ -1218,9 +1229,12 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-2 flex items-center justify-center h-[44px]")}>
-            <div className="inline-flex items-center gap-[3px] rounded-full px-[6px] py-[3px] bg-primary">
-              <span className="text-[5px] font-semibold text-white">Continue</span>
-              <ArrowRight className="w-[6px] h-[6px] text-white" aria-hidden="true" focusable="false" />
+            <div className="relative inline-flex items-center gap-[3px] rounded-full pl-[6px] pr-[2px] py-[2px] bg-gradient-to-b from-primary to-[hsl(var(--primary)/0.85)] shadow-[0_1.5px_4px_-1px_hsl(var(--primary)/0.5)]">
+              <span className="absolute inset-x-[3px] top-0 h-px rounded-full bg-white/30" aria-hidden="true" />
+              <span className="text-[5px] font-semibold text-white tracking-tight">Continue</span>
+              <span className="w-[8px] h-[8px] rounded-full bg-white/20 flex items-center justify-center">
+                <ArrowRight className="w-[5px] h-[5px] text-white" aria-hidden="true" focusable="false" />
+              </span>
             </div>
           </div>
         </div>
