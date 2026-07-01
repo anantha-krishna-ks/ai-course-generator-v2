@@ -278,16 +278,12 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
               {currentVoice.name.slice(0, 1)}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
-                {state.favouriteVoices.includes(currentVoice.id) && (
-                  <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
-                )}
-              </div>
+              <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
               <p className="text-[11px] text-muted-foreground truncate">
                 {currentVoice.language} • {currentVoice.gender} • {currentVoice.category}
               </p>
             </div>
+
             <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </button>
 
