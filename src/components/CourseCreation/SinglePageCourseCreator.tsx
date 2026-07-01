@@ -414,9 +414,9 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     setPageBlocksMap((prev) => {
       const blocks = prev[itemId] || [];
       if (atIndex !== undefined) {
-        const next = [...blocks]; next.splice(atIndex, 0, { id, type, content: defaultContent }); return { ...prev, [itemId]: next };
+        const next = [...blocks]; next.splice(atIndex, 0, { id, type, content: defaultContent, variant }); return { ...prev, [itemId]: next };
       }
-      return { ...prev, [itemId]: [...blocks, { id, type, content: defaultContent }] };
+      return { ...prev, [itemId]: [...blocks, { id, type, content: defaultContent, variant }] };
     });
     setLastAddedBlockId(id);
   }, []);
