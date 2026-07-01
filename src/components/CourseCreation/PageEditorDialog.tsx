@@ -374,7 +374,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     }
     if (type === "text" && variant && ["divider-line", "divider-numbered", "spacer", "continue-button"].includes(variant)) {
       const defaults: Record<string, string> = {
-        "divider-line": JSON.stringify({ style: "solid" }),
+        "divider-line": JSON.stringify({ style: "ornament" }),
         "divider-numbered": JSON.stringify({ number: 1, label: "" }),
         "spacer": JSON.stringify({ height: 40 }),
         "continue-button": JSON.stringify({ label: "Continue" }),

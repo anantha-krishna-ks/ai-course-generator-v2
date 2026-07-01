@@ -72,7 +72,7 @@ export function LayoutUtilityBlock({ variant, content, onChange, readOnly, onCon
 type LineStyle = "solid" | "dashed" | "dotted" | "double" | "ornament";
 
 function DividerLine({ content, onChange, readOnly }: Omit<Props, "variant" | "onContinueClick">) {
-  const data = safeParse(content, { style: "solid" as LineStyle });
+  const data = safeParse(content, { style: "ornament" as LineStyle });
   const set = (patch: Partial<typeof data>) => onChange(JSON.stringify({ ...data, ...patch }));
 
   const renderLine = (style: LineStyle, className = "") => {
