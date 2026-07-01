@@ -630,20 +630,26 @@ function VoiceLibraryDialog({
                     >
                       {/* Top row: avatar + info */}
                       <div className="flex items-start gap-3 p-4">
-                        {/* Gradient avatar with play overlay */}
+                        {/* Circular portrait avatar with play overlay */}
                         <button
                           onClick={() => togglePreview(v.id)}
                           className={cn(
-                            "relative w-14 h-14 rounded-2xl bg-gradient-to-br flex-shrink-0 shadow-sm overflow-hidden group/play",
+                            "relative w-14 h-14 rounded-full flex-shrink-0 shadow-sm overflow-hidden group/play ring-2 ring-background",
+                            "bg-gradient-to-br",
                             v.gradient
                           )}
                           aria-label={isPreviewing ? `Stop sample of ${v.name}` : `Play sample of ${v.name}`}
                         >
-                          <span className="absolute inset-0 flex items-center justify-center text-white text-lg font-semibold group-hover/play:opacity-0 transition-opacity">
-                            {isPreviewing ? "" : v.name.slice(0, 1)}
-                          </span>
+                          <img
+                            src={v.image}
+                            alt={`${v.name} portrait`}
+                            width={56}
+                            height={56}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
                           <span className={cn(
-                            "absolute inset-0 flex items-center justify-center bg-black/35 backdrop-blur-[1px] transition-opacity",
+                            "absolute inset-0 flex items-center justify-center bg-black/45 backdrop-blur-[1px] transition-opacity",
                             isPreviewing ? "opacity-100" : "opacity-0 group-hover/play:opacity-100"
                           )}>
                             {isPreviewing ? (
