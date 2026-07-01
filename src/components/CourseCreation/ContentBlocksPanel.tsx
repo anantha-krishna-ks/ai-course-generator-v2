@@ -1030,6 +1030,32 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "audio-ai":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] flex flex-col gap-[3px]")}>
+            <div className="flex items-center gap-[3px]">
+              <div className="w-[10px] h-[10px] rounded-[2px] bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <Sparkles className="w-[5px] h-[5px] text-white" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="flex-1 h-[3px] rounded-full bg-[hsl(220,15%,25%)] w-1/2" />
+            </div>
+            <div className="w-full rounded-[2px] bg-primary/10 border border-primary/20 p-[3px] flex flex-col gap-[2px]">
+              <div className="h-[2px] rounded-full bg-primary/30 w-full" />
+              <div className="h-[2px] rounded-full bg-primary/25 w-4/5" />
+            </div>
+            <div className="flex items-center gap-[2px]">
+              <div className="flex-1 h-[8px] rounded-[2px] bg-white border border-[hsl(220,13%,91%)] flex items-center gap-[2px] px-[2px]">
+                <div className="w-[5px] h-[5px] rounded-full bg-gradient-to-br from-rose-400 to-pink-500" />
+                <div className="h-[2px] flex-1 rounded-full bg-[hsl(220,10%,75%)]" />
+              </div>
+              <div className="h-[8px] px-[3px] rounded-[2px] bg-gradient-to-br from-primary to-primary/80 flex items-center">
+                <Sparkles className="w-[4px] h-[4px] text-white" aria-hidden="true" focusable="false" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     case "doc-upload":
       return (
         <div className={wrapper}>
