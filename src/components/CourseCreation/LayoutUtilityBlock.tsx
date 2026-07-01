@@ -113,7 +113,7 @@ function DividerLine({ content, onChange, readOnly }: Omit<Props, "variant" | "o
   }
 
   return (
-    <div className="w-full py-3 relative group/util">
+    <div className="w-full py-6 relative group/util">
       <div className="flex items-center">{renderLine(data.style)}</div>
       <Popover>
         <PopoverTrigger asChild>
