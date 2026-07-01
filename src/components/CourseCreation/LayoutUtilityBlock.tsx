@@ -26,7 +26,7 @@ export function isLayoutUtilityVariant(v?: string): v is LayoutUtilityVariant {
 }
 
 export const layoutUtilityDefaults: Record<LayoutUtilityVariant, string> = {
-  "divider-line": JSON.stringify({ style: "solid" }),
+  "divider-line": JSON.stringify({ style: "ornament" }),
   "divider-numbered": JSON.stringify({ number: 1, label: "" }),
   spacer: JSON.stringify({ height: 40 }),
   "continue-button": JSON.stringify({ label: "Continue" }),
