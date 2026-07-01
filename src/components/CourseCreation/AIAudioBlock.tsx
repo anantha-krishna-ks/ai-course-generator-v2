@@ -747,30 +747,51 @@ function VoiceLibraryDialog({
 }
 
 function WaveformStrip({ active, progress }: { active: boolean; progress: number }) {
-  // Static pseudo-waveform bars; the played portion is highlighted.
-  const bars = 44;
+  // Organic-looking pseudo waveform; the played portion glows with the primary color.
+  const bars = 56;
+  // Smooth sine-based heights for a more natural waveform silhouette.
+  const heights = Array.from({ length: bars }, (_, i) => {
+    const t = i / bars;
+    const wave =
+      Math.sin(t * Math.PI * 6) * 0.35 +
+      Math.sin(t * Math.PI * 13 + 1.3) * 0.25 +
+      Math.sin(t * Math.PI * 3 + 0.6) * 0.4;
+    return 32 + Math.abs(wave) * 60; // 32% – ~92%
+  });
+
   return (
-    <div className="flex items-center gap-[3px] w-full h-full" aria-hidden="true">
-      {Array.from({ length: bars }).map((_, i) => {
-        const h = 20 + ((i * 53) % 80); // 20% – 100%
+    <div className="relative flex items-center gap-[2px] w-full h-full" aria-hidden="true">
+      {heights.map((h, i) => {
         const played = i / bars <= progress;
         return (
           <span
             key={i}
             className={cn(
-              "flex-1 rounded-full transition-colors",
-              active && played ? "bg-primary" : "bg-muted-foreground/30"
+              "flex-1 rounded-full transition-all duration-300 ease-out",
+              active && played
+                ? "bg-gradient-to-b from-primary to-primary/70 shadow-[0_0_4px_hsl(var(--primary)/0.6)]"
+                : active
+                  ? "bg-foreground/25"
+                  : "bg-foreground/20"
             )}
             style={{
-              height: `${h}%`,
-              animation: active && !played ? `pulse 1.2s ease-in-out ${i * 30}ms infinite` : undefined,
+              height: `${active && played ? Math.min(100, h + 6) : h}%`,
+              animation: active && !played ? `waveform-idle 1.4s ease-in-out ${i * 40}ms infinite` : undefined,
+              transformOrigin: "center",
             }}
           />
         );
       })}
+      <style>{`
+        @keyframes waveform-idle {
+          0%, 100% { transform: scaleY(0.85); opacity: 0.7; }
+          50% { transform: scaleY(1.05); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }
+
 
 
 interface FilterSelectProps {
