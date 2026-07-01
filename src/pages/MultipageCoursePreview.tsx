@@ -710,9 +710,17 @@ const MultipageCoursePreview = () => {
               <div className="p-4">
                 <audio src={audioSrc} controls className="w-full h-9" aria-label="AI-generated narration" />
                 {showTranscript && (
-                  <details className="mt-3 rounded-lg bg-muted/40 border border-border/40">
-                    <summary className="cursor-pointer select-none px-3 py-2 text-xs font-medium text-foreground">Show transcript</summary>
-                    <p className="px-3 pb-3 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]">{aiState.transcript}</p>
+                  <details className="group mt-3 rounded-xl bg-gradient-to-br from-muted/30 to-muted/50 border border-border/50 hover:border-primary/30 transition-colors [&_summary::-webkit-details-marker]:hidden">
+                    <summary className="cursor-pointer select-none flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-foreground">
+                      <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center transition-transform group-open:rotate-180">
+                        <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      </span>
+                      <span className="flex-1">Transcript</span>
+                      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{aiState.transcript?.split(/\s+/).filter(Boolean).length ?? 0} words</span>
+                    </summary>
+                    <div className="px-4 pb-4 pt-1">
+                      <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere] border-l-2 border-primary/30 pl-3">{aiState.transcript}</p>
+                    </div>
                   </details>
                 )}
               </div>
