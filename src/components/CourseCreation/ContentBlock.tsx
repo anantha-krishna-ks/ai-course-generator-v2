@@ -522,7 +522,9 @@ export function ContentBlock({
           className="w-full"
           style={type === "text" && font ? { fontFamily: getFontStack(font) } : undefined}
         >
-          {type === "video-description" ? (
+          {type === "text" && isLayoutUtilityVariant(variant) ? (
+            <LayoutUtilityBlock variant={variant} content={content} onChange={onChange} readOnly={readOnly} />
+          ) : type === "video-description" ? (
             <VideoDescriptionBlock content={content} onChange={onChange} />
           ) : type === "text" && variant === "accordion" ? (
             <AccordionBlock content={content} onChange={onChange} />
