@@ -78,33 +78,38 @@ function DividerLine({ content, onChange, readOnly }: Omit<Props, "variant" | "o
   const renderLine = (style: LineStyle, className = "") => {
     if (style === "double") {
       return (
-        <div className={cn("flex-1 flex flex-col gap-[3px]", className)}>
-          <div className="h-px w-full bg-border" />
-          <div className="h-px w-full bg-border" />
+        <div className={cn("flex-1 flex flex-col gap-[5px]", className)}>
+          <div className="h-[2px] w-full bg-foreground/40 rounded-full" />
+          <div className="h-[2px] w-full bg-foreground/40 rounded-full" />
         </div>
       );
     }
     if (style === "ornament") {
       return (
-        <div className={cn("flex-1 flex items-center gap-2", className)}>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-border" />
-          <div className="w-1.5 h-1.5 rounded-full bg-border" aria-hidden="true" />
-          <div className="w-2.5 h-2.5 rotate-45 border border-border bg-background" aria-hidden="true" />
-          <div className="w-1.5 h-1.5 rounded-full bg-border" aria-hidden="true" />
-          <div className="flex-1 h-px bg-gradient-to-l from-transparent via-border to-border" />
+        <div className={cn("flex-1 flex items-center gap-3", className)}>
+          <div className="flex-1 h-[2px] rounded-full bg-gradient-to-r from-transparent via-foreground/30 to-foreground/45" />
+          <div className="w-2 h-2 rounded-full bg-foreground/45" aria-hidden="true" />
+          <div className="w-3.5 h-3.5 rotate-45 border-[1.5px] border-foreground/45 bg-background" aria-hidden="true" />
+          <div className="w-2 h-2 rounded-full bg-foreground/45" aria-hidden="true" />
+          <div className="flex-1 h-[2px] rounded-full bg-gradient-to-l from-transparent via-foreground/30 to-foreground/45" />
         </div>
       );
     }
+    const thickness = style === "dotted" ? 3 : 2.5;
     return (
       <div
-        className={cn("flex-1 h-0", className)}
-        style={{ borderTopWidth: 1, borderTopStyle: style, borderTopColor: "hsl(var(--border))" }}
+        className={cn("flex-1 h-0 rounded-full", className)}
+        style={{
+          borderTopWidth: thickness,
+          borderTopStyle: style,
+          borderTopColor: "hsl(var(--foreground) / 0.45)",
+        }}
       />
     );
   };
 
   if (readOnly) {
-    return <div className="w-full py-4 flex items-center">{renderLine(data.style)}</div>;
+    return <div className="w-full py-6 flex items-center">{renderLine(data.style)}</div>;
   }
 
   return (
