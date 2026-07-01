@@ -1158,6 +1158,47 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "divider-line":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex items-center justify-center h-[44px]")}>
+            <div className="w-full h-px bg-[hsl(220,13%,80%)]" />
+          </div>
+        </div>
+      );
+    case "divider-numbered":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex items-center justify-center gap-[3px] h-[44px]")}>
+            <div className="flex-1 h-px bg-[hsl(220,13%,85%)]" />
+            <div className="w-[10px] h-[10px] rounded-full bg-primary text-white text-[5px] font-bold flex items-center justify-center">2</div>
+            <div className="flex-1 h-px bg-[hsl(220,13%,85%)]" />
+          </div>
+        </div>
+      );
+    case "spacer":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[2px]")}>
+            <div className="h-[2px] rounded bg-[hsl(220,13%,90%)] w-4/5" />
+            <div className="my-[2px] h-[10px] rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] flex items-center justify-center">
+              <span className="text-[4px] text-[hsl(220,8%,55%)] uppercase tracking-wider">Space</span>
+            </div>
+            <div className="h-[2px] rounded bg-[hsl(220,13%,90%)] w-2/3" />
+          </div>
+        </div>
+      );
+    case "continue-button":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-2 flex items-center justify-center h-[44px]")}>
+            <div className="inline-flex items-center gap-[3px] rounded-full px-[6px] py-[3px] bg-primary">
+              <span className="text-[5px] font-semibold text-white">Continue</span>
+              <ArrowRight className="w-[6px] h-[6px] text-white" aria-hidden="true" focusable="false" />
+            </div>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
