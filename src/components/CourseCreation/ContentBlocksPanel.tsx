@@ -628,6 +628,55 @@ function BlockPreview({ id }: { id: string }) {
           </p>
         </div>
       );
+    case "divider-line":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.6] mb-2">Section one wraps up here…</p>
+            <div className="h-px w-full bg-[hsl(220,13%,85%)] my-2" />
+            <p className="text-[9px] text-[hsl(220,8%,50%)] leading-[1.6] mt-2">A new topic begins next.</p>
+          </div>
+        </div>
+      );
+    case "divider-numbered":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4")}>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[hsl(220,13%,85%)]" />
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full border border-[hsl(220,13%,88%)] bg-white">
+                <div className="w-4 h-4 rounded-full bg-primary text-white text-[8px] font-bold flex items-center justify-center">2</div>
+                <span className="text-[9px] font-medium text-[hsl(220,15%,20%)]">Getting Started</span>
+              </div>
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[hsl(220,13%,85%)]" />
+            </div>
+          </div>
+        </div>
+      );
+    case "spacer":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-1.5 w-4/5" />
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] mb-1.5 w-full" />
+            <div className="my-2 h-8 rounded border border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] flex items-center justify-center">
+              <span className="text-[8px] text-[hsl(220,8%,55%)] uppercase tracking-wider">Space</span>
+            </div>
+            <div className="h-2 rounded bg-[hsl(220,13%,93%)] w-3/4" />
+          </div>
+        </div>
+      );
+    case "continue-button":
+      return (
+        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-4 flex items-center justify-center")}>
+            <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-primary text-white shadow-[0_2px_6px_-2px_hsl(var(--primary)/0.6)]">
+              <span className="text-[10px] font-semibold">Continue</span>
+              <ArrowRight className="w-3 h-3" aria-hidden="true" focusable="false" />
+            </div>
+          </div>
+        </div>
+      );
       default:
       return null;
   }
