@@ -83,10 +83,13 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
     : variant?.endsWith("-course")
     ? "Course Level"
     : null;
-  const headerTitle = isLearningAssessment
-    ? `Learning Assessment${scopeLabel ? ` — ${scopeLabel}` : ""}`
-    : isKnowledgeCheck
-    ? `Knowledge Check${scopeLabel ? ` — ${scopeLabel}` : ""}`
+  const headerTitle =
+    variant === "learning-assessment-page" ? "Page Exam"
+    : variant === "learning-assessment-section" ? "Section Exam"
+    : variant === "learning-assessment-course" ? "Final Exam"
+    : variant === "knowledge-check-page" ? "Page Check"
+    : variant === "knowledge-check-section" ? "Section Check"
+    : variant === "knowledge-check-course" ? "Final Check"
     : isQuizVariant
     ? "Quiz"
     : "Questions";
