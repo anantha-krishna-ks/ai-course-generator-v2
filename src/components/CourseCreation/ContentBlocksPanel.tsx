@@ -796,7 +796,7 @@ function BlockPreview({ id }: { id: string }) {
     case "knowledge-check-course": {
       const isKC = id.startsWith("knowledge-check");
       const scope = id.endsWith("page") ? "Page Level" : id.endsWith("section") ? "Section Level" : "Course Level";
-      const title = isKC ? "Knowledge Check" : "Learning Assessment";
+      const title = isKC ? "Check" : "Exam";
       const badge = isKC ? "REVIEW" : "GRADED";
       const badgeColor = isKC ? "hsl(158,64%,42%)" : "hsl(211,100%,44%)";
       const items = isKC
@@ -1422,7 +1422,7 @@ function BlockThumbnail({ id }: { id: string }) {
     case "knowledge-check-section":
     case "knowledge-check-course": {
       const isKC = id.startsWith("knowledge-check");
-      const title = isKC ? "Knowledge Check" : "Module 1 Quiz";
+      const title = isKC ? "Check" : "Exam";
       const items = isKC
         ? ["Quick recall", "Concept check"]
         : ["Basics", "Core concepts", "Practice"];
