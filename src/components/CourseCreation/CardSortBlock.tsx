@@ -244,7 +244,8 @@ function CardStack({
                       />
                     ) : (
                       <p
-                        className="px-5 text-sm font-medium text-foreground break-words"
+                        className="px-5 text-sm font-medium text-foreground max-w-full"
+                        style={{ overflowWrap: "anywhere", wordBreak: "break-word" }}
                         dangerouslySetInnerHTML={{ __html: sanitizeCardHtml(current?.label || "") }}
                       />
 
