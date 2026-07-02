@@ -16,6 +16,7 @@ import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLo
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
+import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 
 interface CourseItem {
@@ -522,6 +523,10 @@ const MultipageCoursePreview = () => {
         if (block.variant === "accordion") {
           return <AccordionPreview content={content} />;
         }
+        if (block.variant === "card-sort") {
+          return <CardSortPreview content={content} />;
+        }
+
         // Vertical tabs variant renders using the tabs preview in vertical orientation
         if (block.variant === "vertical-tabs") {
           return <VerticalTextTabsPreview content={content} isMobile={isMobileView} />;

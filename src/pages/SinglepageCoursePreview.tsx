@@ -12,6 +12,7 @@ import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
+import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 
 interface CourseItem {
@@ -311,6 +312,11 @@ const SinglepageCoursePreview = () => {
         if (isLayoutUtilityVariant(block.variant)) {
           return <LayoutUtilityBlock variant={block.variant} content={content} onChange={() => {}} readOnly />;
         }
+        if (block.variant === "card-sort") {
+          return <CardSortPreview content={content} />;
+        }
+
+
 
         const COL_SEPARATOR = "<!--col-break-->";
         const layoutMatch = content.match(/<!--layout:(\w[\w-]*)-->/);

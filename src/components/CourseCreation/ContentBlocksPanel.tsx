@@ -32,6 +32,8 @@ import {
   Hash,
   MoveVertical,
   ArrowRight,
+  Group,
+
 
 
 } from "lucide-react";
@@ -102,6 +104,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "vertical-tabs", label: "Vertical Tabs", icon: LayoutPanelLeft, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "vertical-tabs", description: "Organise content into a list of tabs stacked along the left" },
   { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
   { id: "flashcards", label: "Flashcards", icon: Layers, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "flashcards", variant: "flashcards", description: "Two-sided cards learners flip to reveal answers, definitions or images" },
+  { id: "card-sort", label: "Card Sorting", icon: Group, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "card-sort", description: "Learners drag items into the right category — great for grouping and classification exercises" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
@@ -671,7 +674,30 @@ function BlockPreview({ id }: { id: string }) {
           </p>
         </div>
       );
+    case "card-sort":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 space-y-2")}>
+            <div className="rounded-md border border-dashed border-primary/30 bg-primary/[0.05] p-2 flex gap-1.5">
+              <div className="rounded bg-white border border-[hsl(220,13%,88%)] px-2 py-1 text-[8px] font-semibold text-[hsl(220,15%,25%)] shadow-sm">Apple</div>
+              <div className="rounded bg-white border border-[hsl(220,13%,88%)] px-2 py-1 text-[8px] font-semibold text-[hsl(220,15%,25%)] shadow-sm">Carrot</div>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="rounded-md border-2 border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] p-1.5">
+                <p className="text-[8px] font-bold text-[hsl(220,15%,20%)]">Fruit</p>
+                <div className="mt-1 h-4 rounded bg-white/70 border border-dashed border-[hsl(220,13%,85%)]" />
+              </div>
+              <div className="rounded-md border-2 border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] p-1.5">
+                <p className="text-[8px] font-bold text-[hsl(220,15%,20%)]">Vegetable</p>
+                <div className="mt-1 h-4 rounded bg-white/70 border border-dashed border-[hsl(220,13%,85%)]" />
+              </div>
+            </div>
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Drag items into the right category</p>
+        </div>
+      );
     case "divider-line":
+
       return (
         <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-4")}>
@@ -1245,7 +1271,27 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "card-sort":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[2px]")}>
+            <div className="rounded-[2px] border border-dashed border-primary/30 bg-primary/[0.05] px-[3px] py-[2px] flex gap-[2px]">
+              <div className="rounded-[1.5px] bg-white border border-[hsl(220,13%,88%)] px-[3px] py-[1px] text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Item</div>
+              <div className="rounded-[1.5px] bg-white border border-[hsl(220,13%,88%)] px-[3px] py-[1px] text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Item</div>
+            </div>
+            <div className="grid grid-cols-2 gap-[2px]">
+              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[12px] flex items-center justify-center">
+                <span className="text-[3.5px] font-bold text-[hsl(220,15%,25%)]">A</span>
+              </div>
+              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[12px] flex items-center justify-center">
+                <span className="text-[3.5px] font-bold text-[hsl(220,15%,25%)]">B</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     case "divider-line":
+
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-2 flex items-center justify-center gap-[2px] h-[44px]")}>
