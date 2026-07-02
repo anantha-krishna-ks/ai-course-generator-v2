@@ -300,7 +300,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           <div className="flex items-center gap-2.5">
             <MessageCircleQuestion className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
             <span className="text-sm font-semibold text-foreground">
-              {isQuizVariant ? "Quiz" : "Questions"}
+              {headerTitle}
             </span>
             {questions.length > 0 && (
               <Badge variant="secondary" className="text-[11px] h-5 px-2 font-semibold">
