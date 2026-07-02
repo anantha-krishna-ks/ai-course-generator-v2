@@ -655,18 +655,17 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const saveCategory = () => {
     if (!editing) return;
     const label = draftCatLabel.trim() || "Category";
-    const description = draftCatDescription.trim();
     if (editing.kind === "category-new") {
       const id = `cat-${Date.now()}`;
       commit({
         ...data,
-        categories: [...data.categories, { id, label, description }],
+        categories: [...data.categories, { id, label }],
       });
     } else if (editing.kind === "category") {
       commit({
         ...data,
         categories: data.categories.map((c) =>
-          c.id === editing.id ? { ...c, label, description } : c
+          c.id === editing.id ? { ...c, label } : c
         ),
       });
     }
