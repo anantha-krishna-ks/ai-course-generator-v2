@@ -822,18 +822,27 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                   </div>
                 );
               })}
-            </div>
-
-            {/* Add category */}
-            <div className="mt-5">
+              {/* Add category tile */}
               <button
                 type="button"
                 onClick={openCreateCategory}
                 disabled={data.categories.length >= 4}
-                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border bg-card/60 hover:bg-primary/[0.04] hover:border-primary/40 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className={cn(
+                  "group rounded-2xl border border-dashed border-primary/25 bg-card/30 min-h-[220px] flex flex-col items-center justify-center gap-3 p-5 transition-all",
+                  "hover:border-primary/50 hover:bg-primary/[0.04] hover:shadow-sm",
+                  "disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-primary/25 disabled:hover:shadow-none"
+                )}
               >
-                <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
-                Add category
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
+                  <Plus className="w-5 h-5" aria-hidden="true" focusable="false" />
+                </span>
+                <div className="text-center space-y-0.5">
+                  <p className="text-sm font-semibold text-foreground">Add category</p>
+                  <p className="text-xs text-muted-foreground">Create a new drop zone</p>
+                </div>
+                {data.categories.length >= 4 && (
+                  <span className="text-[10px] text-muted-foreground/70 mt-1">Maximum 4 categories</span>
+                )}
               </button>
             </div>
           </div>
