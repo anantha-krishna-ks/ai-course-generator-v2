@@ -649,7 +649,6 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     const cat = data.categories.find((c) => c.id === id);
     if (!cat) return;
     setDraftCatLabel(cat.label);
-    setDraftCatDescription(cat.description ?? "");
     setEditing({ kind: "category", id });
   };
 
