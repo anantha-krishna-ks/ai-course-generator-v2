@@ -645,6 +645,11 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     if (dragOverCol !== colId) setDragOverCol(colId);
   };
 
+  const allowEditorCategoryDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
   const handleColDrop = (categoryId: string | null) => (e: React.DragEvent) => {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain") || draggingId;
@@ -762,7 +767,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
         categories={data.categories}
         droppedCounts={editorDroppedCounts}
         onDropTo={handleEditorDropToCategory}
-        allowDrop={handleColDragOver("editor-category")}
+        allowDrop={allowEditorCategoryDrop}
         activeDropId={dragOverCol}
         onDragEnter={setDragOverCol}
         onDragLeave={() => setDragOverCol(null)}
