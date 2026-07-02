@@ -375,7 +375,15 @@ function InlineSortCard({
   onDelete,
 }: InlineSortCardProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const isText = (item.type ?? "text") === "text";
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [item.label]);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -433,8 +441,9 @@ function InlineSortCard({
 
       {/* Body */}
       {isText ? (
-        <div className="absolute inset-0 pt-9 pb-6 px-3 flex items-center">
+        <div className="absolute inset-0 pt-9 pb-6 px-3 flex items-center justify-center">
           <Textarea
+            ref={textareaRef}
             value={item.label}
             onChange={(e) =>
               onChange({ label: e.target.value.slice(0, TEXT_LIMIT) })
@@ -445,7 +454,8 @@ function InlineSortCard({
             onClick={(e) => e.stopPropagation()}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
-            className="w-full h-full resize-none border-0 bg-transparent p-0 text-center text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 shadow-none leading-snug"
+            rows={1}
+            className="w-full resize-none border-0 bg-transparent p-0 text-center text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 shadow-none leading-snug overflow-hidden"
           />
           <span className="absolute bottom-2 right-3 text-[10px] font-medium text-muted-foreground tabular-nums">
             {(item.label ?? "").length}/{TEXT_LIMIT}
