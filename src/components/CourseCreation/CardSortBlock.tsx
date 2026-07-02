@@ -305,8 +305,161 @@ function CategoryGrid({
 }
 
 /* -------------------------------------------------------------------------- */
+/* Inline sort card (editable in place)                                       */
+/* -------------------------------------------------------------------------- */
+
+interface InlineSortCardProps {
+  item: CardSortItem;
+  dragging: boolean;
+  onDragStart: (e: React.DragEvent, id: string) => void;
+  onDragEnd: () => void;
+  onChange: (patch: Partial<CardSortItem>) => void;
+  onDelete: () => void;
+}
+
+function InlineSortCard({
+  item,
+  dragging,
+  onDragStart,
+  onDragEnd,
+  onChange,
+  onDelete,
+}: InlineSortCardProps) {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const isText = (item.type ?? "text") === "text";
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onChange({ image: String(reader.result || "") });
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  return (
+    <div
+      data-card-id={item.id}
+      draggable
+      onDragStart={(e) => onDragStart(e, item.id)}
+      onDragEnd={onDragEnd}
+      className={cn(
+        "group relative w-[190px] h-[230px] rounded-2xl border bg-card overflow-hidden transition-all cursor-grab active:cursor-grabbing",
+        "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)]",
+        dragging
+          ? "opacity-40 scale-[0.97] border-primary"
+          : "border-border/80 hover:border-primary/40 hover:shadow-[0_2px_4px_rgba(15,23,42,0.06),0_16px_36px_-14px_rgba(15,23,42,0.18)] hover:-translate-y-0.5"
+      )}
+    >
+      {/* Top bar */}
+      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-2 py-1.5 bg-gradient-to-b from-background/95 to-background/0">
+        <span
+          className={cn(
+            "inline-flex items-center justify-center w-6 h-6 rounded-md border text-muted-foreground",
+            "bg-background/80 backdrop-blur border-border/70"
+          )}
+          aria-hidden="true"
+        >
+          {isText ? (
+            <TypeIcon className="w-3 h-3" focusable="false" />
+          ) : (
+            <ImageIcon className="w-3 h-3" focusable="false" />
+          )}
+        </span>
+        <span
+          className="inline-flex items-center justify-center w-6 h-6 text-muted-foreground/70"
+          aria-hidden="true"
+        >
+          <GripVertical className="w-3.5 h-3.5" focusable="false" />
+        </span>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur border border-border/70 text-muted-foreground hover:text-destructive hover:border-destructive/40 opacity-0 group-hover:opacity-100 transition-all"
+          aria-label={`Delete ${item.label || "card"}`}
+        >
+          <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+        </button>
+      </div>
+
+      {/* Body */}
+      {isText ? (
+        <div className="absolute inset-0 pt-9 pb-6 px-3 flex items-center">
+          <Textarea
+            value={item.label}
+            onChange={(e) =>
+              onChange({ label: e.target.value.slice(0, TEXT_LIMIT) })
+            }
+            maxLength={TEXT_LIMIT}
+            placeholder="Type card text…"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            className="w-full h-full resize-none border-0 bg-transparent p-0 text-center text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 shadow-none leading-snug"
+          />
+          <span className="absolute bottom-2 right-3 text-[10px] font-medium text-muted-foreground tabular-nums">
+            {(item.label ?? "").length}/{TEXT_LIMIT}
+          </span>
+        </div>
+      ) : (
+        <>
+          {item.image ? (
+            <>
+              <img
+                src={item.image}
+                alt={item.label || "Card"}
+                className="absolute inset-0 w-full h-full object-cover"
+                draggable={false}
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileRef.current?.click();
+                }}
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur border border-border px-2.5 py-1 text-[10px] font-medium text-foreground hover:border-primary/50 hover:text-primary transition-all opacity-0 group-hover:opacity-100 shadow-sm"
+              >
+                <Upload className="w-3 h-3" aria-hidden="true" focusable="false" />
+                Replace
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileRef.current?.click();
+              }}
+              className="absolute inset-0 pt-9 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary/10 text-primary">
+                <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </span>
+              <span className="text-xs font-medium">Upload image</span>
+              <span className="text-[10px] text-muted-foreground/70">
+                PNG, JPG up to 20MB
+              </span>
+            </button>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFile}
+            aria-label="Upload card image"
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Editor Block                                                                */
 /* -------------------------------------------------------------------------- */
+
 
 type EditTarget =
   | { kind: "item"; id: string }
@@ -356,63 +509,30 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   );
 
   /* ---------- Card CRUD ---------- */
-  const openCreateCard = (categoryId: string | null) => {
-    setDraftType("text");
-    setDraftLabel("");
-    setDraftImage("");
-    setEditing({ kind: "item-new", categoryId });
+  const addCard = (categoryId: string, type: CardType) => {
+    const id = `item-${Date.now()}`;
+    commit({
+      ...data,
+      items: [
+        ...data.items,
+        {
+          id,
+          type,
+          label: "",
+          image: undefined,
+          categoryId,
+        },
+      ],
+    });
   };
 
-  const openEditCard = (id: string) => {
-    const item = data.items.find((i) => i.id === id);
-    if (!item) return;
-    setDraftType(item.type ?? "text");
-    setDraftLabel(item.label ?? "");
-    setDraftImage(item.image ?? "");
-    setEditing({ kind: "item", id });
+  const updateItem = (id: string, patch: Partial<CardSortItem>) => {
+    commit({
+      ...data,
+      items: data.items.map((i) => (i.id === id ? { ...i, ...patch } : i)),
+    });
   };
 
-  const saveCard = () => {
-    if (!editing) return;
-    const trimmedLabel = draftLabel.slice(0, TEXT_LIMIT).trim();
-    if (draftType === "text" && !trimmedLabel) return;
-    if (draftType === "image" && !draftImage) return;
-
-    if (editing.kind === "item-new") {
-      const id = `item-${Date.now()}`;
-      commit({
-        ...data,
-        items: [
-          ...data.items,
-          {
-            id,
-            type: draftType,
-            label: draftType === "text" ? trimmedLabel : trimmedLabel || "Image card",
-            image: draftType === "image" ? draftImage : undefined,
-            categoryId: editing.categoryId,
-          },
-        ],
-      });
-    } else if (editing.kind === "item") {
-      commit({
-        ...data,
-        items: data.items.map((i) =>
-          i.id === editing.id
-            ? {
-                ...i,
-                type: draftType,
-                label:
-                  draftType === "text"
-                    ? trimmedLabel
-                    : trimmedLabel || i.label || "Image card",
-                image: draftType === "image" ? draftImage : undefined,
-              }
-            : i
-        ),
-      });
-    }
-    setEditing(null);
-  };
 
   const removeCard = (id: string) => {
     commit({ ...data, items: data.items.filter((i) => i.id !== id) });
@@ -657,12 +777,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             variant="outline"
                             size="sm"
                             className="h-9 gap-1.5 rounded-full"
-                            onClick={() => {
-                              setDraftType("text");
-                              setDraftLabel("");
-                              setDraftImage("");
-                              setEditing({ kind: "item-new", categoryId: cat.id });
-                            }}
+                            onClick={() => addCard(cat.id, "text")}
                           >
                             <TypeIcon
                               className="w-3.5 h-3.5 text-primary"
@@ -676,12 +791,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             variant="outline"
                             size="sm"
                             className="h-9 gap-1.5 rounded-full"
-                            onClick={() => {
-                              setDraftType("image");
-                              setDraftLabel("");
-                              setDraftImage("");
-                              setEditing({ kind: "item-new", categoryId: cat.id });
-                            }}
+                            onClick={() => addCard(cat.id, "image")}
                           >
                             <ImageIcon
                               className="w-3.5 h-3.5 text-primary"
@@ -691,76 +801,23 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             Image card
                           </Button>
                         </div>
+
                       </div>
 
                       {/* Cards row */}
-                      <div className="pt-4 flex flex-wrap gap-3 min-h-[180px]">
+                      <div className="pt-5 flex flex-wrap gap-4 min-h-[220px]">
                         {cards.map((item) => (
-                          <div
+                          <InlineSortCard
                             key={item.id}
-                            data-card-id={item.id}
-                            draggable
-                            onDragStart={(e) => handleDragStart(e, item.id)}
+                            item={item}
+                            dragging={draggingId === item.id}
+                            onDragStart={handleDragStart}
                             onDragEnd={handleDragEnd}
-                            className={cn(
-                              "group relative w-[150px] h-[160px] rounded-xl border bg-card shadow-sm overflow-hidden cursor-grab active:cursor-grabbing transition-all",
-                              draggingId === item.id
-                                ? "opacity-40 scale-95 border-primary"
-                                : "border-border hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5"
-                            )}
-                          >
-                            {/* Actions */}
-                            <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                type="button"
-                                className="w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground hover:text-primary hover:border-primary/40 inline-flex items-center justify-center transition-colors"
-                                onClick={() => openEditCard(item.id)}
-                                aria-label={`Edit ${item.label || "card"}`}
-                              >
-                                <Pencil
-                                  className="w-3 h-3"
-                                  aria-hidden="true"
-                                  focusable="false"
-                                />
-                              </button>
-                              <button
-                                type="button"
-                                className="w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 inline-flex items-center justify-center transition-colors"
-                                onClick={() => removeCard(item.id)}
-                                aria-label={`Delete ${item.label || "card"}`}
-                              >
-                                <Trash2
-                                  className="w-3 h-3"
-                                  aria-hidden="true"
-                                  focusable="false"
-                                />
-                              </button>
-                            </div>
-                            <span
-                              className="absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground inline-flex items-center justify-center"
-                              aria-hidden="true"
-                            >
-                              <GripVertical
-                                className="w-3 h-3"
-                                focusable="false"
-                              />
-                            </span>
-
-                            {item.type === "image" && item.image ? (
-                              <img
-                                src={item.image}
-                                alt={item.label || "Card"}
-                                className="absolute inset-0 w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="absolute inset-0 flex items-center justify-center px-3 text-center">
-                                <span className="text-sm font-medium text-foreground break-words line-clamp-4">
-                                  {item.label || "Untitled card"}
-                                </span>
-                              </div>
-                            )}
-                          </div>
+                            onChange={(patch) => updateItem(item.id, patch)}
+                            onDelete={() => removeCard(item.id)}
+                          />
                         ))}
+
 
                         {cards.length === 0 && (
                           <div className="w-full flex items-center justify-center text-xs text-muted-foreground/70 italic border border-dashed border-border rounded-xl py-10 px-4 text-center">
@@ -795,124 +852,6 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
       </Dialog>
 
 
-      {/* Card create/edit modal */}
-      <Dialog
-        open={isCardEditing}
-        onOpenChange={(open) => !open && setEditing(null)}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {editing?.kind === "item-new" ? "Add card" : "Edit card"}
-            </DialogTitle>
-            <DialogDescription>
-              Choose a text or image card. Text is limited to {TEXT_LIMIT} characters.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-2">
-            {/* Type toggle */}
-            <div className="inline-flex p-1 rounded-full bg-muted">
-              {(["text", "image"] as CardType[]).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setDraftType(t)}
-                  className={cn(
-                    "px-3.5 py-1.5 text-xs font-medium rounded-full transition-all inline-flex items-center gap-1.5",
-                    draftType === t
-                      ? "bg-card text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {t === "text" ? (
-                    <TypeIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  ) : (
-                    <ImageIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  )}
-                  {t === "text" ? "Text" : "Image"}
-                </button>
-              ))}
-            </div>
-
-            {draftType === "text" ? (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="card-sort-text">Card text</Label>
-                  <span className="text-[10px] text-muted-foreground tabular-nums">
-                    {draftLabel.length}/{TEXT_LIMIT}
-                  </span>
-                </div>
-                <Textarea
-                  id="card-sort-text"
-                  value={draftLabel}
-                  onChange={(e) => setDraftLabel(e.target.value.slice(0, TEXT_LIMIT))}
-                  maxLength={TEXT_LIMIT}
-                  rows={3}
-                  placeholder="e.g. Photosynthesis"
-                  autoFocus
-                />
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Label>Image</Label>
-                <div
-                  className="relative w-full aspect-[5/4] rounded-xl border-2 border-dashed border-border bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-colors"
-                  onClick={onPickImage}
-                >
-                  {draftImage ? (
-                    <img
-                      src={draftImage}
-                      alt="Card preview"
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                      <Upload className="w-5 h-5" aria-hidden="true" focusable="false" />
-                      <span className="text-xs">Click to upload image</span>
-                    </div>
-                  )}
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={onFileChange}
-                  aria-label="Upload card image"
-                />
-                <div className="space-y-1.5">
-                  <Label htmlFor="card-sort-image-label" className="text-xs">
-                    Caption (optional)
-                  </Label>
-                  <Input
-                    id="card-sort-image-label"
-                    value={draftLabel}
-                    onChange={(e) => setDraftLabel(e.target.value.slice(0, TEXT_LIMIT))}
-                    maxLength={TEXT_LIMIT}
-                    placeholder="Short caption for accessibility"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditing(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={saveCard}
-              disabled={
-                (draftType === "text" && !draftLabel.trim()) ||
-                (draftType === "image" && !draftImage)
-              }
-            >
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Category create/edit modal */}
       <Dialog
