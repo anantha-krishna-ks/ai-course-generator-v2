@@ -79,7 +79,9 @@ function parseContent(raw: string): CardSortContent {
           data.categories.length >= 2 ? data.categories : DEFAULT_CONTENT.categories,
       };
     }
-  } catch {}
+  } catch {
+    // Fall back to defaults when old or malformed card sort content is loaded.
+  }
   return DEFAULT_CONTENT;
 }
 
