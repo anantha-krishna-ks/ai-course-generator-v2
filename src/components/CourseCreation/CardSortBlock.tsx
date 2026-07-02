@@ -550,6 +550,19 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   // Drag state
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  const [dropIndicator, setDropIndicator] = useState<{ colId: string; index: number } | null>(null);
+
+  const computeInsertIndex = (row: HTMLElement, clientX: number, clientY: number) => {
+    const cards = Array.from(row.querySelectorAll<HTMLElement>("[data-card-id]"));
+    for (let i = 0; i < cards.length; i++) {
+      const r = cards[i].getBoundingClientRect();
+      // Match rows first (dropping onto a wrapped line)
+      if (clientY < r.bottom) {
+        if (clientX < r.left + r.width / 2) return i;
+      }
+    }
+    return cards.length;
+  };
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
