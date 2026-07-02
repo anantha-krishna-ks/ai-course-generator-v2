@@ -310,7 +310,9 @@ function CategoryGrid({
 
 type EditTarget =
   | { kind: "item"; id: string }
+  | { kind: "item-new"; categoryId: string | null }
   | { kind: "category"; id: string }
+  | { kind: "category-new" }
   | null;
 
 interface CardSortBlockProps {
@@ -321,88 +323,28 @@ interface CardSortBlockProps {
 export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const [index, setIndex] = useState(0);
+  const [managerOpen, setManagerOpen] = useState(false);
   const [editing, setEditing] = useState<EditTarget>(null);
-  const [managingCategories, setManagingCategories] = useState(false);
+
+  // Card draft
+  const [draftType, setDraftType] = useState<CardType>("text");
   const [draftLabel, setDraftLabel] = useState("");
-  const [draftDescription, setDraftDescription] = useState("");
+  const [draftImage, setDraftImage] = useState<string>("");
+
+  // Category draft
+  const [draftCatLabel, setDraftCatLabel] = useState("");
+  const [draftCatDescription, setDraftCatDescription] = useState("");
+
+  // Drag state
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (index >= data.items.length) setIndex(Math.max(0, data.items.length - 1));
   }, [data.items.length, index]);
 
   const commit = (next: CardSortContent) => onChange(JSON.stringify(next));
-
-  const current = data.items[index];
-
-  const openItemEditor = () => {
-    if (!current) return;
-    setDraftLabel(current.label);
-    setDraftDescription("");
-    setEditing({ kind: "item", id: current.id });
-  };
-
-  const openCategoryEditor = (id: string) => {
-    const cat = data.categories.find((c) => c.id === id);
-    if (!cat) return;
-    setDraftLabel(cat.label);
-    setDraftDescription(cat.description ?? "");
-    setEditing({ kind: "category", id });
-  };
-
-  const saveEditor = () => {
-    if (!editing) return;
-    if (editing.kind === "item") {
-      commit({
-        ...data,
-        items: data.items.map((i) =>
-          i.id === editing.id ? { ...i, label: draftLabel.trim() || "Card" } : i
-        ),
-      });
-    } else {
-      commit({
-        ...data,
-        categories: data.categories.map((c) =>
-          c.id === editing.id
-            ? {
-                ...c,
-                label: draftLabel.trim() || "Category",
-                description: draftDescription.trim(),
-              }
-            : c
-        ),
-      });
-    }
-    setEditing(null);
-  };
-
-  const addItem = () => {
-    const id = `item-${Date.now()}`;
-    const next = { ...data, items: [...data.items, { id, label: `Card ${data.items.length + 1}` }] };
-    commit(next);
-    setIndex(next.items.length - 1);
-  };
-
-  const removeCurrentItem = () => {
-    if (!current || data.items.length <= 1) return;
-    commit({ ...data, items: data.items.filter((i) => i.id !== current.id) });
-  };
-
-  const addCategory = () => {
-    if (data.categories.length >= 4) return;
-    const id = `cat-${Date.now()}`;
-    commit({
-      ...data,
-      categories: [
-        ...data.categories,
-        { id, label: `Category ${data.categories.length + 1}`, description: "" },
-      ],
-    });
-  };
-
-  const removeCategory = (id: string) => {
-    if (data.categories.length <= 2) return;
-    commit({ ...data, categories: data.categories.filter((c) => c.id !== id) });
-  };
 
   const prev = useCallback(
     () => setIndex((i) => (i - 1 + data.items.length) % data.items.length),
@@ -413,12 +355,191 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     [data.items.length]
   );
 
-  const editingItem =
-    editing?.kind === "item" ? data.items.find((i) => i.id === editing.id) : null;
-  const editingCategory =
-    editing?.kind === "category"
-      ? data.categories.find((c) => c.id === editing.id)
-      : null;
+  /* ---------- Card CRUD ---------- */
+  const openCreateCard = (categoryId: string | null) => {
+    setDraftType("text");
+    setDraftLabel("");
+    setDraftImage("");
+    setEditing({ kind: "item-new", categoryId });
+  };
+
+  const openEditCard = (id: string) => {
+    const item = data.items.find((i) => i.id === id);
+    if (!item) return;
+    setDraftType(item.type ?? "text");
+    setDraftLabel(item.label ?? "");
+    setDraftImage(item.image ?? "");
+    setEditing({ kind: "item", id });
+  };
+
+  const saveCard = () => {
+    if (!editing) return;
+    const trimmedLabel = draftLabel.slice(0, TEXT_LIMIT).trim();
+    if (draftType === "text" && !trimmedLabel) return;
+    if (draftType === "image" && !draftImage) return;
+
+    if (editing.kind === "item-new") {
+      const id = `item-${Date.now()}`;
+      commit({
+        ...data,
+        items: [
+          ...data.items,
+          {
+            id,
+            type: draftType,
+            label: draftType === "text" ? trimmedLabel : trimmedLabel || "Image card",
+            image: draftType === "image" ? draftImage : undefined,
+            categoryId: editing.categoryId,
+          },
+        ],
+      });
+    } else if (editing.kind === "item") {
+      commit({
+        ...data,
+        items: data.items.map((i) =>
+          i.id === editing.id
+            ? {
+                ...i,
+                type: draftType,
+                label:
+                  draftType === "text"
+                    ? trimmedLabel
+                    : trimmedLabel || i.label || "Image card",
+                image: draftType === "image" ? draftImage : undefined,
+              }
+            : i
+        ),
+      });
+    }
+    setEditing(null);
+  };
+
+  const removeCard = (id: string) => {
+    commit({ ...data, items: data.items.filter((i) => i.id !== id) });
+  };
+
+  /* ---------- Category CRUD ---------- */
+  const openCreateCategory = () => {
+    setDraftCatLabel("");
+    setDraftCatDescription("");
+    setEditing({ kind: "category-new" });
+  };
+
+  const openEditCategory = (id: string) => {
+    const cat = data.categories.find((c) => c.id === id);
+    if (!cat) return;
+    setDraftCatLabel(cat.label);
+    setDraftCatDescription(cat.description ?? "");
+    setEditing({ kind: "category", id });
+  };
+
+  const saveCategory = () => {
+    if (!editing) return;
+    const label = draftCatLabel.trim() || "Category";
+    const description = draftCatDescription.trim();
+    if (editing.kind === "category-new") {
+      const id = `cat-${Date.now()}`;
+      commit({
+        ...data,
+        categories: [...data.categories, { id, label, description }],
+      });
+    } else if (editing.kind === "category") {
+      commit({
+        ...data,
+        categories: data.categories.map((c) =>
+          c.id === editing.id ? { ...c, label, description } : c
+        ),
+      });
+    }
+    setEditing(null);
+  };
+
+  const removeCategory = (id: string) => {
+    if (data.categories.length <= 2) return;
+    commit({
+      ...data,
+      categories: data.categories.filter((c) => c.id !== id),
+      items: data.items.map((i) =>
+        i.categoryId === id ? { ...i, categoryId: null } : i
+      ),
+    });
+  };
+
+  /* ---------- Drag & drop within manager ---------- */
+  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", itemId);
+    setDraggingId(itemId);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingId(null);
+    setDragOverCol(null);
+  };
+
+  const handleColDragOver = (colId: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverCol !== colId) setDragOverCol(colId);
+  };
+
+  const handleColDrop = (categoryId: string | null) => (e: React.DragEvent) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("text/plain") || draggingId;
+    setDragOverCol(null);
+    setDraggingId(null);
+    if (!id) return;
+
+    // Find target index. If dropped on a card inside, we'll reorder before that card.
+    const targetCardId = (e.target as HTMLElement)
+      .closest("[data-card-id]")
+      ?.getAttribute("data-card-id");
+
+    const dragged = data.items.find((i) => i.id === id);
+    if (!dragged) return;
+
+    const nextItems = data.items.filter((i) => i.id !== id);
+    const updated = { ...dragged, categoryId };
+
+    if (targetCardId && targetCardId !== id) {
+      const idx = nextItems.findIndex((i) => i.id === targetCardId);
+      if (idx >= 0) {
+        nextItems.splice(idx, 0, updated);
+        commit({ ...data, items: nextItems });
+        return;
+      }
+    }
+    // Append to end of column
+    let lastIdxInCol = -1;
+    nextItems.forEach((i, idx) => {
+      if ((i.categoryId ?? null) === categoryId) lastIdxInCol = idx;
+    });
+    nextItems.splice(lastIdxInCol + 1, 0, updated);
+    commit({ ...data, items: nextItems });
+  };
+
+  const onPickImage = () => fileInputRef.current?.click();
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setDraftImage(String(reader.result || ""));
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const columns: Array<{ id: string | null; label: string; description?: string }> = [
+    { id: null, label: "Unassigned", description: "Cards not yet placed in a category" },
+    ...data.categories.map((c) => ({ id: c.id, label: c.label, description: c.description })),
+  ];
+
+  const itemsByCol = (colId: string | null) =>
+    data.items.filter((i) => (i.categoryId ?? null) === colId);
+
+  const isCategoryEditing =
+    editing?.kind === "category" || editing?.kind === "category-new";
+  const isCardEditing = editing?.kind === "item" || editing?.kind === "item-new";
 
   return (
     <div className="w-full space-y-6">
@@ -429,44 +550,11 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
           variant="outline"
           size="sm"
           className="h-8 gap-1.5 rounded-full"
-          onClick={() => setManagingCategories(true)}
+          onClick={() => setManagerOpen(true)}
         >
-          <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          Edit categories
+          <Settings2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          Edit
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 rounded-full text-primary hover:text-primary hover:bg-primary/10"
-          onClick={addItem}
-        >
-          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          Add card
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 rounded-full"
-          onClick={openItemEditor}
-          disabled={!current}
-        >
-          <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          Edit card
-        </Button>
-        {data.items.length > 1 && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-8 gap-1.5 rounded-full text-destructive hover:text-destructive hover:bg-destructive/10"
-            onClick={removeCurrentItem}
-          >
-            <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            Delete card
-          </Button>
-        )}
       </div>
 
       {/* Card stack */}
@@ -481,117 +569,352 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
       {/* Categories */}
       <CategoryGrid categories={data.categories} />
 
-      {/* Manage categories dialog */}
-      <Dialog
-        open={managingCategories}
-        onOpenChange={(open) => !open && setManagingCategories(false)}
-      >
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Manage categories</DialogTitle>
+      {/* Manager modal */}
+      <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
+        <DialogContent className="sm:max-w-5xl max-h-[90vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+            <DialogTitle>Manage cards & categories</DialogTitle>
             <DialogDescription>
-              Rename, add, or remove the categories learners will sort cards into.
+              Create categories and cards, then drag cards between columns to organize them.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2 max-h-[50vh] overflow-y-auto">
-            {data.categories.map((cat) => (
-              <div
-                key={cat.id}
-                className="flex items-center gap-2 rounded-xl border border-border p-2.5"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">
-                    {cat.label}
+
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+            {/* Categories row */}
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">Categories</h3>
+                  <p className="text-xs text-muted-foreground">
+                    At least 2 required. Rename or remove.
                   </p>
-                  {cat.description && (
-                    <p className="text-xs text-muted-foreground truncate">
-                      {cat.description}
-                    </p>
-                  )}
                 </div>
                 <Button
                   type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full"
-                  onClick={() => {
-                    setManagingCategories(false);
-                    openCategoryEditor(cat.id);
-                  }}
-                  aria-label={`Edit ${cat.label}`}
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5 rounded-full"
+                  onClick={openCreateCategory}
                 >
-                  <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Add category
                 </Button>
-                {data.categories.length > 2 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-full text-destructive hover:text-destructive"
-                    onClick={() => removeCategory(cat.id)}
-                    aria-label={`Delete ${cat.label}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  </Button>
-                )}
               </div>
-            ))}
+              <div className="flex flex-wrap gap-2">
+                {data.categories.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card pl-3 pr-1 py-1"
+                  >
+                    <span className="text-sm font-medium text-foreground">{cat.label}</span>
+                    <button
+                      type="button"
+                      className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 inline-flex items-center justify-center transition-colors"
+                      onClick={() => openEditCategory(cat.id)}
+                      aria-label={`Edit ${cat.label}`}
+                    >
+                      <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    </button>
+                    {data.categories.length > 2 && (
+                      <button
+                        type="button"
+                        className="w-6 h-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 inline-flex items-center justify-center transition-colors"
+                        onClick={() => removeCategory(cat.id)}
+                        aria-label={`Delete ${cat.label}`}
+                      >
+                        <X className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Board */}
+            <section className="space-y-3">
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">Cards</h3>
+                <p className="text-xs text-muted-foreground">
+                  Drag cards between columns to organize. Add cards to any column.
+                </p>
+              </div>
+              <div
+                className="grid gap-4"
+                style={{
+                  gridTemplateColumns: `repeat(${Math.min(columns.length, 4)}, minmax(0, 1fr))`,
+                }}
+              >
+                {columns.map((col) => {
+                  const isOver = dragOverCol === (col.id ?? "unassigned");
+                  const cards = itemsByCol(col.id);
+                  return (
+                    <div
+                      key={col.id ?? "unassigned"}
+                      onDragOver={handleColDragOver(col.id ?? "unassigned")}
+                      onDragLeave={() => setDragOverCol(null)}
+                      onDrop={handleColDrop(col.id)}
+                      className={cn(
+                        "rounded-2xl border p-3 flex flex-col gap-2 min-h-[260px] transition-all",
+                        isOver
+                          ? "border-primary bg-primary/5 shadow-sm"
+                          : "border-border bg-muted/30"
+                      )}
+                    >
+                      <div className="flex items-center justify-between px-1 pb-1 border-b border-border/60">
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-foreground truncate">
+                            {col.label}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {cards.length} {cards.length === 1 ? "card" : "cards"}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 inline-flex items-center justify-center transition-colors"
+                          onClick={() => openCreateCard(col.id)}
+                          aria-label={`Add card to ${col.label}`}
+                        >
+                          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        </button>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        {cards.map((item) => (
+                          <div
+                            key={item.id}
+                            data-card-id={item.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, item.id)}
+                            onDragEnd={handleDragEnd}
+                            className={cn(
+                              "group relative rounded-xl border bg-card shadow-sm px-2.5 py-2 flex items-center gap-2 cursor-grab active:cursor-grabbing transition-all",
+                              draggingId === item.id
+                                ? "opacity-40 border-primary"
+                                : "border-border hover:border-primary/40 hover:shadow-md"
+                            )}
+                          >
+                            <GripVertical
+                              className="w-3.5 h-3.5 text-muted-foreground shrink-0"
+                              aria-hidden="true"
+                              focusable="false"
+                            />
+                            {item.type === "image" && item.image ? (
+                              <img
+                                src={item.image}
+                                alt={item.label || "Card"}
+                                className="w-8 h-8 rounded-md object-cover border border-border shrink-0"
+                              />
+                            ) : (
+                              <span className="w-8 h-8 rounded-md bg-primary/10 text-primary inline-flex items-center justify-center shrink-0">
+                                <TypeIcon
+                                  className="w-3.5 h-3.5"
+                                  aria-hidden="true"
+                                  focusable="false"
+                                />
+                              </span>
+                            )}
+                            <span className="flex-1 min-w-0 text-xs font-medium text-foreground truncate">
+                              {item.label || (item.type === "image" ? "Image card" : "Card")}
+                            </span>
+                            <button
+                              type="button"
+                              className="w-6 h-6 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 inline-flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => openEditCard(item.id)}
+                              aria-label={`Edit ${item.label || "card"}`}
+                            >
+                              <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            </button>
+                            <button
+                              type="button"
+                              className="w-6 h-6 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 inline-flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeCard(item.id)}
+                              aria-label={`Delete ${item.label || "card"}`}
+                            >
+                              <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            </button>
+                          </div>
+                        ))}
+                        {cards.length === 0 && (
+                          <div className="text-[11px] text-muted-foreground/70 italic text-center py-6 border border-dashed border-border rounded-lg">
+                            Drop cards here
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
           </div>
-          <DialogFooter className="sm:justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              className="gap-1.5"
-              onClick={addCategory}
-              disabled={data.categories.length >= 4}
-            >
-              <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
-              Add category
-            </Button>
-            <Button onClick={() => setManagingCategories(false)}>Done</Button>
+
+          <DialogFooter className="px-6 py-4 border-t border-border">
+            <Button onClick={() => setManagerOpen(false)}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Edit label/description modal */}
-      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+      {/* Card create/edit modal */}
+      <Dialog
+        open={isCardEditing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingItem ? "Edit card" : "Edit category"}</DialogTitle>
+            <DialogTitle>
+              {editing?.kind === "item-new" ? "Add card" : "Edit card"}
+            </DialogTitle>
             <DialogDescription>
-              {editingItem
-                ? "Update the label learners will see on this sortable card."
-                : "Rename this drop category and add optional guidance for learners."}
+              Choose a text or image card. Text is limited to {TEXT_LIMIT} characters.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Type toggle */}
+            <div className="inline-flex p-1 rounded-full bg-muted">
+              {(["text", "image"] as CardType[]).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setDraftType(t)}
+                  className={cn(
+                    "px-3.5 py-1.5 text-xs font-medium rounded-full transition-all inline-flex items-center gap-1.5",
+                    draftType === t
+                      ? "bg-card text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {t === "text" ? (
+                    <TypeIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <ImageIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  )}
+                  {t === "text" ? "Text" : "Image"}
+                </button>
+              ))}
+            </div>
+
+            {draftType === "text" ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="card-sort-text">Card text</Label>
+                  <span className="text-[10px] text-muted-foreground tabular-nums">
+                    {draftLabel.length}/{TEXT_LIMIT}
+                  </span>
+                </div>
+                <Textarea
+                  id="card-sort-text"
+                  value={draftLabel}
+                  onChange={(e) => setDraftLabel(e.target.value.slice(0, TEXT_LIMIT))}
+                  maxLength={TEXT_LIMIT}
+                  rows={3}
+                  placeholder="e.g. Photosynthesis"
+                  autoFocus
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label>Image</Label>
+                <div
+                  className="relative w-full aspect-[5/4] rounded-xl border-2 border-dashed border-border bg-muted/30 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/50 transition-colors"
+                  onClick={onPickImage}
+                >
+                  {draftImage ? (
+                    <img
+                      src={draftImage}
+                      alt="Card preview"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                      <Upload className="w-5 h-5" aria-hidden="true" focusable="false" />
+                      <span className="text-xs">Click to upload image</span>
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={onFileChange}
+                  aria-label="Upload card image"
+                />
+                <div className="space-y-1.5">
+                  <Label htmlFor="card-sort-image-label" className="text-xs">
+                    Caption (optional)
+                  </Label>
+                  <Input
+                    id="card-sort-image-label"
+                    value={draftLabel}
+                    onChange={(e) => setDraftLabel(e.target.value.slice(0, TEXT_LIMIT))}
+                    maxLength={TEXT_LIMIT}
+                    placeholder="Short caption for accessibility"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={saveCard}
+              disabled={
+                (draftType === "text" && !draftLabel.trim()) ||
+                (draftType === "image" && !draftImage)
+              }
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Category create/edit modal */}
+      <Dialog
+        open={isCategoryEditing}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {editing?.kind === "category-new" ? "Add category" : "Edit category"}
+            </DialogTitle>
+            <DialogDescription>
+              Name the drop category and optionally describe it for learners.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label htmlFor="card-sort-label">Label</Label>
+              <Label htmlFor="cat-label">Name</Label>
               <Input
-                id="card-sort-label"
-                value={draftLabel}
-                onChange={(e) => setDraftLabel(e.target.value)}
-                placeholder={editingItem ? "e.g. Photosynthesis" : "e.g. Biology"}
+                id="cat-label"
+                value={draftCatLabel}
+                onChange={(e) => setDraftCatLabel(e.target.value)}
+                placeholder="e.g. Biology"
                 autoFocus
               />
             </div>
-            {editingCategory && (
-              <div className="space-y-2">
-                <Label htmlFor="card-sort-description">Description (optional)</Label>
-                <Input
-                  id="card-sort-description"
-                  value={draftDescription}
-                  onChange={(e) => setDraftDescription(e.target.value)}
-                  placeholder="Short hint for learners"
-                />
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="cat-desc">Description (optional)</Label>
+              <Input
+                id="cat-desc"
+                value={draftCatDescription}
+                onChange={(e) => setDraftCatDescription(e.target.value)}
+                placeholder="Short hint for learners"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(null)}>
               Cancel
             </Button>
-            <Button onClick={saveEditor}>Save</Button>
+            <Button onClick={saveCategory} disabled={!draftCatLabel.trim()}>
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
