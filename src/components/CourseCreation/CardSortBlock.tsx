@@ -947,7 +947,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
 
                         {cards.length === 0 && (
-                          <div className="w-full flex items-center justify-center text-xs text-muted-foreground/70 italic border border-dashed border-border rounded-xl py-10 px-4 text-center">
+                          <div className="w-full h-[230px] flex items-center justify-center text-xs text-muted-foreground/70 italic border border-dashed border-border rounded-xl py-10 px-4 text-center">
                             No cards yet — add a Text or Image card, or drag one here.
                           </div>
                         )}
