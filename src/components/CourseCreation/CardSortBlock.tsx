@@ -624,12 +624,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             variant="outline"
                             size="sm"
                             className="h-9 gap-1.5 rounded-full"
-                            onClick={() => {
-                              setDraftType("text");
-                              setDraftLabel("");
-                              setDraftImage("");
-                              setEditing({ kind: "item-new", categoryId: cat.id });
-                            }}
+                            onClick={() => addCard(cat.id, "text")}
                           >
                             <TypeIcon
                               className="w-3.5 h-3.5 text-primary"
@@ -643,12 +638,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             variant="outline"
                             size="sm"
                             className="h-9 gap-1.5 rounded-full"
-                            onClick={() => {
-                              setDraftType("image");
-                              setDraftLabel("");
-                              setDraftImage("");
-                              setEditing({ kind: "item-new", categoryId: cat.id });
-                            }}
+                            onClick={() => addCard(cat.id, "image")}
                           >
                             <ImageIcon
                               className="w-3.5 h-3.5 text-primary"
@@ -658,6 +648,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             Image card
                           </Button>
                         </div>
+
                       </div>
 
                       {/* Cards row */}
