@@ -796,9 +796,9 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     e.target.value = "";
   };
 
-  const columns: Array<{ id: string | null; label: string; description?: string }> = [
-    { id: null, label: "Unassigned", description: "Cards not yet placed in a category" },
-    ...data.categories.map((c) => ({ id: c.id, label: c.label, description: c.description })),
+  const columns: Array<{ id: string | null; label: string }> = [
+    { id: null, label: "Unassigned" },
+    ...data.categories.map((c) => ({ id: c.id, label: c.label })),
   ];
 
   const itemsByCol = (colId: string | null) =>
