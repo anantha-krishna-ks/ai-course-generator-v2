@@ -1019,25 +1019,17 @@ function BlockThumbnail({ id }: { id: string }) {
     case "audio-ai":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-[4px] flex flex-col gap-[3px]")}>
-            <div className="flex items-center gap-[3px]">
-              <div className="w-[10px] h-[10px] rounded-[2px] bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                <Sparkles className="w-[5px] h-[5px] text-white" aria-hidden="true" focusable="false" />
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="w-full h-[22px] rounded-[3px] bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,93%)] flex items-center gap-[3px] px-[4px]">
+              <div className="w-[12px] h-[12px] rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Sparkles className="w-[6px] h-[6px] text-primary" aria-hidden="true" focusable="false" />
               </div>
-              <div className="flex-1 h-[3px] rounded-full bg-[hsl(220,15%,25%)] w-1/2" />
-            </div>
-            <div className="w-full rounded-[2px] bg-primary/10 border border-primary/20 p-[3px] flex flex-col gap-[2px]">
-              <div className="h-[2px] rounded-full bg-primary/30 w-full" />
-              <div className="h-[2px] rounded-full bg-primary/25 w-4/5" />
-            </div>
-            <div className="flex items-center gap-[2px]">
-              <div className="flex-1 h-[8px] rounded-[2px] bg-white border border-[hsl(220,13%,91%)] flex items-center gap-[2px] px-[2px]">
-                <div className="w-[5px] h-[5px] rounded-full bg-gradient-to-br from-rose-400 to-pink-500" />
-                <div className="h-[2px] flex-1 rounded-full bg-[hsl(220,10%,75%)]" />
+              <div className="flex-1 flex items-end gap-[1px]">
+                {[3, 6, 2, 8, 5, 10, 4, 7, 2, 5, 9, 3].map((h, i) => (
+                  <div key={i} className="flex-1 rounded-[0.5px] bg-primary/25" style={{ height: `${h * 0.7}px` }} />
+                ))}
               </div>
-              <div className="h-[8px] px-[3px] rounded-[2px] bg-gradient-to-br from-primary to-primary/80 flex items-center">
-                <Sparkles className="w-[4px] h-[4px] text-white" aria-hidden="true" focusable="false" />
-              </div>
+              <span className="text-[5px] text-[hsl(220,8%,60%)] shrink-0 tabular-nums">0:42</span>
             </div>
           </div>
         </div>
