@@ -34,6 +34,7 @@ import { HotspotBlock } from "./HotspotBlock";
 import { TabsBlock } from "./TabsBlock";
 import { AccordionBlock } from "./AccordionBlock";
 import { FlashcardsBlock } from "./FlashcardsBlock";
+import { CardSortBlock } from "./CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "./LayoutUtilityBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
