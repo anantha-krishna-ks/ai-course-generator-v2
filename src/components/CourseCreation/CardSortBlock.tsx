@@ -44,7 +44,6 @@ interface CardSortItem {
 interface CardSortCategory {
   id: string;
   label: string;
-  description?: string;
 }
 
 interface CardSortContent {
@@ -59,8 +58,8 @@ const DEFAULT_CONTENT: CardSortContent = {
     { id: "item-3", label: "Card 3", type: "text", categoryId: null },
   ],
   categories: [
-    { id: "cat-1", label: "Category 1", description: "" },
-    { id: "cat-2", label: "Category 2", description: "" },
+    { id: "cat-1", label: "Category 1" },
+    { id: "cat-2", label: "Category 2" },
   ],
 };
 
@@ -77,8 +76,9 @@ function parseContent(raw: string): CardSortContent {
             ...i,
           })
         ),
-        categories:
-          data.categories.length >= 1 ? data.categories : DEFAULT_CONTENT.categories,
+        categories: (data.categories.length >= 1 ? data.categories : DEFAULT_CONTENT.categories).map(
+          (c: CardSortCategory) => ({ id: c.id, label: c.label })
+        ),
       };
     }
   } catch {
@@ -324,11 +324,6 @@ function CategoryGrid({
               </span>
             )}
             <p className="text-base font-semibold text-foreground">{cat.label}</p>
-            {cat.description && (
-              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                {cat.description}
-              </p>
-            )}
             {interactive ? (
               count > 0 ? (
                 <p className="mt-2 text-xs font-medium text-primary">
@@ -545,7 +540,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
   // Category draft
   const [draftCatLabel, setDraftCatLabel] = useState("");
-  const [draftCatDescription, setDraftCatDescription] = useState("");
+  
 
   // Drag state
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -647,7 +642,6 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   /* ---------- Category CRUD ---------- */
   const openCreateCategory = () => {
     setDraftCatLabel("");
-    setDraftCatDescription("");
     setEditing({ kind: "category-new" });
   };
 
@@ -655,25 +649,23 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     const cat = data.categories.find((c) => c.id === id);
     if (!cat) return;
     setDraftCatLabel(cat.label);
-    setDraftCatDescription(cat.description ?? "");
     setEditing({ kind: "category", id });
   };
 
   const saveCategory = () => {
     if (!editing) return;
     const label = draftCatLabel.trim() || "Category";
-    const description = draftCatDescription.trim();
     if (editing.kind === "category-new") {
       const id = `cat-${Date.now()}`;
       commit({
         ...data,
-        categories: [...data.categories, { id, label, description }],
+        categories: [...data.categories, { id, label }],
       });
     } else if (editing.kind === "category") {
       commit({
         ...data,
         categories: data.categories.map((c) =>
-          c.id === editing.id ? { ...c, label, description } : c
+          c.id === editing.id ? { ...c, label } : c
         ),
       });
     }
@@ -801,9 +793,9 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     e.target.value = "";
   };
 
-  const columns: Array<{ id: string | null; label: string; description?: string }> = [
-    { id: null, label: "Unassigned", description: "Cards not yet placed in a category" },
-    ...data.categories.map((c) => ({ id: c.id, label: c.label, description: c.description })),
+  const columns: Array<{ id: string | null; label: string }> = [
+    { id: null, label: "Unassigned" },
+    ...data.categories.map((c) => ({ id: c.id, label: c.label })),
   ];
 
   const itemsByCol = (colId: string | null) =>
@@ -1074,7 +1066,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
               {editing?.kind === "category-new" ? "Add category" : "Edit category"}
             </DialogTitle>
             <DialogDescription>
-              Name the drop category and optionally describe it for learners.
+              Name the drop category for learners.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -1086,15 +1078,6 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                 onChange={(e) => setDraftCatLabel(e.target.value)}
                 placeholder="e.g. Biology"
                 autoFocus
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cat-desc">Description (optional)</Label>
-              <Input
-                id="cat-desc"
-                value={draftCatDescription}
-                onChange={(e) => setDraftCatDescription(e.target.value)}
-                placeholder="Short hint for learners"
               />
             </div>
           </div>
