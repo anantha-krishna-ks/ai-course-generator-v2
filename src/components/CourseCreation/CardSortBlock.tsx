@@ -1066,7 +1066,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
               {editing?.kind === "category-new" ? "Add category" : "Edit category"}
             </DialogTitle>
             <DialogDescription>
-              Name the drop category and optionally describe it for learners.
+              Name the drop category for learners.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
