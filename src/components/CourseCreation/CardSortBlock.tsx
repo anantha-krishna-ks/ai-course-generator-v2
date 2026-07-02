@@ -171,21 +171,30 @@ function CardStack({
                 draggable={interactive}
                 onDragStart={(e) => current && onDragStart?.(e, current.id)}
                 className={cn(
-                  "absolute inset-0 rounded-2xl bg-card border border-border shadow-md transition-transform duration-300",
-                  "flex items-center justify-center px-5 text-center",
+                  "absolute inset-0 rounded-2xl bg-card border border-border shadow-md transition-transform duration-300 overflow-hidden",
+                  "flex items-center justify-center text-center",
                   interactive && "cursor-grab active:cursor-grabbing active:scale-[0.98]"
                 )}
               >
                 <span
-                  className="absolute top-3 left-3 inline-flex items-center justify-center w-6 h-6 rounded-md bg-muted text-muted-foreground"
+                  className="absolute top-3 left-3 z-10 inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur text-muted-foreground"
                   aria-hidden="true"
                 >
                   <GripHorizontal className="w-3.5 h-3.5" focusable="false" />
                 </span>
-                <p className="text-sm font-medium text-foreground break-words">
-                  {current?.label}
-                </p>
+                {current?.type === "image" && current.image ? (
+                  <img
+                    src={current.image}
+                    alt={current.label || "Card image"}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <p className="px-5 text-sm font-medium text-foreground break-words">
+                    {current?.label}
+                  </p>
+                )}
               </div>
+
             </>
           ) : (
             <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-border/60 bg-muted/20 flex items-center justify-center text-xs text-muted-foreground italic px-4 text-center">
