@@ -194,6 +194,7 @@ function CardStack({
                     src={current.image}
                     alt={current.label || "Card image"}
                     className="absolute inset-0 w-full h-full object-cover"
+                    draggable={false}
                   />
                 ) : (
                   <p className="px-5 text-sm font-medium text-foreground break-words">
