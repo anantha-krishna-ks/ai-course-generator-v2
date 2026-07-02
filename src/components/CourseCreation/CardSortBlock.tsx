@@ -521,7 +521,7 @@ function RtButton({
       title={label}
       className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
     >
-      <Icon className="w-3.5 h-3.5" aria-hidden focusable="false" />
+      <Icon className="w-3.5 h-3.5" />
     </button>
   );
 }
