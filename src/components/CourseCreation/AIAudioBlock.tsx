@@ -270,54 +270,52 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
           </div>
         </div>
 
-        {/* Voice + Generate row */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setVoiceLibraryOpen(true)}
-            className="group flex-1 flex items-center gap-2.5 rounded-lg border border-border bg-background hover:border-primary/50 hover:bg-primary/[0.03] px-2.5 py-2 transition-colors text-left"
-            aria-label="Choose an AI voice"
-          >
-            <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
-              <img
-                src={currentVoice.image}
-                alt={`${currentVoice.name} portrait`}
-                width={32}
-                height={32}
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
-              <p className="text-[11px] text-muted-foreground truncate">
-                {currentVoice.language} • {currentVoice.gender} • {currentVoice.category}
-              </p>
-            </div>
+        {/* Voice selector */}
+        <button
+          type="button"
+          onClick={() => setVoiceLibraryOpen(true)}
+          className="group w-full flex items-center gap-2.5 rounded-lg border border-border bg-background hover:border-primary/50 hover:bg-primary/[0.03] px-2.5 py-2 transition-colors text-left"
+          aria-label="Choose an AI voice"
+        >
+          <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
+            <img
+              src={currentVoice.image}
+              alt={`${currentVoice.name} portrait`}
+              width={32}
+              height={32}
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex-1 min-w-0 flex items-center gap-2">
+            <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
+            <p className="text-[11px] text-muted-foreground truncate">
+              {currentVoice.language} • {currentVoice.gender} • {currentVoice.category}
+            </p>
+          </div>
+          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+        </button>
 
-            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
-          </button>
-
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleGenerateClick}
-            disabled={!canGenerate}
-            className="h-9 gap-1.5 rounded-lg px-3 shrink-0"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span className="text-xs">Generating…</span>
-              </>
-            ) : (
-              <>
-                <Wand2 className="w-3.5 h-3.5" />
-                <span className="text-xs">{hasAudio ? "Regenerate" : "Generate"}</span>
-              </>
-            )}
-          </Button>
-        </div>
+        {/* Generate button */}
+        <Button
+          type="button"
+          size="sm"
+          onClick={handleGenerateClick}
+          disabled={!canGenerate}
+          className="h-9 gap-1.5 rounded-lg px-3 self-start"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span className="text-xs">Generating…</span>
+            </>
+          ) : (
+            <>
+              <Wand2 className="w-3.5 h-3.5" />
+              <span className="text-xs">{hasAudio ? "Regenerate" : "Generate"}</span>
+            </>
+          )}
+        </Button>
 
         {/* Audio + transcript result */}
         {hasAudio && !isGenerating && (
