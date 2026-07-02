@@ -17,6 +17,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -118,6 +119,34 @@ function CardStack({
 }: CardStackProps) {
   const current = items[index];
   const hasCards = items.length > 0;
+  const [direction, setDirection] = useState<"left" | "right" | null>(null);
+
+  const goPrev = () => {
+    if (!hasCards || total <= 1) return;
+    setDirection("left");
+    onPrev();
+  };
+  const goNext = () => {
+    if (!hasCards || total <= 1) return;
+    setDirection("right");
+    onNext();
+  };
+
+  const cardVariants = {
+    enter: (dir: "left" | "right" | null) => ({
+      x: dir === "right" ? 70 : dir === "left" ? -70 : 30,
+      opacity: 0,
+      scale: 0.9,
+      rotate: dir === "right" ? 4 : dir === "left" ? -4 : 0,
+    }),
+    center: { x: 0, opacity: 1, scale: 1, rotate: 0 },
+    exit: (dir: "left" | "right" | null) => ({
+      x: dir === "right" ? -70 : dir === "left" ? 70 : -30,
+      opacity: 0,
+      scale: 0.9,
+      rotate: dir === "right" ? -4 : dir === "left" ? 4 : 0,
+    }),
+  };
 
   return (
     <div className="relative w-full">
@@ -144,7 +173,7 @@ function CardStack({
         {/* Prev */}
         <button
           type="button"
-          onClick={onPrev}
+          onClick={goPrev}
           disabled={!hasCards || total <= 1}
           className="absolute left-4 sm:left-8 z-10 w-8 h-8 rounded-full border border-border bg-card text-muted-foreground shadow-sm hover:text-primary hover:border-primary/40 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center"
           aria-label="Previous card"
@@ -172,36 +201,48 @@ function CardStack({
                 />
               )}
               {/* Active card */}
-              <div
-                key={current?.id}
-                draggable={interactive}
-                onDragStart={(e) => current && onDragStart?.(e, current.id)}
-                onDragEnd={interactive ? onDragEnd : undefined}
-                data-card-stack-item-id={current?.id}
-                className={cn(
-                  "absolute inset-0 rounded-2xl bg-card border border-border shadow-md transition-transform duration-300 overflow-hidden",
-                  "flex items-center justify-center text-center",
-                  interactive && "cursor-grab active:cursor-grabbing active:scale-[0.98]"
-                )}
-              >
-                <span
-                  className="absolute top-3 left-3 z-10 inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur text-muted-foreground"
-                  aria-hidden="true"
-                >
-                  <GripHorizontal className="w-3.5 h-3.5" focusable="false" />
-                </span>
-                {current?.type === "image" && current.image ? (
-                  <img
-                    src={current.image}
-                    alt={current.label || "Card image"}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    draggable={false}
-                  />
-                ) : (
-                  <p className="px-5 text-sm font-medium text-foreground break-words">
-                    {current?.label}
-                  </p>
-                )}
+              <div className="absolute inset-0">
+                <AnimatePresence initial={false} custom={direction}>
+                  <motion.div
+                    key={current?.id}
+                    custom={direction}
+                    variants={cardVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+                    draggable={interactive}
+                    onDragStart={(e: unknown) =>
+                      current && onDragStart?.(e as React.DragEvent, current.id)
+                    }
+                    onDragEnd={interactive ? onDragEnd : undefined}
+                    data-card-stack-item-id={current?.id}
+                    className={cn(
+                      "absolute inset-0 rounded-2xl bg-card border border-border shadow-md overflow-hidden",
+                      "flex items-center justify-center text-center",
+                      interactive && "cursor-grab active:cursor-grabbing"
+                    )}
+                  >
+                    <span
+                      className="absolute top-3 left-3 z-10 inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur text-muted-foreground"
+                      aria-hidden="true"
+                    >
+                      <GripHorizontal className="w-3.5 h-3.5" focusable="false" />
+                    </span>
+                    {current?.type === "image" && current.image ? (
+                      <img
+                        src={current.image}
+                        alt={current.label || "Card image"}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        draggable={false}
+                      />
+                    ) : (
+                      <p className="px-5 text-sm font-medium text-foreground break-words">
+                        {current?.label}
+                      </p>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
             </>
@@ -228,7 +269,7 @@ function CardStack({
         {/* Next */}
         <button
           type="button"
-          onClick={onNext}
+          onClick={goNext}
           disabled={!hasCards || total <= 1}
           className="absolute right-4 sm:right-8 z-10 w-8 h-8 rounded-full border border-border bg-card text-muted-foreground shadow-sm hover:text-primary hover:border-primary/40 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center"
           aria-label="Next card"
