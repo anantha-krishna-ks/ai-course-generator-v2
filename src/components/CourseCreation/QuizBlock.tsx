@@ -73,7 +73,23 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 }
 
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
-  const isQuizVariant = variant === "quiz-block";
+  const isLearningAssessment = variant?.startsWith("learning-assessment-") ?? false;
+  const isKnowledgeCheck = variant?.startsWith("knowledge-check-") ?? false;
+  const isQuizVariant = variant === "quiz-block" || isLearningAssessment || isKnowledgeCheck;
+  const scopeLabel = variant?.endsWith("-page")
+    ? "Page Level"
+    : variant?.endsWith("-section")
+    ? "Section Level"
+    : variant?.endsWith("-course")
+    ? "Course Level"
+    : null;
+  const headerTitle = isLearningAssessment
+    ? `Learning Assessment${scopeLabel ? ` — ${scopeLabel}` : ""}`
+    : isKnowledgeCheck
+    ? `Knowledge Check${scopeLabel ? ` — ${scopeLabel}` : ""}`
+    : isQuizVariant
+    ? "Quiz"
+    : "Questions";
   // Parse questions + passCriteria + navPage from content (supports legacy array shape)
   const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string } => {
     try {
