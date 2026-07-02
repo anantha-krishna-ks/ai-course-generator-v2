@@ -571,115 +571,130 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
       {/* Manager modal */}
       <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
-        <DialogContent className="sm:max-w-5xl max-h-[90vh] flex flex-col p-0 gap-0">
+        <DialogContent className="sm:max-w-6xl max-h-[92vh] flex flex-col p-0 gap-0">
           <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
             <DialogTitle>Manage cards & categories</DialogTitle>
             <DialogDescription>
-              Create categories and cards, then drag cards between columns to organize them.
+              Rename categories, add text or image cards, and drag cards between categories.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
-            {/* Categories row */}
-            <section className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground">Categories</h3>
-                  <p className="text-xs text-muted-foreground">
-                    At least 2 required. Rename or remove.
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  className="h-8 gap-1.5 rounded-full"
-                  onClick={openCreateCategory}
-                >
-                  <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  Add category
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {data.categories.map((cat) => (
-                  <div
-                    key={cat.id}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card pl-3 pr-1 py-1"
-                  >
-                    <span className="text-sm font-medium text-foreground">{cat.label}</span>
-                    <button
-                      type="button"
-                      className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 inline-flex items-center justify-center transition-colors"
-                      onClick={() => openEditCategory(cat.id)}
-                      aria-label={`Edit ${cat.label}`}
-                    >
-                      <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    </button>
-                    {data.categories.length > 2 && (
-                      <button
-                        type="button"
-                        className="w-6 h-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 inline-flex items-center justify-center transition-colors"
-                        onClick={() => removeCategory(cat.id)}
-                        aria-label={`Delete ${cat.label}`}
-                      >
-                        <X className="w-3 h-3" aria-hidden="true" focusable="false" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Board */}
-            <section className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">Cards</h3>
-                <p className="text-xs text-muted-foreground">
-                  Drag cards between columns to organize. Add cards to any column.
-                </p>
-              </div>
-              <div
-                className="grid gap-4"
-                style={{
-                  gridTemplateColumns: `repeat(${Math.min(columns.length, 4)}, minmax(0, 1fr))`,
-                }}
-              >
-                {columns.map((col) => {
-                  const isOver = dragOverCol === (col.id ?? "unassigned");
-                  const cards = itemsByCol(col.id);
-                  return (
-                    <div
-                      key={col.id ?? "unassigned"}
-                      onDragOver={handleColDragOver(col.id ?? "unassigned")}
-                      onDragLeave={() => setDragOverCol(null)}
-                      onDrop={handleColDrop(col.id)}
-                      className={cn(
-                        "rounded-2xl border p-3 flex flex-col gap-2 min-h-[260px] transition-all",
-                        isOver
-                          ? "border-primary bg-primary/5 shadow-sm"
-                          : "border-border bg-muted/30"
-                      )}
-                    >
-                      <div className="flex items-center justify-between px-1 pb-1 border-b border-border/60">
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold uppercase tracking-wide text-foreground truncate">
-                            {col.label}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">
-                            {cards.length} {cards.length === 1 ? "card" : "cards"}
-                          </p>
-                        </div>
+          <div className="flex-1 overflow-y-auto px-6 py-6 bg-muted/20">
+            <div
+              className="grid gap-5"
+              style={{
+                gridTemplateColumns: `repeat(${Math.min(
+                  data.categories.length,
+                  2
+                )}, minmax(0, 1fr))`,
+              }}
+            >
+              {data.categories.map((cat, catIdx) => {
+                const cards = data.items.filter(
+                  (i) =>
+                    (i.categoryId ?? data.categories[0]?.id) === cat.id
+                );
+                const isOver = dragOverCol === cat.id;
+                return (
+                  <div key={cat.id} className="space-y-2">
+                    <div className="flex items-center justify-between px-1">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        Category {catIdx + 1}/{data.categories.length}
+                      </span>
+                      {data.categories.length > 2 && (
                         <button
                           type="button"
-                          className="w-6 h-6 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 inline-flex items-center justify-center transition-colors"
-                          onClick={() => openCreateCard(col.id)}
-                          aria-label={`Add card to ${col.label}`}
+                          onClick={() => removeCategory(cat.id)}
+                          className="text-xs text-muted-foreground hover:text-destructive inline-flex items-center gap-1 transition-colors"
+                          aria-label={`Delete ${cat.label}`}
                         >
-                          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          Remove
                         </button>
+                      )}
+                    </div>
+
+                    <div
+                      onDragOver={handleColDragOver(cat.id)}
+                      onDragLeave={() => setDragOverCol(null)}
+                      onDrop={handleColDrop(cat.id)}
+                      className={cn(
+                        "rounded-2xl border bg-card p-5 transition-all shadow-sm",
+                        isOver
+                          ? "border-primary ring-2 ring-primary/20"
+                          : "border-border"
+                      )}
+                    >
+                      {/* Header row: name + action buttons */}
+                      <div className="flex items-start justify-between gap-4 pb-4 border-b border-border/60">
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <Label
+                            htmlFor={`cat-name-${cat.id}`}
+                            className="text-xs font-normal text-muted-foreground"
+                          >
+                            Name
+                          </Label>
+                          <Input
+                            id={`cat-name-${cat.id}`}
+                            value={cat.label}
+                            onChange={(e) =>
+                              commit({
+                                ...data,
+                                categories: data.categories.map((c) =>
+                                  c.id === cat.id
+                                    ? { ...c, label: e.target.value }
+                                    : c
+                                ),
+                              })
+                            }
+                            placeholder="Category name"
+                            className="border-0 border-b border-dashed border-border rounded-none px-0 h-auto py-1 text-xl font-semibold text-foreground focus-visible:ring-0 focus-visible:border-primary shadow-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 pt-5">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 gap-1.5 rounded-full"
+                            onClick={() => {
+                              setDraftType("text");
+                              setDraftLabel("");
+                              setDraftImage("");
+                              setEditing({ kind: "item-new", categoryId: cat.id });
+                            }}
+                          >
+                            <TypeIcon
+                              className="w-3.5 h-3.5 text-primary"
+                              aria-hidden="true"
+                              focusable="false"
+                            />
+                            Text card
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 gap-1.5 rounded-full"
+                            onClick={() => {
+                              setDraftType("image");
+                              setDraftLabel("");
+                              setDraftImage("");
+                              setEditing({ kind: "item-new", categoryId: cat.id });
+                            }}
+                          >
+                            <ImageIcon
+                              className="w-3.5 h-3.5 text-primary"
+                              aria-hidden="true"
+                              focusable="false"
+                            />
+                            Image card
+                          </Button>
+                        </div>
                       </div>
 
-                      <div className="flex flex-col gap-2">
+                      {/* Cards row */}
+                      <div className="pt-4 flex flex-wrap gap-3 min-h-[180px]">
                         {cards.map((item) => (
                           <div
                             key={item.id}
@@ -688,64 +703,89 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                             onDragStart={(e) => handleDragStart(e, item.id)}
                             onDragEnd={handleDragEnd}
                             className={cn(
-                              "group relative rounded-xl border bg-card shadow-sm px-2.5 py-2 flex items-center gap-2 cursor-grab active:cursor-grabbing transition-all",
+                              "group relative w-[150px] h-[160px] rounded-xl border bg-card shadow-sm overflow-hidden cursor-grab active:cursor-grabbing transition-all",
                               draggingId === item.id
-                                ? "opacity-40 border-primary"
-                                : "border-border hover:border-primary/40 hover:shadow-md"
+                                ? "opacity-40 scale-95 border-primary"
+                                : "border-border hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5"
                             )}
                           >
-                            <GripVertical
-                              className="w-3.5 h-3.5 text-muted-foreground shrink-0"
+                            {/* Actions */}
+                            <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                type="button"
+                                className="w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground hover:text-primary hover:border-primary/40 inline-flex items-center justify-center transition-colors"
+                                onClick={() => openEditCard(item.id)}
+                                aria-label={`Edit ${item.label || "card"}`}
+                              >
+                                <Pencil
+                                  className="w-3 h-3"
+                                  aria-hidden="true"
+                                  focusable="false"
+                                />
+                              </button>
+                              <button
+                                type="button"
+                                className="w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 inline-flex items-center justify-center transition-colors"
+                                onClick={() => removeCard(item.id)}
+                                aria-label={`Delete ${item.label || "card"}`}
+                              >
+                                <Trash2
+                                  className="w-3 h-3"
+                                  aria-hidden="true"
+                                  focusable="false"
+                                />
+                              </button>
+                            </div>
+                            <span
+                              className="absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground inline-flex items-center justify-center"
                               aria-hidden="true"
-                              focusable="false"
-                            />
+                            >
+                              <GripVertical
+                                className="w-3 h-3"
+                                focusable="false"
+                              />
+                            </span>
+
                             {item.type === "image" && item.image ? (
                               <img
                                 src={item.image}
                                 alt={item.label || "Card"}
-                                className="w-8 h-8 rounded-md object-cover border border-border shrink-0"
+                                className="absolute inset-0 w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="w-8 h-8 rounded-md bg-primary/10 text-primary inline-flex items-center justify-center shrink-0">
-                                <TypeIcon
-                                  className="w-3.5 h-3.5"
-                                  aria-hidden="true"
-                                  focusable="false"
-                                />
-                              </span>
+                              <div className="absolute inset-0 flex items-center justify-center px-3 text-center">
+                                <span className="text-sm font-medium text-foreground break-words line-clamp-4">
+                                  {item.label || "Untitled card"}
+                                </span>
+                              </div>
                             )}
-                            <span className="flex-1 min-w-0 text-xs font-medium text-foreground truncate">
-                              {item.label || (item.type === "image" ? "Image card" : "Card")}
-                            </span>
-                            <button
-                              type="button"
-                              className="w-6 h-6 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 inline-flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => openEditCard(item.id)}
-                              aria-label={`Edit ${item.label || "card"}`}
-                            >
-                              <Pencil className="w-3 h-3" aria-hidden="true" focusable="false" />
-                            </button>
-                            <button
-                              type="button"
-                              className="w-6 h-6 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 inline-flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => removeCard(item.id)}
-                              aria-label={`Delete ${item.label || "card"}`}
-                            >
-                              <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
-                            </button>
                           </div>
                         ))}
+
                         {cards.length === 0 && (
-                          <div className="text-[11px] text-muted-foreground/70 italic text-center py-6 border border-dashed border-border rounded-lg">
-                            Drop cards here
+                          <div className="w-full flex items-center justify-center text-xs text-muted-foreground/70 italic border border-dashed border-border rounded-xl py-10 px-4 text-center">
+                            No cards yet — add a Text or Image card, or drag one here.
                           </div>
                         )}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            </section>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Add category */}
+            <div className="mt-5">
+              <button
+                type="button"
+                onClick={openCreateCategory}
+                disabled={data.categories.length >= 4}
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border bg-card/60 hover:bg-primary/[0.04] hover:border-primary/40 py-3 text-sm font-medium text-muted-foreground hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Plus className="w-4 h-4" aria-hidden="true" focusable="false" />
+                Add category
+              </button>
+            </div>
           </div>
 
           <DialogFooter className="px-6 py-4 border-t border-border">
@@ -753,6 +793,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
 
       {/* Card create/edit modal */}
       <Dialog
