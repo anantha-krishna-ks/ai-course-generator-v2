@@ -601,7 +601,7 @@ function InlineSortCard({
           type="button"
           onClick={onDelete}
           className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur border border-border/70 text-muted-foreground hover:text-destructive hover:border-destructive/40 opacity-0 group-hover:opacity-100 transition-all"
-          aria-label={`Delete ${item.label || "card"}`}
+          aria-label={`Delete card`}
         >
           <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
         </button>
