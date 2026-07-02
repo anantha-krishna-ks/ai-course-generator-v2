@@ -550,11 +550,22 @@ function VoiceLibraryDialog({
     rafRef.current = requestAnimationFrame(tick);
   };
 
+  // Focused voice in the detail pane. Defaults to current, follows previews & clicks.
+  const [focusedId, setFocusedId] = useState<string>(currentVoiceId);
+  useEffect(() => {
+    if (open) setFocusedId(currentVoiceId);
+  }, [open, currentVoiceId]);
+
+  const focused = useMemo(
+    () => voices.find((v) => v.id === focusedId) ?? voices[0],
+    [voices, focusedId]
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[95vw] p-0 overflow-hidden gap-0 max-h-[88vh] grid-rows-[auto_auto_minmax(0,1fr)]">
-        {/* Header with soft gradient */}
-        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60 bg-gradient-to-br from-primary/[0.06] via-background to-background">
+      <DialogContent className="max-w-5xl w-[96vw] p-0 overflow-hidden gap-0 max-h-[88vh] grid-rows-[auto_minmax(0,1fr)]">
+        {/* Header */}
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-border/60 bg-gradient-to-br from-primary/[0.06] via-background to-background">
           <DialogTitle className="flex items-center gap-2.5 text-lg">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-sm">
               <Volume2 className="w-4 h-4 text-primary-foreground" aria-hidden="true" focusable="false" />
@@ -562,178 +573,289 @@ function VoiceLibraryDialog({
             Voice Library
           </DialogTitle>
           <DialogDescription className="text-xs">
-            Browse {voices.length} lifelike AI voices. Tap play to preview a sample, then pick the one that fits your course.
+            Browse {voices.length} lifelike AI voices. Preview on the left, hear the full sample and pick on the right.
           </DialogDescription>
         </DialogHeader>
 
-        {/* Filters */}
-        <div className="px-6 py-4 space-y-3 border-b border-border/60 bg-background">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, style, or accent…"
-              className="pl-10 h-10 rounded-full bg-background border-border shadow-sm focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/15"
-              aria-label="Search voices"
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterSelect label="Language" value={langFilter} onChange={setLangFilter}
-              options={[{ value: "all", label: "All languages" }, ...languages.map((l) => ({ value: l, label: l }))]} />
-            <FilterSelect label="Gender" value={genderFilter} onChange={setGenderFilter}
-              options={[
-                { value: "all", label: "All genders" },
-                { value: "Female", label: "Female" },
-                { value: "Male", label: "Male" },
-                { value: "Neutral", label: "Neutral" },
-              ]} />
-            <FilterSelect label="Age" value={ageFilter} onChange={setAgeFilter}
-              options={[
-                { value: "all", label: "All ages" },
-                { value: "Young", label: "Young" },
-                { value: "Adult", label: "Adult" },
-                { value: "Senior", label: "Senior" },
-              ]} />
-            <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
-              {filtered.length} {filtered.length === 1 ? "voice" : "voices"}
-            </span>
-          </div>
-        </div>
-
-        {/* Voice grid — scrollable */}
-        <div className="overflow-y-auto thin-scrollbar bg-muted/20">
-          <div className="px-6 py-5">
-
-            {filtered.length === 0 ? (
-              <div className="text-center text-sm text-muted-foreground py-16">
-                No voices match those filters.
+        {/* Master-detail body */}
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] min-h-0">
+          {/* ── Master: filterable list ── */}
+          <div className="flex flex-col min-h-0 border-r border-border/60 bg-background">
+            {/* Search + filters */}
+            <div className="px-4 pt-4 pb-3 space-y-2.5 border-b border-border/60">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search voices…"
+                  className="pl-8 h-9 rounded-full bg-background border-border shadow-sm text-xs focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/15"
+                  aria-label="Search voices"
+                />
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {filtered.map((v) => {
-                  const isCurrent = v.id === currentVoiceId;
-                  const isPreviewing = previewingId === v.id;
-                  return (
-                    <div
-                      key={v.id}
-                      className={cn(
-                        "group relative rounded-xl border transition-all bg-card",
-                        isCurrent
-                          ? "border-primary/60 ring-2 ring-primary/20 shadow-sm"
-                          : "border-border/60 hover:border-primary/40 hover:shadow-sm"
-                      )}
-                    >
-                      {/* ── Top row: avatar | identity + tags | action ── */}
-                      <div className="flex items-center gap-3 p-3">
-                        {/* Avatar (always-visible play affordance) */}
+              <div className="flex flex-wrap gap-1.5">
+                <FilterSelect label="Language" value={langFilter} onChange={setLangFilter}
+                  options={[{ value: "all", label: "All languages" }, ...languages.map((l) => ({ value: l, label: l }))]} />
+                <FilterSelect label="Gender" value={genderFilter} onChange={setGenderFilter}
+                  options={[
+                    { value: "all", label: "All genders" },
+                    { value: "Female", label: "Female" },
+                    { value: "Male", label: "Male" },
+                    { value: "Neutral", label: "Neutral" },
+                  ]} />
+                <FilterSelect label="Age" value={ageFilter} onChange={setAgeFilter}
+                  options={[
+                    { value: "all", label: "All ages" },
+                    { value: "Young", label: "Young" },
+                    { value: "Adult", label: "Adult" },
+                    { value: "Senior", label: "Senior" },
+                  ]} />
+              </div>
+              <p className="text-[10px] text-muted-foreground tabular-nums">
+                {filtered.length} {filtered.length === 1 ? "voice" : "voices"}
+              </p>
+            </div>
+
+            {/* Voice rows */}
+            <div className="flex-1 overflow-y-auto thin-scrollbar">
+              {filtered.length === 0 ? (
+                <div className="text-center text-xs text-muted-foreground py-12 px-4">
+                  No voices match those filters.
+                </div>
+              ) : (
+                <ul className="p-2 space-y-1">
+                  {filtered.map((v) => {
+                    const isCurrent = v.id === currentVoiceId;
+                    const isFocused = v.id === focusedId;
+                    const isPreviewing = previewingId === v.id;
+                    return (
+                      <li key={v.id}>
                         <button
-                          onClick={() => togglePreview(v.id)}
+                          type="button"
+                          onClick={() => setFocusedId(v.id)}
                           className={cn(
-                            "relative w-11 h-11 rounded-full flex-shrink-0 overflow-hidden ring-2 ring-background shadow-sm",
-                            "bg-gradient-to-br",
-                            v.gradient
+                            "group w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors",
+                            isFocused
+                              ? "bg-primary/8 ring-1 ring-primary/25"
+                              : "hover:bg-muted/60"
                           )}
-                          aria-label={isPreviewing ? `Stop sample of ${v.name}` : `Play sample of ${v.name}`}
+                          aria-current={isFocused ? "true" : undefined}
                         >
-                          <img
-                            src={v.image}
-                            alt={`${v.name} portrait`}
-                            width={44}
-                            height={44}
-                            loading="lazy"
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                          {/* Play overlay — always visible for clarity */}
-                          <span className={cn(
-                            "absolute inset-0 flex items-center justify-center transition-opacity",
-                            isPreviewing
-                              ? "bg-black/50 opacity-100"
-                              : "bg-black/30 opacity-100 group-hover:bg-black/50"
-                          )}>
-                            {isPreviewing ? (
-                              <Pause className="w-4 h-4 text-white" aria-hidden="true" focusable="false" />
-                            ) : (
-                              <Play className="w-4 h-4 text-white ml-px" aria-hidden="true" focusable="false" />
+                          {/* Avatar with inline play */}
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setFocusedId(v.id);
+                              togglePreview(v.id);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setFocusedId(v.id);
+                                togglePreview(v.id);
+                              }
+                            }}
+                            aria-label={isPreviewing ? `Stop sample of ${v.name}` : `Play sample of ${v.name}`}
+                            className={cn(
+                              "relative w-9 h-9 rounded-full flex-shrink-0 overflow-hidden ring-2 ring-background shadow-sm bg-gradient-to-br cursor-pointer",
+                              v.gradient
                             )}
+                          >
+                            <img
+                              src={v.image}
+                              alt=""
+                              width={36}
+                              height={36}
+                              loading="lazy"
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <span className={cn(
+                              "absolute inset-0 flex items-center justify-center transition-opacity",
+                              isPreviewing ? "bg-black/50 opacity-100" : "bg-black/25 opacity-0 group-hover:opacity-100"
+                            )}>
+                              {isPreviewing ? (
+                                <Pause className="w-3.5 h-3.5 text-white" aria-hidden="true" focusable="false" />
+                              ) : (
+                                <Play className="w-3.5 h-3.5 text-white ml-px" aria-hidden="true" focusable="false" />
+                              )}
+                            </span>
                           </span>
+
+                          <span className="flex-1 min-w-0">
+                            <span className="flex items-center gap-1.5">
+                              <span className="text-[13px] font-semibold text-foreground truncate">{v.name}</span>
+                              {isCurrent && (
+                                <Check className="w-3 h-3 text-primary flex-shrink-0" aria-label="Currently selected" />
+                              )}
+                            </span>
+                            <span className="block text-[10px] text-muted-foreground truncate">
+                              {v.gender} • {v.age} • {v.category}
+                            </span>
+                          </span>
+
                           {isPreviewing && (
-                            <svg
-                              className="absolute inset-0 -rotate-90 pointer-events-none"
-                              viewBox="0 0 44 44"
-                              aria-hidden="true"
-                              focusable="false"
-                            >
-                              <circle cx="22" cy="22" r="20" fill="none" stroke="white" strokeOpacity="0.25" strokeWidth="2.5" />
-                              <circle
-                                cx="22" cy="22" r="20" fill="none"
-                                stroke="white" strokeWidth="2.5" strokeLinecap="round"
-                                strokeDasharray={2 * Math.PI * 20}
-                                strokeDashoffset={2 * Math.PI * 20 * (1 - progress)}
-                              />
-                            </svg>
+                            <span className="flex items-end gap-[2px] h-4 flex-shrink-0" aria-hidden="true">
+                              {[0, 1, 2].map((i) => (
+                                <span
+                                  key={i}
+                                  className="w-[2px] bg-primary rounded-full"
+                                  style={{
+                                    height: "100%",
+                                    animation: `voice-bar 900ms ease-in-out ${i * 120}ms infinite`,
+                                  }}
+                                />
+                              ))}
+                            </span>
                           )}
                         </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
 
-                        {/* Identity + metadata */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-[13px] font-semibold text-foreground truncate">{v.name}</p>
-                            {isCurrent && (
-                              <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-md flex-shrink-0">
-                                <Check className="w-3 h-3" aria-hidden="true" focusable="false" /> Selected
-                              </span>
-                            )}
-                          </div>
-                          {/* Compact tag row */}
-                          <div className="flex flex-wrap items-center gap-1 mt-1">
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">{v.gender}</span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">{v.age}</span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-primary/10 text-primary font-medium">{v.category}</span>
-                            <span className="text-[10px] text-muted-foreground/60">{v.language} • {v.accent}</span>
-                          </div>
-                        </div>
-
-                        {/* Primary action */}
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            onSelect(v.id);
-                            stopPreview();
-                          }}
-                          disabled={isCurrent}
-                          className="h-8 px-3 text-[11px] gap-1 flex-shrink-0"
-                        >
-                          {isCurrent ? (
-                            <>
-                              <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Selected
-                            </>
-                          ) : (
-                            "Use voice"
-                          )}
-                        </Button>
-                      </div>
-
-                      {/* ── Full-width waveform (visual feedback + scrub hint) ── */}
-                      <button
-                        onClick={() => togglePreview(v.id)}
-                        className="w-full px-3 pb-3"
-                        aria-label={isPreviewing ? `Stop ${v.name}` : `Play ${v.name}`}
-                      >
-                        <div className="relative h-8 flex items-center rounded-lg bg-muted/40 px-2">
-                          <WaveformStrip active={isPreviewing} progress={isPreviewing ? progress : 0} />
-                        </div>
-                      </button>
+          {/* ── Detail pane ── */}
+          <div className="min-h-0 overflow-y-auto thin-scrollbar bg-muted/20">
+            {focused && (
+              <div className="p-6 md:p-8 space-y-6">
+                {/* Identity block */}
+                <div className="flex items-start gap-5">
+                  <div className={cn(
+                    "relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 ring-4 ring-background shadow-md bg-gradient-to-br",
+                    focused.gradient
+                  )}>
+                    <img
+                      src={focused.image}
+                      alt={`${focused.name} portrait`}
+                      width={96}
+                      height={96}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-xl font-semibold text-foreground truncate">{focused.name}</h3>
+                      {focused.id === currentVoiceId && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          <Check className="w-3 h-3" aria-hidden="true" focusable="false" /> Currently selected
+                        </span>
+                      )}
                     </div>
-                  );
-                })}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      A {focused.age.toLowerCase()} {focused.gender.toLowerCase()} {focused.category.toLowerCase()} voice.
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      <MetaChip label="Language" value={focused.language} />
+                      <MetaChip label="Accent" value={focused.accent} />
+                      <MetaChip label="Gender" value={focused.gender} />
+                      <MetaChip label="Age" value={focused.age} />
+                      <MetaChip label="Style" value={focused.category} tone="primary" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Big waveform + play */}
+                <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => togglePreview(focused.id)}
+                      className="relative w-12 h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-sm flex-shrink-0 transition-transform hover:scale-[1.03] active:scale-95"
+                      aria-label={previewingId === focused.id ? `Stop sample of ${focused.name}` : `Play sample of ${focused.name}`}
+                    >
+                      {previewingId === focused.id ? (
+                        <Pause className="w-5 h-5" aria-hidden="true" focusable="false" />
+                      ) : (
+                        <Play className="w-5 h-5 ml-0.5" aria-hidden="true" focusable="false" />
+                      )}
+                      {previewingId === focused.id && (
+                        <svg className="absolute inset-0 -rotate-90 pointer-events-none" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                          <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" />
+                          <circle
+                            cx="24" cy="24" r="22" fill="none"
+                            stroke="white" strokeWidth="2" strokeLinecap="round"
+                            strokeDasharray={2 * Math.PI * 22}
+                            strokeDashoffset={2 * Math.PI * 22 * (1 - progress)}
+                          />
+                        </svg>
+                      )}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="h-14 flex items-center rounded-xl bg-muted/40 px-3">
+                        <WaveformStrip active={previewingId === focused.id} progress={previewingId === focused.id ? progress : 0} />
+                      </div>
+                      <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground tabular-nums">
+                        <span>{formatSeconds((previewingId === focused.id ? progress : 0) * (PREVIEW_DURATION_MS / 1000))}</span>
+                        <span>Sample • {formatSeconds(PREVIEW_DURATION_MS / 1000)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Primary CTA */}
+                <div className="flex items-center justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      onSelect(focused.id);
+                      stopPreview();
+                    }}
+                    disabled={focused.id === currentVoiceId}
+                    className="gap-1.5 min-w-[160px]"
+                  >
+                    {focused.id === currentVoiceId ? (
+                      <>
+                        <Check className="w-4 h-4" aria-hidden="true" focusable="false" /> Currently selected
+                      </>
+                    ) : (
+                      <>Use this voice</>
+                    )}
+                  </Button>
+                </div>
               </div>
             )}
           </div>
         </div>
+
+        <style>{`
+          @keyframes voice-bar {
+            0%, 100% { transform: scaleY(0.35); }
+            50% { transform: scaleY(1); }
+          }
+        `}</style>
       </DialogContent>
     </Dialog>
   );
+}
+
+function MetaChip({ label, value, tone = "default" }: { label: string; value: string; tone?: "default" | "primary" }) {
+  return (
+    <span className={cn(
+      "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border",
+      tone === "primary"
+        ? "bg-primary/10 border-primary/20 text-primary"
+        : "bg-background border-border text-muted-foreground"
+    )}>
+      <span className="uppercase tracking-wide font-semibold text-[9px] opacity-70">{label}</span>
+      <span className="font-medium text-foreground/80">{value}</span>
+    </span>
+  );
+}
+
+function formatSeconds(s: number) {
+  const total = Math.max(0, Math.round(s));
+  const m = Math.floor(total / 60);
+  const sec = total % 60;
+  return `${m}:${sec.toString().padStart(2, "0")}`;
 }
 
 function WaveformStrip({ active, progress }: { active: boolean; progress: number }) {
