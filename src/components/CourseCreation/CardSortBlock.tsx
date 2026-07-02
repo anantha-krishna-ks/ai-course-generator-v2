@@ -702,12 +702,24 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const handleDragEnd = () => {
     setDraggingId(null);
     setDragOverCol(null);
+    setDropIndicator(null);
   };
 
   const handleColDragOver = (colId: string) => (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     if (dragOverCol !== colId) setDragOverCol(colId);
+    const row = (e.currentTarget as HTMLElement).querySelector<HTMLElement>(
+      "[data-cards-row]"
+    );
+    if (row) {
+      const idx = computeInsertIndex(row, e.clientX, e.clientY);
+      setDropIndicator((prev) =>
+        prev && prev.colId === colId && prev.index === idx
+          ? prev
+          : { colId, index: idx }
+      );
+    }
   };
 
   const allowEditorCategoryDrop = (e: React.DragEvent) => {
@@ -718,35 +730,39 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const handleColDrop = (categoryId: string | null) => (e: React.DragEvent) => {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain") || draggingId;
+    const indicator = dropIndicator;
     setDragOverCol(null);
     setDraggingId(null);
+    setDropIndicator(null);
     if (!id) return;
-
-    // Find target index. If dropped on a card inside, we'll reorder before that card.
-    const targetCardId = (e.target as HTMLElement)
-      .closest("[data-card-id]")
-      ?.getAttribute("data-card-id");
 
     const dragged = data.items.find((i) => i.id === id);
     if (!dragged) return;
 
+    // Build ordered list of cards currently in this column (excluding dragged)
+    const inCol = data.items.filter(
+      (i) => (i.categoryId ?? null) === categoryId && i.id !== id
+    );
+    const insertAt =
+      indicator && indicator.colId === categoryId
+        ? Math.min(indicator.index, inCol.length)
+        : inCol.length;
+
+    const targetBeforeId = inCol[insertAt]?.id ?? null;
+
     const nextItems = data.items.filter((i) => i.id !== id);
     const updated = { ...dragged, categoryId };
 
-    if (targetCardId && targetCardId !== id) {
-      const idx = nextItems.findIndex((i) => i.id === targetCardId);
-      if (idx >= 0) {
-        nextItems.splice(idx, 0, updated);
-        commit({ ...data, items: nextItems });
-        return;
-      }
+    if (targetBeforeId) {
+      const idx = nextItems.findIndex((i) => i.id === targetBeforeId);
+      nextItems.splice(idx, 0, updated);
+    } else {
+      let lastIdxInCol = -1;
+      nextItems.forEach((i, idx) => {
+        if ((i.categoryId ?? null) === categoryId) lastIdxInCol = idx;
+      });
+      nextItems.splice(lastIdxInCol + 1, 0, updated);
     }
-    // Append to end of column
-    let lastIdxInCol = -1;
-    nextItems.forEach((i, idx) => {
-      if ((i.categoryId ?? null) === categoryId) lastIdxInCol = idx;
-    });
-    nextItems.splice(lastIdxInCol + 1, 0, updated);
     commit({ ...data, items: nextItems });
   };
 
