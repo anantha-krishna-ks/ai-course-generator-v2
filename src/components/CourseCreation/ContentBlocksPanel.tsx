@@ -788,6 +788,50 @@ function BlockPreview({ id }: { id: string }) {
         </div>
       );
 
+    case "learning-assessment-page":
+    case "learning-assessment-section":
+    case "learning-assessment-course":
+    case "knowledge-check-page":
+    case "knowledge-check-section":
+    case "knowledge-check-course": {
+      const isKC = id.startsWith("knowledge-check");
+      const scope = id.endsWith("page") ? "Page Level" : id.endsWith("section") ? "Section Level" : "Course Level";
+      const title = isKC ? "Knowledge Check" : "Learning Assessment";
+      const badge = isKC ? "REVIEW" : "GRADED";
+      const badgeColor = isKC ? "hsl(158,64%,42%)" : "hsl(211,100%,44%)";
+      const items = isKC
+        ? ["Quick recall", "Concept check", "Reflection prompt"]
+        : ["Warm-up", "Core concepts", "Practice", "Wrap-up"];
+      const Icon = isKC ? HelpCircle : MessageCircleQuestion;
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <Icon className="w-3 h-3" style={{ color: badgeColor }} aria-hidden="true" focusable="false" />
+                <span className="text-[9px] font-bold text-[hsl(220,15%,18%)] leading-none">{title}</span>
+              </div>
+              <span
+                className="text-[7px] font-bold uppercase tracking-wider px-1.5 py-[2px] rounded-full text-white leading-none"
+                style={{ backgroundColor: badgeColor }}
+              >
+                {badge}
+              </span>
+            </div>
+            <p className="text-[8px] text-[hsl(220,8%,50%)] leading-[1.5] mb-2">{scope}</p>
+            <div className="space-y-1">
+              {items.map((label, i) => (
+                <div key={i} className="flex items-center gap-1.5 rounded-md bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,92%)] px-1.5 py-1">
+                  <span className="text-[7px] font-bold text-[hsl(220,8%,55%)] leading-none">{i + 1}.</span>
+                  <span className="text-[8px] text-[hsl(220,15%,25%)] leading-none">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
       default:
       return null;
   }
