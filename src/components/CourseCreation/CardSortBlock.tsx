@@ -174,9 +174,6 @@ function CardStack({
                 onDragStart={(e) => current && onDragStart?.(e, current.id)}
                 onDragEnd={interactive ? onDragEnd : undefined}
                 data-card-stack-item-id={current?.id}
-                role={interactive ? "button" : undefined}
-                tabIndex={interactive ? 0 : undefined}
-                aria-label={interactive ? `Drag ${current?.label || "card"} to a category` : undefined}
                 className={cn(
                   "absolute inset-0 rounded-2xl bg-card border border-border shadow-md transition-transform duration-300 overflow-hidden",
                   "flex items-center justify-center text-center",
