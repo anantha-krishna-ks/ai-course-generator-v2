@@ -1275,21 +1275,30 @@ function BlockThumbnail({ id }: { id: string }) {
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[2px]")}>
-            <div className="rounded-[2px] border border-dashed border-primary/30 bg-primary/[0.05] px-[3px] py-[2px] flex gap-[2px]">
-              <div className="rounded-[1.5px] bg-white border border-[hsl(220,13%,88%)] px-[3px] py-[1px] text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Item</div>
-              <div className="rounded-[1.5px] bg-white border border-[hsl(220,13%,88%)] px-[3px] py-[1px] text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Item</div>
-            </div>
-            <div className="grid grid-cols-2 gap-[2px]">
-              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[12px] flex items-center justify-center">
-                <span className="text-[3.5px] font-bold text-[hsl(220,15%,25%)]">A</span>
+            {/* UNO-style card carousel */}
+            <div className="flex items-center justify-center gap-[2px]">
+              <span className="text-[4px] text-[hsl(220,13%,60%)] leading-none">‹</span>
+              <div className="relative w-[16px] h-[14px]">
+                <div className="absolute inset-0 rounded-[2px] bg-white border border-[hsl(220,13%,82%)] shadow-[0_0.5px_1px_rgba(0,0,0,0.08)] rotate-[-4deg] translate-x-[-1px]" />
+                <div className="absolute inset-0 rounded-[2px] bg-white border border-primary/40 shadow-[0_0.5px_1.5px_rgba(0,0,0,0.1)] flex items-center justify-center">
+                  <span className="text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Card</span>
+                </div>
               </div>
-              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[12px] flex items-center justify-center">
-                <span className="text-[3.5px] font-bold text-[hsl(220,15%,25%)]">B</span>
+              <span className="text-[4px] text-[hsl(220,13%,60%)] leading-none">›</span>
+            </div>
+            {/* Category rows */}
+            <div className="flex flex-col gap-[1.5px]">
+              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[8px] flex items-center px-[3px]">
+                <span className="text-[3px] font-bold text-[hsl(220,15%,25%)]">A</span>
+              </div>
+              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[8px] flex items-center px-[3px]">
+                <span className="text-[3px] font-bold text-[hsl(220,15%,25%)]">B</span>
               </div>
             </div>
           </div>
         </div>
       );
+
     case "divider-line":
 
       return (
