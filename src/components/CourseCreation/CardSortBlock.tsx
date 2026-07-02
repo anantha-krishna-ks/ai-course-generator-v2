@@ -14,6 +14,7 @@ import {
   Upload,
   Settings2,
   Check,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -315,11 +316,11 @@ function CategoryGrid({
             />
             {interactive && count > 0 && (
               <span
-                className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold"
-                aria-label={`${correct} of ${count} correct`}
+                className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold ring-1 ring-emerald-500/20"
+                aria-label={`${correct} correctly placed`}
               >
                 <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                {correct}/{count}
+                {correct}
               </span>
             )}
             <p className="text-base font-semibold text-foreground">{cat.label}</p>
@@ -1045,7 +1046,10 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   const [index, setIndex] = useState(0);
   const [activeDropId, setActiveDropId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Record<string, "correct" | "incorrect" | undefined>>({});
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const feedbackTimer = useRef<number | null>(null);
+  const errorTimer = useRef<number | null>(null);
 
   // Correct category for each item = the category it was authored under in the editor
   const correctFor = useMemo(() => {
@@ -1067,7 +1071,7 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   const unassigned = data.items.filter((i) => !assignments[i.id]);
   const safeIndex = unassigned.length === 0 ? 0 : Math.min(index, unassigned.length - 1);
   const allPlaced = unassigned.length === 0 && data.items.length > 0;
-  const correctTotal = Object.values(results).filter((r) => r === "correct").length;
+  void results;
 
   const prev = useCallback(() => {
     if (unassigned.length === 0) return;
@@ -1107,16 +1111,26 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
 
     const expected = correctFor[id];
     const isCorrect = expected == null ? true : expected === categoryId;
+    const targetCat = data.categories.find((c) => c.id === categoryId);
 
     if (isCorrect) {
       setAssignments((prev) => ({ ...prev, [id]: categoryId }));
       setResults((prev) => ({ ...prev, [id]: "correct" }));
       flashFeedback(categoryId, "correct");
+      setErrorMsg(null);
       setIndex(0);
     } else {
-      // Keep the card on the stack; briefly flash the wrong drop zone.
+      // Reject the drop — card stays on the stack until it fits the right category.
       setResults((prev) => ({ ...prev, [id]: "incorrect" }));
       flashFeedback(categoryId, "incorrect");
+      setAttempts((n) => n + 1);
+      setErrorMsg(
+        targetCat
+          ? `That card doesn't belong in "${targetCat.label}". Try another category.`
+          : `That card doesn't belong here. Try another category.`
+      );
+      if (errorTimer.current) window.clearTimeout(errorTimer.current);
+      errorTimer.current = window.setTimeout(() => setErrorMsg(null), 2600);
     }
   };
 
@@ -1126,6 +1140,8 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
     setAssignments(cleared);
     setResults({});
     setFeedback({});
+    setErrorMsg(null);
+    setAttempts(0);
     setIndex(0);
   };
 
@@ -1150,7 +1166,21 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   }, [assignments, correctFor, data.categories, data.items]);
 
   return (
-    <div className="w-full space-y-6 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+    <div className="w-full space-y-4 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+      {errorMsg && !allPlaced && (
+        <div
+          role="alert"
+          className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/[0.06] px-3.5 py-2.5 animate-[shake_0.35s_ease-in-out]"
+        >
+          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-destructive/15 text-destructive shrink-0 mt-0.5">
+            <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          </span>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold text-destructive">Not quite right</p>
+            <p className="text-xs text-destructive/80">{errorMsg}</p>
+          </div>
+        </div>
+      )}
       {allPlaced && (
         <div
           role="status"
@@ -1161,9 +1191,10 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
               <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
             </span>
             <div className="leading-tight">
-              <p className="text-sm font-semibold">All items have been placed</p>
+              <p className="text-sm font-semibold">Nicely sorted!</p>
               <p className="text-xs text-emerald-800/80">
-                {correctTotal} of {data.items.length} sorted correctly
+                All {data.items.length} cards placed in the right category
+                {attempts > 0 ? ` · ${attempts} retr${attempts === 1 ? "y" : "ies"}` : ""}
               </p>
             </div>
           </div>
