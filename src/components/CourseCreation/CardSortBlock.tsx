@@ -251,6 +251,8 @@ interface CategoryGridProps {
   onDragEnter?: (id: string) => void;
   onDragLeave?: () => void;
   interactive?: boolean;
+  feedback?: Record<string, "correct" | "incorrect" | undefined>;
+  correctCounts?: Record<string, number>;
 }
 
 function CategoryGrid({
@@ -262,6 +264,8 @@ function CategoryGrid({
   onDragEnter,
   onDragLeave,
   interactive,
+  feedback,
+  correctCounts,
 }: CategoryGridProps) {
   return (
     <div
@@ -276,7 +280,9 @@ function CategoryGrid({
     >
       {categories.map((cat) => {
         const count = droppedCounts?.[cat.id] ?? 0;
+        const correct = correctCounts?.[cat.id] ?? 0;
         const isActive = activeDropId === cat.id;
+        const fb = feedback?.[cat.id];
         return (
           <div
             key={cat.id}
@@ -286,15 +292,35 @@ function CategoryGrid({
             onDrop={interactive ? onDropTo?.(cat.id) : undefined}
             className={cn(
               "group relative rounded-2xl border-2 border-dashed transition-all min-h-[170px] p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md",
-              isActive
+              fb === "correct"
+                ? "border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500/30 scale-[1.01]"
+                : fb === "incorrect"
+                ? "border-destructive bg-destructive/10 ring-2 ring-destructive/30 animate-[shake_0.35s_ease-in-out]"
+                : isActive
                 ? "border-primary bg-primary/10 shadow-md scale-[1.01]"
                 : "border-primary/30 bg-card hover:border-primary/60 hover:bg-primary/[0.04]"
             )}
           >
             <span
               aria-hidden="true"
-              className="absolute top-3 left-3 h-1.5 w-8 rounded-full bg-primary/40 group-hover:bg-primary/70 transition-colors"
+              className={cn(
+                "absolute top-3 left-3 h-1.5 w-8 rounded-full transition-colors",
+                fb === "correct"
+                  ? "bg-emerald-500"
+                  : fb === "incorrect"
+                  ? "bg-destructive"
+                  : "bg-primary/40 group-hover:bg-primary/70"
+              )}
             />
+            {interactive && count > 0 && (
+              <span
+                className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold"
+                aria-label={`${correct} of ${count} correct`}
+              >
+                <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                {correct}/{count}
+              </span>
+            )}
             <p className="text-base font-semibold text-foreground">{cat.label}</p>
             {cat.description && (
               <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
@@ -304,12 +330,13 @@ function CategoryGrid({
             {interactive ? (
               count > 0 ? (
                 <p className="mt-2 text-xs font-medium text-primary">
-                  {count} {count === 1 ? "card" : "cards"} sorted
+                  {count} {count === 1 ? "card" : "cards"} placed
                 </p>
               ) : (
                 <p className="mt-2 text-xs text-muted-foreground/80 italic">
                   Drop cards here
                 </p>
+
               )
             ) : (
               <p className="mt-2 text-xs text-muted-foreground/80 italic">
