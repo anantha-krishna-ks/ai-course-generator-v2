@@ -271,19 +271,19 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
         </div>
 
         {/* Voice + Generate row */}
-        <div className="flex flex-col sm:flex-row gap-2.5">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setVoiceLibraryOpen(true)}
-            className="group flex-1 flex items-center gap-3 rounded-xl border border-border bg-background hover:border-primary/50 hover:bg-primary/[0.03] px-3 py-2.5 transition-colors text-left"
+            className="group flex-1 flex items-center gap-2.5 rounded-lg border border-border bg-background hover:border-primary/50 hover:bg-primary/[0.03] px-2.5 py-2 transition-colors text-left"
             aria-label="Choose an AI voice"
           >
-            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
               <img
                 src={currentVoice.image}
                 alt={`${currentVoice.name} portrait`}
-                width={40}
-                height={40}
+                width={32}
+                height={32}
                 loading="lazy"
                 className="w-full h-full object-cover"
               />
@@ -295,24 +295,25 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
               </p>
             </div>
 
-            <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
           </button>
 
           <Button
             type="button"
+            size="sm"
             onClick={handleGenerateClick}
             disabled={!canGenerate}
-            className="h-auto min-h-[52px] sm:w-auto w-full px-5 gap-2 rounded-xl"
+            className="h-9 gap-1.5 rounded-lg px-3 shrink-0"
           >
             {isGenerating ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Generating…
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span className="text-xs">Generating…</span>
               </>
             ) : (
               <>
-                <Wand2 className="w-4 h-4" />
-                {hasAudio ? "Regenerate" : "Generate audio"}
+                <Wand2 className="w-3.5 h-3.5" />
+                <span className="text-xs">{hasAudio ? "Regenerate" : "Generate"}</span>
               </>
             )}
           </Button>
