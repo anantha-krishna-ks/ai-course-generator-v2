@@ -204,8 +204,21 @@ function CardStack({
 
             </>
           ) : (
-            <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-border/60 bg-muted/20 flex items-center justify-center text-xs text-muted-foreground italic px-4 text-center">
-              {emptyLabel}
+            <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-border/60 bg-muted/20 flex flex-col items-center justify-center gap-4 px-5 text-center">
+              <p className="text-sm font-medium text-muted-foreground leading-snug">
+                {emptyLabel}
+              </p>
+              {onReset && (
+                <button
+                  type="button"
+                  onClick={onReset}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-5 py-2 text-xs font-medium text-foreground shadow-sm hover:border-primary/60 hover:text-primary hover:shadow transition-all"
+                  aria-label="Restart sorting"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Restart
+                </button>
+              )}
             </div>
           )}
         </div>
