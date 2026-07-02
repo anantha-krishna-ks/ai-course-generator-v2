@@ -83,7 +83,7 @@ const VOICE_LIBRARY: VoiceOption[] = [
   { id: "hugo", name: "Hugo", language: "French (FR)", gender: "Male", age: "Adult", category: "Documentary", accent: "Parisian", gradient: "from-blue-400 to-indigo-500", image: hugoImg },
 ];
 
-const DEFAULT_VOICE_ID = "aria";
+const DEFAULT_VOICE_ID = "";
 const MAX_SCRIPT_CHARS = 5000;
 
 // ---------- Persistent state (serialized in `content`) ----------
