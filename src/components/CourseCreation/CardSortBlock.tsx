@@ -642,7 +642,6 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   /* ---------- Category CRUD ---------- */
   const openCreateCategory = () => {
     setDraftCatLabel("");
-    setDraftCatDescription("");
     setEditing({ kind: "category-new" });
   };
 
