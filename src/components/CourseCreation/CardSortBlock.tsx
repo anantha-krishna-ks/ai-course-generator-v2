@@ -79,7 +79,9 @@ function parseContent(raw: string): CardSortContent {
           data.categories.length >= 2 ? data.categories : DEFAULT_CONTENT.categories,
       };
     }
-  } catch {}
+  } catch {
+    // Fall back to defaults when old or malformed card sort content is loaded.
+  }
   return DEFAULT_CONTENT;
 }
 
@@ -95,6 +97,7 @@ interface CardStackProps {
   onNext: () => void;
   onReset?: () => void;
   onDragStart?: (e: React.DragEvent, itemId: string) => void;
+  onDragEnd?: () => void;
   interactive?: boolean;
   emptyLabel?: string;
 }
@@ -107,6 +110,7 @@ function CardStack({
   onNext,
   onReset,
   onDragStart,
+  onDragEnd,
   interactive = false,
   emptyLabel = "All cards sorted",
 }: CardStackProps) {
@@ -170,6 +174,8 @@ function CardStack({
                 key={current?.id}
                 draggable={interactive}
                 onDragStart={(e) => current && onDragStart?.(e, current.id)}
+                onDragEnd={interactive ? onDragEnd : undefined}
+                data-card-stack-item-id={current?.id}
                 className={cn(
                   "absolute inset-0 rounded-2xl bg-card border border-border shadow-md transition-transform duration-300 overflow-hidden",
                   "flex items-center justify-center text-center",
@@ -187,6 +193,7 @@ function CardStack({
                     src={current.image}
                     alt={current.label || "Card image"}
                     className="absolute inset-0 w-full h-full object-cover"
+                    draggable={false}
                   />
                 ) : (
                   <p className="px-5 text-sm font-medium text-foreground break-words">
@@ -499,14 +506,48 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
   const commit = (next: CardSortContent) => onChange(JSON.stringify(next));
 
+  const editorUnassignedItems = useMemo(
+    () => data.items.filter((item) => !item.categoryId),
+    [data.items]
+  );
+  const editorSafeIndex =
+    editorUnassignedItems.length === 0
+      ? 0
+      : Math.min(index, editorUnassignedItems.length - 1);
+  const editorDroppedCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const cat of data.categories) counts[cat.id] = 0;
+    for (const item of data.items) {
+      if (item.categoryId && counts[item.categoryId] !== undefined) {
+        counts[item.categoryId] += 1;
+      }
+    }
+    return counts;
+  }, [data.categories, data.items]);
+
   const prev = useCallback(
-    () => setIndex((i) => (i - 1 + data.items.length) % data.items.length),
-    [data.items.length]
+    () => {
+      if (editorUnassignedItems.length === 0) return;
+      setIndex((i) => (i - 1 + editorUnassignedItems.length) % editorUnassignedItems.length);
+    },
+    [editorUnassignedItems.length]
   );
   const next = useCallback(
-    () => setIndex((i) => (i + 1) % data.items.length),
-    [data.items.length]
+    () => {
+      if (editorUnassignedItems.length === 0) return;
+      setIndex((i) => (i + 1) % editorUnassignedItems.length);
+    },
+    [editorUnassignedItems.length]
   );
+
+  const resetEditorSorting = () => {
+    commit({
+      ...data,
+      items: data.items.map((item) => ({ ...item, categoryId: null })),
+    });
+    setIndex(0);
+    setDragOverCol(null);
+  };
 
   /* ---------- Card CRUD ---------- */
   const addCard = (categoryId: string, type: CardType) => {
@@ -588,6 +629,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   /* ---------- Drag & drop within manager ---------- */
   const handleDragStart = (e: React.DragEvent, itemId: string) => {
     e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("application/x-card-sort-item", itemId);
     e.dataTransfer.setData("text/plain", itemId);
     setDraggingId(itemId);
   };
@@ -601,6 +643,11 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     if (dragOverCol !== colId) setDragOverCol(colId);
+  };
+
+  const allowEditorCategoryDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
   };
 
   const handleColDrop = (categoryId: string | null) => (e: React.DragEvent) => {
@@ -636,6 +683,30 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
     });
     nextItems.splice(lastIdxInCol + 1, 0, updated);
     commit({ ...data, items: nextItems });
+  };
+
+  const handleEditorDropToCategory = (categoryId: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id =
+      e.dataTransfer.getData("application/x-card-sort-item") ||
+      e.dataTransfer.getData("text/card-sort-item") ||
+      e.dataTransfer.getData("text/plain") ||
+      draggingId;
+
+    setDragOverCol(null);
+    setDraggingId(null);
+
+    if (!id || !data.items.some((item) => item.id === id)) return;
+
+    commit({
+      ...data,
+      items: data.items.map((item) =>
+        item.id === id ? { ...item, categoryId } : item
+      ),
+    });
+    setIndex(0);
   };
 
   const onPickImage = () => fileInputRef.current?.click();
@@ -679,15 +750,29 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
       {/* Card stack */}
       <CardStack
-        items={data.items}
-        index={index}
+        items={editorUnassignedItems}
+        index={editorSafeIndex}
         total={data.items.length}
         onPrev={prev}
         onNext={next}
+        onReset={resetEditorSorting}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        interactive
+        emptyLabel="All cards assigned"
       />
 
       {/* Categories */}
-      <CategoryGrid categories={data.categories} />
+      <CategoryGrid
+        categories={data.categories}
+        droppedCounts={editorDroppedCounts}
+        onDropTo={handleEditorDropToCategory}
+        allowDrop={allowEditorCategoryDrop}
+        activeDropId={dragOverCol}
+        onDragEnter={setDragOverCol}
+        onDragLeave={() => setDragOverCol(null)}
+        interactive
+      />
 
       {/* Manager modal */}
       <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
@@ -940,7 +1025,9 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   }, [unassigned.length]);
 
   const onDragStart = (e: React.DragEvent, itemId: string) => {
+    e.dataTransfer.setData("application/x-card-sort-item", itemId);
     e.dataTransfer.setData("text/card-sort-item", itemId);
+    e.dataTransfer.setData("text/plain", itemId);
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -950,8 +1037,12 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
 
   const onDropTo = (categoryId: string) => (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setActiveDropId(null);
-    const id = e.dataTransfer.getData("text/card-sort-item");
+    const id =
+      e.dataTransfer.getData("application/x-card-sort-item") ||
+      e.dataTransfer.getData("text/card-sort-item") ||
+      e.dataTransfer.getData("text/plain");
     if (!id) return;
     setAssignments((prev) => ({ ...prev, [id]: categoryId }));
     setIndex(0);
