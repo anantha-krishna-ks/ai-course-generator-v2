@@ -305,8 +305,161 @@ function CategoryGrid({
 }
 
 /* -------------------------------------------------------------------------- */
+/* Inline sort card (editable in place)                                       */
+/* -------------------------------------------------------------------------- */
+
+interface InlineSortCardProps {
+  item: CardSortItem;
+  dragging: boolean;
+  onDragStart: (e: React.DragEvent, id: string) => void;
+  onDragEnd: () => void;
+  onChange: (patch: Partial<CardSortItem>) => void;
+  onDelete: () => void;
+}
+
+function InlineSortCard({
+  item,
+  dragging,
+  onDragStart,
+  onDragEnd,
+  onChange,
+  onDelete,
+}: InlineSortCardProps) {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const isText = (item.type ?? "text") === "text";
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onChange({ image: String(reader.result || "") });
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  return (
+    <div
+      data-card-id={item.id}
+      draggable
+      onDragStart={(e) => onDragStart(e, item.id)}
+      onDragEnd={onDragEnd}
+      className={cn(
+        "group relative w-[190px] h-[230px] rounded-2xl border bg-card overflow-hidden transition-all cursor-grab active:cursor-grabbing",
+        "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)]",
+        dragging
+          ? "opacity-40 scale-[0.97] border-primary"
+          : "border-border/80 hover:border-primary/40 hover:shadow-[0_2px_4px_rgba(15,23,42,0.06),0_16px_36px_-14px_rgba(15,23,42,0.18)] hover:-translate-y-0.5"
+      )}
+    >
+      {/* Top bar */}
+      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-2 py-1.5 bg-gradient-to-b from-background/95 to-background/0">
+        <span
+          className={cn(
+            "inline-flex items-center justify-center w-6 h-6 rounded-md border text-muted-foreground",
+            "bg-background/80 backdrop-blur border-border/70"
+          )}
+          aria-hidden="true"
+        >
+          {isText ? (
+            <TypeIcon className="w-3 h-3" focusable="false" />
+          ) : (
+            <ImageIcon className="w-3 h-3" focusable="false" />
+          )}
+        </span>
+        <span
+          className="inline-flex items-center justify-center w-6 h-6 text-muted-foreground/70"
+          aria-hidden="true"
+        >
+          <GripVertical className="w-3.5 h-3.5" focusable="false" />
+        </span>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur border border-border/70 text-muted-foreground hover:text-destructive hover:border-destructive/40 opacity-0 group-hover:opacity-100 transition-all"
+          aria-label={`Delete ${item.label || "card"}`}
+        >
+          <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+        </button>
+      </div>
+
+      {/* Body */}
+      {isText ? (
+        <div className="absolute inset-0 pt-9 pb-6 px-3 flex items-center">
+          <Textarea
+            value={item.label}
+            onChange={(e) =>
+              onChange({ label: e.target.value.slice(0, TEXT_LIMIT) })
+            }
+            maxLength={TEXT_LIMIT}
+            placeholder="Type card text…"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            className="w-full h-full resize-none border-0 bg-transparent p-0 text-center text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 shadow-none leading-snug"
+          />
+          <span className="absolute bottom-2 right-3 text-[10px] font-medium text-muted-foreground tabular-nums">
+            {(item.label ?? "").length}/{TEXT_LIMIT}
+          </span>
+        </div>
+      ) : (
+        <>
+          {item.image ? (
+            <>
+              <img
+                src={item.image}
+                alt={item.label || "Card"}
+                className="absolute inset-0 w-full h-full object-cover"
+                draggable={false}
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileRef.current?.click();
+                }}
+                className="absolute bottom-2 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur border border-border px-2.5 py-1 text-[10px] font-medium text-foreground hover:border-primary/50 hover:text-primary transition-all opacity-0 group-hover:opacity-100 shadow-sm"
+              >
+                <Upload className="w-3 h-3" aria-hidden="true" focusable="false" />
+                Replace
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                fileRef.current?.click();
+              }}
+              className="absolute inset-0 pt-9 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <span className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary/10 text-primary">
+                <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
+              </span>
+              <span className="text-xs font-medium">Upload image</span>
+              <span className="text-[10px] text-muted-foreground/70">
+                PNG, JPG up to 20MB
+              </span>
+            </button>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFile}
+            aria-label="Upload card image"
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Editor Block                                                                */
 /* -------------------------------------------------------------------------- */
+
 
 type EditTarget =
   | { kind: "item"; id: string }
