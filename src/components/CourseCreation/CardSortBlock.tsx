@@ -1080,15 +1080,6 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                 autoFocus
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="cat-desc">Description (optional)</Label>
-              <Input
-                id="cat-desc"
-                value={draftCatDescription}
-                onChange={(e) => setDraftCatDescription(e.target.value)}
-                placeholder="Short hint for learners"
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(null)}>
