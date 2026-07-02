@@ -403,22 +403,41 @@ function BlockPreview({ id }: { id: string }) {
       );
     case "audio-ai":
       return (
-        <div className="w-56 p-4 bg-[hsl(220,14%,96%)]">
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <div className="w-full rounded-lg bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,91%)] p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+            {/* Premium AI narration card */}
+            <div className="w-full rounded-xl border border-primary/15 bg-gradient-to-br from-primary/[0.04] to-primary/[0.08] p-3">
+              {/* Top row: avatar + meta */}
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-semibold text-[hsl(220,15%,15%)] leading-tight">AI Narration</p>
+                  <p className="text-[9px] text-[hsl(220,8%,50%)] leading-tight">Voiced by Aria</p>
+                </div>
+                <span className="text-[9px] font-medium text-muted-foreground tabular-nums">0:42</span>
               </div>
-              <div className="flex-1 flex items-end gap-[2px]">
-                {[4, 8, 5, 11, 6, 14, 7, 12, 4, 9, 13, 6, 10, 5, 8, 4, 11, 3, 7, 5, 9, 4, 6].map((h, i) => (
-                  <div key={i} className="flex-1 rounded-[1px] bg-primary/30" style={{ height: `${h}px` }} />
+              {/* Waveform strip */}
+              <div className="flex items-end gap-[2px] h-5 px-1">
+                {[3, 7, 4, 10, 6, 13, 8, 11, 5, 9, 12, 7, 10, 6, 8, 4, 10, 5, 7, 4, 9, 5, 6, 8, 4].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-full"
+                    style={{
+                      height: `${h * 1.4}px`,
+                      background: i < 14 ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.35)",
+                      opacity: i < 14 ? 1 : 0.65,
+                    }}
+                  />
                 ))}
               </div>
-              <span className="text-[9px] font-medium text-[hsl(220,8%,50%)] shrink-0 tabular-nums">0:42</span>
-            </div>
-            <div className="mt-2 flex items-center gap-1.5">
-              <Sparkles className="w-2.5 h-2.5 text-primary/70" aria-hidden="true" focusable="false" />
-              <span className="text-[9px] font-medium text-[hsl(220,8%,45%)]">AI voiceover · Aria</span>
+              {/* Script snippet */}
+              <div className="mt-2.5 rounded-lg bg-white/80 border border-[hsl(220,13%,91%)] p-2">
+                <p className="text-[8.5px] text-[hsl(220,8%,50%)] leading-relaxed line-clamp-2">
+                  Welcome to this lesson. In the next few minutes, we'll walk through the key concepts…
+                </p>
+              </div>
             </div>
           </div>
         </div>
