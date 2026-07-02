@@ -652,73 +652,19 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                       </div>
 
                       {/* Cards row */}
-                      <div className="pt-4 flex flex-wrap gap-3 min-h-[180px]">
+                      <div className="pt-5 flex flex-wrap gap-4 min-h-[220px]">
                         {cards.map((item) => (
-                          <div
+                          <InlineSortCard
                             key={item.id}
-                            data-card-id={item.id}
-                            draggable
-                            onDragStart={(e) => handleDragStart(e, item.id)}
+                            item={item}
+                            dragging={draggingId === item.id}
+                            onDragStart={handleDragStart}
                             onDragEnd={handleDragEnd}
-                            className={cn(
-                              "group relative w-[150px] h-[160px] rounded-xl border bg-card shadow-sm overflow-hidden cursor-grab active:cursor-grabbing transition-all",
-                              draggingId === item.id
-                                ? "opacity-40 scale-95 border-primary"
-                                : "border-border hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5"
-                            )}
-                          >
-                            {/* Actions */}
-                            <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                type="button"
-                                className="w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground hover:text-primary hover:border-primary/40 inline-flex items-center justify-center transition-colors"
-                                onClick={() => openEditCard(item.id)}
-                                aria-label={`Edit ${item.label || "card"}`}
-                              >
-                                <Pencil
-                                  className="w-3 h-3"
-                                  aria-hidden="true"
-                                  focusable="false"
-                                />
-                              </button>
-                              <button
-                                type="button"
-                                className="w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 inline-flex items-center justify-center transition-colors"
-                                onClick={() => removeCard(item.id)}
-                                aria-label={`Delete ${item.label || "card"}`}
-                              >
-                                <Trash2
-                                  className="w-3 h-3"
-                                  aria-hidden="true"
-                                  focusable="false"
-                                />
-                              </button>
-                            </div>
-                            <span
-                              className="absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-md bg-background/90 backdrop-blur border border-border text-muted-foreground inline-flex items-center justify-center"
-                              aria-hidden="true"
-                            >
-                              <GripVertical
-                                className="w-3 h-3"
-                                focusable="false"
-                              />
-                            </span>
-
-                            {item.type === "image" && item.image ? (
-                              <img
-                                src={item.image}
-                                alt={item.label || "Card"}
-                                className="absolute inset-0 w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="absolute inset-0 flex items-center justify-center px-3 text-center">
-                                <span className="text-sm font-medium text-foreground break-words line-clamp-4">
-                                  {item.label || "Untitled card"}
-                                </span>
-                              </div>
-                            )}
-                          </div>
+                            onChange={(patch) => updateItem(item.id, patch)}
+                            onDelete={() => removeCard(item.id)}
+                          />
                         ))}
+
 
                         {cards.length === 0 && (
                           <div className="w-full flex items-center justify-center text-xs text-muted-foreground/70 italic border border-dashed border-border rounded-xl py-10 px-4 text-center">
