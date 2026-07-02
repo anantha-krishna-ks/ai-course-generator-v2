@@ -1071,7 +1071,7 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   const unassigned = data.items.filter((i) => !assignments[i.id]);
   const safeIndex = unassigned.length === 0 ? 0 : Math.min(index, unassigned.length - 1);
   const allPlaced = unassigned.length === 0 && data.items.length > 0;
-  const correctTotal = Object.values(results).filter((r) => r === "correct").length;
+  void results;
 
   const prev = useCallback(() => {
     if (unassigned.length === 0) return;
