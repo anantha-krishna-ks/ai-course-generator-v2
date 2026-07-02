@@ -550,6 +550,19 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   // Drag state
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  const [dropIndicator, setDropIndicator] = useState<{ colId: string; index: number } | null>(null);
+
+  const computeInsertIndex = (row: HTMLElement, clientX: number, clientY: number) => {
+    const cards = Array.from(row.querySelectorAll<HTMLElement>("[data-card-id]"));
+    for (let i = 0; i < cards.length; i++) {
+      const r = cards[i].getBoundingClientRect();
+      // Match rows first (dropping onto a wrapped line)
+      if (clientY < r.bottom) {
+        if (clientX < r.left + r.width / 2) return i;
+      }
+    }
+    return cards.length;
+  };
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -689,12 +702,24 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const handleDragEnd = () => {
     setDraggingId(null);
     setDragOverCol(null);
+    setDropIndicator(null);
   };
 
   const handleColDragOver = (colId: string) => (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     if (dragOverCol !== colId) setDragOverCol(colId);
+    const row = (e.currentTarget as HTMLElement).querySelector<HTMLElement>(
+      "[data-cards-row]"
+    );
+    if (row) {
+      const idx = computeInsertIndex(row, e.clientX, e.clientY);
+      setDropIndicator((prev) =>
+        prev && prev.colId === colId && prev.index === idx
+          ? prev
+          : { colId, index: idx }
+      );
+    }
   };
 
   const allowEditorCategoryDrop = (e: React.DragEvent) => {
@@ -705,35 +730,39 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const handleColDrop = (categoryId: string | null) => (e: React.DragEvent) => {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain") || draggingId;
+    const indicator = dropIndicator;
     setDragOverCol(null);
     setDraggingId(null);
+    setDropIndicator(null);
     if (!id) return;
-
-    // Find target index. If dropped on a card inside, we'll reorder before that card.
-    const targetCardId = (e.target as HTMLElement)
-      .closest("[data-card-id]")
-      ?.getAttribute("data-card-id");
 
     const dragged = data.items.find((i) => i.id === id);
     if (!dragged) return;
 
+    // Build ordered list of cards currently in this column (excluding dragged)
+    const inCol = data.items.filter(
+      (i) => (i.categoryId ?? null) === categoryId && i.id !== id
+    );
+    const insertAt =
+      indicator && indicator.colId === categoryId
+        ? Math.min(indicator.index, inCol.length)
+        : inCol.length;
+
+    const targetBeforeId = inCol[insertAt]?.id ?? null;
+
     const nextItems = data.items.filter((i) => i.id !== id);
     const updated = { ...dragged, categoryId };
 
-    if (targetCardId && targetCardId !== id) {
-      const idx = nextItems.findIndex((i) => i.id === targetCardId);
-      if (idx >= 0) {
-        nextItems.splice(idx, 0, updated);
-        commit({ ...data, items: nextItems });
-        return;
-      }
+    if (targetBeforeId) {
+      const idx = nextItems.findIndex((i) => i.id === targetBeforeId);
+      nextItems.splice(idx, 0, updated);
+    } else {
+      let lastIdxInCol = -1;
+      nextItems.forEach((i, idx) => {
+        if ((i.categoryId ?? null) === categoryId) lastIdxInCol = idx;
+      });
+      nextItems.splice(lastIdxInCol + 1, 0, updated);
     }
-    // Append to end of column
-    let lastIdxInCol = -1;
-    nextItems.forEach((i, idx) => {
-      if ((i.categoryId ?? null) === categoryId) lastIdxInCol = idx;
-    });
-    nextItems.splice(lastIdxInCol + 1, 0, updated);
     commit({ ...data, items: nextItems });
   };
 
@@ -863,12 +892,17 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
                     <div
                       onDragOver={handleColDragOver(cat.id)}
-                      onDragLeave={() => setDragOverCol(null)}
+                      onDragLeave={(e) => {
+                        const next = e.relatedTarget as Node | null;
+                        if (next && (e.currentTarget as HTMLElement).contains(next)) return;
+                        setDragOverCol(null);
+                        setDropIndicator((prev) => (prev?.colId === cat.id ? null : prev));
+                      }}
                       onDrop={handleColDrop(cat.id)}
                       className={cn(
                         "rounded-2xl border bg-card p-5 transition-all shadow-sm",
                         isOver
-                          ? "border-primary ring-2 ring-primary/20"
+                          ? "border-primary border-dashed ring-4 ring-primary/15 bg-primary/[0.03] shadow-[0_10px_40px_-16px_hsl(var(--primary)/0.35)]"
                           : "border-border"
                       )}
                     >
@@ -932,27 +966,67 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                       </div>
 
                       {/* Cards row */}
-                      <div className="pt-5 flex flex-wrap gap-4 min-h-[220px]">
-                        {cards.map((item) => (
-                          <InlineSortCard
-                            key={item.id}
-                            item={item}
-                            dragging={draggingId === item.id}
-                            onDragStart={handleDragStart}
-                            onDragEnd={handleDragEnd}
-                            onChange={(patch) => updateItem(item.id, patch)}
-                            onDelete={() => removeCard(item.id)}
-                          />
-                        ))}
+                      <div
+                        data-cards-row
+                        className="pt-5 flex flex-wrap items-stretch gap-4 min-h-[220px]"
+                      >
+                        {(() => {
+                          const showIndicator =
+                            !!draggingId &&
+                            dropIndicator?.colId === cat.id &&
+                            cards.length > 0;
+                          const indicatorIdx = Math.min(
+                            dropIndicator?.index ?? cards.length,
+                            cards.length
+                          );
+                          const Indicator = (
+                            <div
+                              key="__drop-indicator__"
+                              aria-hidden="true"
+                              className="self-stretch flex items-center pointer-events-none"
+                            >
+                              <span className="block w-1 h-[210px] rounded-full bg-primary shadow-[0_0_0_4px_hsl(var(--primary)/0.15),0_0_18px_hsl(var(--primary)/0.55)] animate-pulse" />
+                            </div>
+                          );
+                          const nodes: React.ReactNode[] = [];
+                          cards.forEach((item, i) => {
+                            if (showIndicator && i === indicatorIdx) nodes.push(Indicator);
+                            nodes.push(
+                              <InlineSortCard
+                                key={item.id}
+                                item={item}
+                                dragging={draggingId === item.id}
+                                onDragStart={handleDragStart}
+                                onDragEnd={handleDragEnd}
+                                onChange={(patch) => updateItem(item.id, patch)}
+                                onDelete={() => removeCard(item.id)}
+                              />
+                            );
+                          });
+                          if (showIndicator && indicatorIdx >= cards.length) nodes.push(Indicator);
+                          return nodes;
+                        })()}
 
 
                         {cards.length === 0 && (
-                          <div className="w-full h-[230px] flex items-center justify-center text-xs text-muted-foreground/70 italic border border-dashed border-border rounded-xl py-10 px-4 text-center">
-                            No cards yet — add a Text or Image card, or drag one here.
+                          <div
+                            className={cn(
+                              "w-full h-[230px] flex flex-col items-center justify-center gap-1 text-xs italic border-2 border-dashed rounded-xl py-10 px-4 text-center transition-all",
+                              isOver && draggingId
+                                ? "border-primary bg-primary/5 text-primary not-italic font-medium"
+                                : "border-border text-muted-foreground/70"
+                            )}
+                          >
+                            {isOver && draggingId ? (
+                              <>Drop here to place in <span className="font-semibold">{cat.label}</span></>
+                            ) : (
+                              <>No cards yet — add a Text or Image card, or drag one here.</>
+                            )}
                           </div>
                         )}
                       </div>
                     </div>
+
                   </div>
                 );
               })}
