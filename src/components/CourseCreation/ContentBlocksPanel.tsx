@@ -406,7 +406,7 @@ function BlockPreview({ id }: { id: string }) {
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
             {/* Premium AI narration card */}
-            <div className="w-full rounded-xl border border-primary/15 bg-gradient-to-br from-primary/[0.04] to-primary/[0.08] p-3">
+            <div className="w-full rounded-xl border border-border/60 bg-muted/40 p-3">
               {/* Top row: avatar + meta */}
               <div className="flex items-center gap-2.5 mb-2.5">
                 <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
