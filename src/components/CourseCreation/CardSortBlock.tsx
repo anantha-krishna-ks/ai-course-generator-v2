@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import {
   Pencil,
   Plus,
@@ -7,11 +7,18 @@ import {
   ChevronRight,
   GripHorizontal,
   RotateCcw,
+  Type as TypeIcon,
+  Image as ImageIcon,
+  X,
+  GripVertical,
+  Upload,
+  Settings2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -21,9 +28,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+type CardType = "text" | "image";
+const TEXT_LIMIT = 80;
+
 interface CardSortItem {
   id: string;
   label: string;
+  type?: CardType;
+  image?: string;
+  categoryId?: string | null;
 }
 
 interface CardSortCategory {
@@ -39,9 +52,9 @@ interface CardSortContent {
 
 const DEFAULT_CONTENT: CardSortContent = {
   items: [
-    { id: "item-1", label: "Card 1" },
-    { id: "item-2", label: "Card 2" },
-    { id: "item-3", label: "Card 3" },
+    { id: "item-1", label: "Card 1", type: "text", categoryId: null },
+    { id: "item-2", label: "Card 2", type: "text", categoryId: null },
+    { id: "item-3", label: "Card 3", type: "text", categoryId: null },
   ],
   categories: [
     { id: "cat-1", label: "Category 1", description: "" },
@@ -55,7 +68,13 @@ function parseContent(raw: string): CardSortContent {
     const data = JSON.parse(raw);
     if (data && Array.isArray(data.items) && Array.isArray(data.categories)) {
       return {
-        items: data.items.length ? data.items : DEFAULT_CONTENT.items,
+        items: (data.items.length ? data.items : DEFAULT_CONTENT.items).map(
+          (i: CardSortItem) => ({
+            type: (i.type as CardType) ?? "text",
+            categoryId: i.categoryId ?? null,
+            ...i,
+          })
+        ),
         categories:
           data.categories.length >= 2 ? data.categories : DEFAULT_CONTENT.categories,
       };
