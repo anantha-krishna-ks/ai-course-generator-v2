@@ -112,7 +112,7 @@ function CardStack({
   onDragStart,
   onDragEnd,
   interactive = false,
-  emptyLabel = "All cards sorted",
+  emptyLabel = "All items have been placed",
 }: CardStackProps) {
   const current = items[index];
   const hasCards = items.length > 0;
@@ -772,7 +772,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         interactive
-        emptyLabel="All cards assigned"
+        emptyLabel="All items have been placed"
       />
 
       {/* Categories */}
@@ -1089,7 +1089,7 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
         onReset={reset}
         onDragStart={onDragStart}
         interactive
-        emptyLabel="All cards sorted"
+        emptyLabel="All items have been placed"
       />
       <CategoryGrid
         categories={data.categories}
