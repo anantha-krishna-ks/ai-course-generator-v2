@@ -238,14 +238,16 @@ function CardStack({
                     {current?.type === "image" && current.image ? (
                       <img
                         src={current.image}
-                        alt={current.label || "Card image"}
+                        alt={plainTextLength(current.label || "") ? undefined : "Card image"}
                         className="absolute inset-0 w-full h-full object-cover"
                         draggable={false}
                       />
                     ) : (
-                      <p className="px-5 text-sm font-medium text-foreground break-words">
-                        {current?.label}
-                      </p>
+                      <p
+                        className="px-5 text-sm font-medium text-foreground break-words"
+                        dangerouslySetInnerHTML={{ __html: sanitizeCardHtml(current?.label || "") }}
+                      />
+
                     )}
                   </motion.div>
                 </AnimatePresence>
