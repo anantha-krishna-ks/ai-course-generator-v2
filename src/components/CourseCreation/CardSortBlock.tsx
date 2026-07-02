@@ -540,7 +540,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
   // Category draft
   const [draftCatLabel, setDraftCatLabel] = useState("");
-  const [draftCatDescription, setDraftCatDescription] = useState("");
+  
 
   // Drag state
   const [draggingId, setDraggingId] = useState<string | null>(null);
