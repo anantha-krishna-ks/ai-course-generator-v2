@@ -1271,7 +1271,27 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "card-sort":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[2px]")}>
+            <div className="rounded-[2px] border border-dashed border-primary/30 bg-primary/[0.05] px-[3px] py-[2px] flex gap-[2px]">
+              <div className="rounded-[1.5px] bg-white border border-[hsl(220,13%,88%)] px-[3px] py-[1px] text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Item</div>
+              <div className="rounded-[1.5px] bg-white border border-[hsl(220,13%,88%)] px-[3px] py-[1px] text-[3.5px] font-semibold text-[hsl(220,15%,25%)]">Item</div>
+            </div>
+            <div className="grid grid-cols-2 gap-[2px]">
+              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[12px] flex items-center justify-center">
+                <span className="text-[3.5px] font-bold text-[hsl(220,15%,25%)]">A</span>
+              </div>
+              <div className="rounded-[2px] border border-dashed border-[hsl(220,13%,78%)] bg-[hsl(220,14%,97%)] h-[12px] flex items-center justify-center">
+                <span className="text-[3.5px] font-bold text-[hsl(220,15%,25%)]">B</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     case "divider-line":
+
       return (
         <div className={wrapper}>
           <div className={cn(miniCard, "p-2 flex items-center justify-center gap-[2px] h-[44px]")}>
