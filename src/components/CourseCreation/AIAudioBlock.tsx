@@ -578,7 +578,7 @@ function VoiceLibraryDialog({
         </DialogHeader>
 
         {/* Master-detail body */}
-        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] min-h-0">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,380px)_minmax(0,1fr)] min-h-0">
           {/* ── Master: filterable list ── */}
           <div className="flex flex-col min-h-0 border-r border-border/60 bg-background">
             {/* Search + filters */}
@@ -623,7 +623,7 @@ function VoiceLibraryDialog({
                   No voices match those filters.
                 </div>
               ) : (
-                <ul className="p-2 space-y-1">
+                <ul className="p-2 space-y-0.5">
                   {filtered.map((v) => {
                     const isCurrent = v.id === currentVoiceId;
                     const isFocused = v.id === focusedId;
@@ -634,13 +634,20 @@ function VoiceLibraryDialog({
                           type="button"
                           onClick={() => setFocusedId(v.id)}
                           className={cn(
-                            "group w-full flex items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors",
-                            isFocused
-                              ? "bg-primary/8 ring-1 ring-primary/25"
-                              : "hover:bg-muted/60"
+                            "group relative w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all",
+                            isCurrent
+                              ? "bg-primary/[0.08] ring-1 ring-primary/20"
+                              : isFocused
+                                ? "bg-muted/70 ring-1 ring-border"
+                                : "hover:bg-muted/50"
                           )}
                           aria-current={isFocused ? "true" : undefined}
                         >
+                          {/* Active selection accent */}
+                          {isCurrent && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full bg-primary" aria-hidden="true" />
+                          )}
+
                           {/* Avatar with inline play */}
                           <span
                             role="button"
@@ -660,15 +667,16 @@ function VoiceLibraryDialog({
                             }}
                             aria-label={isPreviewing ? `Stop sample of ${v.name}` : `Play sample of ${v.name}`}
                             className={cn(
-                              "relative w-9 h-9 rounded-full flex-shrink-0 overflow-hidden ring-2 ring-background shadow-sm bg-gradient-to-br cursor-pointer",
+                              "relative w-10 h-10 rounded-full flex-shrink-0 overflow-hidden shadow-sm bg-gradient-to-br cursor-pointer transition-all",
+                              isCurrent ? "ring-2 ring-primary/40" : "ring-2 ring-background",
                               v.gradient
                             )}
                           >
                             <img
                               src={v.image}
                               alt=""
-                              width={36}
-                              height={36}
+                              width={40}
+                              height={40}
                               loading="lazy"
                               className="absolute inset-0 w-full h-full object-cover"
                             />
@@ -677,21 +685,26 @@ function VoiceLibraryDialog({
                               isPreviewing ? "bg-black/50 opacity-100" : "bg-black/25 opacity-0 group-hover:opacity-100"
                             )}>
                               {isPreviewing ? (
-                                <Pause className="w-3.5 h-3.5 text-white" aria-hidden="true" focusable="false" />
+                                <Pause className="w-4 h-4 text-white" aria-hidden="true" focusable="false" />
                               ) : (
-                                <Play className="w-3.5 h-3.5 text-white ml-px" aria-hidden="true" focusable="false" />
+                                <Play className="w-4 h-4 text-white ml-px" aria-hidden="true" focusable="false" />
                               )}
                             </span>
                           </span>
 
                           <span className="flex-1 min-w-0">
-                            <span className="flex items-center gap-1.5">
-                              <span className="text-[13px] font-semibold text-foreground truncate">{v.name}</span>
+                            <span className="flex items-center gap-2">
+                              <span className={cn(
+                                "text-[13px] font-semibold truncate",
+                                isCurrent ? "text-primary" : "text-foreground"
+                              )}>{v.name}</span>
                               {isCurrent && (
-                                <Check className="w-3 h-3 text-primary flex-shrink-0" aria-label="Currently selected" />
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                                  <Check className="w-3 h-3" aria-hidden="true" focusable="false" /> Selected
+                                </span>
                               )}
                             </span>
-                            <span className="block text-[10px] text-muted-foreground truncate">
+                            <span className="block text-[10px] text-muted-foreground truncate mt-0.5">
                               {v.gender} • {v.age} • {v.category}
                             </span>
                           </span>
