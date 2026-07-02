@@ -356,63 +356,30 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   );
 
   /* ---------- Card CRUD ---------- */
-  const openCreateCard = (categoryId: string | null) => {
-    setDraftType("text");
-    setDraftLabel("");
-    setDraftImage("");
-    setEditing({ kind: "item-new", categoryId });
+  const addCard = (categoryId: string, type: CardType) => {
+    const id = `item-${Date.now()}`;
+    commit({
+      ...data,
+      items: [
+        ...data.items,
+        {
+          id,
+          type,
+          label: "",
+          image: undefined,
+          categoryId,
+        },
+      ],
+    });
   };
 
-  const openEditCard = (id: string) => {
-    const item = data.items.find((i) => i.id === id);
-    if (!item) return;
-    setDraftType(item.type ?? "text");
-    setDraftLabel(item.label ?? "");
-    setDraftImage(item.image ?? "");
-    setEditing({ kind: "item", id });
+  const updateItem = (id: string, patch: Partial<CardSortItem>) => {
+    commit({
+      ...data,
+      items: data.items.map((i) => (i.id === id ? { ...i, ...patch } : i)),
+    });
   };
 
-  const saveCard = () => {
-    if (!editing) return;
-    const trimmedLabel = draftLabel.slice(0, TEXT_LIMIT).trim();
-    if (draftType === "text" && !trimmedLabel) return;
-    if (draftType === "image" && !draftImage) return;
-
-    if (editing.kind === "item-new") {
-      const id = `item-${Date.now()}`;
-      commit({
-        ...data,
-        items: [
-          ...data.items,
-          {
-            id,
-            type: draftType,
-            label: draftType === "text" ? trimmedLabel : trimmedLabel || "Image card",
-            image: draftType === "image" ? draftImage : undefined,
-            categoryId: editing.categoryId,
-          },
-        ],
-      });
-    } else if (editing.kind === "item") {
-      commit({
-        ...data,
-        items: data.items.map((i) =>
-          i.id === editing.id
-            ? {
-                ...i,
-                type: draftType,
-                label:
-                  draftType === "text"
-                    ? trimmedLabel
-                    : trimmedLabel || i.label || "Image card",
-                image: draftType === "image" ? draftImage : undefined,
-              }
-            : i
-        ),
-      });
-    }
-    setEditing(null);
-  };
 
   const removeCard = (id: string) => {
     commit({ ...data, items: data.items.filter((i) => i.id !== id) });
