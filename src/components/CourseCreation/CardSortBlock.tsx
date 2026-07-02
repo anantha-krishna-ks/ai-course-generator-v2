@@ -945,7 +945,7 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   };
 
   const allowDrop = (e: React.DragEvent) => {
-    if (e.dataTransfer.types.includes("text/card-sort-item")) e.preventDefault();
+    e.preventDefault();
   };
 
   const onDropTo = (categoryId: string) => (e: React.DragEvent) => {
