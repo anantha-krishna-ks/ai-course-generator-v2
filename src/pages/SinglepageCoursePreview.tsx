@@ -312,6 +312,11 @@ const SinglepageCoursePreview = () => {
         if (isLayoutUtilityVariant(block.variant)) {
           return <LayoutUtilityBlock variant={block.variant} content={content} onChange={() => {}} readOnly />;
         }
+        if (block.variant === "card-sort") {
+          return <CardSortPreview content={content} />;
+        }
+
+
 
         const COL_SEPARATOR = "<!--col-break-->";
         const layoutMatch = content.match(/<!--layout:(\w[\w-]*)-->/);
