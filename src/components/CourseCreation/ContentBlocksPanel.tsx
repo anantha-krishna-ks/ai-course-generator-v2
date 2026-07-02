@@ -1371,6 +1371,38 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "learning-assessment-page":
+    case "learning-assessment-section":
+    case "learning-assessment-course":
+    case "knowledge-check-page":
+    case "knowledge-check-section":
+    case "knowledge-check-course": {
+      const isKC = id.startsWith("knowledge-check");
+      const title = isKC ? "Knowledge Check" : "Module 1 Quiz";
+      const items = isKC
+        ? ["Quick recall", "Concept check"]
+        : ["Basics", "Core concepts", "Practice"];
+      const accent = isKC ? "hsl(158,64%,42%)" : "hsl(211,100%,44%)";
+      const Icon = isKC ? HelpCircle : MessageCircleQuestion;
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="flex items-center gap-[2px] mb-[2.5px]">
+              <Icon className="w-[4px] h-[4px]" style={{ color: accent }} aria-hidden="true" focusable="false" />
+              <span className="text-[3.5px] font-bold text-[hsl(220,15%,20%)] leading-none">{title}</span>
+            </div>
+            <div className="flex flex-col gap-[1.5px]">
+              {items.map((label, i) => (
+                <div key={i} className="flex items-center gap-[2px]">
+                  <span className="text-[3px] font-semibold text-[hsl(220,8%,55%)] leading-none w-[4px]">{i + 1}.</span>
+                  <span className="text-[3px] text-[hsl(220,8%,45%)] leading-none truncate">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
     default:
       return null;
   }
