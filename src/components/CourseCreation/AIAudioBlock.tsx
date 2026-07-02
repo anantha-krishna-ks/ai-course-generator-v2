@@ -145,7 +145,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
   );
 
   const hasAudio = Boolean(state.audioUrl);
-  const canGenerate = state.script.trim().length >= 10 && !isGenerating;
+  const canGenerate = state.script.trim().length >= 10 && !!state.voiceId && !isGenerating;
 
   const doGenerate = async () => {
     setIsGenerating(true);
