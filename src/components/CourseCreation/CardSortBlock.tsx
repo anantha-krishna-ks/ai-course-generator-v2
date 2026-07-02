@@ -324,11 +324,6 @@ function CategoryGrid({
               </span>
             )}
             <p className="text-base font-semibold text-foreground">{cat.label}</p>
-            {cat.description && (
-              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                {cat.description}
-              </p>
-            )}
             {interactive ? (
               count > 0 ? (
                 <p className="mt-2 text-xs font-medium text-primary">
