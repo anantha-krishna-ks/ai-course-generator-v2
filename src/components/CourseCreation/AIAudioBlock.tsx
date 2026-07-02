@@ -274,27 +274,56 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
         <button
           type="button"
           onClick={() => setVoiceLibraryOpen(true)}
-          className="group w-full flex items-center gap-2.5 rounded-lg border border-border bg-background hover:border-primary/50 hover:bg-primary/[0.03] px-2.5 py-2 transition-colors text-left"
+          className={cn(
+            "group w-full flex items-center gap-2.5 rounded-lg border bg-background px-2.5 py-2 transition-colors text-left",
+            currentVoice
+              ? "border-border hover:border-primary/50 hover:bg-primary/[0.03]"
+              : "border-dashed border-muted-foreground/25 bg-muted/20 hover:border-primary/40 hover:bg-muted/30"
+          )}
           aria-label="Choose an AI voice"
         >
-          <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
-            <img
-              src={currentVoice.image}
-              alt={`${currentVoice.name} portrait`}
-              width={32}
-              height={32}
-              loading="lazy"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="flex-1 min-w-0 flex items-center gap-2">
-            <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
-            <p className="text-[11px] text-muted-foreground truncate">
-              {currentVoice.language} • {currentVoice.gender} • {currentVoice.category}
-            </p>
-          </div>
-          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+          {currentVoice ? (
+            <>
+              <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-background border border-border">
+                <img
+                  src={currentVoice.image}
+                  alt={`${currentVoice.name} portrait`}
+                  width={32}
+                  height={32}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0 flex items-center gap-2">
+                <p className="text-sm font-medium text-foreground truncate">{currentVoice.name}</p>
+                <p className="text-[11px] text-muted-foreground truncate">
+                  {currentVoice.language} • {currentVoice.gender} • {currentVoice.category}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-8 h-8 rounded-full bg-muted/60 border border-border flex items-center justify-center flex-shrink-0">
+                <Volume2 className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-muted-foreground truncate">
+                  Select a voice to generate narration
+                </p>
+              </div>
+            </>
+          )}
+          <ChevronDown className={cn(
+            "w-3.5 h-3.5 transition-colors",
+            currentVoice ? "text-muted-foreground group-hover:text-primary" : "text-muted-foreground/60 group-hover:text-muted-foreground"
+          )} />
         </button>
+
+        {!currentVoice && (
+          <p className="text-[11px] text-muted-foreground -mt-2">
+            A voice selection is required to generate audio
+          </p>
+        )}
 
         {/* Generate button */}
         <Button
