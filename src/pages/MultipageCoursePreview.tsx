@@ -16,6 +16,7 @@ import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLo
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
+import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 
 interface CourseItem {
