@@ -315,11 +315,11 @@ function CategoryGrid({
             />
             {interactive && count > 0 && (
               <span
-                className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold"
-                aria-label={`${correct} of ${count} correct`}
+                className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold ring-1 ring-emerald-500/20"
+                aria-label={`${correct} correctly placed`}
               >
                 <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                {correct}/{count}
+                {correct}
               </span>
             )}
             <p className="text-base font-semibold text-foreground">{cat.label}</p>
