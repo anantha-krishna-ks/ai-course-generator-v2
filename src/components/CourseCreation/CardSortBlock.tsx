@@ -1110,16 +1110,26 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
 
     const expected = correctFor[id];
     const isCorrect = expected == null ? true : expected === categoryId;
+    const targetCat = data.categories.find((c) => c.id === categoryId);
 
     if (isCorrect) {
       setAssignments((prev) => ({ ...prev, [id]: categoryId }));
       setResults((prev) => ({ ...prev, [id]: "correct" }));
       flashFeedback(categoryId, "correct");
+      setErrorMsg(null);
       setIndex(0);
     } else {
-      // Keep the card on the stack; briefly flash the wrong drop zone.
+      // Reject the drop — card stays on the stack until it fits the right category.
       setResults((prev) => ({ ...prev, [id]: "incorrect" }));
       flashFeedback(categoryId, "incorrect");
+      setAttempts((n) => n + 1);
+      setErrorMsg(
+        targetCat
+          ? `That card doesn't belong in "${targetCat.label}". Try another category.`
+          : `That card doesn't belong here. Try another category.`
+      );
+      if (errorTimer.current) window.clearTimeout(errorTimer.current);
+      errorTimer.current = window.setTimeout(() => setErrorMsg(null), 2600);
     }
   };
 
@@ -1129,6 +1139,8 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
     setAssignments(cleared);
     setResults({});
     setFeedback({});
+    setErrorMsg(null);
+    setAttempts(0);
     setIndex(0);
   };
 
