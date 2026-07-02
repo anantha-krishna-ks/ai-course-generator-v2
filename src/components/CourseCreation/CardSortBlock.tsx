@@ -13,6 +13,7 @@ import {
   GripVertical,
   Upload,
   Settings2,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
