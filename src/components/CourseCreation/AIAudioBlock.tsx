@@ -164,7 +164,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
     setIsGenerating(false);
     toast({
       title: "Narration generated",
-      description: `Voiced by ${currentVoice.name} — transcript ready.`,
+      description: `Voiced by ${currentVoice?.name ?? "Unknown"} — transcript ready.`,
     });
   };
 
