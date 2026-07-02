@@ -691,24 +691,17 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
       {/* Manager modal */}
       <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
-        <DialogContent className="sm:max-w-6xl max-h-[92vh] flex flex-col p-0 gap-0">
-          <DialogHeader className="px-6 pt-6 pb-4 border-b border-border">
+        <DialogContent className="w-[98vw] max-w-[1600px] sm:w-[95vw] max-h-[95vh] h-[95vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-4 sm:px-6 pt-5 pb-4 border-b border-border">
             <DialogTitle>Manage cards & categories</DialogTitle>
             <DialogDescription>
               Rename categories, add text or image cards, and drag cards between categories.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 py-6 bg-muted/20">
-            <div
-              className="grid gap-5"
-              style={{
-                gridTemplateColumns: `repeat(${Math.min(
-                  data.categories.length,
-                  2
-                )}, minmax(0, 1fr))`,
-              }}
-            >
+          <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6 bg-muted/20">
+            <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
+
               {data.categories.map((cat, catIdx) => {
                 const cards = data.items.filter(
                   (i) =>
