@@ -98,6 +98,14 @@ const ALL_BLOCKS: BlockItem[] = [
   // ASSESSMENT
   { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
+  // LEARNING ASSESSMENT
+  { id: "learning-assessment-page", label: "Learning Assessment - Page Level", icon: MessageCircleQuestion, category: "learning-assessment", categoryLabel: "LEARNING ASSESSMENT", type: "quiz", variant: "learning-assessment-page", description: "A formal, graded assessment scoped to this page — tracks learner mastery" },
+  { id: "learning-assessment-section", label: "Learning Assessment - Section Level", icon: MessageCircleQuestion, category: "learning-assessment", categoryLabel: "LEARNING ASSESSMENT", type: "quiz", variant: "learning-assessment-section", description: "A graded assessment covering an entire section — measures understanding across pages" },
+  { id: "learning-assessment-course", label: "Learning Assessment - Course Level", icon: MessageCircleQuestion, category: "learning-assessment", categoryLabel: "LEARNING ASSESSMENT", type: "quiz", variant: "learning-assessment-course", description: "A comprehensive graded assessment covering the whole course" },
+  // KNOWLEDGE CHECK
+  { id: "knowledge-check-page", label: "Knowledge Check - Page Level", icon: HelpCircle, category: "knowledge-check", categoryLabel: "KNOWLEDGE CHECK", type: "quiz", variant: "knowledge-check-page", description: "A quick, low-stakes check-in for this page — reinforces recall without a grade" },
+  { id: "knowledge-check-section", label: "Knowledge Check - Section Level", icon: HelpCircle, category: "knowledge-check", categoryLabel: "KNOWLEDGE CHECK", type: "quiz", variant: "knowledge-check-section", description: "A short, low-stakes check spanning a section — reinforces key ideas" },
+  { id: "knowledge-check-course", label: "Knowledge Check - Course Level", icon: HelpCircle, category: "knowledge-check", categoryLabel: "KNOWLEDGE CHECK", type: "quiz", variant: "knowledge-check-course", description: "A course-wide knowledge check to reinforce learning end-to-end" },
   // INTERACTIVITY
   { id: "hotspot-block", label: "Hotspot on Image", icon: MousePointerClick, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "hotspot", variant: "hotspot", description: "Make an image clickable — add labels, tooltips, links, and reveals on hotspots" },
   { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
