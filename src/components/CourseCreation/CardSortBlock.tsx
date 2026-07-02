@@ -662,7 +662,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const isCardEditing = editing?.kind === "item" || editing?.kind === "item-new";
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-2">
         <Button
@@ -975,7 +975,7 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   }, [assignments, data.categories, data.items]);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
       <CardStack
         items={unassigned}
         index={safeIndex}
