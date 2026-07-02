@@ -140,7 +140,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
   }, [state]);
 
   const currentVoice = useMemo(
-    () => VOICE_LIBRARY.find((v) => v.id === state.voiceId) ?? VOICE_LIBRARY[0],
+    () => VOICE_LIBRARY.find((v) => v.id === state.voiceId),
     [state.voiceId]
   );
 
