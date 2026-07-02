@@ -44,7 +44,6 @@ interface CardSortItem {
 interface CardSortCategory {
   id: string;
   label: string;
-  description?: string;
 }
 
 interface CardSortContent {
