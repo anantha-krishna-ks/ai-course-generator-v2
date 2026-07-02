@@ -76,8 +76,9 @@ function parseContent(raw: string): CardSortContent {
             ...i,
           })
         ),
-        categories:
-          data.categories.length >= 1 ? data.categories : DEFAULT_CONTENT.categories,
+        categories: (data.categories.length >= 1 ? data.categories : DEFAULT_CONTENT.categories).map(
+          (c: CardSortCategory) => ({ id: c.id, label: c.label })
+        ),
       };
     }
   } catch {
