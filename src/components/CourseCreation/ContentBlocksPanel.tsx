@@ -674,7 +674,30 @@ function BlockPreview({ id }: { id: string }) {
           </p>
         </div>
       );
+    case "card-sort":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 space-y-2")}>
+            <div className="rounded-md border border-dashed border-primary/30 bg-primary/[0.05] p-2 flex gap-1.5">
+              <div className="rounded bg-white border border-[hsl(220,13%,88%)] px-2 py-1 text-[8px] font-semibold text-[hsl(220,15%,25%)] shadow-sm">Apple</div>
+              <div className="rounded bg-white border border-[hsl(220,13%,88%)] px-2 py-1 text-[8px] font-semibold text-[hsl(220,15%,25%)] shadow-sm">Carrot</div>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              <div className="rounded-md border-2 border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] p-1.5">
+                <p className="text-[8px] font-bold text-[hsl(220,15%,20%)]">Fruit</p>
+                <div className="mt-1 h-4 rounded bg-white/70 border border-dashed border-[hsl(220,13%,85%)]" />
+              </div>
+              <div className="rounded-md border-2 border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] p-1.5">
+                <p className="text-[8px] font-bold text-[hsl(220,15%,20%)]">Vegetable</p>
+                <div className="mt-1 h-4 rounded bg-white/70 border border-dashed border-[hsl(220,13%,85%)]" />
+              </div>
+            </div>
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Drag items into the right category</p>
+        </div>
+      );
     case "divider-line":
+
       return (
         <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-4")}>
