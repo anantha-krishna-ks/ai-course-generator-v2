@@ -78,7 +78,7 @@ function parseContent(raw: string): CardSortContent {
           })
         ),
         categories:
-          data.categories.length >= 2 ? data.categories : DEFAULT_CONTENT.categories,
+          data.categories.length >= 1 ? data.categories : DEFAULT_CONTENT.categories,
       };
     }
   } catch {
