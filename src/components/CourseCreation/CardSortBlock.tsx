@@ -510,7 +510,8 @@ function RtButton({
 }: {
   onClick: () => void;
   label: string;
-  Icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean; focusable?: string }>;
+  Icon: React.ComponentType<{ className?: string }>;
+
 }) {
   return (
     <button
