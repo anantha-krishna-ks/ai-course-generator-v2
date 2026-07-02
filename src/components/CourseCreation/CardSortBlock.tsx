@@ -494,7 +494,7 @@ function RichTextCardEditor({ value, onChange, limit }: RichTextCardEditorProps)
           onClick={(e) => e.stopPropagation()}
           onDragStart={(e) => e.preventDefault()}
           draggable={false}
-          className="w-full min-h-[1.25rem] outline-none text-center text-sm font-medium text-foreground leading-snug break-words whitespace-pre-wrap"
+          className="w-full min-h-[1.25rem] outline-none text-center text-sm font-medium text-foreground leading-snug break-words whitespace-pre-wrap cursor-text"
         />
         {isEmpty && (
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground/60">
