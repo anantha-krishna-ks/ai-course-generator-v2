@@ -1045,7 +1045,10 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   const [index, setIndex] = useState(0);
   const [activeDropId, setActiveDropId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Record<string, "correct" | "incorrect" | undefined>>({});
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const feedbackTimer = useRef<number | null>(null);
+  const errorTimer = useRef<number | null>(null);
 
   // Correct category for each item = the category it was authored under in the editor
   const correctFor = useMemo(() => {
