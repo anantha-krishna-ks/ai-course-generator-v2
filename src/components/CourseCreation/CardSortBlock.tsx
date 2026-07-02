@@ -237,26 +237,41 @@ function CategoryGrid({
             onDragLeave={interactive ? onDragLeave : undefined}
             onDrop={interactive ? onDropTo?.(cat.id) : undefined}
             className={cn(
-              "rounded-2xl border-2 border-dashed transition-all min-h-[170px] p-5 flex flex-col items-center justify-center text-center",
+              "group relative rounded-2xl border-2 border-dashed transition-all min-h-[170px] p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md",
               isActive
-                ? "border-primary bg-primary/10"
-                : "border-border/70 bg-transparent hover:border-primary/40 hover:bg-primary/[0.03]"
+                ? "border-primary bg-primary/10 shadow-md scale-[1.01]"
+                : "border-primary/30 bg-card hover:border-primary/60 hover:bg-primary/[0.04]"
             )}
           >
-            <p className="text-sm font-medium text-muted-foreground">{cat.label}</p>
+            <span
+              aria-hidden="true"
+              className="absolute top-3 left-3 h-1.5 w-8 rounded-full bg-primary/40 group-hover:bg-primary/70 transition-colors"
+            />
+            <p className="text-base font-semibold text-foreground">{cat.label}</p>
             {cat.description && (
-              <p className="mt-1 text-xs text-muted-foreground/80 line-clamp-2">
+              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
                 {cat.description}
               </p>
             )}
-            {interactive && count > 0 && (
-              <p className="mt-2 text-xs font-medium text-primary">
-                {count} {count === 1 ? "card" : "cards"} sorted
+            {interactive ? (
+              count > 0 ? (
+                <p className="mt-2 text-xs font-medium text-primary">
+                  {count} {count === 1 ? "card" : "cards"} sorted
+                </p>
+              ) : (
+                <p className="mt-2 text-xs text-muted-foreground/80 italic">
+                  Drop cards here
+                </p>
+              )
+            ) : (
+              <p className="mt-2 text-xs text-muted-foreground/80 italic">
+                Drop zone
               </p>
             )}
           </div>
         );
       })}
+
     </div>
   );
 }
