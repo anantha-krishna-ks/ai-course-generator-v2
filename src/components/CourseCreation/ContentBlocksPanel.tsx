@@ -677,25 +677,33 @@ function BlockPreview({ id }: { id: string }) {
     case "card-sort":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
-          <div className={cn(card, "p-3 space-y-2")}>
-            <div className="rounded-md border border-dashed border-primary/30 bg-primary/[0.05] p-2 flex gap-1.5">
-              <div className="rounded bg-white border border-[hsl(220,13%,88%)] px-2 py-1 text-[8px] font-semibold text-[hsl(220,15%,25%)] shadow-sm">Apple</div>
-              <div className="rounded bg-white border border-[hsl(220,13%,88%)] px-2 py-1 text-[8px] font-semibold text-[hsl(220,15%,25%)] shadow-sm">Carrot</div>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5">
-              <div className="rounded-md border-2 border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] p-1.5">
-                <p className="text-[8px] font-bold text-[hsl(220,15%,20%)]">Fruit</p>
-                <div className="mt-1 h-4 rounded bg-white/70 border border-dashed border-[hsl(220,13%,85%)]" />
+          <div className={cn(card, "p-3 space-y-2.5")}>
+            {/* UNO-style card carousel */}
+            <div className="flex items-center justify-center gap-1.5">
+              <div className="w-4 h-4 rounded-full border border-[hsl(220,13%,85%)] bg-white flex items-center justify-center text-[9px] text-[hsl(220,10%,45%)] leading-none">‹</div>
+              <div className="relative w-[54px] h-[68px]">
+                <div className="absolute inset-0 rounded-md bg-white border border-[hsl(220,13%,85%)] shadow-[0_1px_3px_rgba(0,0,0,0.06)] rotate-[-5deg] -translate-x-1" />
+                <div className="absolute inset-0 rounded-md bg-white border border-[hsl(220,13%,82%)] shadow-[0_1px_3px_rgba(0,0,0,0.08)] rotate-[3deg] translate-x-1" />
+                <div className="absolute inset-0 rounded-md bg-white border border-primary/40 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.12)] flex items-center justify-center">
+                  <span className="text-[9px] font-semibold text-[hsl(220,15%,25%)]">Card 1</span>
+                </div>
               </div>
-              <div className="rounded-md border-2 border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] p-1.5">
-                <p className="text-[8px] font-bold text-[hsl(220,15%,20%)]">Vegetable</p>
-                <div className="mt-1 h-4 rounded bg-white/70 border border-dashed border-[hsl(220,13%,85%)]" />
+              <div className="w-4 h-4 rounded-full border border-[hsl(220,13%,85%)] bg-white flex items-center justify-center text-[9px] text-[hsl(220,10%,45%)] leading-none">›</div>
+            </div>
+            {/* Category rows */}
+            <div className="space-y-1.5">
+              <div className="rounded-md border border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] px-2 py-1.5">
+                <p className="text-[9px] font-bold text-[hsl(220,15%,20%)]">Fruits</p>
+              </div>
+              <div className="rounded-md border border-dashed border-[hsl(220,13%,80%)] bg-[hsl(220,14%,97%)] px-2 py-1.5">
+                <p className="text-[9px] font-bold text-[hsl(220,15%,20%)]">Vegetables</p>
               </div>
             </div>
           </div>
-          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Drag items into the right category</p>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Drag each card into the right category</p>
         </div>
       );
+
     case "divider-line":
 
       return (
