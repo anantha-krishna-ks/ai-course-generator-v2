@@ -15,13 +15,19 @@ import {
   Settings2,
   Check,
   AlertCircle,
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  RemoveFormatting,
 } from "lucide-react";
+import DOMPurify from "dompurify";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import {
   Dialog,
   DialogContent,
@@ -232,14 +238,16 @@ function CardStack({
                     {current?.type === "image" && current.image ? (
                       <img
                         src={current.image}
-                        alt={current.label || "Card image"}
+                        alt={plainTextLength(current.label || "") ? undefined : "Card image"}
                         className="absolute inset-0 w-full h-full object-cover"
                         draggable={false}
                       />
                     ) : (
-                      <p className="px-5 text-sm font-medium text-foreground break-words">
-                        {current?.label}
-                      </p>
+                      <p
+                        className="px-5 text-sm font-medium text-foreground break-words"
+                        dangerouslySetInnerHTML={{ __html: sanitizeCardHtml(current?.label || "") }}
+                      />
+
                     )}
                   </motion.div>
                 </AnimatePresence>
@@ -390,6 +398,137 @@ function CategoryGrid({
 }
 
 /* -------------------------------------------------------------------------- */
+/* Rich text card editor (inline, contentEditable)                            */
+/* -------------------------------------------------------------------------- */
+
+const CARD_ALLOWED_TAGS = ["b", "strong", "i", "em", "u", "s", "strike", "br", "span"];
+
+export const sanitizeCardHtml = (html: string) =>
+  DOMPurify.sanitize(html ?? "", {
+    ALLOWED_TAGS: CARD_ALLOWED_TAGS,
+    ALLOWED_ATTR: [],
+  });
+
+export const plainTextLength = (html: string) => {
+  if (!html) return 0;
+  if (typeof document === "undefined") return html.replace(/<[^>]*>/g, "").length;
+  const el = document.createElement("div");
+  el.innerHTML = html;
+  return (el.textContent || "").length;
+};
+
+interface RichTextCardEditorProps {
+  value: string;
+  onChange: (html: string, textLen: number) => void;
+  limit: number;
+}
+
+function RichTextCardEditor({ value, onChange, limit }: RichTextCardEditorProps) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [focused, setFocused] = useState(false);
+  const [, tick] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const sanitized = sanitizeCardHtml(value);
+    if (el.innerHTML !== sanitized) el.innerHTML = sanitized;
+  }, [value]);
+
+  const emit = () => {
+    const el = ref.current;
+    if (!el) return;
+    let text = el.textContent || "";
+    if (text.length > limit) {
+      el.textContent = text.slice(0, limit);
+      text = el.textContent || "";
+    }
+    const html = sanitizeCardHtml(el.innerHTML);
+    onChange(html, text.length);
+    tick((n) => n + 1);
+  };
+
+  const exec = (cmd: string) => {
+    ref.current?.focus();
+    // execCommand is deprecated but still the pragmatic path for inline rich text
+    document.execCommand(cmd, false);
+    emit();
+  };
+
+  const isEmpty = plainTextLength(value) === 0;
+
+  return (
+    <div className="relative w-full">
+      {focused && (
+        <div
+          className="absolute -top-11 left-1/2 -translate-x-1/2 z-30 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover shadow-lg px-1 py-1"
+          onMouseDown={(e) => e.preventDefault()}
+          role="toolbar"
+          aria-label="Text formatting"
+        >
+          <RtButton onClick={() => exec("bold")} label="Bold" Icon={Bold} />
+          <RtButton onClick={() => exec("italic")} label="Italic" Icon={Italic} />
+          <RtButton onClick={() => exec("underline")} label="Underline" Icon={UnderlineIcon} />
+          <RtButton onClick={() => exec("strikeThrough")} label="Strikethrough" Icon={Strikethrough} />
+          <span className="w-px h-4 bg-border mx-0.5" aria-hidden="true" />
+          <RtButton onClick={() => exec("removeFormat")} label="Clear formatting" Icon={RemoveFormatting} />
+          <span
+            className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-popover border-r border-b border-border/80"
+            aria-hidden="true"
+          />
+        </div>
+      )}
+      <div className="relative">
+        <div
+          ref={ref}
+          contentEditable
+          suppressContentEditableWarning
+          role="textbox"
+          aria-label="Card text"
+          aria-multiline="true"
+          onInput={emit}
+          onFocus={() => setFocused(true)}
+          onBlur={() => window.setTimeout(() => setFocused(false), 120)}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+          onDragStart={(e) => e.preventDefault()}
+          draggable={false}
+          className="w-full min-h-[1.25rem] outline-none text-center text-sm font-medium text-foreground leading-snug break-words whitespace-pre-wrap"
+        />
+        {isEmpty && (
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground/60">
+            Type card text…
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RtButton({
+  onClick,
+  label,
+  Icon,
+}: {
+  onClick: () => void;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+    >
+      <Icon className="w-3.5 h-3.5" />
+    </button>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Inline sort card (editable in place)                                       */
 /* -------------------------------------------------------------------------- */
 
@@ -411,15 +550,7 @@ function InlineSortCard({
   onDelete,
 }: InlineSortCardProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const isText = (item.type ?? "text") === "text";
-
-  useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [item.label]);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -429,6 +560,7 @@ function InlineSortCard({
     reader.readAsDataURL(file);
     e.target.value = "";
   };
+
 
   return (
     <div
@@ -469,7 +601,7 @@ function InlineSortCard({
           type="button"
           onClick={onDelete}
           className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-background/80 backdrop-blur border border-border/70 text-muted-foreground hover:text-destructive hover:border-destructive/40 opacity-0 group-hover:opacity-100 transition-all"
-          aria-label={`Delete ${item.label || "card"}`}
+          aria-label={`Delete card`}
         >
           <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
         </button>
@@ -478,23 +610,15 @@ function InlineSortCard({
       {/* Body */}
       {isText ? (
         <div className="absolute inset-0 pt-9 pb-6 px-3 flex items-center justify-center">
-          <Textarea
-            ref={textareaRef}
+          <RichTextCardEditor
             value={item.label}
-            onChange={(e) =>
-              onChange({ label: e.target.value.slice(0, TEXT_LIMIT) })
-            }
-            maxLength={TEXT_LIMIT}
-            placeholder="Type card text…"
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
-            draggable={false}
-            onDragStart={(e) => e.preventDefault()}
-            rows={1}
-            className="w-full resize-none border-0 bg-transparent p-0 text-center text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 shadow-none leading-snug overflow-hidden"
+            onChange={(html, textLen) => {
+              if (textLen <= TEXT_LIMIT) onChange({ label: html });
+            }}
+            limit={TEXT_LIMIT}
           />
           <span className="absolute bottom-2 right-3 text-[10px] font-medium text-muted-foreground tabular-nums">
-            {(item.label ?? "").length}/{TEXT_LIMIT}
+            {plainTextLength(item.label)}/{TEXT_LIMIT}
           </span>
         </div>
       ) : (
