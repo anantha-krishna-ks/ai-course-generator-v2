@@ -359,7 +359,7 @@ export function AIAudioBlock({ content, onChange }: AIAudioBlockProps) {
                     Narration ready
                   </p>
                   <p className="text-[10px] text-muted-foreground leading-tight">
-                    Voiced by {currentVoice.name}
+                    Voiced by {currentVoice?.name ?? "Unknown voice"}
                   </p>
                 </div>
               </div>
