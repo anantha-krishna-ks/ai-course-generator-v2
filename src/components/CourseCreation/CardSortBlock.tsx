@@ -15,7 +15,13 @@ import {
   Settings2,
   Check,
   AlertCircle,
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  RemoveFormatting,
 } from "lucide-react";
+import DOMPurify from "dompurify";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
