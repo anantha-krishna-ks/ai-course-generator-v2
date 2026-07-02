@@ -58,8 +58,8 @@ const DEFAULT_CONTENT: CardSortContent = {
     { id: "item-3", label: "Card 3", type: "text", categoryId: null },
   ],
   categories: [
-    { id: "cat-1", label: "Category 1", description: "" },
-    { id: "cat-2", label: "Category 2", description: "" },
+    { id: "cat-1", label: "Category 1" },
+    { id: "cat-2", label: "Category 2" },
   ],
 };
 
