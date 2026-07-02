@@ -877,7 +877,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
                       <span className="text-xs font-medium text-muted-foreground">
                         Category {catIdx + 1}/{data.categories.length}
                       </span>
-                      {data.categories.length > 2 && (
+                      {data.categories.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeCategory(cat.id)}
