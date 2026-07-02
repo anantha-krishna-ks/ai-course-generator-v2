@@ -98,6 +98,14 @@ const ALL_BLOCKS: BlockItem[] = [
   // ASSESSMENT
   { id: "question-block", label: "Question", icon: HelpCircle, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "question-block", description: "Add a single question with answer options" },
   { id: "quiz-block", label: "Quiz", icon: MessageCircleQuestion, category: "assessment", categoryLabel: "QUESTION & QUIZ", type: "quiz", variant: "quiz-block", description: "Add a full quiz — one per page" },
+  // LEARNING ASSESSMENT
+  { id: "learning-assessment-page", label: "Learning Assessment - Page Level", icon: MessageCircleQuestion, category: "learning-assessment", categoryLabel: "LEARNING ASSESSMENT", type: "quiz", variant: "learning-assessment-page", description: "A formal, graded assessment scoped to this page — tracks learner mastery" },
+  { id: "learning-assessment-section", label: "Learning Assessment - Section Level", icon: MessageCircleQuestion, category: "learning-assessment", categoryLabel: "LEARNING ASSESSMENT", type: "quiz", variant: "learning-assessment-section", description: "A graded assessment covering an entire section — measures understanding across pages" },
+  { id: "learning-assessment-course", label: "Learning Assessment - Course Level", icon: MessageCircleQuestion, category: "learning-assessment", categoryLabel: "LEARNING ASSESSMENT", type: "quiz", variant: "learning-assessment-course", description: "A comprehensive graded assessment covering the whole course" },
+  // KNOWLEDGE CHECK
+  { id: "knowledge-check-page", label: "Knowledge Check - Page Level", icon: HelpCircle, category: "knowledge-check", categoryLabel: "KNOWLEDGE CHECK", type: "quiz", variant: "knowledge-check-page", description: "A quick, low-stakes check-in for this page — reinforces recall without a grade" },
+  { id: "knowledge-check-section", label: "Knowledge Check - Section Level", icon: HelpCircle, category: "knowledge-check", categoryLabel: "KNOWLEDGE CHECK", type: "quiz", variant: "knowledge-check-section", description: "A short, low-stakes check spanning a section — reinforces key ideas" },
+  { id: "knowledge-check-course", label: "Knowledge Check - Course Level", icon: HelpCircle, category: "knowledge-check", categoryLabel: "KNOWLEDGE CHECK", type: "quiz", variant: "knowledge-check-course", description: "A course-wide knowledge check to reinforce learning end-to-end" },
   // INTERACTIVITY
   { id: "hotspot-block", label: "Hotspot on Image", icon: MousePointerClick, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "hotspot", variant: "hotspot", description: "Make an image clickable — add labels, tooltips, links, and reveals on hotspots" },
   { id: "horizontal-tabs", label: "Horizontal Tabs", icon: LayoutPanelTop, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "tabs", variant: "horizontal-tabs", description: "Organise content into tabs arranged horizontally across the top" },
@@ -780,6 +788,50 @@ function BlockPreview({ id }: { id: string }) {
         </div>
       );
 
+    case "learning-assessment-page":
+    case "learning-assessment-section":
+    case "learning-assessment-course":
+    case "knowledge-check-page":
+    case "knowledge-check-section":
+    case "knowledge-check-course": {
+      const isKC = id.startsWith("knowledge-check");
+      const scope = id.endsWith("page") ? "Page Level" : id.endsWith("section") ? "Section Level" : "Course Level";
+      const title = isKC ? "Knowledge Check" : "Learning Assessment";
+      const badge = isKC ? "REVIEW" : "GRADED";
+      const badgeColor = isKC ? "hsl(158,64%,42%)" : "hsl(211,100%,44%)";
+      const items = isKC
+        ? ["Quick recall", "Concept check", "Reflection prompt"]
+        : ["Warm-up", "Core concepts", "Practice", "Wrap-up"];
+      const Icon = isKC ? HelpCircle : MessageCircleQuestion;
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <Icon className="w-3 h-3" style={{ color: badgeColor }} aria-hidden="true" focusable="false" />
+                <span className="text-[9px] font-bold text-[hsl(220,15%,18%)] leading-none">{title}</span>
+              </div>
+              <span
+                className="text-[7px] font-bold uppercase tracking-wider px-1.5 py-[2px] rounded-full text-white leading-none"
+                style={{ backgroundColor: badgeColor }}
+              >
+                {badge}
+              </span>
+            </div>
+            <p className="text-[8px] text-[hsl(220,8%,50%)] leading-[1.5] mb-2">{scope}</p>
+            <div className="space-y-1">
+              {items.map((label, i) => (
+                <div key={i} className="flex items-center gap-1.5 rounded-md bg-[hsl(220,14%,97%)] border border-[hsl(220,13%,92%)] px-1.5 py-1">
+                  <span className="text-[7px] font-bold text-[hsl(220,8%,55%)] leading-none">{i + 1}.</span>
+                  <span className="text-[8px] text-[hsl(220,15%,25%)] leading-none">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
       default:
       return null;
   }
@@ -1363,6 +1415,38 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "learning-assessment-page":
+    case "learning-assessment-section":
+    case "learning-assessment-course":
+    case "knowledge-check-page":
+    case "knowledge-check-section":
+    case "knowledge-check-course": {
+      const isKC = id.startsWith("knowledge-check");
+      const title = isKC ? "Knowledge Check" : "Module 1 Quiz";
+      const items = isKC
+        ? ["Quick recall", "Concept check"]
+        : ["Basics", "Core concepts", "Practice"];
+      const accent = isKC ? "hsl(158,64%,42%)" : "hsl(211,100%,44%)";
+      const Icon = isKC ? HelpCircle : MessageCircleQuestion;
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px]")}>
+            <div className="flex items-center gap-[2px] mb-[2.5px]">
+              <Icon className="w-[4px] h-[4px]" style={{ color: accent }} aria-hidden="true" focusable="false" />
+              <span className="text-[3.5px] font-bold text-[hsl(220,15%,20%)] leading-none">{title}</span>
+            </div>
+            <div className="flex flex-col gap-[1.5px]">
+              {items.map((label, i) => (
+                <div key={i} className="flex items-center gap-[2px]">
+                  <span className="text-[3px] font-semibold text-[hsl(220,8%,55%)] leading-none w-[4px]">{i + 1}.</span>
+                  <span className="text-[3px] text-[hsl(220,8%,45%)] leading-none truncate">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
     default:
       return null;
   }

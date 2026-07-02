@@ -73,7 +73,23 @@ function SortableQuestionCard({ question, children }: { question: Question; chil
 }
 
 export function QuizBlock({ aiEnabled = false, content, onChange, variant }: QuizBlockProps) {
-  const isQuizVariant = variant === "quiz-block";
+  const isLearningAssessment = variant?.startsWith("learning-assessment-") ?? false;
+  const isKnowledgeCheck = variant?.startsWith("knowledge-check-") ?? false;
+  const isQuizVariant = variant === "quiz-block" || isLearningAssessment || isKnowledgeCheck;
+  const scopeLabel = variant?.endsWith("-page")
+    ? "Page Level"
+    : variant?.endsWith("-section")
+    ? "Section Level"
+    : variant?.endsWith("-course")
+    ? "Course Level"
+    : null;
+  const headerTitle = isLearningAssessment
+    ? `Learning Assessment${scopeLabel ? ` — ${scopeLabel}` : ""}`
+    : isKnowledgeCheck
+    ? `Knowledge Check${scopeLabel ? ` — ${scopeLabel}` : ""}`
+    : isQuizVariant
+    ? "Quiz"
+    : "Questions";
   // Parse questions + passCriteria + navPage from content (supports legacy array shape)
   const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string } => {
     try {
@@ -284,7 +300,7 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           <div className="flex items-center gap-2.5">
             <MessageCircleQuestion className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
             <span className="text-sm font-semibold text-foreground">
-              {isQuizVariant ? "Quiz" : "Questions"}
+              {headerTitle}
             </span>
             {questions.length > 0 && (
               <Badge variant="secondary" className="text-[11px] h-5 px-2 font-semibold">
