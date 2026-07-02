@@ -13,6 +13,7 @@ import {
   GripVertical,
   Upload,
   Settings2,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -251,6 +252,8 @@ interface CategoryGridProps {
   onDragEnter?: (id: string) => void;
   onDragLeave?: () => void;
   interactive?: boolean;
+  feedback?: Record<string, "correct" | "incorrect" | undefined>;
+  correctCounts?: Record<string, number>;
 }
 
 function CategoryGrid({
@@ -262,6 +265,8 @@ function CategoryGrid({
   onDragEnter,
   onDragLeave,
   interactive,
+  feedback,
+  correctCounts,
 }: CategoryGridProps) {
   return (
     <div
@@ -276,7 +281,9 @@ function CategoryGrid({
     >
       {categories.map((cat) => {
         const count = droppedCounts?.[cat.id] ?? 0;
+        const correct = correctCounts?.[cat.id] ?? 0;
         const isActive = activeDropId === cat.id;
+        const fb = feedback?.[cat.id];
         return (
           <div
             key={cat.id}
@@ -286,15 +293,35 @@ function CategoryGrid({
             onDrop={interactive ? onDropTo?.(cat.id) : undefined}
             className={cn(
               "group relative rounded-2xl border-2 border-dashed transition-all min-h-[170px] p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md",
-              isActive
+              fb === "correct"
+                ? "border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500/30 scale-[1.01]"
+                : fb === "incorrect"
+                ? "border-destructive bg-destructive/10 ring-2 ring-destructive/30 animate-[shake_0.35s_ease-in-out]"
+                : isActive
                 ? "border-primary bg-primary/10 shadow-md scale-[1.01]"
                 : "border-primary/30 bg-card hover:border-primary/60 hover:bg-primary/[0.04]"
             )}
           >
             <span
               aria-hidden="true"
-              className="absolute top-3 left-3 h-1.5 w-8 rounded-full bg-primary/40 group-hover:bg-primary/70 transition-colors"
+              className={cn(
+                "absolute top-3 left-3 h-1.5 w-8 rounded-full transition-colors",
+                fb === "correct"
+                  ? "bg-emerald-500"
+                  : fb === "incorrect"
+                  ? "bg-destructive"
+                  : "bg-primary/40 group-hover:bg-primary/70"
+              )}
             />
+            {interactive && count > 0 && (
+              <span
+                className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 text-emerald-700 px-2 py-0.5 text-[10px] font-semibold"
+                aria-label={`${correct} of ${count} correct`}
+              >
+                <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                {correct}/{count}
+              </span>
+            )}
             <p className="text-base font-semibold text-foreground">{cat.label}</p>
             {cat.description && (
               <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
@@ -304,12 +331,13 @@ function CategoryGrid({
             {interactive ? (
               count > 0 ? (
                 <p className="mt-2 text-xs font-medium text-primary">
-                  {count} {count === 1 ? "card" : "cards"} sorted
+                  {count} {count === 1 ? "card" : "cards"} placed
                 </p>
               ) : (
                 <p className="mt-2 text-xs text-muted-foreground/80 italic">
                   Drop cards here
                 </p>
+
               )
             ) : (
               <p className="mt-2 text-xs text-muted-foreground/80 italic">
@@ -1013,8 +1041,18 @@ interface CardSortPreviewProps {
 export function CardSortPreview({ content }: CardSortPreviewProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const [assignments, setAssignments] = useState<Record<string, string | null>>({});
+  const [results, setResults] = useState<Record<string, "correct" | "incorrect">>({});
   const [index, setIndex] = useState(0);
   const [activeDropId, setActiveDropId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Record<string, "correct" | "incorrect" | undefined>>({});
+  const feedbackTimer = useRef<number | null>(null);
+
+  // Correct category for each item = the category it was authored under in the editor
+  const correctFor = useMemo(() => {
+    const map: Record<string, string | null> = {};
+    for (const item of data.items) map[item.id] = item.categoryId ?? null;
+    return map;
+  }, [data.items]);
 
   useEffect(() => {
     setAssignments((prev) => {
@@ -1022,11 +1060,14 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
       for (const item of data.items) next[item.id] = prev[item.id] ?? null;
       return next;
     });
+    setResults({});
     setIndex(0);
   }, [data.items]);
 
   const unassigned = data.items.filter((i) => !assignments[i.id]);
   const safeIndex = unassigned.length === 0 ? 0 : Math.min(index, unassigned.length - 1);
+  const allPlaced = unassigned.length === 0 && data.items.length > 0;
+  const correctTotal = Object.values(results).filter((r) => r === "correct").length;
 
   const prev = useCallback(() => {
     if (unassigned.length === 0) return;
@@ -1036,6 +1077,12 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
     if (unassigned.length === 0) return;
     setIndex((i) => (i + 1) % unassigned.length);
   }, [unassigned.length]);
+
+  const flashFeedback = (categoryId: string, state: "correct" | "incorrect") => {
+    setFeedback({ [categoryId]: state });
+    if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current);
+    feedbackTimer.current = window.setTimeout(() => setFeedback({}), 900);
+  };
 
   const onDragStart = (e: React.DragEvent, itemId: string) => {
     e.dataTransfer.setData("application/x-card-sort-item", itemId);
@@ -1057,14 +1104,28 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
       e.dataTransfer.getData("text/card-sort-item") ||
       e.dataTransfer.getData("text/plain");
     if (!id) return;
-    setAssignments((prev) => ({ ...prev, [id]: categoryId }));
-    setIndex(0);
+
+    const expected = correctFor[id];
+    const isCorrect = expected == null ? true : expected === categoryId;
+
+    if (isCorrect) {
+      setAssignments((prev) => ({ ...prev, [id]: categoryId }));
+      setResults((prev) => ({ ...prev, [id]: "correct" }));
+      flashFeedback(categoryId, "correct");
+      setIndex(0);
+    } else {
+      // Keep the card on the stack; briefly flash the wrong drop zone.
+      setResults((prev) => ({ ...prev, [id]: "incorrect" }));
+      flashFeedback(categoryId, "incorrect");
+    }
   };
 
   const reset = () => {
     const cleared: Record<string, string | null> = {};
     for (const item of data.items) cleared[item.id] = null;
     setAssignments(cleared);
+    setResults({});
+    setFeedback({});
     setIndex(0);
   };
 
@@ -1078,8 +1139,44 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
     return counts;
   }, [assignments, data.categories, data.items]);
 
+  const correctCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const cat of data.categories) counts[cat.id] = 0;
+    for (const item of data.items) {
+      const a = assignments[item.id];
+      if (a && a === correctFor[item.id] && counts[a] !== undefined) counts[a] += 1;
+    }
+    return counts;
+  }, [assignments, correctFor, data.categories, data.items]);
+
   return (
     <div className="w-full space-y-6 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+      {allPlaced && (
+        <div
+          role="status"
+          className="flex items-center justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-50 px-4 py-3"
+        >
+          <div className="flex items-center gap-2 text-emerald-800">
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500/15 text-emerald-700">
+              <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+            </span>
+            <div className="leading-tight">
+              <p className="text-sm font-semibold">All items have been placed</p>
+              <p className="text-xs text-emerald-800/80">
+                {correctTotal} of {data.items.length} sorted correctly
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={reset}
+            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-white px-4 py-1.5 text-xs font-medium text-emerald-800 hover:bg-emerald-50 hover:border-emerald-500 transition-all"
+          >
+            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Restart
+          </button>
+        </div>
+      )}
       <CardStack
         items={unassigned}
         index={safeIndex}
@@ -1094,6 +1191,8 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
       <CategoryGrid
         categories={data.categories}
         droppedCounts={droppedCounts}
+        correctCounts={correctCounts}
+        feedback={feedback}
         onDropTo={onDropTo}
         allowDrop={allowDrop}
         activeDropId={activeDropId}
@@ -1104,3 +1203,4 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
     </div>
   );
 }
+
