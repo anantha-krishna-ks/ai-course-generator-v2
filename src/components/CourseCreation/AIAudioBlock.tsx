@@ -100,7 +100,7 @@ interface AIAudioState {
 
 const EMPTY_STATE: AIAudioState = {
   script: "",
-  voiceId: DEFAULT_VOICE_ID,
+  voiceId: "",
   audioUrl: "",
   transcript: "",
   showTranscriptToLearners: true,
