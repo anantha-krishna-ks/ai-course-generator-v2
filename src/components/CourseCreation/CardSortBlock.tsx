@@ -681,7 +681,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   };
 
   const removeCategory = (id: string) => {
-    if (data.categories.length <= 2) return;
+    if (data.categories.length <= 1) return;
     commit({
       ...data,
       categories: data.categories.filter((c) => c.id !== id),
