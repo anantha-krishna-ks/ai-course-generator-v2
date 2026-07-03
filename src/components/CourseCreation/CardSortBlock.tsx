@@ -1237,6 +1237,29 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Confirm-close manager (unsaved changes) */}
+      <AlertDialog open={confirmCloseOpen} onOpenChange={setConfirmCloseOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Save your changes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved edits to your cards and categories. Save them before closing, or discard to revert.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep editing</AlertDialogCancel>
+            <Button variant="outline" onClick={discardManagerChanges}>
+              Discard
+            </Button>
+            <AlertDialogAction onClick={saveAndCloseManager}>
+              Save &amp; close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+
+
 
 
       {/* Category create/edit modal */}
