@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Languages, Info, Sparkles, RefreshCw, Copy, Check } from "lucide-react";
+import { Captions, Info, Sparkles, RefreshCw, Copy, Check } from "lucide-react";
 import Lottie from "lottie-react";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
@@ -118,7 +118,7 @@ export function AudioTranscribePanel({ blockId, fileName, description }: AudioTr
       <div className="flex items-start sm:items-center justify-between gap-3 px-4 py-3.5 border-b border-border/50 bg-muted/20">
         <div className="flex items-start gap-3 min-w-0">
           <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary flex items-center justify-center shrink-0 ring-1 ring-primary/15">
-            <Languages className="w-4 h-4" aria-hidden="true" focusable="false" />
+            <Captions className="w-4 h-4" aria-hidden="true" focusable="false" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -166,7 +166,7 @@ export function AudioTranscribePanel({ blockId, fileName, description }: AudioTr
                     Ready
                   </span>
                   <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground truncate">
-                    <Languages className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <Captions className="w-3 h-3" aria-hidden="true" focusable="false" />
                     <span className="font-medium text-foreground">{detected}</span>
                   </span>
                 </div>
@@ -243,7 +243,7 @@ export function AudioTranscribePanel({ blockId, fileName, description }: AudioTr
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   This audio sounds like it's in{" "}
                   <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-background border border-border/70 font-medium text-foreground">
-                    <Languages className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <Captions className="w-3 h-3" aria-hidden="true" focusable="false" />
                     {detected}
                   </span>
                   . Our transcription service understands English only for now — support for more languages is on the way. Thank you for your patience!

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Languages, Sparkles, ChevronDown } from "lucide-react";
+import { Captions, Sparkles, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   getAudioTranscribe,
@@ -46,7 +46,7 @@ export function PreviewAudioTranscript({ blockId, className }: PreviewAudioTrans
         aria-controls={`transcript-${blockId}`}
       >
         <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary flex items-center justify-center shrink-0 ring-1 ring-primary/15">
-          <Languages className="w-4 h-4" aria-hidden="true" focusable="false" />
+          <Captions className="w-4 h-4" aria-hidden="true" focusable="false" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
