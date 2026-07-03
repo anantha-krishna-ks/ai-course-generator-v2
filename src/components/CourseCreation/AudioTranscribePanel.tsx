@@ -1,12 +1,18 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Languages, Info, Sparkles, RefreshCw, Copy, Check } from "lucide-react";
 import Lottie from "lottie-react";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { AIBlockLoader } from "./AIBlockLoader";
 import emptyOutlineLottie from "@/assets/empty-outline.json";
+import {
+  clearAudioTranscribe,
+  setAudioTranscribe,
+  getAudioTranscribe,
+} from "@/services/audioTranscribeStore";
 
 interface AudioTranscribePanelProps {
+  blockId?: string;
   fileName?: string | null;
   description?: string;
 }
