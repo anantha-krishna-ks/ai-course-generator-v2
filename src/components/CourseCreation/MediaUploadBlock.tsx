@@ -46,7 +46,7 @@ const mediaConfig: Record<MediaType, {
   },
 };
 
-export function MediaUploadBlock({ type, fileUrl, onChange, description = "", onDescriptionChange }: MediaUploadBlockProps) {
+export function MediaUploadBlock({ type, fileUrl, onChange, description = "", onDescriptionChange, blockId }: MediaUploadBlockProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [localDescription, setLocalDescription] = useState(description);
