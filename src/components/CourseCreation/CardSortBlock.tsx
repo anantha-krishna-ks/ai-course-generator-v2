@@ -36,6 +36,16 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type CardType = "text" | "image";
 const TEXT_LIMIT = 80;
@@ -697,7 +707,37 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const [index, setIndex] = useState(0);
   const [managerOpen, setManagerOpen] = useState(false);
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
+  const managerSnapshot = useRef<string>("");
   const [editing, setEditing] = useState<EditTarget>(null);
+
+  // Snapshot content when the manager opens so we can detect unsaved changes.
+  useEffect(() => {
+    if (managerOpen) managerSnapshot.current = content;
+  }, [managerOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isManagerDirty = () => managerOpen && content !== managerSnapshot.current;
+
+  const requestManagerClose = () => {
+    if (isManagerDirty()) {
+      setConfirmCloseOpen(true);
+    } else {
+      setManagerOpen(false);
+    }
+  };
+
+  const discardManagerChanges = () => {
+    onChange(managerSnapshot.current);
+    setConfirmCloseOpen(false);
+    setManagerOpen(false);
+  };
+
+  const saveAndCloseManager = () => {
+    // Changes already auto-commit; just close.
+    setConfirmCloseOpen(false);
+    setManagerOpen(false);
+  };
+
 
   // Card draft
   const [draftType, setDraftType] = useState<CardType>("text");
@@ -992,7 +1032,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
 
       {/* Manager modal */}
-      <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
+      <Dialog open={managerOpen} onOpenChange={(open) => { if (!open) requestManagerClose(); }}>
         <DialogContent className="w-[98vw] max-w-[1600px] sm:w-[95vw] max-h-[95vh] h-[95vh] flex flex-col p-0 gap-0">
           <DialogHeader className="px-4 sm:px-6 pt-5 pb-4 border-b border-border">
             <DialogTitle>Manage cards &amp; categories</DialogTitle>
@@ -1192,10 +1232,33 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
           </div>
 
           <DialogFooter className="px-6 py-4 border-t border-border">
-            <Button onClick={() => setManagerOpen(false)}>Done</Button>
+            <Button onClick={requestManagerClose}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Confirm-close manager (unsaved changes) */}
+      <AlertDialog open={confirmCloseOpen} onOpenChange={setConfirmCloseOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Save your changes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved edits to your cards and categories. Save them before closing, or discard to revert.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep editing</AlertDialogCancel>
+            <Button variant="outline" onClick={discardManagerChanges}>
+              Discard
+            </Button>
+            <AlertDialogAction onClick={saveAndCloseManager}>
+              Save &amp; close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+
 
 
 
