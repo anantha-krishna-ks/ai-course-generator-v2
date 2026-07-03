@@ -14,6 +14,7 @@ import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
+import { PreviewAudioTranscript } from "@/components/CoursePreview/PreviewAudioTranscript";
 
 interface CourseItem {
   id: string;
@@ -455,14 +456,17 @@ const SinglepageCoursePreview = () => {
         }
         const audioSrc = block.content || DEMO_AUDIO_URL;
         return (
-          <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"><Music className="w-6 h-6 text-primary/70" /></div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground mb-2">{block.content ? "Audio" : "Sample Audio Track"}</p>
-                <audio src={audioSrc} controls className="w-full h-8" aria-label={block.content ? "Course audio" : "Sample audio track"} />
+          <div>
+            <div className="rounded-xl border border-border/40 bg-muted/20 p-4 sm:p-5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0"><Music className="w-6 h-6 text-primary/70" /></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground mb-2">{block.content ? "Audio" : "Sample Audio Track"}</p>
+                  <audio src={audioSrc} controls className="w-full h-8" aria-label={block.content ? "Course audio" : "Sample audio track"} />
+                </div>
               </div>
             </div>
+            <PreviewAudioTranscript blockId={block.id} />
           </div>
         );
       }

@@ -549,7 +549,7 @@ export function ContentBlock({
           ) : type === "audio" && variant === "ai-audio" ? (
             <AIAudioBlock content={content} onChange={onChange} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
-            <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} />
+            <MediaUploadBlock type={type} fileUrl={content} onChange={onChange} blockId={id} />
 
           ) : textGenerating && type === "text" ? (
             <div className="w-full px-1">
