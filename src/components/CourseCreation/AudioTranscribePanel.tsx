@@ -130,7 +130,7 @@ export function AudioTranscribePanel({ blockId, fileName, description }: AudioTr
             </div>
             <p className="text-xs text-muted-foreground mt-1 flex items-start gap-1.5 leading-relaxed">
               <Info className="w-3 h-3 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-              <span>Transcription currently supports English audio only — more languages are coming soon.</span>
+              <span>Transcription currently supports English audio only.</span>
             </p>
           </div>
         </div>
