@@ -2,6 +2,8 @@ import { useRef, useState, useCallback } from "react";
 import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
+import { AudioTranscribePanel } from "./AudioTranscribePanel";
+
 
 type MediaType = "video" | "audio" | "doc";
 
@@ -260,7 +262,9 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
               className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
               rows={1}
             />
+            <AudioTranscribePanel fileName={fileName} description={localDescription} />
           </>
+
         )}
       </div>
     );
