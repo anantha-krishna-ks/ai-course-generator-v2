@@ -60,9 +60,9 @@ interface CardSortContent {
 
 const DEFAULT_CONTENT: CardSortContent = {
   items: [
-    { id: "item-1", label: "Card 1", type: "text", categoryId: null },
-    { id: "item-2", label: "Card 2", type: "text", categoryId: null },
-    { id: "item-3", label: "Card 3", type: "text", categoryId: null },
+    { id: "item-1", label: "Card 1", type: "text", categoryId: "cat-1" },
+    { id: "item-2", label: "Card 2", type: "text", categoryId: "cat-1" },
+    { id: "item-3", label: "Card 3", type: "text", categoryId: "cat-2" },
   ],
   categories: [
     { id: "cat-1", label: "Category 1" },
