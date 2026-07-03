@@ -13,6 +13,7 @@ interface MediaUploadBlockProps {
   onChange: (url: string) => void;
   description?: string;
   onDescriptionChange?: (desc: string) => void;
+  blockId?: string;
 }
 
 const mediaConfig: Record<MediaType, {
