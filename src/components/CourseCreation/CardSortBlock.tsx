@@ -1222,7 +1222,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
           </div>
 
           <DialogFooter className="px-6 py-4 border-t border-border">
-            <Button onClick={() => setManagerOpen(false)}>Done</Button>
+            <Button onClick={requestManagerClose}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
