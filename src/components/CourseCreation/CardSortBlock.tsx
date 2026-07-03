@@ -1269,7 +1269,8 @@ interface CardSortPreviewProps {
   content: string;
 }
 
-export function CardSortPreview({ content }: CardSortPreviewProps) {
+/* Shared interactive body — same logic in both editor inline preview and runtime preview */
+function InteractiveCardSort({ content }: { content: string }) {
   const data = useMemo(() => parseContent(content), [content]);
   const [assignments, setAssignments] = useState<Record<string, string | null>>({});
   const [results, setResults] = useState<Record<string, "correct" | "incorrect">>({});
@@ -1281,7 +1282,6 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   const feedbackTimer = useRef<number | null>(null);
   const errorTimer = useRef<number | null>(null);
 
-  // Correct category for each item = the category it was authored under in the editor
   const correctFor = useMemo(() => {
     const map: Record<string, string | null> = {};
     for (const item of data.items) map[item.id] = item.categoryId ?? null;
@@ -1350,7 +1350,6 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
       setErrorMsg(null);
       setIndex(0);
     } else {
-      // Reject the drop — card stays on the stack until it fits the right category.
       setResults((prev) => ({ ...prev, [id]: "incorrect" }));
       flashFeedback(categoryId, "incorrect");
       setAttempts((n) => n + 1);
@@ -1396,7 +1395,7 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
   }, [assignments, correctFor, data.categories, data.items]);
 
   return (
-    <div className="w-full space-y-4 rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+    <div className="w-full space-y-4">
       {errorMsg && !allPlaced && (
         <div
           role="alert"
@@ -1461,6 +1460,14 @@ export function CardSortPreview({ content }: CardSortPreviewProps) {
         onDragLeave={() => setActiveDropId(null)}
         interactive
       />
+    </div>
+  );
+}
+
+export function CardSortPreview({ content }: CardSortPreviewProps) {
+  return (
+    <div className="w-full rounded-2xl border border-primary/10 bg-card p-6 shadow-sm">
+      <InteractiveCardSort content={content} />
     </div>
   );
 }
