@@ -1318,7 +1318,7 @@ function InteractiveCardSort({ content }: { content: string }) {
     if (!id) return;
 
     const expected = correctFor[id];
-    const isCorrect = expected == null ? true : expected === categoryId;
+    const isCorrect = expected != null && expected === categoryId;
     const targetCat = data.categories.find((c) => c.id === categoryId);
 
     if (isCorrect) {
