@@ -987,31 +987,9 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
         </Button>
       </div>
 
-      {/* Card stack */}
-      <CardStack
-        items={editorUnassignedItems}
-        index={editorSafeIndex}
-        total={data.items.length}
-        onPrev={prev}
-        onNext={next}
-        onReset={resetEditorSorting}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        interactive
-        emptyLabel="All items have been placed"
-      />
+      {/* Live interactive preview — mirrors runtime behavior (validation, feedback, rejection) */}
+      <InteractiveCardSort content={content} />
 
-      {/* Categories */}
-      <CategoryGrid
-        categories={data.categories}
-        droppedCounts={editorDroppedCounts}
-        onDropTo={handleEditorDropToCategory}
-        allowDrop={allowEditorCategoryDrop}
-        activeDropId={dragOverCol}
-        onDragEnter={setDragOverCol}
-        onDragLeave={() => setDragOverCol(null)}
-        interactive
-      />
 
       {/* Manager modal */}
       <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
