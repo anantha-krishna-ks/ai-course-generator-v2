@@ -1022,7 +1022,7 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
 
 
       {/* Manager modal */}
-      <Dialog open={managerOpen} onOpenChange={(open) => !open && setManagerOpen(false)}>
+      <Dialog open={managerOpen} onOpenChange={(open) => { if (!open) requestManagerClose(); }}>
         <DialogContent className="w-[98vw] max-w-[1600px] sm:w-[95vw] max-h-[95vh] h-[95vh] flex flex-col p-0 gap-0">
           <DialogHeader className="px-4 sm:px-6 pt-5 pb-4 border-b border-border">
             <DialogTitle>Manage cards &amp; categories</DialogTitle>
