@@ -88,6 +88,16 @@ export function AudioTranscribePanel({ blockId, fileName, description }: AudioTr
     }
   };
 
+  // Persist to the shared session store so the preview can render the transcript.
+  useEffect(() => {
+    if (!blockId) return;
+    if (!enabled) {
+      clearAudioTranscribe(blockId);
+      return;
+    }
+    setAudioTranscribe(blockId, { enabled, status, transcript, detected });
+  }, [blockId, enabled, status, transcript, detected]);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(transcript);
