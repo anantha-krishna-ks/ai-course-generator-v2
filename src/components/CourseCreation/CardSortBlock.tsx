@@ -697,7 +697,37 @@ export function CardSortBlock({ content, onChange }: CardSortBlockProps) {
   const data = useMemo(() => parseContent(content), [content]);
   const [index, setIndex] = useState(0);
   const [managerOpen, setManagerOpen] = useState(false);
+  const [confirmCloseOpen, setConfirmCloseOpen] = useState(false);
+  const managerSnapshot = useRef<string>("");
   const [editing, setEditing] = useState<EditTarget>(null);
+
+  // Snapshot content when the manager opens so we can detect unsaved changes.
+  useEffect(() => {
+    if (managerOpen) managerSnapshot.current = content;
+  }, [managerOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isManagerDirty = () => managerOpen && content !== managerSnapshot.current;
+
+  const requestManagerClose = () => {
+    if (isManagerDirty()) {
+      setConfirmCloseOpen(true);
+    } else {
+      setManagerOpen(false);
+    }
+  };
+
+  const discardManagerChanges = () => {
+    onChange(managerSnapshot.current);
+    setConfirmCloseOpen(false);
+    setManagerOpen(false);
+  };
+
+  const saveAndCloseManager = () => {
+    // Changes already auto-commit; just close.
+    setConfirmCloseOpen(false);
+    setManagerOpen(false);
+  };
+
 
   // Card draft
   const [draftType, setDraftType] = useState<CardType>("text");
