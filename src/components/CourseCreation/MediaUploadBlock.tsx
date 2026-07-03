@@ -263,7 +263,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
               className="mt-3 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none overflow-hidden min-h-[36px]"
               rows={1}
             />
-            <AudioTranscribePanel fileName={fileName} description={localDescription} />
+            <AudioTranscribePanel blockId={blockId} fileName={fileName} description={localDescription} />
           </>
 
         )}
