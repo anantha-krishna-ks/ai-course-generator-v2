@@ -89,24 +89,41 @@ export function AudioTranscribePanel({ fileName, description }: AudioTranscribeP
     } catch {}
   };
 
+  const wordCount = useMemo(
+    () => (transcript.trim() ? transcript.trim().split(/\s+/).length : 0),
+    [transcript],
+  );
+  const readingMinutes = Math.max(1, Math.round(wordCount / 200));
+
   return (
-    <div className="mt-3 rounded-xl border border-border/60 bg-gradient-to-br from-background to-primary/[0.02] overflow-hidden">
+    <div className="mt-3 rounded-2xl border border-border/60 bg-gradient-to-br from-background via-background to-primary/[0.03] shadow-[0_1px_2px_rgba(0,0,0,0.03),0_10px_28px_-18px_hsl(var(--primary)/0.25)] overflow-hidden">
       {/* Header row */}
-      <div className="flex items-start sm:items-center justify-between gap-3 px-4 py-3 border-b border-border/50">
-        <div className="flex items-start gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+      <div className="flex items-start sm:items-center justify-between gap-3 px-4 py-3.5 border-b border-border/50 bg-muted/20">
+        <div className="flex items-start gap-3 min-w-0">
+          <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary flex items-center justify-center shrink-0 ring-1 ring-primary/15">
             <Languages className="w-4 h-4" aria-hidden="true" focusable="false" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground">Transcribe audio</p>
-            <p className="text-xs text-muted-foreground mt-0.5 flex items-start gap-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-semibold text-foreground">Transcribe audio</p>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-primary/10 text-primary">
+                <Sparkles className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+                AI
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1 flex items-start gap-1.5 leading-relaxed">
               <Info className="w-3 h-3 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
-              <span>Transcription is currently supported for English audio only. Support for more languages is coming soon.</span>
+              <span>Transcription currently supports English audio only — more languages are coming soon.</span>
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs text-muted-foreground hidden sm:inline">
+          <span
+            className={cn(
+              "text-[11px] font-medium hidden sm:inline transition-colors",
+              enabled ? "text-primary" : "text-muted-foreground",
+            )}
+          >
             {enabled ? "On" : "Off"}
           </span>
           <Switch
@@ -120,31 +137,46 @@ export function AudioTranscribePanel({ fileName, description }: AudioTranscribeP
       {/* Body */}
       {enabled && (
         <div className="p-4">
-          {status === "loading" && (
-            <AIBlockLoader stages={STAGES} />
-          )}
+          {status === "loading" && <AIBlockLoader stages={STAGES} />}
 
           {status === "ready" && (
-            <div className="space-y-2 animate-fade-in">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                  <span>Transcript ready · Detected language: <span className="font-medium text-foreground">{detected}</span></span>
+            <div className="animate-fade-in rounded-xl border border-border/60 bg-background overflow-hidden">
+              {/* Transcript toolbar */}
+              <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border/50 bg-muted/30">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+                    Ready
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground truncate">
+                    <Languages className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <span className="font-medium text-foreground">{detected}</span>
+                  </span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   <button
                     type="button"
                     onClick={handleCopy}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                    className={cn(
+                      "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors",
+                      copied
+                        ? "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60",
+                    )}
                     aria-label="Copy transcript"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5" aria-hidden="true" /> : <Copy className="w-3.5 h-3.5" aria-hidden="true" />}
+                    {copied ? (
+                      <Check className="w-3.5 h-3.5" aria-hidden="true" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                    )}
                     {copied ? "Copied" : "Copy"}
                   </button>
+                  <span className="w-px h-4 bg-border mx-0.5" aria-hidden="true" />
                   <button
                     type="button"
                     onClick={runTranscription}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                     aria-label="Regenerate transcript"
                   >
                     <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
@@ -152,39 +184,71 @@ export function AudioTranscribePanel({ fileName, description }: AudioTranscribeP
                   </button>
                 </div>
               </div>
+
+              {/* Transcript document */}
               <textarea
                 value={transcript}
                 onChange={(e) => setTranscript(e.target.value)}
                 aria-label="Audio transcript"
+                spellCheck
                 className={cn(
-                  "w-full min-h-[160px] rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground",
-                  "placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-y"
+                  "w-full min-h-[200px] bg-background px-4 py-3.5 text-[13.5px] leading-[1.7] text-foreground",
+                  "placeholder:text-muted-foreground focus:outline-none focus:ring-0 border-0 resize-y",
                 )}
               />
+
+              {/* Meta footer */}
+              <div className="flex items-center justify-between gap-2 px-3 py-2 border-t border-border/50 bg-muted/20 text-[11px] text-muted-foreground tabular-nums">
+                <div className="flex items-center gap-3">
+                  <span>{wordCount.toLocaleString()} words</span>
+                  <span className="w-px h-3 bg-border" aria-hidden="true" />
+                  <span>~{readingMinutes} min read</span>
+                </div>
+                <span className="hidden sm:inline">Edit freely — changes are saved with this block</span>
+              </div>
             </div>
           )}
 
           {status === "unsupported" && (
-            <div className="flex flex-col items-center justify-center text-center gap-3 py-6 animate-fade-in">
-              <div className="w-40 h-40" aria-hidden="true">
+            <div className="relative flex flex-col items-center justify-center text-center gap-4 py-8 px-6 rounded-xl border border-dashed border-border/70 bg-muted/20 animate-fade-in overflow-hidden">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-3xl opacity-60"
+                style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.10), transparent 70%)" }}
+              />
+              <div className="relative w-40 h-40" aria-hidden="true">
                 <Lottie animationData={emptyOutlineLottie} loop autoplay />
               </div>
-              <div className="space-y-1 max-w-md">
-                <p className="text-sm font-semibold text-foreground">
-                  We can't transcribe this one yet
+              <div className="relative space-y-1.5 max-w-md">
+                <p className="text-base font-semibold text-foreground">
+                  We can't transcribe this one just yet
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  It looks like this audio is in <span className="font-medium text-foreground">{detected}</span>. Right now our transcription
-                  service understands English only — but support for more languages is on the way. Thank you for your patience!
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  This audio sounds like it's in{" "}
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-background border border-border/70 font-medium text-foreground">
+                    <Languages className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    {detected}
+                  </span>
+                  . Our transcription service understands English only for now — support for more languages is on the way. Thank you for your patience!
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => handleToggle(false)}
-                className="mt-1 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-              >
-                Turn off transcription
-              </button>
+              <div className="relative flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={runTranscription}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-background text-foreground hover:bg-muted/60 transition-colors"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Try again
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleToggle(false)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                >
+                  Turn off transcription
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -192,3 +256,4 @@ export function AudioTranscribePanel({ fileName, description }: AudioTranscribeP
     </div>
   );
 }
+
