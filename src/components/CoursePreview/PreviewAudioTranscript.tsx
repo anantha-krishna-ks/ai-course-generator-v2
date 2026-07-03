@@ -18,7 +18,7 @@ interface PreviewAudioTranscriptProps {
  */
 export function PreviewAudioTranscript({ blockId, className }: PreviewAudioTranscriptProps) {
   const [state, setState] = useState<AudioTranscribeState | undefined>(() => getAudioTranscribe(blockId));
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setState(getAudioTranscribe(blockId));
