@@ -44,11 +44,12 @@ const STAGES = [
   "Finalising transcript",
 ];
 
-export function AudioTranscribePanel({ fileName, description }: AudioTranscribePanelProps) {
-  const [enabled, setEnabled] = useState(false);
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "unsupported">("idle");
-  const [transcript, setTranscript] = useState("");
-  const [detected, setDetected] = useState<string>("English");
+export function AudioTranscribePanel({ blockId, fileName, description }: AudioTranscribePanelProps) {
+  const initial = blockId ? getAudioTranscribe(blockId) : undefined;
+  const [enabled, setEnabled] = useState(initial?.enabled ?? false);
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "unsupported">(initial?.status ?? "idle");
+  const [transcript, setTranscript] = useState(initial?.transcript ?? "");
+  const [detected, setDetected] = useState<string>(initial?.detected ?? "English");
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<number | null>(null);
 
