@@ -359,10 +359,10 @@ function AssetCard({
     <button
       onClick={onSelect}
       className={cn(
-        "group relative text-left rounded-2xl border bg-card p-2.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        "group relative text-left rounded-2xl border bg-card p-2.5 transition-shadow duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isSelected
-          ? "border-primary ring-2 ring-primary/30 shadow-md"
-          : "border-border/70 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
+          ? "border-primary shadow-md"
+          : "border-border/70 hover:border-primary/40 hover:shadow-lg"
       )}
       aria-label={`Select ${asset.name}`}
       aria-pressed={isSelected}
@@ -382,7 +382,7 @@ function AssetCard({
             src={asset.url}
             alt={asset.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="w-full h-full object-cover"
           />
         ) : asset.kind === "video" ? (
           <VideoThumb asset={asset} />
@@ -424,7 +424,7 @@ function VideoThumb({ asset }: { asset: LibraryAsset }) {
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-11 h-11 rounded-full bg-background/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+        <div className="w-11 h-11 rounded-full bg-background/95 flex items-center justify-center shadow-lg">
           <Play className="w-4 h-4 text-primary fill-primary ml-0.5" aria-hidden="true" />
         </div>
       </div>
