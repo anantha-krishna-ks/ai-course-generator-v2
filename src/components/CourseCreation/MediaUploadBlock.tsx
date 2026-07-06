@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2, ChevronDown, HardDriveUpload, Library } from "lucide-react";
-import { MediaLibraryDialog } from "./MediaLibraryDialog";
+import { AssetLibraryDialog } from "./AssetLibraryDialog";
 import { cn } from "@/lib/utils";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 import { AudioTranscribePanel } from "./AudioTranscribePanel";
