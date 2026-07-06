@@ -205,7 +205,7 @@ export function AssetLibraryDialog({
             </Select>
 
             <Select value={scope} onValueChange={(v) => setScope(v as typeof scope)}>
-              <SelectTrigger className="h-9 rounded-full w-[170px] bg-background" aria-label="Filter by author">
+              <SelectTrigger className="h-9 rounded-full w-[190px] bg-background" aria-label="Filter by author">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
