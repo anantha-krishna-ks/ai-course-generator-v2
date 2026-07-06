@@ -562,7 +562,7 @@ const MultipageCoursePreview = () => {
       }
       case "image":
         return block.content ? (
-          <img src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm" />
+          <img data-zoomable="true" src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md" />
         ) : null;
       case "image-description": {
         try {
