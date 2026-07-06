@@ -883,10 +883,11 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         </DialogContent>
       </Dialog>
 
-      <ImageRepositoryDialog
+      <AssetLibraryDialog
         open={showLibraryDialog}
         onOpenChange={setShowLibraryDialog}
-        onSelectImage={(url) => onChange(url)}
+        kind="image"
+        onSelect={(url) => onChange(url)}
       />
     </>
 
