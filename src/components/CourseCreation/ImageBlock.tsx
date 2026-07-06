@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch, Library, HardDriveUpload } from "lucide-react";
+import { ImageRepositoryDialog } from "@/components/RichTextEditor/ImageRepositoryDialog";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { ChapterImageDialog } from "@/components/EditCourse/ChapterImageDialog";
 import { cn } from "@/lib/utils";
