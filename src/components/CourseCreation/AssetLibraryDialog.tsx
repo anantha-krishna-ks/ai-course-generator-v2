@@ -355,58 +355,54 @@ function AssetCard({
   isSelected: boolean;
   onSelect: () => void;
 }) {
-  const isImage = asset.kind === "image";
-  const isVideo = asset.kind === "video";
-
   return (
     <button
       onClick={onSelect}
       className={cn(
-        "group relative text-left rounded-xl border bg-card overflow-hidden transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        "group relative text-left rounded-2xl border bg-card p-2.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isSelected
           ? "border-primary ring-2 ring-primary/30 shadow-md"
-          : "border-border/70 hover:border-primary/50 hover:shadow-md"
+          : "border-border/70 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
       )}
       aria-label={`Select ${asset.name}`}
       aria-pressed={isSelected}
     >
-      {isImage ? (
-        <div className="aspect-square bg-muted overflow-hidden">
+      {/* Header: file-type icon + filename */}
+      <div className="flex items-center gap-2 px-1 pb-2">
+        <FileTypePill kind={asset.kind} />
+        <p className="text-[13px] font-medium text-foreground truncate flex-1 leading-tight">
+          {asset.name}
+        </p>
+      </div>
+
+      {/* Preview thumbnail card */}
+      <div className="relative rounded-xl overflow-hidden bg-muted/40 border border-border/60 aspect-[4/3]">
+        {asset.kind === "image" ? (
           <img
             src={asset.url}
             alt={asset.name}
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
-        </div>
-      ) : isVideo ? (
-        <VideoThumb asset={asset} />
-      ) : asset.kind === "doc" ? (
-        <DocThumb asset={asset} />
-      ) : (
-        <AudioThumb asset={asset} />
-      )}
+        ) : asset.kind === "video" ? (
+          <VideoThumb asset={asset} />
+        ) : asset.kind === "doc" ? (
+          <DocThumb asset={asset} />
+        ) : (
+          <AudioThumb asset={asset} />
+        )}
 
-      {isSelected && (
-        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow ring-2 ring-background">
-          <Check className="w-3.5 h-3.5" aria-hidden="true" />
-        </div>
-      )}
+        {asset.source === "ai" && (
+          <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/90 backdrop-blur-sm border border-primary/30 text-primary text-[10px] font-medium shadow-sm">
+            <Sparkles className="w-2.5 h-2.5" aria-hidden="true" /> AI
+          </div>
+        )}
 
-      {asset.source === "ai" && (
-        <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/90 backdrop-blur-sm border border-primary/30 text-primary text-[10px] font-medium shadow-sm">
-          <Sparkles className="w-2.5 h-2.5" aria-hidden="true" /> AI
-        </div>
-      )}
-
-      <div className="px-2.5 py-2 border-t border-border/60 bg-card flex items-center gap-2">
-        <FileTypePill kind={asset.kind} />
-        <div className="min-w-0 flex-1">
-          <p className="text-[12px] font-medium text-foreground truncate leading-tight">{asset.name}</p>
-          <p className="text-[10.5px] text-muted-foreground truncate mt-0.5">
-            {asset.meta ? `${asset.meta} · ${asset.size}` : asset.size}
-          </p>
-        </div>
+        {isSelected && (
+          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow ring-2 ring-background">
+            <Check className="w-3.5 h-3.5" aria-hidden="true" />
+          </div>
+        )}
       </div>
     </button>
   );
@@ -414,7 +410,7 @@ function AssetCard({
 
 function VideoThumb({ asset }: { asset: LibraryAsset }) {
   return (
-    <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-700 relative overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-700">
       {asset.thumbnail && (
         <img
           src={asset.thumbnail}
@@ -428,7 +424,7 @@ function VideoThumb({ asset }: { asset: LibraryAsset }) {
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full bg-background/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+        <div className="w-11 h-11 rounded-full bg-background/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
           <Play className="w-4 h-4 text-primary fill-primary ml-0.5" aria-hidden="true" />
         </div>
       </div>
@@ -451,15 +447,15 @@ function DocThumb({ asset }: { asset: LibraryAsset }) {
       }, [""])
     : [];
   return (
-    <div className="aspect-[4/5] bg-gradient-to-br from-muted/40 to-muted/70 p-3 flex items-center justify-center overflow-hidden">
-      <div className="w-full h-full bg-background rounded-md shadow-sm border border-border/60 p-2 flex flex-col gap-1 overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-br from-muted/30 to-muted/60 p-3 flex items-start justify-center overflow-hidden">
+      <div className="w-[72%] h-[115%] bg-background rounded-t-md shadow-md border border-border/60 border-b-0 p-2.5 flex flex-col gap-1.5 overflow-hidden translate-y-1">
         <div className="h-1.5 w-2/3 rounded-sm bg-foreground/70 mb-1" />
         {lines.length > 0 ? (
-          lines.slice(0, 6).map((_, i) => (
+          lines.slice(0, 8).map((_, i) => (
             <div
               key={i}
               className="h-1 rounded-sm bg-muted-foreground/25"
-              style={{ width: `${Math.max(45, 100 - i * 6 - (i === 5 ? 20 : 0))}%` }}
+              style={{ width: `${Math.max(45, 100 - i * 5 - (i === 7 ? 25 : 0))}%` }}
             />
           ))
         ) : (
@@ -468,28 +464,26 @@ function DocThumb({ asset }: { asset: LibraryAsset }) {
             <div className="h-1 rounded-sm bg-muted-foreground/25 w-11/12" />
             <div className="h-1 rounded-sm bg-muted-foreground/25 w-10/12" />
             <div className="h-1 rounded-sm bg-muted-foreground/25 w-9/12" />
+            <div className="h-1 rounded-sm bg-muted-foreground/25 w-11/12" />
+            <div className="h-1 rounded-sm bg-muted-foreground/25 w-8/12" />
           </>
         )}
-        <div className="mt-auto flex items-center justify-between pt-1">
-          <div className="h-1 w-6 rounded-sm bg-muted-foreground/20" />
-          <div className="h-3 px-1 rounded-sm bg-primary/10 text-primary text-[7px] font-semibold flex items-center">PDF</div>
-        </div>
       </div>
     </div>
   );
 }
 
 function AudioThumb({ asset }: { asset: LibraryAsset }) {
-  const bars = Array.from({ length: 28 }, (_, i) => {
+  const bars = Array.from({ length: 32 }, (_, i) => {
     const seed = asset.id.charCodeAt(0) + i * 7;
     return 20 + ((seed * 13) % 70);
   });
   return (
-    <div className="aspect-[4/5] bg-gradient-to-br from-primary/15 via-primary/5 to-background relative flex flex-col items-center justify-center p-3 gap-3">
+    <div className="absolute inset-0 bg-gradient-to-br from-violet-500/15 via-primary/5 to-background flex flex-col items-center justify-center p-3 gap-3">
       <div className="w-11 h-11 rounded-full bg-background shadow-sm border border-primary/20 flex items-center justify-center">
         <Mic className="w-5 h-5 text-primary" aria-hidden="true" />
       </div>
-      <div className="w-full flex items-center justify-center gap-[2px] h-10">
+      <div className="w-full flex items-center justify-center gap-[2px] h-9 px-2">
         {bars.map((h, i) => (
           <div key={i} className="w-[3px] rounded-full bg-primary/60" style={{ height: `${h}%` }} />
         ))}
