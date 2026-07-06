@@ -1,8 +1,14 @@
 import { useRef, useState, useCallback } from "react";
-import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2 } from "lucide-react";
+import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2, ChevronDown, HardDriveUpload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 import { AudioTranscribePanel } from "./AudioTranscribePanel";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 
 type MediaType = "video" | "audio" | "doc";
