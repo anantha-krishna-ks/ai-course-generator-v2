@@ -376,10 +376,10 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             rows={1}
         />
       )}
-      <MediaLibraryDialog
+      <AssetLibraryDialog
         open={showLibraryDialog}
         onOpenChange={setShowLibraryDialog}
-        type={type}
+        kind={type}
         onSelect={handleLibrarySelect}
       />
     </div>
