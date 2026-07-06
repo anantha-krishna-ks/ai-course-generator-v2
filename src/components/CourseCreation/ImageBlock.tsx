@@ -773,7 +773,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
                 <HardDriveUpload className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                 <div className="flex flex-col">
                   <span className="text-sm font-medium">Upload from device</span>
-                  <span className="text-[11px] text-muted-foreground">JPEG, PNG, BMP, GIF</span>
+                  <span className="text-[11px] text-muted-foreground">JPG, JPEG, PNG</span>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setShowLibraryDialog(true)} className="gap-2.5 py-2">
@@ -806,12 +806,12 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          Recommended size: from 240×280px · Formats: JPEG, PNG, BMP, GIF
+          Recommended size: from 240×280px · Formats: JPG, JPEG, PNG
         </p>
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/jpg,image/png,image/bmp,image/gif"
+          accept="image/jpeg,image/jpg,image/png"
           className="hidden"
           onChange={handleInputChange}
         />

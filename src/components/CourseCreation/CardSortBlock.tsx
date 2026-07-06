@@ -668,7 +668,7 @@ function InlineSortCard({
               </span>
               <span className="text-xs font-medium">Upload image</span>
               <span className="text-[10px] text-muted-foreground/70">
-                PNG, JPG up to 20MB
+                JPG, JPEG, PNG up to 20MB
               </span>
             </button>
           )}

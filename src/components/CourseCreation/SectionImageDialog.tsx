@@ -268,7 +268,7 @@ export function SectionImageDialog({
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">Allowed formats:</p>
-              <p className="text-sm text-muted-foreground">jpeg, jpg, png, bmp, gif</p>
+              <p className="text-sm text-muted-foreground">jpg, jpeg, png</p>
             </div>
           </div>
         </div>
