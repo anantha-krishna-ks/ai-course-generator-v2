@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, CircleDot, CheckSquare, ToggleLeft, Type, Minus, Plus, Brain, Trophy } from "lucide-react";
+import { Sparkles, CircleDot, CheckSquare, ToggleLeft, Type, Minus, Plus, Brain, Trophy, Layers, FileText, BookOpen, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
@@ -17,6 +17,7 @@ interface GenerateQuizDialogProps {
 
 export interface GenerateQuizConfig {
   quizType: string;
+  scope: string[];
   scqCount: number;
   mcqCount: number;
   trueFalseCount: number;
@@ -31,6 +32,12 @@ const quizTypes = [
   { key: "summative", label: "Summative", description: "Graded evaluation of mastery", icon: Trophy },
 ] as const;
 
+const scopeOptions = [
+  { key: "section", label: "This Section", description: "Quiz for the current section only", icon: Layers },
+  { key: "page", label: "This Page", description: "Quiz for the current page only", icon: FileText },
+  { key: "course", label: "Entire Course", description: "Quiz covering the full course", icon: BookOpen },
+] as const;
+
 const questionTypes = [
   { key: "scq", label: "Single Choice", icon: CircleDot, color: "text-blue-600", bg: "bg-blue-50" },
   { key: "mcq", label: "Multiple Choice", icon: CheckSquare, color: "text-purple-600", bg: "bg-purple-50" },
@@ -42,6 +49,7 @@ const MAX_TOTAL = 20;
 
 export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = false }: GenerateQuizDialogProps) {
   const [quizType, setQuizType] = useState<string>("formative");
+  const [scope, setScope] = useState<string[]>(["section"]);
   const [counts, setCounts] = useState<Record<string, number>>({ scq: 3, mcq: 2, tf: 2, fib: 1 });
   const [difficultyLevel, setDifficultyLevel] = useState("medium");
   const [specificInstructions, setSpecificInstructions] = useState(false);
@@ -59,9 +67,14 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
     });
   };
 
+  const toggleScope = (key: string) => {
+    setScope((prev) => (prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]));
+  };
+
   const handleGenerate = () => {
     onGenerate({
       quizType,
+      scope,
       scqCount: counts.scq,
       mcqCount: counts.mcq,
       trueFalseCount: counts.tf,
@@ -118,6 +131,44 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
                             : "border-border/60 bg-white hover:bg-gray-50"
                         )}
                       >
+                        <div className="flex items-center gap-2">
+                          <div className={cn("p-1.5 rounded-lg", isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/70")}>
+                            <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          </div>
+                          <span className={cn("text-xs font-semibold", isActive ? "text-primary" : "text-foreground")}>{label}</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-1.5 leading-snug">{description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Quiz Scope */}
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Quiz Scope
+                </Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {scopeOptions.map(({ key, label, description, icon: Icon }) => {
+                    const isActive = scope.includes(key);
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => toggleScope(key)}
+                        className={cn(
+                          "text-left rounded-xl border-2 p-3 transition-all duration-150 relative",
+                          isActive
+                            ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                            : "border-border/60 bg-white hover:bg-gray-50"
+                        )}
+                      >
+                        {isActive && (
+                          <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                            <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />
+                          </div>
+                        )}
                         <div className="flex items-center gap-2">
                           <div className={cn("p-1.5 rounded-lg", isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/70")}>
                             <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
