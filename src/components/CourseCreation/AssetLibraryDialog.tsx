@@ -424,7 +424,7 @@ function VideoThumb({ asset }: { asset: LibraryAsset }) {
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-11 h-11 rounded-full bg-background/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+        <div className="w-11 h-11 rounded-full bg-background/95 flex items-center justify-center shadow-lg">
           <Play className="w-4 h-4 text-primary fill-primary ml-0.5" aria-hidden="true" />
         </div>
       </div>
