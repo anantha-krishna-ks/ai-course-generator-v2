@@ -355,19 +355,22 @@ function AssetCard({
   isSelected: boolean;
   onSelect: () => void;
 }) {
+  const isImage = asset.kind === "image";
+  const isVideo = asset.kind === "video";
+
   return (
     <button
       onClick={onSelect}
       className={cn(
         "group relative text-left rounded-xl border bg-card overflow-hidden transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isSelected
-          ? "border-primary ring-2 ring-primary/30 shadow-sm"
-          : "border-border hover:border-primary/60 hover:shadow-sm"
+          ? "border-primary ring-2 ring-primary/30 shadow-md"
+          : "border-border/70 hover:border-primary/50 hover:shadow-md"
       )}
       aria-label={`Select ${asset.name}`}
       aria-pressed={isSelected}
     >
-      {asset.kind === "image" ? (
+      {isImage ? (
         <div className="aspect-square bg-muted overflow-hidden">
           <img
             src={asset.url}
@@ -376,14 +379,16 @@ function AssetCard({
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         </div>
+      ) : isVideo ? (
+        <VideoThumb asset={asset} />
+      ) : asset.kind === "doc" ? (
+        <DocThumb asset={asset} />
       ) : (
-        <div className="aspect-[16/9] bg-gradient-to-br from-muted to-muted/60 flex items-center justify-center relative">
-          <MediaTypeGlyph kind={asset.kind} />
-        </div>
+        <AudioThumb asset={asset} />
       )}
 
       {isSelected && (
-        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow">
+        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow ring-2 ring-background">
           <Check className="w-3.5 h-3.5" aria-hidden="true" />
         </div>
       )}
@@ -394,14 +399,120 @@ function AssetCard({
         </div>
       )}
 
-      <div className="px-3 py-2.5 border-t border-border/60">
-        <p className="text-xs font-medium text-foreground truncate">{asset.name}</p>
-        <p className="text-[11px] text-muted-foreground truncate mt-0.5">
-          {asset.size}
-          {asset.meta ? ` · ${asset.meta}` : ""}
-        </p>
+      <div className="px-2.5 py-2 border-t border-border/60 bg-card flex items-center gap-2">
+        <FileTypePill kind={asset.kind} />
+        <div className="min-w-0 flex-1">
+          <p className="text-[12px] font-medium text-foreground truncate leading-tight">{asset.name}</p>
+          <p className="text-[10.5px] text-muted-foreground truncate mt-0.5">
+            {asset.meta ? `${asset.meta} · ${asset.size}` : asset.size}
+          </p>
+        </div>
       </div>
     </button>
+  );
+}
+
+function VideoThumb({ asset }: { asset: LibraryAsset }) {
+  return (
+    <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-700 relative overflow-hidden">
+      {asset.thumbnail && (
+        <img
+          src={asset.thumbnail}
+          alt=""
+          loading="lazy"
+          className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = "none";
+          }}
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full bg-background/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+          <Play className="w-4 h-4 text-primary fill-primary ml-0.5" aria-hidden="true" />
+        </div>
+      </div>
+      {asset.meta && (
+        <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/70 text-white text-[10px] font-medium tabular-nums">
+          {asset.meta}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DocThumb({ asset }: { asset: LibraryAsset }) {
+  const lines = asset.previewText
+    ? asset.previewText.split(" ").reduce<string[]>((acc, w) => {
+        const last = acc[acc.length - 1] ?? "";
+        if ((last + " " + w).trim().length > 34) acc.push(w);
+        else acc[acc.length - 1] = (last + " " + w).trim();
+        return acc;
+      }, [""])
+    : [];
+  return (
+    <div className="aspect-[4/5] bg-gradient-to-br from-muted/40 to-muted/70 p-3 flex items-center justify-center overflow-hidden">
+      <div className="w-full h-full bg-background rounded-md shadow-sm border border-border/60 p-2 flex flex-col gap-1 overflow-hidden">
+        <div className="h-1.5 w-2/3 rounded-sm bg-foreground/70 mb-1" />
+        {lines.length > 0 ? (
+          lines.slice(0, 6).map((_, i) => (
+            <div
+              key={i}
+              className="h-1 rounded-sm bg-muted-foreground/25"
+              style={{ width: `${Math.max(45, 100 - i * 6 - (i === 5 ? 20 : 0))}%` }}
+            />
+          ))
+        ) : (
+          <>
+            <div className="h-1 rounded-sm bg-muted-foreground/25 w-full" />
+            <div className="h-1 rounded-sm bg-muted-foreground/25 w-11/12" />
+            <div className="h-1 rounded-sm bg-muted-foreground/25 w-10/12" />
+            <div className="h-1 rounded-sm bg-muted-foreground/25 w-9/12" />
+          </>
+        )}
+        <div className="mt-auto flex items-center justify-between pt-1">
+          <div className="h-1 w-6 rounded-sm bg-muted-foreground/20" />
+          <div className="h-3 px-1 rounded-sm bg-primary/10 text-primary text-[7px] font-semibold flex items-center">PDF</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AudioThumb({ asset }: { asset: LibraryAsset }) {
+  const bars = Array.from({ length: 28 }, (_, i) => {
+    const seed = asset.id.charCodeAt(0) + i * 7;
+    return 20 + ((seed * 13) % 70);
+  });
+  return (
+    <div className="aspect-[4/5] bg-gradient-to-br from-primary/15 via-primary/5 to-background relative flex flex-col items-center justify-center p-3 gap-3">
+      <div className="w-11 h-11 rounded-full bg-background shadow-sm border border-primary/20 flex items-center justify-center">
+        <Mic className="w-5 h-5 text-primary" aria-hidden="true" />
+      </div>
+      <div className="w-full flex items-center justify-center gap-[2px] h-10">
+        {bars.map((h, i) => (
+          <div key={i} className="w-[3px] rounded-full bg-primary/60" style={{ height: `${h}%` }} />
+        ))}
+      </div>
+      {asset.meta && (
+        <div className="text-[10px] text-muted-foreground tabular-nums font-medium">{asset.meta}</div>
+      )}
+    </div>
+  );
+}
+
+function FileTypePill({ kind }: { kind: AssetKind }) {
+  const map: Record<AssetKind, { Icon: typeof ImageIcon; cls: string }> = {
+    image: { Icon: ImageIcon, cls: "bg-emerald-500/10 text-emerald-600" },
+    doc: { Icon: FileText, cls: "bg-blue-500/10 text-blue-600" },
+    audio: { Icon: Mic, cls: "bg-violet-500/10 text-violet-600" },
+    video: { Icon: VideoIcon, cls: "bg-rose-500/10 text-rose-600" },
+  };
+  const { Icon, cls } = map[kind];
+  return (
+    <div className={cn("w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0", cls)}>
+      <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+    </div>
   );
 }
 
