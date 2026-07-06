@@ -573,8 +573,8 @@ const MultipageCoursePreview = () => {
               isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
             )}>
               {parsed.image && (
-                <img src={parsed.image} alt="Course illustration" className={cn(
-                  "rounded-xl shadow-sm object-cover",
+                <img data-zoomable="true" src={parsed.image} alt="Course illustration" className={cn(
+                  "rounded-xl shadow-sm object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md",
                   isCompactView ? "w-full" : "w-1/2"
                 )} />
               )}
