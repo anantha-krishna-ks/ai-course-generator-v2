@@ -33,23 +33,23 @@ const mediaConfig: Record<MediaType, {
   video: {
     icon: Video,
     label: "Video",
-    accept: "video/mp4,video/webm,video/quicktime",
+    accept: "video/mp4",
     maxSize: "2 GB",
-    formats: "MP4, WebM, MOV",
+    formats: "MP4",
   },
   audio: {
     icon: Mic,
     label: "Audio",
-    accept: "audio/mpeg,audio/wav,audio/mp3,audio/ogg",
+    accept: "audio/mpeg,audio/mp3",
     maxSize: "2 GB",
-    formats: "MP3, WAV, OGG",
+    formats: "MP3",
   },
   doc: {
     icon: FileText,
     label: "Document",
-    accept: ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx",
+    accept: ".pdf",
     maxSize: "100 MB",
-    formats: "PDF, DOCX, PPTX, XLSX",
+    formats: "PDF",
   },
 };
 
