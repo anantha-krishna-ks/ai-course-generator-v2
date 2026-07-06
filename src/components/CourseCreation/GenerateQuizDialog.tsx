@@ -17,6 +17,8 @@ interface GenerateQuizDialogProps {
 }
 
 export interface GenerateQuizConfig {
+  quizType: string;
+  scope: string[];
   scqCount: number;
   mcqCount: number;
   trueFalseCount: number;
@@ -26,6 +28,18 @@ export interface GenerateQuizConfig {
   exclusions: string;
 }
 
+const quizTypes = [
+  { key: "knowledge", label: "Knowledge Check", description: "Quick recall questions", icon: GraduationCap },
+  { key: "practice", label: "Practice", description: "Skill-building drills", icon: Dumbbell },
+  { key: "assessment", label: "Assessment", description: "Formal graded evaluation", icon: ClipboardCheck },
+] as const;
+
+const scopeOptions = [
+  { key: "section", label: "Per Section", description: "One quiz for each section", icon: Layers },
+  { key: "page", label: "Per Page", description: "One quiz for each page", icon: FileText },
+  { key: "course", label: "Whole Course", description: "A single course-wide quiz", icon: BookOpen },
+] as const;
+
 const questionTypes = [
   { key: "scq", label: "Single Choice", icon: CircleDot },
   { key: "mcq", label: "Multiple Choice", icon: CheckSquare },
@@ -34,6 +48,8 @@ const questionTypes = [
 ] as const;
 
 export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = false }: GenerateQuizDialogProps) {
+  const [quizType, setQuizType] = useState<string>("knowledge");
+  const [scope, setScope] = useState<string[]>(["page"]);
   const [scqCount, setScqCount] = useState("1");
   const [mcqCount, setMcqCount] = useState("1");
   const [trueFalseCount, setTrueFalseCount] = useState("1");
@@ -42,6 +58,10 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
   const [specificInstructions, setSpecificInstructions] = useState(false);
   const [inclusions, setInclusions] = useState("");
   const [exclusions, setExclusions] = useState("");
+
+  const toggleScope = (key: string) => {
+    setScope((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
+  };
 
   const valueByKey: Record<string, string> = {
     scq: scqCount,
