@@ -17,6 +17,7 @@ interface GenerateQuizDialogProps {
 
 export interface GenerateQuizConfig {
   quizType: string;
+  scope: string[];
   scqCount: number;
   mcqCount: number;
   trueFalseCount: number;
