@@ -697,7 +697,7 @@ function ImageUploadButton({ onUpload, compact }: { onUpload: (f: File) => void;
             <ImagePlus className="w-4 h-4" aria-hidden="true" focusable="false" />
           </span>
           <span className="text-xs font-semibold leading-tight">Upload image <span className="text-muted-foreground font-medium">(optional)</span></span>
-          <span className="text-[10px] font-medium text-muted-foreground leading-tight">PNG, JPG, SVG · 600×450px (4:3)</span>
+          <span className="text-[10px] font-medium text-muted-foreground leading-tight">JPG, JPEG, PNG · 600×450px (4:3)</span>
         </button>
       )}
     </>
