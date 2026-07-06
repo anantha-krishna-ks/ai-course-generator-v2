@@ -78,6 +78,8 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
 
   const handleGenerate = () => {
     onGenerate({
+      quizType,
+      scope,
       scqCount: parseInt(scqCount),
       mcqCount: parseInt(mcqCount),
       trueFalseCount: parseInt(trueFalseCount),
