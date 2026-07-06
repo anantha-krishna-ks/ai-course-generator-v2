@@ -751,45 +751,40 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
         </div>
         <p className="text-sm text-muted-foreground">Click to add an image...</p>
         <div className="flex items-center gap-2.5">
-          {/* Split button: primary uploads, chevron opens source menu */}
-          <div className="inline-flex items-stretch rounded-full bg-primary text-primary-foreground shadow-sm overflow-hidden">
-            <button
-              type="button"
-              onClick={handleClick}
-              className="inline-flex items-center gap-1.5 pl-5 pr-4 h-9 text-sm font-medium hover:bg-primary/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
-              <ImagePlus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-              Upload Image
-            </button>
-            <span aria-hidden="true" className="w-px bg-primary-foreground/25 my-1.5" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="More image sources"
-                  className="inline-flex items-center justify-center w-8 hover:bg-primary/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                >
+          {/* Unified upload button — click opens source options */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-stretch rounded-full bg-primary text-primary-foreground shadow-sm overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <span className="inline-flex items-center gap-1.5 pl-5 pr-4 h-9 text-sm font-medium hover:bg-primary/90 transition-colors">
+                  <ImagePlus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Upload Image
+                </span>
+                <span aria-hidden="true" className="w-px bg-primary-foreground/25 my-1.5" />
+                <span className="inline-flex items-center justify-center w-8 hover:bg-primary/90 transition-colors">
                   <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="min-w-[220px]">
-                <DropdownMenuItem onClick={handleClick} className="gap-2.5 py-2">
-                  <HardDriveUpload className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">Upload from device</span>
-                    <span className="text-[11px] text-muted-foreground">JPEG, PNG, BMP, GIF</span>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowLibraryDialog(true)} className="gap-2.5 py-2">
-                  <Library className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">Choose from Library</span>
-                    <span className="text-[11px] text-muted-foreground">Pick from saved images</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                </span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[220px]">
+              <DropdownMenuItem onClick={handleClick} className="gap-2.5 py-2">
+                <HardDriveUpload className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Upload from device</span>
+                  <span className="text-[11px] text-muted-foreground">JPEG, PNG, BMP, GIF</span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowLibraryDialog(true)} className="gap-2.5 py-2">
+                <Library className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Choose from Library</span>
+                  <span className="text-[11px] text-muted-foreground">Pick from saved images</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {aiEnabled && (
             <Button
               size="sm"
