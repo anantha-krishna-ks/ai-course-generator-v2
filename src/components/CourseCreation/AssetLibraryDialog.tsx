@@ -516,27 +516,6 @@ function FileTypePill({ kind }: { kind: AssetKind }) {
   );
 }
 
-function MediaTypeGlyph({ kind }: { kind: AssetKind }) {
-  if (kind === "video") {
-    return (
-      <div className="w-12 h-12 rounded-full bg-background/90 flex items-center justify-center shadow-sm">
-        <Play className="w-5 h-5 text-primary fill-primary" aria-hidden="true" />
-      </div>
-    );
-  }
-  if (kind === "audio") {
-    return (
-      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-        <Mic className="w-5 h-5 text-primary" aria-hidden="true" />
-      </div>
-    );
-  }
-  return (
-    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-      <FileText className="w-5 h-5 text-primary" aria-hidden="true" />
-    </div>
-  );
-}
 
 function AssetPreview({ asset }: { asset: LibraryAsset }) {
   if (asset.kind === "image") {
