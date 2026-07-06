@@ -887,6 +887,13 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
           </div>
         </DialogContent>
       </Dialog>
+
+      <ImageRepositoryDialog
+        open={showLibraryDialog}
+        onOpenChange={setShowLibraryDialog}
+        onSelectImage={(url) => onChange(url)}
+      />
     </>
+
   );
 }
