@@ -204,6 +204,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const [rotation, setRotation] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [showLibraryDialog, setShowLibraryDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
