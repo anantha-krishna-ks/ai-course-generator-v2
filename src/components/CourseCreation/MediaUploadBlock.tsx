@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback } from "react";
-import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2, ChevronDown, HardDriveUpload } from "lucide-react";
+import { Upload, Video, Mic, FileText, X, RefreshCw, Trash2, Download, Maximize2, ChevronDown, HardDriveUpload, Library } from "lucide-react";
+import { MediaLibraryDialog } from "./MediaLibraryDialog";
 import { cn } from "@/lib/utils";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 import { AudioTranscribePanel } from "./AudioTranscribePanel";
@@ -58,6 +59,7 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
   const [localDescription, setLocalDescription] = useState(description);
   const [fileType, setFileType] = useState<string>("");
   const [loadingAction, setLoadingAction] = useState<"uploading" | "replacing" | "removing" | null>(null);
+  const [showLibraryDialog, setShowLibraryDialog] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const changeFileInputRef = useRef<HTMLInputElement>(null);
   const config = mediaConfig[type];
@@ -281,6 +283,13 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
     fileInputRef.current?.click();
   };
 
+  const handleLibrarySelect = (url: string, title: string) => {
+    setFileName(title);
+    setFileType(type === "doc" ? "application/pdf" : type === "audio" ? "audio/mpeg" : "video/mp4");
+    onChange(url);
+  };
+
+
   return (
     <div className="space-y-3">
       <div
@@ -328,6 +337,13 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
                   <span className="text-[11px] text-muted-foreground">{config.formats}</span>
                 </div>
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowLibraryDialog(true)} className="gap-2.5 py-2">
+                <Library className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Choose from Library</span>
+                  <span className="text-[11px] text-muted-foreground">Pick from saved {config.label.toLowerCase()}s</span>
+                </div>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -360,6 +376,12 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             rows={1}
         />
       )}
+      <MediaLibraryDialog
+        open={showLibraryDialog}
+        onOpenChange={setShowLibraryDialog}
+        type={type}
+        onSelect={handleLibrarySelect}
+      />
     </div>
   );
 }
