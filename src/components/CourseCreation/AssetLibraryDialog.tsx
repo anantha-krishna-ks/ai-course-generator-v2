@@ -359,10 +359,10 @@ function AssetCard({
     <button
       onClick={onSelect}
       className={cn(
-        "group relative text-left rounded-2xl border bg-card p-2.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        "group relative text-left rounded-2xl border bg-card p-2.5 transition-shadow duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isSelected
-          ? "border-primary ring-2 ring-primary/30 shadow-md"
-          : "border-border/70 hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
+          ? "border-primary shadow-md"
+          : "border-border/70 hover:border-primary/40 hover:shadow-lg"
       )}
       aria-label={`Select ${asset.name}`}
       aria-pressed={isSelected}
