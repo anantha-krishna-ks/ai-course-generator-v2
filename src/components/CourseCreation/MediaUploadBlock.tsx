@@ -283,6 +283,13 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
     fileInputRef.current?.click();
   };
 
+  const handleLibrarySelect = (url: string, title: string) => {
+    setFileName(title);
+    setFileType(type === "doc" ? "application/pdf" : type === "audio" ? "audio/mpeg" : "video/mp4");
+    onChange(url);
+  };
+
+
   return (
     <div className="space-y-3">
       <div
