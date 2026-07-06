@@ -1509,6 +1509,7 @@ const MultipageCoursePreview = () => {
         onOpenChange={setShowExportDialog}
         courseTitle={data?.title}
       />
+      <ImageLightbox />
     </div>
   );
 };
