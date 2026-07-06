@@ -32,6 +32,12 @@ const quizTypes = [
   { key: "summative", label: "Summative", description: "Graded evaluation of mastery", icon: Trophy },
 ] as const;
 
+const scopeOptions = [
+  { key: "section", label: "This Section", description: "Quiz for the current section only", icon: Layers },
+  { key: "page", label: "This Page", description: "Quiz for the current page only", icon: FileText },
+  { key: "course", label: "Entire Course", description: "Quiz covering the full course", icon: BookOpen },
+] as const;
+
 const questionTypes = [
   { key: "scq", label: "Single Choice", icon: CircleDot, color: "text-blue-600", bg: "bg-blue-50" },
   { key: "mcq", label: "Multiple Choice", icon: CheckSquare, color: "text-purple-600", bg: "bg-purple-50" },
