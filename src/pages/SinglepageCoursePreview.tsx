@@ -337,7 +337,7 @@ const SinglepageCoursePreview = () => {
         return <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(cleanContent) }} />;
       }
       case "image":
-        return block.content ? <img src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm" /> : null;
+        return block.content ? <img data-zoomable="true" src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md" /> : null;
       case "image-description": {
         try {
           const parsed = JSON.parse(block.content);
