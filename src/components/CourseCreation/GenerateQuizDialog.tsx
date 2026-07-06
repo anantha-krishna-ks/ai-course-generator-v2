@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, CircleDot, CheckSquare, ToggleLeft, Type, Minus, Plus, Brain, Trophy } from "lucide-react";
+import { Sparkles, CircleDot, CheckSquare, ToggleLeft, Type, Minus, Plus, Brain, Trophy, Layers, FileText, BookOpen, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
