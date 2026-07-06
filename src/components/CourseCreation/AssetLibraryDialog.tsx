@@ -382,7 +382,7 @@ function AssetCard({
             src={asset.url}
             alt={asset.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="w-full h-full object-cover"
           />
         ) : asset.kind === "video" ? (
           <VideoThumb asset={asset} />
