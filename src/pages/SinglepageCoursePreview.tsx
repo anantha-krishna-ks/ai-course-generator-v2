@@ -343,7 +343,7 @@ const SinglepageCoursePreview = () => {
           const parsed = JSON.parse(block.content);
           return (
             <div className={cn("flex gap-4 sm:gap-6 items-start", isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row")}>
-              {parsed.image && <img src={parsed.image} alt="Course illustration" className={cn("rounded-xl shadow-sm object-cover", isCompactView ? "w-full" : "w-1/2")} />}
+              {parsed.image && <img data-zoomable="true" src={parsed.image} alt="Course illustration" className={cn("rounded-xl shadow-sm object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md", isCompactView ? "w-full" : "w-1/2")} />}
               <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
             </div>
           );
