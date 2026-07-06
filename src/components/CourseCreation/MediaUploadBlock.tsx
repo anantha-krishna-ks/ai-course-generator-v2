@@ -337,6 +337,13 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
                   <span className="text-[11px] text-muted-foreground">{config.formats}</span>
                 </div>
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowLibraryDialog(true)} className="gap-2.5 py-2">
+                <Library className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Choose from Library</span>
+                  <span className="text-[11px] text-muted-foreground">Pick from saved {config.label.toLowerCase()}s</span>
+                </div>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
