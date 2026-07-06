@@ -1749,9 +1749,10 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         <div role="tabpanel" className="p-4 min-w-0 overflow-y-auto max-h-[70vh]">
           {active.imageUrl && (
             <img
+              data-zoomable="true"
               src={active.imageUrl}
               alt={`Visual for ${active.name}`}
-              className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3"
+              className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3 cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
             />
           )}
           {hasBody ? (
