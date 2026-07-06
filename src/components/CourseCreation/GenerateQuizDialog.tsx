@@ -48,6 +48,7 @@ const questionTypes = [
 const MAX_TOTAL = 20;
 
 export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = false }: GenerateQuizDialogProps) {
+  const quizTypeId = useId();
   const [quizType, setQuizType] = useState<string>("formative");
   const [scope, setScope] = useState<string[]>(["section"]);
   const [counts, setCounts] = useState<Record<string, number>>({ scq: 3, mcq: 2, tf: 2, fib: 1 });
