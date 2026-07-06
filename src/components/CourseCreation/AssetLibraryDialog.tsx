@@ -177,7 +177,7 @@ export function AssetLibraryDialog({
 
         {/* Toolbar */}
         <div className="flex-shrink-0 px-6 py-3 border-b border-border/60 flex flex-wrap items-center gap-2.5 bg-muted/20">
-          <div className="relative flex-1 max-w-[320px] min-w-[180px]">
+          <div className="relative flex-1 max-w-[380px] min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               placeholder={`Search ${label} by name or tag…`}
@@ -188,45 +188,47 @@ export function AssetLibraryDialog({
             />
           </div>
 
-          <Select value={source} onValueChange={(v) => setSource(v as typeof source)}>
-            <SelectTrigger className="h-9 rounded-full w-[170px] bg-background" aria-label="Filter by source">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All sources</SelectItem>
-              <SelectItem value="uploaded">
-                <span className="inline-flex items-center gap-2"><Upload className="w-3.5 h-3.5" aria-hidden="true" /> Uploaded</span>
-              </SelectItem>
-              <SelectItem value="ai">
-                <span className="inline-flex items-center gap-2"><Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> AI-generated</span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="ml-auto flex items-center gap-2.5">
+            <Select value={source} onValueChange={(v) => setSource(v as typeof source)}>
+              <SelectTrigger className="h-9 rounded-full w-[170px] bg-background" aria-label="Filter by source">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All sources</SelectItem>
+                <SelectItem value="uploaded">
+                  <span className="inline-flex items-center gap-2"><Upload className="w-3.5 h-3.5" aria-hidden="true" /> Uploaded</span>
+                </SelectItem>
+                <SelectItem value="ai">
+                  <span className="inline-flex items-center gap-2"><Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> AI-generated</span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select value={scope} onValueChange={(v) => setScope(v as typeof scope)}>
-            <SelectTrigger className="h-9 rounded-full w-[170px] bg-background" aria-label="Filter by author">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">
-                <span className="inline-flex items-center gap-2"><Users className="w-3.5 h-3.5" aria-hidden="true" /> Added by anyone</span>
-              </SelectItem>
-              <SelectItem value="me">
-                <span className="inline-flex items-center gap-2"><User className="w-3.5 h-3.5" aria-hidden="true" /> Added by me</span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+            <Select value={scope} onValueChange={(v) => setScope(v as typeof scope)}>
+              <SelectTrigger className="h-9 rounded-full w-[170px] bg-background" aria-label="Filter by author">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">
+                  <span className="inline-flex items-center gap-2"><Users className="w-3.5 h-3.5" aria-hidden="true" /> Added by anyone</span>
+                </SelectItem>
+                <SelectItem value="me">
+                  <span className="inline-flex items-center gap-2"><User className="w-3.5 h-3.5" aria-hidden="true" /> Added by me</span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select value={sort} onValueChange={(v) => setSort(v as typeof sort)}>
-            <SelectTrigger className="h-9 rounded-full w-[150px] bg-background" aria-label="Sort assets">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest first</SelectItem>
-              <SelectItem value="oldest">Oldest first</SelectItem>
-              <SelectItem value="name">Name (A–Z)</SelectItem>
-            </SelectContent>
-          </Select>
+            <Select value={sort} onValueChange={(v) => setSort(v as typeof sort)}>
+              <SelectTrigger className="h-9 rounded-full w-[150px] bg-background" aria-label="Sort assets">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest first</SelectItem>
+                <SelectItem value="oldest">Oldest first</SelectItem>
+                <SelectItem value="name">Name (A–Z)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Body: grid + preview */}
