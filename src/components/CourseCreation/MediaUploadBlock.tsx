@@ -376,6 +376,13 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
             rows={1}
         />
       )}
+      )}
+      <MediaLibraryDialog
+        open={showLibraryDialog}
+        onOpenChange={setShowLibraryDialog}
+        type={type}
+        onSelect={handleLibrarySelect}
+      />
     </div>
   );
 }
