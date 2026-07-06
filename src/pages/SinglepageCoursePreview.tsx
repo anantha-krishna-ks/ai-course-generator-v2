@@ -15,6 +15,7 @@ import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 import { PreviewAudioTranscript } from "@/components/CoursePreview/PreviewAudioTranscript";
+import { ImageLightbox } from "@/components/CoursePreview/ImageLightbox";
 
 interface CourseItem {
   id: string;
