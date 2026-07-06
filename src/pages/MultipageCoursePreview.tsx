@@ -1661,9 +1661,10 @@ const TabsPreview = ({ content }: { content: string }) => {
           {active.imageUrl ? (
             <div className="w-full md:w-[140px] shrink-0">
               <img
+                data-zoomable="true"
                 src={active.imageUrl}
                 alt={`Visual for ${active.name}`}
-                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3] shadow-sm"
+                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3] shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
               />
             </div>
           ) : null}
