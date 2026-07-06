@@ -277,6 +277,10 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
     );
   }
 
+  const handleDeviceUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="space-y-3">
       <div
@@ -286,34 +290,50 @@ export function MediaUploadBlock({ type, fileUrl, onChange, description = "", on
           setIsDragOver(true);
         }}
         onDragLeave={() => setIsDragOver(false)}
-        onClick={() => fileInputRef.current?.click()}
         className={cn(
-          "group/upload flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed py-8 px-6 cursor-pointer transition-all duration-200",
+          "group/upload flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed py-10 px-6 transition-all duration-200",
           isDragOver
             ? "border-primary bg-primary/5 scale-[1.01]"
-            : "border-foreground/20 hover:border-primary/50 hover:bg-primary/5 bg-background/80"
+            : "border-foreground/20 hover:border-primary/50 bg-background/80"
         )}
       >
-        <div
-          className={cn(
-            "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-            isDragOver ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground group-hover/upload:bg-primary/10 group-hover/upload:text-primary"
-          )}
-        >
-          {isDragOver ? (
-            <Upload className="w-4 h-4" aria-hidden="true" focusable="false" />
-          ) : (
-            <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-          )}
+        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Icon className="w-6 h-6 text-primary" aria-hidden="true" />
         </div>
-        <div className="text-center">
-          <p className="text-sm font-medium text-foreground">
-            Click to upload or drag & drop
-          </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {config.formats} up to {config.maxSize}
-          </p>
+        <p className="text-sm text-muted-foreground">
+          Click to add {type === "doc" ? "a document" : type === "audio" ? "an audio" : "a video"}...
+        </p>
+        <div className="flex items-center gap-2.5">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex items-stretch rounded-full bg-primary text-primary-foreground shadow-sm overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                <span className="inline-flex items-center gap-1.5 pl-5 pr-4 h-9 text-sm font-medium hover:bg-primary/90 transition-colors">
+                  <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  Upload {config.label}
+                </span>
+                <span aria-hidden="true" className="w-px bg-primary-foreground/25 my-1.5" />
+                <span className="inline-flex items-center justify-center w-8 hover:bg-primary/90 transition-colors">
+                  <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[220px]">
+              <DropdownMenuItem onClick={handleDeviceUploadClick} className="gap-2.5 py-2">
+                <HardDriveUpload className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Upload from device</span>
+                  <span className="text-[11px] text-muted-foreground">{config.formats}</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Formats: {config.formats} up to {config.maxSize}
+        </p>
         <input
           ref={fileInputRef}
           type="file"
