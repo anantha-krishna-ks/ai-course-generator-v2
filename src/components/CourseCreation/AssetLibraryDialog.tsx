@@ -46,7 +46,8 @@ interface LibraryAsset {
   addedDate: string; // ISO
   tags: string[];
   meta?: string; // duration or type
-  thumbnail?: string; // for video
+  thumbnail?: string; // for video/doc preview
+  previewText?: string; // for doc preview snippet
 }
 
 // ————————————————————————————————————————————————————————————
