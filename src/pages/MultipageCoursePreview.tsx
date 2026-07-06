@@ -1830,9 +1830,10 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto pretty-scrollbar animate-in fade-in duration-300">
           {active.imageUrl && (
             <img
+              data-zoomable="true"
               src={active.imageUrl}
               alt={`Visual for ${active.name}`}
-              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4 shadow-sm"
+              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4 shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
             />
           )}
           {hasBody ? (
