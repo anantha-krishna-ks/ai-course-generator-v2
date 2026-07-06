@@ -144,6 +144,44 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
                 </div>
               </div>
 
+              {/* Quiz Scope */}
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Quiz Scope
+                </Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {scopeOptions.map(({ key, label, description, icon: Icon }) => {
+                    const isActive = scope.includes(key);
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => toggleScope(key)}
+                        className={cn(
+                          "text-left rounded-xl border-2 p-3 transition-all duration-150 relative",
+                          isActive
+                            ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                            : "border-border/60 bg-white hover:bg-gray-50"
+                        )}
+                      >
+                        {isActive && (
+                          <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                            <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <div className={cn("p-1.5 rounded-lg", isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/70")}>
+                            <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          </div>
+                          <span className={cn("text-xs font-semibold", isActive ? "text-primary" : "text-foreground")}>{label}</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground mt-1.5 leading-snug">{description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Question Mix */}
               <div className="space-y-3 rounded-2xl border-2 border-border/60 bg-white p-4">
                 <div className="flex items-center justify-between">
