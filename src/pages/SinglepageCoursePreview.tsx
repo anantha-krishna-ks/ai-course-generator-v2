@@ -405,7 +405,7 @@ const SinglepageCoursePreview = () => {
           if (!img) return null;
           return (
             <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
-              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
+              <img data-zoomable="true" src={img} alt="Interactive hotspot image" className="block w-full h-auto cursor-zoom-in" />
               {list.map((hs, idx) => (
                 <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
                   <summary className="list-none cursor-pointer w-full h-full flex items-center justify-center rounded-md transition-all" style={{ background: `${color.replace("hsl(", "hsla(").replace(")", " / 0.25)")}`, border: `2px solid ${color}` }} aria-label={hs.title || `Hotspot ${idx + 1}`}>
