@@ -67,9 +67,14 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
     });
   };
 
+  const toggleScope = (key: string) => {
+    setScope((prev) => (prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]));
+  };
+
   const handleGenerate = () => {
     onGenerate({
       quizType,
+      scope,
       scqCount: counts.scq,
       mcqCount: counts.mcq,
       trueFalseCount: counts.tf,
