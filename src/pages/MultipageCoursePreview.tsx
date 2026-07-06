@@ -2044,9 +2044,10 @@ const AccordionPreview = ({ content }: { content: string }) => {
                     {imageUrl && (
                       <div className="w-full md:w-[140px] shrink-0">
                         <img
+                          data-zoomable="true"
                           src={imageUrl}
                           alt={`Visual for ${item.title}`}
-                          className="w-full h-auto aspect-[4/3] rounded-xl border border-border/40 object-cover shadow-sm"
+                          className="w-full h-auto aspect-[4/3] rounded-xl border border-border/40 object-cover shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
                         />
                       </div>
                     )}
