@@ -15,6 +15,7 @@ import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 import { PreviewAudioTranscript } from "@/components/CoursePreview/PreviewAudioTranscript";
+import { ImageLightbox } from "@/components/CoursePreview/ImageLightbox";
 
 interface CourseItem {
   id: string;
@@ -336,13 +337,13 @@ const SinglepageCoursePreview = () => {
         return <div className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(cleanContent) }} />;
       }
       case "image":
-        return block.content ? <img src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm" /> : null;
+        return block.content ? <img data-zoomable="true" src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md" /> : null;
       case "image-description": {
         try {
           const parsed = JSON.parse(block.content);
           return (
             <div className={cn("flex gap-4 sm:gap-6 items-start", isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row")}>
-              {parsed.image && <img src={parsed.image} alt="Course illustration" className={cn("rounded-xl shadow-sm object-cover", isCompactView ? "w-full" : "w-1/2")} />}
+              {parsed.image && <img data-zoomable="true" src={parsed.image} alt="Course illustration" className={cn("rounded-xl shadow-sm object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md", isCompactView ? "w-full" : "w-1/2")} />}
               <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
             </div>
           );
@@ -404,7 +405,7 @@ const SinglepageCoursePreview = () => {
           if (!img) return null;
           return (
             <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
-              <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
+              <img data-zoomable="true" src={img} alt="Interactive hotspot image" className="block w-full h-auto cursor-zoom-in" />
               {list.map((hs, idx) => (
                 <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
                   <summary className="list-none cursor-pointer w-full h-full flex items-center justify-center rounded-md transition-all" style={{ background: `${color.replace("hsl(", "hsla(").replace(")", " / 0.25)")}`, border: `2px solid ${color}` }} aria-label={hs.title || `Hotspot ${idx + 1}`}>
@@ -899,6 +900,7 @@ const SinglepageCoursePreview = () => {
       <div className="flex-1 min-h-0 flex justify-center overflow-hidden bg-muted/20">
         {renderDeviceFrame(scrollContent)}
       </div>
+      <ImageLightbox />
     </div>
   );
 };

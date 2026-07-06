@@ -19,6 +19,7 @@ import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 import { PreviewAudioTranscript } from "@/components/CoursePreview/PreviewAudioTranscript";
+import { ImageLightbox } from "@/components/CoursePreview/ImageLightbox";
 
 interface CourseItem {
   id: string;
@@ -561,7 +562,7 @@ const MultipageCoursePreview = () => {
       }
       case "image":
         return block.content ? (
-          <img src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm" />
+          <img data-zoomable="true" src={block.content} alt="Course content image" className="w-full max-w-2xl rounded-xl shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md" />
         ) : null;
       case "image-description": {
         try {
@@ -572,8 +573,8 @@ const MultipageCoursePreview = () => {
               isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
             )}>
               {parsed.image && (
-                <img src={parsed.image} alt="Course illustration" className={cn(
-                  "rounded-xl shadow-sm object-cover",
+                <img data-zoomable="true" src={parsed.image} alt="Course illustration" className={cn(
+                  "rounded-xl shadow-sm object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md",
                   isCompactView ? "w-full" : "w-1/2"
                 )} />
               )}
@@ -1508,6 +1509,7 @@ const MultipageCoursePreview = () => {
         onOpenChange={setShowExportDialog}
         courseTitle={data?.title}
       />
+      <ImageLightbox />
     </div>
   );
 };
@@ -1659,9 +1661,10 @@ const TabsPreview = ({ content }: { content: string }) => {
           {active.imageUrl ? (
             <div className="w-full md:w-[140px] shrink-0">
               <img
+                data-zoomable="true"
                 src={active.imageUrl}
                 alt={`Visual for ${active.name}`}
-                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3] shadow-sm"
+                className="w-full h-auto rounded-xl border border-border/40 object-cover aspect-[4/3] shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
               />
             </div>
           ) : null}
@@ -1746,9 +1749,10 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         <div role="tabpanel" className="p-4 min-w-0 overflow-y-auto max-h-[70vh]">
           {active.imageUrl && (
             <img
+              data-zoomable="true"
               src={active.imageUrl}
               alt={`Visual for ${active.name}`}
-              className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3"
+              className="w-full h-auto rounded-xl border border-border/40 object-cover mb-3 cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
             />
           )}
           {hasBody ? (
@@ -1826,9 +1830,10 @@ const VerticalTextTabsPreview = ({ content, isMobile = false }: { content: strin
         <div ref={panelRef} role="tabpanel" className="p-6 flex-1 min-w-0 min-h-0 max-h-[calc(100vh-8rem)] overflow-y-auto pretty-scrollbar animate-in fade-in duration-300">
           {active.imageUrl && (
             <img
+              data-zoomable="true"
               src={active.imageUrl}
               alt={`Visual for ${active.name}`}
-              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4 shadow-sm"
+              className="w-full max-w-md h-auto rounded-xl border border-border/40 object-cover mb-4 shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
             />
           )}
           {hasBody ? (
@@ -2039,9 +2044,10 @@ const AccordionPreview = ({ content }: { content: string }) => {
                     {imageUrl && (
                       <div className="w-full md:w-[140px] shrink-0">
                         <img
+                          data-zoomable="true"
                           src={imageUrl}
                           alt={`Visual for ${item.title}`}
-                          className="w-full h-auto aspect-[4/3] rounded-xl border border-border/40 object-cover shadow-sm"
+                          className="w-full h-auto aspect-[4/3] rounded-xl border border-border/40 object-cover shadow-sm cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md"
                         />
                       </div>
                     )}
