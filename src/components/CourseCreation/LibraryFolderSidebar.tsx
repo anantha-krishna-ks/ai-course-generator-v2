@@ -268,16 +268,34 @@ export function LibraryFolderSidebar() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // create / rename dialog
-  const [nameDialog, setNameDialog] = useState<
-    { mode: "create-root" | "create-child" | "rename"; parentId?: string; targetId?: string; initial: string } | null
+  type DialogMode = "create" | "rename";
+  const [repoDialog, setRepoDialog] = useState<
+    { mode: DialogMode; targetId?: string; defaultParentId?: string } | null
   >(null);
   const [nameInput, setNameInput] = useState("");
+  const [descInput, setDescInput] = useState("");
+  const [isRoot, setIsRoot] = useState(true);
+  const [parentPickId, setParentPickId] = useState<string>("");
 
   // delete dialog
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const visibleFolders = useMemo(() => filterTree(folders, searchQuery), [folders, searchQuery]);
   const selectedNode = findNode(folders, selectedId);
+  const deleteNode = deleteId ? findNode(folders, deleteId) : null;
+
+  // Flat list for the parent picker (excluding the node being renamed)
+  const flatFolders = useMemo(() => {
+    const out: { id: string; label: string }[] = [];
+    const walk = (list: FolderNode[], depth: number) => {
+      for (const n of list) {
+        out.push({ id: n.id, label: `${"— ".repeat(depth)}${n.name}` });
+        if (n.children) walk(n.children, depth + 1);
+      }
+    };
+    walk(folders, 0);
+    return out;
+  }, [folders]);
 
   const handleToggle = (id: string) => {
     setExpandedIds((prev) => {
@@ -288,39 +306,61 @@ export function LibraryFolderSidebar() {
   };
 
   const openCreateRoot = () => {
+    setRepoDialog({ mode: "create" });
     setNameInput("");
-    setNameDialog({ mode: "create-root", initial: "" });
-  };
-  const openCreateChild = (parentId: string) => {
-    setNameInput("");
-    setNameDialog({ mode: "create-child", parentId, initial: "" });
-    setExpandedIds((prev) => new Set(prev).add(parentId));
-  };
-  const openRename = () => {
-    if (!selectedNode) return;
-    setNameInput(selectedNode.name);
-    setNameDialog({ mode: "rename", targetId: selectedNode.id, initial: selectedNode.name });
+    setDescInput("");
+    // If a folder is currently selected, default to nesting under it (toggle off)
+    if (selectedNode && selectedId !== "all") {
+      setIsRoot(false);
+      setParentPickId(selectedId);
+    } else {
+      setIsRoot(true);
+      setParentPickId("");
+    }
   };
 
-  const submitName = () => {
+  const openCreateChild = (parentId: string) => {
+    setRepoDialog({ mode: "create", defaultParentId: parentId });
+    setNameInput("");
+    setDescInput("");
+    setIsRoot(false);
+    setParentPickId(parentId);
+    setExpandedIds((prev) => new Set(prev).add(parentId));
+  };
+
+  const openRename = () => {
+    if (!selectedNode || selectedId === "all") return;
+    setRepoDialog({ mode: "rename", targetId: selectedNode.id });
+    setNameInput(selectedNode.name);
+    setDescInput(selectedNode.description ?? "");
+    setIsRoot(true);
+    setParentPickId("");
+  };
+
+  const submitRepo = () => {
     const name = nameInput.trim();
-    if (!name || !nameDialog) return;
-    if (nameDialog.mode === "rename" && nameDialog.targetId) {
-      const id = nameDialog.targetId;
-      setFolders((prev) => mapTree(prev, (n) => (n.id === id ? { ...n, name } : n)));
+    if (!name || !repoDialog) return;
+    const description = descInput.trim() || undefined;
+
+    if (repoDialog.mode === "rename" && repoDialog.targetId) {
+      const id = repoDialog.targetId;
+      setFolders((prev) => mapTree(prev, (n) => (n.id === id ? { ...n, name, description } : n)));
     } else {
       const newNode: FolderNode = {
         id: `f_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
         name,
         count: 0,
+        description,
       };
-      if (nameDialog.mode === "create-root") {
+      if (isRoot || !parentPickId) {
         setFolders((prev) => [...prev, newNode]);
-      } else if (nameDialog.parentId) {
-        setFolders((prev) => addChild(prev, nameDialog.parentId!, newNode));
+      } else {
+        setFolders((prev) => addChild(prev, parentPickId, newNode));
+        setExpandedIds((prev) => new Set(prev).add(parentPickId));
       }
+      setSelectedId(newNode.id);
     }
-    setNameDialog(null);
+    setRepoDialog(null);
   };
 
   const confirmDelete = () => {
@@ -330,7 +370,16 @@ export function LibraryFolderSidebar() {
     setDeleteId(null);
   };
 
-  const canModify = selectedId !== "all";
+  // Keep parent picker valid
+  useEffect(() => {
+    if (!isRoot && !parentPickId && flatFolders.length > 0) {
+      setParentPickId(flatFolders[0].id);
+    }
+  }, [isRoot, parentPickId, flatFolders]);
+
+  const canModify = selectedId !== "all" && !!selectedNode;
+  const totalCount = (n: FolderNode): number =>
+    n.count + (n.children?.reduce((s, c) => s + totalCount(c), 0) ?? 0);
 
   return (
     <>
@@ -365,7 +414,7 @@ export function LibraryFolderSidebar() {
               size="icon"
               className="h-7 w-7"
               onClick={openCreateRoot}
-              aria-label="Create new folder"
+              aria-label="Create new repository"
             >
               <FolderPlus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             </Button>
@@ -375,7 +424,7 @@ export function LibraryFolderSidebar() {
               className="h-7 w-7"
               onClick={openRename}
               disabled={!canModify}
-              aria-label="Rename selected folder"
+              aria-label="Rename selected repository"
             >
               <Pencil className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             </Button>
@@ -385,7 +434,7 @@ export function LibraryFolderSidebar() {
               className="h-7 w-7 text-destructive hover:text-destructive"
               onClick={() => canModify && setDeleteId(selectedId)}
               disabled={!canModify}
-              aria-label="Delete selected folder"
+              aria-label="Delete selected repository"
             >
               <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             </Button>
@@ -433,64 +482,156 @@ export function LibraryFolderSidebar() {
         </div>
       </aside>
 
-      {/* Create / Rename dialog */}
-      <Dialog open={!!nameDialog} onOpenChange={(v) => !v && setNameDialog(null)}>
-        <DialogContent className="max-w-sm">
+      {/* Create / Rename Repository dialog */}
+      <Dialog open={!!repoDialog} onOpenChange={(v) => !v && setRepoDialog(null)}>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {nameDialog?.mode === "rename"
-                ? "Rename folder"
-                : nameDialog?.mode === "create-child"
-                ? "New subfolder"
-                : "New folder"}
-            </DialogTitle>
-            <DialogDescription>
-              {nameDialog?.mode === "rename"
-                ? "Give this folder a new name."
-                : "Folders help you group assets by topic or project."}
-            </DialogDescription>
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                {repoDialog?.mode === "rename" ? (
+                  <Pencil className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                ) : (
+                  <FolderPlus className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <DialogTitle>
+                  {repoDialog?.mode === "rename" ? "Edit Repository" : "New Repository"}
+                </DialogTitle>
+                <DialogDescription>
+                  {repoDialog?.mode === "rename"
+                    ? "Update the name and description for this repository."
+                    : "Create a new repository to organize your assets"}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
-          <div className="space-y-2">
-            <Label htmlFor="folder-name">Folder name</Label>
-            <Input
-              id="folder-name"
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-              placeholder="e.g. Chapter illustrations"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") submitName();
-              }}
-            />
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="repo-name">
+                Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="repo-name"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value.slice(0, 100))}
+                placeholder="e.g. Mathematics, Science…"
+                autoFocus
+                maxLength={100}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="repo-desc">Description</Label>
+              <Textarea
+                id="repo-desc"
+                value={descInput}
+                onChange={(e) => setDescInput(e.target.value.slice(0, DESC_MAX))}
+                placeholder="Brief description of this repository…"
+                className="min-h-[96px] resize-none"
+                maxLength={DESC_MAX}
+              />
+              <p className="text-xs text-muted-foreground text-right tabular-nums">
+                {descInput.length}/{DESC_MAX}
+              </p>
+            </div>
+
+            {repoDialog?.mode === "create" && (
+              <div className="rounded-xl border border-border p-3 space-y-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Root Repository</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Root repositories appear at the top level
+                    </p>
+                  </div>
+                  <Switch
+                    checked={isRoot}
+                    onCheckedChange={setIsRoot}
+                    aria-label="Create as root repository"
+                  />
+                </div>
+
+                {!isRoot && (
+                  <div className="space-y-1.5 pt-1 border-t border-border">
+                    <Label htmlFor="repo-parent" className="text-xs">
+                      Parent repository
+                    </Label>
+                    <Select value={parentPickId} onValueChange={setParentPickId}>
+                      <SelectTrigger id="repo-parent" aria-label="Select parent repository">
+                        <SelectValue placeholder="Select a parent" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {flatFolders.map((f) => (
+                          <SelectItem key={f.id} value={f.id}>
+                            {f.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setNameDialog(null)}>
+            <Button variant="outline" onClick={() => setRepoDialog(null)}>
               Cancel
             </Button>
-            <Button onClick={submitName} disabled={!nameInput.trim()}>
-              {nameDialog?.mode === "rename" ? "Save" : "Create"}
+            <Button
+              onClick={submitRepo}
+              disabled={!nameInput.trim() || (repoDialog?.mode === "create" && !isRoot && !parentPickId)}
+            >
+              {repoDialog?.mode === "rename" ? "Save changes" : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirm */}
+      {/* Delete confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete folder?</AlertDialogTitle>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader className="items-center text-center">
+            <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+              <AlertTriangle className="w-6 h-6 text-destructive" aria-hidden="true" focusable="false" />
+            </div>
+            <AlertDialogTitle>Delete Repository</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove the folder and all its subfolders. Assets inside will be moved back
-              to "All assets".
+              {deleteNode ? (
+                <>
+                  Are you sure you want to delete <span className="font-semibold text-foreground">{deleteNode.name}</span>?
+                  This will permanently remove the repository and all{" "}
+                  <span className="font-semibold text-foreground">{totalCount(deleteNode)} assets</span> within it.
+                  This action cannot be undone.
+                </>
+              ) : null}
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          {deleteNode && (
+            <div className="rounded-xl border border-border p-3 flex items-center gap-3 bg-muted/30">
+              <div className="w-9 h-9 rounded-lg bg-background border border-border flex items-center justify-center flex-shrink-0">
+                <Folder className="w-4 h-4 text-primary fill-primary/15" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{deleteNode.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {totalCount(deleteNode)} assets
+                  {deleteNode.children?.length ? ` · ${deleteNode.children.length} subfolders` : ""}
+                </p>
+              </div>
+            </div>
+          )}
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              Delete Repository
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
