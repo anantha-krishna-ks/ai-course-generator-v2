@@ -155,7 +155,7 @@ export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuiz
             <div className="space-y-1">
               <DialogTitle className="text-xl sm:text-2xl flex items-center gap-2 font-semibold">
                 <div className="p-1.5 rounded-lg bg-primary/10">
-                  <AISparkles className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                 </div>
                 Generate Quiz Questions
               </DialogTitle>
