@@ -94,7 +94,7 @@ function DurationInput({
           aria-label={`${ariaLabel} minutes`}
           className={base}
         />
-        <span className="text-[9px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">
+        <span className="text-[7px] font-normal uppercase tracking-wider text-muted-foreground/70 mt-0 leading-none">
           min
         </span>
       </div>
