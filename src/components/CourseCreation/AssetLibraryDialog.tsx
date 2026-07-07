@@ -115,6 +115,8 @@ export function AssetLibraryDialog({
   const [scope, setScope] = useState<"any" | "me">("any");
   const [sort, setSort] = useState<"newest" | "oldest" | "name">("newest");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
+  const getName = (a: LibraryAsset) => nameOverrides[a.id] ?? a.name;
 
   const { title, description, Icon, label } = KIND_META[kind];
 
@@ -144,7 +146,7 @@ export function AssetLibraryDialog({
 
   const handleInsert = () => {
     if (!selected || locked) return;
-    onSelect(selected.url, selected.name);
+    onSelect(selected.url, getName(selected));
     onOpenChange(false);
     resetLocal();
   };
@@ -280,7 +282,15 @@ export function AssetLibraryDialog({
                   <AssetPreview asset={selected} />
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm font-semibold text-foreground break-words">{selected.name}</p>
+                      <Input
+                        value={getName(selected)}
+                        onChange={(e) =>
+                          setNameOverrides((prev) => ({ ...prev, [selected.id]: e.target.value }))
+                        }
+                        placeholder="Asset name"
+                        aria-label="Asset name"
+                        className="h-9 text-sm font-semibold text-foreground bg-background/60 border-transparent hover:border-border focus-visible:border-primary/50 focus-visible:bg-background px-2 -mx-2 rounded-md transition-colors"
+                      />
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                         {selected.source === "ai" ? (
                           <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary hover:bg-primary/10">
