@@ -7,7 +7,7 @@ import emptyPagesImg from "@/assets/empty-pages.png";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2, Package } from "lucide-react";
-import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPreferencesPopover } from "./ScormPreferencesPopover";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -617,20 +617,27 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 Finish review
               </Button>
             )}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="SCORM preferences"
-                  className="rounded-full border-border h-9 w-9"
-                  onClick={() => setShowScormPreferences(true)}
-                >
-                  <Package className="w-4 h-4" aria-hidden="true" focusable="false" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>SCORM preferences</TooltipContent>
-            </Tooltip>
+            <ScormPreferencesPopover
+              open={showScormPreferences}
+              onOpenChange={setShowScormPreferences}
+              items={courseItems ?? []}
+              currentPageId={currentPageId}
+              trigger={
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      aria-label="SCORM preferences"
+                      className="rounded-full border-border h-9 w-9"
+                    >
+                      <Package className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>SCORM preferences</TooltipContent>
+                </Tooltip>
+              }
+            />
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="Preview" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
@@ -1911,7 +1918,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     {readOnly && (
       <FinishReviewDialog open={showFinishReviewDialog} onOpenChange={setShowFinishReviewDialog} />
     )}
-    <ScormPreferencesDialog open={showScormPreferences} onOpenChange={setShowScormPreferences} />
+    
     </>
   );
 }
