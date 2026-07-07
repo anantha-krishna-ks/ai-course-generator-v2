@@ -619,7 +619,21 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
             )}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="SCORM preferences"
+                  className="rounded-full border-border h-9 w-9"
+                  onClick={() => setShowScormPreferences(true)}
+                >
+                  <Package className="w-4 h-4" aria-hidden="true" focusable="false" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>SCORM preferences</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" aria-label="Preview" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
                   <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
                 </Button>
               </TooltipTrigger>
