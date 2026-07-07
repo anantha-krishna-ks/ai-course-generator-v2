@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ChevronRight,
   FolderPlus,
@@ -7,10 +7,13 @@ import {
   Search,
   Folder,
   FolderOpen,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -38,10 +41,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
+const DESC_MAX = 500;
+
 export interface FolderNode {
   id: string;
   name: string;
   count: number;
+  description?: string;
   children?: FolderNode[];
 }
 
