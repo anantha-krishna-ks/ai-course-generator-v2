@@ -1,16 +1,24 @@
 import { useState } from "react";
-import { Sparkles, Plus, RefreshCcw, Edit2, Trash2, ChevronDown, AlertTriangle } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
+import { Sparkles, Plus, RefreshCcw, Edit2, Trash2, ChevronDown, AlertTriangle, CircleDot, CheckSquare, ToggleLeft, Type, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 import { EditQuestionDialog } from "./EditQuestionDialog";
+
+const questionTypes = [
+  { key: "scq", label: "Single Choice", icon: CircleDot, color: "text-blue-600", bg: "bg-blue-50" },
+  { key: "mcq", label: "Multiple Choice", icon: CheckSquare, color: "text-purple-600", bg: "bg-purple-50" },
+  { key: "tf", label: "True / False", icon: ToggleLeft, color: "text-emerald-600", bg: "bg-emerald-50" },
+  { key: "fib", label: "Fill in Blank", icon: Type, color: "text-amber-600", bg: "bg-amber-50" },
+] as const;
+
+const MAX_TOTAL = 20;
 
 interface Question {
   id: number;
