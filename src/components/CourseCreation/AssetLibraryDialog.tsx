@@ -289,7 +289,7 @@ export function AssetLibraryDialog({
                         }
                         placeholder="Asset name"
                         aria-label="Asset name"
-                        className="h-9 text-sm font-semibold text-foreground bg-background/60 border-transparent hover:border-border focus-visible:border-primary/50 focus-visible:bg-background px-2 -mx-2 rounded-md transition-colors"
+                        className="h-9 text-sm font-semibold text-foreground bg-background/60 border border-border/60 hover:border-border focus-visible:border-primary/50 focus-visible:bg-background px-2 -mx-2 rounded-md transition-colors"
                       />
                       <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                         {selected.source === "ai" ? (
