@@ -31,6 +31,7 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LibraryFolderSidebar } from "./LibraryFolderSidebar";
 
 export type AssetKind = "image" | "doc" | "audio" | "video";
 
