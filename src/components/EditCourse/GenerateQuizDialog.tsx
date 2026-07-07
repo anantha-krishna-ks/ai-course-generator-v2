@@ -76,6 +76,17 @@ export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuiz
     },
   ]);
 
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  const updateCount = (key: string, delta: number) => {
+    setCounts((prev) => {
+      const next = Math.max(0, (prev[key] ?? 0) + delta);
+      const otherTotal = total - (prev[key] ?? 0);
+      if (otherTotal + next > MAX_TOTAL) return prev;
+      return { ...prev, [key]: next };
+    });
+  };
+
   const handleRegenerate = () => {
     setIsGenerating(true);
     setTimeout(() => setIsGenerating(false), 1200);
