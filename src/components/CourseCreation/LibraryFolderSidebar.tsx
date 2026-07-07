@@ -217,7 +217,7 @@ function FolderRow({
             aria-hidden="true"
             focusable="false"
           />
-          <span className="truncate font-medium">{node.name}</span>
+          <span className="truncate font-medium" title={node.name}>{node.name}</span>
           <span
             className={cn(
               "ml-auto text-xs tabular-nums",
