@@ -128,17 +128,17 @@ function findNode(nodes: FolderNode[], id: string): FolderNode | null {
 function filterTree(nodes: FolderNode[], q: string): FolderNode[] {
   if (!q) return nodes;
   const query = q.toLowerCase();
-  const walk = (list: FolderNode[]): FolderNode[] =>
-    list
-      .map((n) => {
-        const children = n.children ? walk(n.children) : undefined;
-        const matches = n.name.toLowerCase().includes(query);
-        if (matches || (children && children.length)) {
-          return { ...n, children };
-        }
-        return null;
-      })
-      .filter((x): x is FolderNode => x !== null);
+  const walk = (list: FolderNode[]): FolderNode[] => {
+    const out: FolderNode[] = [];
+    for (const n of list) {
+      const children = n.children ? walk(n.children) : undefined;
+      const matches = n.name.toLowerCase().includes(query);
+      if (matches || (children && children.length)) {
+        out.push({ ...n, children });
+      }
+    }
+    return out;
+  };
   return walk(nodes);
 }
 
