@@ -8,7 +8,11 @@ import {
   Folder,
   FolderOpen,
   AlertTriangle,
+  Check,
+  ChevronDown,
+  CornerDownRight,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -555,21 +559,12 @@ export function LibraryFolderSidebar() {
 
                 {!isRoot && (
                   <div className="space-y-1.5 pt-1 border-t border-border">
-                    <Label htmlFor="repo-parent" className="text-xs">
-                      Parent repository
-                    </Label>
-                    <Select value={parentPickId} onValueChange={setParentPickId}>
-                      <SelectTrigger id="repo-parent" aria-label="Select parent repository">
-                        <SelectValue placeholder="Select a parent" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {flatFolders.map((f) => (
-                          <SelectItem key={f.id} value={f.id}>
-                            {f.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-xs">Parent repository</Label>
+                    <ParentRepositoryPicker
+                      folders={folders}
+                      value={parentPickId}
+                      onChange={setParentPickId}
+                    />
                   </div>
                 )}
               </div>
@@ -637,5 +632,210 @@ export function LibraryFolderSidebar() {
         </AlertDialogContent>
       </AlertDialog>
     </>
+  );
+}
+
+// —————————————————— Parent Repository Picker ——————————————————
+function findPath(nodes: FolderNode[], id: string, trail: FolderNode[] = []): FolderNode[] | null {
+  for (const n of nodes) {
+    const next = [...trail, n];
+    if (n.id === id) return next;
+    if (n.children) {
+      const found = findPath(n.children, id, next);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+interface ParentPickerProps {
+  folders: FolderNode[];
+  value: string;
+  onChange: (id: string) => void;
+}
+
+function ParentRepositoryPicker({ folders, value, onChange }: ParentPickerProps) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    const path = value ? findPath(folders, value) : null;
+    return new Set(path ? path.map((n) => n.id) : folders.map((f) => f.id));
+  });
+
+  const selectedPath = value ? findPath(folders, value) : null;
+  const filtered = useMemo(() => filterTree(folders, query), [folders, query]);
+
+  const toggle = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const renderNode = (node: FolderNode, level: number): JSX.Element => {
+    const hasChildren = !!(node.children && node.children.length);
+    const isOpen = expanded.has(node.id) || !!query;
+    const isSelected = value === node.id;
+    const Icon = isOpen && hasChildren ? FolderOpen : Folder;
+
+    return (
+      <div key={node.id}>
+        <button
+          type="button"
+          onClick={() => {
+            onChange(node.id);
+            setOpen(false);
+          }}
+          className={cn(
+            "group w-full flex items-center gap-1.5 rounded-md py-1.5 pr-2 text-sm transition-colors text-left",
+            isSelected ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-accent"
+          )}
+          style={{ paddingLeft: level * 14 + 8 }}
+        >
+          {hasChildren ? (
+            <span
+              role="button"
+              tabIndex={0}
+              aria-label={isOpen ? "Collapse" : "Expand"}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggle(node.id);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggle(node.id);
+                }
+              }}
+              className="p-0.5 rounded hover:bg-background/60"
+            >
+              <ChevronRight
+                className={cn("w-3 h-3 transition-transform", isOpen && "rotate-90")}
+                aria-hidden="true"
+                focusable="false"
+              />
+            </span>
+          ) : (
+            <span className="w-4 shrink-0" aria-hidden="true" />
+          )}
+          <Icon
+            className={cn(
+              "w-4 h-4 shrink-0",
+              isSelected ? "text-primary fill-primary/25" : "text-primary fill-primary/15"
+            )}
+            aria-hidden="true"
+            focusable="false"
+          />
+          <span className="truncate flex-1">{node.name}</span>
+          <span
+            className={cn(
+              "text-[10px] tabular-nums px-1.5 py-0.5 rounded-full",
+              isSelected ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+            )}
+          >
+            {node.count}
+          </span>
+          {isSelected && (
+            <Check className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" focusable="false" />
+          )}
+        </button>
+        {hasChildren && isOpen && (
+          <div>{node.children!.map((c) => renderNode(c, level + 1))}</div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label="Select parent repository"
+          className={cn(
+            "w-full flex items-center gap-2 min-h-10 px-3 py-2 rounded-md border border-input bg-background text-sm text-left transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          )}
+        >
+          {selectedPath ? (
+            <>
+              <FolderOpen
+                className="w-4 h-4 text-primary fill-primary/15 shrink-0"
+                aria-hidden="true"
+                focusable="false"
+              />
+              <div className="flex items-center gap-1 flex-wrap min-w-0 flex-1">
+                {selectedPath.map((n, i) => (
+                  <span key={n.id} className="flex items-center gap-1 min-w-0">
+                    {i > 0 && (
+                      <ChevronRight
+                        className="w-3 h-3 text-muted-foreground shrink-0"
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                    )}
+                    <span
+                      className={cn(
+                        "truncate",
+                        i === selectedPath.length - 1
+                          ? "font-medium text-foreground"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {n.name}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <CornerDownRight
+                className="w-4 h-4 text-muted-foreground shrink-0"
+                aria-hidden="true"
+                focusable="false"
+              />
+              <span className="flex-1 text-muted-foreground">Choose a parent…</span>
+            </>
+          )}
+          <ChevronDown
+            className={cn(
+              "w-4 h-4 text-muted-foreground shrink-0 transition-transform",
+              open && "rotate-180"
+            )}
+            aria-hidden="true"
+            focusable="false"
+          />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="p-0 w-[--radix-popover-trigger-width] min-w-[280px]"
+        align="start"
+      >
+        <div className="p-2 border-b border-border relative">
+          <Search
+            className="w-3.5 h-3.5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2"
+            aria-hidden="true"
+            focusable="false"
+          />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search repositories…"
+            className="h-8 pl-8 text-sm"
+            aria-label="Search repositories"
+          />
+        </div>
+        <div className="max-h-64 overflow-y-auto p-1">
+          {filtered.length === 0 ? (
+            <p className="px-3 py-6 text-xs text-muted-foreground text-center">
+              No repositories match "{query}"
+            </p>
+          ) : (
+            filtered.map((n) => renderNode(n, 0))
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
