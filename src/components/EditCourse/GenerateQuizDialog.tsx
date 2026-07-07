@@ -38,10 +38,8 @@ interface GenerateQuizDialogProps {
 
 // Fresh, simplified dialog with guaranteed working scroll
 export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuizDialogProps) => {
-  const [scqCount, setScqCount] = useState("1");
-  const [mcqCount, setMcqCount] = useState("1");
-  const [trueFalseCount, setTrueFalseCount] = useState("2");
-  const [fibCount, setFibCount] = useState("1");
+  const [counts, setCounts] = useState<Record<string, number>>({ scq: 1, mcq: 1, tf: 2, fib: 1 });
+  const [difficultyLevel, setDifficultyLevel] = useState("medium");
   const [specificInstructions, setSpecificInstructions] = useState(false);
   const [inclusions, setInclusions] = useState("");
   const [exclusions, setExclusions] = useState("");
