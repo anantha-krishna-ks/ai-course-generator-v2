@@ -31,6 +31,7 @@ import {
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LibraryFolderSidebar } from "./LibraryFolderSidebar";
 
 export type AssetKind = "image" | "doc" | "audio" | "video";
 
@@ -232,8 +233,10 @@ export function AssetLibraryDialog({
           </div>
         </div>
 
-        {/* Body: grid + preview */}
+        {/* Body: sidebar + grid + preview */}
         <div className="flex-1 flex min-h-0">
+          <LibraryFolderSidebar />
+
           {/* Grid pane */}
           <div className="flex-1 min-w-0 flex flex-col border-r border-border/60">
             {filtered.length === 0 ? (
