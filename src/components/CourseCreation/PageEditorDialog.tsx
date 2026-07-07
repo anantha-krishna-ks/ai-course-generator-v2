@@ -1911,6 +1911,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     {readOnly && (
       <FinishReviewDialog open={showFinishReviewDialog} onOpenChange={setShowFinishReviewDialog} />
     )}
+    <ScormPreferencesDialog open={showScormPreferences} onOpenChange={setShowScormPreferences} />
     </>
   );
 }
