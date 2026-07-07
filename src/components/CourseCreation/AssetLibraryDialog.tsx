@@ -146,7 +146,7 @@ export function AssetLibraryDialog({
 
   const handleInsert = () => {
     if (!selected || locked) return;
-    onSelect(selected.url, selected.name);
+    onSelect(selected.url, getName(selected));
     onOpenChange(false);
     resetLocal();
   };
