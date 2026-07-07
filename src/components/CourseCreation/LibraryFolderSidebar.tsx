@@ -559,21 +559,12 @@ export function LibraryFolderSidebar() {
 
                 {!isRoot && (
                   <div className="space-y-1.5 pt-1 border-t border-border">
-                    <Label htmlFor="repo-parent" className="text-xs">
-                      Parent repository
-                    </Label>
-                    <Select value={parentPickId} onValueChange={setParentPickId}>
-                      <SelectTrigger id="repo-parent" aria-label="Select parent repository">
-                        <SelectValue placeholder="Select a parent" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {flatFolders.map((f) => (
-                          <SelectItem key={f.id} value={f.id}>
-                            {f.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-xs">Parent repository</Label>
+                    <ParentRepositoryPicker
+                      folders={folders}
+                      value={parentPickId}
+                      onChange={setParentPickId}
+                    />
                   </div>
                 )}
               </div>
