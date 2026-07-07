@@ -446,9 +446,9 @@ export function LibraryFolderSidebar() {
         </div>
 
         {/* Search */}
-        <div className="px-4 pb-2 relative">
+        <div className="px-4 mb-2 relative">
           <Search
-            className="w-3.5 h-3.5 text-muted-foreground absolute left-[1.375rem] top-1/2 -translate-y-1/2"
+            className="w-3.5 h-3.5 text-muted-foreground absolute left-[1.375rem] top-1/2 -translate-y-1/2 pointer-events-none"
             aria-hidden="true"
             focusable="false"
           />
