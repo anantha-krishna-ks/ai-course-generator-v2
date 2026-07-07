@@ -1,16 +1,24 @@
 import { useState } from "react";
-import { Sparkles, Plus, RefreshCcw, Edit2, Trash2, ChevronDown, AlertTriangle } from "lucide-react";
-import { AISparkles } from "@/components/ui/ai-sparkles";
+import { Sparkles, Plus, RefreshCcw, Edit2, Trash2, ChevronDown, AlertTriangle, CircleDot, CheckSquare, ToggleLeft, Type, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 import { EditQuestionDialog } from "./EditQuestionDialog";
+
+const questionTypes = [
+  { key: "scq", label: "Single Choice", icon: CircleDot, color: "text-blue-600", bg: "bg-blue-50" },
+  { key: "mcq", label: "Multiple Choice", icon: CheckSquare, color: "text-purple-600", bg: "bg-purple-50" },
+  { key: "tf", label: "True / False", icon: ToggleLeft, color: "text-emerald-600", bg: "bg-emerald-50" },
+  { key: "fib", label: "Fill in Blank", icon: Type, color: "text-amber-600", bg: "bg-amber-50" },
+] as const;
+
+const MAX_TOTAL = 20;
 
 interface Question {
   id: number;
@@ -30,10 +38,8 @@ interface GenerateQuizDialogProps {
 
 // Fresh, simplified dialog with guaranteed working scroll
 export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuizDialogProps) => {
-  const [scqCount, setScqCount] = useState("1");
-  const [mcqCount, setMcqCount] = useState("1");
-  const [trueFalseCount, setTrueFalseCount] = useState("2");
-  const [fibCount, setFibCount] = useState("1");
+  const [counts, setCounts] = useState<Record<string, number>>({ scq: 1, mcq: 1, tf: 2, fib: 1 });
+  const [difficultyLevel, setDifficultyLevel] = useState("medium");
   const [specificInstructions, setSpecificInstructions] = useState(false);
   const [inclusions, setInclusions] = useState("");
   const [exclusions, setExclusions] = useState("");
@@ -69,6 +75,17 @@ export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuiz
         "Adam Smith's canons of taxation include equity (fairness), certainty (clarity), convenience (ease of payment), and economy (cost-effectiveness).",
     },
   ]);
+
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  const updateCount = (key: string, delta: number) => {
+    setCounts((prev) => {
+      const next = Math.max(0, (prev[key] ?? 0) + delta);
+      const otherTotal = total - (prev[key] ?? 0);
+      if (otherTotal + next > MAX_TOTAL) return prev;
+      return { ...prev, [key]: next };
+    });
+  };
 
   const handleRegenerate = () => {
     setIsGenerating(true);
@@ -138,7 +155,7 @@ export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuiz
             <div className="space-y-1">
               <DialogTitle className="text-xl sm:text-2xl flex items-center gap-2 font-semibold">
                 <div className="p-1.5 rounded-lg bg-primary/10">
-                  <AISparkles className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
                 </div>
                 Generate Quiz Questions
               </DialogTitle>
@@ -153,159 +170,165 @@ export const GenerateQuizDialog = ({ open, onClose, chapterTitle }: GenerateQuiz
         <div className="min-h-0 row-start-2">
           <ScrollArea className="h-full">
             <div className="space-y-4 p-4 pr-2">
-              {/* Question Configuration */}
-              <div className="space-y-4 bg-card border rounded-xl p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-5 bg-primary rounded-full" />
-                  <h3 className="text-sm font-semibold text-foreground">Question Configuration</h3>
+              {/* Question Mix */}
+              <div className="space-y-3 rounded-2xl border-2 border-border/60 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Question Mix
+                  </Label>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-bold text-foreground tabular-nums leading-none">{total}</span>
+                    <span className="text-[11px] text-muted-foreground">/ {MAX_TOTAL} questions</span>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground">Select the number of questions for each type</p>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-                  {/* S.C.Q */}
-                  <div className="space-y-2">
-                    <Label htmlFor="scq" className="text-xs font-semibold text-foreground uppercase tracking-wide">
-                      Single Choice
-                    </Label>
-                    <Select value={scqCount} onValueChange={setScqCount}>
-                      <SelectTrigger id="scq" className="w-full bg-background">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0, 1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Segmented progress bar */}
+                <div className="flex gap-0.5 h-2 rounded-full overflow-hidden bg-muted/60">
+                  {questionTypes.map(({ key, color }) => {
+                    const pct = total > 0 ? (counts[key] / MAX_TOTAL) * 100 : 0;
+                    return (
+                      <div
+                        key={key}
+                        className={cn("h-full transition-all duration-300", color.replace("text-", "bg-"))}
+                        style={{ width: `${pct}%` }}
+                        aria-hidden="true"
+                      />
+                    );
+                  })}
+                </div>
 
-                  {/* M.C.Q */}
-                  <div className="space-y-2">
-                    <Label htmlFor="mcq" className="text-xs font-semibold text-foreground uppercase tracking-wide">
-                      Multiple Choice
-                    </Label>
-                    <Select value={mcqCount} onValueChange={setMcqCount}>
-                      <SelectTrigger id="mcq" className="w-full bg-background">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0, 1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* True/False */}
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="trueFalse"
-                      className="text-xs font-semibold text-foreground uppercase tracking-wide"
-                    >
-                      True/False
-                    </Label>
-                    <Select value={trueFalseCount} onValueChange={setTrueFalseCount}>
-                      <SelectTrigger id="trueFalse" className="w-full bg-background">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0, 1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* FIB */}
-                  <div className="space-y-2">
-                    <Label htmlFor="fib" className="text-xs font-semibold text-foreground uppercase tracking-wide">
-                      Fill in Blank
-                    </Label>
-                    <Select value={fibCount} onValueChange={setFibCount}>
-                      <SelectTrigger id="fib" className="w-full bg-background">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0, 1, 2, 3, 4, 5].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Question type cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {questionTypes.map(({ key, label, icon: Icon, color, bg }) => {
+                    const value = counts[key] ?? 0;
+                    return (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-gray-50/50 px-3 py-2.5"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className={cn("p-1.5 rounded-lg shrink-0", bg, color)}>
+                            <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                          </div>
+                          <span className="text-xs font-semibold text-foreground truncate">{label}</span>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => updateCount(key, -1)}
+                            disabled={value <= 0}
+                            aria-label={`Decrease ${label}`}
+                            className="w-7 h-7 rounded-lg border border-border bg-white flex items-center justify-center text-foreground hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <Minus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          </button>
+                          <span className="w-6 text-center text-sm font-semibold tabular-nums text-foreground">{value}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateCount(key, 1)}
+                            disabled={total >= MAX_TOTAL}
+                            aria-label={`Increase ${label}`}
+                            className="w-7 h-7 rounded-lg border border-border bg-white flex items-center justify-center text-foreground hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-3 bg-muted/30 rounded-xl p-4 border">
-                  <Button onClick={handleRegenerate} disabled={isGenerating} size="lg" className="bg-primary hover:bg-primary/90 shadow-sm">
-                    {isGenerating ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCcw className="w-4 h-4 mr-2" />
-                        Regenerate Quiz
-                      </>
-                    )}
-                  </Button>
-                  <Button variant="outline" size="lg" onClick={handleAddQuestion} className="shadow-sm text-primary border-primary hover:bg-primary hover:text-primary-foreground">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Question
-                  </Button>
-
-                  <div className="flex items-center gap-3 ml-auto bg-card px-4 py-2 rounded-lg border shadow-sm">
-                    <Switch id="specific-instructions" checked={specificInstructions} onCheckedChange={setSpecificInstructions} />
-                    <Label htmlFor="specific-instructions" className="text-sm font-medium cursor-pointer">
-                      Custom Instructions
-                    </Label>
-                  </div>
+              {/* Difficulty Level */}
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Difficulty Level
+                </Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {["easy", "medium", "hard"].map((level) => {
+                    const isActive = difficultyLevel === level;
+                    return (
+                      <button
+                        key={level}
+                        type="button"
+                        onClick={() => setDifficultyLevel(level)}
+                        className={cn(
+                          "px-3.5 py-3 rounded-xl border-2 text-sm font-medium capitalize transition-all duration-150",
+                          isActive
+                            ? "border-primary bg-primary/[0.04] text-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
+                            : "border-border/60 bg-white text-foreground hover:bg-gray-50"
+                        )}
+                      >
+                        {level}
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
 
-                {/* Inclusions and Exclusions */}
+              {/* Custom Instructions */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Custom Instructions
+                  </Label>
+                  <Switch
+                    checked={specificInstructions}
+                    onCheckedChange={setSpecificInstructions}
+                    aria-label="Toggle custom instructions"
+                  />
+                </div>
                 {specificInstructions && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-card border rounded-xl p-4 shadow-sm animate-in fade-in-50 slide-in-from-top-2 duration-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-in fade-in-50 slide-in-from-top-2 duration-200">
                     <div className="space-y-2">
-                      <Label htmlFor="inclusions" className="text-sm font-semibold flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
+                      <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
+                        <span className="w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
                         Inclusions
                       </Label>
                       <Textarea
-                        id="inclusions"
-                        placeholder="Specify topics or concepts to include in questions..."
+                        placeholder="Topics to include..."
                         value={inclusions}
                         onChange={(e) => setInclusions(e.target.value)}
-                        className="min-h-[100px] resize-none"
+                        className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
                       />
-                      <p className="text-xs text-muted-foreground">Topics or concepts that must be covered</p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="exclusions" className="text-sm font-semibold flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-destructive" />
+                      <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
+                        <span className="w-2 h-2 rounded-full bg-destructive" aria-hidden="true" />
                         Exclusions
                       </Label>
                       <Textarea
-                        id="exclusions"
-                        placeholder="Specify topics or concepts to exclude from questions..."
+                        placeholder="Topics to exclude..."
                         value={exclusions}
                         onChange={(e) => setExclusions(e.target.value)}
-                        className="min-h-[100px] resize-none"
+                        className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
                       />
-                      <p className="text-xs text-muted-foreground">Topics or concepts to avoid</p>
                     </div>
                   </div>
                 )}
               </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 rounded-2xl border-2 border-border/60 bg-white p-3 shadow-sm">
+                <Button onClick={handleRegenerate} disabled={isGenerating} className="bg-primary hover:bg-primary/90 shadow-sm rounded-xl">
+                  {isGenerating ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCcw className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+                      Regenerate Quiz
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" onClick={handleAddQuestion} className="rounded-xl text-primary border-primary hover:bg-primary hover:text-primary-foreground">
+                  <Plus className="w-4 h-4 mr-2" aria-hidden="true" focusable="false" />
+                  Add Question
+                </Button>
+              </div>
+
 
               {/* Questions List */}
               <div className="space-y-4">
