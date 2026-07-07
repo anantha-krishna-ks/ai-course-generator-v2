@@ -115,6 +115,8 @@ export function AssetLibraryDialog({
   const [scope, setScope] = useState<"any" | "me">("any");
   const [sort, setSort] = useState<"newest" | "oldest" | "name">("newest");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [nameOverrides, setNameOverrides] = useState<Record<string, string>>({});
+  const getName = (a: LibraryAsset) => nameOverrides[a.id] ?? a.name;
 
   const { title, description, Icon, label } = KIND_META[kind];
 
