@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Sliders, Clock, Folder, FileText, X, Search, RotateCcw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Sliders, Clock, BookOpen, FileText, X, Search, RotateCcw } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,22 +22,13 @@ interface Props {
 
 const DEFAULT_MMSS = "01:00";
 
-function normalize(v: string): string {
-  // Accept "1:30", "01:30", "90" (seconds) -> mm:ss
-  const trimmed = v.trim();
-  if (!trimmed) return DEFAULT_MMSS;
-  if (/^\d{1,2}:\d{2}$/.test(trimmed)) {
-    const [m, s] = trimmed.split(":").map(Number);
-    const mm = Math.min(99, m).toString().padStart(2, "0");
-    const ss = Math.min(59, s).toString().padStart(2, "0");
-    return `${mm}:${ss}`;
-  }
-  const n = Number(trimmed);
-  if (!isNaN(n)) {
-    const mm = Math.floor(n).toString().padStart(2, "0");
-    return `${mm}:00`;
-  }
-  return DEFAULT_MMSS;
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function splitMMSS(v: string): { mm: string; ss: string } {
+  const [m = "00", s = "00"] = (v || DEFAULT_MMSS).split(":");
+  return { mm: m.padStart(2, "0"), ss: s.padStart(2, "0") };
 }
 
 function DurationInput({
@@ -51,28 +42,86 @@ function DurationInput({
   highlighted?: boolean;
   ariaLabel: string;
 }) {
-  const [local, setLocal] = useState(value);
+  const [mm, setMm] = useState(() => splitMMSS(value).mm);
+  const [ss, setSs] = useState(() => splitMMSS(value).ss);
+
+  // Keep local state in sync when the external value changes (course default
+  // propagation, Reset all, etc.)
+  useEffect(() => {
+    const parts = splitMMSS(value);
+    setMm(parts.mm);
+    setSs(parts.ss);
+  }, [value]);
+
+  const commit = (nextMm: string, nextSs: string) => {
+    const m = clamp(parseInt(nextMm || "0", 10) || 0, 0, 99)
+      .toString()
+      .padStart(2, "0");
+    const s = clamp(parseInt(nextSs || "0", 10) || 0, 0, 59)
+      .toString()
+      .padStart(2, "0");
+    setMm(m);
+    setSs(s);
+    onChange(`${m}:${s}`);
+  };
+
+  const base = cn(
+    "h-8 w-9 text-center text-[13px] font-semibold tabular-nums rounded-md px-0 border",
+    highlighted
+      ? "border-primary/70 text-primary bg-primary/[0.04] focus-visible:ring-primary/30"
+      : "border-border text-foreground bg-background"
+  );
+
   return (
-    <Input
-      value={local}
-      onChange={(e) => setLocal(e.target.value)}
-      onFocus={(e) => e.currentTarget.select()}
-      onBlur={() => {
-        const n = normalize(local);
-        setLocal(n);
-        onChange(n);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
-      }}
+    <div
+      role="group"
       aria-label={ariaLabel}
       className={cn(
-        "h-8 w-[68px] text-center text-[13px] font-semibold tabular-nums rounded-md px-1.5",
-        highlighted
-          ? "border-primary/70 text-primary bg-primary/[0.04] focus-visible:ring-primary/30"
-          : "border-border text-foreground bg-background"
+        "inline-flex items-center gap-1 rounded-lg px-1.5 py-1",
+        highlighted ? "bg-primary/[0.04]" : "bg-transparent"
       )}
-    />
+    >
+      <div className="flex flex-col items-center">
+        <Input
+          value={mm}
+          onChange={(e) => setMm(e.target.value.replace(/\D/g, "").slice(0, 2))}
+          onFocus={(e) => e.currentTarget.select()}
+          onBlur={() => commit(mm, ss)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
+          }}
+          inputMode="numeric"
+          aria-label={`${ariaLabel} minutes`}
+          className={base}
+        />
+        <span className="text-[9px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">
+          min
+        </span>
+      </div>
+      <span
+        className="text-[13px] font-semibold text-muted-foreground -mt-3"
+        aria-hidden="true"
+      >
+        :
+      </span>
+      <div className="flex flex-col items-center">
+        <Input
+          value={ss}
+          onChange={(e) => setSs(e.target.value.replace(/\D/g, "").slice(0, 2))}
+          onFocus={(e) => e.currentTarget.select()}
+          onBlur={() => commit(mm, ss)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
+          }}
+          inputMode="numeric"
+          aria-label={`${ariaLabel} seconds`}
+          className={base}
+        />
+        <span className="text-[9px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">
+          sec
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -87,7 +136,9 @@ export function ScormPreferencesPopover({
   const [courseDefault, setCourseDefault] = useState<string>(DEFAULT_MMSS);
   const [query, setQuery] = useState("");
 
-  const getDur = (id: string) => durations[id] ?? DEFAULT_MMSS;
+  // Course default falls through as the value for any item without an explicit
+  // override, so changing the default updates all section/page fields live.
+  const getDur = (id: string) => durations[id] ?? courseDefault;
   const setDur = (id: string, v: string) =>
     setDurations((d) => ({ ...d, [id]: v }));
 
@@ -110,6 +161,7 @@ export function ScormPreferencesPopover({
   const resetAll = () => {
     setDurations({});
     setCourseDefault(DEFAULT_MMSS);
+    setQuery("");
   };
 
   return (
@@ -163,7 +215,7 @@ export function ScormPreferencesPopover({
                 Course default
               </p>
               <p className="text-[11.5px] text-muted-foreground leading-tight mt-0.5">
-                New sections &amp; pages start with this
+                Applies to all sections and pages in the course
               </p>
             </div>
             <DurationInput
@@ -209,8 +261,8 @@ export function ScormPreferencesPopover({
                   key={section.id}
                   className="rounded-xl border border-border bg-card overflow-hidden"
                 >
-                  <div className="flex items-center gap-2.5 px-3 py-2.5">
-                    <Folder
+                  <div className="flex items-center gap-2.5 px-3 py-2">
+                    <BookOpen
                       className="w-3.5 h-3.5 text-muted-foreground shrink-0"
                       aria-hidden="true"
                       focusable="false"
@@ -236,7 +288,7 @@ export function ScormPreferencesPopover({
                           <div
                             key={p.id}
                             className={cn(
-                              "flex items-center gap-2.5 pl-8 pr-3 py-2 transition-colors",
+                              "flex items-center gap-2.5 pl-8 pr-3 py-1.5 transition-colors",
                               isCurrent && "bg-primary/[0.04]"
                             )}
                           >
@@ -279,7 +331,7 @@ export function ScormPreferencesPopover({
         {/* Footer */}
         <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-t border-border bg-muted/20">
           <span className="text-[11.5px] text-muted-foreground">
-            Format: mm:ss
+            Minutes : Seconds
           </span>
           <Button
             size="sm"
