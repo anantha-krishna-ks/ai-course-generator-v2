@@ -77,11 +77,11 @@ function DurationInput({
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex items-center gap-1 rounded-lg px-1.5 py-1",
+        "inline-flex items-center gap-0.5 rounded-lg px-1 py-0.5",
         highlighted ? "bg-primary/[0.04]" : "bg-transparent"
       )}
     >
-      <div className="flex flex-col items-center">
+      <div className="flex items-center gap-0.5">
         <Input
           value={mm}
           onChange={(e) => setMm(e.target.value.replace(/\D/g, "").slice(0, 2))}
@@ -94,17 +94,17 @@ function DurationInput({
           aria-label={`${ariaLabel} minutes`}
           className={base}
         />
-        <span className="text-[7px] font-normal uppercase tracking-wider text-muted-foreground/70 mt-0 leading-none">
-          min
+        <span className="text-[10px] font-medium text-muted-foreground select-none">
+          m
         </span>
       </div>
       <span
-        className="text-[13px] font-semibold text-muted-foreground -mt-3"
+        className="text-[11px] font-semibold text-muted-foreground px-0.5 select-none"
         aria-hidden="true"
       >
         :
       </span>
-      <div className="flex flex-col items-center">
+      <div className="flex items-center gap-0.5">
         <Input
           value={ss}
           onChange={(e) => setSs(e.target.value.replace(/\D/g, "").slice(0, 2))}
@@ -117,8 +117,8 @@ function DurationInput({
           aria-label={`${ariaLabel} seconds`}
           className={base}
         />
-        <span className="text-[7px] font-normal uppercase tracking-wider text-muted-foreground/70 mt-0 leading-none">
-          sec
+        <span className="text-[10px] font-medium text-muted-foreground select-none">
+          s
         </span>
       </div>
     </div>
