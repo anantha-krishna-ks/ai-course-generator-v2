@@ -1312,7 +1312,7 @@ const MultipageCoursePreview = () => {
                       Page {currentIndex + 1} of {totalPages}
                     </span>
                     <h2 className={cn(
-                      "font-extrabold text-foreground leading-[1.1] tracking-tight",
+                      "font-semibold text-foreground leading-[1.1] tracking-tight",
                       isCompactView ? "text-2xl" : "text-3xl sm:text-[2.5rem]"
                     )}>
                       {currentPage.title || "Untitled"}
