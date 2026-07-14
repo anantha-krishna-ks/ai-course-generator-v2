@@ -610,38 +610,24 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
           borderColor: preset.border,
         }}
       >
-        {/* Folded corner — realistic dog-ear with crease shadow */}
+        {/* Folded corner — clean flat dog-ear matching the tinted-callout idiom.
+            A single solid triangle in the top-right, slightly more saturated
+            than the card body. No shadow, no crease line — just a crisp tint
+            change, clipped to the card's rounded corner. */}
         <div
-          className="absolute top-0 right-0 pointer-events-none"
+          className="absolute top-0 right-0 pointer-events-none overflow-hidden"
           aria-hidden="true"
-          style={{ width: 30, height: 30 }}
+          style={{ width: 22, height: 22, borderTopRightRadius: "17px" }}
         >
-          {/* The flap: a triangle occupying top-right corner, gradient makes it read
-              like paper catching light; drop-shadow along the diagonal simulates
-              the crease casting a soft shadow onto the card body. */}
           <div
             className="absolute inset-0"
             style={{
               clipPath: "polygon(0 0, 100% 0, 100% 100%)",
-              background: `linear-gradient(135deg, ${preset.fold} 0%, hsl(0 0% 100% / 0.75) 100%)`,
-              filter: "drop-shadow(-1.5px 1.5px 1.5px rgba(15, 23, 42, 0.10))",
-              borderTopRightRadius: "17px",
-            }}
-          />
-          {/* Thin crease highlight along the diagonal for extra depth */}
-          <div
-            className="absolute"
-            style={{
-              top: -1,
-              left: -1,
-              width: "150%",
-              height: 1,
-              background: `linear-gradient(90deg, transparent 20%, hsl(0 0% 100% / 0.9) 50%, transparent 80%)`,
-              transformOrigin: "top left",
-              transform: "rotate(45deg) translateY(0.5px)",
+              backgroundColor: preset.fold,
             }}
           />
         </div>
+
 
         {/* Icon medallion */}
         <div
