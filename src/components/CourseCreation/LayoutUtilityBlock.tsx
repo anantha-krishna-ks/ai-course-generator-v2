@@ -604,25 +604,56 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
   return (
     <div className="w-full py-2 group/util">
       <div
-        className="relative overflow-hidden rounded-2xl border pl-4 pr-5 py-4 sm:pl-5 sm:py-5 flex gap-4 items-start"
-        style={{ backgroundColor: preset.bg, borderColor: preset.border }}
+        className="relative rounded-[18px] border pl-4 pr-5 py-4 sm:pl-5 sm:py-[18px] flex gap-4 items-start shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_28px_-18px_rgba(15,23,42,0.18)] transition-shadow duration-200 group-hover/util:shadow-[0_1px_2px_rgba(15,23,42,0.05),0_14px_32px_-16px_rgba(15,23,42,0.22)]"
+        style={{
+          background: `linear-gradient(135deg, ${preset.bg} 0%, hsl(0 0% 100% / 0.35) 100%), ${preset.bg}`,
+          borderColor: preset.border,
+        }}
       >
-        {/* Folded corner */}
+        {/* Folded corner — realistic dog-ear with crease shadow */}
         <div
-          className="absolute top-0 right-0 w-8 h-8 pointer-events-none"
-          style={{
-            background: `linear-gradient(225deg, ${preset.fold} 50%, transparent 50%)`,
-          }}
+          className="absolute top-0 right-0 pointer-events-none"
           aria-hidden="true"
-        />
+          style={{ width: 30, height: 30 }}
+        >
+          {/* The flap: a triangle occupying top-right corner, gradient makes it read
+              like paper catching light; drop-shadow along the diagonal simulates
+              the crease casting a soft shadow onto the card body. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+              background: `linear-gradient(135deg, ${preset.fold} 0%, hsl(0 0% 100% / 0.75) 100%)`,
+              filter: "drop-shadow(-1.5px 1.5px 1.5px rgba(15, 23, 42, 0.10))",
+              borderTopRightRadius: "17px",
+            }}
+          />
+          {/* Thin crease highlight along the diagonal for extra depth */}
+          <div
+            className="absolute"
+            style={{
+              top: -1,
+              left: -1,
+              width: "150%",
+              height: 1,
+              background: `linear-gradient(90deg, transparent 20%, hsl(0 0% 100% / 0.9) 50%, transparent 80%)`,
+              transformOrigin: "top left",
+              transform: "rotate(45deg) translateY(0.5px)",
+            }}
+          />
+        </div>
 
         {/* Icon medallion */}
         <div
-          className="shrink-0 w-10 h-10 rounded-full bg-background flex items-center justify-center shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-          style={{ boxShadow: `inset 0 0 0 1px ${preset.border}, 0 1px 2px rgba(0,0,0,0.04)` }}
+          className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+          style={{
+            background: "linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100% / 0.85) 100%)",
+            boxShadow: `inset 0 0 0 1px ${preset.border}, 0 1px 2px rgba(15,23,42,0.06), 0 4px 10px -6px ${preset.accent}`,
+          }}
         >
           <Icon className="w-5 h-5" style={{ color: preset.accent }} aria-hidden="true" focusable="false" />
         </div>
+
 
         {/* Content */}
         <div className="min-w-0 flex-1">
