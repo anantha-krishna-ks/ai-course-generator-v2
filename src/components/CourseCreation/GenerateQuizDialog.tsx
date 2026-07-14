@@ -305,39 +305,47 @@ export function GenerateQuizDialog({
                           )}
                           aria-pressed={isActive}
                         >
-                          {isActive && (
-                            <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                              <Check
-                                className="w-2.5 h-2.5 text-primary-foreground"
-                                aria-hidden="true"
-                                focusable="false"
-                              />
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-start gap-3">
                             <span
                               className={cn(
-                                "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all",
+                                "w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-all border",
                                 isActive
-                                  ? "bg-primary/15 text-primary ring-1 ring-inset ring-primary/25"
-                                  : "bg-muted text-muted-foreground"
+                                  ? "bg-primary border-primary text-primary-foreground"
+                                  : "bg-background border-border"
                               )}
                               aria-hidden="true"
                             >
-                              <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                              <Check
+                                className={cn(
+                                  "w-3.5 h-3.5 transition-all",
+                                  isActive ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                                )}
+                                aria-hidden="true"
+                                focusable="false"
+                              />
                             </span>
-                            <span
-                              className={cn(
-                                "text-[13px] font-semibold",
-                                isActive ? "text-foreground" : "text-foreground"
-                              )}
-                            >
-                              {label}
-                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={cn(
+                                    "w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-all",
+                                    isActive
+                                      ? "bg-primary/15 text-primary ring-1 ring-inset ring-primary/25"
+                                      : "bg-muted text-muted-foreground"
+                                  )}
+                                  aria-hidden="true"
+                                >
+                                  <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                </span>
+                                <span className="text-[13px] font-semibold text-foreground">
+                                  {label}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
+                                {description}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-[11px] text-muted-foreground mt-1.5 leading-snug">
-                            {description}
-                          </p>
                         </button>
                       );
                     })}
