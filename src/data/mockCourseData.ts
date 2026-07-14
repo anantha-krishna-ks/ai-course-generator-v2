@@ -147,7 +147,15 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
     },
   };
 
+  // For course "1" (Carbon Accounting-ACCA), enrich seed data with a broad
+  // sample of every block variant so the editor + preview show a realistic,
+  // fully-populated course.
+  if (courseId === "1") {
+    enrichCourseOne(base);
+  }
+
   if (!courseId) return base;
+
 
   const copies = getCourseCopies(courseId);
   if (
