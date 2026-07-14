@@ -13,9 +13,9 @@ import {
   FileText,
   BookOpen,
   Check,
-  SignalLow,
-  SignalMedium,
-  SignalHigh,
+  BatteryLow,
+  BatteryMedium,
+  BatteryFull,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
