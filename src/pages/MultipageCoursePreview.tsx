@@ -675,7 +675,8 @@ const MultipageCoursePreview = () => {
             <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
               <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
               {list.map((hs, idx) => (
-                <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
+                <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width ?? hs.w ?? 10}%`, height: `${hs.height ?? hs.h ?? 10}%` }}>
+
                   <summary className="list-none cursor-pointer w-full h-full flex items-center justify-center rounded-md transition-all" style={{ background: `${color.replace("hsl(", "hsla(").replace(")", " / 0.25)")}`, border: `2px solid ${color}` }} aria-label={hs.title || `Hotspot ${idx + 1}`}>
                     <span className="text-[11px] font-semibold text-white px-2 py-0.5 rounded-full shadow" style={{ background: color }}>{idx + 1}</span>
                   </summary>
