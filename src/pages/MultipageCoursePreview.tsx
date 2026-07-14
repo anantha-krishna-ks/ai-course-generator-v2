@@ -547,7 +547,7 @@ const MultipageCoursePreview = () => {
               layout === "three-columns" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
             )}>
               {columns.map((col, i) => (
-                <div key={i} className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
+                <div key={i} className="prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-foreground prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
               ))}
             </div>
           );
@@ -555,9 +555,10 @@ const MultipageCoursePreview = () => {
 
         return (
           <div
-            className="prose prose-sm max-w-none text-foreground"
+            className="prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-[17px]"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(cleanContent) }}
           />
+
         );
       }
       case "image":
@@ -567,24 +568,28 @@ const MultipageCoursePreview = () => {
       case "image-description": {
         try {
           const parsed = JSON.parse(block.content);
+          const imgSrc = parsed.imageUrl || parsed.image || "";
+          const descHtml = parsed.description || parsed.text || "";
+          const rightLayout = parsed.layout === "image-right";
           return (
             <div className={cn(
-              "flex gap-4 sm:gap-6 items-start",
-              isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
+              "flex gap-6 sm:gap-8 items-center",
+              isCompactView ? "flex-col" : rightLayout ? "flex-row-reverse" : "flex-row"
             )}>
-              {parsed.image && (
-                <img data-zoomable="true" src={parsed.image} alt="Course illustration" className={cn(
-                  "rounded-xl shadow-sm object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md",
+              {imgSrc && (
+                <img data-zoomable="true" src={imgSrc} alt="Course illustration" className={cn(
+                  "rounded-2xl shadow-md ring-1 ring-border/40 object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-lg",
                   isCompactView ? "w-full" : "w-1/2"
                 )} />
               )}
-              <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
+              <div className="flex-1 prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(descHtml) }} />
             </div>
           );
         } catch {
           return null;
         }
       }
+
       case "quiz": {
         let questions: unknown[] = [];
         let settings: Record<string, unknown> | undefined;
@@ -630,17 +635,20 @@ const MultipageCoursePreview = () => {
       case "video-description": {
         try {
           const parsed = JSON.parse(block.content);
+          const videoSrc = parsed.videoUrl || parsed.video || "";
+          const descHtml = parsed.description || parsed.text || "";
+          const rightLayout = parsed.layout === "video-right";
           return (
             <div className={cn(
-              "flex gap-4 sm:gap-6 items-start",
-              isCompactView ? "flex-col" : parsed.layout === "video-right" ? "flex-row-reverse" : "flex-row"
+              "flex gap-6 sm:gap-8 items-center",
+              isCompactView ? "flex-col" : rightLayout ? "flex-row-reverse" : "flex-row"
             )}>
               <div className={cn(
-                "rounded-xl overflow-hidden border border-border/40 bg-black/5",
+                "rounded-2xl overflow-hidden border border-border/40 bg-black/5 shadow-md",
                 isCompactView ? "w-full" : "w-1/2"
               )}>
-                {parsed.video ? (
-                  <video src={parsed.video} controls className="w-full rounded-xl" />
+                {videoSrc ? (
+                  <video src={videoSrc} controls className="w-full rounded-2xl" />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 gap-2">
                     <Video className="w-8 h-8 text-muted-foreground/40" />
@@ -648,13 +656,14 @@ const MultipageCoursePreview = () => {
                   </div>
                 )}
               </div>
-              <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
+              <div className="flex-1 prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(descHtml) }} />
             </div>
           );
         } catch {
           return null;
         }
       }
+
       case "hotspot": {
         try {
           const parsed = JSON.parse(block.content || "{}");
@@ -666,7 +675,8 @@ const MultipageCoursePreview = () => {
             <div className="relative rounded-xl overflow-hidden border border-border/40 bg-muted/20">
               <img src={img} alt="Interactive hotspot image" className="block w-full h-auto" />
               {list.map((hs, idx) => (
-                <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width}%`, height: `${hs.height}%` }}>
+                <details key={hs.id || idx} className="absolute group" style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.width ?? hs.w ?? 10}%`, height: `${hs.height ?? hs.h ?? 10}%` }}>
+
                   <summary className="list-none cursor-pointer w-full h-full flex items-center justify-center rounded-md transition-all" style={{ background: `${color.replace("hsl(", "hsla(").replace(")", " / 0.25)")}`, border: `2px solid ${color}` }} aria-label={hs.title || `Hotspot ${idx + 1}`}>
                     <span className="text-[11px] font-semibold text-white px-2 py-0.5 rounded-full shadow" style={{ background: color }}>{idx + 1}</span>
                   </summary>
@@ -1298,20 +1308,21 @@ const MultipageCoursePreview = () => {
                    {/* Page indicator */}
                    <div className="space-y-3 sm:space-y-4">
                      <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="content" />
-                    <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground/90 font-medium">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
                       Page {currentIndex + 1} of {totalPages}
                     </span>
                     <h2 className={cn(
-                      "font-bold text-foreground leading-[1.15] tracking-tight",
-                      isCompactView ? "text-2xl" : "text-3xl sm:text-4xl"
+                      "font-extrabold text-foreground leading-[1.1] tracking-tight",
+                      isCompactView ? "text-2xl" : "text-3xl sm:text-[2.5rem]"
                     )}>
                       {currentPage.title || "Untitled"}
                     </h2>
                     {currentPage.type === "question" && (
                       <span className="inline-flex text-xs text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">Quiz</span>
                     )}
-                    <div className="w-16 h-[3px] bg-primary rounded-full" />
+                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-primary/40" />
                   </div>
+
 
                   {(() => {
                     // Use actual blocks, or inject demo blocks if page has none
@@ -1333,44 +1344,60 @@ const MultipageCoursePreview = () => {
                   })()}
 
                   {/* Navigation - desktop inline, mobile uses bottom bar */}
-                  {!isCompactView && (
-                    <div className="flex items-center justify-between pt-8 border-t border-border/40">
-                      <Button
-                        variant="ghost"
-                        onClick={goToPrev}
-                        disabled={currentIndex <= 0}
-                        className="gap-2 text-muted-foreground"
-                        aria-label="Go to previous page"
-                      >
-                        <ArrowLeft className="w-4 h-4" />
-                        Previous
-                      </Button>
-                      <Button
-                        variant={isLastPage ? "default" : "ghost"}
-                        onClick={goToNext}
-                        disabled={currentIndex < 0}
-                        className={cn(
-                          "gap-2",
-                          isLastPage
-                            ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md"
-                            : "text-muted-foreground"
-                        )}
-                        aria-label={isLastPage ? "Finish course" : "Go to next page"}
-                      >
-                        {isLastPage ? (
-                          <>
-                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
-                            Finish
-                          </>
-                        ) : (
-                          <>
-                            Next
-                            <ChevronRight className="w-4 h-4" aria-hidden="true" focusable="false" />
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  )}
+                  {!isCompactView && (() => {
+                    const prevPage = currentIndex > 0 ? allPages[currentIndex - 1] : null;
+                    const nextPage = currentIndex >= 0 && currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null;
+                    return (
+                      <div className="pt-10 mt-4 border-t border-border/60 grid grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={goToPrev}
+                          disabled={!prevPage}
+                          className="group text-left rounded-2xl px-5 py-4 border border-border/40 bg-card/40 hover:bg-card hover:border-border transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          aria-label="Go to previous page"
+                        >
+                          <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                            <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" focusable="false" />
+                            Previous
+                          </span>
+                          <span className="mt-1.5 block text-sm font-semibold text-foreground line-clamp-1">
+                            {prevPage?.title || "Start of course"}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={goToNext}
+                          disabled={currentIndex < 0}
+                          className={cn(
+                            "group text-right rounded-2xl px-5 py-4 border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            isLastPage
+                              ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
+                              : "border-border/40 bg-card/40 hover:bg-card hover:border-border"
+                          )}
+                          aria-label={isLastPage ? "Finish course" : "Go to next page"}
+                        >
+                          <span className={cn(
+                            "flex items-center justify-end gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em]",
+                            isLastPage ? "text-primary-foreground/80" : "text-muted-foreground"
+                          )}>
+                            {isLastPage ? "Finish" : "Next"}
+                            {isLastPage ? (
+                              <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            ) : (
+                              <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" focusable="false" />
+                            )}
+                          </span>
+                          <span className={cn(
+                            "mt-1.5 block text-sm font-semibold line-clamp-1",
+                            isLastPage ? "text-primary-foreground" : "text-foreground"
+                          )}>
+                            {isLastPage ? "Complete course" : nextPage?.title || "Continue"}
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })()}
+
 
                   {/* Completion banner */}
                   {completed && (
