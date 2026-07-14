@@ -1289,26 +1289,26 @@ const MultipageCoursePreview = () => {
             style={contentBgStyle}
           >
             <div className={cn(
-              "max-w-3xl mx-auto space-y-6 sm:space-y-8",
-              isCompactView ? "px-5 py-6" : "px-8 sm:px-12 py-10"
+              "max-w-3xl mx-auto space-y-10 sm:space-y-12",
+              isCompactView ? "px-5 py-8" : "px-8 sm:px-14 lg:px-16 py-14"
             )}>
 
               {currentPage ? (
                 <>
                    {/* Page indicator */}
-                   <div className="space-y-2 sm:space-y-3">
+                   <div className="space-y-3 sm:space-y-4">
                      <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="content" />
-                    <span className="text-xs text-muted-foreground italic">
+                    <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground/90 font-medium">
                       Page {currentIndex + 1} of {totalPages}
                     </span>
                     <h2 className={cn(
-                      "font-bold text-foreground leading-tight",
-                      isCompactView ? "text-xl" : "text-2xl sm:text-3xl"
+                      "font-bold text-foreground leading-[1.15] tracking-tight",
+                      isCompactView ? "text-2xl" : "text-3xl sm:text-4xl"
                     )}>
                       {currentPage.title || "Untitled"}
                     </h2>
                     {currentPage.type === "question" && (
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Quiz</span>
+                      <span className="inline-flex text-xs text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">Quiz</span>
                     )}
                     <div className="w-16 h-[3px] bg-primary rounded-full" />
                   </div>
@@ -1323,11 +1323,12 @@ const MultipageCoursePreview = () => {
                       { id: "demo-quiz", type: "quiz" as const, content: "" },
                     ];
                     return (
-                      <div className="space-y-5 sm:space-y-6">
+                      <div className="space-y-8 sm:space-y-10">
                         {blocksToRender.map((block) => (
                           <div key={block.id}>{renderBlockContent(block)}</div>
                         ))}
                       </div>
+
                     );
                   })()}
 
