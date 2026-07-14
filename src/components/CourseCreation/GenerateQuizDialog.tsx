@@ -1,11 +1,39 @@
-import { useState, useId } from "react";
-import { Sparkles, CircleDot, CheckSquare, ToggleLeft, Type, Minus, Plus, Brain, Trophy, Layers, FileText, BookOpen, Check } from "lucide-react";
+import { useState } from "react";
+import {
+  Sparkles,
+  CircleDot,
+  ListChecks,
+  ToggleRight,
+  PenLine,
+  Minus,
+  Plus,
+  GraduationCap,
+  ClipboardCheck,
+  Layers,
+  FileText,
+  BookOpen,
+  Check,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface GenerateQuizDialogProps {
@@ -27,10 +55,42 @@ export interface GenerateQuizConfig {
   exclusions: string;
 }
 
-const quizTypes = [
-  { key: "formative", label: "Formative", description: "Low-stakes check to reinforce learning", icon: Brain },
-  { key: "summative", label: "Summative", description: "Graded evaluation of mastery", icon: Trophy },
-] as const;
+type QTypeKey = "scq" | "mcq" | "tf" | "fib";
+
+const QUESTION_TYPES: {
+  key: QTypeKey;
+  label: string;
+  icon: LucideIcon;
+  hue: string;
+  barHue: string;
+}[] = [
+  { key: "scq", label: "Single Choice", icon: CircleDot, hue: "212 90% 40%", barHue: "211 100% 50%" },
+  { key: "mcq", label: "Multiple Choice", icon: ListChecks, hue: "262 60% 45%", barHue: "262 83% 58%" },
+  { key: "tf", label: "True / False", icon: ToggleRight, hue: "160 84% 28%", barHue: "160 84% 39%" },
+  { key: "fib", label: "Fill in Blank", icon: PenLine, hue: "25 90% 38%", barHue: "32 95% 53%" },
+];
+
+const QUIZ_VARIANTS = {
+  formative: {
+    title: "Formative",
+    subtitle: "Low-stakes check-ins during learning",
+    description:
+      "Low-stakes check-ins woven into the learning flow to reinforce concepts as learners progress.",
+    icon: GraduationCap,
+    badge: "In-flow",
+    perTypeMax: 8,
+  },
+  summative: {
+    title: "Summative",
+    subtitle: "Graded end-of-course assessment",
+    description:
+      "Single graded assessment that evaluates overall mastery of the material.",
+    icon: ClipboardCheck,
+    badge: "Graded",
+    perTypeMax: 15,
+  },
+} as const;
+type QuizVariantKey = keyof typeof QUIZ_VARIANTS;
 
 const scopeOptions = [
   { key: "section", label: "This Section", description: "Quiz for the current section only", icon: Layers },
@@ -38,34 +98,34 @@ const scopeOptions = [
   { key: "course", label: "Entire Course", description: "Quiz covering the full course", icon: BookOpen },
 ] as const;
 
-const questionTypes = [
-  { key: "scq", label: "Single Choice", icon: CircleDot, color: "text-blue-600", bg: "bg-blue-50" },
-  { key: "mcq", label: "Multiple Choice", icon: CheckSquare, color: "text-purple-600", bg: "bg-purple-50" },
-  { key: "tf", label: "True / False", icon: ToggleLeft, color: "text-emerald-600", bg: "bg-emerald-50" },
-  { key: "fib", label: "Fill in Blank", icon: Type, color: "text-amber-600", bg: "bg-amber-50" },
-] as const;
-
-const MAX_TOTAL = 20;
-
-export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = false }: GenerateQuizDialogProps) {
-  const quizTypeId = useId();
-  const [quizType, setQuizType] = useState<string>("formative");
+export function GenerateQuizDialog({
+  open,
+  onClose,
+  onGenerate,
+  isGenerating = false,
+}: GenerateQuizDialogProps) {
+  const [quizType, setQuizType] = useState<QuizVariantKey>("formative");
   const [scope, setScope] = useState<string[]>(["section"]);
-  const [counts, setCounts] = useState<Record<string, number>>({ scq: 3, mcq: 2, tf: 2, fib: 1 });
+  const [counts, setCounts] = useState<Record<QTypeKey, number>>({
+    scq: 3,
+    mcq: 2,
+    tf: 2,
+    fib: 1,
+  });
   const [difficultyLevel, setDifficultyLevel] = useState("medium");
   const [specificInstructions, setSpecificInstructions] = useState(false);
   const [inclusions, setInclusions] = useState("");
   const [exclusions, setExclusions] = useState("");
 
-  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const variant = QUIZ_VARIANTS[quizType];
+  const perTypeMax = variant.perTypeMax;
+  const total = QUESTION_TYPES.reduce((s, q) => s + (counts[q.key] || 0), 0);
 
-  const updateCount = (key: string, delta: number) => {
-    setCounts((prev) => {
-      const next = Math.max(0, (prev[key] ?? 0) + delta);
-      const otherTotal = total - (prev[key] ?? 0);
-      if (otherTotal + next > MAX_TOTAL) return prev;
-      return { ...prev, [key]: next };
-    });
+  const setType = (k: QTypeKey, n: number) => {
+    setCounts((prev) => ({
+      ...prev,
+      [k]: Math.max(0, Math.min(perTypeMax, n)),
+    }));
   };
 
   const toggleScope = (key: string) => {
@@ -86,6 +146,8 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
     });
   };
 
+  const ActiveIcon = variant.icon;
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
@@ -96,7 +158,9 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
         <DialogHeader className="px-6 pt-4 pb-3 border-b border-border bg-white">
           <div className="flex items-center justify-between pr-8">
             <div>
-              <DialogTitle className="text-base font-semibold tracking-tight">Generate Quiz</DialogTitle>
+              <DialogTitle className="text-base font-semibold tracking-tight">
+                Generate Quiz
+              </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
                 Configure question types and quantity to auto-generate a quiz.
               </DialogDescription>
@@ -111,266 +175,477 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
         {/* Body */}
         <div className="min-h-0 row-start-2">
           <ScrollArea className="h-full">
-            <div className="px-6 pt-4 pb-6 space-y-5">
-              {/* Quiz Type */}
-              <div className="space-y-3">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Quiz Type
-                </Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {quizTypes.map(({ key, label, description, icon: Icon }) => {
-                    const isActive = quizType === key;
-                    const inputId = `${quizTypeId}-${key}`;
-                    return (
-                      <label
-                        key={key}
-                        htmlFor={inputId}
-                        className={cn(
-                          "group relative flex items-start gap-3.5 rounded-2xl border-2 p-4 cursor-pointer transition-all duration-200",
-                          isActive
-                            ? "border-primary bg-white shadow-[0_0_0_4px_hsl(var(--primary)/0.06),0_1px_2px_0_rgba(0,0,0,0.05)]"
-                            : "border-border/50 bg-white hover:border-border hover:shadow-sm"
-                        )}
-                      >
-                        {/* Premium radio circle */}
-                        <div className="shrink-0 mt-0.5">
-                          <div
+            <div className="px-6 pt-5 pb-6 space-y-4">
+              {/* Quiz Configuration Card (matches StepDocumentAssessment PrefCard) */}
+              <div className="rounded-xl border border-border bg-card p-5">
+                {/* Master header row */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <span
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-primary/15 text-primary transition-colors"
+                      aria-hidden="true"
+                    >
+                      <ActiveIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </span>
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[16px] font-semibold text-foreground leading-tight">
+                          Quiz configuration
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary ring-1 ring-inset ring-primary/25">
+                          {variant.badge}
+                        </span>
+                      </div>
+                      <p className="text-[13px] text-muted-foreground mt-1 leading-snug">
+                        {variant.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quiz type selector — card-style radio */}
+                <div className="mt-5">
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Quiz type
+                    </span>
+                  </div>
+                  <div
+                    role="radiogroup"
+                    aria-label="Quiz type"
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                  >
+                    {(Object.keys(QUIZ_VARIANTS) as QuizVariantKey[]).map((k) => {
+                      const v = QUIZ_VARIANTS[k];
+                      const Icon = v.icon;
+                      const selected = quizType === k;
+                      return (
+                        <button
+                          key={k}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          onClick={() => setQuizType(k)}
+                          className={cn(
+                            "group relative flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                            selected
+                              ? "border-primary bg-primary/[0.04] ring-1 ring-primary/40 shadow-[0_2px_10px_-4px_hsl(var(--primary)/0.25)]"
+                              : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+                          )}
+                        >
+                          <span
                             className={cn(
-                              "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200",
-                              isActive
+                              "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300",
+                              selected
+                                ? "bg-gradient-to-br from-primary to-[hsl(var(--primary)/0.85)] text-primary-foreground shadow-[0_4px_12px_-3px_hsl(var(--primary)/0.5),inset_0_1px_0_hsl(0_0%_100%/0.25)]"
+                                : "bg-muted text-muted-foreground group-hover:bg-muted/80"
+                            )}
+                            aria-hidden="true"
+                          >
+                            <Icon className="w-[18px] h-[18px]" aria-hidden="true" focusable="false" />
+                          </span>
+                          <span className="flex flex-col min-w-0 flex-1">
+                            <span className="text-[14px] font-semibold leading-tight text-foreground">
+                              {v.title}
+                            </span>
+                            <span className="text-[12px] text-muted-foreground leading-snug mt-0.5 truncate">
+                              {v.subtitle}
+                            </span>
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            className={cn(
+                              "relative w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-300",
+                              selected
                                 ? "border-primary bg-primary"
-                                : "border-muted-foreground/25 bg-white group-hover:border-muted-foreground/40"
+                                : "border-muted-foreground/35 bg-background group-hover:border-muted-foreground/60"
                             )}
                           >
-                            <div
-                              className={cn(
-                                "w-2 h-2 rounded-full bg-white transition-all duration-200",
-                                isActive ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                              )}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Hidden native radio for semantics */}
-                        <input
-                          id={inputId}
-                          type="radio"
-                          name="quizType"
-                          value={key}
-                          checked={isActive}
-                          onChange={() => setQuizType(key)}
-                          className="sr-only"
-                        />
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={cn(
-                                "w-8 h-8 rounded-xl flex items-center justify-center transition-colors duration-200",
-                                isActive ? "bg-primary/10 text-primary" : "bg-muted/60 text-muted-foreground/60 group-hover:text-muted-foreground"
-                              )}
-                            >
-                              <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                            </div>
                             <span
                               className={cn(
-                                "text-sm font-semibold transition-colors duration-200",
-                                isActive ? "text-primary" : "text-foreground"
+                                "w-2 h-2 rounded-full bg-primary-foreground transition-all duration-300",
+                                selected ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                              )}
+                            />
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Quiz Scope */}
+                <div className="mt-5 pt-5 border-t border-border">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Quiz scope
+                      </div>
+                      <p className="text-[12px] text-muted-foreground mt-0.5">
+                        Choose where the quiz should apply.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {scopeOptions.map(({ key, label, description, icon: Icon }) => {
+                      const isActive = scope.includes(key);
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => toggleScope(key)}
+                          className={cn(
+                            "text-left rounded-2xl border p-3 transition-all duration-200 relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                            isActive
+                              ? "border-primary bg-primary/[0.04] ring-1 ring-primary/40 shadow-[0_2px_10px_-4px_hsl(var(--primary)/0.25)]"
+                              : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+                          )}
+                          aria-pressed={isActive}
+                        >
+                          {isActive && (
+                            <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                              <Check
+                                className="w-2.5 h-2.5 text-primary-foreground"
+                                aria-hidden="true"
+                                focusable="false"
+                              />
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={cn(
+                                "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all",
+                                isActive
+                                  ? "bg-primary/15 text-primary ring-1 ring-inset ring-primary/25"
+                                  : "bg-muted text-muted-foreground"
+                              )}
+                              aria-hidden="true"
+                            >
+                              <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                            </span>
+                            <span
+                              className={cn(
+                                "text-[13px] font-semibold",
+                                isActive ? "text-foreground" : "text-foreground"
                               )}
                             >
                               {label}
                             </span>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{description}</p>
-                        </div>
-
-                        {/* Active indicator ring */}
-                        {isActive && (
-                          <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                            <Check className="w-3 h-3 text-primary-foreground" strokeWidth={3} aria-hidden="true" focusable="false" />
-                          </div>
-                        )}
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Quiz Scope */}
-              <div className="space-y-2.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Quiz Scope
-                </Label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  {scopeOptions.map(({ key, label, description, icon: Icon }) => {
-                    const isActive = scope.includes(key);
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => toggleScope(key)}
-                        className={cn(
-                          "text-left rounded-xl border-2 p-3 transition-all duration-150 relative",
-                          isActive
-                            ? "border-primary bg-primary/[0.04] shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-border/60 bg-white hover:bg-gray-50"
-                        )}
-                      >
-                        {isActive && (
-                          <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                            <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />
-                          </div>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <div className={cn("p-1.5 rounded-lg", isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground/70")}>
-                            <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                          </div>
-                          <span className={cn("text-xs font-semibold", isActive ? "text-primary" : "text-foreground")}>{label}</span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground mt-1.5 leading-snug">{description}</p>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Question Mix */}
-              <div className="space-y-3 rounded-2xl border-2 border-border/60 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Question Mix
-                  </Label>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-bold text-foreground tabular-nums leading-none">{total}</span>
-                    <span className="text-[11px] text-muted-foreground">/ {MAX_TOTAL} questions</span>
+                          <p className="text-[11px] text-muted-foreground mt-1.5 leading-snug">
+                            {description}
+                          </p>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Segmented progress bar */}
-                <div className="flex gap-0.5 h-2 rounded-full overflow-hidden bg-muted/60">
-                  {questionTypes.map(({ key, color }) => {
-                    const pct = total > 0 ? (counts[key] / MAX_TOTAL) * 100 : 0;
-                    return (
-                      <div
-                        key={key}
-                        className={cn("h-full transition-all duration-300", color.replace("text-", "bg-"))}
-                        style={{ width: `${pct}%` }}
-                        aria-hidden="true"
-                      />
-                    );
-                  })}
+                {/* Question mix */}
+                <div className="mt-5 pt-5 border-t border-border">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Question mix
+                      </div>
+                      <p className="text-[12px] text-muted-foreground mt-0.5">
+                        Tune how many of each type. Total updates live.
+                      </p>
+                    </div>
+                    <div
+                      className="flex items-baseline gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 ring-1 ring-primary/20"
+                      aria-live="polite"
+                    >
+                      <span className="text-lg font-bold text-primary tabular-nums leading-none">
+                        {total}
+                      </span>
+                      <span className="text-[11px] font-medium text-primary/80 uppercase tracking-wide">
+                        {total === 1 ? "question" : "questions"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {total > 0 && (
+                    <div className="mb-4">
+                      <TooltipProvider delayDuration={100}>
+                        <div className="relative flex h-3 w-full overflow-hidden rounded-full bg-muted/40 ring-1 ring-border/60 shadow-[inset_0_1px_2px_hsl(var(--foreground)/0.06)]">
+                          {QUESTION_TYPES.map((q, i) => {
+                            const n = counts[q.key] || 0;
+                            if (n === 0) return null;
+                            const pct = (n / total) * 100;
+                            return (
+                              <Tooltip key={q.key}>
+                                <TooltipTrigger asChild>
+                                  <div
+                                    className="relative h-full transition-[width,transform] duration-500 ease-out cursor-pointer hover:brightness-110 hover:scale-y-[1.35] origin-center"
+                                    style={{
+                                      width: `${pct}%`,
+                                      background: `linear-gradient(180deg, hsl(${q.barHue} / 0.95) 0%, hsl(${q.barHue}) 55%, hsl(${q.barHue} / 0.88) 100%)`,
+                                      boxShadow: `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(${q.barHue} / 0.4), 0 1px 4px -1px hsl(${q.barHue} / 0.45)`,
+                                      marginLeft: i === 0 ? 0 : 1,
+                                    }}
+                                    aria-label={`${q.label}: ${n} ${
+                                      n === 1 ? "question" : "questions"
+                                    } (${Math.round(pct)}%)`}
+                                  >
+                                    <span
+                                      className="absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
+                                      aria-hidden="true"
+                                      style={{
+                                        background:
+                                          "linear-gradient(180deg, hsl(0 0% 100% / 0.35), hsl(0 0% 100% / 0))",
+                                      }}
+                                    />
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  side="top"
+                                  sideOffset={10}
+                                  className="px-3 py-2 rounded-xl border border-border/70 bg-popover shadow-lg"
+                                >
+                                  <div className="flex items-center gap-2.5">
+                                    <span
+                                      className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                                      style={{
+                                        backgroundColor: `hsl(${q.hue} / 0.15)`,
+                                        color: `hsl(${q.hue})`,
+                                        boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.35)`,
+                                      }}
+                                      aria-hidden="true"
+                                    >
+                                      <q.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                                    </span>
+                                    <div className="flex flex-col leading-tight">
+                                      <span className="text-[12px] font-semibold text-foreground">
+                                        {q.label}
+                                      </span>
+                                      <span className="text-[11px] text-muted-foreground tabular-nums">
+                                        {n} {n === 1 ? "question" : "questions"} · {Math.round(pct)}% of mix
+                                      </span>
+                                    </div>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            );
+                          })}
+                        </div>
+                      </TooltipProvider>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {QUESTION_TYPES.map((q) => {
+                      const n = counts[q.key] || 0;
+                      const Icon = q.icon;
+                      const active = n > 0;
+                      return (
+                        <div
+                          key={q.key}
+                          className="group relative flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 transition-all"
+                          style={
+                            active
+                              ? { backgroundColor: `hsl(${q.hue} / 0.10)` }
+                              : { backgroundColor: "hsl(var(--muted) / 0.5)" }
+                          }
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span
+                              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all"
+                              style={
+                                active
+                                  ? {
+                                      backgroundColor: `hsl(${q.hue} / 0.15)`,
+                                      color: `hsl(${q.hue})`,
+                                      boxShadow: `inset 0 0 0 1px hsl(${q.hue} / 0.3)`,
+                                    }
+                                  : {
+                                      backgroundColor: "hsl(var(--muted))",
+                                      color: "hsl(var(--muted-foreground))",
+                                    }
+                              }
+                              aria-hidden="true"
+                            >
+                              <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                            </span>
+                            <span className="text-sm font-medium text-foreground truncate">
+                              {q.label}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setType(q.key, n - 1)}
+                              disabled={n <= 0}
+                              aria-label={`Decrease ${q.label}`}
+                              className="w-7 h-7 rounded-full border border-border bg-background flex items-center justify-center hover:border-primary/50 hover:bg-primary/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              <Minus
+                                className="w-3.5 h-3.5 text-foreground"
+                                aria-hidden="true"
+                                focusable="false"
+                              />
+                            </button>
+                            <span
+                              className="text-base font-bold tabular-nums w-6 text-center transition-colors"
+                              style={{
+                                color: active ? `hsl(${q.hue})` : "hsl(var(--muted-foreground))",
+                              }}
+                              aria-live="polite"
+                              aria-label={`${n} ${q.label} questions`}
+                            >
+                              {n}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setType(q.key, n + 1)}
+                              disabled={n >= perTypeMax}
+                              aria-label={`Increase ${q.label}`}
+                              className="w-7 h-7 rounded-full flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              style={{
+                                border: `1px solid hsl(${q.hue} / 0.45)`,
+                                backgroundColor: `hsl(${q.hue} / 0.1)`,
+                                color: `hsl(${q.hue})`,
+                              }}
+                            >
+                              <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {total === 0 && (
+                    <p className="text-[12px] text-muted-foreground mt-3 text-center">
+                      Add at least one question type to include in this quiz.
+                    </p>
+                  )}
                 </div>
 
-                {/* Question type cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {questionTypes.map(({ key, label, icon: Icon, color, bg }) => {
-                    const value = counts[key] ?? 0;
-                    return (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-gray-50/50 px-3 py-2.5"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className={cn("p-1.5 rounded-lg shrink-0", bg, color)}>
-                            <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                          </div>
-                          <span className="text-xs font-semibold text-foreground truncate">{label}</span>
+                {/* Difficulty Level */}
+                <div className="mt-5 pt-5 border-t border-border">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div>
+                      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Difficulty level
+                      </div>
+                      <p className="text-[12px] text-muted-foreground mt-0.5">
+                        Set the challenge level for generated questions.
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    role="radiogroup"
+                    aria-label="Difficulty level"
+                    className="grid grid-cols-3 gap-2.5"
+                  >
+                    {(
+                      [
+                        { key: "easy", label: "Easy", hue: "160 84% 28%" },
+                        { key: "medium", label: "Medium", hue: "32 95% 44%" },
+                        { key: "hard", label: "Hard", hue: "0 72% 45%" },
+                      ] as const
+                    ).map((d) => {
+                      const selected = difficultyLevel === d.key;
+                      return (
+                        <button
+                          key={d.key}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          onClick={() => setDifficultyLevel(d.key)}
+                          className={cn(
+                            "relative rounded-2xl border p-3 text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                            selected
+                              ? "border-transparent shadow-[0_2px_10px_-4px_hsl(var(--primary)/0.25)]"
+                              : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+                          )}
+                          style={
+                            selected
+                              ? {
+                                  backgroundColor: `hsl(${d.hue} / 0.10)`,
+                                  boxShadow: `inset 0 0 0 1px hsl(${d.hue} / 0.45)`,
+                                }
+                              : undefined
+                          }
+                        >
+                          <span
+                            className="text-[13px] font-semibold"
+                            style={{
+                              color: selected ? `hsl(${d.hue})` : "hsl(var(--foreground))",
+                            }}
+                          >
+                            {d.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Custom Instructions */}
+                <div className="mt-5 pt-5 border-t border-border">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Custom instructions
+                      </div>
+                      <p className="text-[12px] text-muted-foreground mt-0.5">
+                        Steer the AI with topics to include or avoid.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={specificInstructions}
+                      onCheckedChange={setSpecificInstructions}
+                      aria-label="Toggle custom instructions"
+                    />
+                  </div>
+
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows,opacity,margin] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                      specificInstructions
+                        ? "grid-rows-[1fr] opacity-100 mt-3"
+                        : "grid-rows-[0fr] opacity-0 mt-0"
+                    )}
+                    aria-hidden={!specificInstructions}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
+                            <span
+                              className="w-2 h-2 rounded-full bg-primary"
+                              aria-hidden="true"
+                            />
+                            Inclusions
+                          </Label>
+                          <Textarea
+                            placeholder="Topics to include..."
+                            value={inclusions}
+                            onChange={(e) => setInclusions(e.target.value)}
+                            className="min-h-[80px] resize-none rounded-xl bg-background border border-border focus:border-primary text-sm transition-colors"
+                          />
                         </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => updateCount(key, -1)}
-                            disabled={value <= 0}
-                            aria-label={`Decrease ${label}`}
-                            className="w-7 h-7 rounded-lg border border-border bg-white flex items-center justify-center text-foreground hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                          >
-                            <Minus className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          </button>
-                          <span className="w-6 text-center text-sm font-semibold tabular-nums text-foreground">{value}</span>
-                          <button
-                            type="button"
-                            onClick={() => updateCount(key, 1)}
-                            disabled={total >= MAX_TOTAL}
-                            aria-label={`Increase ${label}`}
-                            className="w-7 h-7 rounded-lg border border-border bg-white flex items-center justify-center text-foreground hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                          >
-                            <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          </button>
+                        <div className="space-y-2">
+                          <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
+                            <span
+                              className="w-2 h-2 rounded-full bg-destructive"
+                              aria-hidden="true"
+                            />
+                            Exclusions
+                          </Label>
+                          <Textarea
+                            placeholder="Topics to exclude..."
+                            value={exclusions}
+                            onChange={(e) => setExclusions(e.target.value)}
+                            className="min-h-[80px] resize-none rounded-xl bg-background border border-border focus:border-primary text-sm transition-colors"
+                          />
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Difficulty Level */}
-              <div className="space-y-2.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Difficulty Level
-                </Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {["easy", "medium", "hard"].map((level) => {
-                    const isActive = difficultyLevel === level;
-                    return (
-                      <button
-                        key={level}
-                        type="button"
-                        onClick={() => setDifficultyLevel(level)}
-                        className={cn(
-                          "px-3.5 py-3 rounded-xl border-2 text-sm font-medium capitalize transition-all duration-150",
-                          isActive
-                            ? "border-primary bg-primary/[0.04] text-primary shadow-[0_0_0_1px_hsl(var(--primary)/0.1)]"
-                            : "border-border/60 bg-white text-foreground hover:bg-gray-50"
-                        )}
-                      >
-                        {level}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Custom Instructions */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Custom Instructions
-                  </Label>
-                  <Switch
-                    checked={specificInstructions}
-                    onCheckedChange={setSpecificInstructions}
-                    aria-label="Toggle custom instructions"
-                  />
-                </div>
-                {specificInstructions && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 animate-in fade-in-50 slide-in-from-top-2 duration-200">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
-                        <span className="w-2 h-2 rounded-full bg-primary" aria-hidden="true" />
-                        Inclusions
-                      </Label>
-                      <Textarea
-                        placeholder="Topics to include..."
-                        value={inclusions}
-                        onChange={(e) => setInclusions(e.target.value)}
-                        className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-medium flex items-center gap-2 text-foreground">
-                        <span className="w-2 h-2 rounded-full bg-destructive" aria-hidden="true" />
-                        Exclusions
-                      </Label>
-                      <Textarea
-                        placeholder="Topics to exclude..."
-                        value={exclusions}
-                        onChange={(e) => setExclusions(e.target.value)}
-                        className="min-h-[80px] resize-none rounded-xl bg-white border border-gray-300 focus:border-primary text-sm transition-colors"
-                      />
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </ScrollArea>
@@ -381,10 +656,17 @@ export function GenerateQuizDialog({ open, onClose, onGenerate, isGenerating = f
           <Button variant="outline" onClick={onClose} className="rounded-xl">
             Cancel
           </Button>
-          <Button onClick={handleGenerate} disabled={isGenerating || total === 0} className="rounded-xl gap-1.5">
+          <Button
+            onClick={handleGenerate}
+            disabled={isGenerating || total === 0}
+            className="rounded-xl gap-1.5"
+          >
             {isGenerating ? (
               <>
-                <div className="w-3.5 h-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <div
+                  className="w-3.5 h-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin"
+                  aria-hidden="true"
+                />
                 Generating...
               </>
             ) : (
