@@ -1459,6 +1459,33 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "info-cards":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[3px]")}>
+            <div className="relative overflow-hidden rounded-[3px] border pl-[3px] pr-[4px] py-[3px] flex gap-[3px] items-center"
+              style={{ backgroundColor: "hsl(158 60% 94%)", borderColor: "hsl(158 45% 76%)" }}>
+              <div className="absolute top-0 right-0 w-[4px] h-[4px]"
+                style={{ background: "linear-gradient(225deg, hsl(158 60% 88%) 50%, transparent 50%)" }} aria-hidden="true" />
+              <div className="w-[6px] h-[6px] rounded-full bg-white" style={{ boxShadow: "inset 0 0 0 0.5px hsl(158 45% 76%)" }} />
+              <div className="flex-1">
+                <div className="h-[1.5px] rounded-full w-3/4" style={{ backgroundColor: "hsl(158 65% 32%)" }} />
+                <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,80%)] w-full mt-[1px]" />
+              </div>
+            </div>
+            <div className="relative overflow-hidden rounded-[3px] border pl-[3px] pr-[4px] py-[3px] flex gap-[3px] items-center"
+              style={{ backgroundColor: "hsl(38 96% 94%)", borderColor: "hsl(38 80% 80%)" }}>
+              <div className="absolute top-0 right-0 w-[4px] h-[4px]"
+                style={{ background: "linear-gradient(225deg, hsl(38 92% 88%) 50%, transparent 50%)" }} aria-hidden="true" />
+              <div className="w-[6px] h-[6px] rounded-full bg-white" style={{ boxShadow: "inset 0 0 0 0.5px hsl(38 80% 80%)" }} />
+              <div className="flex-1">
+                <div className="h-[1.5px] rounded-full w-1/2" style={{ backgroundColor: "hsl(30 90% 42%)" }} />
+                <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,80%)] w-full mt-[1px]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     case "learning-assessment-page":
     case "learning-assessment-section":
     case "learning-assessment-course":
