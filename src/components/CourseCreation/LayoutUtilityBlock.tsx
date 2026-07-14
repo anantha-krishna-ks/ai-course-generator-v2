@@ -452,7 +452,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(215 90% 96%)",
     border: "hsl(215 60% 82%)",
     accent: "hsl(215 75% 42%)",
-    fold: "hsl(215 80% 90%)",
+    fold: "hsl(215 75% 86%)",
     placeholder: "Add a note learners should keep in mind…",
   },
   {
@@ -462,7 +462,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(0 82% 96%)",
     border: "hsl(0 65% 84%)",
     accent: "hsl(0 72% 46%)",
-    fold: "hsl(0 80% 90%)",
+    fold: "hsl(0 75% 86%)",
     placeholder: "Highlight a critical warning or caveat…",
   },
   {
@@ -472,7 +472,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(38 96% 94%)",
     border: "hsl(38 80% 80%)",
     accent: "hsl(30 90% 42%)",
-    fold: "hsl(38 92% 88%)",
+    fold: "hsl(40 88% 82%)",
     placeholder: "Share a helpful tip or shortcut…",
   },
   {
@@ -482,7 +482,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(262 70% 96%)",
     border: "hsl(262 55% 84%)",
     accent: "hsl(262 65% 50%)",
-    fold: "hsl(262 70% 90%)",
+    fold: "hsl(262 65% 86%)",
     placeholder: "Add commentary from a subject-matter expert…",
   },
   {
@@ -492,7 +492,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(158 60% 94%)",
     border: "hsl(158 45% 76%)",
     accent: "hsl(158 65% 32%)",
-    fold: "hsl(158 60% 88%)",
+    fold: "hsl(158 50% 82%)",
     placeholder: "Describe the recommended way to do this…",
   },
   {
@@ -502,7 +502,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(188 78% 94%)",
     border: "hsl(188 55% 78%)",
     accent: "hsl(192 80% 32%)",
-    fold: "hsl(188 70% 88%)",
+    fold: "hsl(188 60% 82%)",
     placeholder: "Summarise the key point to remember…",
   },
 ];
@@ -610,38 +610,24 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
           borderColor: preset.border,
         }}
       >
-        {/* Folded corner — realistic dog-ear with crease shadow */}
+        {/* Folded corner — clean flat dog-ear matching the tinted-callout idiom.
+            A single solid triangle in the top-right, slightly more saturated
+            than the card body. No shadow, no crease line — just a crisp tint
+            change, clipped to the card's rounded corner. */}
         <div
-          className="absolute top-0 right-0 pointer-events-none"
+          className="absolute top-0 right-0 pointer-events-none overflow-hidden"
           aria-hidden="true"
-          style={{ width: 30, height: 30 }}
+          style={{ width: 22, height: 22, borderTopRightRadius: "17px" }}
         >
-          {/* The flap: a triangle occupying top-right corner, gradient makes it read
-              like paper catching light; drop-shadow along the diagonal simulates
-              the crease casting a soft shadow onto the card body. */}
           <div
             className="absolute inset-0"
             style={{
               clipPath: "polygon(0 0, 100% 0, 100% 100%)",
-              background: `linear-gradient(135deg, ${preset.fold} 0%, hsl(0 0% 100% / 0.75) 100%)`,
-              filter: "drop-shadow(-1.5px 1.5px 1.5px rgba(15, 23, 42, 0.10))",
-              borderTopRightRadius: "17px",
-            }}
-          />
-          {/* Thin crease highlight along the diagonal for extra depth */}
-          <div
-            className="absolute"
-            style={{
-              top: -1,
-              left: -1,
-              width: "150%",
-              height: 1,
-              background: `linear-gradient(90deg, transparent 20%, hsl(0 0% 100% / 0.9) 50%, transparent 80%)`,
-              transformOrigin: "top left",
-              transform: "rotate(45deg) translateY(0.5px)",
+              backgroundColor: preset.fold,
             }}
           />
         </div>
+
 
         {/* Icon medallion */}
         <div
