@@ -10,12 +10,17 @@ import {
   ShieldCheck,
   KeyRound,
   Check,
-  Pencil,
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  RemoveFormatting,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 /**
  * Layout Utility Blocks — visual page-flow helpers (dividers, spacing,
