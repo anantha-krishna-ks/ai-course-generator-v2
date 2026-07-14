@@ -572,6 +572,15 @@ export function GenerateQuizDialog({
                               : undefined
                           }
                         >
+                          <d.icon
+                            size={20}
+                            className="mx-auto mb-1"
+                            style={{
+                              color: selected ? `hsl(${d.hue})` : "hsl(var(--muted-foreground))",
+                            }}
+                            aria-hidden="true"
+                            focusable="false"
+                          />
                           <span
                             className="text-[13px] font-semibold"
                             style={{
