@@ -10,12 +10,17 @@ import {
   ShieldCheck,
   KeyRound,
   Check,
-  Pencil,
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough,
+  RemoveFormatting,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 /**
  * Layout Utility Blocks — visual page-flow helpers (dividers, spacing,
@@ -515,25 +520,41 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
   const data = safeParse(content, { kind: "" as string, body: "" });
   const preset = getPreset(String(data.kind || ""));
   const [body, setBody] = useState(String(data.body ?? ""));
-  const [isEditing, setIsEditing] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [focused, setFocused] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setBody(String(data.body ?? ""));
+    const next = String(data.body ?? "");
+    setBody(next);
+    const el = editorRef.current;
+    if (el && el.innerHTML !== sanitizeHtml(next)) {
+      el.innerHTML = sanitizeHtml(next);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
-  useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-      const el = textareaRef.current;
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight}px`;
-    }
-  }, [isEditing]);
-
   const commit = (patch: Partial<{ kind: string; body: string }>) => {
     onChange(JSON.stringify({ ...data, ...patch }));
+  };
+
+  const emit = () => {
+    const el = editorRef.current;
+    if (!el) return;
+    const html = sanitizeHtml(el.innerHTML);
+    setBody(html);
+  };
+
+  const commitBody = () => {
+    const el = editorRef.current;
+    if (!el) return;
+    const html = sanitizeHtml(el.innerHTML);
+    commit({ body: html });
+  };
+
+  const exec = (cmd: string) => {
+    editorRef.current?.focus();
+    document.execCommand(cmd, false);
+    emit();
   };
 
   // ----- Type picker (mandatory first step) -----
@@ -599,7 +620,7 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
 
   // ----- Rendered card -----
   const Icon = preset.icon;
-  const hasBody = body.trim().length > 0;
+  const isEmpty = !body || body.replace(/<[^>]*>/g, "").trim().length === 0;
 
   return (
     <div className="w-full py-2 group/util">
@@ -610,20 +631,54 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
           borderColor: preset.border,
         }}
       >
-        {/* Folded corner — clean flat dog-ear matching the tinted-callout idiom.
-            A single solid triangle in the top-right, slightly more saturated
-            than the card body. No shadow, no crease line — just a crisp tint
-            change, clipped to the card's rounded corner. */}
+        {/* Layered dog-ear fold — three-part composition:
+            (1) a soft under-shadow bleeding down-left, (2) the fold face with a
+            diagonal sheen gradient, and (3) a hairline crease highlight along
+            the fold edge. Clipped to the card's top-right radius. */}
         <div
-          className="absolute top-0 right-0 pointer-events-none overflow-hidden"
+          className="absolute top-0 right-0 pointer-events-none"
           aria-hidden="true"
-          style={{ width: 22, height: 22, borderTopRightRadius: "17px" }}
+          style={{ width: 40, height: 40, borderTopRightRadius: "17px", overflow: "hidden" }}
         >
+          {/* under-shadow: darker preset fold bleeding down-left, softly blurred */}
+          <div
+            className="absolute"
+            style={{
+              inset: 0,
+              clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+              background: `radial-gradient(120% 120% at 100% 0%, transparent 55%, ${preset.accent} 100%)`,
+              opacity: 0.14,
+              transform: "translate(-2px, 2px)",
+              filter: "blur(2px)",
+            }}
+          />
+          {/* fold face: diagonal sheen from preset.fold to soft white */}
           <div
             className="absolute inset-0"
             style={{
               clipPath: "polygon(0 0, 100% 0, 100% 100%)",
-              backgroundColor: preset.fold,
+              backgroundImage: `linear-gradient(215deg, ${preset.fold} 0%, hsl(0 0% 100% / 0.9) 100%)`,
+            }}
+          />
+          {/* crease highlight: 1px diagonal accent line along the fold edge */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(225deg, transparent calc(50% - 0.75px), ${preset.accent} 50%, transparent calc(50% + 0.75px))`,
+              opacity: 0.35,
+              clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+            }}
+          />
+          {/* inner glint at the tip */}
+          <div
+            className="absolute"
+            style={{
+              top: 2,
+              right: 2,
+              width: 10,
+              height: 10,
+              clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+              background: "linear-gradient(215deg, hsl(0 0% 100% / 0.8), transparent 70%)",
             }}
           />
         </div>
@@ -698,56 +753,82 @@ function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onCo
           </div>
 
           {readOnly ? (
-            <p className="text-sm text-foreground/85 leading-relaxed mt-1 whitespace-pre-wrap break-words">
-              {body || preset.placeholder}
-            </p>
-          ) : isEditing ? (
-            <textarea
-              ref={textareaRef}
-              value={body}
-              onChange={(e) => {
-                setBody(e.target.value);
-                const el = e.currentTarget;
-                el.style.height = "auto";
-                el.style.height = `${el.scrollHeight}px`;
-              }}
-              onBlur={() => {
-                setIsEditing(false);
-                commit({ body });
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  e.currentTarget.blur();
-                }
-              }}
-              placeholder={preset.placeholder}
-              aria-label={`${preset.label} body`}
-              rows={2}
-              className="w-full resize-none bg-transparent outline-none text-sm text-foreground/90 leading-relaxed mt-1 placeholder:text-muted-foreground/70"
+            <div
+              className="text-sm text-foreground/85 leading-relaxed mt-1 whitespace-pre-wrap break-words prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(body || preset.placeholder) }}
             />
           ) : (
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="w-full text-left mt-1 group/edit inline-flex items-start gap-1.5"
-            >
-              <span
-                className={cn(
-                  "text-sm leading-relaxed whitespace-pre-wrap break-words",
-                  hasBody ? "text-foreground/85" : "text-muted-foreground/80 italic",
+            <div className="relative mt-1">
+              {focused && (
+                <div
+                  className="absolute -top-11 left-0 z-30 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover shadow-lg px-1 py-1 animate-in fade-in slide-in-from-bottom-1 duration-150"
+                  onMouseDown={(e) => e.preventDefault()}
+                  role="toolbar"
+                  aria-label="Text formatting"
+                >
+                  <InfoRtButton onClick={() => exec("bold")} label="Bold" Icon={Bold} />
+                  <InfoRtButton onClick={() => exec("italic")} label="Italic" Icon={Italic} />
+                  <InfoRtButton onClick={() => exec("underline")} label="Underline" Icon={UnderlineIcon} />
+                  <InfoRtButton onClick={() => exec("strikeThrough")} label="Strikethrough" Icon={Strikethrough} />
+                  <span className="w-px h-4 bg-border mx-0.5" aria-hidden="true" />
+                  <InfoRtButton onClick={() => exec("removeFormat")} label="Clear formatting" Icon={RemoveFormatting} />
+                  <span
+                    className="absolute -bottom-1 left-4 w-2 h-2 rotate-45 bg-popover border-r border-b border-border/80"
+                    aria-hidden="true"
+                    style={{ borderColor: `${preset.accent}` }}
+                  />
+                </div>
+              )}
+              <div className="relative">
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  suppressContentEditableWarning
+                  role="textbox"
+                  aria-multiline="true"
+                  aria-label={`${preset.label} body`}
+                  onInput={emit}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => {
+                    commitBody();
+                    window.setTimeout(() => setFocused(false), 120);
+                  }}
+                  className="w-full min-h-[1.5rem] outline-none text-sm text-foreground/90 leading-relaxed break-words whitespace-pre-wrap cursor-text"
+                />
+                {isEmpty && (
+                  <span className="pointer-events-none absolute inset-0 text-sm text-muted-foreground/70 italic leading-relaxed">
+                    {preset.placeholder}
+                  </span>
                 )}
-              >
-                {hasBody ? body : preset.placeholder}
-              </span>
-              <Pencil
-                className="w-3 h-3 mt-1 shrink-0 opacity-0 group-hover/edit:opacity-60 transition-opacity text-muted-foreground"
-                aria-hidden="true"
-                focusable="false"
-              />
-            </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
     </div>
   );
 }
+
+function InfoRtButton({
+  onClick,
+  label,
+  Icon,
+}: {
+  onClick: () => void;
+  label: string;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}) {
+  return (
+    <button
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    >
+      <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+    </button>
+  );
+}
+
