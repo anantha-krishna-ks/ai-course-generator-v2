@@ -502,7 +502,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(188 78% 94%)",
     border: "hsl(188 55% 78%)",
     accent: "hsl(192 80% 32%)",
-    fold: "hsl(188 70% 88%)",
+    fold: "hsl(188 60% 82%)",
     placeholder: "Summarise the key point to remember…",
   },
 ];
