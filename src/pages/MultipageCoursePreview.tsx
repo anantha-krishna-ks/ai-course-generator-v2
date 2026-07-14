@@ -568,24 +568,28 @@ const MultipageCoursePreview = () => {
       case "image-description": {
         try {
           const parsed = JSON.parse(block.content);
+          const imgSrc = parsed.imageUrl || parsed.image || "";
+          const descHtml = parsed.description || parsed.text || "";
+          const rightLayout = parsed.layout === "image-right";
           return (
             <div className={cn(
-              "flex gap-4 sm:gap-6 items-start",
-              isCompactView ? "flex-col" : parsed.layout === "image-right" ? "flex-row-reverse" : "flex-row"
+              "flex gap-6 sm:gap-8 items-center",
+              isCompactView ? "flex-col" : rightLayout ? "flex-row-reverse" : "flex-row"
             )}>
-              {parsed.image && (
-                <img data-zoomable="true" src={parsed.image} alt="Course illustration" className={cn(
-                  "rounded-xl shadow-sm object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-md",
+              {imgSrc && (
+                <img data-zoomable="true" src={imgSrc} alt="Course illustration" className={cn(
+                  "rounded-2xl shadow-md ring-1 ring-border/40 object-cover cursor-zoom-in transition-transform duration-200 hover:scale-[1.005] hover:shadow-lg",
                   isCompactView ? "w-full" : "w-1/2"
                 )} />
               )}
-              <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
+              <div className="flex-1 prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(descHtml) }} />
             </div>
           );
         } catch {
           return null;
         }
       }
+
       case "quiz": {
         let questions: unknown[] = [];
         let settings: Record<string, unknown> | undefined;
