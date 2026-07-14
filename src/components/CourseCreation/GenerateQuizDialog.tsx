@@ -13,9 +13,9 @@ import {
   FileText,
   BookOpen,
   Check,
-  Smile,
-  Meh,
-  Frown,
+  SignalLow,
+  SignalMedium,
+  SignalHigh,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
