@@ -79,34 +79,48 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
     ],
     pageBlocksMap: {
       "page-1-1": [
+        { id: "pb-1-div", type: "text", variant: "divider-numbered", content: JSON.stringify({ number: 1, label: "Getting Started" }) },
         { id: "pb-1-1", type: "text", content: "<p>Welcome to this course! In this module, you will learn the foundational concepts that will guide your understanding throughout the program.</p>" },
         { id: "pb-1-2", type: "image", content: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop" },
+        { id: "pb-1-info", type: "text", variant: "info-card", content: JSON.stringify({ kind: "tip", body: "Take notes as you go — the concepts introduced here build on each other in later modules." }) },
+        { id: "pb-1-cont", type: "text", variant: "continue-button", content: JSON.stringify({ label: "Continue" }) },
       ],
       "page-1-2": [
         { id: "pb-1-3", type: "text", content: "<p>By the end of this course, you will be able to:</p><ul><li>Understand core principles and frameworks</li><li>Apply concepts to real-world scenarios</li><li>Analyze and evaluate complex situations</li></ul>" },
+        { id: "pb-1-line", type: "text", variant: "divider-line", content: JSON.stringify({ style: "ornament" }) },
         { id: "pb-1-4", type: "video", content: "/demo/Motion_Video.mp4" },
       ],
       "page-2-1": [
+        { id: "pb-2-div", type: "text", variant: "divider-numbered", content: JSON.stringify({ number: 1, label: "Fundamentals" }) },
         { id: "pb-2-1", type: "text", content: "<p>The fundamental principles form the backbone of this discipline. Understanding these concepts is crucial for building a strong foundation.</p>" },
+        { id: "pb-2-space", type: "text", variant: "spacer", content: JSON.stringify({ height: 32 }) },
         { id: "pb-2-5", type: "audio", content: "/demo/actAudio.mp3" },
       ],
       "page-2-2": [
         { id: "pb-2-2", type: "text", content: "<p>Key terms and definitions that you'll encounter throughout this course:</p><ul><li><strong>Term 1</strong> - Definition and explanation</li><li><strong>Term 2</strong> - Definition and explanation</li><li><strong>Term 3</strong> - Definition and explanation</li></ul>" },
+        { id: "pb-2-info", type: "text", variant: "info-card", content: JSON.stringify({ kind: "key-takeaway", body: "Memorising these terms early makes the rest of the course significantly easier to follow." }) },
         { id: "pb-2-6", type: "doc", content: "/demo/G2_EVS.pdf" },
       ],
       "page-2-3": [
         { id: "pb-2-3", type: "text", content: "<h3>Practical Applications</h3><p>In this section, we explore how theoretical concepts translate into real-world practice. You'll work through guided examples and scenarios designed to reinforce your understanding.</p>" },
+        { id: "pb-2-line", type: "text", variant: "divider-line", content: JSON.stringify({ style: "dashed" }) },
         { id: "pb-2-4", type: "image", content: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop" },
+        { id: "pb-2-important", type: "text", variant: "info-card", content: JSON.stringify({ kind: "important", body: "Always verify your assumptions against real data before drawing conclusions." }) },
       ],
       "page-3-1": [
+        { id: "pb-3-div", type: "text", variant: "divider-numbered", content: JSON.stringify({ number: 1, label: "Case Study" }) },
         { id: "pb-3-1", type: "text", content: "<h3>Case Study 1: Industry Analysis</h3><p>This case study examines a real-world scenario where organizations applied the core principles discussed in earlier modules.</p>" },
         { id: "pb-3-4", type: "video", content: "/demo/Motion_Video.mp4" },
+        { id: "pb-3-cont", type: "text", variant: "continue-button", content: JSON.stringify({ label: "Next case" }) },
       ],
       "page-3-2": [
         { id: "pb-3-3", type: "text", content: "<h3>Best Practices</h3><p>Based on industry research and expert insights, the following best practices have been identified.</p>" },
+        { id: "pb-3-bp", type: "text", variant: "info-card", content: JSON.stringify({ kind: "best-practice", body: "Document decisions and their rationale — future reviewers will thank you." }) },
       ],
       "page-4-1": [
+        { id: "pb-4-div", type: "text", variant: "divider-numbered", content: JSON.stringify({ number: 1, label: "Wrap Up" }) },
         { id: "pb-4-1", type: "text", content: "<h3>Course Summary</h3><p>Throughout this course, you have explored the fundamental principles, key terminology, and advanced topics.</p>" },
+        { id: "pb-4-info", type: "text", variant: "info-card", content: JSON.stringify({ kind: "expert-insight", body: "Revisit the key-takeaway callouts before attempting the final assessment." }) },
       ],
       "q-4-1": [
         { id: "pb-q-1", type: "text", content: "<h3>Final Assessment</h3><p>This quiz will test your understanding of the key concepts covered throughout the course.</p>" },
