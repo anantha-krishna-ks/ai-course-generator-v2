@@ -635,17 +635,20 @@ const MultipageCoursePreview = () => {
       case "video-description": {
         try {
           const parsed = JSON.parse(block.content);
+          const videoSrc = parsed.videoUrl || parsed.video || "";
+          const descHtml = parsed.description || parsed.text || "";
+          const rightLayout = parsed.layout === "video-right";
           return (
             <div className={cn(
-              "flex gap-4 sm:gap-6 items-start",
-              isCompactView ? "flex-col" : parsed.layout === "video-right" ? "flex-row-reverse" : "flex-row"
+              "flex gap-6 sm:gap-8 items-center",
+              isCompactView ? "flex-col" : rightLayout ? "flex-row-reverse" : "flex-row"
             )}>
               <div className={cn(
-                "rounded-xl overflow-hidden border border-border/40 bg-black/5",
+                "rounded-2xl overflow-hidden border border-border/40 bg-black/5 shadow-md",
                 isCompactView ? "w-full" : "w-1/2"
               )}>
-                {parsed.video ? (
-                  <video src={parsed.video} controls className="w-full rounded-xl" />
+                {videoSrc ? (
+                  <video src={videoSrc} controls className="w-full rounded-2xl" />
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 gap-2">
                     <Video className="w-8 h-8 text-muted-foreground/40" />
@@ -653,13 +656,14 @@ const MultipageCoursePreview = () => {
                   </div>
                 )}
               </div>
-              <div className="flex-1 prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(parsed.text || "") }} />
+              <div className="flex-1 prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(descHtml) }} />
             </div>
           );
         } catch {
           return null;
         }
       }
+
       case "hotspot": {
         try {
           const parsed = JSON.parse(block.content || "{}");
