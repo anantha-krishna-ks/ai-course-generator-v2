@@ -452,7 +452,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(215 90% 96%)",
     border: "hsl(215 60% 82%)",
     accent: "hsl(215 75% 42%)",
-    fold: "hsl(215 80% 90%)",
+    fold: "hsl(215 75% 86%)",
     placeholder: "Add a note learners should keep in mind…",
   },
   {
@@ -462,7 +462,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(0 82% 96%)",
     border: "hsl(0 65% 84%)",
     accent: "hsl(0 72% 46%)",
-    fold: "hsl(0 80% 90%)",
+    fold: "hsl(0 75% 86%)",
     placeholder: "Highlight a critical warning or caveat…",
   },
   {
@@ -472,7 +472,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(38 96% 94%)",
     border: "hsl(38 80% 80%)",
     accent: "hsl(30 90% 42%)",
-    fold: "hsl(38 92% 88%)",
+    fold: "hsl(40 88% 82%)",
     placeholder: "Share a helpful tip or shortcut…",
   },
   {
@@ -482,7 +482,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(262 70% 96%)",
     border: "hsl(262 55% 84%)",
     accent: "hsl(262 65% 50%)",
-    fold: "hsl(262 70% 90%)",
+    fold: "hsl(262 65% 86%)",
     placeholder: "Add commentary from a subject-matter expert…",
   },
   {
@@ -492,7 +492,7 @@ const INFO_CARD_PRESETS: InfoCardPreset[] = [
     bg: "hsl(158 60% 94%)",
     border: "hsl(158 45% 76%)",
     accent: "hsl(158 65% 32%)",
-    fold: "hsl(158 60% 88%)",
+    fold: "hsl(158 50% 82%)",
     placeholder: "Describe the recommended way to do this…",
   },
   {
