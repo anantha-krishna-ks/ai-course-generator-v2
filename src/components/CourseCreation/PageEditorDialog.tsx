@@ -374,12 +374,13 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
     if (type === "text" && variant === "any-block-layout-2") {
       return JSON.stringify({ kind: "any-block-layout", columns: [[], []] });
     }
-    if (type === "text" && variant && ["divider-line", "divider-numbered", "spacer", "continue-button"].includes(variant)) {
+    if (type === "text" && variant && ["divider-line", "divider-numbered", "spacer", "continue-button", "info-card"].includes(variant)) {
       const defaults: Record<string, string> = {
         "divider-line": JSON.stringify({ style: "ornament" }),
         "divider-numbered": JSON.stringify({ number: 1, label: "" }),
         "spacer": JSON.stringify({ height: 40 }),
         "continue-button": JSON.stringify({ label: "Continue" }),
+        "info-card": JSON.stringify({ kind: "", body: "" }),
       };
       return defaults[variant];
     }

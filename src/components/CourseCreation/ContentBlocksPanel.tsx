@@ -33,6 +33,11 @@ import {
   MoveVertical,
   ArrowRight,
   Group,
+  Info,
+
+
+
+
 
 
 
@@ -75,6 +80,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "divider-numbered", label: "Numbered Divider", icon: Hash, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "divider-numbered", description: "A numbered milestone divider with an optional label — perfect for step-by-step sections" },
   { id: "spacer", label: "Space", icon: MoveVertical, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "spacer", description: "Add adjustable vertical space between blocks for better rhythm" },
   { id: "continue-button", label: "Continue", icon: ArrowRight, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "continue-button", description: "A primary call-to-action button learners tap to move forward" },
+  { id: "info-cards", label: "Info Cards", icon: Info, category: "layout", categoryLabel: "LAYOUT", type: "text", variant: "info-card", description: "Highlight notes, tips, warnings, best practices, expert insights or key takeaways in a coloured callout" },
   // TEXT
   { id: "heading-text", label: "Heading & Text", icon: Heading, category: "text", categoryLabel: "TEXT", type: "text", variant: "heading-text", description: "A bold heading followed by a paragraph of body text" },
   { id: "text-only", label: "Text", icon: Type, category: "text", categoryLabel: "TEXT", type: "text", variant: "text-only", description: "A simple rich-text paragraph block" },
@@ -787,6 +793,44 @@ function BlockPreview({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "info-cards":
+      return (
+        <div className="w-60 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3 space-y-1.5")}>
+            {/* Best Practice card */}
+            <div className="relative overflow-hidden rounded-md border pl-2 pr-2.5 py-2 flex gap-2 items-start"
+              style={{ backgroundColor: "hsl(158 60% 94%)", borderColor: "hsl(158 45% 76%)" }}>
+              <div className="absolute top-0 right-0 w-3 h-3"
+                style={{ background: "linear-gradient(225deg, hsl(158 60% 88%) 50%, transparent 50%)" }} aria-hidden="true" />
+              <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center shrink-0"
+                style={{ boxShadow: "inset 0 0 0 1px hsl(158 45% 76%)" }}>
+                <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: "hsl(158 65% 32%)" }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[7px] font-bold uppercase tracking-[0.14em]" style={{ color: "hsl(158 65% 32%)" }}>Best Practice</p>
+                <div className="h-[3px] rounded-full bg-[hsl(220,13%,80%)] w-full mt-1" />
+                <div className="h-[3px] rounded-full bg-[hsl(220,13%,85%)] w-4/5 mt-0.5" />
+              </div>
+            </div>
+            {/* Tip card */}
+            <div className="relative overflow-hidden rounded-md border pl-2 pr-2.5 py-2 flex gap-2 items-start"
+              style={{ backgroundColor: "hsl(38 96% 94%)", borderColor: "hsl(38 80% 80%)" }}>
+              <div className="absolute top-0 right-0 w-3 h-3"
+                style={{ background: "linear-gradient(225deg, hsl(38 92% 88%) 50%, transparent 50%)" }} aria-hidden="true" />
+              <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center shrink-0"
+                style={{ boxShadow: "inset 0 0 0 1px hsl(38 80% 80%)" }}>
+                <div className="w-1.5 h-2 rounded-t-full" style={{ backgroundColor: "hsl(30 90% 42%)" }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[7px] font-bold uppercase tracking-[0.14em]" style={{ color: "hsl(30 90% 42%)" }}>Tip</p>
+                <div className="h-[3px] rounded-full bg-[hsl(220,13%,80%)] w-full mt-1" />
+                <div className="h-[3px] rounded-full bg-[hsl(220,13%,85%)] w-3/4 mt-0.5" />
+              </div>
+            </div>
+            <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Note · Important · Tip · Insight · Best Practice · Key Takeaway</p>
+          </div>
+        </div>
+      );
 
     case "learning-assessment-page":
     case "learning-assessment-section":
@@ -1411,6 +1455,33 @@ function BlockThumbnail({ id }: { id: string }) {
               <span className="w-[8px] h-[8px] rounded-full bg-white/20 flex items-center justify-center">
                 <ArrowRight className="w-[5px] h-[5px] text-white" aria-hidden="true" focusable="false" />
               </span>
+            </div>
+          </div>
+        </div>
+      );
+    case "info-cards":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[3px] h-[44px] flex flex-col justify-center gap-[3px]")}>
+            <div className="relative overflow-hidden rounded-[3px] border pl-[3px] pr-[4px] py-[3px] flex gap-[3px] items-center"
+              style={{ backgroundColor: "hsl(158 60% 94%)", borderColor: "hsl(158 45% 76%)" }}>
+              <div className="absolute top-0 right-0 w-[4px] h-[4px]"
+                style={{ background: "linear-gradient(225deg, hsl(158 60% 88%) 50%, transparent 50%)" }} aria-hidden="true" />
+              <div className="w-[6px] h-[6px] rounded-full bg-white" style={{ boxShadow: "inset 0 0 0 0.5px hsl(158 45% 76%)" }} />
+              <div className="flex-1">
+                <div className="h-[1.5px] rounded-full w-3/4" style={{ backgroundColor: "hsl(158 65% 32%)" }} />
+                <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,80%)] w-full mt-[1px]" />
+              </div>
+            </div>
+            <div className="relative overflow-hidden rounded-[3px] border pl-[3px] pr-[4px] py-[3px] flex gap-[3px] items-center"
+              style={{ backgroundColor: "hsl(38 96% 94%)", borderColor: "hsl(38 80% 80%)" }}>
+              <div className="absolute top-0 right-0 w-[4px] h-[4px]"
+                style={{ background: "linear-gradient(225deg, hsl(38 92% 88%) 50%, transparent 50%)" }} aria-hidden="true" />
+              <div className="w-[6px] h-[6px] rounded-full bg-white" style={{ boxShadow: "inset 0 0 0 0.5px hsl(38 80% 80%)" }} />
+              <div className="flex-1">
+                <div className="h-[1.5px] rounded-full w-1/2" style={{ backgroundColor: "hsl(30 90% 42%)" }} />
+                <div className="h-[1.5px] rounded-full bg-[hsl(220,13%,80%)] w-full mt-[1px]" />
+              </div>
             </div>
           </div>
         </div>
