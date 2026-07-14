@@ -1,5 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Settings2, MoveVertical } from "lucide-react";
+import {
+  ArrowRight,
+  Settings2,
+  MoveVertical,
+  StickyNote,
+  AlertTriangle,
+  Lightbulb,
+  GraduationCap,
+  ShieldCheck,
+  KeyRound,
+  Check,
+  Pencil,
+} from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -7,21 +19,23 @@ import { cn } from "@/lib/utils";
 
 /**
  * Layout Utility Blocks — visual page-flow helpers (dividers, spacing,
- * continue). Stored as type="text" with a variant so we don't need to widen
- * the block union across the whole codebase.
+ * continue, info cards). Stored as type="text" with a variant so we don't
+ * need to widen the block union across the whole codebase.
  */
 export type LayoutUtilityVariant =
   | "divider-line"
   | "divider-numbered"
   | "spacer"
-  | "continue-button";
+  | "continue-button"
+  | "info-card";
 
 export function isLayoutUtilityVariant(v?: string): v is LayoutUtilityVariant {
   return (
     v === "divider-line" ||
     v === "divider-numbered" ||
     v === "spacer" ||
-    v === "continue-button"
+    v === "continue-button" ||
+    v === "info-card"
   );
 }
 
@@ -30,6 +44,7 @@ export const layoutUtilityDefaults: Record<LayoutUtilityVariant, string> = {
   "divider-numbered": JSON.stringify({ number: 1, label: "" }),
   spacer: JSON.stringify({ height: 40 }),
   "continue-button": JSON.stringify({ label: "Continue" }),
+  "info-card": JSON.stringify({ kind: "", body: "" }),
 };
 
 function safeParse<T extends Record<string, unknown>>(content: string, fallback: T): T {
@@ -61,6 +76,8 @@ export function LayoutUtilityBlock({ variant, content, onChange, readOnly, onCon
       return (
         <ContinueButton content={content} onChange={onChange} readOnly={readOnly} onClick={onContinueClick} />
       );
+    case "info-card":
+      return <InfoCard content={content} onChange={onChange} readOnly={readOnly} />;
   }
 }
 
