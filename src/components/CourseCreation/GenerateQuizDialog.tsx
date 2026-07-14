@@ -544,9 +544,9 @@ export function GenerateQuizDialog({
                   >
                     {(
                       [
-                        { key: "easy", label: "Easy", hue: "160 84% 28%", icon: SignalLow },
-                        { key: "medium", label: "Medium", hue: "32 95% 44%", icon: SignalMedium },
-                        { key: "hard", label: "Hard", hue: "0 72% 45%", icon: SignalHigh },
+                        { key: "easy", label: "Easy", hue: "160 84% 28%", icon: BatteryLow },
+                        { key: "medium", label: "Medium", hue: "32 95% 44%", icon: BatteryMedium },
+                        { key: "hard", label: "Hard", hue: "0 72% 45%", icon: BatteryFull },
                       ] as const
                     ).map((d) => {
                       const selected = difficultyLevel === d.key;
