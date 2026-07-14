@@ -547,7 +547,7 @@ const MultipageCoursePreview = () => {
               layout === "three-columns" ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"
             )}>
               {columns.map((col, i) => (
-                <div key={i} className="prose prose-sm max-w-none text-foreground" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
+                <div key={i} className="prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-foreground prose-p:leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(col.trim()) }} />
               ))}
             </div>
           );
@@ -555,9 +555,10 @@ const MultipageCoursePreview = () => {
 
         return (
           <div
-            className="prose prose-sm max-w-none text-foreground"
+            className="prose prose-base max-w-none text-foreground prose-headings:tracking-tight prose-headings:font-bold prose-headings:text-foreground prose-p:leading-relaxed prose-p:text-[17px]"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(cleanContent) }}
           />
+
         );
       }
       case "image":
