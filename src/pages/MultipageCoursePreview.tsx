@@ -1298,20 +1298,21 @@ const MultipageCoursePreview = () => {
                    {/* Page indicator */}
                    <div className="space-y-3 sm:space-y-4">
                      <CourseBrandingLogo courseId={String((data ?? previewState)?.courseId ?? "")} slot="content" />
-                    <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground/90 font-medium">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
                       Page {currentIndex + 1} of {totalPages}
                     </span>
                     <h2 className={cn(
-                      "font-bold text-foreground leading-[1.15] tracking-tight",
-                      isCompactView ? "text-2xl" : "text-3xl sm:text-4xl"
+                      "font-extrabold text-foreground leading-[1.1] tracking-tight",
+                      isCompactView ? "text-2xl" : "text-3xl sm:text-[2.5rem]"
                     )}>
                       {currentPage.title || "Untitled"}
                     </h2>
                     {currentPage.type === "question" && (
                       <span className="inline-flex text-xs text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">Quiz</span>
                     )}
-                    <div className="w-16 h-[3px] bg-primary rounded-full" />
+                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-primary/40" />
                   </div>
+
 
                   {(() => {
                     // Use actual blocks, or inject demo blocks if page has none
