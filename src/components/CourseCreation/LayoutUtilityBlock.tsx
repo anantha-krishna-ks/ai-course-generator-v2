@@ -432,7 +432,7 @@ type InfoCardKind =
 interface InfoCardPreset {
   id: InfoCardKind;
   label: string;
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: string | boolean; focusable?: string | boolean }>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   /** Soft background tint (HSL with alpha) */
   bg: string;
   /** Border/ring tint */
