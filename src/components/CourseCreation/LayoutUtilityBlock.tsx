@@ -413,3 +413,324 @@ function ContinueButton({
     </div>
   );
 }
+
+/* ---------- Info Card ----------
+ * Callout card with 6 flavours: note, important, tip, expert-insight,
+ * best-practice, key-takeaway. Uses design-token driven soft tints, a
+ * rounded icon medallion, an uppercase eyebrow label, editable body, and a
+ * folded corner accent. First-run forces a mandatory type selection.
+ */
+
+type InfoCardKind =
+  | "note"
+  | "important"
+  | "tip"
+  | "expert-insight"
+  | "best-practice"
+  | "key-takeaway";
+
+interface InfoCardPreset {
+  id: InfoCardKind;
+  label: string;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: string | boolean; focusable?: string | boolean }>;
+  /** Soft background tint (HSL with alpha) */
+  bg: string;
+  /** Border/ring tint */
+  border: string;
+  /** Accent (icon + eyebrow) */
+  accent: string;
+  /** Folded corner tint */
+  fold: string;
+  placeholder: string;
+}
+
+const INFO_CARD_PRESETS: InfoCardPreset[] = [
+  {
+    id: "note",
+    label: "Note",
+    icon: StickyNote,
+    bg: "hsl(215 90% 96%)",
+    border: "hsl(215 60% 82%)",
+    accent: "hsl(215 75% 42%)",
+    fold: "hsl(215 80% 90%)",
+    placeholder: "Add a note learners should keep in mind…",
+  },
+  {
+    id: "important",
+    label: "Important",
+    icon: AlertTriangle,
+    bg: "hsl(0 82% 96%)",
+    border: "hsl(0 65% 84%)",
+    accent: "hsl(0 72% 46%)",
+    fold: "hsl(0 80% 90%)",
+    placeholder: "Highlight a critical warning or caveat…",
+  },
+  {
+    id: "tip",
+    label: "Tip",
+    icon: Lightbulb,
+    bg: "hsl(38 96% 94%)",
+    border: "hsl(38 80% 80%)",
+    accent: "hsl(30 90% 42%)",
+    fold: "hsl(38 92% 88%)",
+    placeholder: "Share a helpful tip or shortcut…",
+  },
+  {
+    id: "expert-insight",
+    label: "Expert Insight",
+    icon: GraduationCap,
+    bg: "hsl(262 70% 96%)",
+    border: "hsl(262 55% 84%)",
+    accent: "hsl(262 65% 50%)",
+    fold: "hsl(262 70% 90%)",
+    placeholder: "Add commentary from a subject-matter expert…",
+  },
+  {
+    id: "best-practice",
+    label: "Best Practice",
+    icon: ShieldCheck,
+    bg: "hsl(158 60% 94%)",
+    border: "hsl(158 45% 76%)",
+    accent: "hsl(158 65% 32%)",
+    fold: "hsl(158 60% 88%)",
+    placeholder: "Describe the recommended way to do this…",
+  },
+  {
+    id: "key-takeaway",
+    label: "Key Takeaway",
+    icon: KeyRound,
+    bg: "hsl(188 78% 94%)",
+    border: "hsl(188 55% 78%)",
+    accent: "hsl(192 80% 32%)",
+    fold: "hsl(188 70% 88%)",
+    placeholder: "Summarise the key point to remember…",
+  },
+];
+
+function getPreset(kind: string): InfoCardPreset | undefined {
+  return INFO_CARD_PRESETS.find((p) => p.id === kind);
+}
+
+function InfoCard({ content, onChange, readOnly }: Omit<Props, "variant" | "onContinueClick">) {
+  const data = safeParse(content, { kind: "" as string, body: "" });
+  const preset = getPreset(String(data.kind || ""));
+  const [body, setBody] = useState(String(data.body ?? ""));
+  const [isEditing, setIsEditing] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setBody(String(data.body ?? ""));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content]);
+
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      const el = textareaRef.current;
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, [isEditing]);
+
+  const commit = (patch: Partial<{ kind: string; body: string }>) => {
+    onChange(JSON.stringify({ ...data, ...patch }));
+  };
+
+  // ----- Type picker (mandatory first step) -----
+  if (!preset) {
+    if (readOnly) return null;
+    return (
+      <div className="w-full py-2">
+        <div className="rounded-2xl border border-dashed border-border/70 bg-muted/20 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-[11px] font-bold">?</span>
+            <h4 className="text-sm font-semibold text-foreground tracking-tight">Choose an Info Card type</h4>
+          </div>
+          <p className="text-xs text-muted-foreground mb-4">
+            Pick the callout style that matches the message you want to highlight.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {INFO_CARD_PRESETS.map((p) => {
+              const Icon = p.icon;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => commit({ kind: p.id })}
+                  className="group relative overflow-hidden rounded-xl border text-left px-3 py-3 transition-all hover:-translate-y-[1px] hover:shadow-[0_6px_16px_-8px_hsl(220_43%_15%/0.18)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  style={{ backgroundColor: p.bg, borderColor: p.border }}
+                  aria-label={`Use ${p.label} card`}
+                >
+                  <div
+                    className="absolute top-0 right-0 w-5 h-5"
+                    style={{
+                      background: `linear-gradient(225deg, ${p.fold} 50%, transparent 50%)`,
+                    }}
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="w-8 h-8 rounded-full bg-background flex items-center justify-center shadow-sm mb-2"
+                    style={{ boxShadow: `inset 0 0 0 1px ${p.border}` }}
+                  >
+                    <Icon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  </div>
+                  <span
+                    className="block text-[10px] font-bold uppercase tracking-[0.12em]"
+                    style={{ color: p.accent }}
+                  >
+                    {p.label}
+                  </span>
+                  <span className="block text-[10.5px] text-foreground/70 leading-snug mt-0.5">
+                    {p.id === "note" && "General information"}
+                    {p.id === "important" && "Critical warning"}
+                    {p.id === "tip" && "Helpful advice"}
+                    {p.id === "expert-insight" && "Subject-matter view"}
+                    {p.id === "best-practice" && "Recommended approach"}
+                    {p.id === "key-takeaway" && "Point to remember"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ----- Rendered card -----
+  const Icon = preset.icon;
+  const hasBody = body.trim().length > 0;
+
+  return (
+    <div className="w-full py-2 group/util">
+      <div
+        className="relative overflow-hidden rounded-2xl border pl-4 pr-5 py-4 sm:pl-5 sm:py-5 flex gap-4 items-start"
+        style={{ backgroundColor: preset.bg, borderColor: preset.border }}
+      >
+        {/* Folded corner */}
+        <div
+          className="absolute top-0 right-0 w-8 h-8 pointer-events-none"
+          style={{
+            background: `linear-gradient(225deg, ${preset.fold} 50%, transparent 50%)`,
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Icon medallion */}
+        <div
+          className="shrink-0 w-10 h-10 rounded-full bg-background flex items-center justify-center shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+          style={{ boxShadow: `inset 0 0 0 1px ${preset.border}, 0 1px 2px rgba(0,0,0,0.04)` }}
+        >
+          <Icon className="w-5 h-5" style={{ color: preset.accent }} aria-hidden="true" focusable="false" />
+        </div>
+
+        {/* Content */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.14em]"
+              style={{ color: preset.accent }}
+            >
+              {preset.label}
+            </span>
+            {!readOnly && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="opacity-0 group-hover/util:opacity-100 transition-opacity h-5 px-1.5 rounded-md border border-border/60 bg-background/80 backdrop-blur text-[9px] font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 flex items-center gap-1"
+                    aria-label="Change info card type"
+                  >
+                    <Settings2 className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+                    Change
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-64 p-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-1 pb-1.5">
+                    Info Card Type
+                  </p>
+                  <div className="grid grid-cols-1 gap-1">
+                    {INFO_CARD_PRESETS.map((p) => {
+                      const PIcon = p.icon;
+                      const active = p.id === preset.id;
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => commit({ kind: p.id })}
+                          className={cn(
+                            "flex items-center gap-2 px-2 py-1.5 rounded-md text-left text-[12px] transition-colors",
+                            active
+                              ? "bg-primary/5 text-foreground"
+                              : "hover:bg-muted/60 text-foreground",
+                          )}
+                        >
+                          <span
+                            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                            style={{ backgroundColor: p.bg, boxShadow: `inset 0 0 0 1px ${p.border}` }}
+                          >
+                            <PIcon className="w-3 h-3" style={{ color: p.accent }} aria-hidden="true" focusable="false" />
+                          </span>
+                          <span className="flex-1 font-medium">{p.label}</span>
+                          {active && <Check className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+
+          {readOnly ? (
+            <p className="text-sm text-foreground/85 leading-relaxed mt-1 whitespace-pre-wrap break-words">
+              {body || preset.placeholder}
+            </p>
+          ) : isEditing ? (
+            <textarea
+              ref={textareaRef}
+              value={body}
+              onChange={(e) => {
+                setBody(e.target.value);
+                const el = e.currentTarget;
+                el.style.height = "auto";
+                el.style.height = `${el.scrollHeight}px`;
+              }}
+              onBlur={() => {
+                setIsEditing(false);
+                commit({ body });
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  e.currentTarget.blur();
+                }
+              }}
+              placeholder={preset.placeholder}
+              aria-label={`${preset.label} body`}
+              rows={2}
+              className="w-full resize-none bg-transparent outline-none text-sm text-foreground/90 leading-relaxed mt-1 placeholder:text-muted-foreground/70"
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="w-full text-left mt-1 group/edit inline-flex items-start gap-1.5"
+            >
+              <span
+                className={cn(
+                  "text-sm leading-relaxed whitespace-pre-wrap break-words",
+                  hasBody ? "text-foreground/85" : "text-muted-foreground/80 italic",
+                )}
+              >
+                {hasBody ? body : preset.placeholder}
+              </span>
+              <Pencil
+                className="w-3 h-3 mt-1 shrink-0 opacity-0 group-hover/edit:opacity-60 transition-opacity text-muted-foreground"
+                aria-hidden="true"
+                focusable="false"
+              />
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
