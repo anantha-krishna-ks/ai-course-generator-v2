@@ -13,9 +13,9 @@ import {
   FileText,
   BookOpen,
   Check,
-  BatteryLow,
-  BatteryMedium,
-  BatteryFull,
+  Sprout,
+  Gauge,
+  Award,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -544,9 +544,9 @@ export function GenerateQuizDialog({
                   >
                     {(
                       [
-                        { key: "easy", label: "Easy", hue: "160 84% 28%", icon: BatteryLow },
-                        { key: "medium", label: "Medium", hue: "32 95% 44%", icon: BatteryMedium },
-                        { key: "hard", label: "Hard", hue: "0 72% 45%", icon: BatteryFull },
+                        { key: "easy", label: "Easy", hue: "160 84% 28%", icon: Sprout },
+                        { key: "medium", label: "Medium", hue: "32 95% 44%", icon: Gauge },
+                        { key: "hard", label: "Hard", hue: "0 72% 45%", icon: Award },
                       ] as const
                     ).map((d) => {
                       const selected = difficultyLevel === d.key;
