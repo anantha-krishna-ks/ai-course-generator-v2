@@ -1365,10 +1365,7 @@ const MultipageCoursePreview = () => {
                           type="button"
                           onClick={goToNext}
                           disabled={currentIndex < 0}
-                          className={cn(
-                            "group flex items-center gap-2 px-2 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded",
-                            isLastPage ? "text-foreground" : "text-foreground"
-                          )}
+                          className="group flex items-center gap-2 px-2 py-1 text-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                           aria-label={isLastPage ? "Finish course" : "Go to next page"}
                         >
                           <span className="text-sm font-medium">{isLastPage ? "Finish" : "Next"}</span>
