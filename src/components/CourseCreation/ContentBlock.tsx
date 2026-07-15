@@ -301,6 +301,8 @@ export function ContentBlock({
   useEffect(() => {
     if (!isEditing) return;
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('[data-rte-popover="true"]')) return;
       if (blockRef.current && !blockRef.current.contains(e.target as Node)) {
         setIsEditing(false);
       }

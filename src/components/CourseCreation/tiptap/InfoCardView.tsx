@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NodeViewWrapper, NodeViewContent, type NodeViewProps } from '@tiptap/react';
 import { Settings2, Check, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -12,13 +13,14 @@ import { INFO_CARD_PRESETS, getInfoCardPreset, type InfoCardKind } from './infoC
  * toolbar for edit mode only.
  */
 export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNode }: NodeViewProps) {
+  const [changeOpen, setChangeOpen] = useState(false);
   const kind = (node.attrs.kind as InfoCardKind) || 'note';
   const preset = getInfoCardPreset(kind);
   const Icon = preset.icon;
   const editable = editor?.isEditable ?? true;
 
   const changeButton = editable && (
-    <Popover>
+    <Popover open={changeOpen} onOpenChange={setChangeOpen}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -33,6 +35,8 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
       <PopoverContent
         align="start"
         className="w-64 p-2 bg-background"
+        data-rte-popover="true"
+        onMouseDown={(e) => e.stopPropagation()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-1 pb-1.5">
@@ -62,6 +66,7 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
                   } else {
                     updateAttributes({ kind: p.id });
                   }
+                  setChangeOpen(false);
                 }}
                 className={cn(
                   'flex items-center gap-2 px-2 py-1.5 rounded-md text-left text-[12px] transition-colors',

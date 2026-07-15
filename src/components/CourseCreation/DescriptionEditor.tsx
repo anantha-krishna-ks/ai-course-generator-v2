@@ -406,6 +406,8 @@ function InfoCardsMenu({ editor }: { editor: Editor }) {
       <PopoverContent
         align="start"
         className="w-64 p-2 bg-background"
+        data-rte-popover="true"
+        onMouseDown={(e) => e.stopPropagation()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-1 pb-1.5">
