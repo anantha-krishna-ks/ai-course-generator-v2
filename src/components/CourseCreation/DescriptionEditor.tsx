@@ -374,24 +374,20 @@ function TableMenu({ editor }: { editor: Editor }) {
 
 function InfoCardsMenu({ editor }: { editor: Editor }) {
   const [open, setOpen] = useState(false);
-  const iconFor = (id: InfoCardKind) => {
+  const presetFor = (id: InfoCardKind) => {
     switch (id) {
-      case 'note': return StickyNote;
-      case 'important': return AlertTriangle;
-      case 'tip': return Lightbulb;
-      case 'expert-insight': return GraduationCap;
-      case 'best-practice': return ShieldCheck;
-      case 'key-takeaway': return KeyRound;
-    }
-  };
-  const colorFor = (id: InfoCardKind) => {
-    switch (id) {
-      case 'note': return 'hsl(215 75% 42%)';
-      case 'important': return 'hsl(0 72% 46%)';
-      case 'tip': return 'hsl(30 90% 42%)';
-      case 'expert-insight': return 'hsl(262 65% 50%)';
-      case 'best-practice': return 'hsl(158 65% 32%)';
-      case 'key-takeaway': return 'hsl(192 80% 32%)';
+      case 'note':
+        return { Icon: StickyNote, bg: 'hsl(215 90% 96%)', border: 'hsl(215 60% 82%)', accent: 'hsl(215 75% 42%)' };
+      case 'important':
+        return { Icon: AlertTriangle, bg: 'hsl(0 82% 96%)', border: 'hsl(0 65% 84%)', accent: 'hsl(0 72% 46%)' };
+      case 'tip':
+        return { Icon: Lightbulb, bg: 'hsl(38 96% 94%)', border: 'hsl(38 80% 80%)', accent: 'hsl(30 90% 42%)' };
+      case 'expert-insight':
+        return { Icon: GraduationCap, bg: 'hsl(262 70% 96%)', border: 'hsl(262 55% 84%)', accent: 'hsl(262 65% 50%)' };
+      case 'best-practice':
+        return { Icon: ShieldCheck, bg: 'hsl(158 60% 94%)', border: 'hsl(158 45% 76%)', accent: 'hsl(158 65% 32%)' };
+      case 'key-takeaway':
+        return { Icon: KeyRound, bg: 'hsl(188 78% 94%)', border: 'hsl(188 55% 78%)', accent: 'hsl(192 80% 32%)' };
     }
   };
   return (
@@ -404,7 +400,7 @@ function InfoCardsMenu({ editor }: { editor: Editor }) {
           title="Insert info card"
           className="inline-flex items-center justify-center h-8 w-8 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
         >
-          <LayoutPanelTop className="w-4 h-4" aria-hidden="true" />
+          <Megaphone className="w-4 h-4" aria-hidden="true" />
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -412,12 +408,12 @@ function InfoCardsMenu({ editor }: { editor: Editor }) {
         className="w-64 p-2 bg-background"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        <div className="text-xs font-medium text-muted-foreground px-1.5 pb-1.5">
-          Choose an info card
-        </div>
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-1 pb-1.5">
+          Info Card Type
+        </p>
         <div className="grid grid-cols-1 gap-1">
           {INFO_CARD_KINDS.map((k) => {
-            const Icon = iconFor(k.id);
+            const p = presetFor(k.id);
             return (
               <button
                 key={k.id}
@@ -427,16 +423,16 @@ function InfoCardsMenu({ editor }: { editor: Editor }) {
                   editor.chain().focus().insertInfoCard(k.id).run();
                   setOpen(false);
                 }}
-                className="flex items-center gap-2.5 px-2 py-2 rounded-md text-sm text-foreground hover:bg-foreground/5 transition-colors text-left"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-md text-left text-[12px] transition-colors hover:bg-muted/60 text-foreground"
               >
                 <span
-                  className="inline-flex items-center justify-center h-6 w-6 rounded-md shrink-0"
-                  style={{ background: `${colorFor(k.id)}20`, color: colorFor(k.id) }}
+                  className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: p.bg, boxShadow: `inset 0 0 0 1px ${p.border}` }}
                   aria-hidden="true"
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <p.Icon className="w-3 h-3" style={{ color: p.accent }} />
                 </span>
-                <span className="truncate">{k.label}</span>
+                <span className="flex-1 font-medium">{k.label}</span>
               </button>
             );
           })}
