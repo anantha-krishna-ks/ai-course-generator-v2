@@ -1,14 +1,5 @@
-import { useMemo } from 'react';
-import { NodeViewWrapper, NodeViewContent, useEditorState, type NodeViewProps } from '@tiptap/react';
-import {
-  Settings2,
-  Check,
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  RemoveFormatting,
-} from 'lucide-react';
+import { NodeViewWrapper, NodeViewContent, type NodeViewProps } from '@tiptap/react';
+import { Settings2, Check, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { INFO_CARD_PRESETS, getInfoCardPreset, type InfoCardKind } from './infoCardPresets';
