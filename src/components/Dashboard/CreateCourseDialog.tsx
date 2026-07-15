@@ -215,19 +215,8 @@ function LivePreviewPanel({
 
       {/* Course specs grid */}
       <div className="relative z-10 flex-1 space-y-3">
-        {/* Primary specs — 2x2 grid */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
-            {selectedLayout === "multi-page" ? (
-              <Layers className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
-            ) : (
-              <FileText className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
-            )}
-            <p className="text-primary-foreground text-sm font-bold leading-tight">
-              {selectedLayout === "multi-page" ? "Multi" : "Single"}
-            </p>
-            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Layout</p>
-          </div>
+        {/* Primary specs — single content card */}
+        <div className="grid grid-cols-1 gap-2">
           <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
             <BrainCircuit className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
             <p className="text-primary-foreground text-sm font-bold leading-tight">
