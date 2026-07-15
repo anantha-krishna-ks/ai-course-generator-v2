@@ -395,6 +395,7 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
       TableRow,
       TableHeader,
       TableCell,
+      InfoCardNode,
     ],
     content,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
