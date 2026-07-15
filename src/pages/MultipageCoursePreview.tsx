@@ -1347,7 +1347,7 @@ const MultipageCoursePreview = () => {
                   {!isCompactView && (() => {
                     const prevPage = currentIndex > 0 ? allPages[currentIndex - 1] : null;
                     return (
-                      <div className="pt-10 mt-4 border-t border-border/60 grid grid-cols-2 gap-4">
+                      <div className="pt-10 mt-4 border-t border-border/60 grid grid-cols-2 gap-4 w-1/2 mx-auto">
                         <button
                           type="button"
                           onClick={goToPrev}
