@@ -61,6 +61,10 @@ export const InfoCardNode = Node.create({
     ];
   },
 
+  addNodeView() {
+    return ReactNodeViewRenderer(InfoCardView);
+  },
+
   addCommands() {
     return {
       insertInfoCard:
