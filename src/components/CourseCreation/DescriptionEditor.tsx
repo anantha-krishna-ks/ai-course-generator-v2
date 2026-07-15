@@ -44,7 +44,15 @@ import {
   Trash2,
   Plus,
   Minus,
+  StickyNote,
+  AlertTriangle,
+  Lightbulb,
+  GraduationCap,
+  ShieldCheck,
+  KeyRound,
+  LayoutPanelTop,
 } from 'lucide-react';
+import { InfoCardNode, INFO_CARD_KINDS, type InfoCardKind } from './tiptap/InfoCardNode';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -364,6 +372,80 @@ function TableMenu({ editor }: { editor: Editor }) {
   );
 }
 
+function InfoCardsMenu({ editor }: { editor: Editor }) {
+  const [open, setOpen] = useState(false);
+  const iconFor = (id: InfoCardKind) => {
+    switch (id) {
+      case 'note': return StickyNote;
+      case 'important': return AlertTriangle;
+      case 'tip': return Lightbulb;
+      case 'expert-insight': return GraduationCap;
+      case 'best-practice': return ShieldCheck;
+      case 'key-takeaway': return KeyRound;
+    }
+  };
+  const colorFor = (id: InfoCardKind) => {
+    switch (id) {
+      case 'note': return 'hsl(215 75% 42%)';
+      case 'important': return 'hsl(0 72% 46%)';
+      case 'tip': return 'hsl(30 90% 42%)';
+      case 'expert-insight': return 'hsl(262 65% 50%)';
+      case 'best-practice': return 'hsl(158 65% 32%)';
+      case 'key-takeaway': return 'hsl(192 80% 32%)';
+    }
+  };
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          aria-label="Insert info card"
+          title="Insert info card"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-md text-foreground/70 hover:bg-foreground/10 hover:text-foreground transition-all shrink-0"
+        >
+          <LayoutPanelTop className="w-4 h-4" aria-hidden="true" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-64 p-2 bg-background"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <div className="text-xs font-medium text-muted-foreground px-1.5 pb-1.5">
+          Choose an info card
+        </div>
+        <div className="grid grid-cols-1 gap-1">
+          {INFO_CARD_KINDS.map((k) => {
+            const Icon = iconFor(k.id);
+            return (
+              <button
+                key={k.id}
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  editor.chain().focus().insertInfoCard(k.id).run();
+                  setOpen(false);
+                }}
+                className="flex items-center gap-2.5 px-2 py-2 rounded-md text-sm text-foreground hover:bg-foreground/5 transition-colors text-left"
+              >
+                <span
+                  className="inline-flex items-center justify-center h-6 w-6 rounded-md shrink-0"
+                  style={{ background: `${colorFor(k.id)}20`, color: colorFor(k.id) }}
+                  aria-hidden="true"
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                </span>
+                <span className="truncate">{k.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBlockFontChange, placeholder }: DescriptionEditorProps) {
   const [moreOpen, setMoreOpen] = useState(false);
   const editor = useEditor({
@@ -387,6 +469,7 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
       TableRow,
       TableHeader,
       TableCell,
+      InfoCardNode,
     ],
     content,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -522,6 +605,7 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
             </span>
             <LinkPopover editor={editor} />
             <TableMenu editor={editor} />
+            <InfoCardsMenu editor={editor} />
 
             <Divider />
 
