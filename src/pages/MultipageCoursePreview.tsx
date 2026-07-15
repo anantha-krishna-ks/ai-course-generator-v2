@@ -1366,7 +1366,7 @@ const MultipageCoursePreview = () => {
                             "group flex items-center justify-end gap-2 rounded-2xl px-5 py-3 border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             isLastPage
                               ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
-                              : "border-border/80 bg-card/40 hover:bg-card hover:border-primary/40"
+                              : "border-border bg-card shadow-sm hover:bg-card hover:border-primary/40 hover:shadow-md"
                           )}
                           aria-label={isLastPage ? "Finish course" : "Go to next page"}
                         >
