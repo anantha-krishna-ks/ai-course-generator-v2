@@ -435,7 +435,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 sm:mb-3 block">
                   Import Course Outline
                 </label>
-                <div className="rounded-lg border-2 border-dashed border-border bg-muted/20 p-4 sm:p-5">
+                <div className="rounded-lg border border-border bg-muted/20 p-3 sm:p-4">
                   <input
                     ref={outlineInputRef}
                     type="file"
@@ -471,15 +471,15 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <Upload className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Upload className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-foreground">
                           Import an outline to jump-start your course
                         </p>
-                        <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
                           Bring your existing structure — we'll turn it into editable sections and pages.
                         </p>
                       </div>
@@ -488,7 +488,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                         variant="outline"
                         size="sm"
                         onClick={() => outlineInputRef.current?.click()}
-                        className="shrink-0 gap-1.5 text-xs h-9 rounded-full"
+                        className="shrink-0 gap-1.5 text-xs h-8 rounded-full"
                       >
                         <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                         Import outline
@@ -496,32 +496,43 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     </div>
                   )}
 
-                  {/* Supported files */}
+                  {/* Templates + supported files */}
                   <div className="mt-3 pt-3 border-t border-border/60">
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      Supported files
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        { ext: "DOCX", icon: FileText },
-                        { ext: "PDF", icon: FileText },
-                        { ext: "TXT", icon: FileText },
-                        { ext: "MD", icon: FileText },
-                        { ext: "JSON", icon: FileJson },
-                        { ext: "CSV", icon: FileSpreadsheet },
-                        { ext: "XLSX", icon: FileSpreadsheet },
-                      ].map(({ ext, icon: Icon }) => (
-                        <span
-                          key={ext}
-                          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
-                        >
-                          <Icon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          {ext}
-                        </span>
-                      ))}
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3">
+                      <div className="flex items-center gap-1.5 shrink-0 pt-1">
+                        <Download className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+                        <span className="text-[11px] font-semibold text-foreground">Download template:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          { label: "PDF", ext: "pdf", color: "text-rose-600", bg: "bg-rose-50 hover:bg-rose-100 border-rose-200" },
+                          { label: "Word", ext: "docx", color: "text-blue-600", bg: "bg-blue-50 hover:bg-blue-100 border-blue-200" },
+                          { label: "PPT", ext: "pptx", color: "text-orange-600", bg: "bg-orange-50 hover:bg-orange-100 border-orange-200" },
+                          { label: "TXT", ext: "txt", color: "text-slate-600", bg: "bg-slate-50 hover:bg-slate-100 border-slate-200" },
+                        ].map((t) => (
+                          <button
+                            key={t.ext}
+                            type="button"
+                            onClick={() => {
+                              const blob = new Blob([`Course Outline Template (.${t.ext})\n\nSection 1: ...\n  Page 1.1: ...\n  Page 1.2: ...\n\nSection 2: ...\n  Page 2.1: ...\n`], { type: "text/plain" });
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = `course-outline-template.${t.ext}`;
+                              a.click();
+                              URL.revokeObjectURL(url);
+                            }}
+                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-[10px] font-semibold transition-colors ${t.bg} ${t.color} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+                            aria-label={`Download ${t.label} template`}
+                          >
+                            <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <p className="text-[10px] text-muted-foreground/70 mt-2">
-                      Max 20MB per file
+                    <p className="text-[10px] text-muted-foreground mt-2">
+                      Supported: DOCX, PDF, TXT, MD, JSON, CSV, XLSX · Max 20MB
                     </p>
                   </div>
                 </div>
