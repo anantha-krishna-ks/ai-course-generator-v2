@@ -57,7 +57,22 @@ export const InfoCardNode = Node.create({
     return [
       'div',
       mergeAttributes(HTMLAttributes, { class: 'rte-info-card' }),
-      0,
+      [
+        'div',
+        { class: 'rte-info-card__card' },
+        ['div', { class: 'rte-info-card__fold', 'aria-hidden': 'true' }],
+        ['div', { class: 'rte-info-card__medallion', 'aria-hidden': 'true' }],
+        [
+          'div',
+          { class: 'rte-info-card__main' },
+          [
+            'div',
+            { class: 'rte-info-card__header' },
+            ['div', { class: 'rte-info-card__label', 'aria-hidden': 'true' }],
+          ],
+          ['div', { class: 'rte-info-card__body' }, 0],
+        ],
+      ],
     ];
   },
 
