@@ -11,23 +11,11 @@ import { INFO_CARD_PRESETS, getInfoCardPreset, type InfoCardKind } from './infoC
  * preset's inline-SVG icon). Adds Change popover + floating formatting
  * toolbar for edit mode only.
  */
-export function InfoCardView({ node, updateAttributes, editor, getPos }: NodeViewProps) {
+export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNode }: NodeViewProps) {
   const kind = (node.attrs.kind as InfoCardKind) || 'note';
   const preset = getInfoCardPreset(kind);
   const Icon = preset.icon;
   const editable = editor?.isEditable ?? true;
-
-  const isFocusedInside = useEditorState({
-    editor,
-    selector: ({ editor: ed }) => {
-      if (!ed || !editable) return false;
-      const pos = typeof getPos === 'function' ? getPos() : null;
-      if (pos == null) return false;
-      const { from, to } = ed.state.selection;
-      const nodeSize = node.nodeSize;
-      return from >= pos && to <= pos + nodeSize;
-    },
-  });
 
   const changeButton = editable && (
     <Popover>
