@@ -1,14 +1,5 @@
-import { useMemo } from 'react';
-import { NodeViewWrapper, NodeViewContent, useEditorState, type NodeViewProps } from '@tiptap/react';
-import {
-  Settings2,
-  Check,
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  RemoveFormatting,
-} from 'lucide-react';
+import { NodeViewWrapper, NodeViewContent, type NodeViewProps } from '@tiptap/react';
+import { Settings2, Check, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { INFO_CARD_PRESETS, getInfoCardPreset, type InfoCardKind } from './infoCardPresets';
@@ -20,23 +11,11 @@ import { INFO_CARD_PRESETS, getInfoCardPreset, type InfoCardKind } from './infoC
  * preset's inline-SVG icon). Adds Change popover + floating formatting
  * toolbar for edit mode only.
  */
-export function InfoCardView({ node, updateAttributes, editor, getPos }: NodeViewProps) {
+export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNode }: NodeViewProps) {
   const kind = (node.attrs.kind as InfoCardKind) || 'note';
   const preset = getInfoCardPreset(kind);
   const Icon = preset.icon;
   const editable = editor?.isEditable ?? true;
-
-  const isFocusedInside = useEditorState({
-    editor,
-    selector: ({ editor: ed }) => {
-      if (!ed || !editable) return false;
-      const pos = typeof getPos === 'function' ? getPos() : null;
-      if (pos == null) return false;
-      const { from, to } = ed.state.selection;
-      const nodeSize = node.nodeSize;
-      return from >= pos && to <= pos + nodeSize;
-    },
-  });
 
   const changeButton = editable && (
     <Popover>
@@ -87,30 +66,17 @@ export function InfoCardView({ node, updateAttributes, editor, getPos }: NodeVie
     </Popover>
   );
 
-  const toolbar = useMemo(() => {
-    if (!editable || !isFocusedInside) return null;
-    return (
-      <div
-        className="absolute -top-11 left-0 z-30 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover shadow-lg px-1 py-1 animate-in fade-in slide-in-from-bottom-1 duration-150"
-        onMouseDown={(e) => e.preventDefault()}
-        role="toolbar"
-        aria-label="Text formatting"
-        contentEditable={false}
-      >
-        <RtBtn label="Bold" Icon={Bold} active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} />
-        <RtBtn label="Italic" Icon={Italic} active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} />
-        <RtBtn label="Underline" Icon={UnderlineIcon} active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()} />
-        <RtBtn label="Strikethrough" Icon={Strikethrough} active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} />
-        <span className="w-px h-4 bg-border mx-0.5" aria-hidden="true" />
-        <RtBtn label="Clear formatting" Icon={RemoveFormatting} onClick={() => editor.chain().focus().unsetAllMarks().run()} />
-        <span
-          className="absolute -bottom-1 left-4 w-2 h-2 rotate-45 bg-popover border-r border-b border-border/80"
-          aria-hidden="true"
-        />
-      </div>
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editable, isFocusedInside, editor, kind]);
+  const deleteButton = editable && (
+    <button
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={() => deleteNode()}
+      className="opacity-0 group-hover/ic:opacity-100 focus:opacity-100 transition-opacity h-5 w-5 rounded-md border border-border/60 bg-background/80 backdrop-blur text-muted-foreground hover:text-destructive hover:border-destructive/40 flex items-center justify-center"
+      aria-label="Delete info card"
+    >
+      <Trash2 className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+    </button>
+  );
 
   return (
     <NodeViewWrapper
@@ -222,54 +188,24 @@ export function InfoCardView({ node, updateAttributes, editor, getPos }: NodeVie
               {preset.label}
             </span>
             {changeButton}
+            {deleteButton}
           </div>
-          <div style={{ position: 'relative' }}>
-            {toolbar}
-            <NodeViewContent
-              as="div"
-              className="rte-info-card__body"
-              style={{
-                marginTop: 6,
-                fontSize: 14,
-                lineHeight: 1.55,
-                color: 'hsl(var(--foreground) / 0.9)',
-                wordBreak: 'break-word',
-                overflowWrap: 'anywhere',
-                outline: 'none',
-              }}
-            />
-          </div>
+          <NodeViewContent
+            as="div"
+            className="rte-info-card__body"
+            style={{
+              marginTop: 6,
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: 'hsl(var(--foreground) / 0.9)',
+              wordBreak: 'break-word',
+              overflowWrap: 'anywhere',
+              outline: 'none',
+            }}
+          />
         </div>
       </div>
     </NodeViewWrapper>
   );
 }
 
-function RtBtn({
-  onClick,
-  label,
-  Icon,
-  active,
-}: {
-  onClick: () => void;
-  label: string;
-  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  active?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onMouseDown={(e) => e.preventDefault()}
-      onClick={onClick}
-      aria-label={label}
-      aria-pressed={active}
-      title={label}
-      className={cn(
-        'w-7 h-7 rounded-md flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
-        active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted',
-      )}
-    >
-      <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-    </button>
-  );
-}
