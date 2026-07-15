@@ -1,4 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { ReactNodeViewRenderer } from '@tiptap/react';
+import { InfoCardView } from './InfoCardView';
 
 /**
  * InfoCard tiptap node — inserts a coloured callout (Note / Important / Tip /
@@ -57,6 +59,10 @@ export const InfoCardNode = Node.create({
       mergeAttributes(HTMLAttributes, { class: 'rte-info-card' }),
       0,
     ];
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(InfoCardView);
   },
 
   addCommands() {
