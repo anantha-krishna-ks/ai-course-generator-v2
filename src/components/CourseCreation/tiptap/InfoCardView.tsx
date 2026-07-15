@@ -209,31 +209,3 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
   );
 }
 
-function RtBtn({
-  onClick,
-  label,
-  Icon,
-  active,
-}: {
-  onClick: () => void;
-  label: string;
-  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  active?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onMouseDown={(e) => e.preventDefault()}
-      onClick={onClick}
-      aria-label={label}
-      aria-pressed={active}
-      title={label}
-      className={cn(
-        'w-7 h-7 rounded-md flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
-        active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted',
-      )}
-    >
-      <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-    </button>
-  );
-}
