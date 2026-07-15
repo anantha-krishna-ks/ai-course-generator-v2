@@ -50,7 +50,7 @@ import {
   GraduationCap,
   ShieldCheck,
   KeyRound,
-  LayoutPanelTop,
+  Megaphone,
 } from 'lucide-react';
 import { InfoCardNode, INFO_CARD_KINDS, type InfoCardKind } from './tiptap/InfoCardNode';
 import {
