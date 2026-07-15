@@ -605,6 +605,7 @@ export function DescriptionEditor({ content, onChange, onBlur, blockFont, onBloc
             </span>
             <LinkPopover editor={editor} />
             <TableMenu editor={editor} />
+            <InfoCardsMenu editor={editor} />
 
             <Divider />
 
