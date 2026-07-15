@@ -430,89 +430,103 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 )}
               </div>
 
-              {/* Layout Options — kept as-is */}
+              {/* Import Course Outline */}
               <div className="mb-4 sm:mb-5">
                 <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 sm:mb-3 block">
-                  Layout
+                  Import Course Outline
                 </label>
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:gap-4">
-                  {/* Multi-page */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLayout("multi-page")}
-                    className={cn(
-                      "relative p-2.5 sm:p-3 md:p-4 rounded-lg border-2 transition-all text-left",
-                      selectedLayout === "multi-page"
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    )}
-                  >
-                    <div className="absolute top-2.5 sm:top-3 md:top-4 left-2.5 sm:left-3 md:left-4">
-                      <div className={cn(
-                        "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
-                        selectedLayout === "multi-page"
-                          ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
-                          : "border-muted-foreground/30 bg-background hover:border-muted-foreground/50"
-                      )}>
-                        <div className={cn(
-                          "rounded-full bg-primary-foreground transition-all duration-300",
-                          selectedLayout === "multi-page"
-                            ? "w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 opacity-100 scale-100"
-                            : "w-0 h-0 opacity-0 scale-0"
-                        )} />
+                <div className="rounded-lg border-2 border-dashed border-border bg-muted/20 p-4 sm:p-5">
+                  <input
+                    ref={outlineInputRef}
+                    type="file"
+                    accept=".docx,.pdf,.txt,.md,.json,.csv,.xlsx"
+                    className="sr-only"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0] ?? null;
+                      setOutlineFile(f);
+                      if (outlineInputRef.current) outlineInputRef.current.value = "";
+                    }}
+                    aria-label="Import course outline file"
+                  />
+                  {outlineFile ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
                       </div>
-                    </div>
-                    <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
-                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden bg-muted">
-                        <img src={previewMultipage} alt="Multi-page layout preview" loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover object-top" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{outlineFile.name}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {(outlineFile.size / 1024).toFixed(1)} KB · Ready to import
+                        </p>
                       </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setOutlineFile(null)}
+                        className="shrink-0 h-8 w-8 p-0 rounded-full"
+                        aria-label="Remove imported outline"
+                      >
+                        <X className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      </Button>
                     </div>
-                    <div className="text-center">
-                      <h3 className="font-semibold text-xs sm:text-sm md:text-base text-foreground mb-0.5">Multi-page layout</h3>
-                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground hidden sm:block">A full-length course, covering multiple topics</p>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Upload className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground">
+                          Import an outline to jump-start your course
+                        </p>
+                        <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
+                          Bring your existing structure — we'll turn it into editable sections and pages.
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => outlineInputRef.current?.click()}
+                        className="shrink-0 gap-1.5 text-xs h-9 rounded-full"
+                      >
+                        <Upload className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        Import outline
+                      </Button>
                     </div>
-                  </button>
+                  )}
 
-                  {/* Single-page */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLayout("single-page")}
-                    className={cn(
-                      "relative p-2.5 sm:p-3 md:p-4 rounded-lg border-2 transition-all text-left",
-                      selectedLayout === "single-page"
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    )}
-                  >
-                    <div className="absolute top-2.5 sm:top-3 md:top-4 left-2.5 sm:left-3 md:left-4">
-                      <div className={cn(
-                        "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300",
-                        selectedLayout === "single-page"
-                          ? "border-primary bg-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
-                          : "border-muted-foreground/30 bg-background hover:border-muted-foreground/50"
-                      )}>
-                        <div className={cn(
-                          "rounded-full bg-primary-foreground transition-all duration-300",
-                          selectedLayout === "single-page"
-                            ? "w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 opacity-100 scale-100"
-                            : "w-0 h-0 opacity-0 scale-0"
-                        )} />
-                      </div>
+                  {/* Supported files */}
+                  <div className="mt-3 pt-3 border-t border-border/60">
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                      Supported files
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { ext: "DOCX", icon: FileText },
+                        { ext: "PDF", icon: FileText },
+                        { ext: "TXT", icon: FileText },
+                        { ext: "MD", icon: FileText },
+                        { ext: "JSON", icon: FileJson },
+                        { ext: "CSV", icon: FileSpreadsheet },
+                        { ext: "XLSX", icon: FileSpreadsheet },
+                      ].map(({ ext, icon: Icon }) => (
+                        <span
+                          key={ext}
+                          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                        >
+                          <Icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                          {ext}
+                        </span>
+                      ))}
                     </div>
-                    <div className="mt-4 sm:mt-5 md:mt-6 mb-2 sm:mb-3 md:mb-4 flex justify-center">
-                      <div className="w-[100px] sm:w-[140px] md:w-[160px] h-[60px] sm:h-[85px] md:h-[100px] rounded-lg border border-border/80 shadow-md overflow-hidden bg-muted">
-                        <img src={previewSinglepage} alt="Single-page layout preview" loading="eager" decoding="async" fetchPriority="high" className="w-full h-full object-cover object-top" />
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <h3 className="font-semibold text-xs sm:text-sm md:text-base text-foreground mb-0.5">Single-page layout</h3>
-                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground hidden sm:block">A short, focused course designed for quick learning</p>
-                    </div>
-                  </button>
+                    <p className="text-[10px] text-muted-foreground/70 mt-2">
+                      Max 20MB per file
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* AI Support Toggle — kept as-is */}
               <div className="mb-3 sm:mb-4">
                 <div
                   ref={aiSectionRef}
