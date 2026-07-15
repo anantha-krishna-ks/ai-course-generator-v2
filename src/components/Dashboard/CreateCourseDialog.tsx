@@ -430,6 +430,57 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 )}
               </div>
 
+
+              <div className="mb-3 sm:mb-4">
+                <div
+                  ref={aiSectionRef}
+                  className={cn(
+                    "rounded-lg transition-all",
+                    aiError && "ring-1 ring-destructive ring-offset-2 ring-offset-background"
+                  )}
+                >
+                  <AIToggleRow
+                    options={aiOptions}
+                    onChange={setAIOptions}
+                    onConfigure={() => setShowAIConfig(true)}
+                  />
+                </div>
+                {aiError && (
+                  <p role="alert" aria-live="polite" className="text-[11px] sm:text-xs text-destructive mt-1.5 font-medium">
+                    {aiError}
+                  </p>
+                )}
+              </div>
+
+
+
+              {/* SCORM Preferences */}
+              <div className="mb-4 sm:mb-5">
+                <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-background transition-all">
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
+                    <Package className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-semibold text-foreground block">
+                      SCORM Preferences
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      Configure SCORM packaging & completion rules
+                    </span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowScormConfig(true)}
+                    className="shrink-0 gap-1.5 text-xs h-8 rounded-full"
+                  >
+                    <Settings2 className="w-3.5 h-3.5" />
+                    Configure
+                  </Button>
+                </div>
+              </div>
+
               {/* Import Course Outline */}
               <div className="mb-4 sm:mb-5">
                 <div className="rounded-lg border border-border bg-muted/20 p-3 sm:p-4">
@@ -535,57 +586,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                 </div>
               </div>
 
-              <div className="mb-3 sm:mb-4">
-                <div
-                  ref={aiSectionRef}
-                  className={cn(
-                    "rounded-lg transition-all",
-                    aiError && "ring-1 ring-destructive ring-offset-2 ring-offset-background"
-                  )}
-                >
-                  <AIToggleRow
-                    options={aiOptions}
-                    onChange={setAIOptions}
-                    onConfigure={() => setShowAIConfig(true)}
-                  />
-                </div>
-                {aiError && (
-                  <p role="alert" aria-live="polite" className="text-[11px] sm:text-xs text-destructive mt-1.5 font-medium">
-                    {aiError}
-                  </p>
-                )}
-              </div>
-
-
-
-              {/* SCORM Preferences */}
-              <div className="mb-4 sm:mb-5">
-                <div className="flex items-center gap-3 px-3 py-3 rounded-lg border border-border bg-background transition-all">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-muted shrink-0">
-                    <Package className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-foreground block">
-                      SCORM Preferences
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Configure SCORM packaging & completion rules
-                    </span>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowScormConfig(true)}
-                    className="shrink-0 gap-1.5 text-xs h-8 rounded-full"
-                  >
-                    <Settings2 className="w-3.5 h-3.5" />
-                    Configure
-                  </Button>
-                </div>
-              </div>
-
               {/* Spacer */}
+
               <div className="flex-1 min-h-0" />
 
               {/* Footer: secondary action (font) on the left, primary CTA on the right */}
