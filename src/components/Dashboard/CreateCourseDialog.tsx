@@ -17,7 +17,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown } from "lucide-react";
+import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
