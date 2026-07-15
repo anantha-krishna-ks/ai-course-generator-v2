@@ -30,7 +30,11 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
           Change
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-64 p-2 bg-background">
+      <PopoverContent
+        align="start"
+        className="w-64 p-2 bg-background"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-1 pb-1.5">
           Info Card Type
         </p>
@@ -43,7 +47,22 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
                 key={p.id}
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => updateAttributes({ kind: p.id })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const pos = typeof getPos === 'function' ? getPos() : null;
+                  if (pos != null && editor) {
+                    editor
+                      .chain()
+                      .command(({ tr }) => {
+                        tr.setNodeMarkup(pos, undefined, { ...node.attrs, kind: p.id });
+                        return true;
+                      })
+                      .run();
+                  } else {
+                    updateAttributes({ kind: p.id });
+                  }
+                }}
                 className={cn(
                   'flex items-center gap-2 px-2 py-1.5 rounded-md text-left text-[12px] transition-colors',
                   active ? 'bg-primary/5 text-foreground' : 'hover:bg-muted/60 text-foreground',
