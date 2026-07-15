@@ -1,0 +1,155 @@
+/* ============================================================
+ * Rich-text embedded Info Card visuals
+ * Shared styling for tiptap NodeView (editor) and preview HTML
+ * (sanitized) so the card renders identically in both contexts.
+ * ============================================================ */
+
+.rte-info-card {
+  position: relative;
+  margin: 12px 0;
+}
+
+.rte-info-card__card {
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid var(--ic-border);
+  padding: 16px 20px 16px 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background:
+    linear-gradient(135deg, var(--ic-bg) 0%, hsl(0 0% 100% / 0.35) 100%),
+    var(--ic-bg);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 10px 28px -18px rgba(15, 23, 42, 0.18);
+  transition: box-shadow 0.2s ease;
+}
+.rte-info-card:hover .rte-info-card__card {
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 14px 32px -16px rgba(15, 23, 42, 0.22);
+}
+
+.rte-info-card__fold {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-top-right-radius: 17px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  background:
+    linear-gradient(225deg, transparent calc(50% - 0.75px), var(--ic-accent) 50%, transparent calc(50% + 0.75px)) center/100% 100% no-repeat,
+    linear-gradient(215deg, var(--ic-fold) 0%, hsl(0 0% 100% / 0.9) 100%);
+  pointer-events: none;
+}
+
+.rte-info-card__medallion {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background:
+    var(--ic-icon) center/20px 20px no-repeat,
+    linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100% / 0.85) 100%);
+  box-shadow:
+    inset 0 0 0 1px var(--ic-border),
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 4px 10px -6px var(--ic-accent);
+}
+
+.rte-info-card__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.rte-info-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rte-info-card__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ic-accent);
+  line-height: 1;
+}
+
+.rte-info-card__body {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: hsl(var(--foreground) / 0.9);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  outline: none;
+}
+.rte-info-card__body p { margin: 0; }
+.rte-info-card__body p + p { margin-top: 6px; }
+
+/* ---- Kind tokens ---- */
+.rte-info-card[data-info-card="note"] {
+  --ic-bg: hsl(215 90% 96%);
+  --ic-border: hsl(215 60% 82%);
+  --ic-accent: hsl(215 75% 42%);
+  --ic-fold: hsl(215 75% 86%);
+  --ic-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B5EBB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z'/><path d='M15 3v4a2 2 0 0 0 2 2h4'/></svg>");
+}
+.rte-info-card[data-info-card="note"] .rte-info-card__label::before { content: "Note"; }
+
+.rte-info-card[data-info-card="important"] {
+  --ic-bg: hsl(0 82% 96%);
+  --ic-border: hsl(0 65% 84%);
+  --ic-accent: hsl(0 72% 46%);
+  --ic-fold: hsl(0 75% 86%);
+  --ic-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23CE2A2A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/><path d='M12 9v4'/><path d='M12 17h.01'/></svg>");
+}
+.rte-info-card[data-info-card="important"] .rte-info-card__label::before { content: "Important"; }
+
+.rte-info-card[data-info-card="tip"] {
+  --ic-bg: hsl(38 96% 94%);
+  --ic-border: hsl(38 80% 80%);
+  --ic-accent: hsl(30 90% 42%);
+  --ic-fold: hsl(40 88% 82%);
+  --ic-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23CB6D0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5'/><path d='M9 18h6'/><path d='M10 22h4'/></svg>");
+}
+.rte-info-card[data-info-card="tip"] .rte-info-card__label::before { content: "Tip"; }
+
+.rte-info-card[data-info-card="expert-insight"] {
+  --ic-bg: hsl(262 70% 96%);
+  --ic-border: hsl(262 55% 84%);
+  --ic-accent: hsl(262 65% 50%);
+  --ic-fold: hsl(262 65% 86%);
+  --ic-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A3CD1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z'/><path d='M22 10v6'/><path d='M6 12.5V16a6 3 0 0 0 12 0v-3.5'/></svg>");
+}
+.rte-info-card[data-info-card="expert-insight"] .rte-info-card__label::before { content: "Expert Insight"; }
+
+.rte-info-card[data-info-card="best-practice"] {
+  --ic-bg: hsl(158 60% 94%);
+  --ic-border: hsl(158 45% 76%);
+  --ic-accent: hsl(158 65% 32%);
+  --ic-fold: hsl(158 50% 82%);
+  --ic-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231C8757' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/><path d='m9 12 2 2 4-4'/></svg>");
+}
+.rte-info-card[data-info-card="best-practice"] .rte-info-card__label::before { content: "Best Practice"; }
+
+.rte-info-card[data-info-card="key-takeaway"] {
+  --ic-bg: hsl(188 78% 94%);
+  --ic-border: hsl(188 55% 78%);
+  --ic-accent: hsl(192 80% 32%);
+  --ic-fold: hsl(188 60% 82%);
+  --ic-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23107593' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z'/><circle cx='16.5' cy='7.5' r='.5' fill='%23107593'/></svg>");
+}
+.rte-info-card[data-info-card="key-takeaway"] .rte-info-card__label::before { content: "Key Takeaway"; }
+
+/* Compact swatch used inside the "Change" popover in the editor */
+.rte-info-card__swatch {
+  background:
+    var(--ic-icon, none) center/12px 12px no-repeat,
+    var(--ic-bg, hsl(0 0% 96%));
+  box-shadow: inset 0 0 0 1px var(--ic-border, hsl(0 0% 88%));
+}
