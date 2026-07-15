@@ -295,6 +295,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [aiError, setAiError] = useState<string | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const aiSectionRef = useRef<HTMLDivElement>(null);
+  const outlineInputRef = useRef<HTMLInputElement>(null);
+  const [outlineFile, setOutlineFile] = useState<File | null>(null);
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
