@@ -17,7 +17,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, Layers, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X, Download } from "lucide-react";
+import { Wand2, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -215,19 +215,8 @@ function LivePreviewPanel({
 
       {/* Course specs grid */}
       <div className="relative z-10 flex-1 space-y-3">
-        {/* Primary specs — 2x2 grid */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
-            {selectedLayout === "multi-page" ? (
-              <Layers className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
-            ) : (
-              <FileText className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
-            )}
-            <p className="text-primary-foreground text-sm font-bold leading-tight">
-              {selectedLayout === "multi-page" ? "Multi" : "Single"}
-            </p>
-            <p className="text-primary-foreground/40 text-[9px] mt-0.5">Layout</p>
-          </div>
+        {/* Primary specs — single content card */}
+        <div className="grid grid-cols-1 gap-2">
           <div className="rounded-xl bg-primary-foreground/[0.08] backdrop-blur-md border border-primary-foreground/[0.06] p-3 flex flex-col items-center text-center">
             <BrainCircuit className="w-4 h-4 text-primary-foreground/70 mb-1.5" />
             <p className="text-primary-foreground text-sm font-bold leading-tight">
