@@ -432,9 +432,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
               {/* Import Course Outline */}
               <div className="mb-4 sm:mb-5">
-                <label className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 sm:mb-3 block">
-                  Import Course Outline
-                </label>
                 <div className="rounded-lg border border-border bg-muted/20 p-3 sm:p-4">
                   <input
                     ref={outlineInputRef}
