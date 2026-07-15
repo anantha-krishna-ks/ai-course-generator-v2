@@ -18,13 +18,15 @@ export const sanitizeHtml = (html: string): string => {
       'div', 'span', 'mark'
     ],
     ALLOWED_ATTR: [
-      'href', 'src', 'alt', 'title', 
+      'href', 'src', 'alt', 'title',
       'class', 'id',
       'target', 'rel',
       'width', 'height',
-      'colspan', 'rowspan'
+      'colspan', 'rowspan',
+      'aria-hidden', 'aria-label', 'role',
+      'data-info-card',
     ],
-    ALLOW_DATA_ATTR: false,
+    ALLOW_DATA_ATTR: true,
     ADD_ATTR: ['target'],
     // Ensure links open safely
     ADD_TAGS: [],
