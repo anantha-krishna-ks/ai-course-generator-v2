@@ -1353,26 +1353,33 @@ const MultipageCoursePreview = () => {
                           onClick={goToPrev}
                           disabled={!prevPage}
                           className={cn(
-                            "group flex items-center gap-2 px-2 py-1 transition-colors disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded",
-                            prevPage ? "text-foreground hover:text-primary" : "text-muted-foreground"
+                            "group flex items-center justify-center gap-2 rounded-full px-4 py-2.5 border transition-all disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            prevPage
+                              ? "border-border/80 bg-card/40 text-foreground hover:bg-card hover:border-primary/40"
+                              : "border-border/60 bg-card/30 text-muted-foreground"
                           )}
                           aria-label="Go to previous page"
                         >
-                          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" focusable="false" />
+                          <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" focusable="false" />
                           <span className="text-sm font-medium">Previous</span>
                         </button>
                         <button
                           type="button"
                           onClick={goToNext}
                           disabled={currentIndex < 0}
-                          className="group flex items-center gap-2 px-2 py-1 text-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                          className={cn(
+                            "group flex items-center justify-center gap-2 rounded-full px-4 py-2.5 border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            isLastPage
+                              ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
+                              : "border-border/80 bg-card/40 text-foreground hover:bg-card hover:border-primary/40"
+                          )}
                           aria-label={isLastPage ? "Finish course" : "Go to next page"}
                         >
                           <span className="text-sm font-medium">{isLastPage ? "Finish" : "Next"}</span>
                           {isLastPage ? (
-                            <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
                           ) : (
-                            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" focusable="false" />
+                            <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" focusable="false" />
                           )}
                         </button>
                       </div>
