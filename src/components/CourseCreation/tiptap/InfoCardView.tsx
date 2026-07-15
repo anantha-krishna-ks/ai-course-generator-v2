@@ -66,30 +66,17 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
     </Popover>
   );
 
-  const toolbar = useMemo(() => {
-    if (!editable || !isFocusedInside) return null;
-    return (
-      <div
-        className="absolute -top-11 left-0 z-30 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover shadow-lg px-1 py-1 animate-in fade-in slide-in-from-bottom-1 duration-150"
-        onMouseDown={(e) => e.preventDefault()}
-        role="toolbar"
-        aria-label="Text formatting"
-        contentEditable={false}
-      >
-        <RtBtn label="Bold" Icon={Bold} active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} />
-        <RtBtn label="Italic" Icon={Italic} active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} />
-        <RtBtn label="Underline" Icon={UnderlineIcon} active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()} />
-        <RtBtn label="Strikethrough" Icon={Strikethrough} active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} />
-        <span className="w-px h-4 bg-border mx-0.5" aria-hidden="true" />
-        <RtBtn label="Clear formatting" Icon={RemoveFormatting} onClick={() => editor.chain().focus().unsetAllMarks().run()} />
-        <span
-          className="absolute -bottom-1 left-4 w-2 h-2 rotate-45 bg-popover border-r border-b border-border/80"
-          aria-hidden="true"
-        />
-      </div>
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editable, isFocusedInside, editor, kind]);
+  const deleteButton = editable && (
+    <button
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={() => deleteNode()}
+      className="opacity-0 group-hover/ic:opacity-100 focus:opacity-100 transition-opacity h-5 w-5 rounded-md border border-border/60 bg-background/80 backdrop-blur text-muted-foreground hover:text-destructive hover:border-destructive/40 flex items-center justify-center"
+      aria-label="Delete info card"
+    >
+      <Trash2 className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+    </button>
+  );
 
   return (
     <NodeViewWrapper
