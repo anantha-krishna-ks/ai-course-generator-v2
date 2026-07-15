@@ -70,7 +70,27 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
     <button
       type="button"
       onMouseDown={(e) => e.preventDefault()}
-      onClick={() => deleteNode()}
+      onClick={() => {
+        const pos = typeof getPos === 'function' ? getPos() : null;
+        if (pos == null || !editor) return deleteNode();
+        const size = node.nodeSize;
+        let from = pos;
+        let to = pos + size;
+        const doc = editor.state.doc;
+        // Consume an adjacent empty paragraph left by tiptap's insertContent
+        // so deleting the card doesn't leave a large blank line behind.
+        const after = to <= doc.content.size ? doc.nodeAt(to) : null;
+        if (after && after.type.name === 'paragraph' && after.content.size === 0) {
+          to += after.nodeSize;
+        } else {
+          const $from = doc.resolve(pos);
+          const before = $from.nodeBefore;
+          if (before && before.type.name === 'paragraph' && before.content.size === 0) {
+            from -= before.nodeSize;
+          }
+        }
+        editor.chain().focus().deleteRange({ from, to }).run();
+      }}
       className="opacity-0 group-hover/ic:opacity-100 focus:opacity-100 transition-opacity h-5 w-5 rounded-md border border-border/60 bg-background/80 backdrop-blur text-muted-foreground hover:text-destructive hover:border-destructive/40 flex items-center justify-center"
       aria-label="Delete info card"
     >
