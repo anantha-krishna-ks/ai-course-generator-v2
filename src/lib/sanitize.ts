@@ -19,7 +19,7 @@ export const sanitizeHtml = (html: string): string => {
     ],
     ALLOWED_ATTR: [
       'href', 'src', 'alt', 'title',
-      'class', 'id',
+      'class', 'id', 'style',
       'target', 'rel',
       'width', 'height',
       'colspan', 'rowspan',
