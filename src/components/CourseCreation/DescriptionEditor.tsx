@@ -44,7 +44,15 @@ import {
   Trash2,
   Plus,
   Minus,
+  StickyNote,
+  AlertTriangle,
+  Lightbulb,
+  GraduationCap,
+  ShieldCheck,
+  KeyRound,
+  LayoutPanelTop,
 } from 'lucide-react';
+import { InfoCardNode, INFO_CARD_KINDS, type InfoCardKind } from './tiptap/InfoCardNode';
 import {
   DropdownMenu,
   DropdownMenuContent,
