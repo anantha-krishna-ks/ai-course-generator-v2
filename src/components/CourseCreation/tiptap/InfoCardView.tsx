@@ -188,23 +188,21 @@ export function InfoCardView({ node, updateAttributes, editor, getPos, deleteNod
               {preset.label}
             </span>
             {changeButton}
+            {deleteButton}
           </div>
-          <div style={{ position: 'relative' }}>
-            {toolbar}
-            <NodeViewContent
-              as="div"
-              className="rte-info-card__body"
-              style={{
-                marginTop: 6,
-                fontSize: 14,
-                lineHeight: 1.55,
-                color: 'hsl(var(--foreground) / 0.9)',
-                wordBreak: 'break-word',
-                overflowWrap: 'anywhere',
-                outline: 'none',
-              }}
-            />
-          </div>
+          <NodeViewContent
+            as="div"
+            className="rte-info-card__body"
+            style={{
+              marginTop: 6,
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: 'hsl(var(--foreground) / 0.9)',
+              wordBreak: 'break-word',
+              overflowWrap: 'anywhere',
+              outline: 'none',
+            }}
+          />
         </div>
       </div>
     </NodeViewWrapper>
