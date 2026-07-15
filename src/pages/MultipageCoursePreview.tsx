@@ -1352,7 +1352,10 @@ const MultipageCoursePreview = () => {
                           type="button"
                           onClick={goToPrev}
                           disabled={!prevPage}
-                          className="group flex items-center gap-2 px-2 py-1 transition-colors disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                          className={cn(
+                            "group flex items-center gap-2 px-2 py-1 transition-colors disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded",
+                            prevPage ? "text-foreground hover:text-primary" : "text-muted-foreground"
+                          )}
                           aria-label="Go to previous page"
                         >
                           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" focusable="false" />
