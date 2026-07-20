@@ -262,12 +262,30 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
       </div>
 
-      {/* Main card */}
-      <div className="relative rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
-        {/* Thin premium grey accent strip */}
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent" />
+      {/* Stacked card deck */}
+      <div className="relative">
+        {/* Depth layers */}
+        {total > 2 && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 rounded-2xl bg-card border border-border shadow-sm"
+            style={{ transform: "translate(12px, 12px) rotate(1.5deg)", opacity: 0.5, zIndex: 0 }}
+          />
+        )}
+        {total > 1 && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 rounded-2xl bg-card border border-border shadow-sm"
+            style={{ transform: "translate(6px, 6px) rotate(0.75deg)", opacity: 0.75, zIndex: 1 }}
+          />
+        )}
 
-        <div className="p-6 sm:p-8">
+        {/* Main card */}
+        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
+          {/* Thin premium grey accent strip */}
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent" />
+
+          <div className="p-6 sm:p-8">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={current}
@@ -461,6 +479,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             )}
           </div>
         </div>
+      </div>
       </div>
 
       {settings?.requireCorrect && (
