@@ -235,301 +235,214 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   const selected = selectedAnswers[current] || [];
   const currentAnswered = isFIB ? (selected[0] || "").trim().length > 0 : selected.length > 0;
 
+  const difficulty = (q as any).difficulty || (q as any).level || "";
+  const category = (q as any).category || (q as any).topic || "Knowledge";
+  const typeLabel =
+    qType === "MCQ" ? "Multiple choice"
+    : qType === "SCQ" ? "Single choice"
+    : qType === "FIB" ? "Fill in the blank"
+    : qType === "TF" ? "True / False"
+    : qType;
+
   return (
-    <div className="relative">
-      {/* Ambient gradient glow */}
-      <div aria-hidden="true" className="pointer-events-none absolute -inset-4 -z-10 opacity-70">
-        <div className="absolute -top-10 -left-10 w-64 h-64 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -bottom-16 -right-10 w-72 h-72 rounded-full bg-fuchsia-500/10 blur-3xl" />
+    <div className="relative space-y-5">
+      {/* Top progress row */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-medium text-muted-foreground tracking-wide">Progress</span>
+          <span className="font-semibold text-foreground tabular-nums">{progressPct}%</span>
+        </div>
+        <div className="relative h-1.5 w-full rounded-full bg-muted overflow-hidden">
+          <motion.div
+            initial={false}
+            animate={{ width: `${progressPct}%` }}
+            transition={{ type: "spring", stiffness: 160, damping: 24 }}
+            className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-fuchsia-500"
+          />
+        </div>
       </div>
 
-      {/* Gradient border wrapper */}
-      <div className="rounded-[28px] p-[1.5px] bg-gradient-to-br from-primary/50 via-primary/10 to-fuchsia-500/30 shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.35)]">
-        <div className="relative rounded-[26px] bg-gradient-to-br from-background/95 via-background/90 to-muted/40 backdrop-blur-xl p-5 sm:p-7 space-y-6 overflow-hidden">
-          {/* Subtle grid pattern */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage:
-                "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
-            }}
-          />
+      {/* Main card */}
+      <div className="relative rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
+        {/* Thin accent bar */}
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary via-primary to-fuchsia-500" />
 
-          {/* Header: eyebrow + progress ring */}
-          <div className="relative flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 rounded-xl bg-primary/30 blur-md" aria-hidden="true" />
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
-                  <Sparkles className="w-5 h-5 text-primary-foreground" aria-hidden="true" />
-                </div>
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                  Formative Quiz
-                </p>
-                <p className="text-sm font-semibold text-foreground truncate">
-                  Question <span className="text-primary">{current + 1}</span>
-                  <span className="text-muted-foreground font-normal"> of {total}</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Circular progress badge */}
-            <ProgressRing pct={progressPct} />
-          </div>
-
-          {/* Segmented progress bar */}
-          <div className="relative">
-            <div className="flex items-center gap-1.5">
-              {questions.map((_, i) => {
-                const isDone = i < current || (i === current && currentAnsweredForIndex(questions[i], selectedAnswers[i]));
-                const isCurrent = i === current;
-                return (
-                  <div key={i} className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                    <motion.div
-                      initial={false}
-                      animate={{ width: isDone ? "100%" : isCurrent ? "40%" : "0%" }}
-                      transition={{ type: "spring", stiffness: 160, damping: 22 }}
-                      className={cn(
-                        "h-full rounded-full",
-                        isDone
-                          ? "bg-gradient-to-r from-primary via-primary to-fuchsia-500"
-                          : "bg-primary/50"
-                      )}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Number nav pills */}
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {questions.map((qq, i) => {
-                const sel = selectedAnswers[i] || [];
-                const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
-                const isCurrent = i === current;
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => goTo(i)}
-                    aria-label={`Go to question ${i + 1}`}
-                    aria-current={isCurrent ? "step" : undefined}
-                    className={cn(
-                      "relative w-8 h-8 rounded-full text-xs font-semibold border transition-all",
-                      isCurrent
-                        ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-transparent shadow-lg shadow-primary/30 scale-110"
-                        : done
-                        ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/15"
-                        : "bg-background/70 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
-                    )}
-                  >
-                    {done && !isCurrent ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 mx-auto" aria-hidden="true" />
-                    ) : (
-                      i + 1
-                    )}
-                    {isCurrent && (
-                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Card slide/fade transition */}
-          <div className="relative min-h-[300px]">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={current}
-                custom={direction}
-                initial={{ opacity: 0, x: direction * 40, scale: 0.98 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: -direction * 40, scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 220, damping: 26 }}
-                className="relative rounded-2xl border border-border/60 bg-gradient-to-br from-card via-card to-muted/30 p-6 sm:p-7 shadow-[0_10px_40px_-15px_hsl(var(--foreground)/0.15)] overflow-hidden"
-              >
-                {/* Corner decoration */}
-                <div aria-hidden="true" className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-[100px] pointer-events-none" />
-
-                <div className="relative flex items-start gap-4 mb-5">
-                  <div className="relative flex-shrink-0">
-                    <div className="absolute inset-0 rounded-2xl bg-primary/20 blur-lg" aria-hidden="true" />
-                    <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-fuchsia-500/80 flex items-center justify-center text-primary-foreground font-bold text-sm shadow-lg">
-                      {String(current + 1).padStart(2, "0")}
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    {q.type && (
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-[10px] font-semibold tracking-wider uppercase text-primary border border-primary/20">
-                          <span className="w-1 h-1 rounded-full bg-primary animate-pulse" aria-hidden="true" />
-                          {q.type}
-                        </span>
-                        {isMCQ && (
-                          <span className="text-[10px] font-medium text-muted-foreground">Select all that apply</span>
-                        )}
-                      </div>
-                    )}
-                    <p className="font-semibold text-foreground text-lg sm:text-xl leading-snug tracking-tight">
-                      {q.question || q.text}
-                    </p>
-                  </div>
+        <div className="p-6 sm:p-8">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={current}
+              custom={direction}
+              initial={{ opacity: 0, x: direction * 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -direction * 24 }}
+              transition={{ type: "spring", stiffness: 220, damping: 28 }}
+            >
+              {/* Header row */}
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">
+                    Question {current + 1} <span className="text-muted-foreground/60">/ {total}</span>
+                  </p>
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
+                    {q.question || q.text}
+                  </h3>
                 </div>
 
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  {difficulty && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-background border border-border/70 text-foreground/80">
+                      {difficulty}
+                    </span>
+                  )}
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-muted/60 border border-border/70 text-foreground/80">
+                    {typeLabel}
+                  </span>
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 border border-primary/25 text-primary">
+                    {category}
+                  </span>
+                </div>
+              </div>
+
+              {isMCQ && (
+                <p className="mt-2 text-xs text-muted-foreground">Select all that apply</p>
+              )}
+
+              {/* Options */}
+              <div className="mt-6">
                 {isFIB ? (
-                  <div className="relative">
-                    <Input
-                      value={selected[0] || ""}
-                      onChange={(e) => handleFib(e.target.value)}
-                      placeholder="Type your answer..."
-                      aria-label={`Answer for question ${current + 1}`}
-                      className="h-12 rounded-xl bg-background/80 border-border/60 pl-4 pr-4 text-base focus-visible:ring-2 focus-visible:ring-primary/30"
-                    />
-                  </div>
+                  <Input
+                    value={selected[0] || ""}
+                    onChange={(e) => handleFib(e.target.value)}
+                    placeholder="Type your answer..."
+                    aria-label={`Answer for question ${current + 1}`}
+                    className="h-12 rounded-xl bg-background border-border/70 text-base focus-visible:ring-2 focus-visible:ring-primary/30"
+                  />
                 ) : (
                   <div className="space-y-2.5">
                     {options.map((opt, ai) => {
                       const isSelected = selected.includes(opt);
-                      const letter = String.fromCharCode(65 + ai);
                       return (
                         <motion.button
                           key={ai}
                           type="button"
                           onClick={() => handleSelect(opt, isMCQ)}
-                          whileHover={{ x: 2 }}
                           whileTap={{ scale: 0.995 }}
                           className={cn(
-                            "group/opt relative w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left text-sm transition-all border overflow-hidden",
+                            "group/opt relative w-full flex items-center gap-4 px-4 sm:px-5 py-4 rounded-xl text-left text-sm transition-all border",
                             isSelected
-                              ? "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/50 shadow-[0_4px_20px_-8px_hsl(var(--primary)/0.4)]"
-                              : "bg-background/70 border-border/60 hover:border-primary/40 hover:bg-primary/[0.03]"
+                              ? "border-primary bg-primary/[0.06] shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.55)]"
+                              : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/40"
                           )}
                         >
-                          {/* Letter badge */}
-                          <div
+                          {/* Radio / checkbox indicator */}
+                          <span
                             className={cn(
-                              "relative flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-semibold text-sm border transition-all",
-                              isSelected
-                                ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-transparent shadow-md"
-                                : "bg-muted/50 text-muted-foreground border-border/60 group-hover/opt:border-primary/30 group-hover/opt:text-foreground"
-                            )}
-                          >
-                            {letter}
-                          </div>
-
-                          <span className={cn(
-                            "flex-1 leading-relaxed",
-                            isSelected ? "font-semibold text-foreground" : "text-foreground/85"
-                          )}>
-                            {opt}
-                          </span>
-
-                          {/* Selection indicator */}
-                          <div
-                            className={cn(
-                              "flex-shrink-0 flex items-center justify-center transition-all",
+                              "relative flex-shrink-0 flex items-center justify-center transition-all",
                               isMCQ ? "w-5 h-5 rounded-md border-2" : "w-5 h-5 rounded-full border-2",
                               isSelected
                                 ? "border-primary bg-primary"
-                                : "border-muted-foreground/30 group-hover/opt:border-primary/50"
+                                : "border-muted-foreground/35 group-hover/opt:border-primary/60"
                             )}
+                            aria-hidden="true"
                           >
                             {isSelected && (
                               isMCQ ? (
-                                <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                                <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
                                   <path d="M2.5 6l2.5 2.5 4.5-5" />
                                 </svg>
                               ) : (
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                                <span className="w-2 h-2 rounded-full bg-primary-foreground" />
                               )
                             )}
-                          </div>
+                          </span>
 
-                          {/* Shine on selected */}
-                          {isSelected && (
-                            <motion.div
-                              aria-hidden="true"
-                              initial={{ x: "-120%" }}
-                              animate={{ x: "220%" }}
-                              transition={{ duration: 1.1, ease: "easeOut" }}
-                              className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                            />
-                          )}
+                          <span className={cn(
+                            "flex-1 leading-relaxed",
+                            isSelected ? "font-medium text-foreground" : "text-foreground/85"
+                          )}>
+                            {opt}
+                          </span>
                         </motion.button>
                       );
                     })}
                   </div>
                 )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Footer actions */}
-          <div className="relative flex items-center justify-between gap-3 pt-1">
-            <Button
-              variant="outline"
-              onClick={() => goTo(current - 1)}
-              disabled={current === 0}
-              className="gap-1.5 rounded-full bg-background/70 backdrop-blur border-border/60 hover:bg-background hover:border-primary/40"
-            >
-              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-              Previous
-            </Button>
-
-            <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                {Array.from({ length: total }).map((_, i) => {
-                  const sel = selectedAnswers[i] || [];
-                  const done = (questions[i].type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
-                  return (
-                    <span
-                      key={i}
-                      className={cn(
-                        "w-1.5 h-1.5 rounded-full transition-colors",
-                        done ? "bg-primary" : "bg-muted-foreground/30"
-                      )}
-                      aria-hidden="true"
-                    />
-                  );
-                })}
               </div>
-              <span className="font-medium">{answeredCount}/{total} answered</span>
-            </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-            {current < total - 1 ? (
-              <Button
-                onClick={() => goTo(current + 1)}
-                disabled={!currentAnswered}
-                className="gap-1.5 rounded-full bg-gradient-to-r from-primary to-primary/85 hover:from-primary hover:to-primary shadow-lg shadow-primary/25"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" aria-hidden="true" />
-              </Button>
-            ) : (
-              <Button
-                onClick={() => setValidated(true)}
-                disabled={!allAnswered}
-                className="gap-1.5 rounded-full bg-gradient-to-r from-primary via-primary to-fuchsia-500 hover:opacity-95 shadow-lg shadow-primary/30"
-              >
-                Submit quiz
-                <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
-              </Button>
-            )}
+        {/* Divider + Footer */}
+        <div className="border-t border-border/70 bg-muted/25 px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => goTo(current - 1)}
+            disabled={current === 0}
+            className="gap-1.5 rounded-full text-foreground/80 hover:text-foreground disabled:opacity-40"
+          >
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+            Previous
+          </Button>
+
+          {/* Question dot navigation */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar max-w-[55%]">
+            {questions.map((qq, i) => {
+              const sel = selectedAnswers[i] || [];
+              const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+              const isCurrent = i === current;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to question ${i + 1}`}
+                  aria-current={isCurrent ? "step" : undefined}
+                  className={cn(
+                    "relative h-7 min-w-[28px] px-2 rounded-full text-[11px] font-semibold border transition-all",
+                    isCurrent
+                      ? "bg-foreground text-background border-transparent shadow-sm"
+                      : done
+                      ? "bg-primary/10 text-primary border-primary/25 hover:bg-primary/15"
+                      : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                  )}
+                >
+                  {i + 1}
+                </button>
+              );
+            })}
           </div>
 
-          {settings?.requireCorrect && (
-            <div className="relative flex items-start gap-2 px-3 py-2 rounded-lg bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300 backdrop-blur">
-              <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
-              <span>You must answer correctly to continue.</span>
-            </div>
+          {current < total - 1 ? (
+            <Button
+              size="sm"
+              onClick={() => goTo(current + 1)}
+              disabled={!currentAnswered}
+              className="gap-1.5 rounded-full bg-foreground text-background hover:bg-foreground/90"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => setValidated(true)}
+              disabled={!allAnswered}
+              className="gap-1.5 rounded-full bg-gradient-to-r from-primary to-fuchsia-500 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/25"
+            >
+              Submit
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+            </Button>
           )}
         </div>
       </div>
+
+      {settings?.requireCorrect && (
+        <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300">
+          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <span>You must answer correctly to continue.</span>
+        </div>
+      )}
     </div>
   );
 };
