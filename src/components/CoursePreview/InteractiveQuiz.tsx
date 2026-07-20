@@ -300,9 +300,24 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         )}
 
         {/* Main card */}
-        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_20px_60px_-28px_hsl(var(--foreground)/0.28)] overflow-hidden">
+        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_20px_60px_-28px_hsl(var(--foreground)/0.28)]">
           {/* Thin premium grey accent strip */}
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent z-20" />
+
+          {/* Clip boundary for animated question content */}
+          <div aria-hidden="true" className="absolute inset-0 rounded-2xl overflow-hidden z-0" />
+
+          {/* Premium diagonal ribbon */}
+          <div className="absolute -right-11 top-7 rotate-45 z-30 pointer-events-none" aria-hidden="true">
+            <div className="relative flex items-center justify-center gap-1.5 pl-12 pr-10 py-1.5 shadow-[0_6px_18px_-4px_hsl(var(--foreground)/0.18)]" style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%)" }}>
+              {/* Folded top tail */}
+              <div className="absolute right-full top-0 h-0 w-0" style={{ borderTop: "10px solid hsl(var(--primary))", borderLeft: "10px solid transparent" }} />
+              {/* Folded bottom tail */}
+              <div className="absolute left-full bottom-0 h-0 w-0" style={{ borderBottom: "10px solid hsl(var(--primary-glow))", borderRight: "10px solid transparent" }} />
+              <Sparkles className="w-3 h-3 text-primary-foreground" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-foreground">Quiz</span>
+            </div>
+          </div>
 
           <div className="relative p-6 sm:p-8">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
