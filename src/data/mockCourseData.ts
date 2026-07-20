@@ -61,6 +61,7 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
         title: "Assessment & Review",
         children: [
           { id: "page-4-1", type: "page", title: "Summary" },
+          { id: "q-4-2", type: "question", title: "Knowledge Check" },
           { id: "q-4-1", type: "question", title: "Final Assessment Quiz" },
         ],
       },
@@ -326,7 +327,7 @@ const hotspot = (id: string, imageUrl: string, hotspots: { x: number; y: number;
     settings: { color: "hsl(211, 100%, 50%)", shape: "rect", opacity: 0.35 },
   }),
 });
-const quiz = (id: string, variant: string, questions: { q: string; type?: "SCQ" | "MCQ" | "TrueFalse"; options: string[]; answer: string; explanation?: string }[]): Block => ({
+const quiz = (id: string, variant: string, questions: { q: string; type?: "SCQ" | "MCQ" | "TrueFalse"; options: string[]; answer: string; explanation?: string }[], overrides?: Partial<{ quizType: string; passCriteria: number; retries: string }>): Block => ({
   id, type: "quiz", variant,
   content: J({
     questions: questions.map((qq, i) => ({
@@ -337,11 +338,12 @@ const quiz = (id: string, variant: string, questions: { q: string; type?: "SCQ" 
       answer: qq.answer,
       explanation: qq.explanation || "",
     })),
-    passCriteria: Math.max(1, Math.ceil(questions.length * 0.6)),
+    passCriteria: overrides?.passCriteria ?? Math.max(1, Math.ceil(questions.length * 0.6)),
     failNavigationPage: "",
     requireCorrect: false,
-    retries: "unlimited",
+    retries: overrides?.retries ?? "unlimited",
     revealAnswers: "reveal_all",
+    quizType: overrides?.quizType,
   }),
 });
 
@@ -471,6 +473,21 @@ function enrichCourseOne(base: MultiPageCourseCreatorRestoreState): void {
     ]),
     divLine("bk-411-dl", "ornament"),
     cont("bk-411-cont", "Take the final assessment"),
+  ];
+
+  // q-4-2: Formative Knowledge Check
+  p["q-4-2"] = [
+    ...(p["q-4-2"] || []),
+    quiz(
+      "bk-q42-formative",
+      "knowledge-check-formative",
+      [
+        { q: "Which scope includes emissions from a diesel truck the company owns?", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 1", explanation: "Owned combustion sources are Scope 1." },
+        { q: "Purchased grid electricity falls under…", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 2" },
+        { q: "Business travel booked with a third-party airline is…", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 3" },
+      ],
+      { quizType: "formative", retries: "unlimited" }
+    ),
   ];
 
   // q-4-1: Final Assessment Quiz
