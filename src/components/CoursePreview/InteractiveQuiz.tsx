@@ -257,7 +257,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             initial={false}
             animate={{ width: `${progressPct}%` }}
             transition={{ type: "spring", stiffness: 160, damping: 24 }}
-            className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-fuchsia-500"
+            className="h-full rounded-full bg-primary"
           />
         </div>
       </div>
@@ -265,7 +265,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       {/* Main card */}
       <div className="relative rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
         {/* Thin accent bar */}
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary via-primary to-fuchsia-500" />
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-primary" />
 
         <div className="p-6 sm:p-8">
           <AnimatePresence mode="wait" custom={direction}>
@@ -279,13 +279,21 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             >
               {/* Header row */}
               <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">
-                    Question {current + 1} <span className="text-muted-foreground/60">/ {total}</span>
-                  </p>
-                  <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
-                    {q.question || q.text}
-                  </h3>
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <span
+                    aria-hidden="true"
+                    className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tabular-nums"
+                  >
+                    {String(current + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0 pt-0.5">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">
+                      Question {current + 1} <span className="text-muted-foreground/60">of {total}</span>
+                    </p>
+                    <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
+                      {q.question || q.text}
+                    </h3>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -304,19 +312,34 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               </div>
 
               {isMCQ && (
-                <p className="mt-2 text-xs text-muted-foreground">Select all that apply</p>
+                <p className="mt-2 ml-[52px] text-xs text-muted-foreground">Select all that apply</p>
               )}
 
               {/* Options */}
               <div className="mt-6">
                 {isFIB ? (
-                  <Input
-                    value={selected[0] || ""}
-                    onChange={(e) => handleFib(e.target.value)}
-                    placeholder="Type your answer..."
-                    aria-label={`Answer for question ${current + 1}`}
-                    className="h-12 rounded-xl bg-background border-border/70 text-base focus-visible:ring-2 focus-visible:ring-primary/30"
-                  />
+                  <div className="rounded-xl border border-border/70 bg-muted/30 p-4 sm:p-5">
+                    <label
+                      htmlFor={`fib-${current}`}
+                      className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2"
+                    >
+                      Your answer
+                    </label>
+                    <div className="relative flex items-center">
+                      <Input
+                        id={`fib-${current}`}
+                        value={selected[0] || ""}
+                        onChange={(e) => handleFib(e.target.value)}
+                        placeholder="Type your answer here..."
+                        aria-label={`Answer for question ${current + 1}`}
+                        className="h-12 rounded-lg bg-background border-2 border-border text-base pr-16 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                      />
+                      <span className="pointer-events-none absolute right-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                        {(selected[0] || "").length} chars
+                      </span>
+                    </div>
+                    <p className="mt-2 text-xs text-muted-foreground">Press Tab or Next when you're done.</p>
+                  </div>
                 ) : (
                   <div className="space-y-2.5">
                     {options.map((opt, ai) => {
@@ -430,7 +453,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 size="sm"
                 onClick={() => setValidated(true)}
                 disabled={!allAnswered}
-                className="gap-1.5 rounded-full bg-gradient-to-r from-primary to-fuchsia-500 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/25"
+                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20"
               >
                 Submit
                 <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
