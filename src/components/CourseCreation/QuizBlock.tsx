@@ -291,7 +291,15 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         });
       }
 
-      setQuestions((prev) => [...prev, ...generated]);
+      if (config.quizType) {
+        setQuizTypeState(config.quizType);
+      }
+      setQuestions((prev) => {
+        const next = [...prev, ...generated];
+        // persist quizType alongside the new questions
+        persist(next, Math.min(Math.max(1, passCriteria), Math.max(1, next.length)), failNavigationPage, requireCorrect, retries, revealAnswers, config.quizType || quizType);
+        return next;
+      });
       setIsGenerating(false);
       setShowGenerateDialog(false);
     }, 1500);
