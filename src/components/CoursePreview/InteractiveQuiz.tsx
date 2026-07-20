@@ -390,13 +390,18 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               {/* Options */}
               <div className="mt-6">
                 {isFIB ? (
-                  <div className="rounded-xl border border-border/70 bg-muted/30 p-4 sm:p-5">
-                    <label
-                      htmlFor={`fib-${current}`}
-                      className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2"
-                    >
-                      Your answer
-                    </label>
+                  <div className="rounded-xl border border-border/80 bg-muted/30 p-4 sm:p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-primary/10 text-primary">
+                        <PencilLine className="w-3.5 h-3.5" aria-hidden="true" />
+                      </span>
+                      <label
+                        htmlFor={`fib-${current}`}
+                        className="text-xs font-semibold text-foreground"
+                      >
+                        Your answer
+                      </label>
+                    </div>
                     <div className="relative flex items-center">
                       <Input
                         id={`fib-${current}`}
@@ -404,13 +409,13 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                         onChange={(e) => handleFib(e.target.value)}
                         placeholder="Type your answer here..."
                         aria-label={`Answer for question ${current + 1}`}
-                        className="h-12 rounded-lg bg-background border-2 border-border text-base pr-16 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                        className="h-12 rounded-xl bg-background border border-border pl-11 text-base shadow-sm focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                       />
-                      <span className="pointer-events-none absolute right-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                        {(selected[0] || "").length} chars
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70">
+                        <PencilLine className="w-4 h-4" aria-hidden="true" />
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">Press Tab or Next when you're done.</p>
+                    <p className="mt-2.5 text-xs text-muted-foreground">Press Tab or click Next when you're done.</p>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
