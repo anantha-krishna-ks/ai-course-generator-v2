@@ -257,7 +257,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             initial={false}
             animate={{ width: `${progressPct}%` }}
             transition={{ type: "spring", stiffness: 160, damping: 24 }}
-            className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-fuchsia-500"
+            className="h-full rounded-full bg-primary"
           />
         </div>
       </div>
@@ -265,7 +265,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       {/* Main card */}
       <div className="relative rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
         {/* Thin accent bar */}
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary via-primary to-fuchsia-500" />
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-primary" />
 
         <div className="p-6 sm:p-8">
           <AnimatePresence mode="wait" custom={direction}>
