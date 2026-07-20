@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { motion, AnimatePresence } from "framer-motion";
 
 type FeedbackMode = "any" | "correct_incorrect" | "by_choice";
 type RevealMode = "reveal_all" | "incorrect_with_feedback" | "hide_all";
@@ -27,6 +28,7 @@ interface QuizSettings {
   requireCorrect?: boolean;
   retries?: string | number; // "unlimited" | "none" | "0".."5"
   revealAnswers?: RevealMode;
+  quizType?: string; // "formative" | "summative"
 }
 
 interface InteractiveQuizProps {
@@ -51,7 +53,418 @@ const isQuestionCorrect = (q: QuizQuestion, selected: string[]): boolean => {
   return sel.length === cor.length && sel.every((v, i) => v === cor[i]);
 };
 
-export const InteractiveQuiz = ({ questions, settings }: InteractiveQuizProps) => {
+export const InteractiveQuiz = ({ questions, settings, isCompactView }: InteractiveQuizProps) => {
+  if ((settings?.quizType || "").toLowerCase() === "formative") {
+    return <FormativeCardQuiz questions={questions} settings={settings} />;
+  }
+  return <ClassicQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
+};
+
+/* ---------------------------------------------------------------------- */
+/* Formative card-based quiz — one question at a time, modern progress    */
+/* ---------------------------------------------------------------------- */
+
+const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[]; settings?: QuizSettings }) => {
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string[]>>({});
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [validated, setValidated] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+
+  const total = questions.length;
+  const passCriteria = Math.max(1, Math.min(settings?.passCriteria ?? total, total));
+  const revealMode: RevealMode = (settings?.revealAnswers as RevealMode) || "reveal_all";
+  const retriesSetting = settings?.retries ?? "unlimited";
+  const maxRetries: number | "unlimited" = useMemo(() => {
+    if (retriesSetting === "unlimited") return "unlimited";
+    if (retriesSetting === "none") return 0;
+    const n = Number(retriesSetting);
+    return Number.isFinite(n) ? n : "unlimited";
+  }, [retriesSetting]);
+
+  const answeredCount = questions.reduce((acc, q, i) => {
+    const sel = selectedAnswers[i] || [];
+    const done = (q.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+    return acc + (done ? 1 : 0);
+  }, 0);
+  const progressPct = total === 0 ? 0 : Math.round(((validated ? total : answeredCount) / total) * 100);
+  const allAnswered = answeredCount === total;
+
+  const correctCount = questions.filter((q, i) => isQuestionCorrect(q, selectedAnswers[i] || [])).length;
+  const passed = correctCount >= passCriteria;
+  const canRetry = maxRetries === "unlimited" || attempts < (maxRetries as number);
+
+  const handleSelect = (option: string, isMCQ: boolean) => {
+    if (validated) return;
+    setSelectedAnswers((prev) => {
+      const cur = prev[current] || [];
+      if (isMCQ) {
+        return {
+          ...prev,
+          [current]: cur.includes(option) ? cur.filter((o) => o !== option) : [...cur, option],
+        };
+      }
+      return { ...prev, [current]: [option] };
+    });
+  };
+
+  const handleFib = (value: string) => {
+    if (validated) return;
+    setSelectedAnswers((prev) => ({ ...prev, [current]: [value] }));
+  };
+
+  const goTo = (i: number) => {
+    if (i < 0 || i >= total || i === current) return;
+    setDirection(i > current ? 1 : -1);
+    setCurrent(i);
+  };
+
+  const handleRetry = () => {
+    setSelectedAnswers({});
+    setValidated(false);
+    setCurrent(0);
+    setDirection(1);
+    setAttempts((a) => a + 1);
+  };
+
+  if (total === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
+        No questions have been added yet.
+      </div>
+    );
+  }
+
+  // Results screen
+  if (validated) {
+    return (
+      <div className="space-y-5">
+        <ResultsHeader
+          correct={correctCount}
+          total={total}
+          passed={passed}
+          passCriteria={passCriteria}
+        />
+
+        {/* Review list */}
+        <div className="space-y-3">
+          {questions.map((q, qi) => {
+            const sel = selectedAnswers[qi] || [];
+            const correct = isQuestionCorrect(q, sel);
+            const options = getOptions(q);
+            const correctAnswers = getAnswers(q);
+            return (
+              <div
+                key={qi}
+                className={cn(
+                  "rounded-xl border p-4",
+                  correct
+                    ? "border-green-500/30 bg-green-50/60 dark:bg-green-950/20"
+                    : "border-red-400/30 bg-red-50/60 dark:bg-red-950/20"
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    className={cn(
+                      "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold",
+                      correct ? "bg-green-600 text-white" : "bg-red-500 text-white"
+                    )}
+                  >
+                    {qi + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground leading-relaxed">
+                      {q.question || q.text}
+                    </p>
+                    {revealMode !== "hide_all" && (
+                      <div className="mt-2 text-xs">
+                        <span className="text-muted-foreground">Your answer: </span>
+                        <span className={cn("font-medium", correct ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400")}>
+                          {(sel.length ? sel.join(", ") : "—")}
+                        </span>
+                        {!correct && revealMode === "reveal_all" && (
+                          <>
+                            <span className="text-muted-foreground"> · Correct: </span>
+                            <span className="font-medium text-green-700 dark:text-green-400">{correctAnswers.join(", ")}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                    {q.explanation && revealMode !== "hide_all" && (
+                      <p className="mt-2 text-xs text-muted-foreground leading-relaxed">{q.explanation}</p>
+                    )}
+                  </div>
+                  {correct ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" aria-hidden="true" />
+                  ) : (
+                    <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" aria-hidden="true" />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+          {canRetry ? (
+            <Button onClick={handleRetry} className="gap-1.5 rounded-full">
+              <RotateCcw className="w-4 h-4" aria-hidden="true" />
+              Retake quiz
+            </Button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">
+              <Lock className="w-3.5 h-3.5" aria-hidden="true" />
+              No retries left
+            </span>
+          )}
+          {maxRetries !== "unlimited" && (
+            <span className="text-xs text-muted-foreground">
+              {Math.max(0, (maxRetries as number) - attempts)} retries left
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const q = questions[current];
+  const qType = (q.type || "SCQ").toUpperCase();
+  const isFIB = qType === "FIB";
+  const isMCQ = qType === "MCQ";
+  const options = getOptions(q);
+  const selected = selectedAnswers[current] || [];
+  const currentAnswered = isFIB ? (selected[0] || "").trim().length > 0 : selected.length > 0;
+
+  return (
+    <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-5 sm:p-6 space-y-5 shadow-sm">
+      {/* Progress bar */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-xs">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+            <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+            Question {current + 1} of {total}
+          </span>
+          <span className="text-muted-foreground font-medium">{progressPct}% complete</span>
+        </div>
+        <div className="h-2 rounded-full bg-muted overflow-hidden">
+          <motion.div
+            initial={false}
+            animate={{ width: `${progressPct}%` }}
+            transition={{ type: "spring", stiffness: 140, damping: 20 }}
+            className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-primary/70"
+          />
+        </div>
+
+        {/* Number nav pills */}
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {questions.map((qq, i) => {
+            const sel = selectedAnswers[i] || [];
+            const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+            const isCurrent = i === current;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Go to question ${i + 1}`}
+                aria-current={isCurrent ? "step" : undefined}
+                className={cn(
+                  "w-8 h-8 rounded-full text-xs font-semibold border transition-all",
+                  isCurrent
+                    ? "bg-primary text-primary-foreground border-primary shadow-md scale-110"
+                    : done
+                    ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/15"
+                    : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                )}
+              >
+                {i + 1}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Card slide/fade transition */}
+      <div className="relative min-h-[280px]">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={current}
+            custom={direction}
+            initial={{ opacity: 0, x: direction * 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -direction * 40 }}
+            transition={{ type: "spring", stiffness: 220, damping: 26 }}
+            className="rounded-xl border border-border/60 bg-background p-5 sm:p-6 shadow-sm"
+          >
+            <div className="flex items-start gap-3 mb-4">
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                {current + 1}
+              </span>
+              <div className="flex-1 min-w-0">
+                {q.type && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-[10px] font-semibold tracking-wide uppercase text-primary mb-2">
+                    {q.type}
+                  </span>
+                )}
+                <p className="font-medium text-foreground text-base sm:text-lg leading-relaxed">
+                  {q.question || q.text}
+                </p>
+              </div>
+            </div>
+
+            {isFIB ? (
+              <Input
+                value={selected[0] || ""}
+                onChange={(e) => handleFib(e.target.value)}
+                placeholder="Type your answer..."
+                aria-label={`Answer for question ${current + 1}`}
+                className="h-11"
+              />
+            ) : (
+              <div className="space-y-2">
+                {options.map((opt, ai) => {
+                  const isSelected = selected.includes(opt);
+                  return (
+                    <button
+                      key={ai}
+                      type="button"
+                      onClick={() => handleSelect(opt, isMCQ)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm transition-all border",
+                        isSelected
+                          ? "bg-primary/10 border-primary/50 shadow-sm"
+                          : "bg-background border-border hover:border-primary/40 hover:bg-primary/5"
+                      )}
+                    >
+                      {isMCQ ? (
+                        <div
+                          className={cn(
+                            "w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center",
+                            isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
+                          )}
+                        >
+                          {isSelected && (
+                            <svg className="w-3.5 h-3.5 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                              <path d="M2.5 6l2.5 2.5 4.5-5" />
+                            </svg>
+                          )}
+                        </div>
+                      ) : (
+                        <div
+                          className={cn(
+                            "w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center",
+                            isSelected ? "border-primary" : "border-muted-foreground/40"
+                          )}
+                        >
+                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                        </div>
+                      )}
+                      <span className={cn("leading-relaxed flex-1", isSelected ? "font-semibold text-foreground" : "text-foreground/80")}>
+                        {opt}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Footer actions */}
+      <div className="flex items-center justify-between gap-2 pt-1">
+        <Button
+          variant="outline"
+          onClick={() => goTo(current - 1)}
+          disabled={current === 0}
+          className="gap-1.5 rounded-full"
+        >
+          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+          Previous
+        </Button>
+
+        <span className="text-xs text-muted-foreground hidden sm:inline">
+          {answeredCount}/{total} answered
+        </span>
+
+        {current < total - 1 ? (
+          <Button
+            onClick={() => goTo(current + 1)}
+            disabled={!currentAnswered}
+            className="gap-1.5 rounded-full"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" aria-hidden="true" />
+          </Button>
+        ) : (
+          <Button
+            onClick={() => setValidated(true)}
+            disabled={!allAnswered}
+            className="gap-1.5 rounded-full"
+          >
+            Submit quiz
+            <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+          </Button>
+        )}
+      </div>
+
+      {settings?.requireCorrect && (
+        <div className="flex items-start gap-2 px-3 py-2 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300">
+          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <span>You must answer correctly to continue.</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ResultsHeader = ({
+  correct,
+  total,
+  passed,
+  passCriteria,
+}: {
+  correct: number;
+  total: number;
+  passed: boolean;
+  passCriteria: number;
+}) => {
+  const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-2xl border p-6 flex items-center gap-5",
+        passed
+          ? "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/40 dark:via-emerald-950/30 dark:to-teal-950/30 border-green-500/30"
+          : "bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-red-950/30 border-amber-500/30"
+      )}
+    >
+      <div
+        className={cn(
+          "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg",
+          passed ? "bg-green-600 text-white" : "bg-amber-500 text-white"
+        )}
+      >
+        <Trophy className="w-8 h-8" aria-hidden="true" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quiz complete</p>
+        <h3 className="text-2xl font-semibold text-foreground mt-0.5">
+          {passed ? "Great work!" : "Keep going"}
+        </h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          You scored <span className="font-semibold text-foreground">{correct} / {total}</span> ({pct}%) · Pass mark {passCriteria}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/* ---------------------------------------------------------------------- */
+/* Classic list-style quiz (existing behaviour, unchanged)                */
+/* ---------------------------------------------------------------------- */
+
+const ClassicQuiz = ({ questions, settings }: InteractiveQuizProps) => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string[]>>({});
   const [validated, setValidated] = useState(false);
   const [attempts, setAttempts] = useState(0);
@@ -126,7 +539,6 @@ export const InteractiveQuiz = ({ questions, settings }: InteractiveQuizProps) =
         const isCorrect = validated && isQuestionCorrect(q, selected);
         const feedbackMode: FeedbackMode = q.feedbackMode || "any";
 
-        // Reveal styling rules
         const showCorrectHighlights =
           validated && (revealMode === "reveal_all" || (revealMode === "incorrect_with_feedback" && !isCorrect));
         const showIncorrectHighlights = validated && revealMode !== "hide_all";
@@ -246,7 +658,6 @@ export const InteractiveQuiz = ({ questions, settings }: InteractiveQuizProps) =
                         )}
                       </div>
 
-                      {/* Per-choice rationale (by_choice mode) — visible after submit for the selected option */}
                       {validated && perOptionRationale && isSelected && (
                         <div className="mt-1.5 ml-2 pl-3 border-l-2 border-primary/30 text-xs text-muted-foreground">
                           {perOptionRationale}
@@ -258,7 +669,6 @@ export const InteractiveQuiz = ({ questions, settings }: InteractiveQuizProps) =
               </div>
             )}
 
-            {/* Feedback / Explanation block after validation */}
             {validated && (() => {
               if (revealMode === "hide_all") return null;
               if (revealMode === "incorrect_with_feedback" && isCorrect) return null;
@@ -289,11 +699,9 @@ export const InteractiveQuiz = ({ questions, settings }: InteractiveQuizProps) =
               }
 
               if (feedbackMode === "by_choice") {
-                // Per-option rationales render inline above; nothing extra here
                 return null;
               }
 
-              // Default "any" mode → single Explanation
               if (q.explanation?.trim()) {
                 return (
                   <div className="mt-3 bg-primary/5 border border-primary/20 rounded-lg p-3 animate-in fade-in-50 duration-200">
@@ -308,7 +716,6 @@ export const InteractiveQuiz = ({ questions, settings }: InteractiveQuizProps) =
         );
       })}
 
-      {/* Score, gating & actions */}
       <div className="flex flex-wrap items-center gap-3 pt-2">
         {!validated ? (
           <Button onClick={handleValidate} disabled={!allAnswered} className="bg-primary hover:bg-primary/90">

@@ -94,10 +94,10 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
     ? "Quiz"
     : "Questions";
   // Parse questions + passCriteria + navPage from content (supports legacy array shape)
-  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string } => {
+  const parseContent = (raw: string): { questions: Question[]; passCriteria: number; failNavigationPage: string; requireCorrect: boolean; retries: string; revealAnswers: string; quizType: string } => {
     try {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all" };
+      if (Array.isArray(parsed)) return { questions: parsed, passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all", quizType: "formative" };
       if (parsed && typeof parsed === "object") {
         return {
           questions: Array.isArray(parsed.questions) ? parsed.questions : [],
@@ -106,12 +106,13 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
           requireCorrect: typeof parsed.requireCorrect === "boolean" ? parsed.requireCorrect : false,
           retries: typeof parsed.retries === "string" ? parsed.retries : "unlimited",
           revealAnswers: typeof parsed.revealAnswers === "string" ? parsed.revealAnswers : "reveal_all",
+          quizType: typeof parsed.quizType === "string" ? parsed.quizType : "formative",
         };
       }
     } catch {
       /* fallthrough */
     }
-    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all" };
+    return { questions: [], passCriteria: 1, failNavigationPage: "", requireCorrect: false, retries: "unlimited", revealAnswers: "reveal_all", quizType: "formative" };
   };
 
   const initial = parseContent(content);
@@ -121,10 +122,11 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
   const [requireCorrect, setRequireCorrectState] = useState<boolean>(initial.requireCorrect);
   const [retries, setRetriesState] = useState<string>(initial.retries);
   const [revealAnswers, setRevealAnswersState] = useState<string>(initial.revealAnswers);
+  const [quizType, setQuizTypeState] = useState<string>(initial.quizType);
   const [showPassCriteriaDialog, setShowPassCriteriaDialog] = useState(false);
 
-  const persist = (qs: Question[], pc: number, fnp: string, rc: boolean, rt: string, ra: string) => {
-    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp, requireCorrect: rc, retries: rt, revealAnswers: ra }));
+  const persist = (qs: Question[], pc: number, fnp: string, rc: boolean, rt: string, ra: string, qt: string = quizType) => {
+    onChange(JSON.stringify({ questions: qs, passCriteria: pc, failNavigationPage: fnp, requireCorrect: rc, retries: rt, revealAnswers: ra, quizType: qt }));
   };
 
   const setQuestions = (updater: Question[] | ((prev: Question[]) => Question[])) => {
@@ -289,7 +291,14 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         });
       }
 
-      setQuestions((prev) => [...prev, ...generated]);
+      const newQt = config.quizType || quizType;
+      if (config.quizType) setQuizTypeState(config.quizType);
+      const nextQs = [...questions, ...generated];
+      setQuestionsState(nextQs);
+      const clamped = nextQs.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), nextQs.length);
+      if (clamped !== passCriteria) setPassCriteriaState(clamped);
+      // Persist with the freshly chosen quizType so preview reflects formative/summative immediately.
+      onChange(JSON.stringify({ questions: nextQs, passCriteria: clamped, failNavigationPage, requireCorrect, retries, revealAnswers, quizType: newQt }));
       setIsGenerating(false);
       setShowGenerateDialog(false);
     }, 1500);
