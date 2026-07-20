@@ -415,7 +415,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                         <PencilLine className="w-4 h-4" aria-hidden="true" />
                       </span>
                     </div>
-                    <p className="mt-2.5 text-xs text-muted-foreground">Type your answer and click Next to continue.</p>
+                    
                   </div>
                 ) : (
                   <div className="space-y-2.5">
