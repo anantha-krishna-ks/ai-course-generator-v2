@@ -345,42 +345,39 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               style={{ transformOrigin: "50% 110%", willChange: "transform, opacity, filter" }}
             >
               {/* Header row */}
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <span
-                    aria-hidden="true"
-                    className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tabular-nums"
-                  >
-                    {String(current + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0 pt-0.5">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">
+              <div className="flex items-start gap-3">
+                <span
+                  aria-hidden="true"
+                  className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tabular-nums"
+                >
+                  {String(current + 1).padStart(2, "0")}
+                </span>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <div className="flex items-start justify-between gap-3 mb-1">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                       Question {current + 1} <span className="text-muted-foreground/60">of {total}</span>
                     </p>
-                    <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
-                      {q.question || q.text}
-                    </h3>
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border",
+                        qType === "MCQ" && "bg-blue-50/80 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800",
+                        qType === "SCQ" && "bg-emerald-50/80 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800",
+                        qType === "FIB" && "bg-amber-50/80 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
+                        qType === "TF" && "bg-violet-50/80 border-violet-200 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-800",
+                        !["MCQ", "SCQ", "FIB", "TF"].includes(qType) && "bg-muted/60 border-border/70 text-foreground/80"
+                      )}
+                      aria-label={`Question type: ${typeLabel}`}
+                    >
+                      {qType === "MCQ" && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" aria-hidden="true" />}
+                      {qType === "SCQ" && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />}
+                      {qType === "FIB" && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true" />}
+                      {qType === "TF" && <span className="w-1.5 h-1.5 rounded-full bg-violet-500" aria-hidden="true" />}
+                      {typeLabel}
+                    </span>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border",
-                      qType === "MCQ" && "bg-blue-50/80 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800",
-                      qType === "SCQ" && "bg-emerald-50/80 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800",
-                      qType === "FIB" && "bg-amber-50/80 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
-                      qType === "TF" && "bg-violet-50/80 border-violet-200 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-800",
-                      !["MCQ", "SCQ", "FIB", "TF"].includes(qType) && "bg-muted/60 border-border/70 text-foreground/80"
-                    )}
-                    aria-label={`Question type: ${typeLabel}`}
-                  >
-                    {qType === "MCQ" && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" aria-hidden="true" />}
-                    {qType === "SCQ" && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />}
-                    {qType === "FIB" && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true" />}
-                    {qType === "TF" && <span className="w-1.5 h-1.5 rounded-full bg-violet-500" aria-hidden="true" />}
-                    {typeLabel}
-                  </span>
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
+                    {q.question || q.text}
+                  </h3>
                 </div>
               </div>
 
