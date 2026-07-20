@@ -372,21 +372,10 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </AnimatePresence>
         </div>
 
-        {/* Divider + Footer */}
-        <div className="border-t border-border/70 bg-muted/25 px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => goTo(current - 1)}
-            disabled={current === 0}
-            className="gap-1.5 rounded-full text-foreground/80 hover:text-foreground disabled:opacity-40"
-          >
-            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-            Previous
-          </Button>
-
-          {/* Question dot navigation */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar max-w-[55%]">
+        {/* Divider + Question pills + Footer */}
+        <div className="border-t border-border/70 bg-muted/25 px-5 sm:px-6 py-4 space-y-4">
+          {/* Question number pills — centered, scalable row */}
+          <div className="flex items-center justify-center gap-2 flex-wrap">
             {questions.map((qq, i) => {
               const sel = selectedAnswers[i] || [];
               const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
@@ -401,7 +390,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   className={cn(
                     "relative h-7 min-w-[28px] px-2 rounded-full text-[11px] font-semibold border transition-all",
                     isCurrent
-                      ? "bg-foreground text-background border-transparent shadow-sm"
+                      ? "bg-primary text-primary-foreground border-transparent shadow-sm"
                       : done
                       ? "bg-primary/10 text-primary border-primary/25 hover:bg-primary/15"
                       : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
@@ -413,27 +402,41 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             })}
           </div>
 
-          {current < total - 1 ? (
+          {/* Navigation buttons */}
+          <div className="flex items-center justify-between gap-3">
             <Button
+              variant="outline"
               size="sm"
-              onClick={() => goTo(current + 1)}
-              disabled={!currentAnswered}
-              className="gap-1.5 rounded-full bg-foreground text-background hover:bg-foreground/90"
+              onClick={() => goTo(current - 1)}
+              disabled={current === 0}
+              className="gap-1.5 rounded-full border-border/80 bg-card/40 hover:bg-card hover:text-foreground disabled:opacity-40"
             >
-              Next
-              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              Previous
             </Button>
-          ) : (
-            <Button
-              size="sm"
-              onClick={() => setValidated(true)}
-              disabled={!allAnswered}
-              className="gap-1.5 rounded-full bg-gradient-to-r from-primary to-fuchsia-500 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/25"
-            >
-              Submit
-              <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
-            </Button>
-          )}
+
+            {current < total - 1 ? (
+              <Button
+                size="sm"
+                onClick={() => goTo(current + 1)}
+                disabled={!currentAnswered}
+                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => setValidated(true)}
+                disabled={!allAnswered}
+                className="gap-1.5 rounded-full bg-gradient-to-r from-primary to-fuchsia-500 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/25"
+              >
+                Submit
+                <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
