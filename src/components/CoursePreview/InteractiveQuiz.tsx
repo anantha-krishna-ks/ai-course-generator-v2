@@ -264,8 +264,8 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
 
       {/* Main card */}
       <div className="relative rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
-        {/* Thin accent bar */}
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-primary" />
+        {/* Thin premium grey accent strip */}
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-muted-foreground" />
 
         <div className="p-6 sm:p-8">
           <AnimatePresence mode="wait" custom={direction}>
