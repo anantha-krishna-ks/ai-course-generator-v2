@@ -346,16 +346,22 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             >
               {/* Header row */}
               <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex items-start gap-3 min-w-0 flex-1">
-                  <span
+                <div className="flex items-start gap-4 min-w-0 flex-1">
+                  {/* Cornered question badge */}
+                  <div
                     aria-hidden="true"
-                    className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tabular-nums"
+                    className="relative flex-shrink-0"
                   >
-                    {String(current + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0 pt-0.5">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-br-2xl rounded-tl-xl rounded-tr-sm rounded-bl-sm bg-primary text-primary-foreground shadow-md">
+                      <span className="text-sm font-semibold tabular-nums tracking-tight">
+                        {String(current + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-0 h-0 border-t-[10px] border-t-primary border-r-[10px] border-r-transparent rotate-90" />
+                  </div>
+                  <div className="min-w-0 pt-1">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">
-                      Question {current + 1} <span className="text-muted-foreground/60">of {total}</span>
+                      Question {current + 1} <span className="text-muted-foreground">of {total}</span>
                     </p>
                     <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
                       {q.question || q.text}
@@ -379,7 +385,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               </div>
 
               {isMCQ && (
-                <p className="mt-2 ml-[52px] text-xs text-muted-foreground">Select all that apply</p>
+                <p className="mt-2 ml-[64px] text-xs text-muted-foreground">Select all that apply</p>
               )}
 
               {/* Options */}
