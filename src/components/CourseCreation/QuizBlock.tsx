@@ -291,15 +291,14 @@ export function QuizBlock({ aiEnabled = false, content, onChange, variant }: Qui
         });
       }
 
-      if (config.quizType) {
-        setQuizTypeState(config.quizType);
-      }
-      setQuestions((prev) => {
-        const next = [...prev, ...generated];
-        // persist quizType alongside the new questions
-        persist(next, Math.min(Math.max(1, passCriteria), Math.max(1, next.length)), failNavigationPage, requireCorrect, retries, revealAnswers, config.quizType || quizType);
-        return next;
-      });
+      const newQt = config.quizType || quizType;
+      if (config.quizType) setQuizTypeState(config.quizType);
+      const nextQs = [...questions, ...generated];
+      setQuestionsState(nextQs);
+      const clamped = nextQs.length === 0 ? 1 : Math.min(Math.max(1, passCriteria), nextQs.length);
+      if (clamped !== passCriteria) setPassCriteriaState(clamped);
+      // Persist with the freshly chosen quizType so preview reflects formative/summative immediately.
+      onChange(JSON.stringify({ questions: nextQs, passCriteria: clamped, failNavigationPage, requireCorrect, retries, revealAnswers, quizType: newQt }));
       setIsGenerating(false);
       setShowGenerateDialog(false);
     }, 1500);
