@@ -263,33 +263,44 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       </div>
 
       {/* Stacked card deck */}
-      <div className="relative [perspective:1400px]">
-        {/* Depth layers — subtle live shuffle each step */}
+      <div className="relative [perspective:1600px]">
+        {/* Depth layers — cinematic live shuffle each step */}
+        {total > 3 && (
+          <motion.div
+            key={`layer-3-${current}`}
+            aria-hidden="true"
+            className="absolute inset-0 rounded-2xl bg-card border border-border/60"
+            initial={{ x: 26, y: 26, rotate: 3, opacity: 0, scale: 0.9 }}
+            animate={{ x: 20, y: 20, rotate: 2.4, opacity: 0.32, scale: 0.91 }}
+            transition={{ type: "spring", stiffness: 160, damping: 28, delay: 0.08 }}
+            style={{ zIndex: 0, transformOrigin: "50% 100%", filter: "blur(0.5px)" }}
+          />
+        )}
         {total > 2 && (
           <motion.div
             key={`layer-2-${current}`}
             aria-hidden="true"
-            className="absolute inset-0 rounded-2xl bg-card border border-border shadow-sm"
-            initial={{ x: 18, y: 18, rotate: 2.2, opacity: 0.35, scale: 0.92 }}
-            animate={{ x: 12, y: 12, rotate: 1.5, opacity: 0.5, scale: 0.94 }}
-            transition={{ type: "spring", stiffness: 180, damping: 26 }}
-            style={{ zIndex: 0, transformOrigin: "50% 100%" }}
+            className="absolute inset-0 rounded-2xl bg-card border border-border/70 shadow-[0_6px_20px_-12px_hsl(var(--foreground)/0.15)]"
+            initial={{ x: 20, y: 20, rotate: 2.4, opacity: 0.32, scale: 0.91 }}
+            animate={{ x: 13, y: 13, rotate: 1.6, opacity: 0.55, scale: 0.94 }}
+            transition={{ type: "spring", stiffness: 170, damping: 26, delay: 0.05 }}
+            style={{ zIndex: 1, transformOrigin: "50% 100%" }}
           />
         )}
         {total > 1 && (
           <motion.div
             key={`layer-1-${current}`}
             aria-hidden="true"
-            className="absolute inset-0 rounded-2xl bg-card border border-border shadow-sm"
-            initial={{ x: 12, y: 12, rotate: 1.5, opacity: 0.5, scale: 0.94 }}
-            animate={{ x: 6, y: 6, rotate: 0.75, opacity: 0.78, scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 180, damping: 26 }}
-            style={{ zIndex: 1, transformOrigin: "50% 100%" }}
+            className="absolute inset-0 rounded-2xl bg-card border border-border/80 shadow-[0_10px_30px_-18px_hsl(var(--foreground)/0.2)]"
+            initial={{ x: 13, y: 13, rotate: 1.6, opacity: 0.55, scale: 0.94 }}
+            animate={{ x: 6, y: 6, rotate: 0.75, opacity: 0.85, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 180, damping: 26, delay: 0.02 }}
+            style={{ zIndex: 2, transformOrigin: "50% 100%" }}
           />
         )}
 
         {/* Main card */}
-        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
+        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_20px_60px_-28px_hsl(var(--foreground)/0.28)] overflow-hidden">
           {/* Thin premium grey accent strip */}
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent z-20" />
 
@@ -298,18 +309,40 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             <motion.div
               key={current}
               custom={direction}
-              initial={{ opacity: 0, x: 12, y: 12, scale: 0.94, rotate: 1.5 }}
-              animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
+              initial={{
+                opacity: 0,
+                x: 13,
+                y: 13,
+                scale: 0.94,
+                rotate: 1.6,
+                filter: "blur(6px)",
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+                y: 0,
+                scale: 1,
+                rotate: 0,
+                filter: "blur(0px)",
+                transition: {
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 26,
+                  mass: 0.9,
+                  delay: 0.18,
+                  filter: { duration: 0.5, delay: 0.18, ease: [0.22, 1, 0.36, 1] },
+                },
+              }}
               exit={{
                 opacity: 0,
-                x: direction * 520,
-                y: -60,
-                rotate: direction * 18,
-                scale: 0.92,
-                transition: { duration: 0.55, ease: [0.32, 0.72, 0.35, 1] },
+                x: direction * 640,
+                y: -80,
+                rotate: direction * 22,
+                scale: 0.9,
+                filter: "blur(3px)",
+                transition: { duration: 0.65, ease: [0.32, 0.72, 0.25, 1] },
               }}
-              transition={{ type: "spring", stiffness: 220, damping: 28, mass: 0.95, delay: 0.12 }}
-              style={{ transformOrigin: "50% 100%" }}
+              style={{ transformOrigin: "50% 110%", willChange: "transform, opacity, filter" }}
             >
               {/* Header row */}
               <div className="flex items-start justify-between gap-4 flex-wrap">
