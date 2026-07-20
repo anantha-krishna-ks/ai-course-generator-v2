@@ -300,24 +300,9 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         )}
 
         {/* Main card */}
-        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_20px_60px_-28px_hsl(var(--foreground)/0.28)]">
+        <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_20px_60px_-28px_hsl(var(--foreground)/0.28)] overflow-hidden">
           {/* Thin premium grey accent strip */}
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent z-20" />
-
-          {/* Clip boundary for animated question content */}
-          <div aria-hidden="true" className="absolute inset-0 rounded-2xl overflow-hidden z-0" />
-
-          {/* Premium diagonal ribbon */}
-          <div className="absolute -right-11 top-7 rotate-45 z-30 pointer-events-none" aria-hidden="true">
-            <div className="relative flex items-center justify-center gap-1.5 pl-12 pr-10 py-1.5 shadow-[0_6px_18px_-4px_hsl(var(--foreground)/0.18)]" style={{ background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%)" }}>
-              {/* Folded top tail */}
-              <div className="absolute right-full top-0 h-0 w-0" style={{ borderTop: "10px solid hsl(var(--primary))", borderLeft: "10px solid transparent" }} />
-              {/* Folded bottom tail */}
-              <div className="absolute left-full bottom-0 h-0 w-0" style={{ borderBottom: "10px solid hsl(var(--primary-glow))", borderRight: "10px solid transparent" }} />
-              <Sparkles className="w-3 h-3 text-primary-foreground" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-foreground">Quiz</span>
-            </div>
-          </div>
 
           <div className="relative p-6 sm:p-8">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
@@ -361,22 +346,16 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             >
               {/* Header row */}
               <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex items-start gap-4 min-w-0 flex-1">
-                  {/* Cornered question badge */}
-                  <div
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                  <span
                     aria-hidden="true"
-                    className="relative flex-shrink-0"
+                    className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tabular-nums"
                   >
-                    <div className="flex items-center justify-center w-12 h-12 rounded-br-2xl rounded-tl-xl rounded-tr-sm rounded-bl-sm bg-primary text-primary-foreground shadow-md">
-                      <span className="text-sm font-semibold tabular-nums tracking-tight">
-                        {String(current + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 w-0 h-0 border-t-[10px] border-t-primary border-r-[10px] border-r-transparent rotate-90" />
-                  </div>
-                  <div className="min-w-0 pt-1">
+                    {String(current + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0 pt-0.5">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">
-                      Question {current + 1} <span className="text-muted-foreground">of {total}</span>
+                      Question {current + 1} <span className="text-muted-foreground/60">of {total}</span>
                     </p>
                     <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
                       {q.question || q.text}
@@ -400,7 +379,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               </div>
 
               {isMCQ && (
-                <p className="mt-2 ml-[64px] text-xs text-muted-foreground">Select all that apply</p>
+                <p className="mt-2 ml-[52px] text-xs text-muted-foreground">Select all that apply</p>
               )}
 
               {/* Options */}
