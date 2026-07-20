@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -345,44 +345,49 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               style={{ transformOrigin: "50% 110%", willChange: "transform, opacity, filter" }}
             >
               {/* Header row */}
-              <div className="flex items-start gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex-shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-semibold tabular-nums"
-                >
-                  {String(current + 1).padStart(2, "0")}
-                </span>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <div className="flex items-start justify-between gap-3 mb-1">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Question {current + 1} <span className="text-muted-foreground/60">of {total}</span>
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    aria-hidden="true"
+                    className="flex-shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary/10 border-2 border-primary/20 text-primary text-sm font-semibold tabular-nums shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.25)]"
+                  >
+                    {String(current + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground leading-tight">
+                      Question {current + 1} <span className="text-muted-foreground font-medium">of {total}</span>
                     </p>
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border",
-                        qType === "MCQ" && "bg-blue-50/80 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800",
-                        qType === "SCQ" && "bg-emerald-50/80 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800",
-                        qType === "FIB" && "bg-amber-50/80 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
-                        qType === "TF" && "bg-violet-50/80 border-violet-200 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-800",
-                        !["MCQ", "SCQ", "FIB", "TF"].includes(qType) && "bg-muted/60 border-border/70 text-foreground/80"
-                      )}
-                      aria-label={`Question type: ${typeLabel}`}
-                    >
-                      {qType === "MCQ" && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" aria-hidden="true" />}
-                      {qType === "SCQ" && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />}
-                      {qType === "FIB" && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true" />}
-                      {qType === "TF" && <span className="w-1.5 h-1.5 rounded-full bg-violet-500" aria-hidden="true" />}
-                      {typeLabel}
-                    </span>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wider mt-0.5">
+                      Progress {progressPct}%
+                    </p>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
-                    {q.question || q.text}
-                  </h3>
                 </div>
+
+                <span
+                  className={cn(
+                    "flex-shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-semibold border shadow-sm",
+                    qType === "MCQ" && "bg-blue-50/80 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800",
+                    qType === "SCQ" && "bg-emerald-50/80 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800",
+                    qType === "FIB" && "bg-amber-50/80 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
+                    qType === "TF" && "bg-violet-50/80 border-violet-200 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-800",
+                    !["MCQ", "SCQ", "FIB", "TF"].includes(qType) && "bg-muted/60 border-border/70 text-foreground/80"
+                  )}
+                  aria-label={`Question type: ${typeLabel}`}
+                >
+                  {qType === "MCQ" && <ListChecks className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {qType === "SCQ" && <CircleCheck className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {qType === "FIB" && <PencilLine className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {qType === "TF" && <ToggleLeft className="w-3.5 h-3.5" aria-hidden="true" />}
+                  {typeLabel}
+                </span>
               </div>
 
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug tracking-tight">
+                {q.question || q.text}
+              </h3>
+
               {isMCQ && (
-                <p className="mt-2 ml-[52px] text-xs text-muted-foreground">Select all that apply</p>
+                <p className="mt-2 text-xs text-muted-foreground">Select all that apply</p>
               )}
 
               {/* Options */}
