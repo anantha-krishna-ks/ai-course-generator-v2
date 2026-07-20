@@ -263,37 +263,46 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       </div>
 
       {/* Stacked card deck */}
-      <div className="relative">
-        {/* Depth layers */}
+      <div className="relative [perspective:1400px]">
+        {/* Depth layers — subtle live shuffle each step */}
         {total > 2 && (
-          <div
+          <motion.div
+            key={`layer-2-${current}`}
             aria-hidden="true"
             className="absolute inset-0 rounded-2xl bg-card border border-border shadow-sm"
-            style={{ transform: "translate(12px, 12px) rotate(1.5deg)", opacity: 0.5, zIndex: 0 }}
+            initial={{ x: 18, y: 18, rotate: 2.2, opacity: 0.35, scale: 0.92 }}
+            animate={{ x: 12, y: 12, rotate: 1.5, opacity: 0.5, scale: 0.94 }}
+            transition={{ type: "spring", stiffness: 180, damping: 26 }}
+            style={{ zIndex: 0, transformOrigin: "50% 100%" }}
           />
         )}
         {total > 1 && (
-          <div
+          <motion.div
+            key={`layer-1-${current}`}
             aria-hidden="true"
             className="absolute inset-0 rounded-2xl bg-card border border-border shadow-sm"
-            style={{ transform: "translate(6px, 6px) rotate(0.75deg)", opacity: 0.75, zIndex: 1 }}
+            initial={{ x: 12, y: 12, rotate: 1.5, opacity: 0.5, scale: 0.94 }}
+            animate={{ x: 6, y: 6, rotate: 0.75, opacity: 0.78, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 180, damping: 26 }}
+            style={{ zIndex: 1, transformOrigin: "50% 100%" }}
           />
         )}
 
         {/* Main card */}
         <div className="relative z-10 rounded-2xl border border-border/70 bg-card shadow-[0_1px_0_hsl(var(--border)),0_10px_40px_-24px_hsl(var(--foreground)/0.18)] overflow-hidden">
           {/* Thin premium grey accent strip */}
-          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent" />
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent z-20" />
 
-          <div className="p-6 sm:p-8">
-          <AnimatePresence mode="wait" custom={direction}>
+          <div className="relative p-6 sm:p-8">
+          <AnimatePresence mode="wait" custom={direction} initial={false}>
             <motion.div
               key={current}
               custom={direction}
-              initial={{ opacity: 0, x: direction * 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -direction * 24 }}
-              transition={{ type: "spring", stiffness: 220, damping: 28 }}
+              initial={{ opacity: 0, x: direction * 64, y: 20, scale: 0.94, rotate: direction * 2.5 }}
+              animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, x: -direction * 140, y: -16, scale: 0.9, rotate: -direction * 5 }}
+              transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9 }}
+              style={{ transformOrigin: "50% 60%" }}
             >
               {/* Header row */}
               <div className="flex items-start justify-between gap-4 flex-wrap">
