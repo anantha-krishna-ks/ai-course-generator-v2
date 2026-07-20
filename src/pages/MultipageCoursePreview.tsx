@@ -1347,41 +1347,62 @@ const MultipageCoursePreview = () => {
                   {!isCompactView && (() => {
                     const prevPage = currentIndex > 0 ? allPages[currentIndex - 1] : null;
                     return (
-                      <div className="pt-10 mt-4 border-t border-border/60 flex justify-between items-center w-full">
-                        <button
-                          type="button"
-                          onClick={goToPrev}
-                          disabled={!prevPage}
-                          className={cn(
-                            "group flex items-center justify-center gap-2 rounded-full px-4 py-2.5 border transition-all disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            prevPage
-                              ? "border-border/80 bg-card/40 text-foreground hover:bg-card hover:border-primary/40"
-                              : "border-border/60 bg-card/30 text-muted-foreground"
-                          )}
-                          aria-label="Go to previous page"
-                        >
-                          <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" focusable="false" />
-                          <span className="text-sm font-medium">Previous</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={goToNext}
-                          disabled={currentIndex < 0}
-                          className={cn(
-                            "group flex items-center justify-center gap-2 rounded-full px-4 py-2.5 border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            isLastPage
-                              ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
-                              : "border-border/80 bg-card/40 text-foreground hover:bg-card hover:border-primary/40"
-                          )}
-                          aria-label={isLastPage ? "Finish course" : "Go to next page"}
-                        >
-                          <span className="text-sm font-medium">{isLastPage ? "Finish" : "Next"}</span>
-                          {isLastPage ? (
-                            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          ) : (
-                            <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" focusable="false" />
-                          )}
-                        </button>
+                      <div className="pt-10 mt-6 flex justify-center w-full">
+                        <div className="w-full max-w-2xl rounded-2xl bg-card/95 backdrop-blur-md border border-border/70 shadow-[0_8px_30px_rgb(0,0,0,0.06)] px-4 sm:px-5 py-3.5 flex items-center gap-3 sm:gap-4">
+                          {/* Previous */}
+                          <button
+                            type="button"
+                            onClick={goToPrev}
+                            disabled={!prevPage}
+                            className={cn(
+                              "group flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                              prevPage
+                                ? "border border-border/80 bg-background text-foreground hover:border-primary/50 hover:bg-primary/5"
+                                : "border border-transparent text-muted-foreground bg-transparent"
+                            )}
+                            aria-label="Go to previous page"
+                          >
+                            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" focusable="false" />
+                            <span className="hidden sm:inline">Previous</span>
+                          </button>
+
+                          {/* Center progress */}
+                          <div className="flex-1 flex flex-col gap-1.5 min-w-0">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground font-medium truncate">
+                                Page {Math.max(1, currentIndex + 1)} of {totalPages}
+                              </span>
+                              <span className="text-primary font-semibold tabular-nums">{progress}%</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden ring-1 ring-border/40">
+                              <div
+                                className="h-full bg-primary rounded-full transition-all duration-500"
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Next / Finish */}
+                          <button
+                            type="button"
+                            onClick={goToNext}
+                            disabled={currentIndex < 0}
+                            className={cn(
+                              "group flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                              isLastPage
+                                ? "bg-primary text-primary-foreground border border-primary shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5"
+                                : "border border-border/80 bg-background text-foreground hover:border-primary/50 hover:bg-primary/5"
+                            )}
+                            aria-label={isLastPage ? "Finish course" : "Go to next page"}
+                          >
+                            <span className="hidden sm:inline">{isLastPage ? "Finish" : "Next"}</span>
+                            {isLastPage ? (
+                              <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" focusable="false" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                     );
                   })()}
