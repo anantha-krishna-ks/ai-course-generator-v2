@@ -294,15 +294,22 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-accent z-20" />
 
           <div className="relative p-6 sm:p-8">
-          <AnimatePresence mode="wait" custom={direction} initial={false}>
+          <AnimatePresence mode="popLayout" custom={direction} initial={false}>
             <motion.div
               key={current}
               custom={direction}
-              initial={{ opacity: 0, x: direction * 64, y: 20, scale: 0.94, rotate: direction * 2.5 }}
+              initial={{ opacity: 0, x: 12, y: 12, scale: 0.94, rotate: 1.5 }}
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, x: -direction * 140, y: -16, scale: 0.9, rotate: -direction * 5 }}
-              transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9 }}
-              style={{ transformOrigin: "50% 60%" }}
+              exit={{
+                opacity: 0,
+                x: direction * 520,
+                y: -60,
+                rotate: direction * 18,
+                scale: 0.92,
+                transition: { duration: 0.55, ease: [0.32, 0.72, 0.35, 1] },
+              }}
+              transition={{ type: "spring", stiffness: 220, damping: 28, mass: 0.95, delay: 0.12 }}
+              style={{ transformOrigin: "50% 100%" }}
             >
               {/* Header row */}
               <div className="flex items-start justify-between gap-4 flex-wrap">
