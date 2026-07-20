@@ -363,17 +363,23 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  {difficulty && (
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-background border border-border/70 text-foreground/80">
-                      {difficulty}
-                    </span>
-                  )}
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-muted/60 border border-border/70 text-foreground/80">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border",
+                      qType === "MCQ" && "bg-blue-50/80 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800",
+                      qType === "SCQ" && "bg-emerald-50/80 border-emerald-200 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800",
+                      qType === "FIB" && "bg-amber-50/80 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
+                      qType === "TF" && "bg-violet-50/80 border-violet-200 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-800",
+                      !["MCQ", "SCQ", "FIB", "TF"].includes(qType) && "bg-muted/60 border-border/70 text-foreground/80"
+                    )}
+                    aria-label={`Question type: ${typeLabel}`}
+                  >
+                    {qType === "MCQ" && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" aria-hidden="true" />}
+                    {qType === "SCQ" && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />}
+                    {qType === "FIB" && <span className="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true" />}
+                    {qType === "TF" && <span className="w-1.5 h-1.5 rounded-full bg-violet-500" aria-hidden="true" />}
                     {typeLabel}
-                  </span>
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 border border-primary/25 text-primary">
-                    {category}
                   </span>
                 </div>
               </div>
