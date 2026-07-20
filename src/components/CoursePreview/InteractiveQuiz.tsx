@@ -349,7 +349,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 <div className="flex items-center gap-3 min-w-0">
                   <span
                     aria-hidden="true"
-                    className="flex-shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-full bg-primary/10 border-2 border-primary/20 text-primary text-sm font-semibold tabular-nums shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.25)]"
+                    className="flex-shrink-0 inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary text-primary-foreground text-base font-semibold tabular-nums shadow-[0_4px_14px_-4px_hsl(var(--primary)/0.45)] ring-4 ring-primary/10"
                   >
                     {String(current + 1).padStart(2, "0")}
                   </span>
@@ -357,11 +357,9 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     <p className="text-sm font-semibold text-foreground leading-tight">
                       Question {current + 1} <span className="text-muted-foreground font-medium">of {total}</span>
                     </p>
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wider mt-0.5">
-                      Progress {progressPct}%
-                    </p>
                   </div>
                 </div>
+
 
                 <span
                   className={cn(
