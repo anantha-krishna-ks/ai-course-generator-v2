@@ -453,7 +453,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 size="sm"
                 onClick={() => setValidated(true)}
                 disabled={!allAnswered}
-                className="gap-1.5 rounded-full bg-gradient-to-r from-primary to-fuchsia-500 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/25"
+                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20"
               >
                 Submit
                 <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
