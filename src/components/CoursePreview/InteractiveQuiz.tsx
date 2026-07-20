@@ -385,7 +385,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               </div>
 
               {isMCQ && (
-                <p className="mt-2 ml-[52px] text-xs text-muted-foreground">Select all that apply</p>
+                <p className="mt-2 ml-[64px] text-xs text-muted-foreground">Select all that apply</p>
               )}
 
               {/* Options */}
