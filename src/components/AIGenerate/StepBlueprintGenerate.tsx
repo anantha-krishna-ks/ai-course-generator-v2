@@ -59,6 +59,75 @@ function SectionHeader({ title }: { icon?: LucideIcon; title: string; desc?: str
   );
 }
 
+function ImageToggleTile({
+  selected,
+  onToggle,
+  title,
+  description,
+  ariaLabel,
+}: {
+  selected: boolean;
+  onToggle: () => void;
+  title: string;
+  description: string;
+  ariaLabel: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-2xl border transition-all duration-200 p-4",
+        selected
+          ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02]"
+          : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onToggle}
+          role="switch"
+          aria-checked={selected}
+          aria-label={ariaLabel}
+          className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
+        >
+          <span
+            className={cn(
+              "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+              selected ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+            )}
+            aria-hidden="true"
+          >
+            <ImageIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+          </span>
+          <span className="flex flex-col min-w-0">
+            <span className="text-sm font-semibold text-foreground leading-tight">{title}</span>
+            <span className="text-[12px] text-muted-foreground leading-snug mt-0.5">{description}</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={onToggle}
+          role="switch"
+          aria-checked={selected}
+          aria-label={`Toggle ${ariaLabel}`}
+          className={cn(
+            "w-10 h-6 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            selected ? "bg-primary" : "bg-muted-foreground/25"
+          )}
+        >
+          <span
+            className={cn(
+              "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-background shadow-sm transition-transform",
+              selected && "translate-x-4"
+            )}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function PrefCard({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
@@ -272,6 +341,29 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         onTypeChange={(t) => onChange({ pageQuizType: t })}
         onConfigChange={(c) => onChange({ pageQuizConfig: c })}
       />
+
+      {/* Images */}
+      <PrefCard>
+        <SectionHeader icon={ImageIcon} title="Images" desc="Choose whether AI generates visuals for sections and pages." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <ImageToggleTile
+            selected={state.sectionImages}
+            onToggle={() => onChange({ sectionImages: !state.sectionImages })}
+            title="Section images"
+            description="Generate a hero image for each section"
+            ariaLabel="section images"
+          />
+          <ImageToggleTile
+            selected={state.pageImages}
+            onToggle={() => onChange({ pageImages: !state.pageImages })}
+            title="Page images"
+            description="Add supporting images inside pages"
+            ariaLabel="page images"
+          />
+        </div>
+      </PrefCard>
+
+
 
 
       {/* Course Tone */}

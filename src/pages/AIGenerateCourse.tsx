@@ -71,6 +71,8 @@ export interface AIGenerateState {
   sectionQuizConfig: QuizScopeConfig;
   pageQuizType: "formative" | "summative";
   pageQuizConfig: QuizScopeConfig;
+  sectionImages: boolean;
+  pageImages: boolean;
   scormPageDurationSec: number;
   scormBgImage: { name: string; url: string } | null;
   scormBgOpacity: number;
@@ -137,6 +139,8 @@ const initialState: AIGenerateState = {
   sectionQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
   pageQuizType: "formative",
   pageQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
+  sectionImages: true,
+  pageImages: true,
   scormPageDurationSec: 30,
   scormBgImage: null,
   scormBgOpacity: 40,
