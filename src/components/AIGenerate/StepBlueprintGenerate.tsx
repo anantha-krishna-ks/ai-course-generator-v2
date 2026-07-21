@@ -273,6 +273,29 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         onConfigChange={(c) => onChange({ pageQuizConfig: c })}
       />
 
+      {/* Images */}
+      <PrefCard>
+        <SectionHeader icon={ImageIcon} title="Images" desc="Choose whether AI generates visuals for sections and pages." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <ImageToggleTile
+            selected={state.sectionImages}
+            onToggle={() => onChange({ sectionImages: !state.sectionImages })}
+            title="Section images"
+            description="Generate a hero image for each section"
+            ariaLabel="section images"
+          />
+          <ImageToggleTile
+            selected={state.pageImages}
+            onToggle={() => onChange({ pageImages: !state.pageImages })}
+            title="Page images"
+            description="Add supporting images inside pages"
+            ariaLabel="page images"
+          />
+        </div>
+      </PrefCard>
+
+
+
 
       {/* Course Tone */}
       <PrefCard>
