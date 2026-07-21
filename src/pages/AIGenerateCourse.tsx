@@ -40,10 +40,8 @@ export interface AIGenerateState {
   learningObjectives: string[];
   bloomsTaxonomy: string[];
   supportingDocuments: string[];
-  guidelines: string;
-  guidelinesDocuments: string[];
-  exclusions: string;
-  exclusionsDocuments: string[];
+  contentRules: string;
+  contentRulesDocuments: string[];
   pageSpanTime: number;
   courseSpanTime: number;
   blueprintSource: "import" | "ai";
