@@ -37,6 +37,12 @@ import {
 import { useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
+import imgStylePhoto from "@/assets/image-style-photorealistic.jpg";
+import imgStyleIllustration from "@/assets/image-style-illustration.jpg";
+import imgStyleFlat from "@/assets/image-style-flat.jpg";
+import imgStyle3d from "@/assets/image-style-3d.jpg";
+import imgStyleSketch from "@/assets/image-style-sketch.jpg";
+import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 
 interface StepBlueprintGenerateProps {
