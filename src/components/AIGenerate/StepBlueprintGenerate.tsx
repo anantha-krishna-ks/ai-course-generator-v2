@@ -1,8 +1,9 @@
-import { AIGenerateState } from "@/pages/AIGenerateCourse";
+import { AIGenerateState, QuizScopeConfig, QuizVariantConfig } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Accordion,
   AccordionContent,
@@ -25,6 +26,12 @@ import {
   CheckCircle2,
   XCircle,
   Info,
+  GraduationCap,
+  ClipboardCheck,
+  CircleDot,
+  ListChecks,
+  ToggleRight,
+  PenLine,
   type LucideIcon,
 } from "lucide-react";
 import { useRef } from "react";
