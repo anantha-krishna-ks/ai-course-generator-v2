@@ -73,6 +73,7 @@ export interface AIGenerateState {
   pageQuizConfig: QuizScopeConfig;
   sectionImages: boolean;
   pageImages: boolean;
+  imageStyle: "photorealistic" | "illustration" | "flat" | "3d" | "sketch" | "watercolor";
   scormPageDurationSec: number;
   scormBgImage: { name: string; url: string } | null;
   scormBgOpacity: number;
@@ -141,6 +142,7 @@ const initialState: AIGenerateState = {
   pageQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
   sectionImages: true,
   pageImages: true,
+  imageStyle: "photorealistic",
   scormPageDurationSec: 30,
   scormBgImage: null,
   scormBgOpacity: 40,

@@ -51,6 +51,15 @@ const TONE_OPTIONS = [
   { value: "coaching" as const, label: "Coaching", icon: "🎓" },
 ];
 
+const IMAGE_STYLE_OPTIONS = [
+  { value: "photorealistic" as const, label: "Photorealistic", icon: "📷" },
+  { value: "illustration" as const, label: "Illustration", icon: "🎨" },
+  { value: "flat" as const, label: "Flat / Minimal", icon: "▱" },
+  { value: "3d" as const, label: "3D Render", icon: "🧊" },
+  { value: "sketch" as const, label: "Sketch", icon: "✏️" },
+  { value: "watercolor" as const, label: "Watercolor", icon: "🖌️" },
+];
+
 function SectionHeader({ title }: { icon?: LucideIcon; title: string; desc?: string }) {
   return (
     <div className="mb-2.5">
@@ -361,6 +370,52 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
             ariaLabel="page images"
           />
         </div>
+
+        {(state.sectionImages || state.pageImages) && (
+          <div className="mt-4 pt-4 border-t border-border/60">
+            <div className="flex items-center justify-between gap-3 mb-2.5">
+              <div>
+                <div className="text-[13px] font-semibold text-foreground leading-tight">Visual style</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  Applied consistently across every AI-generated image in the course
+                </div>
+              </div>
+            </div>
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5"
+              role="radiogroup"
+              aria-label="Image visual style"
+            >
+              {IMAGE_STYLE_OPTIONS.map((opt) => {
+                const selected = state.imageStyle === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    aria-label={`${opt.label} image style`}
+                    onClick={() => onChange({ imageStyle: opt.value })}
+                    className={cn(
+                      "group flex flex-col items-center gap-1.5 p-2.5 rounded-xl border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                      selected
+                        ? "border-primary/60 bg-primary/[0.05] shadow-sm"
+                        : "border-border hover:border-primary/30 hover:bg-muted/40"
+                    )}
+                  >
+                    <span className="text-xl leading-none" aria-hidden="true">{opt.icon}</span>
+                    <span className={cn(
+                      "text-[11px] leading-tight font-medium",
+                      selected ? "text-foreground" : "text-muted-foreground"
+                    )}>
+                      {opt.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </PrefCard>
 
 
