@@ -34,7 +34,7 @@ import {
   PenLine,
   type LucideIcon,
 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
 import imgStylePhoto from "@/assets/image-style-photorealistic.jpg";
@@ -525,42 +525,9 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
           })}
         </div>
       </PrefCard>
-      <PrefCard>
-        <SectionHeader title="Guidelines" />
-        <div className="space-y-3">
-          <Textarea
-            value={state.guidelines}
-            onChange={(e) => onChange({ guidelines: e.target.value })}
-            placeholder="e.g., Use plain language, include real-world examples…"
-            className="min-h-[80px] resize-none rounded-xl text-sm"
-            aria-label="Guidelines"
-          />
-          <DocUploadZone
-            documents={state.guidelinesDocuments ?? []}
-            onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
-            ariaLabel="Upload guidelines documents"
-          />
-        </div>
-      </PrefCard>
+      {/* Guidelines & Exclusions (merged, tabbed) */}
+      <GuidelinesExclusionsCard state={state} onChange={onChange} />
 
-      {/* Exclusions */}
-      <PrefCard>
-        <SectionHeader title="Exclusions" />
-        <div className="space-y-3">
-          <Textarea
-            value={state.exclusions}
-            onChange={(e) => onChange({ exclusions: e.target.value })}
-            placeholder="e.g., Avoid jargon, do not include pricing…"
-            className="min-h-[80px] resize-none rounded-xl text-sm"
-            aria-label="Exclusions"
-          />
-          <DocUploadZone
-            documents={state.exclusionsDocuments ?? []}
-            onDocumentsChange={(docs) => onChange({ exclusionsDocuments: docs })}
-            ariaLabel="Upload exclusions documents"
-          />
-        </div>
-      </PrefCard>
 
       {/* SCORM Preferences (collapsed accordion) */}
       <ScormPreferencesAccordion state={state} onChange={onChange} />
@@ -1237,3 +1204,142 @@ function ScormPreferencesAccordion({
     </Accordion>
   );
 }
+
+function GuidelinesExclusionsCard({
+  state,
+  onChange,
+}: {
+  state: AIGenerateState;
+  onChange: (partial: Partial<AIGenerateState>) => void;
+}) {
+  const [active, setActive] = useState<"guidelines" | "exclusions">("guidelines");
+
+  const TABS = [
+    {
+      key: "guidelines" as const,
+      label: "Do",
+      title: "Guidelines",
+      icon: CheckCircle2,
+      accent: "text-emerald-600",
+      activeBg: "bg-emerald-50 dark:bg-emerald-500/10",
+      activeBorder: "border-emerald-500/40",
+      ring: "focus-visible:ring-emerald-500/40",
+      helper: "Tell the AI what to include and how the content should read.",
+      placeholder: "e.g., Use plain language, include real-world examples, cite sources…",
+      value: state.guidelines,
+      onValue: (v: string) => onChange({ guidelines: v }),
+      docs: state.guidelinesDocuments ?? [],
+      onDocs: (docs: any[]) => onChange({ guidelinesDocuments: docs }),
+      count:
+        (state.guidelines?.trim() ? 1 : 0) +
+        (state.guidelinesDocuments?.length ?? 0),
+    },
+    {
+      key: "exclusions" as const,
+      label: "Don't",
+      title: "Exclusions",
+      icon: XCircle,
+      accent: "text-rose-600",
+      activeBg: "bg-rose-50 dark:bg-rose-500/10",
+      activeBorder: "border-rose-500/40",
+      ring: "focus-visible:ring-rose-500/40",
+      helper: "Tell the AI what to avoid, skip, or leave out of the course.",
+      placeholder: "e.g., Avoid jargon, don't include pricing, skip competitor mentions…",
+      value: state.exclusions,
+      onValue: (v: string) => onChange({ exclusions: v }),
+      docs: state.exclusionsDocuments ?? [],
+      onDocs: (docs: any[]) => onChange({ exclusionsDocuments: docs }),
+      count:
+        (state.exclusions?.trim() ? 1 : 0) +
+        (state.exclusionsDocuments?.length ?? 0),
+    },
+  ];
+
+  const current = TABS.find((t) => t.key === active)!;
+
+  return (
+    <PrefCard>
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div>
+          <div className="text-[16px] font-semibold text-foreground leading-tight">
+            Content rules
+          </div>
+          <div className="text-[12px] text-muted-foreground mt-0.5">
+            Tell the AI what to do and what to avoid when generating your course.
+          </div>
+        </div>
+      </div>
+
+      {/* Segmented tabs */}
+      <div
+        role="tablist"
+        aria-label="Content rules"
+        className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/60 mb-3"
+      >
+        {TABS.map((t) => {
+          const selected = t.key === active;
+          const Icon = t.icon;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setActive(t.key)}
+              className={cn(
+                "relative flex items-center justify-center gap-2 h-9 px-3 rounded-lg text-[13px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                selected
+                  ? cn("bg-background shadow-sm border", t.activeBorder)
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Icon
+                className={cn("w-4 h-4", selected ? t.accent : "text-muted-foreground")}
+                aria-hidden="true"
+                focusable="false"
+              />
+              <span className={selected ? "text-foreground" : ""}>
+                <span className="font-semibold">{t.label}</span>
+                <span className="text-muted-foreground font-normal"> · {t.title}</span>
+              </span>
+              {t.count > 0 && (
+                <span
+                  className={cn(
+                    "ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold",
+                    selected
+                      ? cn(t.activeBg, t.accent)
+                      : "bg-muted text-muted-foreground"
+                  )}
+                  aria-label={`${t.count} item${t.count === 1 ? "" : "s"} added`}
+                >
+                  {t.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Active panel */}
+      <div role="tabpanel" aria-label={current.title} className="space-y-2.5">
+        <p className="text-[12px] text-muted-foreground leading-snug">{current.helper}</p>
+        <Textarea
+          value={current.value}
+          onChange={(e) => current.onValue(e.target.value)}
+          placeholder={current.placeholder}
+          className={cn(
+            "min-h-[90px] resize-none rounded-xl text-sm",
+            current.ring
+          )}
+          aria-label={current.title}
+        />
+        <DocUploadZone
+          documents={current.docs}
+          onDocumentsChange={current.onDocs}
+          ariaLabel={`Upload ${current.title.toLowerCase()} documents`}
+        />
+      </div>
+    </PrefCard>
+  );
+}
+
