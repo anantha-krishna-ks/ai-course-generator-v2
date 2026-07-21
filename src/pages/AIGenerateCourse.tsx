@@ -65,12 +65,39 @@ export interface AIGenerateState {
     trueFalse: number;
     fillInBlank: number;
   };
+  courseQuizType: "formative" | "summative";
+  courseQuizConfig: QuizScopeConfig;
+  sectionQuizType: "formative" | "summative";
+  sectionQuizConfig: QuizScopeConfig;
+  pageQuizType: "formative" | "summative";
+  pageQuizConfig: QuizScopeConfig;
   scormPageDurationSec: number;
   scormBgImage: { name: string; url: string } | null;
   scormBgOpacity: number;
   scormPassMessage: string;
   scormFailMessage: string;
 }
+
+export interface QuizVariantConfig {
+  enabled: boolean;
+  questionsPerQuiz: number;
+  questionTypes: {
+    singleChoice: number;
+    multipleChoice: number;
+    trueFalse: number;
+    fillInBlank: number;
+  };
+}
+
+export interface QuizScopeConfig {
+  formative: QuizVariantConfig;
+  summative: QuizVariantConfig;
+}
+
+const defaultQuizScope: QuizScopeConfig = {
+  formative: { enabled: false, questionsPerQuiz: 5, questionTypes: { singleChoice: 2, multipleChoice: 1, trueFalse: 1, fillInBlank: 1 } },
+  summative: { enabled: false, questionsPerQuiz: 10, questionTypes: { singleChoice: 4, multipleChoice: 3, trueFalse: 2, fillInBlank: 1 } },
+};
 
 const initialState: AIGenerateState = {
   title: "",
@@ -104,6 +131,12 @@ const initialState: AIGenerateState = {
     trueFalse: 1,
     fillInBlank: 0,
   },
+  courseQuizType: "formative",
+  courseQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
+  sectionQuizType: "formative",
+  sectionQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
+  pageQuizType: "formative",
+  pageQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
   scormPageDurationSec: 30,
   scormBgImage: null,
   scormBgOpacity: 40,
