@@ -526,7 +526,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
       </PrefCard>
       {/* Guidelines & Exclusions (merged, tabbed) */}
-      <GuidelinesExclusionsCard state={state} onChange={onChange} />
+      <ContentRulesCard state={state} onChange={onChange} />
 
 
       {/* SCORM Preferences (collapsed accordion) */}
