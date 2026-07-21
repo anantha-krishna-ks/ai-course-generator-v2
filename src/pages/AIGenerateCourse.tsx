@@ -71,6 +71,8 @@ export interface AIGenerateState {
   sectionQuizConfig: QuizScopeConfig;
   pageQuizType: "formative" | "summative";
   pageQuizConfig: QuizScopeConfig;
+  sectionImages: boolean;
+  pageImages: boolean;
   scormPageDurationSec: number;
   scormBgImage: { name: string; url: string } | null;
   scormBgOpacity: number;
