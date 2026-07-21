@@ -525,42 +525,9 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
           })}
         </div>
       </PrefCard>
-      <PrefCard>
-        <SectionHeader title="Guidelines" />
-        <div className="space-y-3">
-          <Textarea
-            value={state.guidelines}
-            onChange={(e) => onChange({ guidelines: e.target.value })}
-            placeholder="e.g., Use plain language, include real-world examples…"
-            className="min-h-[80px] resize-none rounded-xl text-sm"
-            aria-label="Guidelines"
-          />
-          <DocUploadZone
-            documents={state.guidelinesDocuments ?? []}
-            onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
-            ariaLabel="Upload guidelines documents"
-          />
-        </div>
-      </PrefCard>
+      {/* Guidelines & Exclusions (merged, tabbed) */}
+      <GuidelinesExclusionsCard state={state} onChange={onChange} />
 
-      {/* Exclusions */}
-      <PrefCard>
-        <SectionHeader title="Exclusions" />
-        <div className="space-y-3">
-          <Textarea
-            value={state.exclusions}
-            onChange={(e) => onChange({ exclusions: e.target.value })}
-            placeholder="e.g., Avoid jargon, do not include pricing…"
-            className="min-h-[80px] resize-none rounded-xl text-sm"
-            aria-label="Exclusions"
-          />
-          <DocUploadZone
-            documents={state.exclusionsDocuments ?? []}
-            onDocumentsChange={(docs) => onChange({ exclusionsDocuments: docs })}
-            ariaLabel="Upload exclusions documents"
-          />
-        </div>
-      </PrefCard>
 
       {/* SCORM Preferences (collapsed accordion) */}
       <ScormPreferencesAccordion state={state} onChange={onChange} />
