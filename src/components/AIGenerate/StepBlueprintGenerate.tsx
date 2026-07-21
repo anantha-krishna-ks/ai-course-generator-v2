@@ -403,15 +403,30 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
                     aria-label={`${opt.label} image style`}
                     onClick={() => onChange({ imageStyle: opt.value })}
                     className={cn(
-                      "group flex flex-col items-center gap-1.5 p-2.5 rounded-xl border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                      "group relative flex flex-col overflow-hidden rounded-xl border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                       selected
-                        ? "border-primary/60 bg-primary/[0.05] shadow-sm"
-                        : "border-border hover:border-primary/30 hover:bg-muted/40"
+                        ? "border-primary/60 ring-2 ring-primary/40 shadow-sm"
+                        : "border-border hover:border-primary/30"
                     )}
                   >
-                    <span className="text-xl leading-none" aria-hidden="true">{opt.icon}</span>
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                      <img
+                        src={opt.preview}
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        width={512}
+                        height={384}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      {selected && (
+                        <div className="absolute top-1.5 right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground shadow">
+                          <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        </div>
+                      )}
+                    </div>
                     <span className={cn(
-                      "text-[11px] leading-tight font-medium",
+                      "text-[11px] leading-tight font-medium py-1.5 px-1 text-center",
                       selected ? "text-foreground" : "text-muted-foreground"
                     )}>
                       {opt.label}
