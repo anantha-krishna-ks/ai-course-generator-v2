@@ -241,178 +241,38 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
   return (
     <div className="space-y-4">
-      {/* Page-level Preferences */}
-      <PrefCard>
-        <SectionHeader icon={BookOpen} title="Page-level Preferences" desc="Control what each page contains" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          {/* Questions tile */}
-          <div
-            className={cn(
-              "group relative rounded-2xl border transition-all duration-200 p-3.5",
-              state.contentPreferences.includeQuestions
-                ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] shadow-[0_1px_0_0_hsl(var(--primary)/0.08)]"
-                : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
-            )}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => togglePref("includeQuestions")}
-                role="switch"
-                aria-checked={state.contentPreferences.includeQuestions}
-                className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
-                aria-label="Include questions in pages"
-              >
-                <span
-                  className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors",
-                    state.contentPreferences.includeQuestions
-                      ? "bg-primary/15 text-primary"
-                      : "bg-muted text-muted-foreground group-hover:text-foreground"
-                  )}
-                  aria-hidden="true"
-                >
-                  <HelpCircle className="w-4 h-4" />
-                </span>
-                <span className="flex flex-col min-w-0">
-                  <span className="text-sm font-semibold text-foreground leading-tight">Questions</span>
-                  <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">Include questions in pages</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => togglePref("includeQuestions")}
-                role="switch"
-                aria-checked={state.contentPreferences.includeQuestions}
-                aria-label="Toggle include questions in pages"
-                className={cn(
-                  "w-9 h-5 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  state.contentPreferences.includeQuestions ? "bg-primary" : "bg-muted-foreground/25"
-                )}
-              >
-                <span
-                  className={cn(
-                    "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform",
-                    state.contentPreferences.includeQuestions && "translate-x-4"
-                  )}
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
-            {state.contentPreferences.includeQuestions && (
-              <div className="mt-3 pt-3 border-t border-primary/15 flex items-center justify-between gap-3">
-                <span className="text-xs font-medium text-muted-foreground">Questions per page</span>
-                <Stepper
-                  value={state.questionsPerPage}
-                  onChange={(v) => onChange({ questionsPerPage: v })}
-                  min={1}
-                  max={10}
-                  ariaLabel="questions per page"
-                />
-              </div>
-            )}
-          </div>
+      {/* Assessment scopes — Course / Section / Page quizzes */}
+      <QuizScopeCard
+        scope="course"
+        title="Course quiz"
+        badge="One per course"
+        offHelp="Turn on to add a course quiz and configure its question mix."
+        activeType={state.courseQuizType}
+        config={state.courseQuizConfig}
+        onTypeChange={(t) => onChange({ courseQuizType: t })}
+        onConfigChange={(c) => onChange({ courseQuizConfig: c })}
+      />
+      <QuizScopeCard
+        scope="section"
+        title="Section quiz"
+        badge="Applies to every section"
+        offHelp="Turn on to add a section quiz and configure its question mix."
+        activeType={state.sectionQuizType}
+        config={state.sectionQuizConfig}
+        onTypeChange={(t) => onChange({ sectionQuizType: t })}
+        onConfigChange={(c) => onChange({ sectionQuizConfig: c })}
+      />
+      <QuizScopeCard
+        scope="page"
+        title="Page quiz"
+        badge="Applies to every page"
+        offHelp="Turn on to add a page quiz and configure its question mix."
+        activeType={state.pageQuizType}
+        config={state.pageQuizConfig}
+        onTypeChange={(t) => onChange({ pageQuizType: t })}
+        onConfigChange={(c) => onChange({ pageQuizConfig: c })}
+      />
 
-          {/* Images tile */}
-          <div
-            className={cn(
-              "group relative rounded-2xl border transition-all duration-200 p-3.5",
-              state.contentPreferences.addImages
-                ? "border-primary/50 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] shadow-[0_1px_0_0_hsl(var(--primary)/0.08)]"
-                : "border-border bg-background hover:border-primary/30 hover:bg-muted/30"
-            )}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => togglePref("addImages")}
-                role="switch"
-                aria-checked={state.contentPreferences.addImages}
-                className="flex items-center gap-3 text-left flex-1 min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg"
-                aria-label="Add images to pages"
-              >
-                <span
-                  className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors",
-                    state.contentPreferences.addImages
-                      ? "bg-primary/15 text-primary"
-                      : "bg-muted text-muted-foreground group-hover:text-foreground"
-                  )}
-                  aria-hidden="true"
-                >
-                  <ImageIcon className="w-4 h-4" />
-                </span>
-                <span className="flex flex-col min-w-0">
-                  <span className="text-sm font-semibold text-foreground leading-tight">Images</span>
-                  <span className="text-[11px] text-muted-foreground leading-snug mt-0.5">Add images to the pages</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => togglePref("addImages")}
-                role="switch"
-                aria-checked={state.contentPreferences.addImages}
-                aria-label="Toggle add images to pages"
-                className={cn(
-                  "w-9 h-5 rounded-full relative transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  state.contentPreferences.addImages ? "bg-primary" : "bg-muted-foreground/25"
-                )}
-              >
-                <span
-                  className={cn(
-                    "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background shadow-sm transition-transform",
-                    state.contentPreferences.addImages && "translate-x-4"
-                  )}
-                  aria-hidden="true"
-                />
-              </button>
-            </div>
-          </div>
-        </div>
-        {state.contentPreferences.includeQuestions && (
-          <div className="mt-3 rounded-xl border border-border bg-background p-4">
-            <div className="mb-3">
-              <div className="text-[15px] font-semibold text-foreground leading-tight">Number of Questions</div>
-              <p className="text-xs text-muted-foreground mt-0.5">Set how many of each question type to include per page.</p>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {[
-                { key: "singleChoice" as const, label: "Single Choice" },
-                { key: "multipleChoice" as const, label: "Multiple Choice" },
-                { key: "trueFalse" as const, label: "True / False" },
-                { key: "fillInBlank" as const, label: "Fill in Blank" },
-              ].map((q) => {
-                const id = `qtype-${q.key}`;
-                return (
-                  <div key={q.key} className="space-y-1.5">
-                    <label htmlFor={id} className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide block">
-                      {q.label}
-                    </label>
-                    <select
-                      id={id}
-                      value={state.questionTypes[q.key]}
-                      onChange={(e) =>
-                        onChange({
-                          questionTypes: {
-                            ...state.questionTypes,
-                            [q.key]: Number(e.target.value),
-                          },
-                        })
-                      }
-                      aria-label={`${q.label} count`}
-                      className="w-full h-9 rounded-lg border border-border bg-background text-sm font-medium text-foreground px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors hover:border-primary/50"
-                    >
-                      {[0, 1, 2, 3, 4, 5].map((n) => (
-                        <option key={n} value={n}>{n}</option>
-                      ))}
-                    </select>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </PrefCard>
 
       {/* Course Tone */}
       <PrefCard>
