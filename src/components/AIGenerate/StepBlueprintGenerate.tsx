@@ -1205,29 +1205,6 @@ function ScormPreferencesAccordion({
   );
 }
 
-type RuleKind = "do" | "dont";
-type Rule = { id: string; kind: RuleKind; text: string };
-
-const RULE_SUGGESTIONS: { kind: RuleKind; text: string }[] = [
-  { kind: "do", text: "Use plain, learner-friendly language" },
-  { kind: "do", text: "Include real-world examples" },
-  { kind: "do", text: "Cite credible sources" },
-  { kind: "dont", text: "Avoid jargon and acronyms" },
-  { kind: "dont", text: "Don't mention pricing" },
-  { kind: "dont", text: "Skip competitor names" },
-];
-
-function parseLines(v: string): string[] {
-  return (v ?? "")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-function joinLines(items: string[]): string {
-  return items.join("\n");
-}
-
 function GuidelinesExclusionsCard({
   state,
   onChange,
@@ -1235,251 +1212,73 @@ function GuidelinesExclusionsCard({
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }) {
-  const [kind, setKind] = useState<RuleKind>("do");
-  const [draft, setDraft] = useState("");
-
-  const doItems = parseLines(state.guidelines);
-  const dontItems = parseLines(state.exclusions);
-  const rules: Rule[] = [
-    ...doItems.map((t, i) => ({ id: `do-${i}-${t}`, kind: "do" as const, text: t })),
-    ...dontItems.map((t, i) => ({ id: `dont-${i}-${t}`, kind: "dont" as const, text: t })),
-  ];
-
-  const addRule = (k: RuleKind, text: string) => {
-    const clean = text.trim();
-    if (!clean) return;
-    if (k === "do") {
-      if (doItems.includes(clean)) return;
-      onChange({ guidelines: joinLines([...doItems, clean]) });
-    } else {
-      if (dontItems.includes(clean)) return;
-      onChange({ exclusions: joinLines([...dontItems, clean]) });
-    }
-  };
-
-  const removeRule = (r: Rule) => {
-    if (r.kind === "do") {
-      onChange({ guidelines: joinLines(doItems.filter((t) => t !== r.text)) });
-    } else {
-      onChange({ exclusions: joinLines(dontItems.filter((t) => t !== r.text)) });
-    }
-  };
-
-  const toggleRule = (r: Rule) => {
-    if (r.kind === "do") {
-      onChange({
-        guidelines: joinLines(doItems.filter((t) => t !== r.text)),
-        exclusions: joinLines([...dontItems, r.text]),
-      });
-    } else {
-      onChange({
-        exclusions: joinLines(dontItems.filter((t) => t !== r.text)),
-        guidelines: joinLines([...doItems, r.text]),
-      });
-    }
-  };
-
-  const commitDraft = () => {
-    addRule(kind, draft);
-    setDraft("");
-  };
-
-  const combinedDocs = [
-    ...(state.guidelinesDocuments ?? []),
-    ...(state.exclusionsDocuments ?? []),
-  ];
-
   return (
     <PrefCard>
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div>
-          <div className="text-[16px] font-semibold text-foreground leading-tight">
-            Content rules
-          </div>
-          <div className="text-[12px] text-muted-foreground mt-0.5">
-            Add short rules the AI should follow. Tag each as{" "}
-            <span className="text-emerald-600 font-medium">Do</span> or{" "}
-            <span className="text-rose-600 font-medium">Don't</span>.
-          </div>
+      <div className="mb-3">
+        <div className="text-[16px] font-semibold text-foreground leading-tight">
+          Content rules
         </div>
-        {rules.length > 0 && (
-          <div className="text-[11.5px] text-muted-foreground tabular-nums whitespace-nowrap pt-1">
-            <span className="text-emerald-600 font-semibold">{doItems.length}</span> do ·{" "}
-            <span className="text-rose-600 font-semibold">{dontItems.length}</span> don't
-          </div>
-        )}
+        <div className="text-[12px] text-muted-foreground mt-0.5">
+          Tell the AI what to include and what to leave out. One rule per line.
+        </div>
       </div>
 
-      {/* Composer */}
-      <div className="flex items-stretch gap-2 rounded-xl border border-border bg-background focus-within:ring-2 focus-within:ring-ring/50 transition-shadow">
-        {/* Kind toggle */}
-        <div
-          role="group"
-          aria-label="Rule type"
-          className="flex items-center gap-0.5 p-1 m-1 rounded-lg bg-muted/60"
-        >
-          <button
-            type="button"
-            aria-pressed={kind === "do"}
-            onClick={() => setKind("do")}
-            className={cn(
-              "flex items-center gap-1 h-7 px-2 rounded-md text-[12.5px] font-medium transition-colors",
-              kind === "do"
-                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            Do
-          </button>
-          <button
-            type="button"
-            aria-pressed={kind === "dont"}
-            onClick={() => setKind("dont")}
-            className={cn(
-              "flex items-center gap-1 h-7 px-2 rounded-md text-[12.5px] font-medium transition-colors",
-              kind === "dont"
-                ? "bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300 shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <XCircle className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-            Don't
-          </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Do */}
+        <div className="rounded-xl border border-border bg-background overflow-hidden">
+          <div className="flex items-center gap-2 px-3.5 py-2.5 bg-emerald-50/60 dark:bg-emerald-500/10 border-b border-border">
+            <CheckCircle2
+              className="w-4 h-4 text-emerald-600"
+              aria-hidden="true"
+              focusable="false"
+            />
+            <Label
+              htmlFor="content-rules-do"
+              className="text-[14px] font-semibold text-foreground"
+            >
+              Do
+            </Label>
+          </div>
+          <Textarea
+            id="content-rules-do"
+            value={state.guidelines}
+            onChange={(e) => onChange({ guidelines: e.target.value })}
+            placeholder="Use plain language&#10;Include real-world examples&#10;Cite credible sources"
+            className="text-[13.5px] min-h-[110px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+          />
         </div>
 
-        <Input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              commitDraft();
-            }
-          }}
-          placeholder={
-            kind === "do"
-              ? "e.g., Use plain language and short paragraphs"
-              : "e.g., Avoid jargon and internal acronyms"
-          }
-          aria-label="Add a rule"
-          className="flex-1 h-11 border-0 bg-transparent focus-visible:ring-0 text-[13.5px] px-1"
-        />
-
-        <button
-          type="button"
-          onClick={commitDraft}
-          disabled={!draft.trim()}
-          aria-label="Add rule"
-          className={cn(
-            "m-1 inline-flex items-center gap-1 h-9 px-3 rounded-lg text-[13px] font-semibold transition-colors",
-            draft.trim()
-              ? "bg-foreground text-background hover:bg-foreground/90"
-              : "bg-muted text-muted-foreground cursor-not-allowed"
-          )}
-        >
-          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          Add
-        </button>
+        {/* Don't */}
+        <div className="rounded-xl border border-border bg-background overflow-hidden">
+          <div className="flex items-center gap-2 px-3.5 py-2.5 bg-rose-50/60 dark:bg-rose-500/10 border-b border-border">
+            <XCircle
+              className="w-4 h-4 text-rose-600"
+              aria-hidden="true"
+              focusable="false"
+            />
+            <Label
+              htmlFor="content-rules-dont"
+              className="text-[14px] font-semibold text-foreground"
+            >
+              Don't
+            </Label>
+          </div>
+          <Textarea
+            id="content-rules-dont"
+            value={state.exclusions}
+            onChange={(e) => onChange({ exclusions: e.target.value })}
+            placeholder="Avoid jargon and acronyms&#10;Don't mention pricing&#10;Skip competitor names"
+            className="text-[13.5px] min-h-[110px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+          />
+        </div>
       </div>
-
-      {/* Suggestions */}
-      {rules.length === 0 && (
-        <div className="mt-3">
-          <div className="text-[11.5px] uppercase tracking-wide text-muted-foreground/80 font-semibold mb-1.5">
-            Quick add
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {RULE_SUGGESTIONS.map((s) => (
-              <button
-                key={s.text}
-                type="button"
-                onClick={() => addRule(s.kind, s.text)}
-                className={cn(
-                  "inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[12px] border transition-colors",
-                  s.kind === "do"
-                    ? "border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
-                    : "border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10"
-                )}
-              >
-                {s.kind === "do" ? (
-                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
-                ) : (
-                  <XCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
-                )}
-                {s.text}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Rules list */}
-      {rules.length > 0 && (
-        <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Content rules list">
-          {rules.map((r) => {
-            const isDo = r.kind === "do";
-            return (
-              <li
-                key={r.id}
-                className={cn(
-                  "group inline-flex items-center gap-1.5 h-8 pl-2 pr-1 rounded-full border text-[12.5px]",
-                  isDo
-                    ? "bg-emerald-50/60 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-200"
-                    : "bg-rose-50/60 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30 text-rose-800 dark:text-rose-200"
-                )}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleRule(r)}
-                  aria-label={`Switch to ${isDo ? "Don't" : "Do"}`}
-                  title={`Switch to ${isDo ? "Don't" : "Do"}`}
-                  className={cn(
-                    "inline-flex items-center justify-center w-5 h-5 rounded-full transition-colors",
-                    isDo
-                      ? "text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-500/20"
-                      : "text-rose-600 hover:bg-rose-100 dark:hover:bg-rose-500/20"
-                  )}
-                >
-                  {isDo ? (
-                    <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  ) : (
-                    <XCircle className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  )}
-                </button>
-                <span className="max-w-[28rem] truncate">{r.text}</span>
-                <button
-                  type="button"
-                  onClick={() => removeRule(r)}
-                  aria-label={`Remove rule: ${r.text}`}
-                  className={cn(
-                    "inline-flex items-center justify-center w-5 h-5 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/70 transition-colors"
-                  )}
-                >
-                  <X className="w-3 h-3" aria-hidden="true" focusable="false" />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
 
       {/* Reference files */}
       <div className="mt-3 pt-3 border-t border-border/60">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="text-[12.5px] font-medium text-foreground">
-            Reference files{" "}
-            <span className="text-muted-foreground font-normal">(optional)</span>
-          </div>
-          {combinedDocs.length > 0 && (
-            <span className="text-[11px] text-muted-foreground tabular-nums">
-              {combinedDocs.length} attached
-            </span>
-          )}
+        <div className="text-[12.5px] font-medium text-foreground mb-1.5">
+          Reference files{" "}
+          <span className="text-muted-foreground font-normal">(optional)</span>
         </div>
-        <p className="text-[11.5px] text-muted-foreground mb-2 leading-snug">
-          Attach style guides, brand books, or policies the AI should follow.
-        </p>
         <DocUploadZone
           documents={state.guidelinesDocuments ?? []}
           onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
@@ -1489,4 +1288,5 @@ function GuidelinesExclusionsCard({
     </PrefCard>
   );
 }
+
 
