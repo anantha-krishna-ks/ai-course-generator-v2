@@ -219,12 +219,12 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
         </div>
       </div>
 
-      {/* Guidelines Documents Upload Helper */}
-      <GuidelinesUpload
-        documents={state.guidelinesDocuments ?? []}
-        onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
-        guidelines={state.guidelines}
-        onGuidelinesChange={(g) => onChange({ guidelines: g })}
+      {/* Content Rules Upload Helper */}
+      <ContentRulesUpload
+        documents={state.contentRulesDocuments ?? []}
+        onDocumentsChange={(docs) => onChange({ contentRulesDocuments: docs })}
+        contentRules={state.contentRules}
+        onContentRulesChange={(v) => onChange({ contentRules: v })}
       />
     </div>
   );
