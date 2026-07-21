@@ -142,6 +142,7 @@ const initialState: AIGenerateState = {
   pageQuizConfig: JSON.parse(JSON.stringify(defaultQuizScope)),
   sectionImages: true,
   pageImages: true,
+  imageStyle: "photorealistic",
   scormPageDurationSec: 30,
   scormBgImage: null,
   scormBgOpacity: 40,
