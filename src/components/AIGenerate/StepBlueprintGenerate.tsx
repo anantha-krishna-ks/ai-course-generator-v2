@@ -1228,7 +1228,7 @@ function ContentRulesCard({
         value={state.contentRules}
         onChange={(e) => onChange({ contentRules: e.target.value })}
         placeholder="Include real-world examples, use plain language, avoid competitor names, skip pricing details, etc."
-        className="text-[13.5px] min-h-[110px] resize-none rounded-xl border-border bg-background focus-visible:ring-2 focus-visible:ring-ring"
+        className="text-[13.5px] min-h-[110px] resize-none rounded-xl border-2 border-input bg-background focus-visible:ring-2 focus-visible:ring-ring"
         aria-label="Content rules"
       />
 
