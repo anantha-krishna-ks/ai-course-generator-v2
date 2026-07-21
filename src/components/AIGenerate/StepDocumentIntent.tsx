@@ -261,7 +261,7 @@ function ContentRulesUpload({
           <div
             role="button"
             tabIndex={0}
-            aria-label="Upload guidelines documents"
+            aria-label="Upload content rules documents"
             onClick={() => inputRef.current?.click()}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -282,7 +282,7 @@ function ContentRulesUpload({
             multiple
             className="hidden"
             accept=".pdf,.doc,.docx,.txt,.md"
-            aria-label="Upload guidelines documents file input"
+            aria-label="Upload content rules documents file input"
             onChange={(e) => {
               if (e.target.files?.length) {
                 handleFiles(e.target.files);
