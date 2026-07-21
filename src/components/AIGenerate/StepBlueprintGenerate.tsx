@@ -1205,6 +1205,29 @@ function ScormPreferencesAccordion({
   );
 }
 
+type RuleKind = "do" | "dont";
+type Rule = { id: string; kind: RuleKind; text: string };
+
+const RULE_SUGGESTIONS: { kind: RuleKind; text: string }[] = [
+  { kind: "do", text: "Use plain, learner-friendly language" },
+  { kind: "do", text: "Include real-world examples" },
+  { kind: "do", text: "Cite credible sources" },
+  { kind: "dont", text: "Avoid jargon and acronyms" },
+  { kind: "dont", text: "Don't mention pricing" },
+  { kind: "dont", text: "Skip competitor names" },
+];
+
+function parseLines(v: string): string[] {
+  return (v ?? "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function joinLines(items: string[]): string {
+  return items.join("\n");
+}
+
 function GuidelinesExclusionsCard({
   state,
   onChange,
@@ -1212,50 +1235,59 @@ function GuidelinesExclusionsCard({
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }) {
-  const [active, setActive] = useState<"guidelines" | "exclusions">("guidelines");
+  const [kind, setKind] = useState<RuleKind>("do");
+  const [draft, setDraft] = useState("");
 
-  const TABS = [
-    {
-      key: "guidelines" as const,
-      label: "Do",
-      title: "Guidelines",
-      icon: CheckCircle2,
-      accent: "text-emerald-600",
-      activeBg: "bg-emerald-50 dark:bg-emerald-500/10",
-      activeBorder: "border-emerald-500/40",
-      ring: "focus-visible:ring-emerald-500/40",
-      helper: "Tell the AI what to include and how the content should read.",
-      placeholder: "e.g., Use plain language, include real-world examples, cite sources…",
-      value: state.guidelines,
-      onValue: (v: string) => onChange({ guidelines: v }),
-      docs: state.guidelinesDocuments ?? [],
-      onDocs: (docs: any[]) => onChange({ guidelinesDocuments: docs }),
-      count:
-        (state.guidelines?.trim() ? 1 : 0) +
-        (state.guidelinesDocuments?.length ?? 0),
-    },
-    {
-      key: "exclusions" as const,
-      label: "Don't",
-      title: "Exclusions",
-      icon: XCircle,
-      accent: "text-rose-600",
-      activeBg: "bg-rose-50 dark:bg-rose-500/10",
-      activeBorder: "border-rose-500/40",
-      ring: "focus-visible:ring-rose-500/40",
-      helper: "Tell the AI what to avoid, skip, or leave out of the course.",
-      placeholder: "e.g., Avoid jargon, don't include pricing, skip competitor mentions…",
-      value: state.exclusions,
-      onValue: (v: string) => onChange({ exclusions: v }),
-      docs: state.exclusionsDocuments ?? [],
-      onDocs: (docs: any[]) => onChange({ exclusionsDocuments: docs }),
-      count:
-        (state.exclusions?.trim() ? 1 : 0) +
-        (state.exclusionsDocuments?.length ?? 0),
-    },
+  const doItems = parseLines(state.guidelines);
+  const dontItems = parseLines(state.exclusions);
+  const rules: Rule[] = [
+    ...doItems.map((t, i) => ({ id: `do-${i}-${t}`, kind: "do" as const, text: t })),
+    ...dontItems.map((t, i) => ({ id: `dont-${i}-${t}`, kind: "dont" as const, text: t })),
   ];
 
-  const current = TABS.find((t) => t.key === active)!;
+  const addRule = (k: RuleKind, text: string) => {
+    const clean = text.trim();
+    if (!clean) return;
+    if (k === "do") {
+      if (doItems.includes(clean)) return;
+      onChange({ guidelines: joinLines([...doItems, clean]) });
+    } else {
+      if (dontItems.includes(clean)) return;
+      onChange({ exclusions: joinLines([...dontItems, clean]) });
+    }
+  };
+
+  const removeRule = (r: Rule) => {
+    if (r.kind === "do") {
+      onChange({ guidelines: joinLines(doItems.filter((t) => t !== r.text)) });
+    } else {
+      onChange({ exclusions: joinLines(dontItems.filter((t) => t !== r.text)) });
+    }
+  };
+
+  const toggleRule = (r: Rule) => {
+    if (r.kind === "do") {
+      onChange({
+        guidelines: joinLines(doItems.filter((t) => t !== r.text)),
+        exclusions: joinLines([...dontItems, r.text]),
+      });
+    } else {
+      onChange({
+        exclusions: joinLines(dontItems.filter((t) => t !== r.text)),
+        guidelines: joinLines([...doItems, r.text]),
+      });
+    }
+  };
+
+  const commitDraft = () => {
+    addRule(kind, draft);
+    setDraft("");
+  };
+
+  const combinedDocs = [
+    ...(state.guidelinesDocuments ?? []),
+    ...(state.exclusionsDocuments ?? []),
+  ];
 
   return (
     <PrefCard>
@@ -1265,78 +1297,193 @@ function GuidelinesExclusionsCard({
             Content rules
           </div>
           <div className="text-[12px] text-muted-foreground mt-0.5">
-            Tell the AI what to do and what to avoid when generating your course.
+            Add short rules the AI should follow. Tag each as{" "}
+            <span className="text-emerald-600 font-medium">Do</span> or{" "}
+            <span className="text-rose-600 font-medium">Don't</span>.
           </div>
         </div>
+        {rules.length > 0 && (
+          <div className="text-[11.5px] text-muted-foreground tabular-nums whitespace-nowrap pt-1">
+            <span className="text-emerald-600 font-semibold">{doItems.length}</span> do ·{" "}
+            <span className="text-rose-600 font-semibold">{dontItems.length}</span> don't
+          </div>
+        )}
       </div>
 
-      {/* Segmented tabs */}
-      <div
-        role="tablist"
-        aria-label="Content rules"
-        className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/60 mb-3"
-      >
-        {TABS.map((t) => {
-          const selected = t.key === active;
-          const Icon = t.icon;
-          return (
-            <button
-              key={t.key}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setActive(t.key)}
-              className={cn(
-                "relative flex items-center justify-center gap-2 h-9 px-3 rounded-lg text-[13px] font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                selected
-                  ? cn("bg-background shadow-sm border", t.activeBorder)
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Icon
-                className={cn("w-4 h-4", selected ? t.accent : "text-muted-foreground")}
-                aria-hidden="true"
-                focusable="false"
-              />
-              <span className={selected ? "text-foreground" : ""}>
-                <span className="font-semibold">{t.label}</span>
-                <span className="text-muted-foreground font-normal"> · {t.title}</span>
-              </span>
-              {t.count > 0 && (
-                <span
-                  className={cn(
-                    "ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold",
-                    selected
-                      ? cn(t.activeBg, t.accent)
-                      : "bg-muted text-muted-foreground"
-                  )}
-                  aria-label={`${t.count} item${t.count === 1 ? "" : "s"} added`}
-                >
-                  {t.count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      {/* Composer */}
+      <div className="flex items-stretch gap-2 rounded-xl border border-border bg-background focus-within:ring-2 focus-within:ring-ring/50 transition-shadow">
+        {/* Kind toggle */}
+        <div
+          role="group"
+          aria-label="Rule type"
+          className="flex items-center gap-0.5 p-1 m-1 rounded-lg bg-muted/60"
+        >
+          <button
+            type="button"
+            aria-pressed={kind === "do"}
+            onClick={() => setKind("do")}
+            className={cn(
+              "flex items-center gap-1 h-7 px-2 rounded-md text-[12.5px] font-medium transition-colors",
+              kind === "do"
+                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Do
+          </button>
+          <button
+            type="button"
+            aria-pressed={kind === "dont"}
+            onClick={() => setKind("dont")}
+            className={cn(
+              "flex items-center gap-1 h-7 px-2 rounded-md text-[12.5px] font-medium transition-colors",
+              kind === "dont"
+                ? "bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300 shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <XCircle className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Don't
+          </button>
+        </div>
 
-      {/* Active panel */}
-      <div role="tabpanel" aria-label={current.title} className="space-y-2.5">
-        <p className="text-[12px] text-muted-foreground leading-snug">{current.helper}</p>
-        <Textarea
-          value={current.value}
-          onChange={(e) => current.onValue(e.target.value)}
-          placeholder={current.placeholder}
-          className={cn(
-            "min-h-[90px] resize-none rounded-xl text-sm",
-            current.ring
-          )}
-          aria-label={current.title}
+        <Input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              commitDraft();
+            }
+          }}
+          placeholder={
+            kind === "do"
+              ? "e.g., Use plain language and short paragraphs"
+              : "e.g., Avoid jargon and internal acronyms"
+          }
+          aria-label="Add a rule"
+          className="flex-1 h-11 border-0 bg-transparent focus-visible:ring-0 text-[13.5px] px-1"
         />
+
+        <button
+          type="button"
+          onClick={commitDraft}
+          disabled={!draft.trim()}
+          aria-label="Add rule"
+          className={cn(
+            "m-1 inline-flex items-center gap-1 h-9 px-3 rounded-lg text-[13px] font-semibold transition-colors",
+            draft.trim()
+              ? "bg-foreground text-background hover:bg-foreground/90"
+              : "bg-muted text-muted-foreground cursor-not-allowed"
+          )}
+        >
+          <Plus className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          Add
+        </button>
+      </div>
+
+      {/* Suggestions */}
+      {rules.length === 0 && (
+        <div className="mt-3">
+          <div className="text-[11.5px] uppercase tracking-wide text-muted-foreground/80 font-semibold mb-1.5">
+            Quick add
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {RULE_SUGGESTIONS.map((s) => (
+              <button
+                key={s.text}
+                type="button"
+                onClick={() => addRule(s.kind, s.text)}
+                className={cn(
+                  "inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[12px] border transition-colors",
+                  s.kind === "do"
+                    ? "border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                    : "border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-500/10"
+                )}
+              >
+                {s.kind === "do" ? (
+                  <CheckCircle2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                ) : (
+                  <XCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
+                )}
+                {s.text}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Rules list */}
+      {rules.length > 0 && (
+        <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Content rules list">
+          {rules.map((r) => {
+            const isDo = r.kind === "do";
+            return (
+              <li
+                key={r.id}
+                className={cn(
+                  "group inline-flex items-center gap-1.5 h-8 pl-2 pr-1 rounded-full border text-[12.5px]",
+                  isDo
+                    ? "bg-emerald-50/60 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-200"
+                    : "bg-rose-50/60 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30 text-rose-800 dark:text-rose-200"
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleRule(r)}
+                  aria-label={`Switch to ${isDo ? "Don't" : "Do"}`}
+                  title={`Switch to ${isDo ? "Don't" : "Do"}`}
+                  className={cn(
+                    "inline-flex items-center justify-center w-5 h-5 rounded-full transition-colors",
+                    isDo
+                      ? "text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-500/20"
+                      : "text-rose-600 hover:bg-rose-100 dark:hover:bg-rose-500/20"
+                  )}
+                >
+                  {isDo ? (
+                    <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <XCircle className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  )}
+                </button>
+                <span className="max-w-[28rem] truncate">{r.text}</span>
+                <button
+                  type="button"
+                  onClick={() => removeRule(r)}
+                  aria-label={`Remove rule: ${r.text}`}
+                  className={cn(
+                    "inline-flex items-center justify-center w-5 h-5 rounded-full text-muted-foreground hover:text-foreground hover:bg-background/70 transition-colors"
+                  )}
+                >
+                  <X className="w-3 h-3" aria-hidden="true" focusable="false" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {/* Reference files */}
+      <div className="mt-3 pt-3 border-t border-border/60">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="text-[12.5px] font-medium text-foreground">
+            Reference files{" "}
+            <span className="text-muted-foreground font-normal">(optional)</span>
+          </div>
+          {combinedDocs.length > 0 && (
+            <span className="text-[11px] text-muted-foreground tabular-nums">
+              {combinedDocs.length} attached
+            </span>
+          )}
+        </div>
+        <p className="text-[11.5px] text-muted-foreground mb-2 leading-snug">
+          Attach style guides, brand books, or policies the AI should follow.
+        </p>
         <DocUploadZone
-          documents={current.docs}
-          onDocumentsChange={current.onDocs}
-          ariaLabel={`Upload ${current.title.toLowerCase()} documents`}
+          documents={state.guidelinesDocuments ?? []}
+          onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
+          ariaLabel="Upload content rule reference documents"
         />
       </div>
     </PrefCard>
