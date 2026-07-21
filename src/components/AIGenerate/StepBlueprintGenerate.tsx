@@ -34,7 +34,7 @@ import {
   PenLine,
   type LucideIcon,
 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import scormPlaceholder from "@/assets/scorm-placeholder.jpg";
 import imgStylePhoto from "@/assets/image-style-photorealistic.jpg";
