@@ -219,27 +219,27 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
         </div>
       </div>
 
-      {/* Guidelines Documents Upload Helper */}
-      <GuidelinesUpload
-        documents={state.guidelinesDocuments ?? []}
-        onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
-        guidelines={state.guidelines}
-        onGuidelinesChange={(g) => onChange({ guidelines: g })}
+      {/* Content Rules Upload Helper */}
+      <ContentRulesUpload
+        documents={state.contentRulesDocuments ?? []}
+        onDocumentsChange={(docs) => onChange({ contentRulesDocuments: docs })}
+        contentRules={state.contentRules}
+        onContentRulesChange={(v) => onChange({ contentRules: v })}
       />
     </div>
   );
 }
 
-function GuidelinesUpload({
+function ContentRulesUpload({
   documents,
   onDocumentsChange,
-  guidelines,
-  onGuidelinesChange,
+  contentRules,
+  onContentRulesChange,
 }: {
   documents: string[];
   onDocumentsChange: (docs: string[]) => void;
-  guidelines: string;
-  onGuidelinesChange: (v: string) => void;
+  contentRules: string;
+  onContentRulesChange: (v: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const handleFiles = (files: FileList | File[]) => {
@@ -248,20 +248,20 @@ function GuidelinesUpload({
   };
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <div className="text-[16px] font-semibold text-foreground leading-tight mb-2.5">Guidelines</div>
+      <div className="text-[16px] font-semibold text-foreground leading-tight mb-2.5">Content rules</div>
       <div className="space-y-3">
         <Textarea
-          value={guidelines}
-          onChange={(e) => onGuidelinesChange(e.target.value)}
-          placeholder="e.g., Use plain language, include real-world examples…"
+          value={contentRules}
+          onChange={(e) => onContentRulesChange(e.target.value)}
+          placeholder="e.g., Use plain language, include real-world examples, avoid jargon…"
           className="min-h-[80px] resize-none rounded-xl text-sm"
-          aria-label="Guidelines"
+          aria-label="Content rules"
         />
         <div className="space-y-2">
           <div
             role="button"
             tabIndex={0}
-            aria-label="Upload guidelines documents"
+            aria-label="Upload content rules documents"
             onClick={() => inputRef.current?.click()}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -282,7 +282,7 @@ function GuidelinesUpload({
             multiple
             className="hidden"
             accept=".pdf,.doc,.docx,.txt,.md"
-            aria-label="Upload guidelines documents file input"
+            aria-label="Upload content rules documents file input"
             onChange={(e) => {
               if (e.target.files?.length) {
                 handleFiles(e.target.files);

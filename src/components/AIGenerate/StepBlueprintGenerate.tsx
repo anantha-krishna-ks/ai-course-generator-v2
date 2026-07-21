@@ -526,7 +526,7 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
         </div>
       </PrefCard>
       {/* Guidelines & Exclusions (merged, tabbed) */}
-      <GuidelinesExclusionsCard state={state} onChange={onChange} />
+      <ContentRulesCard state={state} onChange={onChange} />
 
 
       {/* SCORM Preferences (collapsed accordion) */}
@@ -1205,7 +1205,7 @@ function ScormPreferencesAccordion({
   );
 }
 
-function GuidelinesExclusionsCard({
+function ContentRulesCard({
   state,
   onChange,
 }: {
@@ -1219,59 +1219,18 @@ function GuidelinesExclusionsCard({
           Content rules
         </div>
         <div className="text-[12px] text-muted-foreground mt-0.5">
-          Tell the AI what to include and what to leave out. One rule per line.
+          Tell the AI what to include and what to leave out. Keep it simple.
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Do */}
-        <div className="rounded-xl border border-border bg-background overflow-hidden">
-          <div className="flex items-center gap-2 px-3.5 py-2.5 bg-emerald-50/60 dark:bg-emerald-500/10 border-b border-border">
-            <CheckCircle2
-              className="w-4 h-4 text-emerald-600"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <Label
-              htmlFor="content-rules-do"
-              className="text-[14px] font-semibold text-foreground"
-            >
-              Do
-            </Label>
-          </div>
-          <Textarea
-            id="content-rules-do"
-            value={state.guidelines}
-            onChange={(e) => onChange({ guidelines: e.target.value })}
-            placeholder="Use plain language&#10;Include real-world examples&#10;Cite credible sources"
-            className="text-[13.5px] min-h-[110px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
-          />
-        </div>
-
-        {/* Don't */}
-        <div className="rounded-xl border border-border bg-background overflow-hidden">
-          <div className="flex items-center gap-2 px-3.5 py-2.5 bg-rose-50/60 dark:bg-rose-500/10 border-b border-border">
-            <XCircle
-              className="w-4 h-4 text-rose-600"
-              aria-hidden="true"
-              focusable="false"
-            />
-            <Label
-              htmlFor="content-rules-dont"
-              className="text-[14px] font-semibold text-foreground"
-            >
-              Don't
-            </Label>
-          </div>
-          <Textarea
-            id="content-rules-dont"
-            value={state.exclusions}
-            onChange={(e) => onChange({ exclusions: e.target.value })}
-            placeholder="Avoid jargon and acronyms&#10;Don't mention pricing&#10;Skip competitor names"
-            className="text-[13.5px] min-h-[110px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
-          />
-        </div>
-      </div>
+      <Textarea
+        id="content-rules"
+        value={state.contentRules}
+        onChange={(e) => onChange({ contentRules: e.target.value })}
+        placeholder="Include real-world examples, use plain language, avoid competitor names, skip pricing details, etc."
+        className="text-[13.5px] min-h-[110px] resize-none rounded-xl border-border bg-background focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label="Content rules"
+      />
 
       {/* Reference files */}
       <div className="mt-3 pt-3 border-t border-border/60">
@@ -1280,8 +1239,8 @@ function GuidelinesExclusionsCard({
           <span className="text-muted-foreground font-normal">(optional)</span>
         </div>
         <DocUploadZone
-          documents={state.guidelinesDocuments ?? []}
-          onDocumentsChange={(docs) => onChange({ guidelinesDocuments: docs })}
+          documents={state.contentRulesDocuments ?? []}
+          onDocumentsChange={(docs) => onChange({ contentRulesDocuments: docs })}
           ariaLabel="Upload content rule reference documents"
         />
       </div>
