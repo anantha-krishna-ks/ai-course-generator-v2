@@ -58,12 +58,12 @@ const TONE_OPTIONS = [
 ];
 
 const IMAGE_STYLE_OPTIONS = [
-  { value: "photorealistic" as const, label: "Photorealistic", icon: "📷" },
-  { value: "illustration" as const, label: "Illustration", icon: "🎨" },
-  { value: "flat" as const, label: "Flat / Minimal", icon: "▱" },
-  { value: "3d" as const, label: "3D Render", icon: "🧊" },
-  { value: "sketch" as const, label: "Sketch", icon: "✏️" },
-  { value: "watercolor" as const, label: "Watercolor", icon: "🖌️" },
+  { value: "photorealistic" as const, label: "Photorealistic", preview: imgStylePhoto },
+  { value: "illustration" as const, label: "Illustration", preview: imgStyleIllustration },
+  { value: "flat" as const, label: "Flat / Minimal", preview: imgStyleFlat },
+  { value: "3d" as const, label: "3D Render", preview: imgStyle3d },
+  { value: "sketch" as const, label: "Sketch", preview: imgStyleSketch },
+  { value: "watercolor" as const, label: "Watercolor", preview: imgStyleWatercolor },
 ];
 
 function SectionHeader({ title }: { icon?: LucideIcon; title: string; desc?: string }) {
