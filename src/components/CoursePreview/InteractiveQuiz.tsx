@@ -331,9 +331,9 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   return (
     <div className="space-y-4">
       {/* Exam header */}
-      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg">
-        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
-        <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center gap-4">
+      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
+        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
+        <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" />
@@ -344,14 +344,10 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
             <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
             <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
-              <Clock className="w-3.5 h-3.5 text-white/80" aria-hidden="true" />
-              <span className="text-xs font-mono font-semibold tabular-nums text-white">{formatClock(elapsed)}</span>
-            </div>
           </div>
         </div>
         {/* Slim answered progress */}
