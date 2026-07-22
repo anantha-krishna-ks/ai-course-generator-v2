@@ -169,79 +169,105 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
 
   // ------------------ Results scorecard ------------------
   if (validated) {
+    const scoreRingRadius = 48;
+    const stroke = 7;
+    const circumference = 2 * Math.PI * scoreRingRadius;
+    const scoreOffset = circumference - (accuracyPct / 100) * circumference;
+    const passPct = Math.round((passCriteria / total) * 100);
+
     const stats = [
-      { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30" },
-      { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950/30" },
+      { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-success", bg: "bg-success/10" },
+      { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-destructive", bg: "bg-destructive/10" },
       { label: "Accuracy", value: `${accuracyPct}%`, icon: Percent, tone: "text-primary", bg: "bg-primary/10" },
-      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-indigo-600", bg: "bg-indigo-50 dark:bg-indigo-950/30" },
+      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-info", bg: "bg-info/10" },
     ];
 
     return (
-      <div className="space-y-5">
-        {/* Verdict banner */}
-        <div
-          className={cn(
-            "relative overflow-hidden rounded-2xl border p-6",
-            passed
-              ? "border-emerald-500/30 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/30"
-              : "border-rose-400/30 bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 dark:from-rose-950/40 dark:via-orange-950/30 dark:to-amber-950/30"
-          )}
-        >
-          <div className="flex items-center gap-5">
-            <div
-              className={cn(
-                "w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg rotate-[-4deg]",
-                passed ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
-              )}
-            >
-              <Award className="w-10 h-10" aria-hidden="true" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Summative Exam · Result
-                </span>
-                <span
-                  className={cn(
-                    "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                    passed ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
-                  )}
-                >
-                  {passed ? "Passed" : "Not passed"}
-                </span>
+      <div className="space-y-6">
+        {/* Verdict card */}
+        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+              {/* Score ring */}
+              <div className="relative flex-shrink-0 w-28 h-28">
+                <svg width="112" height="112" viewBox="0 0 112 112" className="rotate-[-90deg]" aria-hidden="true">
+                  <circle
+                    cx="56"
+                    cy="56"
+                    r={scoreRingRadius}
+                    stroke="currentColor"
+                    strokeWidth={stroke}
+                    fill="transparent"
+                    className="text-muted/40"
+                  />
+                  <circle
+                    cx="56"
+                    cy="56"
+                    r={scoreRingRadius}
+                    stroke="currentColor"
+                    strokeWidth={stroke}
+                    fill="transparent"
+                    strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={scoreOffset}
+                    className={cn("transition-all duration-700", passed ? "text-success" : "text-destructive")}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-2xl font-semibold text-foreground tabular-nums">{accuracyPct}%</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Accuracy</span>
+                </div>
               </div>
-              <h3 className="text-2xl font-semibold text-foreground mt-1">
-                {passed ? "You've cleared the exam." : "You didn't clear the exam."}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
-                Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
-                Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
-              </p>
-            </div>
-          </div>
 
-          {/* Score progress bar */}
-          <div className="mt-5">
-            <div className="relative h-2.5 rounded-full bg-background/60 overflow-hidden">
-              <div
-                className={cn(
-                  "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
-                  passed ? "bg-emerald-500" : "bg-rose-500"
-                )}
-                style={{ width: `${accuracyPct}%` }}
-              />
-              {/* Pass mark tick */}
-              <div
-                className="absolute inset-y-[-4px] w-px bg-foreground/50"
-                style={{ left: `${Math.round((passCriteria / total) * 100)}%` }}
-                aria-hidden="true"
-              />
+              {/* Verdict text */}
+              <div className="flex-1 min-w-0 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    Summative Exam · Result
+                  </span>
+                  <span
+                    className={cn(
+                      "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                      passed
+                        ? "bg-success text-success-foreground"
+                        : "bg-destructive text-destructive-foreground"
+                    )}
+                  >
+                    {passed ? "Passed" : "Not passed"}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  {passed ? "You've cleared the exam." : "You didn't clear the exam."}
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1.5">
+                  Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
+                  Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
+                  Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
+                </p>
+              </div>
             </div>
-            <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
-              <span>0</span>
-              <span>Pass mark {Math.round((passCriteria / total) * 100)}%</span>
-              <span>100%</span>
+
+            {/* Score progress bar */}
+            <div className="mt-6">
+              <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={cn(
+                    "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
+                    passed ? "bg-success" : "bg-destructive"
+                  )}
+                  style={{ width: `${accuracyPct}%` }}
+                />
+                <div
+                  className="absolute inset-y-[-3px] w-px bg-foreground/40"
+                  style={{ left: `${passPct}%` }}
+                  aria-hidden="true"
+                />
+              </div>
+              <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
+                <span>0</span>
+                <span>Pass mark {passPct}%</span>
+                <span>100%</span>
+              </div>
             </div>
           </div>
         </div>
@@ -249,9 +275,17 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stats.map((s) => (
-            <div key={s.label} className={cn("rounded-xl border border-border/60 p-3.5 flex items-center gap-3", s.bg)}>
-              <s.icon className={cn("w-5 h-5 flex-shrink-0", s.tone)} aria-hidden="true" />
-              <div>
+            <div
+              key={s.label}
+              className={cn(
+                "rounded-xl border border-border/60 p-3.5 flex items-center gap-3",
+                s.bg
+              )}
+            >
+              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center bg-card border border-border/60", s.tone)}>
+                <s.icon className="w-4 h-4" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
                 <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.label}</div>
                 <div className="text-lg font-semibold text-foreground tabular-nums leading-tight">{s.value}</div>
               </div>
@@ -259,8 +293,8 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           ))}
         </div>
 
-        {/* Per-question review (compact) */}
-        <div className="rounded-2xl border border-border/60 overflow-hidden">
+        {/* Per-question review */}
+        <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-border/60 bg-muted/40 flex items-center gap-2">
             <FileCheck2 className="w-4 h-4 text-primary" aria-hidden="true" />
             <span className="text-sm font-semibold text-foreground">Answer sheet</span>
@@ -273,11 +307,13 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               const correctAnswers = getAnswers(qq);
               const wasFlagged = !!flagged[qi];
               return (
-                <li key={qi} className="px-4 py-3 flex items-start gap-3">
+                <li key={qi} className="px-4 sm:px-5 py-3.5 flex items-start gap-3 sm:gap-4">
                   <span
                     className={cn(
                       "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold",
-                      correct ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
+                      correct
+                        ? "bg-success text-success-foreground"
+                        : "bg-destructive text-destructive-foreground"
                     )}
                   >
                     {qi + 1}
@@ -287,26 +323,36 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                       {qq.question || qq.text}
                     </p>
                     {revealMode !== "hide_all" && (
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        <span>Your answer: </span>
-                        <span className={cn("font-medium", correct ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400")}>
-                          {sel.length ? sel.join(", ") : "— skipped —"}
-                        </span>
+                      <div className="mt-1.5 text-xs text-muted-foreground space-y-0.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-muted-foreground">Your answer:</span>
+                          <span className={cn("font-medium", correct ? "text-success" : "text-destructive")}>
+                            {sel.length ? sel.join(", ") : "— skipped —"}
+                          </span>
+                        </div>
                         {!correct && revealMode === "reveal_all" && correctAnswers.length > 0 && (
-                          <>
-                            <span> · Correct: </span>
-                            <span className="font-medium text-emerald-700 dark:text-emerald-400">{correctAnswers.join(", ")}</span>
-                          </>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-muted-foreground">Correct:</span>
+                            <span className="font-medium text-success">{correctAnswers.join(", ")}</span>
+                          </div>
                         )}
                       </div>
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {wasFlagged && <Flag className="w-3.5 h-3.5 text-amber-500" aria-label="Flagged" />}
+                    {wasFlagged && (
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-warning/10 border border-warning/20">
+                        <Flag className="w-3.5 h-3.5 text-warning" aria-label="Flagged for review" />
+                      </div>
+                    )}
                     {correct ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-success/10 border border-success/20">
+                        <CheckCircle2 className="w-4 h-4 text-success" aria-hidden="true" />
+                      </div>
                     ) : (
-                      <XCircle className="w-5 h-5 text-rose-500" aria-hidden="true" />
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-destructive/10 border border-destructive/20">
+                        <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" />
+                      </div>
                     )}
                   </div>
                 </li>
