@@ -582,20 +582,6 @@ function useTicker(active: boolean, tick: () => void) {
   }, [active]);
 }
 
-const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
-  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
-    <Icon className={cn("w-3.5 h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
-    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
-    <span className="text-xs font-semibold tabular-nums text-white">{value}</span>
-  </div>
-);
-
-const LegendDot = ({ color, label }: { color: string; label: string }) => (
-  <div className="flex items-center gap-2 text-muted-foreground">
-    <span className={cn("w-3 h-3 rounded", color)} aria-hidden="true" />
-    <span>{label}</span>
-  </div>
-);
 
 const MiniStat = ({ label, value, tone }: { label: string; value: string; tone: "emerald" | "amber" | "primary" | "muted" }) => {
   const tones: Record<string, string> = {
