@@ -312,66 +312,98 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             <span className="text-sm font-semibold text-foreground">Answer sheet</span>
             <span className="ml-auto text-xs text-muted-foreground">{total} questions</span>
           </div>
-          <ul className="divide-y divide-border/60">
+          <ul className="divide-y divide-border/60" aria-label="Per-question answer review">
             {questions.map((qq, qi) => {
               const sel = selectedAnswers[qi] || [];
               const correct = isQuestionCorrect(qq, sel);
               const correctAnswers = getAnswers(qq);
               const wasFlagged = !!flagged[qi];
+              const skipped = sel.length === 0;
+              const statusLabel = correct ? "Correct" : skipped ? "Skipped" : "Incorrect";
               return (
-                <li key={qi} className="px-4 sm:px-5 py-3.5 flex items-start gap-3 sm:gap-4">
-                  <span
-                    className={cn(
-                      "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold",
-                      correct
-                        ? "bg-success text-success-foreground"
-                        : "bg-destructive text-destructive-foreground"
-                    )}
-                  >
-                    {qi + 1}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground leading-relaxed">
-                      {qq.question || qq.text}
-                    </p>
-                    {revealMode !== "hide_all" && (
-                      <div className="mt-1.5 text-xs text-muted-foreground space-y-0.5">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-muted-foreground">Your answer:</span>
-                          <span className={cn("font-medium", correct ? "text-success" : "text-destructive")}>
-                            {sel.length ? sel.join(", ") : "— skipped —"}
-                          </span>
-                        </div>
-                        {!correct && revealMode === "reveal_all" && correctAnswers.length > 0 && (
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-muted-foreground">Correct:</span>
-                            <span className="font-medium text-success">{correctAnswers.join(", ")}</span>
-                          </div>
+                <li key={qi} className="px-4 sm:px-5 py-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <span
+                      className={cn(
+                        "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-semibold",
+                        correct
+                          ? "bg-success text-success-foreground"
+                          : "bg-destructive text-destructive-foreground"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {qi + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground leading-relaxed">
+                        <span className="sr-only">Question {qi + 1}, {statusLabel}. </span>
+                        {qq.question || qq.text}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {wasFlagged && (
+                        <span
+                          className="inline-flex items-center gap-1 px-2 h-7 rounded-md bg-warning/10 border border-warning/30 text-warning text-xs font-medium"
+                          aria-label="Flagged for review"
+                        >
+                          <Flag className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>Flagged</span>
+                        </span>
+                      )}
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 px-2 h-7 rounded-md text-xs font-semibold border",
+                          correct
+                            ? "bg-success/10 border-success/30 text-success"
+                            : "bg-destructive/10 border-destructive/30 text-destructive"
                         )}
-                      </div>
-                    )}
+                      >
+                        {correct ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                        )}
+                        <span>{statusLabel}</span>
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {wasFlagged && (
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-warning/10 border border-warning/20">
-                        <Flag className="w-3.5 h-3.5 text-warning" aria-label="Flagged for review" />
+                  {revealMode !== "hide_all" && (
+                    <dl className="mt-3 ml-11 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2 min-w-0">
+                        <dt className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Your answer
+                        </dt>
+                        <dd
+                          className={cn(
+                            "mt-0.5 text-sm font-medium break-words",
+                            skipped
+                              ? "text-muted-foreground italic"
+                              : correct
+                              ? "text-success"
+                              : "text-destructive"
+                          )}
+                        >
+                          {skipped ? "Not answered" : sel.join(", ")}
+                        </dd>
                       </div>
-                    )}
-                    {correct ? (
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-success/10 border border-success/20">
-                        <CheckCircle2 className="w-4 h-4 text-success" aria-hidden="true" />
-                      </div>
-                    ) : (
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-destructive/10 border border-destructive/20">
-                        <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" />
-                      </div>
-                    )}
-                  </div>
+                      {revealMode === "reveal_all" && correctAnswers.length > 0 && (
+                        <div className="rounded-lg border border-success/30 bg-success/5 px-3 py-2 min-w-0">
+                          <dt className="text-[10px] font-semibold uppercase tracking-wider text-success">
+                            Correct answer
+                          </dt>
+                          <dd className="mt-0.5 text-sm font-medium text-success break-words">
+                            {correctAnswers.join(", ")}
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                  )}
                 </li>
               );
             })}
           </ul>
         </div>
+
 
         <div className="flex justify-end">
           <Button onClick={handleRetry} variant="outline" className="gap-2 rounded-full">
