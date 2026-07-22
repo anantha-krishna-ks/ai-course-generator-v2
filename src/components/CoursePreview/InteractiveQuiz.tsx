@@ -528,43 +528,42 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
 
-          {/* Status summary — compact segmented legend */}
-          <div className="rounded-2xl border border-border bg-card/50 p-1.5 shadow-sm">
-            <div className="grid grid-cols-3 divide-x divide-border/60">
-              <div className="flex items-center gap-2.5 px-2.5 py-2">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300">
+          {/* Status summary — clean vertical rows, labels always visible */}
+          <div className="rounded-2xl border border-border bg-card/50 p-4 shadow-sm space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</span>
+              <span className="text-xs font-medium text-muted-foreground tabular-nums">{answeredCount} of {total} answered</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 rounded-xl bg-emerald-50 p-2.5 dark:bg-emerald-950/30">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300">
                   <CircleCheck className="h-4 w-4" aria-hidden="true" />
                 </span>
-                <div className="flex min-w-0 flex-col">
-                  <span className="text-base font-semibold tabular-nums leading-none text-emerald-700 dark:text-emerald-300">
-                    {answeredCount}
-                  </span>
-                  <span className="text-[11px] font-medium text-muted-foreground truncate">Done</span>
-                </div>
+                <span className="flex-1 text-sm font-medium text-emerald-800 dark:text-emerald-300">Answered</span>
+                <span className="shrink-0 rounded-full bg-emerald-200 px-2.5 py-0.5 text-sm font-semibold tabular-nums text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300">
+                  {answeredCount}
+                </span>
               </div>
 
-              <div className="flex items-center gap-2.5 px-2.5 py-2">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+              <div className="flex items-center gap-3 rounded-xl bg-muted p-2.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-background text-muted-foreground">
                   <Circle className="h-4 w-4" aria-hidden="true" />
                 </span>
-                <div className="flex min-w-0 flex-col">
-                  <span className="text-base font-semibold tabular-nums leading-none text-foreground">
-                    {unansweredCount}
-                  </span>
-                  <span className="text-[11px] font-medium text-muted-foreground truncate">Pending</span>
-                </div>
+                <span className="flex-1 text-sm font-medium text-foreground">Pending</span>
+                <span className="shrink-0 rounded-full bg-background px-2.5 py-0.5 text-sm font-semibold tabular-nums text-foreground">
+                  {unansweredCount}
+                </span>
               </div>
 
-              <div className="flex items-center gap-2.5 px-2.5 py-2">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300">
+              <div className="flex items-center gap-3 rounded-xl bg-amber-50 p-2.5 dark:bg-amber-950/30">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300">
                   <Flag className="h-4 w-4" aria-hidden="true" />
                 </span>
-                <div className="flex min-w-0 flex-col">
-                  <span className="text-base font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300">
-                    {flaggedCount}
-                  </span>
-                  <span className="text-[11px] font-medium text-muted-foreground truncate">Flagged</span>
-                </div>
+                <span className="flex-1 text-sm font-medium text-amber-800 dark:text-amber-300">Flagged for review</span>
+                <span className="shrink-0 rounded-full bg-amber-200 px-2.5 py-0.5 text-sm font-semibold tabular-nums text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+                  {flaggedCount}
+                </span>
               </div>
             </div>
           </div>
@@ -606,18 +605,18 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             })}
           </div>
 
-          {/* Legend */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] font-medium">
-            <span className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" />
+          {/* Legend — icon chips, full labels always visible */}
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+              <CircleCheck className="w-3.5 h-3.5" aria-hidden="true" />
               Answered
             </span>
-            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-muted-foreground/30" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              <Circle className="w-3.5 h-3.5" aria-hidden="true" />
               Unanswered
             </span>
-            <span className="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
-              <span className="w-2 h-2 rounded-full bg-amber-400" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+              <Flag className="w-3.5 h-3.5" aria-hidden="true" />
               Flagged
             </span>
           </div>
