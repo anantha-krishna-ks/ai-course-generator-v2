@@ -638,9 +638,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
 
 // Tiny hook for the exam clock without adding another top-level import block.
 function useTicker(active: boolean, tick: () => void) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const React = require("react");
-  React.useEffect(() => {
+  useEffect(() => {
     if (!active) return;
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
