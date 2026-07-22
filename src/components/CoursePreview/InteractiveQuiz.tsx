@@ -510,31 +510,57 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
 
         {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-5 h-fit lg:sticky lg:top-4">
-          <div className="flex items-center justify-between mb-4">
+        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-5">
+          {/* Header */}
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
               </div>
-              <div>
-                <span className="text-sm font-semibold text-foreground block leading-tight">Question map</span>
-                <span className="text-[11px] text-muted-foreground">Jump to any question</span>
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-foreground leading-tight">Question map</span>
+                <span className="text-[11px] text-muted-foreground leading-tight">Jump to any question</span>
               </div>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground border border-border">
               {total}
             </span>
           </div>
 
+          {/* Progress segment */}
+          <div className="flex flex-col gap-2">
+            <div className="h-2.5 w-full rounded-full bg-muted overflow-hidden flex">
+              <div
+                className="h-full bg-emerald-500 transition-all duration-500"
+                style={{ width: `${total ? (answeredCount / total) * 100 : 0}%` }}
+                aria-hidden="true"
+              />
+              <div
+                className="h-full bg-amber-400 transition-all duration-500"
+                style={{ width: `${total ? (flaggedCount / total) * 100 : 0}%` }}
+                aria-hidden="true"
+              />
+              <div
+                className="h-full bg-muted-foreground/20 transition-all duration-500"
+                style={{ width: `${total ? (unansweredCount / total) * 100 : 0}%` }}
+                aria-hidden="true"
+              />
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+              <span>{Math.round((answeredCount / total) * 100) || 0}% answered</span>
+              <span>{unansweredCount} left</span>
+            </div>
+          </div>
+
           {/* Status summary */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <MiniStat label="Done" value={String(answeredCount)} tone="emerald" />
-            <MiniStat label="Pending" value={String(unansweredCount)} tone="muted" />
-            <MiniStat label="Flagged" value={String(flaggedCount)} tone="amber" />
+          <div className="grid grid-cols-3 gap-2">
+            <MiniStat label="Done" value={String(answeredCount)} tone="emerald" icon={CircleCheck} />
+            <MiniStat label="Pending" value={String(unansweredCount)} tone="muted" icon={Circle} />
+            <MiniStat label="Flagged" value={String(flaggedCount)} tone="amber" icon={Flag} />
           </div>
 
           {/* Question grid */}
-          <div className="grid grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-5 gap-2">
             {questions.map((qq, i) => {
               const sel = selectedAnswers[i] || [];
               const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
@@ -548,18 +574,20 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}${isFlagged ? ", flagged" : ""}`}
                   aria-current={isCurrent ? "step" : undefined}
                   className={cn(
-                    "relative h-10 w-full rounded-full text-sm font-semibold transition-all duration-200 tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card",
+                    "relative h-9 w-full rounded-lg text-sm font-semibold transition-all duration-200 tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                     isCurrent
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105"
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 ring-1 ring-primary/30"
                       : done
-                      ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                      ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-sm"
+                      : isFlagged
+                      ? "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/60"
                       : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/50"
                   )}
                 >
                   {i + 1}
                   {isFlagged && !isCurrent && (
                     <span
-                      className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
+                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
                       aria-hidden="true"
                     />
                   )}
@@ -569,17 +597,17 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Legend */}
-          <div className="mt-5 flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
-              <CircleCheck className="w-3.5 h-3.5" aria-hidden="true" />
+          <div className="flex items-center justify-between gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
               Answered
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-muted text-muted-foreground text-xs font-medium">
-              <Circle className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+              <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" aria-hidden="true" />
               Unanswered
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-amber-400/15 text-amber-700 dark:text-amber-300 text-xs font-medium">
-              <Flag className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" aria-hidden="true" />
               Flagged
             </span>
           </div>
