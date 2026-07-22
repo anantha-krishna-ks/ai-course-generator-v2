@@ -537,16 +537,15 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     <h4 className="text-base font-semibold text-foreground">Submit your exam?</h4>
                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {unansweredCount > 0
-                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}${flaggedCount > 0 ? ` and ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`
-                        : `All ${total} questions are answered${flaggedCount > 0 ? `, with ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`}
+                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}. Once submitted you can't change your answers.`
+                        : `All ${total} questions are answered. Once submitted you can't change your answers.`}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div className="mt-4 grid grid-cols-2 gap-2 text-center">
                   <MiniStat label="Answered" value={`${answeredCount}`} tone="emerald" />
                   <MiniStat label="Unanswered" value={`${unansweredCount}`} tone={unansweredCount > 0 ? "amber" : "muted"} />
-                  <MiniStat label="Flagged" value={`${flaggedCount}`} tone={flaggedCount > 0 ? "primary" : "muted"} />
                 </div>
               </div>
               <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex items-center justify-between gap-3">
