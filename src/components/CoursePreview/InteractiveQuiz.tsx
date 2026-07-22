@@ -179,17 +179,16 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-success", bg: "bg-success/10" },
       { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-destructive", bg: "bg-destructive/10" },
       { label: "Accuracy", value: `${accuracyPct}%`, icon: Percent, tone: "text-primary", bg: "bg-primary/10" },
-      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-info", bg: "bg-info/10" },
     ];
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Verdict card */}
         <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-          <div className="p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+          <div className="p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6">
               {/* Score ring */}
-              <div className="relative flex-shrink-0 w-28 h-28">
+              <div className="relative flex-shrink-0 w-28 h-28 self-center sm:self-auto">
                 <svg width="112" height="112" viewBox="0 0 112 112" className="rotate-[-90deg]" aria-hidden="true">
                   <circle
                     cx="56"
@@ -219,66 +218,79 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 </div>
               </div>
 
-              {/* Verdict text */}
-              <div className="flex-1 min-w-0 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Summative Exam · Result
-                  </span>
-                  <span
-                    className={cn(
-                      "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                      passed
-                        ? "bg-success text-success-foreground"
-                        : "bg-destructive text-destructive-foreground"
-                    )}
-                  >
-                    {passed ? "Passed" : "Not passed"}
-                  </span>
+              {/* Verdict + mini score */}
+              <div className="flex-1 min-w-0 flex flex-col justify-between gap-4">
+                <div className="text-center sm:text-left">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Summative Exam · Result
+                    </span>
+                    <span
+                      className={cn(
+                        "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                        passed
+                          ? "bg-success text-success-foreground"
+                          : "bg-destructive text-destructive-foreground"
+                      )}
+                    >
+                      {passed ? "Passed" : "Not passed"}
+                    </span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
+                    {passed ? "You've cleared the exam." : "You didn't clear the exam."}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
+                    Pass mark <span className="font-semibold text-foreground">{passCriteria}</span>
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
-                  {passed ? "You've cleared the exam." : "You didn't clear the exam."}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1.5">
-                  Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
-                  Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
-                  Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
-                </p>
-              </div>
-            </div>
 
-            {/* Score progress bar */}
-            <div className="mt-6">
-              <div className="relative h-2 rounded-full bg-muted overflow-hidden">
-                <div
-                  className={cn(
-                    "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
-                    passed ? "bg-success" : "bg-destructive"
-                  )}
-                  style={{ width: `${accuracyPct}%` }}
-                />
-                <div
-                  className="absolute inset-y-[-3px] w-px bg-foreground/40"
-                  style={{ left: `${passPct}%` }}
-                  aria-hidden="true"
-                />
+                {/* Score progress bar */}
+                <div>
+                  <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={cn(
+                        "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
+                        passed ? "bg-success" : "bg-destructive"
+                      )}
+                      style={{ width: `${accuracyPct}%` }}
+                    />
+                    <div
+                      className="absolute inset-y-[-3px] w-px bg-foreground/40"
+                      style={{ left: `${passPct}%` }}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
+                    <span>0</span>
+                    <span>Pass mark {passPct}%</span>
+                    <span>100%</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
-                <span>0</span>
-                <span>Pass mark {passPct}%</span>
-                <span>100%</span>
+
+              {/* Mini score tiles */}
+              <div className="flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5">
+                <div className="flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-success">Score</div>
+                  <div className="text-lg font-semibold text-foreground tabular-nums">{correctCount}/{total}</div>
+                </div>
+                <div className="flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Pass mark</div>
+                  <div className="text-lg font-semibold text-foreground tabular-nums">{passCriteria}</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {stats.map((s) => (
             <div
               key={s.label}
               className={cn(
-                "rounded-xl border border-border/60 p-3.5 flex items-center gap-3",
+                "rounded-xl border border-border/60 p-3 flex items-center gap-3",
                 s.bg
               )}
             >
