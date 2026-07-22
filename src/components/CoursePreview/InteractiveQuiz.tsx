@@ -569,6 +569,13 @@ function useTicker(active: boolean, tick: () => void) {
 }
 
 
+const LegendRow = ({ color, label }: { color: string; label: string }) => (
+  <div className="flex items-center gap-2">
+    <span className={cn("w-3 h-3 rounded", color)} aria-hidden="true" />
+    <span className="text-[11px] text-muted-foreground">{label}</span>
+  </div>
+);
+
 const MiniStat = ({ label, value, tone }: { label: string; value: string; tone: "emerald" | "amber" | "primary" | "muted" }) => {
   const tones: Record<string, string> = {
     emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
