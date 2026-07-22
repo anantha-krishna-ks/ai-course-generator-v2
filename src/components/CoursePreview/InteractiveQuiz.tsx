@@ -457,7 +457,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               {answeredCount}/{total} recorded
             </span>
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {questions.map((qq, i) => {
               const sel = selectedAnswers[i] || [];
               const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
