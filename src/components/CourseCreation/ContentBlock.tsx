@@ -1,5 +1,20 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight } from "lucide-react";
+import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight, Check } from "lucide-react";
+import imgStylePhoto from "@/assets/image-style-photorealistic.jpg";
+import imgStyleIllustration from "@/assets/image-style-illustration.jpg";
+import imgStyleFlat from "@/assets/image-style-flat.jpg";
+import imgStyle3d from "@/assets/image-style-3d.jpg";
+import imgStyleSketch from "@/assets/image-style-sketch.jpg";
+import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
+
+const IMAGE_STYLE_OPTIONS = [
+  { value: "photorealistic", label: "Photorealistic", preview: imgStylePhoto },
+  { value: "illustration", label: "Illustration", preview: imgStyleIllustration },
+  { value: "flat", label: "Flat / Minimal", preview: imgStyleFlat },
+  { value: "3d", label: "3D Render", preview: imgStyle3d },
+  { value: "sketch", label: "Sketch", preview: imgStyleSketch },
+  { value: "watercolor", label: "Watercolor", preview: imgStyleWatercolor },
+] as const;
 import { getFontStack } from "./FontSelectorDropdown";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { useSortable } from "@dnd-kit/sortable";
@@ -188,6 +203,7 @@ export function ContentBlock({
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
+  const [imageStyle, setImageStyle] = useState<typeof IMAGE_STYLE_OPTIONS[number]["value"]>("photorealistic");
   const [imageGenerating, setImageGenerating] = useState(false);
   const [textGenerating, setTextGenerating] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
@@ -742,6 +758,65 @@ export function ContentBlock({
             <p className="text-[11px] text-muted-foreground mt-2 px-1">
               Press Enter to generate · Shift+Enter for new line
             </p>
+
+            {type === "image" && (
+              <div className="mt-4">
+                <div className="mb-2">
+                  <div className="text-[13px] font-semibold text-foreground leading-tight">
+                    Visual style
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                    Choose the look and feel for this image
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-3 gap-1.5"
+                  role="radiogroup"
+                  aria-label="Image visual style"
+                >
+                  {IMAGE_STYLE_OPTIONS.map((opt) => {
+                    const selected = imageStyle === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        aria-label={`${opt.label} image style`}
+                        onClick={() => setImageStyle(opt.value)}
+                        className={cn(
+                          "group relative flex flex-col overflow-hidden rounded-lg border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                          selected
+                            ? "border-primary/60 ring-2 ring-primary/40 shadow-sm"
+                            : "border-border hover:border-primary/30"
+                        )}
+                      >
+                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                          <img
+                            src={opt.preview}
+                            alt=""
+                            aria-hidden="true"
+                            loading="lazy"
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                          {selected && (
+                            <div className="absolute top-1.5 right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground shadow">
+                              <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            </div>
+                          )}
+                        </div>
+                        <span className={cn(
+                          "text-[11px] leading-tight font-medium py-1.5 px-1 text-center",
+                          selected ? "text-foreground" : "text-muted-foreground"
+                        )}>
+                          {opt.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
