@@ -316,157 +316,181 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   // ------------------ Active exam view ------------------
   const answeredPct = total === 0 ? 0 : Math.round((answeredCount / total) * 100);
 
+  const ringCircumference = 2 * Math.PI * 26; // r=26
+  const ringOffset = ringCircumference * (1 - answeredPct / 100);
+
   return (
-    <div className="space-y-4">
-      {/* Exam sheet — single wide card, distinct from formative stacked deck */}
-      <div className="relative rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-        {/* Top status strip — dot indicators inline */}
-        <div className="flex items-center gap-4 px-6 py-3 border-b border-border/60 bg-muted/30">
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4" aria-hidden="true" />
-            </div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Summative
-            </span>
-          </div>
-
-          {/* Dot pip strip */}
-          <div className="flex-1 min-w-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex items-center gap-1.5">
-              {questions.map((qq, i) => {
-                const sel = selectedAnswers[i] || [];
-                const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
-                const isCurrent = i === current;
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => goTo(i)}
-                    aria-label={`Question ${i + 1}${done ? ", answered" : ", unanswered"}`}
-                    aria-current={isCurrent ? "step" : undefined}
-                    className={cn(
-                      "flex-shrink-0 transition-all rounded-full",
-                      isCurrent
-                        ? "w-6 h-2 bg-primary"
-                        : done
-                        ? "w-2 h-2 bg-primary/50 hover:bg-primary/70"
-                        : "w-2 h-2 bg-border hover:bg-muted-foreground/40"
-                    )}
-                  />
-                );
-              })}
+    <div className="space-y-3">
+      {/* Assessment console — dark header panel + light body. Nothing like formative deck. */}
+      <div className="relative rounded-2xl overflow-hidden border border-border shadow-sm">
+        {/* DARK CONSOLE HEADER */}
+        <div className="relative bg-foreground text-background px-6 sm:px-8 py-5 flex items-center gap-5">
+          {/* Radial progress ring */}
+          <div className="relative w-16 h-16 flex-shrink-0" aria-hidden="true">
+            <svg viewBox="0 0 60 60" className="w-16 h-16 -rotate-90">
+              <circle cx="30" cy="30" r="26" fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="4" />
+              <circle
+                cx="30" cy="30" r="26"
+                fill="none"
+                stroke="currentColor"
+                strokeOpacity="0.95"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray={ringCircumference}
+                strokeDashoffset={ringOffset}
+                style={{ transition: "stroke-dashoffset 500ms ease" }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
+              <span className="text-[9px] font-medium uppercase tracking-wider opacity-60">Ans</span>
+              <span className="text-sm font-semibold tabular-nums">{answeredCount}/{total}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 flex-shrink-0 px-2 py-1 rounded-full bg-background border border-border">
-            <Lock className="w-3 h-3 text-muted-foreground" aria-hidden="true" />
-            <span className="text-[10px] font-semibold text-muted-foreground">Results on submit</span>
-          </div>
-        </div>
-
-        {/* Body — boarding-pass style split header, then question */}
-        <div className="px-6 sm:px-10 pt-8 pb-6">
-          {/* Meta row — Question number as monospace tag + type + counter */}
-          <div className="flex items-end justify-between gap-4 mb-6 pb-5 border-b border-dashed border-border">
-            <div>
-              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground mb-1">
-                Question
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl sm:text-5xl font-semibold text-foreground tabular-nums leading-none tracking-tight">
-                  {String(current + 1).padStart(2, "0")}
-                </span>
-                <span className="text-lg font-medium text-muted-foreground tabular-nums">
-                  / {String(total).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-2">
-              {q?.type && (
-                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-semibold uppercase tracking-wider">
-                  {q.type}
-                </span>
-              )}
-              <span className="text-[10px] font-medium text-muted-foreground">
-                {isFIB ? "Type your answer" : isMCQ ? "Select all that apply" : "Select one"}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.24em] opacity-70">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+                Session · Live
               </span>
             </div>
+            <h3 className="text-lg sm:text-xl font-semibold leading-tight">
+              Summative Assessment
+            </h3>
+            <p className="text-[11px] font-mono uppercase tracking-widest opacity-60 mt-0.5">
+              Proctored · Results on submit
+            </p>
           </div>
 
-          {/* Question text — full width, no side sidebar */}
-          <p className="text-xl sm:text-2xl font-medium text-foreground leading-relaxed">
-            {q?.question || q?.text}
-          </p>
-
-          {/* Answers */}
-          {isFIB ? (
-            <div className="mt-8 relative">
-              <PencilLine className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-              <Input
-                value={selected[0] || ""}
-                onChange={(e) => handleFib(e.target.value)}
-                placeholder="Type your answer here"
-                aria-label={`Answer for question ${current + 1}`}
-                className="h-14 pl-11 rounded-xl text-base border-input focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary"
-              />
-            </div>
-          ) : (
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {options.map((opt, ai) => {
-                const isSelected = selected.includes(opt);
-                const letter = String.fromCharCode(65 + ai);
-                return (
-                  <button
-                    key={ai}
-                    type="button"
-                    onClick={() => handleSelect(opt)}
-                    aria-pressed={isSelected}
-                    className={cn(
-                      "group flex items-start gap-3 px-4 py-4 rounded-xl border text-left transition-all",
-                      isSelected
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                        : "border-border bg-background hover:border-primary/40 hover:bg-muted/40"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "flex items-center justify-center w-6 h-6 flex-shrink-0 text-[11px] font-semibold border transition-colors mt-0.5",
-                        isMCQ ? "rounded-md" : "rounded-full",
-                        isSelected
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "bg-background border-border text-muted-foreground group-hover:border-primary/40"
-                      )}
-                      aria-hidden="true"
-                    >
-                      {isSelected ? (isMCQ ? "✓" : "●") : letter}
-                    </span>
-                    <span className={cn(
-                      "flex-1 text-sm leading-relaxed",
-                      isSelected ? "text-foreground font-medium" : "text-foreground/85"
-                    )}>
-                      {opt}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/10 border border-background/15 backdrop-blur-sm">
+            <Lock className="w-3.5 h-3.5 opacity-80" aria-hidden="true" />
+            <span className="text-[10px] font-mono uppercase tracking-widest opacity-80">Sealed</span>
+          </div>
         </div>
 
-        {/* Footer nav */}
-        <div className="px-6 sm:px-10 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-between gap-3">
+        {/* Segmented tick strip — thin ticks, clickable */}
+        <div className="bg-foreground text-background px-6 sm:px-8 pb-4">
+          <div className="flex items-center gap-[3px]">
+            {questions.map((qq, i) => {
+              const sel = selectedAnswers[i] || [];
+              const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+              const isCurrent = i === current;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}`}
+                  aria-current={isCurrent ? "step" : undefined}
+                  className={cn(
+                    "flex-1 h-1 rounded-full transition-all",
+                    isCurrent
+                      ? "bg-background h-1.5"
+                      : done
+                      ? "bg-background/60 hover:bg-background/80"
+                      : "bg-background/15 hover:bg-background/30"
+                  )}
+                />
+              );
+            })}
+          </div>
+          <div className="flex items-center justify-between mt-2 font-mono text-[10px] uppercase tracking-widest opacity-60">
+            <span>Q {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
+            <span>{q?.type || "—"} · {isFIB ? "Free text" : isMCQ ? "Multi-select" : "Single-select"}</span>
+          </div>
+        </div>
+
+        {/* LIGHT BODY — question with watermark numeral */}
+        <div className="relative bg-card px-6 sm:px-10 pt-8 pb-6 overflow-hidden">
+          {/* Watermark numeral */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none select-none absolute -top-4 right-4 sm:right-8 text-[140px] sm:text-[180px] leading-none font-semibold text-muted-foreground/[0.06] tabular-nums tracking-tighter"
+          >
+            {String(current + 1).padStart(2, "0")}
+          </span>
+
+          <div className="relative">
+            <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground mb-3">
+              Question {current + 1}
+            </p>
+            <p className="text-xl sm:text-2xl font-medium text-foreground leading-relaxed max-w-3xl">
+              {q?.question || q?.text}
+            </p>
+
+            {isFIB ? (
+              <div className="mt-8 max-w-2xl">
+                <label className="block text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">
+                  Your response
+                </label>
+                <div className="relative">
+                  <PencilLine className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                  <Input
+                    value={selected[0] || ""}
+                    onChange={(e) => handleFib(e.target.value)}
+                    placeholder="Type your answer here"
+                    aria-label={`Answer for question ${current + 1}`}
+                    className="h-14 pl-11 rounded-xl text-base border-input focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="mt-8 space-y-2.5">
+                {options.map((opt, ai) => {
+                  const isSelected = selected.includes(opt);
+                  const num = ai + 1;
+                  return (
+                    <button
+                      key={ai}
+                      type="button"
+                      onClick={() => handleSelect(opt)}
+                      aria-pressed={isSelected}
+                      className={cn(
+                        "group w-full flex items-center gap-4 pl-3 pr-5 py-3 rounded-xl border text-left transition-all",
+                        isSelected
+                          ? "border-primary bg-primary/[0.06] shadow-[inset_3px_0_0_hsl(var(--primary))]"
+                          : "border-border bg-background hover:border-foreground/30 hover:bg-muted/40"
+                      )}
+                    >
+                      {/* Keycap-style number tile */}
+                      <span
+                        className={cn(
+                          "flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-lg font-mono text-sm font-semibold border-b-2 transition-all",
+                          isSelected
+                            ? "bg-primary text-primary-foreground border-primary/70"
+                            : "bg-muted text-foreground/70 border-border group-hover:bg-background group-hover:text-foreground"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {num}
+                      </span>
+                      <span className={cn(
+                        "flex-1 text-sm sm:text-base leading-relaxed",
+                        isSelected ? "text-foreground font-medium" : "text-foreground/85"
+                      )}>
+                        {opt}
+                      </span>
+                      {isSelected && (
+                        <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer nav — monochrome, exam-console feel */}
+        <div className="px-6 sm:px-10 py-4 border-t border-border bg-card flex items-center justify-between gap-3">
           <Button variant="outline" size="sm" onClick={() => goTo(current - 1)} disabled={current === 0} className="gap-1.5 rounded-full">
             <ChevronLeft className="w-4 h-4" aria-hidden="true" />
             Previous
           </Button>
 
-          <div className="hidden sm:flex items-center gap-2 text-[11px] text-muted-foreground">
-            <span className="tabular-nums font-medium text-foreground">{answeredCount}</span>
-            <span>of</span>
-            <span className="tabular-nums">{total}</span>
-            <span>answered</span>
-          </div>
+          <span className="hidden sm:block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            {answeredCount} of {total} answered
+          </span>
 
           {current < total - 1 ? (
             <Button size="sm" onClick={() => goTo(current + 1)} className="gap-1.5 rounded-full">
@@ -481,6 +505,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           )}
         </div>
       </div>
+
 
 
 
