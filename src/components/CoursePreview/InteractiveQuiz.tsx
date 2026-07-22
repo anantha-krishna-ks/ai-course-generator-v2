@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, Flag, ShieldCheck, Clock, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, ShieldCheck, FileCheck2, AlertTriangle, Award, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -173,7 +173,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30" },
       { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950/30" },
       { label: "Accuracy", value: `${accuracyPct}%`, icon: Percent, tone: "text-primary", bg: "bg-primary/10" },
-      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-indigo-600", bg: "bg-indigo-50 dark:bg-indigo-950/30" },
     ];
 
     return (
@@ -214,9 +213,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 {passed ? "You've cleared the exam." : "You didn't clear the exam."}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
-                Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
-                Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
+                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span>
               </p>
             </div>
           </div>
@@ -231,23 +228,16 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 )}
                 style={{ width: `${accuracyPct}%` }}
               />
-              {/* Pass mark tick */}
-              <div
-                className="absolute inset-y-[-4px] w-px bg-foreground/50"
-                style={{ left: `${Math.round((passCriteria / total) * 100)}%` }}
-                aria-hidden="true"
-              />
             </div>
             <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
-              <span>0</span>
-              <span>Pass mark {Math.round((passCriteria / total) * 100)}%</span>
+              <span>0%</span>
               <span>100%</span>
             </div>
           </div>
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {stats.map((s) => (
             <div key={s.label} className={cn("rounded-xl border border-border/60 p-3.5 flex items-center gap-3", s.bg)}>
               <s.icon className={cn("w-5 h-5 flex-shrink-0", s.tone)} aria-hidden="true" />
@@ -271,7 +261,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               const sel = selectedAnswers[qi] || [];
               const correct = isQuestionCorrect(qq, sel);
               const correctAnswers = getAnswers(qq);
-              const wasFlagged = !!flagged[qi];
               return (
                 <li key={qi} className="px-4 py-3 flex items-start gap-3">
                   <span
@@ -302,7 +291,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {wasFlagged && <Flag className="w-3.5 h-3.5 text-amber-500" aria-label="Flagged" />}
                     {correct ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
                     ) : (
@@ -330,7 +318,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
 
   return (
     <div className="space-y-4">
-      {/* Exam header */}
+      {/* Exam header — slim, focus on identity + progress */}
       <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
         <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center gap-4">
@@ -344,14 +332,9 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
-            <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
-            <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
-              <Clock className="w-3.5 h-3.5 text-white/80" aria-hidden="true" />
-              <span className="text-xs font-mono font-semibold tabular-nums text-white">{formatClock(elapsed)}</span>
-            </div>
+          <div className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">Question</span>
+            <span className="text-xs font-semibold tabular-nums text-white">{current + 1} / {total}</span>
           </div>
         </div>
         {/* Slim answered progress */}
@@ -363,209 +346,163 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
       </div>
 
-      {/* Body: question + navigator */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-4">
-        {/* Question panel */}
-        <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden">
-          <div className="px-5 sm:px-6 pt-5 pb-3 flex items-center gap-3 border-b border-border/60">
-            <span className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold tabular-nums">
-              {current + 1}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Question {current + 1} of {total}</span>
-              {q?.type && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground/80 tracking-wider">
-                  {q.type}
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={toggleFlag}
-              aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
-              aria-pressed={!!flagged[current]}
-              className={cn(
-                "ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
-                flagged[current]
-                  ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
-                  : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
-              )}
-            >
-              <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
-              {flagged[current] ? "Flagged" : "Flag for review"}
-            </button>
-          </div>
-
-          <div className="px-5 sm:px-6 py-5">
-            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-5">
-              {q?.question || q?.text}
-            </p>
-
-            {isFIB ? (
-              <div className="relative">
-                <PencilLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
-                <Input
-                  value={selected[0] || ""}
-                  onChange={(e) => handleFib(e.target.value)}
-                  placeholder="Type your answer..."
-                  aria-label={`Answer for question ${current + 1}`}
-                  className="h-12 rounded-xl bg-background border border-border pl-10 text-base"
-                />
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {options.map((opt, ai) => {
-                  const isSelected = selected.includes(opt);
-                  const letter = String.fromCharCode(65 + ai);
-                  return (
-                    <button
-                      key={ai}
-                      type="button"
-                      onClick={() => handleSelect(opt)}
-                      aria-pressed={isSelected}
-                      className={cn(
-                        "group w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left text-sm border transition-all",
-                        isSelected
-                          ? "border-primary bg-primary/[0.06] shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.55)]"
-                          : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/40"
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold border-2 flex-shrink-0 transition-all",
-                          isSelected
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border bg-muted/40 text-muted-foreground group-hover:border-primary/40"
-                        )}
-                        aria-hidden="true"
-                      >
-                        {letter}
-                      </span>
-                      <span className={cn("flex-1 leading-relaxed", isSelected ? "font-medium text-foreground" : "text-foreground/85")}>
-                        {opt}
-                      </span>
-                      {isMCQ && (
-                        <span
-                          className={cn(
-                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
-                            isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
-                          )}
-                          aria-hidden="true"
-                        >
-                          {isSelected && (
-                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <path d="M2.5 6l2.5 2.5 4.5-5" />
-                            </svg>
-                          )}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Locked feedback notice */}
-            <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 border border-border/60">
-              <Lock className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
-              <span>Answers and feedback are hidden until you submit the exam.</span>
-            </div>
-          </div>
-
-          {/* Nav footer */}
-          <div className="px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => goTo(current - 1)}
-              disabled={current === 0}
-              className="gap-1.5 rounded-full"
-            >
-              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-              Previous
-            </Button>
-
-            {current < total - 1 ? (
-              <Button
-                size="sm"
-                onClick={() => goTo(current + 1)}
-                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+      {/* Horizontal question navigator strip — compact, scrollable */}
+      <div className="rounded-2xl border border-border/70 bg-card shadow-sm px-3 py-2.5">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          {questions.map((qq, i) => {
+            const sel = selectedAnswers[i] || [];
+            const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+            const isCurrent = i === current;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}`}
+                aria-current={isCurrent ? "step" : undefined}
+                className={cn(
+                  "flex-shrink-0 h-8 min-w-8 px-2 rounded-lg text-xs font-semibold border transition-all tabular-nums",
+                  isCurrent
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
+                    : done
+                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/20"
+                    : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                )}
               >
-                Next
-                <ChevronRight className="w-4 h-4" aria-hidden="true" />
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                onClick={() => setConfirmOpen(true)}
-                className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
-              >
-                <FileCheck2 className="w-4 h-4" aria-hidden="true" />
-                Submit exam
-              </Button>
+                {i + 1}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Question panel */}
+      <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden">
+        <div className="px-5 sm:px-6 pt-5 pb-3 flex items-center gap-3 border-b border-border/60">
+          <span className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold tabular-nums">
+            {current + 1}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Question {current + 1} of {total}</span>
+            {q?.type && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground/80 tracking-wider">
+                {q.type}
+              </span>
             )}
           </div>
         </div>
 
-        {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/70 bg-card shadow-sm p-4 h-fit lg:sticky lg:top-4">
-          <div className="flex items-center gap-2 mb-3">
-            <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
-            <span className="text-xs font-semibold text-foreground">Question navigator</span>
-          </div>
+        <div className="px-5 sm:px-6 py-5">
+          <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-5">
+            {q?.question || q?.text}
+          </p>
 
-          <div className="grid grid-cols-5 gap-2">
-            {questions.map((qq, i) => {
-              const sel = selectedAnswers[i] || [];
-              const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
-              const isCurrent = i === current;
-              const isFlagged = !!flagged[i];
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}${isFlagged ? ", flagged" : ""}`}
-                  aria-current={isCurrent ? "step" : undefined}
-                  className={cn(
-                    "relative h-9 rounded-lg text-xs font-semibold border transition-all tabular-nums",
-                    isCurrent && "ring-2 ring-primary ring-offset-2 ring-offset-card",
-                    done
-                      ? "bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600"
-                      : "bg-background text-foreground border-border hover:border-primary/40"
-                  )}
-                >
-                  {i + 1}
-                  {isFlagged && (
+          {isFIB ? (
+            <div className="relative">
+              <PencilLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
+              <Input
+                value={selected[0] || ""}
+                onChange={(e) => handleFib(e.target.value)}
+                placeholder="Type your answer..."
+                aria-label={`Answer for question ${current + 1}`}
+                className="h-12 rounded-xl bg-background border border-border pl-10 text-base"
+              />
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {options.map((opt, ai) => {
+                const isSelected = selected.includes(opt);
+                const letter = String.fromCharCode(65 + ai);
+                return (
+                  <button
+                    key={ai}
+                    type="button"
+                    onClick={() => handleSelect(opt)}
+                    aria-pressed={isSelected}
+                    className={cn(
+                      "group w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left text-sm border transition-all",
+                      isSelected
+                        ? "border-primary bg-primary/[0.06] shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.55)]"
+                        : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/40"
+                    )}
+                  >
                     <span
-                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
+                      className={cn(
+                        "flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold border-2 flex-shrink-0 transition-all",
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-muted/40 text-muted-foreground group-hover:border-primary/40"
+                      )}
                       aria-hidden="true"
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                    >
+                      {letter}
+                    </span>
+                    <span className={cn("flex-1 leading-relaxed", isSelected ? "font-medium text-foreground" : "text-foreground/85")}>
+                      {opt}
+                    </span>
+                    {isMCQ && (
+                      <span
+                        className={cn(
+                          "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                          isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {isSelected && (
+                          <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M2.5 6l2.5 2.5 4.5-5" />
+                          </svg>
+                        )}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
-          {/* Legend */}
-          <div className="mt-4 space-y-1.5 text-[11px]">
-            <LegendDot color="bg-emerald-500" label={`Answered (${answeredCount})`} />
-            <LegendDot color="bg-background border border-border" label={`Unanswered (${unansweredCount})`} />
-            <LegendDot color="bg-amber-400" label={`Flagged (${flaggedCount})`} />
+          {/* Locked feedback notice */}
+          <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 border border-border/60">
+            <Lock className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+            <span>Answers and feedback are hidden until you submit the exam.</span>
           </div>
+        </div>
 
-          <div className="mt-4 pt-4 border-t border-border/60">
+        {/* Nav footer */}
+        <div className="px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => goTo(current - 1)}
+            disabled={current === 0}
+            className="gap-1.5 rounded-full"
+          >
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+            Previous
+          </Button>
+
+          {current < total - 1 ? (
+            <Button
+              size="sm"
+              onClick={() => goTo(current + 1)}
+              className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          ) : (
             <Button
               size="sm"
               onClick={() => setConfirmOpen(true)}
-              className="w-full gap-2 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+              className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
             >
               <FileCheck2 className="w-4 h-4" aria-hidden="true" />
               Submit exam
             </Button>
-          </div>
-        </aside>
+          )}
+        </div>
       </div>
+
 
       {/* Submit confirmation */}
       <AnimatePresence>
@@ -600,16 +537,15 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     <h4 className="text-base font-semibold text-foreground">Submit your exam?</h4>
                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {unansweredCount > 0
-                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}${flaggedCount > 0 ? ` and ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`
-                        : `All ${total} questions are answered${flaggedCount > 0 ? `, with ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`}
+                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}. Once submitted you can't change your answers.`
+                        : `All ${total} questions are answered. Once submitted you can't change your answers.`}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div className="mt-4 grid grid-cols-2 gap-2 text-center">
                   <MiniStat label="Answered" value={`${answeredCount}`} tone="emerald" />
                   <MiniStat label="Unanswered" value={`${unansweredCount}`} tone={unansweredCount > 0 ? "amber" : "muted"} />
-                  <MiniStat label="Flagged" value={`${flaggedCount}`} tone={flaggedCount > 0 ? "primary" : "muted"} />
                 </div>
               </div>
               <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex items-center justify-between gap-3">
@@ -646,20 +582,6 @@ function useTicker(active: boolean, tick: () => void) {
   }, [active]);
 }
 
-const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
-  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
-    <Icon className={cn("w-3.5 h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
-    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
-    <span className="text-xs font-semibold tabular-nums text-white">{value}</span>
-  </div>
-);
-
-const LegendDot = ({ color, label }: { color: string; label: string }) => (
-  <div className="flex items-center gap-2 text-muted-foreground">
-    <span className={cn("w-3 h-3 rounded", color)} aria-hidden="true" />
-    <span>{label}</span>
-  </div>
-);
 
 const MiniStat = ({ label, value, tone }: { label: string; value: string; tone: "emerald" | "amber" | "primary" | "muted" }) => {
   const tones: Record<string, string> = {
