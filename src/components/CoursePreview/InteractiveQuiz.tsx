@@ -647,7 +647,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   )}>
                     {unansweredCount > 0 ? <AlertTriangle className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h4 className="text-base font-semibold text-foreground">Submit your exam?</h4>
                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {unansweredCount > 0
@@ -657,23 +657,42 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                  <MiniStat label="Answered" value={`${answeredCount}`} tone="emerald" />
-                  <MiniStat label="Unanswered" value={`${unansweredCount}`} tone={unansweredCount > 0 ? "amber" : "muted"} />
-                  <MiniStat label="Flagged" value={`${flaggedCount}`} tone={flaggedCount > 0 ? "primary" : "muted"} />
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  <div className="flex flex-col items-center gap-1.5 rounded-xl border border-emerald-100 bg-emerald-50 px-2 py-3 dark:bg-emerald-950/30 dark:border-emerald-900/40">
+                    <CircleCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+                    <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{answeredCount}</span>
+                    <span className="text-[10px] font-medium text-emerald-700/80 dark:text-emerald-300/80">Answered</span>
+                  </div>
+
+                  <div className={cn(
+                    "flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3",
+                    unansweredCount > 0
+                      ? "border-amber-100 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-900/40"
+                      : "border-border bg-muted"
+                  )}>
+                    <Circle className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                    <span className={cn("text-sm font-semibold", unansweredCount > 0 ? "text-amber-700 dark:text-amber-300" : "text-foreground")}>{unansweredCount}</span>
+                    <span className={cn("text-[10px] font-medium", unansweredCount > 0 ? "text-amber-700/80 dark:text-amber-300/80" : "text-muted-foreground")}>Unanswered</span>
+                  </div>
+
+                  <div className="flex flex-col items-center gap-1.5 rounded-xl border border-amber-100 bg-amber-50 px-2 py-3 dark:bg-amber-950/30 dark:border-amber-900/40">
+                    <Flag className="w-4 h-4 text-amber-600" aria-hidden="true" />
+                    <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">{flaggedCount}</span>
+                    <span className="text-[10px] font-medium text-amber-700/80 dark:text-amber-300/80">Flagged</span>
+                  </div>
                 </div>
               </div>
-              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex items-center justify-between gap-3">
+              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
                 {unansweredCount > 0 ? (
-                  <Button variant="ghost" size="sm" onClick={jumpToFirstUnanswered} className="rounded-full">
+                  <Button variant="ghost" size="sm" onClick={jumpToFirstUnanswered} className="rounded-full w-full sm:w-auto">
                     Review unanswered
                   </Button>
-                ) : <span />}
-                <div className="flex items-center gap-2 ml-auto">
-                  <Button variant="outline" size="sm" onClick={() => setConfirmOpen(false)} className="rounded-full">
+                ) : <span className="hidden sm:block" />}
+                <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
+                  <Button variant="outline" size="sm" onClick={() => setConfirmOpen(false)} className="rounded-full flex-1 sm:flex-initial">
                     Keep editing
                   </Button>
-                  <Button size="sm" onClick={handleSubmit} className="rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white gap-1.5">
+                  <Button size="sm" onClick={handleSubmit} className="rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white gap-1.5 flex-1 sm:flex-initial">
                     <FileCheck2 className="w-4 h-4" aria-hidden="true" />
                     Submit exam
                   </Button>
