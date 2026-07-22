@@ -632,7 +632,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             aria-label="Submit exam confirmation"
           >
             <motion.div
-              className="w-full max-w-md rounded-2xl bg-card border border-border shadow-2xl overflow-hidden"
+              className="w-full max-w-xl rounded-2xl bg-card border border-border shadow-2xl overflow-hidden"
               initial={{ y: 12, opacity: 0, scale: 0.98 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 8, opacity: 0, scale: 0.98 }}
@@ -682,7 +682,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   </div>
                 </div>
               </div>
-              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-end gap-2">
+              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
                 {unansweredCount > 0 && (
                   <Button variant="ghost" size="sm" onClick={jumpToFirstUnanswered} className="rounded-full w-full sm:w-auto">
                     Review unanswered
