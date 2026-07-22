@@ -512,20 +512,21 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         {/* Question navigator palette */}
         <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-5">
           {/* Header */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-9 h-9 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
                 <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground leading-tight">Question map</span>
-                <span className="text-[11px] text-muted-foreground leading-tight">Jump to any question</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-semibold text-foreground leading-tight truncate">Question map</span>
+                <span className="text-[11px] text-muted-foreground leading-tight truncate">Jump to any question</span>
               </div>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground border border-border">
+            <span className="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border tabular-nums">
               {total}
             </span>
           </div>
+
 
           {/* Progress segment */}
           <div className="flex flex-col gap-2">
