@@ -54,10 +54,628 @@ const isQuestionCorrect = (q: QuizQuestion, selected: string[]): boolean => {
 };
 
 export const InteractiveQuiz = ({ questions, settings, isCompactView }: InteractiveQuizProps) => {
-  if ((settings?.quizType || "").toLowerCase() === "formative") {
+  const qt = (settings?.quizType || "").toLowerCase();
+  if (qt === "formative") {
     return <FormativeCardQuiz questions={questions} settings={settings} />;
   }
+  if (qt === "summative") {
+    return <SummativeExamQuiz questions={questions} settings={settings} />;
+  }
   return <ClassicQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
+};
+
+/* ---------------------------------------------------------------------- */
+/* Summative exam-style quiz — proctored feel, navigator palette,          */
+/* flag-for-review, locked feedback until submit, scorecard on completion. */
+/* ---------------------------------------------------------------------- */
+
+const formatClock = (seconds: number) => {
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+};
+
+const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[]; settings?: QuizSettings }) => {
+  const total = questions.length;
+  const passCriteria = Math.max(1, Math.min(settings?.passCriteria ?? total, total));
+  const revealMode: RevealMode = (settings?.revealAnswers as RevealMode) || "reveal_all";
+
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string[]>>({});
+  const [flagged, setFlagged] = useState<Record<number, boolean>>({});
+  const [current, setCurrent] = useState(0);
+  const [validated, setValidated] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [finalTime, setFinalTime] = useState<number | null>(null);
+
+  // Elapsed timer (upward, exam feel). Stops on submit.
+  useMemo(() => 0, []);
+  // Use useEffect via a small inline hook alternative — but we already import useState/useMemo.
+  // Add useEffect for timer:
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useTicker(!validated, () => setElapsed((e) => e + 1));
+
+  const answeredCount = questions.reduce((acc, q, i) => {
+    const sel = selectedAnswers[i] || [];
+    const done = (q.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+    return acc + (done ? 1 : 0);
+  }, 0);
+  const flaggedCount = Object.values(flagged).filter(Boolean).length;
+  const unansweredCount = total - answeredCount;
+
+  const correctCount = questions.filter((q, i) => isQuestionCorrect(q, selectedAnswers[i] || [])).length;
+  const incorrectCount = total - correctCount - (validated ? 0 : 0);
+  const accuracyPct = total === 0 ? 0 : Math.round((correctCount / total) * 100);
+  const passed = correctCount >= passCriteria;
+
+  const q = questions[current];
+  const qType = (q?.type || "SCQ").toUpperCase();
+  const isFIB = qType === "FIB";
+  const isMCQ = qType === "MCQ";
+  const options = q ? getOptions(q) : [];
+  const selected = selectedAnswers[current] || [];
+
+  const handleSelect = (option: string) => {
+    if (validated) return;
+    setSelectedAnswers((prev) => {
+      const cur = prev[current] || [];
+      if (isMCQ) {
+        return { ...prev, [current]: cur.includes(option) ? cur.filter((o) => o !== option) : [...cur, option] };
+      }
+      return { ...prev, [current]: [option] };
+    });
+  };
+  const handleFib = (value: string) => {
+    if (validated) return;
+    setSelectedAnswers((prev) => ({ ...prev, [current]: [value] }));
+  };
+  const toggleFlag = () => setFlagged((prev) => ({ ...prev, [current]: !prev[current] }));
+
+  const goTo = (i: number) => {
+    if (i < 0 || i >= total) return;
+    setCurrent(i);
+  };
+  const jumpToFirstUnanswered = () => {
+    const idx = questions.findIndex((qq, i) => {
+      const sel = selectedAnswers[i] || [];
+      return (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length === 0 : sel.length === 0;
+    });
+    if (idx >= 0) {
+      setCurrent(idx);
+      setConfirmOpen(false);
+    }
+  };
+  const handleSubmit = () => {
+    setFinalTime(elapsed);
+    setValidated(true);
+    setConfirmOpen(false);
+  };
+  const handleRetry = () => {
+    setSelectedAnswers({});
+    setFlagged({});
+    setCurrent(0);
+    setValidated(false);
+    setElapsed(0);
+    setFinalTime(null);
+  };
+
+  if (total === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border/60 p-8 text-center text-sm text-muted-foreground">
+        No questions have been added yet.
+      </div>
+    );
+  }
+
+  // ------------------ Results scorecard ------------------
+  if (validated) {
+    const stats = [
+      { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30" },
+      { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950/30" },
+      { label: "Accuracy", value: `${accuracyPct}%`, icon: Percent, tone: "text-primary", bg: "bg-primary/10" },
+      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-indigo-600", bg: "bg-indigo-50 dark:bg-indigo-950/30" },
+    ];
+
+    return (
+      <div className="space-y-5">
+        {/* Verdict banner */}
+        <div
+          className={cn(
+            "relative overflow-hidden rounded-2xl border p-6",
+            passed
+              ? "border-emerald-500/30 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/30"
+              : "border-rose-400/30 bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 dark:from-rose-950/40 dark:via-orange-950/30 dark:to-amber-950/30"
+          )}
+        >
+          <div className="flex items-center gap-5">
+            <div
+              className={cn(
+                "w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg rotate-[-4deg]",
+                passed ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
+              )}
+            >
+              <Award className="w-10 h-10" aria-hidden="true" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  Summative Exam · Result
+                </span>
+                <span
+                  className={cn(
+                    "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                    passed ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
+                  )}
+                >
+                  {passed ? "Passed" : "Not passed"}
+                </span>
+              </div>
+              <h3 className="text-2xl font-semibold text-foreground mt-1">
+                {passed ? "You've cleared the exam." : "You didn't clear the exam."}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
+                Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
+                Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Score progress bar */}
+          <div className="mt-5">
+            <div className="relative h-2.5 rounded-full bg-background/60 overflow-hidden">
+              <div
+                className={cn(
+                  "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
+                  passed ? "bg-emerald-500" : "bg-rose-500"
+                )}
+                style={{ width: `${accuracyPct}%` }}
+              />
+              {/* Pass mark tick */}
+              <div
+                className="absolute inset-y-[-4px] w-px bg-foreground/50"
+                style={{ left: `${Math.round((passCriteria / total) * 100)}%` }}
+                aria-hidden="true"
+              />
+            </div>
+            <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
+              <span>0</span>
+              <span>Pass mark {Math.round((passCriteria / total) * 100)}%</span>
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {stats.map((s) => (
+            <div key={s.label} className={cn("rounded-xl border border-border/60 p-3.5 flex items-center gap-3", s.bg)}>
+              <s.icon className={cn("w-5 h-5 flex-shrink-0", s.tone)} aria-hidden="true" />
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                <div className="text-lg font-semibold text-foreground tabular-nums leading-tight">{s.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Per-question review (compact) */}
+        <div className="rounded-2xl border border-border/60 overflow-hidden">
+          <div className="px-4 py-3 border-b border-border/60 bg-muted/40 flex items-center gap-2">
+            <FileCheck2 className="w-4 h-4 text-primary" aria-hidden="true" />
+            <span className="text-sm font-semibold text-foreground">Answer sheet</span>
+            <span className="ml-auto text-xs text-muted-foreground">{total} questions</span>
+          </div>
+          <ul className="divide-y divide-border/60">
+            {questions.map((qq, qi) => {
+              const sel = selectedAnswers[qi] || [];
+              const correct = isQuestionCorrect(qq, sel);
+              const correctAnswers = getAnswers(qq);
+              const wasFlagged = !!flagged[qi];
+              return (
+                <li key={qi} className="px-4 py-3 flex items-start gap-3">
+                  <span
+                    className={cn(
+                      "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold",
+                      correct ? "bg-emerald-600 text-white" : "bg-rose-500 text-white"
+                    )}
+                  >
+                    {qi + 1}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground leading-relaxed">
+                      {qq.question || qq.text}
+                    </p>
+                    {revealMode !== "hide_all" && (
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        <span>Your answer: </span>
+                        <span className={cn("font-medium", correct ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400")}>
+                          {sel.length ? sel.join(", ") : "— skipped —"}
+                        </span>
+                        {!correct && revealMode === "reveal_all" && correctAnswers.length > 0 && (
+                          <>
+                            <span> · Correct: </span>
+                            <span className="font-medium text-emerald-700 dark:text-emerald-400">{correctAnswers.join(", ")}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {wasFlagged && <Flag className="w-3.5 h-3.5 text-amber-500" aria-label="Flagged" />}
+                    {correct ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-rose-500" aria-hidden="true" />
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={handleRetry} variant="outline" className="gap-2 rounded-full">
+            <RotateCcw className="w-4 h-4" aria-hidden="true" />
+            Retake exam
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ------------------ Active exam view ------------------
+  const answeredPct = total === 0 ? 0 : Math.round((answeredCount / total) * 100);
+
+  return (
+    <div className="space-y-4">
+      {/* Exam header */}
+      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg">
+        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
+        <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" />
+            </div>
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">Summative Exam</div>
+              <div className="text-sm font-semibold text-white">Final assessment · {total} questions</div>
+            </div>
+          </div>
+
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
+            <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
+            <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+              <Clock className="w-3.5 h-3.5 text-white/80" aria-hidden="true" />
+              <span className="text-xs font-mono font-semibold tabular-nums text-white">{formatClock(elapsed)}</span>
+            </div>
+          </div>
+        </div>
+        {/* Slim answered progress */}
+        <div className="relative h-1 bg-white/10">
+          <div
+            className="absolute inset-y-0 left-0 bg-emerald-400/80 transition-all duration-500"
+            style={{ width: `${answeredPct}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Body: question + navigator */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-4">
+        {/* Question panel */}
+        <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden">
+          <div className="px-5 sm:px-6 pt-5 pb-3 flex items-center gap-3 border-b border-border/60">
+            <span className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold tabular-nums">
+              {current + 1}
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Question {current + 1} of {total}</span>
+              {q?.type && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground/80 tracking-wider">
+                  {q.type}
+                </span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={toggleFlag}
+              aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
+              aria-pressed={!!flagged[current]}
+              className={cn(
+                "ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                flagged[current]
+                  ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
+                  : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
+              )}
+            >
+              <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
+              {flagged[current] ? "Flagged" : "Flag for review"}
+            </button>
+          </div>
+
+          <div className="px-5 sm:px-6 py-5">
+            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-5">
+              {q?.question || q?.text}
+            </p>
+
+            {isFIB ? (
+              <div className="relative">
+                <PencilLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
+                <Input
+                  value={selected[0] || ""}
+                  onChange={(e) => handleFib(e.target.value)}
+                  placeholder="Type your answer..."
+                  aria-label={`Answer for question ${current + 1}`}
+                  className="h-12 rounded-xl bg-background border border-border pl-10 text-base"
+                />
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {options.map((opt, ai) => {
+                  const isSelected = selected.includes(opt);
+                  const letter = String.fromCharCode(65 + ai);
+                  return (
+                    <button
+                      key={ai}
+                      type="button"
+                      onClick={() => handleSelect(opt)}
+                      aria-pressed={isSelected}
+                      className={cn(
+                        "group w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left text-sm border transition-all",
+                        isSelected
+                          ? "border-primary bg-primary/[0.06] shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.55)]"
+                          : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/40"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold border-2 flex-shrink-0 transition-all",
+                          isSelected
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-muted/40 text-muted-foreground group-hover:border-primary/40"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {letter}
+                      </span>
+                      <span className={cn("flex-1 leading-relaxed", isSelected ? "font-medium text-foreground" : "text-foreground/85")}>
+                        {opt}
+                      </span>
+                      {isMCQ && (
+                        <span
+                          className={cn(
+                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
+                          )}
+                          aria-hidden="true"
+                        >
+                          {isSelected && (
+                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M2.5 6l2.5 2.5 4.5-5" />
+                            </svg>
+                          )}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Locked feedback notice */}
+            <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 border border-border/60">
+              <Lock className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+              <span>Answers and feedback are hidden until you submit the exam.</span>
+            </div>
+          </div>
+
+          {/* Nav footer */}
+          <div className="px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => goTo(current - 1)}
+              disabled={current === 0}
+              className="gap-1.5 rounded-full"
+            >
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              Previous
+            </Button>
+
+            {current < total - 1 ? (
+              <Button
+                size="sm"
+                onClick={() => goTo(current + 1)}
+                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => setConfirmOpen(true)}
+                className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+              >
+                <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                Submit exam
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Question navigator palette */}
+        <aside className="rounded-2xl border border-border/70 bg-card shadow-sm p-4 h-fit lg:sticky lg:top-4">
+          <div className="flex items-center gap-2 mb-3">
+            <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
+            <span className="text-xs font-semibold text-foreground">Question navigator</span>
+          </div>
+
+          <div className="grid grid-cols-5 gap-2">
+            {questions.map((qq, i) => {
+              const sel = selectedAnswers[i] || [];
+              const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+              const isCurrent = i === current;
+              const isFlagged = !!flagged[i];
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}${isFlagged ? ", flagged" : ""}`}
+                  aria-current={isCurrent ? "step" : undefined}
+                  className={cn(
+                    "relative h-9 rounded-lg text-xs font-semibold border transition-all tabular-nums",
+                    isCurrent && "ring-2 ring-primary ring-offset-2 ring-offset-card",
+                    done
+                      ? "bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600"
+                      : "bg-background text-foreground border-border hover:border-primary/40"
+                  )}
+                >
+                  {i + 1}
+                  {isFlagged && (
+                    <span
+                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="mt-4 space-y-1.5 text-[11px]">
+            <LegendDot color="bg-emerald-500" label={`Answered (${answeredCount})`} />
+            <LegendDot color="bg-background border border-border" label={`Unanswered (${unansweredCount})`} />
+            <LegendDot color="bg-amber-400" label={`Flagged (${flaggedCount})`} />
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-border/60">
+            <Button
+              size="sm"
+              onClick={() => setConfirmOpen(true)}
+              className="w-full gap-2 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+            >
+              <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+              Submit exam
+            </Button>
+          </div>
+        </aside>
+      </div>
+
+      {/* Submit confirmation */}
+      <AnimatePresence>
+        {confirmOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/40 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setConfirmOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Submit exam confirmation"
+          >
+            <motion.div
+              className="w-full max-w-md rounded-2xl bg-card border border-border shadow-2xl overflow-hidden"
+              initial={{ y: 12, opacity: 0, scale: 0.98 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 8, opacity: 0, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 260, damping: 24 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex items-start gap-3">
+                  <div className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
+                    unansweredCount > 0 ? "bg-amber-100 text-amber-600 dark:bg-amber-950/40" : "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40"
+                  )}>
+                    {unansweredCount > 0 ? <AlertTriangle className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-semibold text-foreground">Submit your exam?</h4>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                      {unansweredCount > 0
+                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}${flaggedCount > 0 ? ` and ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`
+                        : `All ${total} questions are answered${flaggedCount > 0 ? `, with ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                  <MiniStat label="Answered" value={`${answeredCount}`} tone="emerald" />
+                  <MiniStat label="Unanswered" value={`${unansweredCount}`} tone={unansweredCount > 0 ? "amber" : "muted"} />
+                  <MiniStat label="Flagged" value={`${flaggedCount}`} tone={flaggedCount > 0 ? "primary" : "muted"} />
+                </div>
+              </div>
+              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex items-center justify-between gap-3">
+                {unansweredCount > 0 ? (
+                  <Button variant="ghost" size="sm" onClick={jumpToFirstUnanswered} className="rounded-full">
+                    Review unanswered
+                  </Button>
+                ) : <span />}
+                <div className="flex items-center gap-2 ml-auto">
+                  <Button variant="outline" size="sm" onClick={() => setConfirmOpen(false)} className="rounded-full">
+                    Keep editing
+                  </Button>
+                  <Button size="sm" onClick={handleSubmit} className="rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white gap-1.5">
+                    <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                    Submit exam
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// Tiny hook for the exam clock without adding another top-level import block.
+function useTicker(active: boolean, tick: () => void) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const React = require("react");
+  React.useEffect(() => {
+    if (!active) return;
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+}
+
+const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
+  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+    <Icon className={cn("w-3.5 h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
+    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
+    <span className="text-xs font-semibold tabular-nums text-white">{value}</span>
+  </div>
+);
+
+const LegendDot = ({ color, label }: { color: string; label: string }) => (
+  <div className="flex items-center gap-2 text-muted-foreground">
+    <span className={cn("w-3 h-3 rounded", color)} aria-hidden="true" />
+    <span>{label}</span>
+  </div>
+);
+
+const MiniStat = ({ label, value, tone }: { label: string; value: string; tone: "emerald" | "amber" | "primary" | "muted" }) => {
+  const tones: Record<string, string> = {
+    emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+    amber: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
+    primary: "bg-primary/10 text-primary",
+    muted: "bg-muted text-muted-foreground",
+  };
+  return (
+    <div className={cn("rounded-lg py-2", tones[tone])}>
+      <div className="text-lg font-semibold tabular-nums leading-none">{value}</div>
+      <div className="text-[10px] font-medium uppercase tracking-wider mt-1 opacity-80">{label}</div>
+    </div>
+  );
 };
 
 /* ---------------------------------------------------------------------- */
