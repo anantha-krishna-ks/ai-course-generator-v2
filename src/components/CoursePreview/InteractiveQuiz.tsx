@@ -680,17 +680,20 @@ const LegendDot = ({ color, label }: { color: string; label: string }) => (
   </div>
 );
 
-const MiniStat = ({ label, value, tone }: { label: string; value: string; tone: "emerald" | "amber" | "primary" | "muted" }) => {
+const MiniStat = ({ label, value, tone, icon: Icon }: { label: string; value: string; tone: "emerald" | "amber" | "primary" | "muted"; icon?: React.ElementType }) => {
   const tones: Record<string, string> = {
-    emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
-    amber: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
-    primary: "bg-primary/10 text-primary",
-    muted: "bg-muted text-muted-foreground",
+    emerald: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900/40",
+    amber: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-100 dark:border-amber-900/40",
+    primary: "bg-primary/10 text-primary border-primary/20",
+    muted: "bg-muted text-muted-foreground border-border",
   };
   return (
-    <div className={cn("rounded-lg py-2", tones[tone])}>
-      <div className="text-lg font-semibold tabular-nums leading-none">{value}</div>
-      <div className="text-[10px] font-medium uppercase tracking-wider mt-1 opacity-80">{label}</div>
+    <div className={cn("rounded-xl border px-3 py-2 flex items-center gap-2.5", tones[tone])}>
+      {Icon && <Icon className="w-4 h-4 opacity-70" aria-hidden="true" />}
+      <div className="flex flex-col">
+        <span className="text-sm font-semibold tabular-nums leading-none">{value}</span>
+        <span className="text-[10px] font-medium leading-tight mt-0.5 opacity-75">{label}</span>
+      </div>
     </div>
   );
 };
