@@ -770,7 +770,7 @@ export function ContentBlock({
                   </div>
                 </div>
                 <div
-                  className="grid grid-cols-2 sm:grid-cols-3 gap-2"
+                  className="grid grid-cols-3 sm:grid-cols-3 gap-2"
                   role="radiogroup"
                   aria-label="Image visual style"
                 >
@@ -785,13 +785,13 @@ export function ContentBlock({
                         aria-label={`${opt.label} image style`}
                         onClick={() => setImageStyle(opt.value)}
                         className={cn(
-                          "group relative flex flex-col overflow-hidden rounded-lg border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                          "group relative flex flex-col overflow-hidden rounded-md border bg-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
                           selected
                             ? "border-primary/60 ring-2 ring-primary/40 shadow-sm"
                             : "border-border hover:border-primary/30"
                         )}
                       >
-                        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                        <div className="relative aspect-[3/2] w-full overflow-hidden bg-muted">
                           <img
                             src={opt.preview}
                             alt=""
@@ -800,13 +800,13 @@ export function ContentBlock({
                             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                           {selected && (
-                            <div className="absolute top-1.5 right-1.5 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground shadow">
-                              <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            <div className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground shadow">
+                              <Check className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
                             </div>
                           )}
                         </div>
                         <span className={cn(
-                          "text-[11px] leading-tight font-medium py-1.5 px-1 text-center",
+                          "text-[10px] leading-tight font-medium py-1 px-1 text-center",
                           selected ? "text-foreground" : "text-muted-foreground"
                         )}>
                           {opt.label}
