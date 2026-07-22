@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, ShieldCheck, FileCheck2, AlertTriangle, Award, Percent } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, Flag, ShieldCheck, Clock, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -173,6 +173,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30" },
       { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950/30" },
       { label: "Accuracy", value: `${accuracyPct}%`, icon: Percent, tone: "text-primary", bg: "bg-primary/10" },
+      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-indigo-600", bg: "bg-indigo-50 dark:bg-indigo-950/30" },
     ];
 
     return (
@@ -213,7 +214,9 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 {passed ? "You've cleared the exam." : "You didn't clear the exam."}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span>
+                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
+                Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
+                Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
               </p>
             </div>
           </div>
@@ -228,16 +231,23 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 )}
                 style={{ width: `${accuracyPct}%` }}
               />
+              {/* Pass mark tick */}
+              <div
+                className="absolute inset-y-[-4px] w-px bg-foreground/50"
+                style={{ left: `${Math.round((passCriteria / total) * 100)}%` }}
+                aria-hidden="true"
+              />
             </div>
             <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
-              <span>0%</span>
+              <span>0</span>
+              <span>Pass mark {Math.round((passCriteria / total) * 100)}%</span>
               <span>100%</span>
             </div>
           </div>
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stats.map((s) => (
             <div key={s.label} className={cn("rounded-xl border border-border/60 p-3.5 flex items-center gap-3", s.bg)}>
               <s.icon className={cn("w-5 h-5 flex-shrink-0", s.tone)} aria-hidden="true" />
@@ -261,6 +271,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               const sel = selectedAnswers[qi] || [];
               const correct = isQuestionCorrect(qq, sel);
               const correctAnswers = getAnswers(qq);
+              const wasFlagged = !!flagged[qi];
               return (
                 <li key={qi} className="px-4 py-3 flex items-start gap-3">
                   <span
@@ -291,6 +302,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {wasFlagged && <Flag className="w-3.5 h-3.5 text-amber-500" aria-label="Flagged" />}
                     {correct ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
                     ) : (
@@ -316,129 +328,95 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   // ------------------ Active exam view ------------------
   const answeredPct = total === 0 ? 0 : Math.round((answeredCount / total) * 100);
 
-  const ringCircumference = 2 * Math.PI * 26; // r=26
-  const ringOffset = ringCircumference * (1 - answeredPct / 100);
-
   return (
-    <div className="space-y-3">
-      {/* Assessment console — dark header panel + light body. Nothing like formative deck. */}
-      <div className="relative rounded-2xl overflow-hidden border border-border shadow-sm">
-        {/* DARK CONSOLE HEADER */}
-        <div className="relative bg-foreground text-background px-6 sm:px-8 py-5 flex items-center gap-5">
-          {/* Radial progress ring */}
-          <div className="relative w-16 h-16 flex-shrink-0" aria-hidden="true">
-            <svg viewBox="0 0 60 60" className="w-16 h-16 -rotate-90">
-              <circle cx="30" cy="30" r="26" fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="4" />
-              <circle
-                cx="30" cy="30" r="26"
-                fill="none"
-                stroke="currentColor"
-                strokeOpacity="0.95"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeDasharray={ringCircumference}
-                strokeDashoffset={ringOffset}
-                style={{ transition: "stroke-dashoffset 500ms ease" }}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-              <span className="text-[9px] font-medium uppercase tracking-wider opacity-60">Ans</span>
-              <span className="text-sm font-semibold tabular-nums">{answeredCount}/{total}</span>
+    <div className="space-y-4">
+      {/* Exam header */}
+      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg">
+        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
+        <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" />
+            </div>
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">Summative Exam</div>
+              <div className="text-sm font-semibold text-white">Final assessment · {total} questions</div>
             </div>
           </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.24em] opacity-70">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-                Session · Live
-              </span>
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
+            <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
+            <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+              <Clock className="w-3.5 h-3.5 text-white/80" aria-hidden="true" />
+              <span className="text-xs font-mono font-semibold tabular-nums text-white">{formatClock(elapsed)}</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-semibold leading-tight">
-              Summative Assessment
-            </h3>
-            <p className="text-[11px] font-mono uppercase tracking-widest opacity-60 mt-0.5">
-              Proctored · Results on submit
-            </p>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/10 border border-background/15 backdrop-blur-sm">
-            <Lock className="w-3.5 h-3.5 opacity-80" aria-hidden="true" />
-            <span className="text-[10px] font-mono uppercase tracking-widest opacity-80">Sealed</span>
           </div>
         </div>
-
-        {/* Segmented tick strip — thin ticks, clickable */}
-        <div className="bg-foreground text-background px-6 sm:px-8 pb-4">
-          <div className="flex items-center gap-[3px]">
-            {questions.map((qq, i) => {
-              const sel = selectedAnswers[i] || [];
-              const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
-              const isCurrent = i === current;
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => goTo(i)}
-                  aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}`}
-                  aria-current={isCurrent ? "step" : undefined}
-                  className={cn(
-                    "flex-1 h-1 rounded-full transition-all",
-                    isCurrent
-                      ? "bg-background h-1.5"
-                      : done
-                      ? "bg-background/60 hover:bg-background/80"
-                      : "bg-background/15 hover:bg-background/30"
-                  )}
-                />
-              );
-            })}
-          </div>
-          <div className="flex items-center justify-between mt-2 font-mono text-[10px] uppercase tracking-widest opacity-60">
-            <span>Q {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
-            <span>{q?.type || "—"} · {isFIB ? "Free text" : isMCQ ? "Multi-select" : "Single-select"}</span>
-          </div>
+        {/* Slim answered progress */}
+        <div className="relative h-1 bg-white/10">
+          <div
+            className="absolute inset-y-0 left-0 bg-emerald-400/80 transition-all duration-500"
+            style={{ width: `${answeredPct}%` }}
+          />
         </div>
+      </div>
 
-        {/* LIGHT BODY — question with watermark numeral */}
-        <div className="relative bg-card px-6 sm:px-10 pt-8 pb-6 overflow-hidden">
-          {/* Watermark numeral */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none select-none absolute -top-4 right-4 sm:right-8 text-[140px] sm:text-[180px] leading-none font-semibold text-muted-foreground/[0.06] tabular-nums tracking-tighter"
-          >
-            {String(current + 1).padStart(2, "0")}
-          </span>
+      {/* Body: question + navigator */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-4">
+        {/* Question panel */}
+        <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden">
+          <div className="px-5 sm:px-6 pt-5 pb-3 flex items-center gap-3 border-b border-border/60">
+            <span className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold tabular-nums">
+              {current + 1}
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Question {current + 1} of {total}</span>
+              {q?.type && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-muted text-[10px] font-bold text-foreground/80 tracking-wider">
+                  {q.type}
+                </span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={toggleFlag}
+              aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
+              aria-pressed={!!flagged[current]}
+              className={cn(
+                "ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                flagged[current]
+                  ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
+                  : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
+              )}
+            >
+              <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
+              {flagged[current] ? "Flagged" : "Flag for review"}
+            </button>
+          </div>
 
-          <div className="relative">
-            <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground mb-3">
-              Question {current + 1}
-            </p>
-            <p className="text-xl sm:text-2xl font-medium text-foreground leading-relaxed max-w-3xl">
+          <div className="px-5 sm:px-6 py-5">
+            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-5">
               {q?.question || q?.text}
             </p>
 
             {isFIB ? (
-              <div className="mt-8 max-w-2xl">
-                <label className="block text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">
-                  Your response
-                </label>
-                <div className="relative">
-                  <PencilLine className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-                  <Input
-                    value={selected[0] || ""}
-                    onChange={(e) => handleFib(e.target.value)}
-                    placeholder="Type your answer here"
-                    aria-label={`Answer for question ${current + 1}`}
-                    className="h-14 pl-11 rounded-xl text-base border-input focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary"
-                  />
-                </div>
+              <div className="relative">
+                <PencilLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" aria-hidden="true" />
+                <Input
+                  value={selected[0] || ""}
+                  onChange={(e) => handleFib(e.target.value)}
+                  placeholder="Type your answer..."
+                  aria-label={`Answer for question ${current + 1}`}
+                  className="h-12 rounded-xl bg-background border border-border pl-10 text-base"
+                />
               </div>
             ) : (
-              <div className="mt-8 space-y-2.5">
+              <div className="space-y-2.5">
                 {options.map((opt, ai) => {
                   const isSelected = selected.includes(opt);
-                  const num = ai + 1;
+                  const letter = String.fromCharCode(65 + ai);
                   return (
                     <button
                       key={ai}
@@ -446,71 +424,148 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                       onClick={() => handleSelect(opt)}
                       aria-pressed={isSelected}
                       className={cn(
-                        "group w-full flex items-center gap-4 pl-3 pr-5 py-3 rounded-xl border text-left transition-all",
+                        "group w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-left text-sm border transition-all",
                         isSelected
-                          ? "border-primary bg-primary/[0.06] shadow-[inset_3px_0_0_hsl(var(--primary))]"
-                          : "border-border bg-background hover:border-foreground/30 hover:bg-muted/40"
+                          ? "border-primary bg-primary/[0.06] shadow-[0_4px_18px_-10px_hsl(var(--primary)/0.55)]"
+                          : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/40"
                       )}
                     >
-                      {/* Keycap-style number tile */}
                       <span
                         className={cn(
-                          "flex items-center justify-center w-10 h-10 flex-shrink-0 rounded-lg font-mono text-sm font-semibold border-b-2 transition-all",
+                          "flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold border-2 flex-shrink-0 transition-all",
                           isSelected
-                            ? "bg-primary text-primary-foreground border-primary/70"
-                            : "bg-muted text-foreground/70 border-border group-hover:bg-background group-hover:text-foreground"
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-muted/40 text-muted-foreground group-hover:border-primary/40"
                         )}
                         aria-hidden="true"
                       >
-                        {num}
+                        {letter}
                       </span>
-                      <span className={cn(
-                        "flex-1 text-sm sm:text-base leading-relaxed",
-                        isSelected ? "text-foreground font-medium" : "text-foreground/85"
-                      )}>
+                      <span className={cn("flex-1 leading-relaxed", isSelected ? "font-medium text-foreground" : "text-foreground/85")}>
                         {opt}
                       </span>
-                      {isSelected && (
-                        <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
+                      {isMCQ && (
+                        <span
+                          className={cn(
+                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
+                          )}
+                          aria-hidden="true"
+                        >
+                          {isSelected && (
+                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M2.5 6l2.5 2.5 4.5-5" />
+                            </svg>
+                          )}
+                        </span>
                       )}
                     </button>
                   );
                 })}
               </div>
             )}
+
+            {/* Locked feedback notice */}
+            <div className="mt-5 flex items-start gap-2 text-[11px] text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 border border-border/60">
+              <Lock className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+              <span>Answers and feedback are hidden until you submit the exam.</span>
+            </div>
+          </div>
+
+          {/* Nav footer */}
+          <div className="px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => goTo(current - 1)}
+              disabled={current === 0}
+              className="gap-1.5 rounded-full"
+            >
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              Previous
+            </Button>
+
+            {current < total - 1 ? (
+              <Button
+                size="sm"
+                onClick={() => goTo(current + 1)}
+                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => setConfirmOpen(true)}
+                className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+              >
+                <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                Submit exam
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Footer nav — monochrome, exam-console feel */}
-        <div className="px-6 sm:px-10 py-4 border-t border-border bg-card flex items-center justify-between gap-3">
-          <Button variant="outline" size="sm" onClick={() => goTo(current - 1)} disabled={current === 0} className="gap-1.5 rounded-full">
-            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-            Previous
-          </Button>
+        {/* Question navigator palette */}
+        <aside className="rounded-2xl border border-border/70 bg-card shadow-sm p-4 h-fit lg:sticky lg:top-4">
+          <div className="flex items-center gap-2 mb-3">
+            <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
+            <span className="text-xs font-semibold text-foreground">Question navigator</span>
+          </div>
 
-          <span className="hidden sm:block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            {answeredCount} of {total} answered
-          </span>
+          <div className="grid grid-cols-5 gap-2">
+            {questions.map((qq, i) => {
+              const sel = selectedAnswers[i] || [];
+              const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
+              const isCurrent = i === current;
+              const isFlagged = !!flagged[i];
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goTo(i)}
+                  aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}${isFlagged ? ", flagged" : ""}`}
+                  aria-current={isCurrent ? "step" : undefined}
+                  className={cn(
+                    "relative h-9 rounded-lg text-xs font-semibold border transition-all tabular-nums",
+                    isCurrent && "ring-2 ring-primary ring-offset-2 ring-offset-card",
+                    done
+                      ? "bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600"
+                      : "bg-background text-foreground border-border hover:border-primary/40"
+                  )}
+                >
+                  {i + 1}
+                  {isFlagged && (
+                    <span
+                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-          {current < total - 1 ? (
-            <Button size="sm" onClick={() => goTo(current + 1)} className="gap-1.5 rounded-full">
-              Next
-              <ChevronRight className="w-4 h-4" aria-hidden="true" />
-            </Button>
-          ) : (
-            <Button size="sm" onClick={() => setConfirmOpen(true)} className="gap-1.5 rounded-full">
+          {/* Legend */}
+          <div className="mt-4 space-y-1.5 text-[11px]">
+            <LegendDot color="bg-emerald-500" label={`Answered (${answeredCount})`} />
+            <LegendDot color="bg-background border border-border" label={`Unanswered (${unansweredCount})`} />
+            <LegendDot color="bg-amber-400" label={`Flagged (${flaggedCount})`} />
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-border/60">
+            <Button
+              size="sm"
+              onClick={() => setConfirmOpen(true)}
+              className="w-full gap-2 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+            >
               <FileCheck2 className="w-4 h-4" aria-hidden="true" />
               Submit exam
             </Button>
-          )}
-        </div>
+          </div>
+        </aside>
       </div>
-
-
-
-
-
-
 
       {/* Submit confirmation */}
       <AnimatePresence>
@@ -545,15 +600,16 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     <h4 className="text-base font-semibold text-foreground">Submit your exam?</h4>
                     <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {unansweredCount > 0
-                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}. Once submitted you can't change your answers.`
-                        : `All ${total} questions are answered. Once submitted you can't change your answers.`}
+                        ? `You have ${unansweredCount} unanswered ${unansweredCount === 1 ? "question" : "questions"}${flaggedCount > 0 ? ` and ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`
+                        : `All ${total} questions are answered${flaggedCount > 0 ? `, with ${flaggedCount} flagged for review` : ""}. Once submitted you can't change your answers.`}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-2 text-center">
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center">
                   <MiniStat label="Answered" value={`${answeredCount}`} tone="emerald" />
                   <MiniStat label="Unanswered" value={`${unansweredCount}`} tone={unansweredCount > 0 ? "amber" : "muted"} />
+                  <MiniStat label="Flagged" value={`${flaggedCount}`} tone={flaggedCount > 0 ? "primary" : "muted"} />
                 </div>
               </div>
               <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex items-center justify-between gap-3">
@@ -590,11 +646,18 @@ function useTicker(active: boolean, tick: () => void) {
   }, [active]);
 }
 
+const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
+  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+    <Icon className={cn("w-3.5 h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
+    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
+    <span className="text-xs font-semibold tabular-nums text-white">{value}</span>
+  </div>
+);
 
-const LegendRow = ({ color, label }: { color: string; label: string }) => (
-  <div className="flex items-center gap-2">
+const LegendDot = ({ color, label }: { color: string; label: string }) => (
+  <div className="flex items-center gap-2 text-muted-foreground">
     <span className={cn("w-3 h-3 rounded", color)} aria-hidden="true" />
-    <span className="text-[11px] text-muted-foreground">{label}</span>
+    <span>{label}</span>
   </div>
 );
 
