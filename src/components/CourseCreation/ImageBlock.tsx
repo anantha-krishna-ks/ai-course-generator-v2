@@ -1,5 +1,20 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch, Library, HardDriveUpload } from "lucide-react";
+import { ImagePlus, Upload, Minus, Plus, Image, RectangleHorizontal, Maximize, ChevronDown, GripHorizontal, FlipHorizontal, FlipVertical, RotateCw, SlidersHorizontal, Sparkles, Send, X, Trash2, GitBranch, Library, HardDriveUpload, Check } from "lucide-react";
+import imgStylePhoto from "@/assets/image-style-photorealistic.jpg";
+import imgStyleIllustration from "@/assets/image-style-illustration.jpg";
+import imgStyleFlat from "@/assets/image-style-flat.jpg";
+import imgStyle3d from "@/assets/image-style-3d.jpg";
+import imgStyleSketch from "@/assets/image-style-sketch.jpg";
+import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
+
+const IMAGE_STYLE_OPTIONS = [
+  { value: "photorealistic", label: "Photorealistic", preview: imgStylePhoto },
+  { value: "illustration", label: "Illustration", preview: imgStyleIllustration },
+  { value: "flat", label: "Flat / Minimal", preview: imgStyleFlat },
+  { value: "3d", label: "3D Render", preview: imgStyle3d },
+  { value: "sketch", label: "Sketch", preview: imgStyleSketch },
+  { value: "watercolor", label: "Watercolor", preview: imgStyleWatercolor },
+] as const;
 import { AssetLibraryDialog } from "@/components/CourseCreation/AssetLibraryDialog";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { ChapterImageDialog } from "@/components/EditCourse/ChapterImageDialog";
