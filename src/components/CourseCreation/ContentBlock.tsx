@@ -1,5 +1,20 @@
 import { useRef, useEffect, useState } from "react";
-import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight } from "lucide-react";
+import { GripVertical, Copy, Trash2, GitBranch, Send, X, Video, Mic, FileText, Type, PenLine, ImageIcon, Clock, RotateCcw, History, LayoutGrid, Heading, Columns2, Columns3, Image as ImageLucide, ImageUp, ImageDown, PanelLeft, PanelRight, Check } from "lucide-react";
+import imgStylePhoto from "@/assets/image-style-photorealistic.jpg";
+import imgStyleIllustration from "@/assets/image-style-illustration.jpg";
+import imgStyleFlat from "@/assets/image-style-flat.jpg";
+import imgStyle3d from "@/assets/image-style-3d.jpg";
+import imgStyleSketch from "@/assets/image-style-sketch.jpg";
+import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
+
+const IMAGE_STYLE_OPTIONS = [
+  { value: "photorealistic", label: "Photorealistic", preview: imgStylePhoto },
+  { value: "illustration", label: "Illustration", preview: imgStyleIllustration },
+  { value: "flat", label: "Flat / Minimal", preview: imgStyleFlat },
+  { value: "3d", label: "3D Render", preview: imgStyle3d },
+  { value: "sketch", label: "Sketch", preview: imgStyleSketch },
+  { value: "watercolor", label: "Watercolor", preview: imgStyleWatercolor },
+] as const;
 import { getFontStack } from "./FontSelectorDropdown";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { useSortable } from "@dnd-kit/sortable";
