@@ -682,21 +682,19 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   </div>
                 </div>
               </div>
-              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-                {unansweredCount > 0 ? (
+              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-end gap-2">
+                {unansweredCount > 0 && (
                   <Button variant="ghost" size="sm" onClick={jumpToFirstUnanswered} className="rounded-full w-full sm:w-auto">
                     Review unanswered
                   </Button>
-                ) : <span className="hidden sm:block" />}
-                <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
-                  <Button variant="outline" size="sm" onClick={() => setConfirmOpen(false)} className="rounded-full flex-1 sm:flex-initial">
-                    Keep editing
-                  </Button>
-                  <Button size="sm" onClick={handleSubmit} className="rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white gap-1.5 flex-1 sm:flex-initial">
-                    <FileCheck2 className="w-4 h-4" aria-hidden="true" />
-                    Submit exam
-                  </Button>
-                </div>
+                )}
+                <Button variant="outline" size="sm" onClick={() => setConfirmOpen(false)} className="rounded-full w-full sm:w-auto">
+                  Keep editing
+                </Button>
+                <Button size="sm" onClick={handleSubmit} className="rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white gap-1.5 w-full sm:w-auto">
+                  <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                  Submit exam
+                </Button>
               </div>
             </motion.div>
           </motion.div>
