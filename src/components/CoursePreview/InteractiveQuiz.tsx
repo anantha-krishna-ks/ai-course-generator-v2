@@ -324,13 +324,8 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 <li key={qi} className="px-3 sm:px-4 py-2.5">
                   <div className="flex items-start gap-2.5 sm:gap-3">
                     <span
-                      className={cn(
-                        "flex-shrink-0 w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold",
-                        correct
-                          ? "bg-success text-success-foreground"
-                          : "bg-destructive text-destructive-foreground"
-                      )}
-                      aria-hidden="true"
+                      className="flex-shrink-0 w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold bg-muted border border-border text-foreground shadow-sm"
+                      aria-label={`Question ${qi + 1}`}
                     >
                       {qi + 1}
                     </span>
