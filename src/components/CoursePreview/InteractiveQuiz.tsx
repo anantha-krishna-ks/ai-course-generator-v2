@@ -321,11 +321,11 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               const skipped = sel.length === 0;
               const statusLabel = correct ? "Correct" : skipped ? "Skipped" : "Incorrect";
               return (
-                <li key={qi} className="px-4 sm:px-5 py-4">
-                  <div className="flex items-start gap-3 sm:gap-4">
+                <li key={qi} className="px-3 sm:px-4 py-2.5">
+                  <div className="flex items-start gap-2.5 sm:gap-3">
                     <span
                       className={cn(
-                        "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-semibold",
+                        "flex-shrink-0 w-7 h-7 rounded-md flex items-center justify-center text-xs font-semibold",
                         correct
                           ? "bg-success text-success-foreground"
                           : "bg-destructive text-destructive-foreground"
@@ -335,69 +335,68 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                       {qi + 1}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground leading-relaxed">
-                        <span className="sr-only">Question {qi + 1}, {statusLabel}. </span>
-                        {qq.question || qq.text}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      {wasFlagged && (
-                        <span
-                          className="inline-flex items-center gap-1 px-2 h-7 rounded-md bg-warning/10 border border-warning/30 text-warning text-xs font-medium"
-                          aria-label="Flagged for review"
-                        >
-                          <Flag className="w-3.5 h-3.5" aria-hidden="true" />
-                          <span>Flagged</span>
-                        </span>
-                      )}
-                      <span
-                        className={cn(
-                          "inline-flex items-center gap-1 px-2 h-7 rounded-md text-xs font-semibold border",
-                          correct
-                            ? "bg-success/10 border-success/30 text-success"
-                            : "bg-destructive/10 border-destructive/30 text-destructive"
-                        )}
-                      >
-                        {correct ? (
-                          <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
-                        ) : (
-                          <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                        )}
-                        <span>{statusLabel}</span>
-                      </span>
-                    </div>
-                  </div>
-                  {revealMode !== "hide_all" && (
-                    <dl className="mt-3 ml-11 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2 min-w-0">
-                        <dt className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          Your answer
-                        </dt>
-                        <dd
-                          className={cn(
-                            "mt-0.5 text-sm font-medium break-words",
-                            skipped
-                              ? "text-muted-foreground italic"
-                              : correct
-                              ? "text-success"
-                              : "text-destructive"
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-medium text-foreground leading-snug">
+                          <span className="sr-only">Question {qi + 1}, {statusLabel}. </span>
+                          {qq.question || qq.text}
+                        </p>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {wasFlagged && (
+                            <span
+                              className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-warning/10 border border-warning/30 text-warning"
+                              aria-label="Flagged for review"
+                              title="Flagged for review"
+                            >
+                              <Flag className="w-3.5 h-3.5" aria-hidden="true" />
+                            </span>
                           )}
-                        >
-                          {skipped ? "Not answered" : sel.join(", ")}
-                        </dd>
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1 px-1.5 h-6 rounded-md text-[11px] font-semibold border",
+                              correct
+                                ? "bg-success/10 border-success/30 text-success"
+                                : "bg-destructive/10 border-destructive/30 text-destructive"
+                            )}
+                            aria-label={statusLabel}
+                          >
+                            {correct ? (
+                              <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+                            ) : (
+                              <XCircle className="w-3 h-3" aria-hidden="true" />
+                            )}
+                            <span>{statusLabel}</span>
+                          </span>
+                        </div>
                       </div>
-                      {revealMode === "reveal_all" && correctAnswers.length > 0 && (
-                        <div className="rounded-lg border border-success/30 bg-success/5 px-3 py-2 min-w-0">
-                          <dt className="text-[10px] font-semibold uppercase tracking-wider text-success">
-                            Correct answer
-                          </dt>
-                          <dd className="mt-0.5 text-sm font-medium text-success break-words">
-                            {correctAnswers.join(", ")}
-                          </dd>
+                      {revealMode !== "hide_all" && (
+                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                          <span className="inline-flex items-center gap-1 min-w-0">
+                            <span className="text-muted-foreground font-medium">Your:</span>
+                            <span
+                              className={cn(
+                                "font-medium break-words",
+                                skipped
+                                  ? "text-muted-foreground italic"
+                                  : correct
+                                  ? "text-success"
+                                  : "text-destructive"
+                              )}
+                            >
+                              {skipped ? "Not answered" : sel.join(", ")}
+                            </span>
+                          </span>
+                          {revealMode === "reveal_all" && correctAnswers.length > 0 && (
+                            <span className="inline-flex items-center gap-1 min-w-0">
+                              <span className="text-success font-medium">Correct:</span>
+                              <span className="font-medium text-success break-words">
+                                {correctAnswers.join(", ")}
+                              </span>
+                            </span>
+                          )}
                         </div>
                       )}
-                    </dl>
-                  )}
+                    </div>
+                  </div>
                 </li>
               );
             })}
