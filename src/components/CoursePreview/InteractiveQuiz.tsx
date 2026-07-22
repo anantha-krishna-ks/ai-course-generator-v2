@@ -550,16 +550,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             <LegendDot color="bg-amber-400" label={`Flagged (${flaggedCount})`} />
           </div>
 
-          <div className="mt-4 pt-4 border-t border-border/60">
-            <Button
-              size="sm"
-              onClick={() => setConfirmOpen(true)}
-              className="w-full gap-2 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
-            >
-              <FileCheck2 className="w-4 h-4" aria-hidden="true" />
-              Submit exam
-            </Button>
-          </div>
         </aside>
       </div>
 
