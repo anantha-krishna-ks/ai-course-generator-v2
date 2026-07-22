@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, Flag, ShieldCheck, Clock, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, ShieldCheck, FileCheck2, AlertTriangle, Award, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
