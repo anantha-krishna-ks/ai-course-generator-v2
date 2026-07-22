@@ -493,17 +493,12 @@ function enrichCourseOne(base: MultiPageCourseCreatorRestoreState): void {
   // q-4-1: Final Assessment Quiz
   p["q-4-1"] = [
     ...(p["q-4-1"] || []),
-    quiz(
-      "bk-q41-final",
-      "learning-assessment-course",
-      [
-        { q: "Which scope includes emissions from a diesel truck the company owns?", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 1", explanation: "Owned combustion sources are Scope 1." },
-        { q: "Purchased grid electricity falls under…", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 2" },
-        { q: "Business travel booked with a third-party airline is…", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 3" },
-        { q: "True or false: emission factors never need updating.", type: "TrueFalse", options: ["True", "False"], answer: "False", explanation: "Factors are revised regularly to reflect grid and process changes." },
-      ],
-      { quizType: "summative", passCriteria: 3, retries: "none" }
-    ),
+    quiz("bk-q41-final", "learning-assessment-course", [
+      { q: "Which scope includes emissions from a diesel truck the company owns?", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 1", explanation: "Owned combustion sources are Scope 1." },
+      { q: "Purchased grid electricity falls under…", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 2" },
+      { q: "Business travel booked with a third-party airline is…", options: ["Scope 1", "Scope 2", "Scope 3"], answer: "Scope 3" },
+      { q: "True or false: emission factors never need updating.", type: "TrueFalse", options: ["True", "False"], answer: "False", explanation: "Factors are revised regularly to reflect grid and process changes." },
+    ]),
     info("bk-q41-tip", "expert-insight", "Take your time — the goal is understanding, not speed."),
   ];
 }
