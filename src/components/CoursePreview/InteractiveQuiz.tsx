@@ -718,14 +718,15 @@ const MiniStat = ({ label, value, tone, icon: Icon }: { label: string; value: st
     muted: "bg-muted text-muted-foreground border-border",
   };
   return (
-    <div className={cn("rounded-xl border px-3 py-2 flex items-center gap-2.5", tones[tone])}>
-      {Icon && <Icon className="w-4 h-4 opacity-70" aria-hidden="true" />}
-      <div className="flex flex-col">
+    <div className={cn("rounded-xl border px-2 py-2 flex items-center gap-1.5 min-w-0", tones[tone])}>
+      {Icon && <Icon className="w-3.5 h-3.5 shrink-0 opacity-70" aria-hidden="true" />}
+      <div className="flex flex-col min-w-0">
         <span className="text-sm font-semibold tabular-nums leading-none">{value}</span>
-        <span className="text-[10px] font-medium leading-tight mt-0.5 opacity-75">{label}</span>
+        <span className="text-[10px] font-medium leading-tight mt-0.5 opacity-75 truncate">{label}</span>
       </div>
     </div>
   );
+
 };
 
 /* ---------------------------------------------------------------------- */
