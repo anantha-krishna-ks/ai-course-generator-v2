@@ -221,6 +221,7 @@ export function ImageBlock({ imageUrl, onChange, altText = "", onAltTextChange, 
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showLibraryDialog, setShowLibraryDialog] = useState(false);
   const [imagePrompt, setImagePrompt] = useState("");
+  const [imageStyle, setImageStyle] = useState<typeof IMAGE_STYLE_OPTIONS[number]["value"]>("photorealistic");
   const [isGenerating, setIsGenerating] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
 
