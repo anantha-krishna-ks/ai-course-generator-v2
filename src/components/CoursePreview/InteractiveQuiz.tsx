@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -364,9 +364,12 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                         </div>
                       </div>
                       {revealMode !== "hide_all" && (
-                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-                          <span className="inline-flex items-center gap-1 min-w-0">
-                            <span className="text-muted-foreground font-medium">Your:</span>
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 pl-1.5 pr-2.5 py-1 min-w-0">
+                            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-background border border-border text-muted-foreground">
+                              <User className="w-3 h-3" aria-hidden="true" />
+                            </span>
+                            <span className="text-muted-foreground font-medium">Your answer</span>
                             <span
                               className={cn(
                                 "font-medium break-words",
@@ -381,8 +384,11 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                             </span>
                           </span>
                           {revealMode === "reveal_all" && correctAnswers.length > 0 && (
-                            <span className="inline-flex items-center gap-1 min-w-0">
-                              <span className="text-success font-medium">Correct:</span>
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/5 pl-1.5 pr-2.5 py-1 min-w-0">
+                              <span className="flex items-center justify-center w-5 h-5 rounded-full bg-success text-success-foreground">
+                                <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+                              </span>
+                              <span className="text-success font-medium">Correct</span>
                               <span className="font-medium text-success break-words">
                                 {correctAnswers.join(", ")}
                               </span>
