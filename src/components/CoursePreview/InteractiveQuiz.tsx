@@ -528,36 +528,45 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
 
-          {/* Progress segment */}
-          <div className="flex flex-col gap-2">
-            <div className="h-2.5 w-full rounded-full bg-muted overflow-hidden flex">
-              <div
-                className="h-full bg-emerald-500 transition-all duration-500"
-                style={{ width: `${total ? (answeredCount / total) * 100 : 0}%` }}
-                aria-hidden="true"
-              />
-              <div
-                className="h-full bg-amber-400 transition-all duration-500"
-                style={{ width: `${total ? (flaggedCount / total) * 100 : 0}%` }}
-                aria-hidden="true"
-              />
-              <div
-                className="h-full bg-muted-foreground/20 transition-all duration-500"
-                style={{ width: `${total ? (unansweredCount / total) * 100 : 0}%` }}
-                aria-hidden="true"
-              />
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-              <span>{Math.round((answeredCount / total) * 100) || 0}% answered</span>
-              <span>{unansweredCount} left</span>
-            </div>
-          </div>
+          {/* Status summary — compact segmented legend */}
+          <div className="rounded-2xl border border-border bg-card/50 p-1.5 shadow-sm">
+            <div className="grid grid-cols-3 divide-x divide-border/60">
+              <div className="flex items-center gap-2.5 px-2.5 py-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300">
+                  <CircleCheck className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-base font-semibold tabular-nums leading-none text-emerald-700 dark:text-emerald-300">
+                    {answeredCount}
+                  </span>
+                  <span className="text-[11px] font-medium text-muted-foreground truncate">Done</span>
+                </div>
+              </div>
 
-          {/* Status summary */}
-          <div className="grid grid-cols-3 gap-2">
-            <MiniStat label="Done" value={String(answeredCount)} tone="emerald" icon={CircleCheck} />
-            <MiniStat label="Pending" value={String(unansweredCount)} tone="muted" icon={Circle} />
-            <MiniStat label="Flagged" value={String(flaggedCount)} tone="amber" icon={Flag} />
+              <div className="flex items-center gap-2.5 px-2.5 py-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                  <Circle className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-base font-semibold tabular-nums leading-none text-foreground">
+                    {unansweredCount}
+                  </span>
+                  <span className="text-[11px] font-medium text-muted-foreground truncate">Pending</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 px-2.5 py-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300">
+                  <Flag className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-base font-semibold tabular-nums leading-none text-amber-700 dark:text-amber-300">
+                    {flaggedCount}
+                  </span>
+                  <span className="text-[11px] font-medium text-muted-foreground truncate">Flagged</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Question grid */}
