@@ -403,7 +403,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Body */}
-          <div className="px-6 sm:px-7 py-6">
+          <div className="flex-1 px-6 sm:px-7 py-6">
             <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-6">
               {q?.question || q?.text}
             </p>
@@ -472,15 +472,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               </div>
             )}
 
-            {/* Locked feedback notice */}
-            <div className="mt-6 flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.16em] font-medium">
-              <Lock className="w-3 h-3" aria-hidden="true" />
-              <span>Answers withheld until submission</span>
-              <div className="h-px flex-1 bg-border/60" aria-hidden="true" />
-            </div>
           </div>
-
-
 
           {/* Nav footer */}
           <div className="px-6 sm:px-7 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
