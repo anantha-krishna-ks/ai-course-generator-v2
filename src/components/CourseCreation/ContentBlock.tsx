@@ -718,22 +718,22 @@ export function ContentBlock({
 
       {/* Generate Content Dialog */}
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="sm:max-w-[520px] gap-0 p-0 overflow-hidden">
-          <DialogHeader className="px-6 pt-6 pb-4">
-            <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+        <DialogContent className="w-[95vw] max-w-[720px] max-h-[90vh] overflow-y-auto gap-0 p-0 sm:rounded-lg">
+          <DialogHeader className="px-4 sm:px-6 pt-5 sm:pt-6 pb-3 sm:pb-4">
+            <DialogTitle className="flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base font-semibold">
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <AISparkles className="w-4 h-4" />
               </div>
               {type === "image" ? "Generate image with AI" : "Generate text with AI"}
             </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground mt-1.5">
+            <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-1.5">
               {type === "image"
                 ? "Describe the image you'd like to generate for this block."
                 : "Describe what text content you'd like to generate for this block."}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="px-6 pb-2">
+          <div className="px-4 sm:px-6 pb-2">
             <div className="rounded-xl border border-border/60 bg-muted/10 overflow-hidden focus-within:border-foreground/20 transition-colors">
               <textarea
                 ref={promptInputRef}
@@ -770,7 +770,7 @@ export function ContentBlock({
                   </div>
                 </div>
                 <div
-                  className="grid grid-cols-3 gap-1.5"
+                  className="grid grid-cols-2 sm:grid-cols-3 gap-2"
                   role="radiogroup"
                   aria-label="Image visual style"
                 >
@@ -819,7 +819,7 @@ export function ContentBlock({
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border/60 bg-muted/20">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 px-4 sm:px-6 py-3 sm:py-4 border-t border-border/60 bg-muted/20">
             <Button
               variant="outline"
               size="sm"
