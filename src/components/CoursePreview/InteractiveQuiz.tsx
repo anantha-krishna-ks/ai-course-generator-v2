@@ -363,48 +363,48 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-4">
         {/* Question panel */}
         <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden">
-          {/* Ink header — exam paper feel */}
-          <div className="relative bg-slate-900 dark:bg-slate-950 text-slate-100 px-6 sm:px-8 py-5">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4 min-w-0">
-                <span className="font-mono text-3xl sm:text-4xl font-semibold tracking-tight text-white tabular-nums leading-none">
-                  Q{String(current + 1).padStart(2, "0")}
-                </span>
-                <span className="h-8 w-px bg-white/20" aria-hidden="true" />
-                <div className="flex flex-col gap-1 min-w-0">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50 tabular-nums">
-                    Item {current + 1} of {total}
-                  </span>
-                  {q?.type && (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/10 text-white/90 text-[10px] font-bold tracking-wider w-fit">
-                      <span className="w-1 h-1 rounded-full bg-emerald-400" aria-hidden="true" />
-                      {q.type}
-                    </span>
-                  )}
-                </div>
+          {/* Header ribbon */}
+          <div className="flex items-stretch border-b border-border/60">
+            {/* Left number block */}
+            <div className="flex items-center gap-3 px-5 sm:px-6 py-4 bg-primary/[0.06] border-r border-border/60">
+              <span className="text-3xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
+                {String(current + 1).padStart(2, "0")}
+              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Question</span>
+                <span className="text-[11px] text-muted-foreground/80 tabular-nums">of {String(total).padStart(2, "0")}</span>
               </div>
+            </div>
 
+            {/* Right meta */}
+            <div className="flex-1 flex items-center justify-between gap-3 px-5 sm:px-6 py-4">
+              {q?.type && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted text-[10px] font-bold text-foreground/75 tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                  {q.type}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={toggleFlag}
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all flex-shrink-0",
+                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
                   flagged[current]
-                    ? "bg-amber-400/15 border-amber-400/60 text-amber-300"
-                    : "bg-white/5 border-white/15 text-white/70 hover:text-white hover:border-white/40"
+                    ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
+                    : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
-                <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-400")} aria-hidden="true" />
+                <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
                 {flagged[current] ? "Flagged" : "Flag for review"}
               </button>
             </div>
           </div>
 
-          {/* Body — paper */}
-          <div className="px-6 sm:px-8 py-7">
-            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-6 pl-4 border-l-2 border-slate-900/80 dark:border-slate-100/70">
+          {/* Body */}
+          <div className="px-6 sm:px-7 py-6">
+            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-6">
               {q?.question || q?.text}
             </p>
 
@@ -420,67 +420,66 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 />
               </div>
             ) : (
-              <ol className="divide-y divide-border/70 border-y border-border/70" role="list">
+              <div className="space-y-2">
                 {options.map((opt, ai) => {
                   const isSelected = selected.includes(opt);
                   const letter = String.fromCharCode(65 + ai);
                   return (
-                    <li key={ai}>
-                      <button
-                        type="button"
-                        onClick={() => handleSelect(opt)}
-                        aria-pressed={isSelected}
+                    <button
+                      key={ai}
+                      type="button"
+                      onClick={() => handleSelect(opt)}
+                      aria-pressed={isSelected}
+                      className={cn(
+                        "group relative w-full flex items-center gap-3 pl-3 pr-4 py-3 rounded-lg text-left text-sm border transition-all",
+                        isSelected
+                          ? "border-primary/60 bg-primary/[0.05]"
+                          : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/30"
+                      )}
+                    >
+                      <span
                         className={cn(
-                          "group relative w-full flex items-center gap-4 px-2 py-3.5 text-left text-sm transition-colors",
-                          isSelected ? "bg-primary/[0.05]" : "hover:bg-muted/40"
+                          "flex items-center justify-center w-7 h-7 rounded-md text-[11px] font-semibold flex-shrink-0 transition-all",
+                          isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
                         )}
+                        aria-hidden="true"
                       >
-                        {isSelected && (
-                          <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-primary" aria-hidden="true" />
-                        )}
+                        {letter}
+                      </span>
+                      <span className={cn("flex-1 leading-relaxed", isSelected ? "font-medium text-foreground" : "text-foreground/85")}>
+                        {opt}
+                      </span>
+                      {isMCQ && (
                         <span
                           className={cn(
-                            "flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold flex-shrink-0 transition-all font-mono",
-                            isSelected
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-transparent text-muted-foreground border border-border group-hover:border-primary/50 group-hover:text-foreground"
+                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
                           )}
                           aria-hidden="true"
                         >
-                          {letter}
+                          {isSelected && (
+                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M2.5 6l2.5 2.5 4.5-5" />
+                            </svg>
+                          )}
                         </span>
-                        <span className={cn("flex-1 leading-relaxed", isSelected ? "font-medium text-foreground" : "text-foreground/85")}>
-                          {opt}
-                        </span>
-                        {isMCQ && (
-                          <span
-                            className={cn(
-                              "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
-                              isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
-                            )}
-                            aria-hidden="true"
-                          >
-                            {isSelected && (
-                              <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <path d="M2.5 6l2.5 2.5 4.5-5" />
-                              </svg>
-                            )}
-                          </span>
-                        )}
-                      </button>
-                    </li>
+                      )}
+                    </button>
                   );
                 })}
-              </ol>
+              </div>
             )}
 
             {/* Locked feedback notice */}
-            <div className="mt-6 flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+            <div className="mt-6 flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.16em] font-medium">
               <Lock className="w-3 h-3" aria-hidden="true" />
               <span>Answers withheld until submission</span>
               <div className="h-px flex-1 bg-border/60" aria-hidden="true" />
             </div>
           </div>
+
 
 
           {/* Nav footer */}
