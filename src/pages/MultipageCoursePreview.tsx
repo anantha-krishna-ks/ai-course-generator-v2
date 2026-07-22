@@ -1299,8 +1299,8 @@ const MultipageCoursePreview = () => {
             style={contentBgStyle}
           >
             <div className={cn(
-              "max-w-3xl mx-auto space-y-10 sm:space-y-12",
-              isCompactView ? "px-5 py-8" : "px-8 sm:px-14 lg:px-16 py-14"
+              "max-w-5xl mx-auto space-y-10 sm:space-y-12",
+              isCompactView ? "px-5 py-8" : "px-6 sm:px-8 lg:px-10 py-14"
             )}>
 
               {currentPage ? (
