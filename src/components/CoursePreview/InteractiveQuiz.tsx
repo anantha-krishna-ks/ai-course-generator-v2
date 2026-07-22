@@ -173,7 +173,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       { label: "Correct", value: `${correctCount}`, icon: CheckCircle2, tone: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30" },
       { label: "Incorrect", value: `${total - correctCount}`, icon: XCircle, tone: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950/30" },
       { label: "Accuracy", value: `${accuracyPct}%`, icon: Percent, tone: "text-primary", bg: "bg-primary/10" },
-      { label: "Time", value: formatClock(finalTime ?? elapsed), icon: Timer, tone: "text-indigo-600", bg: "bg-indigo-50 dark:bg-indigo-950/30" },
     ];
 
     return (
@@ -214,9 +213,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 {passed ? "You've cleared the exam." : "You didn't clear the exam."}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
-                Pass mark <span className="font-semibold text-foreground">{passCriteria}</span> ·
-                Time <span className="font-semibold text-foreground">{formatClock(finalTime ?? elapsed)}</span>
+                Score <span className="font-semibold text-foreground">{correctCount} / {total}</span>
               </p>
             </div>
           </div>
@@ -231,23 +228,16 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 )}
                 style={{ width: `${accuracyPct}%` }}
               />
-              {/* Pass mark tick */}
-              <div
-                className="absolute inset-y-[-4px] w-px bg-foreground/50"
-                style={{ left: `${Math.round((passCriteria / total) * 100)}%` }}
-                aria-hidden="true"
-              />
             </div>
             <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
-              <span>0</span>
-              <span>Pass mark {Math.round((passCriteria / total) * 100)}%</span>
+              <span>0%</span>
               <span>100%</span>
             </div>
           </div>
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {stats.map((s) => (
             <div key={s.label} className={cn("rounded-xl border border-border/60 p-3.5 flex items-center gap-3", s.bg)}>
               <s.icon className={cn("w-5 h-5 flex-shrink-0", s.tone)} aria-hidden="true" />
@@ -271,7 +261,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
               const sel = selectedAnswers[qi] || [];
               const correct = isQuestionCorrect(qq, sel);
               const correctAnswers = getAnswers(qq);
-              const wasFlagged = !!flagged[qi];
               return (
                 <li key={qi} className="px-4 py-3 flex items-start gap-3">
                   <span
@@ -302,7 +291,6 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {wasFlagged && <Flag className="w-3.5 h-3.5 text-amber-500" aria-label="Flagged" />}
                     {correct ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
                     ) : (
