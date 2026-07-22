@@ -598,20 +598,21 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-between gap-2 text-[11px] font-medium">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] font-medium">
             <span className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" />
               Answered
             </span>
             <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-muted-foreground/30" aria-hidden="true" />
               Unanswered
             </span>
             <span className="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-amber-400" aria-hidden="true" />
               Flagged
             </span>
           </div>
+
         </aside>
       </div>
 
