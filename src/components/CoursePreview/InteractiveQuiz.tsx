@@ -317,147 +317,47 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   const answeredPct = total === 0 ? 0 : Math.round((answeredCount / total) * 100);
 
   return (
-    <div className="space-y-0">
-      {/* Exam paper — ivory, editorial, ruled. Deliberately unlike the formative deck. */}
-      <div className="relative rounded-[28px] border border-stone-300/80 dark:border-stone-700/60 bg-[#fbf7ee] dark:bg-stone-950 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.35)] overflow-hidden">
-        {/* Perforated left edge */}
-        <div
-          className="absolute left-0 top-0 bottom-0 w-8 border-r border-dashed border-stone-300/80 dark:border-stone-700/60 bg-[repeating-linear-gradient(to_bottom,transparent_0_18px,rgba(0,0,0,0.06)_18px_19px)] dark:bg-[repeating-linear-gradient(to_bottom,transparent_0_18px,rgba(255,255,255,0.06)_18px_19px)]"
-          aria-hidden="true"
-        />
-
-        {/* Masthead — like an official certificate strip */}
-        <div className="relative pl-14 pr-6 sm:pr-10 pt-6 pb-4 flex items-start justify-between gap-6 border-b-2 border-double border-stone-400/50 dark:border-stone-600/60">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 flex items-center justify-center shadow-inner">
-              <ShieldCheck className="w-5 h-5" aria-hidden="true" />
-            </div>
-            <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.32em] text-stone-500 dark:text-stone-400">
-                Summative · Certified Assessment
-              </div>
-              <div className="font-serif text-xl sm:text-2xl text-stone-900 dark:text-stone-100 leading-tight mt-0.5">
-                Final Examination
-              </div>
-            </div>
+    <div className="space-y-4">
+      {/* Exam header — glassmorphic, on-brand */}
+      <div className="relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden">
+        <div className="flex items-center gap-3 px-5 py-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+            <ShieldCheck className="w-5 h-5" aria-hidden="true" />
           </div>
-
-          {/* Wax-seal-style paper meta */}
-          <div className="hidden sm:flex flex-col items-end text-right">
-            <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-stone-500 dark:text-stone-400">Paper No.</span>
-            <span className="font-mono text-sm font-semibold text-stone-900 dark:text-stone-100 tabular-nums">
-              {String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </span>
-            <span className="mt-1 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400">
-              <Lock className="w-3 h-3" aria-hidden="true" />
-              Sealed until submission
-            </span>
-          </div>
-        </div>
-
-        {/* Body — two-column: giant serif question number rail + question column */}
-        <div className="relative pl-14 pr-6 sm:pr-10 py-8 grid grid-cols-[auto_1fr] gap-8 sm:gap-10">
-          {/* Question number rail */}
-          <div className="flex flex-col items-start w-16 sm:w-20">
-            <span className="font-serif text-6xl sm:text-7xl leading-none text-stone-900 dark:text-stone-100 tabular-nums">
-              {String(current + 1).padStart(2, "0")}
-            </span>
-            <span className="mt-1 font-mono text-[11px] text-stone-500 dark:text-stone-400 tabular-nums">
-              of {String(total).padStart(2, "0")}
-            </span>
-            {q?.type && (
-              <span className="mt-4 inline-flex items-center px-2 py-0.5 rounded-sm border border-stone-400 dark:border-stone-600 text-[10px] font-bold tracking-widest text-stone-700 dark:text-stone-300 uppercase">
-                {q.type}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Summative assessment
               </span>
-            )}
-          </div>
-
-          {/* Question + answer sheet */}
-          <div className="min-w-0">
-            <p className="font-serif text-lg sm:text-xl text-stone-900 dark:text-stone-100 leading-relaxed">
-              {q?.question || q?.text}
-            </p>
-
-            <div className="mt-5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.28em] text-stone-500 dark:text-stone-400">
-              <span className="h-px flex-1 bg-stone-300 dark:bg-stone-700" aria-hidden="true" />
-              {isFIB ? "Write your answer" : isMCQ ? "Select all that apply" : "Select one"}
-              <span className="h-px flex-1 bg-stone-300 dark:bg-stone-700" aria-hidden="true" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-[10px] font-semibold text-muted-foreground">
+                <Lock className="w-3 h-3" aria-hidden="true" />
+                Results on submit
+              </span>
             </div>
-
-            {isFIB ? (
-              <div className="mt-4">
-                <label className="block font-mono text-[10px] uppercase tracking-widest text-stone-500 dark:text-stone-400 mb-1">
-                  Candidate response
-                </label>
-                <Input
-                  value={selected[0] || ""}
-                  onChange={(e) => handleFib(e.target.value)}
-                  placeholder="Write in the space below"
-                  aria-label={`Answer for question ${current + 1}`}
-                  className="h-12 rounded-none border-0 border-b-2 border-stone-400 dark:border-stone-600 bg-transparent px-0 font-serif text-lg text-stone-900 dark:text-stone-100 focus-visible:ring-0 focus-visible:border-stone-900 dark:focus-visible:border-stone-100"
-                />
-              </div>
-            ) : (
-              <ol className="mt-4 divide-y divide-stone-300/80 dark:divide-stone-700/60 border-y border-stone-300/80 dark:border-stone-700/60">
-                {options.map((opt, ai) => {
-                  const isSelected = selected.includes(opt);
-                  const letter = String.fromCharCode(65 + ai);
-                  return (
-                    <li key={ai}>
-                      <button
-                        type="button"
-                        onClick={() => handleSelect(opt)}
-                        aria-pressed={isSelected}
-                        className={cn(
-                          "w-full flex items-center gap-5 py-3.5 px-1 text-left transition-colors group",
-                          isSelected
-                            ? "bg-stone-900/[0.04] dark:bg-stone-100/[0.04]"
-                            : "hover:bg-stone-900/[0.02] dark:hover:bg-stone-100/[0.02]"
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "flex items-center justify-center w-9 h-9 border-2 flex-shrink-0 font-serif text-base font-semibold transition-all",
-                            isMCQ ? "rounded-sm" : "rounded-full",
-                            isSelected
-                              ? "border-stone-900 dark:border-stone-100 bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900"
-                              : "border-stone-400 dark:border-stone-600 bg-transparent text-stone-600 dark:text-stone-400 group-hover:border-stone-700 dark:group-hover:border-stone-400"
-                          )}
-                          aria-hidden="true"
-                        >
-                          {letter}
-                        </span>
-                        <span className={cn(
-                          "flex-1 font-serif text-base leading-relaxed",
-                          isSelected ? "text-stone-900 dark:text-stone-100" : "text-stone-700 dark:text-stone-300"
-                        )}>
-                          {opt}
-                        </span>
-                        {isSelected && (
-                          <span className="flex-shrink-0 font-mono text-[10px] uppercase tracking-widest text-stone-500 dark:text-stone-400">
-                            Marked
-                          </span>
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            )}
+            <h3 className="text-base font-semibold text-foreground leading-tight mt-0.5">
+              Question {current + 1} <span className="text-muted-foreground font-normal">of {total}</span>
+            </h3>
+          </div>
+          <div className="hidden sm:flex items-center gap-2">
+            <div className="text-right">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Answered</div>
+              <div className="text-sm font-semibold text-foreground tabular-nums">{answeredCount}/{total}</div>
+            </div>
           </div>
         </div>
+        <div className="h-1 bg-muted">
+          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${answeredPct}%` }} />
+        </div>
+      </div>
 
-        {/* Answer ledger — thin numbered squares along the bottom, like a scantron */}
-        <div className="relative pl-14 pr-6 sm:pr-10 pb-5 pt-3 border-t border-stone-300/80 dark:border-stone-700/60 bg-[#f5efe0]/60 dark:bg-stone-900/40">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-stone-500 dark:text-stone-400">
-              Answer Ledger
-            </span>
-            <span className="font-mono text-[10px] text-stone-500 dark:text-stone-400 tabular-nums">
-              {answeredCount}/{total} recorded
-            </span>
+      {/* Main body — sidebar navigator + question card */}
+      <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-4">
+        <aside className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-4 order-2 lg:order-1 h-fit lg:sticky lg:top-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Questions</span>
+            <span className="text-[10px] font-medium text-muted-foreground tabular-nums">{answeredCount}/{total}</span>
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="grid grid-cols-5 lg:grid-cols-4 gap-1.5">
             {questions.map((qq, i) => {
               const sel = selectedAnswers[i] || [];
               const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
@@ -467,62 +367,125 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   key={i}
                   type="button"
                   onClick={() => goTo(i)}
-                  aria-label={`Go to question ${i + 1}${done ? ", recorded" : ", blank"}`}
+                  aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}`}
                   aria-current={isCurrent ? "step" : undefined}
                   className={cn(
-                    "flex-shrink-0 h-7 min-w-7 px-1.5 font-mono text-[11px] font-semibold tabular-nums border transition-all relative",
+                    "h-9 w-full rounded-lg text-xs font-semibold tabular-nums border transition-all",
                     isCurrent
-                      ? "bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 border-stone-900 dark:border-stone-100"
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
                       : done
-                      ? "bg-stone-900/10 dark:bg-stone-100/10 text-stone-900 dark:text-stone-100 border-stone-400 dark:border-stone-600"
-                      : "bg-transparent text-stone-500 dark:text-stone-400 border-stone-300 dark:border-stone-700 hover:border-stone-600 dark:hover:border-stone-400"
+                      ? "bg-primary/10 text-primary border-primary/20 hover:border-primary/40"
+                      : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
                   )}
                 >
-                  {String(i + 1).padStart(2, "0")}
+                  {i + 1}
                 </button>
               );
             })}
           </div>
-        </div>
+          <div className="mt-4 pt-3 border-t border-border/60 space-y-1.5">
+            <LegendRow color="bg-primary" label="Current" />
+            <LegendRow color="bg-primary/20 border border-primary/30" label="Answered" />
+            <LegendRow color="bg-background border border-border" label="Unanswered" />
+          </div>
+        </aside>
 
-        {/* Nav footer — signature-line inspired */}
-        <div className="relative pl-14 pr-6 sm:pr-10 py-4 border-t-2 border-double border-stone-400/50 dark:border-stone-600/60 flex items-center justify-between gap-3 bg-[#fbf7ee] dark:bg-stone-950">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => goTo(current - 1)}
-            disabled={current === 0}
-            className="gap-1.5 rounded-none font-mono text-xs uppercase tracking-widest text-stone-700 dark:text-stone-300 hover:bg-transparent hover:text-stone-900 dark:hover:text-stone-100 disabled:opacity-40"
-          >
-            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-            Prev
-          </Button>
+        <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden order-1 lg:order-2">
+          <div className="p-6 sm:p-8">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground text-sm font-semibold tabular-nums">
+                {current + 1}
+              </span>
+              {q?.type && (
+                <span className="px-2.5 py-1 rounded-full bg-muted text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {q.type}
+                </span>
+              )}
+              <span className="ml-auto text-[10px] font-medium text-muted-foreground">
+                {isFIB ? "Type your answer" : isMCQ ? "Select all that apply" : "Select one"}
+              </span>
+            </div>
 
-          <span className="hidden sm:block font-mono text-[10px] uppercase tracking-[0.3em] text-stone-500 dark:text-stone-400">
-            — Do not mark outside the boxes —
-          </span>
+            <p className="text-lg sm:text-xl font-medium text-foreground leading-relaxed">
+              {q?.question || q?.text}
+            </p>
 
-          {current < total - 1 ? (
-            <Button
-              size="sm"
-              onClick={() => goTo(current + 1)}
-              className="gap-1.5 rounded-none font-mono text-xs uppercase tracking-widest bg-stone-900 hover:bg-stone-800 text-stone-100 dark:bg-stone-100 dark:hover:bg-stone-200 dark:text-stone-900"
-            >
-              Next
-              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+            {isFIB ? (
+              <div className="mt-6 relative">
+                <PencilLine className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                <Input
+                  value={selected[0] || ""}
+                  onChange={(e) => handleFib(e.target.value)}
+                  placeholder="Type your answer here"
+                  aria-label={`Answer for question ${current + 1}`}
+                  className="h-12 pl-10 rounded-xl border-input focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary"
+                />
+              </div>
+            ) : (
+              <div className="mt-6 space-y-2.5">
+                {options.map((opt, ai) => {
+                  const isSelected = selected.includes(opt);
+                  const letter = String.fromCharCode(65 + ai);
+                  return (
+                    <button
+                      key={ai}
+                      type="button"
+                      onClick={() => handleSelect(opt)}
+                      aria-pressed={isSelected}
+                      className={cn(
+                        "w-full flex items-center gap-4 px-4 py-3.5 rounded-xl border-2 text-left transition-all",
+                        isSelected
+                          ? "border-primary bg-primary/5 shadow-sm"
+                          : "border-border bg-background hover:border-primary/40 hover:bg-muted/50"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "flex items-center justify-center w-8 h-8 flex-shrink-0 text-sm font-semibold transition-colors",
+                          isMCQ ? "rounded-md" : "rounded-full",
+                          isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {letter}
+                      </span>
+                      <span className={cn(
+                        "flex-1 text-sm leading-relaxed",
+                        isSelected ? "text-foreground font-medium" : "text-foreground/80"
+                      )}>
+                        {opt}
+                      </span>
+                      {isSelected && (
+                        <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 sm:px-8 py-4 border-t border-border/60 bg-muted/30 flex items-center justify-between gap-3">
+            <Button variant="outline" size="sm" onClick={() => goTo(current - 1)} disabled={current === 0} className="gap-1.5 rounded-full">
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              Previous
             </Button>
-          ) : (
-            <Button
-              size="sm"
-              onClick={() => setConfirmOpen(true)}
-              className="gap-1.5 rounded-none font-mono text-xs uppercase tracking-widest bg-emerald-700 hover:bg-emerald-800 text-white"
-            >
-              <FileCheck2 className="w-4 h-4" aria-hidden="true" />
-              Seal & Submit
-            </Button>
-          )}
+
+            {current < total - 1 ? (
+              <Button size="sm" onClick={() => goTo(current + 1)} className="gap-1.5 rounded-full">
+                Next
+                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => setConfirmOpen(true)} className="gap-1.5 rounded-full">
+                <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                Submit exam
+              </Button>
+            )}
+          </div>
         </div>
       </div>
+
 
 
 
