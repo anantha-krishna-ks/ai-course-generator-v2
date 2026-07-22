@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -510,13 +510,31 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
 
         {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/70 bg-card shadow-sm p-4 h-fit lg:sticky lg:top-4">
-          <div className="flex items-center gap-2 mb-3">
-            <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
-            <span className="text-xs font-semibold text-foreground">Question navigator</span>
+        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-5 h-fit lg:sticky lg:top-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
+              </div>
+              <div>
+                <span className="text-sm font-semibold text-foreground block leading-tight">Question map</span>
+                <span className="text-[11px] text-muted-foreground">Jump to any question</span>
+              </div>
+            </div>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground">
+              {total}
+            </span>
           </div>
 
-          <div className="grid grid-cols-5 gap-2">
+          {/* Status summary */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <MiniStat label="Done" value={String(answeredCount)} tone="emerald" />
+            <MiniStat label="Pending" value={String(unansweredCount)} tone="muted" />
+            <MiniStat label="Flagged" value={String(flaggedCount)} tone="amber" />
+          </div>
+
+          {/* Question grid */}
+          <div className="grid grid-cols-4 gap-2.5">
             {questions.map((qq, i) => {
               const sel = selectedAnswers[i] || [];
               const done = (qq.type || "").toUpperCase() === "FIB" ? (sel[0] || "").trim().length > 0 : sel.length > 0;
@@ -530,17 +548,18 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                   aria-label={`Go to question ${i + 1}${done ? ", answered" : ", unanswered"}${isFlagged ? ", flagged" : ""}`}
                   aria-current={isCurrent ? "step" : undefined}
                   className={cn(
-                    "relative h-9 rounded-lg text-xs font-semibold border transition-all tabular-nums",
-                    isCurrent && "ring-2 ring-primary ring-offset-2 ring-offset-card",
-                    done
-                      ? "bg-emerald-500 text-white border-emerald-500 hover:bg-emerald-600"
-                      : "bg-background text-foreground border-border hover:border-primary/40"
+                    "relative h-10 w-full rounded-full text-sm font-semibold transition-all duration-200 tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card",
+                    isCurrent
+                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-105"
+                      : done
+                      ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                      : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/50"
                   )}
                 >
                   {i + 1}
-                  {isFlagged && (
+                  {isFlagged && !isCurrent && (
                     <span
-                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
+                      className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-amber-400 border-2 border-card"
                       aria-hidden="true"
                     />
                   )}
@@ -550,12 +569,20 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Legend */}
-          <div className="mt-4 space-y-1.5 text-[11px]">
-            <LegendDot color="bg-emerald-500" label={`Answered (${answeredCount})`} />
-            <LegendDot color="bg-background border border-border" label={`Unanswered (${unansweredCount})`} />
-            <LegendDot color="bg-amber-400" label={`Flagged (${flaggedCount})`} />
+          <div className="mt-5 flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
+              <CircleCheck className="w-3.5 h-3.5" aria-hidden="true" />
+              Answered
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-muted text-muted-foreground text-xs font-medium">
+              <Circle className="w-3.5 h-3.5" aria-hidden="true" />
+              Unanswered
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-amber-400/15 text-amber-700 dark:text-amber-300 text-xs font-medium">
+              <Flag className="w-3.5 h-3.5" aria-hidden="true" />
+              Flagged
+            </span>
           </div>
-
         </aside>
       </div>
 
