@@ -753,6 +753,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             </span>
           </div>
 
+          </div>
         </aside>
       </div>
 
