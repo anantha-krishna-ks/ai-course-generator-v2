@@ -521,8 +521,8 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Body */}
-          <div className="flex-1 px-6 sm:px-7 py-6">
-            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-6">
+          <div className="flex-1 px-4 sm:px-7 py-5 sm:py-6">
+            <p className="text-[15px] sm:text-lg font-medium text-foreground leading-relaxed mb-5 sm:mb-6 break-words">
               {q?.question || q?.text}
             </p>
 
