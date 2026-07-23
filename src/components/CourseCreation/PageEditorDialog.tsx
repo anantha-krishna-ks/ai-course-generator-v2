@@ -6,8 +6,7 @@ import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
-import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2, Package } from "lucide-react";
-import { ScormPreferencesPopover } from "./ScormPreferencesPopover";
+import { X, FileText, LayoutGrid, Plus, Sparkles, Type, ImageIcon, Video, FileText as DocIcon, Layers, MoreHorizontal, MessageCircleQuestion, Mic, Eye, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, MoreHorizontal as Dots, Undo2, Send, BookOpen, GripVertical, Pencil, Copy, Trash2, Check, ArrowLeft, Loader2 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -137,7 +136,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
   const [showFinishReviewDialog, setShowFinishReviewDialog] = useState(false);
-  const [showScormPreferences, setShowScormPreferences] = useState(false);
+  
   const flashTimerRef = useRef<number | null>(null);
   const triggerBlocksFlash = useCallback(() => {
     setSidebarCollapsed(false);
@@ -618,23 +617,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 Finish review
               </Button>
             )}
-            <ScormPreferencesPopover
-              open={showScormPreferences}
-              onOpenChange={setShowScormPreferences}
-              items={courseItems ?? []}
-              currentPageId={currentPageId}
-              trigger={
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="SCORM preferences"
-                  title="SCORM preferences"
-                  className="rounded-full border-border h-9 w-9"
-                >
-                  <Package className="w-4 h-4" aria-hidden="true" focusable="false" />
-                </Button>
-              }
-            />
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="Preview" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>

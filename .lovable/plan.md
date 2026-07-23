@@ -1,39 +1,45 @@
-# Info Card: floating toolbar + premium corner fold
+# Move Page Duration into Content Generation
 
-Two focused changes to `src/components/CourseCreation/LayoutUtilityBlock.tsx` (the `InfoCard` component). No other files or business logic touched.
+You're right — page duration is a **content-generation** setting (how much content AI produces per page), not an LMS/SCORM behaviour. Right now it lives in two wrong places:
 
-## 1. Rich-text toolbar on the body
+1. Inside the **SCORM Preferences** accordion on the blueprint step (`StepBlueprintGenerate.tsx`).
+2. Inside the editor's **SCORM Preferences popover** as per-page overrides (`ScormPreferencesPopover.tsx`) — added last turn.
 
-Reuse the CardSortBlock toolbar pattern (floating pill, arrow tail, `execCommand`, mousedown-preserve-focus) inside the Info Card body editor.
+Both will be removed and rebuilt inside the AI generation flow.
 
-- Replace the current textarea + "click-to-edit" button with a single `contentEditable` div that keeps the same look (auto-grow, placeholder, `text-foreground/90` body copy).
-- Sanitize with the existing `sanitizeCardHtml` helper so only Bold / Italic / Underline / Strikethrough / links are allowed — same allow-list as CardSortBlock.
-- Store the sanitized HTML in the existing `body` field (`commit({ body })`). Read-only mode renders it with `dangerouslySetInnerHTML` through the same sanitizer.
-- Toolbar appears above the card body only while focused, tinted with the active preset's `accent` on the divider dot so it feels tied to the card. Buttons: Bold, Italic, Underline, Strikethrough, divider, Clear formatting — identical order to CardSortBlock so muscle memory transfers.
-- Preserve accessibility: `role="toolbar"`, `aria-label="Text formatting"`, `aria-label` on the editable region, keyboard-reachable buttons, `onMouseDown` preventDefault so the selection isn't lost.
+## Changes
 
-## 2. Redesigned top-right corner "fold"
+### 1. Blueprint step — new top-level "Page Duration" card
+File: `src/components/AIGenerate/StepBlueprintGenerate.tsx`
 
-Replace the current flat triangle (lines 617–629) with a layered dog-ear that reads as a real folded paper corner:
+- Remove the "Page Duration" block from `ScormPreferencesAccordion` (SCORM keeps only Background Image + other LMS options).
+- Add a new top-level section card placed right after **Images** (before Tone/Font), styled like the other blueprint cards:
+  - Header: icon (Clock) + title "Page duration" + description "Default time budget AI uses to size each page's content."
+  - Minutes / seconds steppers (reusing the existing inputs).
+- Keep the same state field for now (`scormPageDurationSec`) to avoid a rename ripple; label/help text reframed to content-generation wording.
 
-- Larger corner (≈40×40) clipped to the card's `borderTopRightRadius` so it hugs the rounded corner.
-- Three stacked layers:
-  1. **Under-shadow** — soft radial shadow bleeding down-left from the fold to imply lift.
-  2. **Fold face** — diagonal gradient from `preset.fold` → `hsl(0 0% 100% / 0.85)`, giving it a subtle sheen instead of a flat tint.
-  3. **Crease highlight** — 1px diagonal line along the fold edge in `preset.accent / 0.35` for definition.
-- Add a faint inner "peeked" corner behind the fold using `preset.bg` darkened ~6% so you can sense the page beneath.
-- Keep it `aria-hidden`, pointer-events-none, and honor `prefers-reduced-motion` (no animation needed — this is static).
-- Match the fold size/position responsively (a hair larger on `sm:` breakpoint) so it stays proportional to the card padding.
+### 2. Refine step — per-page duration overrides
+File: `src/components/AIGenerate/StepEditRefine.tsx`
 
-## Technical notes
+- Extend the local `Page` type with an optional `durationSec?: number` (undefined = inherits course default).
+- On each page row, add a compact duration control on the right:
+  - Shows `Default · Nm Ss` chip when inheriting, or `Nm Ss` in a bordered input when overridden.
+  - Small pencil icon toggles into edit mode (minutes/seconds steppers).
+  - Reset (RotateCcw) button appears when a custom value is set, reverts to inherit.
+- Validation: any custom value must be ≥ 1 minute; block advancing (reuse existing next-button disabled pattern) with an inline error on the offending row.
+- No styling changes to the surrounding section cards.
 
-- No new dependencies. `sanitizeCardHtml` and DOMPurify are already imported elsewhere; import `sanitizeCardHtml` from `CardSortBlock` or lift it to `src/lib/sanitize.ts` if it isn't already exported — prefer lifting to a shared util to avoid a component-to-component import.
-- Reuse `RtButton` by exporting it from `CardSortBlock` or inlining a small local twin; lifting to a shared file (`src/components/CourseCreation/RichTextToolbarButton.tsx`) is cleaner and lets other blocks reuse it later.
-- Read-only path renders sanitized HTML; empty body still shows the italic placeholder exactly like today.
-- No changes to the type picker, popover "Change" menu, icon medallion, or preset colors.
+### 3. Revert SCORM popover
+File: `src/components/CourseCreation/ScormPreferencesPopover.tsx`
 
-## Verification
+- Remove the "Course default" card, per-page Default/Custom badges, `DurationInput`, reset buttons, and Done-button gating added last turn.
+- Restore the file to its pre-duration state (background image + whatever else it originally had).
 
-- Focus the body → toolbar appears above; Bold/Italic/Underline/Strike apply to selection; Clear formatting strips them; blur commits and re-renders the same HTML.
-- Switch preset kinds → fold color updates and the new layered fold still clips cleanly to the rounded corner in each of the 6 flavours.
-- Read-only preview page shows formatted HTML with no toolbar.
+### Technical notes
+- No new state fields on `AIGenerateState` — the existing `scormPageDurationSec` is reused as the course-default; renaming is a follow-up if you want.
+- Per-page overrides live in `StepEditRefine`'s local `sections` state (same place page titles/types already live).
+- Accessibility: number inputs get `aria-label`s, reset buttons get `aria-label="Reset to course default"`, chips use `role="status"` when showing inherited state.
+
+## Out of scope
+- Renaming `scormPageDurationSec` → `defaultPageDurationSec` across the codebase.
+- Persisting per-page durations into the generated course/editor (currently the refine step is a pre-generation preview; wiring durations into the produced course data is a separate task — say the word if you want it in this pass).

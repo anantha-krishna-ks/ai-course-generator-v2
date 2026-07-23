@@ -32,6 +32,7 @@ import {
   ListChecks,
   ToggleRight,
   PenLine,
+  Clock,
   type LucideIcon,
 } from "lucide-react";
 import { useRef, useState } from "react";
@@ -442,7 +443,10 @@ export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerate
 
 
 
-      {/* Course Tone */}
+      {/* Page Duration */}
+      <PageDurationCard state={state} onChange={onChange} />
+
+
       <PrefCard>
         <SectionHeader icon={MessageSquare} title="Course Tone" desc="Voice and style of the content" />
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course tone">
@@ -919,6 +923,68 @@ function QuizScopeCard({
   );
 }
 
+function PageDurationCard({
+  state,
+  onChange,
+}: {
+  state: AIGenerateState;
+  onChange: (partial: Partial<AIGenerateState>) => void;
+}) {
+  const mins = Math.floor(state.scormPageDurationSec / 60);
+  const secs = state.scormPageDurationSec % 60;
+  return (
+    <PrefCard>
+      <div className="flex items-start gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+          <Clock className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-[16px] font-semibold text-foreground leading-tight">Page duration</div>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
+            Default time budget AI uses to size each page's content. You can override any individual page in the next step.
+          </p>
+          <div className="mt-3 flex items-end gap-3">
+            <div className="flex flex-col">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                Minutes
+              </span>
+              <Input
+                type="number"
+                min={0}
+                max={60}
+                value={mins}
+                onChange={(e) => {
+                  const m = Math.max(0, Math.min(60, Number(e.target.value) || 0));
+                  onChange({ scormPageDurationSec: m * 60 + secs });
+                }}
+                aria-label="Default page duration minutes"
+                className="h-11 w-20 text-center text-[16px] font-semibold tabular-nums rounded-lg"
+              />
+            </div>
+            <span aria-hidden="true" className="text-[20px] font-light text-muted-foreground pb-1.5 select-none">:</span>
+            <div className="flex flex-col">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
+                Seconds
+              </span>
+              <Input
+                type="number"
+                min={0}
+                max={59}
+                value={secs}
+                onChange={(e) => {
+                  const s = Math.max(0, Math.min(59, Number(e.target.value) || 0));
+                  onChange({ scormPageDurationSec: mins * 60 + s });
+                }}
+                aria-label="Default page duration seconds"
+                className="h-11 w-20 text-center text-[16px] font-semibold tabular-nums rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </PrefCard>
+  );
+}
 
 
 function ScormPreferencesAccordion({
@@ -929,8 +995,7 @@ function ScormPreferencesAccordion({
   onChange: (partial: Partial<AIGenerateState>) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mins = Math.floor(state.scormPageDurationSec / 60);
-  const secs = state.scormPageDurationSec % 60;
+
 
   const handleFile = (file: File) => {
     const url = URL.createObjectURL(file);
@@ -960,50 +1025,6 @@ function ScormPreferencesAccordion({
         </AccordionTrigger>
         <AccordionContent className="p-0">
           <div className="divide-y divide-border">
-            {/* Page Duration */}
-            <div className="p-5">
-              <Label className="text-[16px] font-semibold text-foreground">Page Duration</Label>
-              <p className="text-[13.5px] text-muted-foreground mt-1">
-                Minimum time learners must spend on each page before progressing.
-              </p>
-              <div className="mt-3 flex items-end gap-3">
-                <div className="flex flex-col">
-                  <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
-                    Minutes
-                  </span>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={60}
-                    value={mins}
-                    onChange={(e) => {
-                      const m = Math.max(0, Math.min(60, Number(e.target.value) || 0));
-                      onChange({ scormPageDurationSec: m * 60 + secs });
-                    }}
-                    aria-label="Minutes"
-                    className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg"
-                  />
-                </div>
-                <span aria-hidden="true" className="text-[22px] font-light text-muted-foreground pb-2 select-none">:</span>
-                <div className="flex flex-col">
-                  <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
-                    Seconds
-                  </span>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={59}
-                    value={secs}
-                    onChange={(e) => {
-                      const s = Math.max(0, Math.min(59, Number(e.target.value) || 0));
-                      onChange({ scormPageDurationSec: mins * 60 + s });
-                    }}
-                    aria-label="Seconds"
-                    className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
 
             {/* Background Image */}
             <div className="p-5">
