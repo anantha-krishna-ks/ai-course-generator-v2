@@ -617,23 +617,6 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                 Finish review
               </Button>
             )}
-            <ScormPreferencesPopover
-              open={showScormPreferences}
-              onOpenChange={setShowScormPreferences}
-              items={courseItems ?? []}
-              currentPageId={currentPageId}
-              trigger={
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="SCORM preferences"
-                  title="SCORM preferences"
-                  className="rounded-full border-border h-9 w-9"
-                >
-                  <Package className="w-4 h-4" aria-hidden="true" focusable="false" />
-                </Button>
-              }
-            />
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="Preview" className="rounded-full border-border h-9 w-9" onClick={() => onPreview?.(currentPageId)}>
