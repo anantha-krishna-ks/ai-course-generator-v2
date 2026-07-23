@@ -522,8 +522,8 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
           </div>
 
           {/* Body */}
-          <div className="flex-1 px-3 sm:px-7 py-4 sm:py-6">
-            <p className="text-sm sm:text-lg font-medium text-foreground leading-relaxed mb-4 sm:mb-6 break-words">
+          <div className="flex-1 px-2.5 sm:px-7 py-3 sm:py-6">
+            <p className="text-sm sm:text-lg font-medium text-foreground leading-relaxed mb-3 sm:mb-6 break-words">
               {q?.question || q?.text}
             </p>
 
@@ -535,11 +535,11 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                   onChange={(e) => handleFib(e.target.value)}
                   placeholder="Type your answer..."
                   aria-label={`Answer for question ${current + 1}`}
-                  className="h-12 rounded-xl bg-background border border-border pl-10 text-base"
+                  className="h-10 sm:h-12 rounded-xl bg-background border border-border pl-10 text-sm sm:text-base"
                 />
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 {options.map((opt, ai) => {
                   const isSelected = selected.includes(opt);
                   const letter = String.fromCharCode(65 + ai);
@@ -550,7 +550,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       onClick={() => handleSelect(opt)}
                       aria-pressed={isSelected}
                       className={cn(
-                        "group relative w-full flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 pr-3 sm:pr-4 py-2.5 sm:py-3 rounded-lg text-left text-[13px] sm:text-sm border transition-all",
+                        "group relative w-full flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 pr-3 sm:pr-4 py-2 sm:py-3 rounded-lg text-left text-xs sm:text-sm border transition-all",
                         isSelected
                           ? "border-primary/60 bg-primary/[0.05]"
                           : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/30"
@@ -558,7 +558,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                     >
                       <span
                         className={cn(
-                          "flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md text-[10px] sm:text-[11px] font-semibold flex-shrink-0 transition-all",
+                          "flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 rounded-md text-[9px] sm:text-[11px] font-semibold flex-shrink-0 transition-all",
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
@@ -573,13 +573,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       {isMCQ && (
                         <span
                           className={cn(
-                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            "w-4 h-4 sm:w-5 sm:h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
                             isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
                           )}
                           aria-hidden="true"
                         >
                           {isSelected && (
-                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <path d="M2.5 6l2.5 2.5 4.5-5" />
                             </svg>
                           )}
