@@ -789,7 +789,7 @@ function formatDuration(sec: number): string {
   return `${m}m ${s}s`;
 }
 
-function PageDurationPill({
+export function PageDurationPill({
   pageId,
   pageTitle,
   overrideSec,
