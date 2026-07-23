@@ -832,7 +832,7 @@ export function PageDurationPill({
           type="button"
           aria-label={`Edit duration for page ${pageTitle || "Untitled"}. Current: ${formatDuration(currentSec)}${isCustom ? " (custom)" : " (default)"}`}
           className={cn(
-            "group shrink-0 inline-flex items-center gap-1.5 h-7 pl-1 pr-2.5 rounded-full border text-[11.5px] font-semibold tabular-nums shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:shadow-md hover:-translate-y-[1px]",
+            "group shrink-0 inline-flex items-center gap-1.5 h-7 pl-1 pr-2.5 rounded-full border text-[13px] font-semibold tabular-nums shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:shadow-md hover:-translate-y-[1px]",
             isCustom
               ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
               : "bg-primary/10 border-primary/25 text-primary hover:bg-primary/15 hover:border-primary/40"
@@ -846,7 +846,7 @@ export function PageDurationPill({
                 : "bg-primary text-primary-foreground ring-2 ring-primary/10 ring-offset-1 ring-offset-background"
             )}
           >
-            <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
+            <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
           </span>
           <span className="leading-none">{formatDuration(currentSec)}</span>
           {isCustom && (
