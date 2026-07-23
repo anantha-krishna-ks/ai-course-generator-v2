@@ -45,6 +45,7 @@ import imgStyle3d from "@/assets/image-style-3d.jpg";
 import imgStyleSketch from "@/assets/image-style-sketch.jpg";
 import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -930,59 +931,12 @@ function PageDurationCard({
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
 }) {
-  const mins = Math.floor(state.scormPageDurationSec / 60);
-  const secs = state.scormPageDurationSec % 60;
   return (
-    <PrefCard>
-      <div className="flex items-start gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 shrink-0">
-          <Clock className="h-4 w-4 text-primary" aria-hidden="true" focusable="false" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="text-[16px] font-semibold text-foreground leading-tight">Page duration</div>
-          <p className="text-[13px] text-muted-foreground mt-0.5">
-            Default time budget AI uses to size each page's content. You can override any individual page in the next step.
-          </p>
-          <div className="mt-3 flex items-end gap-3">
-            <div className="flex flex-col">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
-                Minutes
-              </span>
-              <Input
-                type="number"
-                min={0}
-                max={60}
-                value={mins}
-                onChange={(e) => {
-                  const m = Math.max(0, Math.min(60, Number(e.target.value) || 0));
-                  onChange({ scormPageDurationSec: m * 60 + secs });
-                }}
-                aria-label="Default page duration minutes"
-                className="h-11 w-20 text-center text-[16px] font-semibold tabular-nums rounded-lg"
-              />
-            </div>
-            <span aria-hidden="true" className="text-[20px] font-light text-muted-foreground pb-1.5 select-none">:</span>
-            <div className="flex flex-col">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
-                Seconds
-              </span>
-              <Input
-                type="number"
-                min={0}
-                max={59}
-                value={secs}
-                onChange={(e) => {
-                  const s = Math.max(0, Math.min(59, Number(e.target.value) || 0));
-                  onChange({ scormPageDurationSec: mins * 60 + s });
-                }}
-                aria-label="Default page duration seconds"
-                className="h-11 w-20 text-center text-[16px] font-semibold tabular-nums rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </PrefCard>
+    <PageDurationDefaultCard
+      valueSec={state.scormPageDurationSec}
+      onChange={(sec) => onChange({ scormPageDurationSec: sec })}
+      description="Default time budget AI uses to size each page's content. You can override any individual page in the next step."
+    />
   );
 }
 

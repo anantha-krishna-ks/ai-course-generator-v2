@@ -10,6 +10,7 @@ import {
   GalleryHorizontalEnd,
   Check,
 } from "lucide-react";
+import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 
 
 export interface DocumentPreferencesValue {
@@ -44,8 +45,8 @@ export interface DocumentPreferencesValue {
 }
 
 interface Props {
-  state: Partial<DocumentPreferencesValue> & { layoutType: "multi-page" | "single-page" };
-  onChange: (partial: Partial<DocumentPreferencesValue>) => void;
+  state: Partial<DocumentPreferencesValue> & { layoutType: "multi-page" | "single-page"; scormPageDurationSec?: number };
+  onChange: (partial: Partial<DocumentPreferencesValue> & { scormPageDurationSec?: number }) => void;
 }
 
 const WORD_PRESETS = [100, 125, 150, 200];
@@ -415,6 +416,13 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
           />
         </div>
       </PrefCard>
+
+      {/* Page duration */}
+      <PageDurationDefaultCard
+        valueSec={state.scormPageDurationSec ?? 300}
+        onChange={(sec) => onChange({ scormPageDurationSec: sec })}
+        description="Default time budget per page for the generated course. You can override any individual page in the next step."
+      />
 
     </div>
   );

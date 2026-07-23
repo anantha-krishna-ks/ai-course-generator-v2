@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 
 interface StepCourseDetailsProps {
   state: AIGenerateState;
@@ -463,18 +464,12 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-      {/* Page Duration */}
-      <div data-field="pageSpanTime" className={cn("rounded-xl border bg-card p-4", errors.pageSpanTime ? "border-destructive" : "border-border")}>
-        <div className="mb-3">
-          <div className="text-[16px] font-semibold text-foreground leading-tight">
-            Page Duration
-            <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">Set the duration for each page of content</p>
-        </div>
-        <PageDurationStepper
-          value={state.pageSpanTime || 5}
-          onChange={(v) => onChange({ pageSpanTime: v })}
+      <div data-field="pageSpanTime">
+        <PageDurationDefaultCard
+          valueSec={(state.pageSpanTime || 5) * 60}
+          onChange={(sec) => onChange({ pageSpanTime: Math.max(1, Math.round(sec / 60)), scormPageDurationSec: sec } as Partial<AIGenerateState>)}
+          description="Default time budget per page. You can override individual pages in the next step."
+          className={cn(errors.pageSpanTime ? "border-destructive" : undefined)}
         />
         {errors.pageSpanTime && (
           <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.pageSpanTime}</p>

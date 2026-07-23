@@ -1,45 +1,30 @@
-# Move Page Duration into Content Generation
+Bring the new **Page duration** pattern (default + per-page overrides) to both flows.
 
-You're right — page duration is a **content-generation** setting (how much content AI produces per page), not an LMS/SCORM behaviour. Right now it lives in two wrong places:
+## 1. Step-by-step creation (`StepCourseDetails.tsx`)
+- Replace the existing `PageDurationStepper` block (around line 466–478) with the new **Page duration** card used in Blueprint (label, mins:secs inputs, description).
+- On the pages list (the section where users add/remove pages, ~line 500+), append a small clock **duration pill** to each page row.
+  - Pill shows current duration and **Default** / **Custom** state.
+  - Popover editor with mins/secs inputs, min 1 minute validation, and **Use default** reset.
+- Reuse `scormPageDurationSec` from `AIGenerateState` as the default; store per-page overrides in a local `Record<pageId, sec>` map (same shape as `StepEditRefine`).
 
-1. Inside the **SCORM Preferences** accordion on the blueprint step (`StepBlueprintGenerate.tsx`).
-2. Inside the editor's **SCORM Preferences popover** as per-page overrides (`ScormPreferencesPopover.tsx`) — added last turn.
+## 2. Document to course
+- **`StepDocumentPreferences.tsx`**: add the same **Page duration** default card as a new preference section (near other preference cards).
+- **`StepDocumentAssessment.tsx`** (or wherever the generated page outline is shown for review — confirm during build): add the per-page duration pill on each page row, with the same popover + reset behavior.
+- If a page outline list doesn't exist in that step, add overrides only in the Refine step already shared with AI flow.
 
-Both will be removed and rebuilt inside the AI generation flow.
+## 3. Shared helper
+- Extract `PageDurationPill` and `formatDuration` from `StepEditRefine.tsx` into `src/components/AIGenerate/PageDurationPill.tsx` and import from all three flows to avoid duplication.
+- Extract the default-duration card into `PageDurationDefaultCard.tsx` for reuse in Blueprint, Step-by-step, and Document Preferences.
 
-## Changes
+## 4. Consistency
+- Same labels ("Page duration", "Default", "Custom", "Use default (Xm Ys)").
+- Same 1-minute minimum validation.
+- Not under SCORM anywhere.
 
-### 1. Blueprint step — new top-level "Page Duration" card
-File: `src/components/AIGenerate/StepBlueprintGenerate.tsx`
-
-- Remove the "Page Duration" block from `ScormPreferencesAccordion` (SCORM keeps only Background Image + other LMS options).
-- Add a new top-level section card placed right after **Images** (before Tone/Font), styled like the other blueprint cards:
-  - Header: icon (Clock) + title "Page duration" + description "Default time budget AI uses to size each page's content."
-  - Minutes / seconds steppers (reusing the existing inputs).
-- Keep the same state field for now (`scormPageDurationSec`) to avoid a rename ripple; label/help text reframed to content-generation wording.
-
-### 2. Refine step — per-page duration overrides
-File: `src/components/AIGenerate/StepEditRefine.tsx`
-
-- Extend the local `Page` type with an optional `durationSec?: number` (undefined = inherits course default).
-- On each page row, add a compact duration control on the right:
-  - Shows `Default · Nm Ss` chip when inheriting, or `Nm Ss` in a bordered input when overridden.
-  - Small pencil icon toggles into edit mode (minutes/seconds steppers).
-  - Reset (RotateCcw) button appears when a custom value is set, reverts to inherit.
-- Validation: any custom value must be ≥ 1 minute; block advancing (reuse existing next-button disabled pattern) with an inline error on the offending row.
-- No styling changes to the surrounding section cards.
-
-### 3. Revert SCORM popover
-File: `src/components/CourseCreation/ScormPreferencesPopover.tsx`
-
-- Remove the "Course default" card, per-page Default/Custom badges, `DurationInput`, reset buttons, and Done-button gating added last turn.
-- Restore the file to its pre-duration state (background image + whatever else it originally had).
-
-### Technical notes
-- No new state fields on `AIGenerateState` — the existing `scormPageDurationSec` is reused as the course-default; renaming is a follow-up if you want.
-- Per-page overrides live in `StepEditRefine`'s local `sections` state (same place page titles/types already live).
-- Accessibility: number inputs get `aria-label`s, reset buttons get `aria-label="Reset to course default"`, chips use `role="status"` when showing inherited state.
-
-## Out of scope
-- Renaming `scormPageDurationSec` → `defaultPageDurationSec` across the codebase.
-- Persisting per-page durations into the generated course/editor (currently the refine step is a pre-generation preview; wiring durations into the produced course data is a separate task — say the word if you want it in this pass).
+## Files to edit
+- `src/components/AIGenerate/StepCourseDetails.tsx`
+- `src/components/AIGenerate/StepDocumentPreferences.tsx`
+- `src/components/AIGenerate/StepDocumentAssessment.tsx` (per-page pills, if outline present)
+- `src/components/AIGenerate/StepBlueprintGenerate.tsx` (switch to shared components)
+- `src/components/AIGenerate/StepEditRefine.tsx` (switch to shared components)
+- New: `src/components/AIGenerate/PageDurationPill.tsx`, `src/components/AIGenerate/PageDurationDefaultCard.tsx`
