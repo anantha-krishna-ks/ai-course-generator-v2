@@ -449,16 +449,16 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
   return (
     <div className="space-y-4">
       {/* Exam header */}
-      <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
+      <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
-        <div className="relative px-2.5 sm:px-6 py-2.5 sm:py-4 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
-              <ShieldCheck className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" aria-hidden="true" />
+        <div className="relative px-2 sm:px-6 py-2 sm:py-4 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-3 h-3 sm:w-5 sm:h-5 text-white" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <div className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.2em] text-white/60">Summative Exam</div>
-              <div className="text-[11px] sm:text-sm font-semibold text-white truncate">Final assessment · {total} questions</div>
+              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.2em] text-white/60">Summative Exam</div>
+              <div className="text-[10px] sm:text-sm font-semibold text-white truncate">Final assessment · {total} questions</div>
             </div>
           </div>
 
@@ -480,22 +480,22 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
       {/* Body: question + navigator */}
       <div className={cn("grid grid-cols-1 gap-3 sm:gap-4", !isCompactView && "lg:grid-cols-[minmax(0,1fr)_260px]")}>
         {/* Question panel */}
-        <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden flex flex-col">
+        <div className="rounded-xl sm:rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden flex flex-col">
           {/* Header ribbon */}
           <div className="flex items-stretch border-b border-border/60">
             {/* Left number block */}
-            <div className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-6 py-2.5 sm:py-4 bg-primary/[0.06] border-r border-border/60">
-              <span className="text-xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
+            <div className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-6 py-2 sm:py-4 bg-primary/[0.06] border-r border-border/60">
+              <span className="text-lg sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
                 {String(current + 1).padStart(2, "0")}
               </span>
-              <div className="flex flex-col leading-tight">
-                <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.14em] sm:tracking-[0.16em] text-muted-foreground">Question</span>
-                <span className="text-[10px] sm:text-[11px] text-muted-foreground/80 tabular-nums">of {String(total).padStart(2, "0")}</span>
+              <div className="hidden sm:flex flex-col leading-tight">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Question</span>
+                <span className="text-[11px] text-muted-foreground/80 tabular-nums">of {String(total).padStart(2, "0")}</span>
               </div>
             </div>
 
             {/* Right meta */}
-            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-2.5 sm:px-6 py-2.5 sm:py-4">
+            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-2 sm:px-6 py-2 sm:py-4">
               {q?.type && (
                 <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted text-[9px] sm:text-[10px] font-bold text-foreground/75 tracking-wider">
                   <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" aria-hidden="true" />
@@ -508,13 +508,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium border transition-all",
+                  "inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-full text-[9px] sm:text-xs font-medium border transition-all",
                   flagged[current]
                     ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
                     : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
-                <Flag className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
+                <Flag className={cn("w-2.5 h-2.5 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
                 <span className="hidden sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
                 <span className="sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
               </button>
@@ -522,8 +522,8 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
           </div>
 
           {/* Body */}
-          <div className="flex-1 px-3 sm:px-7 py-4 sm:py-6">
-            <p className="text-sm sm:text-lg font-medium text-foreground leading-relaxed mb-4 sm:mb-6 break-words">
+          <div className="flex-1 px-2.5 sm:px-7 py-3 sm:py-6">
+            <p className="text-sm sm:text-lg font-medium text-foreground leading-relaxed mb-3 sm:mb-6 break-words">
               {q?.question || q?.text}
             </p>
 
@@ -535,11 +535,11 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                   onChange={(e) => handleFib(e.target.value)}
                   placeholder="Type your answer..."
                   aria-label={`Answer for question ${current + 1}`}
-                  className="h-12 rounded-xl bg-background border border-border pl-10 text-base"
+                  className="h-10 sm:h-12 rounded-xl bg-background border border-border pl-10 text-sm sm:text-base"
                 />
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5 sm:space-y-2">
                 {options.map((opt, ai) => {
                   const isSelected = selected.includes(opt);
                   const letter = String.fromCharCode(65 + ai);
@@ -550,7 +550,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       onClick={() => handleSelect(opt)}
                       aria-pressed={isSelected}
                       className={cn(
-                        "group relative w-full flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 pr-3 sm:pr-4 py-2.5 sm:py-3 rounded-lg text-left text-[13px] sm:text-sm border transition-all",
+                        "group relative w-full flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 pr-3 sm:pr-4 py-2 sm:py-3 rounded-lg text-left text-xs sm:text-sm border transition-all",
                         isSelected
                           ? "border-primary/60 bg-primary/[0.05]"
                           : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/30"
@@ -558,7 +558,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                     >
                       <span
                         className={cn(
-                          "flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md text-[10px] sm:text-[11px] font-semibold flex-shrink-0 transition-all",
+                          "flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 rounded-md text-[9px] sm:text-[11px] font-semibold flex-shrink-0 transition-all",
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
@@ -573,13 +573,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       {isMCQ && (
                         <span
                           className={cn(
-                            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
+                            "w-4 h-4 sm:w-5 sm:h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0",
                             isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"
                           )}
                           aria-hidden="true"
                         >
                           {isSelected && (
-                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.5">
                               <path d="M2.5 6l2.5 2.5 4.5-5" />
                             </svg>
                           )}
@@ -594,15 +594,15 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
           </div>
 
           {/* Nav footer */}
-          <div className="px-3 sm:px-7 py-2.5 sm:py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+          <div className="px-2.5 sm:px-7 py-2 sm:py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => goTo(current - 1)}
               disabled={current === 0}
-              className="gap-1.5 rounded-full"
+              className="gap-1 rounded-full h-8 sm:h-9 text-xs"
             >
-              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
               Previous
             </Button>
 
@@ -610,18 +610,18 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
               <Button
                 size="sm"
                 onClick={() => goTo(current + 1)}
-                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                className="gap-1 rounded-full h-8 sm:h-9 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Next
-                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
               </Button>
             ) : (
               <Button
                 size="sm"
                 onClick={() => setConfirmOpen(true)}
-                className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+                className="gap-1 rounded-full h-8 sm:h-9 text-xs bg-emerald-600 hover:bg-emerald-600/90 text-white"
               >
-                <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                <FileCheck2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
                 Submit exam
               </Button>
             )}
@@ -854,8 +854,8 @@ function useTicker(active: boolean, tick: () => void) {
 }
 
 const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
-  <div className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
-    <Icon className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
+  <div className="flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+    <Icon className={cn("w-2.5 h-2.5 sm:w-3.5 sm:h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
     <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
     <span className="text-[10px] sm:text-xs font-semibold tabular-nums text-white">{value}</span>
   </div>
