@@ -662,7 +662,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
 
           <div
             id="summative-nav-body"
-            className={cn("flex-col gap-4 sm:gap-5", navOpen ? "flex" : "hidden", "lg:flex")}
+            className={cn("flex-col gap-4 sm:gap-5", navOpen ? "flex" : "hidden", !isCompactView && "lg:flex")}
           >
 
 
