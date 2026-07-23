@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { BlockCommentIndicator } from "@/components/EditCourse/BlockCommentIndicator";
+import { PageDurationPill } from "@/components/AIGenerate/StepEditRefine";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import emptyPagesImg from "@/assets/empty-pages.png";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
@@ -155,6 +156,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [renameTarget, setRenameTarget] = useState<{ id: string; title: string } | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
+  const [pageDurationOverrides, setPageDurationOverrides] = useState<Record<string, number>>({});
+  const defaultPageDurationSec = Math.max(60, Math.round(((aiOptions?.pageSpanTime ?? 5) as number) * 60));
   const onBlocksChangeRef = useRef(onBlocksChange);
   onBlocksChangeRef.current = onBlocksChange;
 
@@ -1222,7 +1225,27 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               ) : (
               <>
               {/* Page title label */}
-              <span className="text-sm text-muted-foreground block mb-2">Page title</span>
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <span className="text-sm text-muted-foreground">Page title</span>
+                {currentPageId && (
+                  <PageDurationPill
+                    pageId={currentPageId}
+                    pageTitle={pageTitle}
+                    overrideSec={pageDurationOverrides[currentPageId]}
+                    defaultSec={defaultPageDurationSec}
+                    onChange={(sec) =>
+                      setPageDurationOverrides((prev) => ({ ...prev, [currentPageId]: sec }))
+                    }
+                    onReset={() =>
+                      setPageDurationOverrides((prev) => {
+                        const next = { ...prev };
+                        delete next[currentPageId];
+                        return next;
+                      })
+                    }
+                  />
+                )}
+              </div>
 
               {/* Editable title */}
               <input
