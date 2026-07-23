@@ -136,7 +136,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
   const [showFinishReviewDialog, setShowFinishReviewDialog] = useState(false);
-  const [showScormPreferences, setShowScormPreferences] = useState(false);
+  
   const flashTimerRef = useRef<number | null>(null);
   const triggerBlocksFlash = useCallback(() => {
     setSidebarCollapsed(false);
