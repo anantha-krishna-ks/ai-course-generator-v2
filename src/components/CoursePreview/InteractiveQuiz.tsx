@@ -484,21 +484,21 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
           {/* Header ribbon */}
           <div className="flex items-stretch border-b border-border/60">
             {/* Left number block */}
-            <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 bg-primary/[0.06] border-r border-border/60">
-              <span className="text-2xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
+            <div className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-6 py-2.5 sm:py-4 bg-primary/[0.06] border-r border-border/60">
+              <span className="text-xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
                 {String(current + 1).padStart(2, "0")}
               </span>
               <div className="flex flex-col leading-tight">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Question</span>
-                <span className="text-[11px] text-muted-foreground/80 tabular-nums">of {String(total).padStart(2, "0")}</span>
+                <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.14em] sm:tracking-[0.16em] text-muted-foreground">Question</span>
+                <span className="text-[10px] sm:text-[11px] text-muted-foreground/80 tabular-nums">of {String(total).padStart(2, "0")}</span>
               </div>
             </div>
 
             {/* Right meta */}
-            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4">
+            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-2.5 sm:px-6 py-2.5 sm:py-4">
               {q?.type && (
-                <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md bg-muted text-[10px] font-bold text-foreground/75 tracking-wider">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted text-[9px] sm:text-[10px] font-bold text-foreground/75 tracking-wider">
+                  <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" aria-hidden="true" />
                   {q.type}
                 </span>
               )}
@@ -508,22 +508,22 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium border transition-all",
+                  "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium border transition-all",
                   flagged[current]
                     ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
                     : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
-                <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
-                <span className="hidden xs:inline sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
-                <span className="xs:hidden sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
+                <Flag className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
+                <span className="hidden sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
+                <span className="sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
               </button>
             </div>
           </div>
 
           {/* Body */}
-          <div className="flex-1 px-4 sm:px-7 py-5 sm:py-6">
-            <p className="text-[15px] sm:text-lg font-medium text-foreground leading-relaxed mb-5 sm:mb-6 break-words">
+          <div className="flex-1 px-3 sm:px-7 py-4 sm:py-6">
+            <p className="text-sm sm:text-lg font-medium text-foreground leading-relaxed mb-4 sm:mb-6 break-words">
               {q?.question || q?.text}
             </p>
 
