@@ -85,6 +85,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   const [current, setCurrent] = useState(0);
   const [validated, setValidated] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [finalTime, setFinalTime] = useState<number | null>(null);
 
