@@ -59,7 +59,7 @@ export const InteractiveQuiz = ({ questions, settings, isCompactView }: Interact
     return <FormativeCardQuiz questions={questions} settings={settings} />;
   }
   if (qt === "summative") {
-    return <SummativeExamQuiz questions={questions} settings={settings} />;
+    return <SummativeExamQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
   }
   return <ClassicQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
 };
@@ -75,7 +75,7 @@ const formatClock = (seconds: number) => {
   return `${m}:${s}`;
 };
 
-const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[]; settings?: QuizSettings }) => {
+const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: QuizQuestion[]; settings?: QuizSettings; isCompactView?: boolean }) => {
   const total = questions.length;
   const passCriteria = Math.max(1, Math.min(settings?.passCriteria ?? total, total));
   const revealMode: RevealMode = (settings?.revealAnswers as RevealMode) || "reveal_all";
@@ -478,7 +478,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       </div>
 
       {/* Body: question + navigator */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-3 sm:gap-4">
+      <div className={cn("grid grid-cols-1 gap-3 sm:gap-4", !isCompactView && "lg:grid-cols-[minmax(0,1fr)_260px]")}>
         {/* Question panel */}
         <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden flex flex-col">
           {/* Header ribbon */}
@@ -629,14 +629,14 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
 
         {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-4 sm:p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-3 sm:gap-5">
+        <aside className={cn("rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-4 sm:p-5 h-fit flex flex-col gap-3 sm:gap-5", !isCompactView && "lg:sticky lg:top-4")}>
           {/* Header (also toggles body on mobile) */}
           <button
             type="button"
             onClick={() => setNavOpen((v) => !v)}
             aria-expanded={navOpen}
             aria-controls="summative-nav-body"
-            className="flex items-center justify-between gap-2 text-left lg:cursor-default lg:pointer-events-none"
+            className={cn("flex items-center justify-between gap-2 text-left", !isCompactView && "lg:cursor-default lg:pointer-events-none")}
           >
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-9 h-9 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -654,7 +654,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 {total}
               </span>
               <ChevronDown
-                className={cn("w-4 h-4 text-muted-foreground transition-transform lg:hidden", navOpen && "rotate-180")}
+                className={cn("w-4 h-4 text-muted-foreground transition-transform", !isCompactView && "lg:hidden", navOpen && "rotate-180")}
                 aria-hidden="true"
               />
             </div>
@@ -662,7 +662,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
 
           <div
             id="summative-nav-body"
-            className={cn("flex-col gap-4 sm:gap-5", navOpen ? "flex" : "hidden", "lg:flex")}
+            className={cn("flex-col gap-4 sm:gap-5", navOpen ? "flex" : "hidden", !isCompactView && "lg:flex")}
           >
 
 
