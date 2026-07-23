@@ -565,7 +565,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
 
           {/* Body */}
           <div className="flex-1 px-2.5 sm:px-7 py-3 sm:py-6">
-            <p className="text-sm sm:text-lg font-medium text-foreground leading-relaxed mb-3 sm:mb-6 break-words">
+            <p className="text-base sm:text-xl font-semibold text-foreground leading-relaxed mb-4 sm:mb-7 break-words border-l-2 border-primary pl-3 sm:pl-4 py-1">
               {q?.question || q?.text}
             </p>
 
