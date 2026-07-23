@@ -628,7 +628,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
 
         {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-5">
+        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-4 sm:p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-4 sm:gap-5 [&_.nav-body]:hidden lg:[&_.nav-body]:flex [&[open]_.nav-body]:flex" role="group">
           {/* Header */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
