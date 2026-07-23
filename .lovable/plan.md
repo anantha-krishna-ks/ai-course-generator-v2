@@ -1,30 +1,23 @@
-Bring the new **Page duration** pattern (default + per-page overrides) to both flows.
+## Plan
 
-## 1. Step-by-step creation (`StepCourseDetails.tsx`)
-- Replace the existing `PageDurationStepper` block (around line 466–478) with the new **Page duration** card used in Blueprint (label, mins:secs inputs, description).
-- On the pages list (the section where users add/remove pages, ~line 500+), append a small clock **duration pill** to each page row.
-  - Pill shows current duration and **Default** / **Custom** state.
-  - Popover editor with mins/secs inputs, min 1 minute validation, and **Use default** reset.
-- Reuse `scormPageDurationSec` from `AIGenerateState` as the default; store per-page overrides in a local `Record<pageId, sec>` map (same shape as `StepEditRefine`).
+You’re right — the **Page duration** control was added to the AI generation step-by-step screen, but not to the dashboard **Create Course** popup you’re looking at.
 
-## 2. Document to course
-- **`StepDocumentPreferences.tsx`**: add the same **Page duration** default card as a new preference section (near other preference cards).
-- **`StepDocumentAssessment.tsx`** (or wherever the generated page outline is shown for review — confirm during build): add the per-page duration pill on each page row, with the same popover + reset behavior.
-- If a page outline list doesn't exist in that step, add overrides only in the Refine step already shared with AI flow.
+I’ll add it directly in this modal so it appears in the same screen as **Course Title**, **AI Support**, **SCORM Preferences**, and **Import outline**.
 
-## 3. Shared helper
-- Extract `PageDurationPill` and `formatDuration` from `StepEditRefine.tsx` into `src/components/AIGenerate/PageDurationPill.tsx` and import from all three flows to avoid duplication.
-- Extract the default-duration card into `PageDurationDefaultCard.tsx` for reuse in Blueprint, Step-by-step, and Document Preferences.
+### Changes
 
-## 4. Consistency
-- Same labels ("Page duration", "Default", "Custom", "Use default (Xm Ys)").
-- Same 1-minute minimum validation.
-- Not under SCORM anywhere.
+1. **Add Page duration to Create Course popup**
+   - Place the shared **Page duration** card inside `CreateCourseDialog`, likely between **AI Support** and **SCORM Preferences** so it is easy to find.
+   - Bind it to the existing `aiOptions.pageSpanTime` value already used by this flow.
 
-## Files to edit
-- `src/components/AIGenerate/StepCourseDetails.tsx`
-- `src/components/AIGenerate/StepDocumentPreferences.tsx`
-- `src/components/AIGenerate/StepDocumentAssessment.tsx` (per-page pills, if outline present)
-- `src/components/AIGenerate/StepBlueprintGenerate.tsx` (switch to shared components)
-- `src/components/AIGenerate/StepEditRefine.tsx` (switch to shared components)
-- New: `src/components/AIGenerate/PageDurationPill.tsx`, `src/components/AIGenerate/PageDurationDefaultCard.tsx`
+2. **Keep it separate from SCORM**
+   - The control will not live inside SCORM Preferences.
+   - SCORM will remain only for packaging/completion rules.
+
+3. **Reuse the same UI**
+   - Use the existing shared `PageDurationDefaultCard` so the visual style stays consistent with the other workflows.
+   - Store minutes/seconds cleanly while preserving this modal’s existing minute-based `pageSpanTime` data.
+
+4. **Accessibility and layout**
+   - Keep the inputs labeled with accessible names.
+   - Make the card compact enough for the popup and aligned with the surrounding rows.
