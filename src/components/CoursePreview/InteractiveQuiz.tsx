@@ -593,7 +593,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Nav footer */}
-          <div className="px-6 sm:px-7 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+          <div className="px-4 sm:px-7 py-3 sm:py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
             <Button
               variant="outline"
               size="sm"
