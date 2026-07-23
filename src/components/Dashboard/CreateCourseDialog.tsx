@@ -17,14 +17,14 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, FileText, GraduationCap, BookOpen, Clock, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X, Download } from "lucide-react";
+import { Wand2, FileText, GraduationCap, BookOpen, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
-import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
+
 
 interface CreateCourseDialogProps {
   open: boolean;
@@ -444,20 +444,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
 
 
-              {/* Page Duration */}
-              <div className="mb-4 sm:mb-5">
-                <PageDurationDefaultCard
-                  valueSec={(aiOptions.pageSpanTime || 5) * 60}
-                  onChange={(sec) =>
-                    setAIOptions({
-                      ...aiOptions,
-                      pageSpanTime: Math.max(1, Math.round(sec / 60)),
-                    })
-                  }
-                  description="Default time budget per page for generated content. You can refine individual pages later."
-                  className="p-4 shadow-sm"
-                />
-              </div>
 
 
 
