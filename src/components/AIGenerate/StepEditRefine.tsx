@@ -617,6 +617,19 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
                                         </span>
                                       )}
 
+                                      {/* Duration pill (always visible) */}
+                                      {!isEditingThisPage && (
+                                        <PageDurationPill
+                                          pageId={page.id}
+                                          pageTitle={page.title}
+                                          overrideSec={pageDurations[page.id]}
+                                          defaultSec={defaultPageSec}
+                                          onChange={(sec) => setPageDuration(page.id, sec)}
+                                          onReset={() => resetPageDuration(page.id)}
+                                        />
+                                      )}
+
+
                                       {/* Page actions on hover */}
                                       {!isEditingThisPage && (
                                         <div className="flex items-center gap-0 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
