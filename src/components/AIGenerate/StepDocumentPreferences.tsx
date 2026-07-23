@@ -45,8 +45,8 @@ export interface DocumentPreferencesValue {
 }
 
 interface Props {
-  state: Partial<DocumentPreferencesValue> & { layoutType: "multi-page" | "single-page" };
-  onChange: (partial: Partial<DocumentPreferencesValue>) => void;
+  state: Partial<DocumentPreferencesValue> & { layoutType: "multi-page" | "single-page"; scormPageDurationSec?: number };
+  onChange: (partial: Partial<DocumentPreferencesValue> & { scormPageDurationSec?: number }) => void;
 }
 
 const WORD_PRESETS = [100, 125, 150, 200];
