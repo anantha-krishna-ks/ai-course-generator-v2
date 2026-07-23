@@ -654,7 +654,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                 {total}
               </span>
               <ChevronDown
-                className={cn("w-4 h-4 text-muted-foreground transition-transform lg:hidden", navOpen && "rotate-180")}
+                className={cn("w-4 h-4 text-muted-foreground transition-transform", !isCompactView && "lg:hidden", navOpen && "rotate-180")}
                 aria-hidden="true"
               />
             </div>
