@@ -10,6 +10,7 @@ import {
   GalleryHorizontalEnd,
   Check,
 } from "lucide-react";
+import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 
 
 export interface DocumentPreferencesValue {
