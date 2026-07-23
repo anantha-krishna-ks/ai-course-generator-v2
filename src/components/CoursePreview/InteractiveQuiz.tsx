@@ -629,7 +629,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
         </div>
 
         {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-4 sm:p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-3 sm:gap-5">
+        <aside className={cn("rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-4 sm:p-5 h-fit flex flex-col gap-3 sm:gap-5", !isCompactView && "lg:sticky lg:top-4")}>
           {/* Header (also toggles body on mobile) */}
           <button
             type="button"
