@@ -59,7 +59,7 @@ export const InteractiveQuiz = ({ questions, settings, isCompactView }: Interact
     return <FormativeCardQuiz questions={questions} settings={settings} />;
   }
   if (qt === "summative") {
-    return <SummativeExamQuiz questions={questions} settings={settings} />;
+    return <SummativeExamQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
   }
   return <ClassicQuiz questions={questions} settings={settings} isCompactView={isCompactView} />;
 };
