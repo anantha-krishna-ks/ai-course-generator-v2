@@ -75,7 +75,7 @@ const formatClock = (seconds: number) => {
   return `${m}:${s}`;
 };
 
-const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[]; settings?: QuizSettings }) => {
+const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: QuizQuestion[]; settings?: QuizSettings; isCompactView?: boolean }) => {
   const total = questions.length;
   const passCriteria = Math.max(1, Math.min(settings?.passCriteria ?? total, total));
   const revealMode: RevealMode = (settings?.revealAnswers as RevealMode) || "reveal_all";
