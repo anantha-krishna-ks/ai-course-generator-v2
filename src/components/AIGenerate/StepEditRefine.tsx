@@ -780,3 +780,152 @@ export function StepEditRefine({ state }: StepEditRefineProps) {
     </div>
   );
 }
+
+function formatDuration(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  if (s === 0) return `${m}m`;
+  if (m === 0) return `${s}s`;
+  return `${m}m ${s}s`;
+}
+
+function PageDurationPill({
+  pageId,
+  pageTitle,
+  overrideSec,
+  defaultSec,
+  onChange,
+  onReset,
+}: {
+  pageId: string;
+  pageTitle: string;
+  overrideSec?: number;
+  defaultSec: number;
+  onChange: (sec: number) => void;
+  onReset: () => void;
+}) {
+  const isCustom = overrideSec !== undefined;
+  const currentSec = overrideSec ?? defaultSec;
+  const mins = Math.floor(currentSec / 60);
+  const secs = currentSec % 60;
+  const [open, setOpen] = useState(false);
+  const [draftM, setDraftM] = useState(mins);
+  const [draftS, setDraftS] = useState(secs);
+
+  const openAndSeed = (v: boolean) => {
+    if (v) {
+      setDraftM(mins);
+      setDraftS(secs);
+    }
+    setOpen(v);
+  };
+
+  const commit = () => {
+    const total = Math.max(60, draftM * 60 + draftS);
+    onChange(total);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={openAndSeed}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Edit duration for page ${pageTitle || "Untitled"}. Current: ${formatDuration(currentSec)}${isCustom ? " (custom)" : " (default)"}`}
+          className={cn(
+            "shrink-0 inline-flex items-center gap-1 h-6 pl-1.5 pr-2 rounded-full border text-[11px] font-medium tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            isCustom
+              ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15"
+              : "border-border bg-muted/60 text-muted-foreground hover:bg-muted"
+          )}
+        >
+          <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
+          {formatDuration(currentSec)}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" sideOffset={6} className="w-64 p-3 rounded-xl">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[12px] font-semibold text-foreground">Page duration</span>
+          <span
+            className={cn(
+              "text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full border",
+              isCustom
+                ? "border-primary/30 bg-primary/10 text-primary"
+                : "border-border bg-muted text-muted-foreground"
+            )}
+          >
+            {isCustom ? "Custom" : "Default"}
+          </span>
+        </div>
+        <div className="flex items-end gap-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              Min
+            </span>
+            <Input
+              type="number"
+              min={0}
+              max={60}
+              value={draftM}
+              onChange={(e) => setDraftM(Math.max(0, Math.min(60, Number(e.target.value) || 0)))}
+              aria-label="Minutes"
+              className="h-9 w-16 text-center text-[14px] font-semibold tabular-nums rounded-md"
+            />
+          </div>
+          <span aria-hidden="true" className="text-[16px] font-light text-muted-foreground pb-1.5">:</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+              Sec
+            </span>
+            <Input
+              type="number"
+              min={0}
+              max={59}
+              value={draftS}
+              onChange={(e) => setDraftS(Math.max(0, Math.min(59, Number(e.target.value) || 0)))}
+              aria-label="Seconds"
+              className="h-9 w-16 text-center text-[14px] font-semibold tabular-nums rounded-md"
+            />
+          </div>
+        </div>
+        {draftM * 60 + draftS < 60 && (
+          <p className="text-[11px] text-destructive mt-2">Duration must be at least 1 minute.</p>
+        )}
+        <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-border">
+          <button
+            type="button"
+            onClick={() => {
+              onReset();
+              setOpen(false);
+            }}
+            disabled={!isCustom}
+            className="inline-flex items-center gap-1.5 text-[11.5px] font-medium text-muted-foreground hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <RotateCcw className="w-3 h-3" aria-hidden="true" focusable="false" />
+            Use default ({formatDuration(defaultSec)})
+          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="h-7 px-2.5 rounded-md text-[11.5px] font-medium text-muted-foreground hover:bg-muted transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                commit();
+                setOpen(false);
+              }}
+              disabled={draftM * 60 + draftS < 60}
+              className="h-7 px-3 rounded-md text-[11.5px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
