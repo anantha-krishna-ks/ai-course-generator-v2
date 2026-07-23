@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, Trophy, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer, User } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, ChevronDown, Trophy, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,6 +85,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
   const [current, setCurrent] = useState(0);
   const [validated, setValidated] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [finalTime, setFinalTime] = useState<number | null>(null);
 
@@ -450,18 +451,18 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       {/* Exam header */}
       <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
-        <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" />
+        <div className="relative px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-white" aria-hidden="true" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">Summative Exam</div>
-              <div className="text-sm font-semibold text-white">Final assessment · {total} questions</div>
+              <div className="text-xs sm:text-sm font-semibold text-white truncate">Final assessment · {total} questions</div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
             <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
             <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
             <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
@@ -477,14 +478,14 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       </div>
 
       {/* Body: question + navigator */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-3 sm:gap-4">
         {/* Question panel */}
         <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden flex flex-col">
           {/* Header ribbon */}
           <div className="flex items-stretch border-b border-border/60">
             {/* Left number block */}
-            <div className="flex items-center gap-3 px-5 sm:px-6 py-4 bg-primary/[0.06] border-r border-border/60">
-              <span className="text-3xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
+            <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 bg-primary/[0.06] border-r border-border/60">
+              <span className="text-2xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
                 {String(current + 1).padStart(2, "0")}
               </span>
               <div className="flex flex-col leading-tight">
@@ -494,9 +495,9 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             </div>
 
             {/* Right meta */}
-            <div className="flex-1 flex items-center justify-between gap-3 px-5 sm:px-6 py-4">
+            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4">
               {q?.type && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted text-[10px] font-bold text-foreground/75 tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md bg-muted text-[10px] font-bold text-foreground/75 tracking-wider">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
                   {q.type}
                 </span>
@@ -507,21 +508,22 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                  "inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium border transition-all",
                   flagged[current]
                     ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
                     : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
                 <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
-                {flagged[current] ? "Flagged" : "Flag for review"}
+                <span className="hidden xs:inline sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
+                <span className="xs:hidden sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
               </button>
             </div>
           </div>
 
           {/* Body */}
-          <div className="flex-1 px-6 sm:px-7 py-6">
-            <p className="text-base sm:text-lg font-medium text-foreground leading-relaxed mb-6">
+          <div className="flex-1 px-4 sm:px-7 py-5 sm:py-6">
+            <p className="text-[15px] sm:text-lg font-medium text-foreground leading-relaxed mb-5 sm:mb-6 break-words">
               {q?.question || q?.text}
             </p>
 
@@ -592,7 +594,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           </div>
 
           {/* Nav footer */}
-          <div className="px-6 sm:px-7 py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+          <div className="px-4 sm:px-7 py-3 sm:py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
             <Button
               variant="outline"
               size="sm"
@@ -627,22 +629,41 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
         </div>
 
         {/* Question navigator palette */}
-        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-5">
-          {/* Header */}
-          <div className="flex items-center justify-between gap-2">
+        <aside className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm shadow-lg p-4 sm:p-5 h-fit lg:sticky lg:top-4 flex flex-col gap-3 sm:gap-5">
+          {/* Header (also toggles body on mobile) */}
+          <button
+            type="button"
+            onClick={() => setNavOpen((v) => !v)}
+            aria-expanded={navOpen}
+            aria-controls="summative-nav-body"
+            className="flex items-center justify-between gap-2 text-left lg:cursor-default lg:pointer-events-none"
+          >
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-9 h-9 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
                 <LayoutGrid className="w-4 h-4 text-primary" aria-hidden="true" />
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-foreground leading-tight truncate">Question map</span>
-                <span className="text-[11px] text-muted-foreground leading-tight truncate">Jump to any question</span>
+                <span className="text-[11px] text-muted-foreground leading-tight truncate">
+                  {answeredCount} / {total} answered
+                </span>
               </div>
             </div>
-            <span className="shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border tabular-nums">
-              {total}
-            </span>
-          </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border tabular-nums">
+                {total}
+              </span>
+              <ChevronDown
+                className={cn("w-4 h-4 text-muted-foreground transition-transform lg:hidden", navOpen && "rotate-180")}
+                aria-hidden="true"
+              />
+            </div>
+          </button>
+
+          <div
+            id="summative-nav-body"
+            className={cn("flex-col gap-4 sm:gap-5", navOpen ? "flex" : "hidden", "lg:flex")}
+          >
 
 
           {/* Status summary — compact inline rows */}
@@ -732,6 +753,7 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             </span>
           </div>
 
+          </div>
         </aside>
       </div>
 
@@ -832,10 +854,10 @@ function useTicker(active: boolean, tick: () => void) {
 }
 
 const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
-  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+  <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
     <Icon className={cn("w-3.5 h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
-    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
-    <span className="text-xs font-semibold tabular-nums text-white">{value}</span>
+    <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
+    <span className="text-[11px] sm:text-xs font-semibold tabular-nums text-white">{value}</span>
   </div>
 );
 
