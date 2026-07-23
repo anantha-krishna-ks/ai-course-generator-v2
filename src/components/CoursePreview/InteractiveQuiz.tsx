@@ -451,23 +451,59 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
       {/* Exam header */}
       <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
-        <div className="relative px-2 sm:px-6 py-2 sm:py-4 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
-          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
-            <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-md sm:rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
-              <ShieldCheck className="w-3 h-3 sm:w-5 sm:h-5 text-white" aria-hidden="true" />
+        {/* Desktop / tablet */}
+        <div className="hidden sm:flex relative px-6 py-4 flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <div className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.2em] text-white/60">Summative Exam</div>
-              <div className="text-[10px] sm:text-sm font-semibold text-white truncate">Final assessment · {total} questions</div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">Summative Exam</div>
+              <div className="text-sm font-semibold text-white truncate">Final assessment · {total} questions</div>
             </div>
           </div>
-
-          <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
             <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
             <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
           </div>
         </div>
+        {/* Mobile */}
+        <div className="sm:hidden relative px-3 py-2.5 space-y-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-3.5 h-3.5 text-white" aria-hidden="true" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/60 leading-tight">Summative Exam</div>
+              <div className="text-[11px] font-semibold text-white truncate leading-tight">Final assessment · {total} Qs</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-1.5">
+            <div className="flex flex-col items-center justify-center px-1 py-1.5 rounded-md bg-white/10 backdrop-blur border border-white/15">
+              <div className="flex items-center gap-1 text-white/60">
+                <Target className="w-2.5 h-2.5" aria-hidden="true" />
+                <span className="text-[8px] font-semibold uppercase tracking-wider">Pass</span>
+              </div>
+              <span className="text-[11px] font-semibold tabular-nums text-white leading-tight">{passCriteria}/{total}</span>
+            </div>
+            <div className="flex flex-col items-center justify-center px-1 py-1.5 rounded-md bg-white/10 backdrop-blur border border-white/15">
+              <div className="flex items-center gap-1 text-white/60">
+                <ListChecks className="w-2.5 h-2.5" aria-hidden="true" />
+                <span className="text-[8px] font-semibold uppercase tracking-wider">Done</span>
+              </div>
+              <span className="text-[11px] font-semibold tabular-nums text-white leading-tight">{answeredCount}/{total}</span>
+            </div>
+            <div className="flex flex-col items-center justify-center px-1 py-1.5 rounded-md bg-white/10 backdrop-blur border border-white/15">
+              <div className="flex items-center gap-1 text-amber-300">
+                <Flag className="w-2.5 h-2.5" aria-hidden="true" />
+                <span className="text-[8px] font-semibold uppercase tracking-wider">Flags</span>
+              </div>
+              <span className="text-[11px] font-semibold tabular-nums text-white leading-tight">{flaggedCount}</span>
+            </div>
+          </div>
+        </div>
+
         {/* Slim answered progress */}
         <div className="relative h-1 bg-white/10">
           <div
@@ -497,9 +533,9 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
             {/* Right meta */}
             <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-2 sm:px-6 py-2 sm:py-4">
               {q?.type && (
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted text-[9px] sm:text-[10px] font-bold text-foreground/75 tracking-wider">
-                  <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                  {q.type}
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted text-[9px] sm:text-[10px] font-bold text-foreground/75 tracking-wider min-w-0 max-w-[45%]">
+                  <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary flex-shrink-0" aria-hidden="true" />
+                  <span className="truncate">{q.type}</span>
                 </span>
               )}
               <button
@@ -508,17 +544,18 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-full text-[9px] sm:text-xs font-medium border transition-all",
+                  "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium border transition-all flex-shrink-0",
                   flagged[current]
                     ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
                     : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
-                <Flag className={cn("w-2.5 h-2.5 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
+                <Flag className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
                 <span className="hidden sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
                 <span className="sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
               </button>
             </div>
+
           </div>
 
           {/* Body */}
