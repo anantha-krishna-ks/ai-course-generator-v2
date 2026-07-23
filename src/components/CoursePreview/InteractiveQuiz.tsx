@@ -832,10 +832,10 @@ function useTicker(active: boolean, tick: () => void) {
 }
 
 const ExamStat = ({ icon: Icon, label, value, accent }: { icon: any; label: string; value: string; accent?: boolean }) => (
-  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
+  <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15">
     <Icon className={cn("w-3.5 h-3.5", accent ? "text-amber-300" : "text-white/80")} aria-hidden="true" />
-    <span className="text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
-    <span className="text-xs font-semibold tabular-nums text-white">{value}</span>
+    <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-wider text-white/60">{label}</span>
+    <span className="text-[11px] sm:text-xs font-semibold tabular-nums text-white">{value}</span>
   </div>
 );
 
