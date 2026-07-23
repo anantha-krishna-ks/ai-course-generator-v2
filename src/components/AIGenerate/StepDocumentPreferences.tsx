@@ -419,7 +419,7 @@ export function StepDocumentPreferences({ state, onChange }: Props) {
 
       {/* Page duration */}
       <PageDurationDefaultCard
-        valueSec={value.scormPageDurationSec ?? 300}
+        valueSec={state.scormPageDurationSec ?? 300}
         onChange={(sec) => onChange({ scormPageDurationSec: sec })}
         description="Default time budget per page for the generated course. You can override any individual page in the next step."
       />
