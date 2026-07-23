@@ -636,7 +636,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
             onClick={() => setNavOpen((v) => !v)}
             aria-expanded={navOpen}
             aria-controls="summative-nav-body"
-            className="flex items-center justify-between gap-2 text-left lg:cursor-default lg:pointer-events-none"
+            className={cn("flex items-center justify-between gap-2 text-left", !isCompactView && "lg:cursor-default lg:pointer-events-none")}
           >
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-9 h-9 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
