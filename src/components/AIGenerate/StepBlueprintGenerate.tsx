@@ -45,6 +45,7 @@ import imgStyle3d from "@/assets/image-style-3d.jpg";
 import imgStyleSketch from "@/assets/image-style-sketch.jpg";
 import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
+import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
