@@ -113,6 +113,17 @@ function pickRandom<T>(pool: T[], avoid?: T): T {
 
 export function StepEditRefine({ state }: StepEditRefineProps) {
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
+  const defaultPageSec = state.scormPageDurationSec ?? 300;
+  const [pageDurations, setPageDurations] = useState<Record<string, number>>({});
+  const setPageDuration = useCallback((pageId: string, sec: number) => {
+    setPageDurations((prev) => ({ ...prev, [pageId]: Math.max(60, sec) }));
+  }, []);
+  const resetPageDuration = useCallback((pageId: string) => {
+    setPageDurations((prev) => {
+      const { [pageId]: _omit, ...rest } = prev;
+      return rest;
+    });
+  }, []);
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
   const [editingTitleId, setEditingTitleId] = useState<string | null>(null);
   const [editingPageId, setEditingPageId] = useState<string | null>(null);
