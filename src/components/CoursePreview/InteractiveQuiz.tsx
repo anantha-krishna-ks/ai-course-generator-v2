@@ -450,18 +450,18 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
       {/* Exam header */}
       <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
-        <div className="relative px-5 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-white" aria-hidden="true" />
+        <div className="relative px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 backdrop-blur border border-white/15 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-white" aria-hidden="true" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">Summative Exam</div>
-              <div className="text-sm font-semibold text-white">Final assessment · {total} questions</div>
+              <div className="text-xs sm:text-sm font-semibold text-white truncate">Final assessment · {total} questions</div>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
             <ExamStat icon={Target} label="Pass mark" value={`${passCriteria}/${total}`} />
             <ExamStat icon={ListChecks} label="Answered" value={`${answeredCount}/${total}`} />
             <ExamStat icon={Flag} label="Flagged" value={`${flaggedCount}`} accent />
