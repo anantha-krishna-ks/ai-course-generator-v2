@@ -155,6 +155,8 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const [renameTarget, setRenameTarget] = useState<{ id: string; title: string } | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [blocks, setBlocks] = useState<PageContentBlock[]>(initialBlocks || []);
+  const [pageDurationOverrides, setPageDurationOverrides] = useState<Record<string, number>>({});
+  const defaultPageDurationSec = Math.max(60, Math.round(((aiOptions?.pageSpanTime ?? 5) as number) * 60));
   const onBlocksChangeRef = useRef(onBlocksChange);
   onBlocksChangeRef.current = onBlocksChange;
 
