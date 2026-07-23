@@ -3,8 +3,10 @@ import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
   BookOpen, Lightbulb, Wrench, ClipboardCheck, ChevronDown, File,
-  MessageSquare, MoreHorizontal, Copy, ChevronRight, RefreshCw, Loader2, Sparkles
+  MessageSquare, MoreHorizontal, Copy, ChevronRight, RefreshCw, Loader2, Sparkles, RotateCcw
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
