@@ -550,7 +550,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       onClick={() => handleSelect(opt)}
                       aria-pressed={isSelected}
                       className={cn(
-                        "group relative w-full flex items-center gap-3 pl-3 pr-4 py-3 rounded-lg text-left text-sm border transition-all",
+                        "group relative w-full flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 pr-3 sm:pr-4 py-2.5 sm:py-3 rounded-lg text-left text-[13px] sm:text-sm border transition-all",
                         isSelected
                           ? "border-primary/60 bg-primary/[0.05]"
                           : "border-border/70 bg-background hover:border-primary/40 hover:bg-muted/30"
@@ -558,7 +558,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                     >
                       <span
                         className={cn(
-                          "flex items-center justify-center w-7 h-7 rounded-md text-[11px] font-semibold flex-shrink-0 transition-all",
+                          "flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md text-[10px] sm:text-[11px] font-semibold flex-shrink-0 transition-all",
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
