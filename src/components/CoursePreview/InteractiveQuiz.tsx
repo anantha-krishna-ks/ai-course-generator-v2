@@ -594,15 +594,15 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
           </div>
 
           {/* Nav footer */}
-          <div className="px-3 sm:px-7 py-2.5 sm:py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
+          <div className="px-2.5 sm:px-7 py-2 sm:py-3.5 border-t border-border/60 bg-muted/25 flex items-center justify-between gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => goTo(current - 1)}
               disabled={current === 0}
-              className="gap-1.5 rounded-full"
+              className="gap-1 rounded-full h-8 sm:h-9 text-xs"
             >
-              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+              <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
               Previous
             </Button>
 
@@ -610,18 +610,18 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
               <Button
                 size="sm"
                 onClick={() => goTo(current + 1)}
-                className="gap-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                className="gap-1 rounded-full h-8 sm:h-9 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Next
-                <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
               </Button>
             ) : (
               <Button
                 size="sm"
                 onClick={() => setConfirmOpen(true)}
-                className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-600/90 text-white"
+                className="gap-1 rounded-full h-8 sm:h-9 text-xs bg-emerald-600 hover:bg-emerald-600/90 text-white"
               >
-                <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                <FileCheck2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
                 Submit exam
               </Button>
             )}
