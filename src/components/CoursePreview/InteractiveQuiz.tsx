@@ -478,7 +478,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
       </div>
 
       {/* Body: question + navigator */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-3 sm:gap-4">
+      <div className={cn("grid grid-cols-1 gap-3 sm:gap-4", !isCompactView && "lg:grid-cols-[minmax(0,1fr)_260px]")}>
         {/* Question panel */}
         <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden flex flex-col">
           {/* Header ribbon */}
