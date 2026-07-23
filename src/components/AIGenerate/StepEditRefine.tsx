@@ -835,7 +835,7 @@ export function PageDurationPill({
             "group shrink-0 inline-flex items-center gap-1.5 h-7 pl-1 pr-2.5 rounded-full border text-[13px] font-semibold tabular-nums shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:shadow-md hover:-translate-y-[1px]",
             isCustom
               ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
-              : "bg-primary/10 border-primary/25 text-primary hover:bg-primary/15 hover:border-primary/40"
+              : "bg-primary/15 border-primary/30 text-primary ring-1 ring-primary/10 hover:bg-primary/20 hover:border-primary/40 hover:ring-primary/20"
           )}
         >
           <span
@@ -843,7 +843,7 @@ export function PageDurationPill({
               "flex items-center justify-center w-5 h-5 rounded-full transition-colors",
               isCustom
                 ? "bg-primary-foreground/20 text-primary-foreground"
-                : "bg-primary text-primary-foreground ring-2 ring-primary/10 ring-offset-1 ring-offset-background"
+                : "bg-primary text-primary-foreground"
             )}
           >
             <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
