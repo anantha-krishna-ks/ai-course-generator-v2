@@ -933,8 +933,7 @@ function ScormPreferencesAccordion({
   onChange: (partial: Partial<AIGenerateState>) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mins = Math.floor(state.scormPageDurationSec / 60);
-  const secs = state.scormPageDurationSec % 60;
+
 
   const handleFile = (file: File) => {
     const url = URL.createObjectURL(file);
