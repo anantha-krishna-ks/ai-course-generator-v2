@@ -1225,7 +1225,27 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               ) : (
               <>
               {/* Page title label */}
-              <span className="text-sm text-muted-foreground block mb-2">Page title</span>
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <span className="text-sm text-muted-foreground">Page title</span>
+                {currentPageId && (
+                  <PageDurationPill
+                    pageId={currentPageId}
+                    pageTitle={pageTitle}
+                    overrideSec={pageDurationOverrides[currentPageId]}
+                    defaultSec={defaultPageDurationSec}
+                    onChange={(sec) =>
+                      setPageDurationOverrides((prev) => ({ ...prev, [currentPageId]: sec }))
+                    }
+                    onReset={() =>
+                      setPageDurationOverrides((prev) => {
+                        const next = { ...prev };
+                        delete next[currentPageId];
+                        return next;
+                      })
+                    }
+                  />
+                )}
+              </div>
 
               {/* Editable title */}
               <input
