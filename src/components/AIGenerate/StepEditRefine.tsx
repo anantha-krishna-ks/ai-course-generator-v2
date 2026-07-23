@@ -832,14 +832,29 @@ export function PageDurationPill({
           type="button"
           aria-label={`Edit duration for page ${pageTitle || "Untitled"}. Current: ${formatDuration(currentSec)}${isCustom ? " (custom)" : " (default)"}`}
           className={cn(
-            "shrink-0 inline-flex items-center gap-1 h-6 pl-1.5 pr-2 rounded-full border text-[11px] font-medium tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "group shrink-0 inline-flex items-center gap-1.5 h-7 pl-1 pr-2.5 rounded-full border text-[11.5px] font-semibold tabular-nums shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:shadow-md hover:-translate-y-[1px]",
             isCustom
-              ? "border-primary/40 bg-primary/10 text-primary hover:bg-primary/15"
-              : "border-border bg-muted/60 text-muted-foreground hover:bg-muted"
+              ? "border-primary/40 bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 text-primary hover:from-primary/20 hover:via-primary/15 hover:to-primary/10"
+              : "border-border bg-gradient-to-r from-muted/80 to-muted/40 text-foreground/80 hover:text-foreground hover:border-border/80"
           )}
         >
-          <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
-          {formatDuration(currentSec)}
+          <span
+            className={cn(
+              "flex items-center justify-center w-5 h-5 rounded-full transition-colors",
+              isCustom
+                ? "bg-primary/20 text-primary"
+                : "bg-background text-muted-foreground group-hover:text-foreground"
+            )}
+          >
+            <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
+          </span>
+          <span className="leading-none">{formatDuration(currentSec)}</span>
+          {isCustom && (
+            <span
+              aria-hidden="true"
+              className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_0_2px_hsl(var(--background))]"
+            />
+          )}
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" sideOffset={6} className="w-64 p-3 rounded-xl">
