@@ -964,50 +964,6 @@ function ScormPreferencesAccordion({
         </AccordionTrigger>
         <AccordionContent className="p-0">
           <div className="divide-y divide-border">
-            {/* Page Duration */}
-            <div className="p-5">
-              <Label className="text-[16px] font-semibold text-foreground">Page Duration</Label>
-              <p className="text-[13.5px] text-muted-foreground mt-1">
-                Minimum time learners must spend on each page before progressing.
-              </p>
-              <div className="mt-3 flex items-end gap-3">
-                <div className="flex flex-col">
-                  <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
-                    Minutes
-                  </span>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={60}
-                    value={mins}
-                    onChange={(e) => {
-                      const m = Math.max(0, Math.min(60, Number(e.target.value) || 0));
-                      onChange({ scormPageDurationSec: m * 60 + secs });
-                    }}
-                    aria-label="Minutes"
-                    className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg"
-                  />
-                </div>
-                <span aria-hidden="true" className="text-[22px] font-light text-muted-foreground pb-2 select-none">:</span>
-                <div className="flex flex-col">
-                  <span className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground mb-1.5">
-                    Seconds
-                  </span>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={59}
-                    value={secs}
-                    onChange={(e) => {
-                      const s = Math.max(0, Math.min(59, Number(e.target.value) || 0));
-                      onChange({ scormPageDurationSec: mins * 60 + s });
-                    }}
-                    aria-label="Seconds"
-                    className="h-12 w-20 text-center text-[17px] font-semibold tabular-nums rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
 
             {/* Background Image */}
             <div className="p-5">
