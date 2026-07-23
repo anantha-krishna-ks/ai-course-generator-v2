@@ -533,9 +533,9 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
             {/* Right meta */}
             <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-2 sm:px-6 py-2 sm:py-4">
               {q?.type && (
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted text-[9px] sm:text-[10px] font-bold text-foreground/75 tracking-wider">
-                  <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary" aria-hidden="true" />
-                  {q.type}
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-muted text-[9px] sm:text-[10px] font-bold text-foreground/75 tracking-wider min-w-0 max-w-[45%]">
+                  <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary flex-shrink-0" aria-hidden="true" />
+                  <span className="truncate">{q.type}</span>
                 </span>
               )}
               <button
@@ -544,17 +544,18 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-3 py-0.5 sm:py-1.5 rounded-full text-[9px] sm:text-xs font-medium border transition-all",
+                  "inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium border transition-all flex-shrink-0",
                   flagged[current]
                     ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
                     : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
-                <Flag className={cn("w-2.5 h-2.5 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
+                <Flag className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
                 <span className="hidden sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
                 <span className="sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
               </button>
             </div>
+
           </div>
 
           {/* Body */}
