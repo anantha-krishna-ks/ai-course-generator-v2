@@ -483,8 +483,8 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           {/* Header ribbon */}
           <div className="flex items-stretch border-b border-border/60">
             {/* Left number block */}
-            <div className="flex items-center gap-3 px-5 sm:px-6 py-4 bg-primary/[0.06] border-r border-border/60">
-              <span className="text-3xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
+            <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 bg-primary/[0.06] border-r border-border/60">
+              <span className="text-2xl sm:text-[2rem] font-semibold text-primary tabular-nums leading-none">
                 {String(current + 1).padStart(2, "0")}
               </span>
               <div className="flex flex-col leading-tight">
@@ -494,9 +494,9 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
             </div>
 
             {/* Right meta */}
-            <div className="flex-1 flex items-center justify-between gap-3 px-5 sm:px-6 py-4">
+            <div className="flex-1 min-w-0 flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4">
               {q?.type && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted text-[10px] font-bold text-foreground/75 tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md bg-muted text-[10px] font-bold text-foreground/75 tracking-wider">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
                   {q.type}
                 </span>
@@ -507,14 +507,15 @@ const SummativeExamQuiz = ({ questions, settings }: { questions: QuizQuestion[];
                 aria-label={flagged[current] ? "Unflag question" : "Flag question for review"}
                 aria-pressed={!!flagged[current]}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                  "inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-medium border transition-all",
                   flagged[current]
                     ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/40 dark:border-amber-700 dark:text-amber-300"
                     : "bg-background border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-300"
                 )}
               >
                 <Flag className={cn("w-3.5 h-3.5", flagged[current] && "fill-amber-400 text-amber-500")} aria-hidden="true" />
-                {flagged[current] ? "Flagged" : "Flag for review"}
+                <span className="hidden xs:inline sm:inline">{flagged[current] ? "Flagged" : "Flag for review"}</span>
+                <span className="xs:hidden sm:hidden">{flagged[current] ? "Flagged" : "Flag"}</span>
               </button>
             </div>
           </div>
