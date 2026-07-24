@@ -353,7 +353,14 @@ export function AIConfigView({
                       <Icon className="w-5 h-5" strokeWidth={1.5} />
                     </span>
                     <div className="min-w-0 pr-6">
-                      <div className="text-[13px] font-semibold text-foreground leading-tight tracking-tight">
+                      <div
+                        className={cn(
+                          "leading-tight tracking-tight transition-colors duration-200",
+                          isActive
+                            ? "text-[15px] font-bold text-primary"
+                            : "text-[13px] font-semibold text-foreground"
+                        )}
+                      >
                         {tier.label}
                       </div>
                       <div
