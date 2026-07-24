@@ -314,8 +314,8 @@ export function AIConfigView({
                   className={cn(
                     "group relative flex flex-col text-left rounded-2xl border p-5 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     isActive
-                      ? "border-primary/60 bg-primary/[0.03] shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.12)]"
-                      : "border-border bg-background hover:border-primary/30 hover:bg-muted/30 hover:shadow-[0_2px_8px_-2px_hsl(0_0%_0%/0.06)] hover:-translate-y-0.5"
+                      ? "border-primary/40 bg-primary/[0.03] shadow-[0_10px_28px_-10px_hsl(var(--primary)/0.18),0_4px_10px_-4px_hsl(var(--primary)/0.08)]"
+                      : "border-border bg-background shadow-[0_2px_8px_-4px_hsl(0_0%_0%/0.04)] hover:border-primary/30 hover:bg-muted/30 hover:shadow-[0_12px_32px_-10px_hsl(0_0%_0%/0.08),0_4px_12px_-4px_hsl(var(--primary)/0.06)] hover:-translate-y-0.5"
                   )}
                 >
                   {/* Selection indicator */}
