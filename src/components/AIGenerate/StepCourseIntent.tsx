@@ -1,9 +1,11 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File, Download, AlertCircle } from "lucide-react";
+import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File, Download, AlertCircle, Check, Timer, Coins } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { TitleAutocomplete } from "./TitleAutocomplete";
+import { CONTENT_DEPTH_TIERS, type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
 import blueprintImportIllustration from "@/assets/blueprint-import.png";
 import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 
