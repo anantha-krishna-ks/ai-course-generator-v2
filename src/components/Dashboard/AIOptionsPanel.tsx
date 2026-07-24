@@ -110,7 +110,7 @@ const CONTENT_DEPTH_TIERS: Array<{
   {
     id: "balanced",
     label: "Balanced",
-    tagline: "Recommended",
+    tagline: "Best all-rounder",
     description: "Rich content with examples and interactivity. Best all-round quality vs speed.",
     speed: "~4 min",
     credits: "Standard",
