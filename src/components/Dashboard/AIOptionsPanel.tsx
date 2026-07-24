@@ -66,6 +66,7 @@ export interface AIOptions {
   exclusionsDocuments: string[];
   pageSpanTime: number;
   courseSpanTime: number;
+  contentDepth: ContentDepth;
 }
 
 export type AIMode = "manual-with-ai" | "ai";
