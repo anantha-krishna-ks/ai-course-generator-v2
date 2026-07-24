@@ -25,6 +25,7 @@ import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
+import type { ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
 
 const STEPS = [
   { id: 1, label: "Course Intent" },
@@ -77,6 +78,7 @@ export interface AIGenerateState {
   scormBgOpacity: number;
   scormPassMessage: string;
   scormFailMessage: string;
+  contentDepth: ContentDepth;
 }
 
 export interface QuizVariantConfig {
@@ -144,6 +146,7 @@ const initialState: AIGenerateState = {
   scormBgOpacity: 40,
   scormPassMessage: "Congratulations! You have successfully completed the course.",
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
+  contentDepth: "balanced",
 };
 
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
@@ -198,6 +201,7 @@ export default function AIGenerateCourse() {
         if (!formState.pageSpanTime) fail("pageSpanTime", "Please set a page duration");
         if (formState.bloomsTaxonomy.length === 0) fail("bloomsTaxonomy", "Select at least one Bloom's Taxonomy level");
         if (!formState.learningObjectives.some((o) => o.trim())) fail("learningObjectives", "Add at least one learning objective");
+        if (!formState.contentDepth) fail("contentDepth", "Select a content depth");
         break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };

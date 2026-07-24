@@ -88,7 +88,7 @@ const LEARNER_LEVELS = [
 
 export type ContentDepth = "quick" | "balanced" | "thorough";
 
-const CONTENT_DEPTH_TIERS: Array<{
+export const CONTENT_DEPTH_TIERS: Array<{
   id: ContentDepth;
   label: string;
   tagline: string;
