@@ -611,7 +611,7 @@ const MultipageCoursePreview = () => {
           questions = JSON.parse(DEMO_QUIZ_CONTENT);
           settings = undefined;
         }
-        return <InteractiveQuiz questions={questions as never} settings={settings as never} isCompactView={isCompactView} />;
+        return <InteractiveQuiz questions={questions as never} settings={settings as never} isCompactView={isCompactView} isMobilePreview={isMobileView} />;
       }
       case "video": {
         const videoSrc = block.content || DEMO_VIDEO_URL;
