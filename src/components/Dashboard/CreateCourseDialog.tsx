@@ -32,47 +32,6 @@ interface CreateCourseDialogProps {
 }
 
 type LayoutType = "multi-page" | "single-page";
-export type ContentDepth = "quick" | "balanced" | "thorough";
-
-const CONTENT_DEPTH_TIERS: Array<{
-  id: ContentDepth;
-  label: string;
-  tagline: string;
-  description: string;
-  speed: string;
-  credits: string;
-  icon: typeof Rabbit;
-  recommended?: boolean;
-}> = [
-  {
-    id: "quick",
-    label: "Quick",
-    tagline: "Fastest draft",
-    description: "Concise outlines with essential explanations. Best for rapid prototyping.",
-    speed: "~2 min",
-    credits: "Low cost",
-    icon: Rabbit,
-  },
-  {
-    id: "balanced",
-    label: "Balanced",
-    tagline: "Recommended",
-    description: "Rich content with examples and interactivity. Best all-round quality vs speed.",
-    speed: "~4 min",
-    credits: "Standard",
-    icon: Scale,
-    recommended: true,
-  },
-  {
-    id: "thorough",
-    label: "Thorough",
-    tagline: "Highest quality",
-    description: "Most capable model plus a refinement pass. Deepest coverage and polish.",
-    speed: "~8 min",
-    credits: "Premium",
-    icon: Gem,
-  },
-];
 
 const defaultAIOptions: AIOptions = {
   enabled: true,
@@ -329,7 +288,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const aiSectionRef = useRef<HTMLDivElement>(null);
   const outlineInputRef = useRef<HTMLInputElement>(null);
   const [outlineFile, setOutlineFile] = useState<File | null>(null);
-  const [contentDepth, setContentDepth] = useState<ContentDepth>("balanced");
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
@@ -368,7 +326,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         title: courseTitle.trim(),
         layout: selectedLayout,
         aiOptions: aiOptions.enabled ? aiOptions : null,
-        contentDepth,
+        contentDepth: aiOptions.contentDepth,
         fontId,
       }
     });
