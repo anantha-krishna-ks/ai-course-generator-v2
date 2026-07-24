@@ -85,6 +85,7 @@ const defaultAIOptions: AIOptions = {
   exclusionsDocuments: [],
   pageSpanTime: 5,
   courseSpanTime: 60,
+  contentDepth: "balanced",
 };
 
 function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComplete: () => void }) {

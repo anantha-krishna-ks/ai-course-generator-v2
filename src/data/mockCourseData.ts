@@ -145,6 +145,7 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
       exclusionsDocuments: [],
       pageSpanTime: 10,
       courseSpanTime: 60,
+      contentDepth: "balanced",
     },
   };
 
