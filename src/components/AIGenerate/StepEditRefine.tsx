@@ -1,4 +1,10 @@
 import { useState, useCallback, useRef } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import {
   Pencil, Trash2, GripVertical, Plus, FileText, Clock, Layers,
@@ -827,36 +833,61 @@ export function PageDurationPill({
 
   return (
     <Popover open={open} onOpenChange={openAndSeed}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={`Edit duration for page ${pageTitle || "Untitled"}. Current: ${formatDuration(currentSec)}${isCustom ? " (custom)" : " (default)"}`}
-          className={cn(
-            "group shrink-0 inline-flex items-center gap-1.5 h-7 pl-1 pr-2.5 rounded-full border text-[13px] font-semibold tabular-nums shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:shadow-md hover:-translate-y-[1px]",
-            isCustom
-              ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
-              : "bg-primary/15 border-primary/30 text-primary ring-1 ring-primary/10 hover:bg-primary/20 hover:border-primary/40 hover:ring-primary/20"
-          )}
-        >
-          <span
-            className={cn(
-              "flex items-center justify-center w-5 h-5 rounded-full transition-colors",
-              isCustom
-                ? "bg-primary-foreground/20 text-primary-foreground"
-                : "bg-primary text-primary-foreground"
-            )}
+      <TooltipProvider delayDuration={120}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label={`Edit duration for page ${pageTitle || "Untitled"}. Current: ${formatDuration(currentSec)}${isCustom ? " (custom)" : " (default)"}`}
+                className={cn(
+                  "group shrink-0 inline-flex items-center gap-1.5 h-7 pl-1 pr-2.5 rounded-full border text-[13px] font-semibold tabular-nums shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:shadow-md hover:-translate-y-[1px]",
+                  isCustom
+                    ? "bg-primary text-primary-foreground border-primary hover:bg-primary-hover"
+                    : "bg-primary/15 border-primary/30 text-primary ring-1 ring-primary/10 hover:bg-primary/20 hover:border-primary/40 hover:ring-primary/20"
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex items-center justify-center w-5 h-5 rounded-full transition-colors",
+                    isCustom
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-primary text-primary-foreground"
+                  )}
+                >
+                  <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </span>
+                <span className="leading-none">{formatDuration(currentSec)}</span>
+                {isCustom && (
+                  <span
+                    aria-hidden="true"
+                    className="w-1.5 h-1.5 rounded-full bg-primary-foreground shadow-[0_0_0_2px_hsl(var(--primary))]"
+                  />
+                )}
+              </button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent
+            side="top"
+            sideOffset={8}
+            className="max-w-[240px] px-3 py-2.5 rounded-xl border border-border bg-popover shadow-lg"
           >
-            <Clock className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          </span>
-          <span className="leading-none">{formatDuration(currentSec)}</span>
-          {isCustom && (
-            <span
-              aria-hidden="true"
-              className="w-1.5 h-1.5 rounded-full bg-primary-foreground shadow-[0_0_0_2px_hsl(var(--primary))]"
-            />
-          )}
-        </button>
-      </PopoverTrigger>
+            <div className="flex gap-2.5">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <Clock className="h-3.5 w-3.5 text-primary" aria-hidden="true" focusable="false" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[12px] font-semibold text-foreground">Page duration</p>
+                <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                  {isCustom
+                    ? `Custom time budget for this page. Click to edit or reset to the default ${formatDuration(defaultSec)}.`
+                    : "Default time budget for this page. Click to override for this page only."}
+                </p>
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <PopoverContent align="end" sideOffset={6} className="w-64 p-3 rounded-xl">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[12px] font-semibold text-foreground">Page duration</span>
