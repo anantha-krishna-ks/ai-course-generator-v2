@@ -78,6 +78,7 @@ export interface AIGenerateState {
   scormBgOpacity: number;
   scormPassMessage: string;
   scormFailMessage: string;
+  contentDepth: ContentDepth;
 }
 
 export interface QuizVariantConfig {
