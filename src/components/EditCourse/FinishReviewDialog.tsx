@@ -111,15 +111,7 @@ export function FinishReviewDialog({ open, onOpenChange }: Props) {
           </div>
         </div>
 
-        <DialogFooter className="px-4 sm:px-6 py-4 border-t border-border bg-muted/30 flex-col sm:flex-row gap-2 sm:gap-2 [&>button]:w-full sm:[&>button]:w-auto">
-          <Button
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            disabled={submitting}
-            className="rounded-full"
-          >
-            Keep reviewing
-          </Button>
+        <DialogFooter className="px-4 sm:px-6 py-4 border-t border-border bg-muted/30 flex-col sm:flex-row gap-2 sm:gap-3 [&>button]:w-full sm:[&>button]:w-auto sm:[&>button]:flex-1 sm:[&>button]:max-w-[260px]">
           <Button
             variant="outline"
             onClick={() => finish("ready")}
