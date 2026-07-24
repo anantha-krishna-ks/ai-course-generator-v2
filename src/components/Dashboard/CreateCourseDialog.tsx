@@ -367,6 +367,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         title: courseTitle.trim(),
         layout: selectedLayout,
         aiOptions: aiOptions.enabled ? aiOptions : null,
+        contentDepth,
         fontId,
       }
     });
