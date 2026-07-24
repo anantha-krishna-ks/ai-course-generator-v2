@@ -74,6 +74,7 @@ export interface AIGenerateState {
   wordsPerPage: number;
   sectionImages: boolean;
   pageImages: boolean;
+  contentDepth: "quick" | "balanced" | "thorough";
 }
 
 const initialState: AIGenerateState = {
