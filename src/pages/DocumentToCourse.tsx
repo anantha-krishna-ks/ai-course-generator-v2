@@ -74,6 +74,7 @@ export interface AIGenerateState {
   wordsPerPage: number;
   sectionImages: boolean;
   pageImages: boolean;
+  contentDepth: "quick" | "balanced" | "thorough";
 }
 
 const initialState: AIGenerateState = {
@@ -116,6 +117,7 @@ const initialState: AIGenerateState = {
   wordsPerPage: 150,
   sectionImages: true,
   pageImages: true,
+  contentDepth: "balanced",
 };
 
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepDocumentAssessment, StepEditRefine];
@@ -147,6 +149,7 @@ export default function DocumentToCourse() {
         if ("bloomsTaxonomy" in partial && next.bloomsTaxonomy.length > 0) delete cleared.bloomsTaxonomy;
         if ("learningOutcome" in partial && next.learningOutcome.trim()) delete cleared.learningOutcome;
         if ("learningObjectives" in partial && next.learningObjectives.some((o) => o.trim())) delete cleared.learningObjectives;
+        if ("contentDepth" in partial && next.contentDepth) delete cleared.contentDepth;
         return cleared;
       });
       return next;
@@ -164,6 +167,7 @@ export default function DocumentToCourse() {
       case 1:
         if (!formState.title.trim()) fail("title", "Course title is required");
         if (formState.supportingDocuments.length === 0) fail("supportingDocuments", "Please make sure the uploaded document matches the course title, as the course will be created exactly based on what's in the document.");
+        if (!formState.contentDepth) fail("contentDepth", "Please select a content depth tier");
         break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };
