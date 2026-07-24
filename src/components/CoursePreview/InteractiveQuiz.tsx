@@ -192,63 +192,20 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
             <div
               className={cn(
                 isMobilePreview
-                  ? "grid grid-cols-[76px,minmax(0,1fr)] gap-x-3 gap-y-3 items-start"
+                  ? "flex flex-col items-stretch gap-4 w-full"
                   : "flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6"
               )}
             >
-              {/* Score ring */}
-              <div
-                className={cn(
-                  "relative flex-shrink-0 w-28 h-28 self-center sm:self-auto",
-                  isMobilePreview && "w-[76px] h-[76px] self-start"
-                )}
-              >
-                <svg
-                  width={scoreRingSize}
-                  height={scoreRingSize}
-                  viewBox={`0 0 ${scoreRingSize} ${scoreRingSize}`}
-                  className="rotate-[-90deg]"
-                  aria-hidden="true"
-                >
-                  <circle
-                    cx={scoreRingSize / 2}
-                    cy={scoreRingSize / 2}
-                    r={scoreRingRadius}
-                    stroke="currentColor"
-                    strokeWidth={stroke}
-                    fill="transparent"
-                    className="text-muted/40"
-                  />
-                  <circle
-                    cx={scoreRingSize / 2}
-                    cy={scoreRingSize / 2}
-                    r={scoreRingRadius}
-                    stroke="currentColor"
-                    strokeWidth={stroke}
-                    fill="transparent"
-                    strokeLinecap="round"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={scoreOffset}
-                    className={cn("transition-all duration-700", passed ? "text-success" : "text-destructive")}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={cn("text-2xl font-semibold text-foreground tabular-nums", isMobilePreview && "text-lg")}>{accuracyPct}%</span>
-                  <span className={cn("text-[10px] font-medium uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide")}>Accuracy</span>
-                </div>
-              </div>
-
-              {/* Verdict + mini score */}
-              <div className={cn("flex-1 min-w-0 flex flex-col justify-between gap-4", isMobilePreview && "gap-2")}>
-                <div className={cn("text-center sm:text-left", isMobilePreview && "text-left")}>
-                  <div className={cn("flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2", isMobilePreview && "justify-start gap-1.5 mb-1.5")}>
-                    <span className={cn("text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide")}> 
+              {/* Header row (mobile): status pill + label, right-aligned ring */}
+              {isMobilePreview && (
+                <div className="flex items-center justify-between gap-3 w-full">
+                  <div className="min-w-0 flex flex-col gap-1.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                       Summative Exam · Result
                     </span>
                     <span
                       className={cn(
-                        "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                        isMobilePreview && "px-2 py-0.5 text-[9px] tracking-wide",
+                        "self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
                         passed
                           ? "bg-success text-success-foreground"
                           : "bg-destructive text-destructive-foreground"
@@ -257,18 +214,128 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                       {passed ? "Passed" : "Not passed"}
                     </span>
                   </div>
-                  <h3 className={cn("text-xl sm:text-2xl font-semibold text-foreground", isMobilePreview && "text-sm leading-snug")}>
-                    {passed ? "You've cleared the exam." : "You didn't clear the exam."}
-                  </h3>
-                  <p className={cn("text-sm text-muted-foreground mt-1", isMobilePreview && "text-xs leading-relaxed")}>
-                    Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
-                    <span aria-hidden="true"> · </span>
-                    <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
-                  </p>
+                  <div className="relative flex-shrink-0 w-[76px] h-[76px]">
+                    <svg
+                      width={scoreRingSize}
+                      height={scoreRingSize}
+                      viewBox={`0 0 ${scoreRingSize} ${scoreRingSize}`}
+                      className="rotate-[-90deg]"
+                      aria-hidden="true"
+                    >
+                      <circle
+                        cx={scoreRingSize / 2}
+                        cy={scoreRingSize / 2}
+                        r={scoreRingRadius}
+                        stroke="currentColor"
+                        strokeWidth={stroke}
+                        fill="transparent"
+                        className="text-muted/40"
+                      />
+                      <circle
+                        cx={scoreRingSize / 2}
+                        cy={scoreRingSize / 2}
+                        r={scoreRingRadius}
+                        stroke="currentColor"
+                        strokeWidth={stroke}
+                        fill="transparent"
+                        strokeLinecap="round"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={scoreOffset}
+                        className={cn("transition-all duration-700", passed ? "text-success" : "text-destructive")}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-lg font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
+                      <span className="text-[9px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">Accuracy</span>
+                    </div>
+                  </div>
                 </div>
+              )}
+
+              {/* Score ring (desktop/tablet) */}
+              {!isMobilePreview && (
+                <div className="relative flex-shrink-0 w-28 h-28 self-center sm:self-auto">
+                  <svg
+                    width={scoreRingSize}
+                    height={scoreRingSize}
+                    viewBox={`0 0 ${scoreRingSize} ${scoreRingSize}`}
+                    className="rotate-[-90deg]"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx={scoreRingSize / 2}
+                      cy={scoreRingSize / 2}
+                      r={scoreRingRadius}
+                      stroke="currentColor"
+                      strokeWidth={stroke}
+                      fill="transparent"
+                      className="text-muted/40"
+                    />
+                    <circle
+                      cx={scoreRingSize / 2}
+                      cy={scoreRingSize / 2}
+                      r={scoreRingRadius}
+                      stroke="currentColor"
+                      strokeWidth={stroke}
+                      fill="transparent"
+                      strokeLinecap="round"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={scoreOffset}
+                      className={cn("transition-all duration-700", passed ? "text-success" : "text-destructive")}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-semibold text-foreground tabular-nums">{accuracyPct}%</span>
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Accuracy</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Verdict + mini score */}
+              <div className={cn("flex-1 min-w-0 flex flex-col justify-between gap-4", isMobilePreview && "gap-3 w-full")}>
+                {!isMobilePreview && (
+                  <div className="text-center sm:text-left">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Summative Exam · Result
+                      </span>
+                      <span
+                        className={cn(
+                          "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                          passed
+                            ? "bg-success text-success-foreground"
+                            : "bg-destructive text-destructive-foreground"
+                        )}
+                      >
+                        {passed ? "Passed" : "Not passed"}
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
+                      {passed ? "You've cleared the exam." : "You didn't clear the exam."}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
+                      <span aria-hidden="true"> · </span>
+                      <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
+                    </p>
+                  </div>
+                )}
+
+                {isMobilePreview && (
+                  <div className="w-full">
+                    <h3 className="text-base font-semibold text-foreground leading-snug">
+                      {passed ? "You've cleared the exam." : "You didn't clear the exam."}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                      Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
+                      <span aria-hidden="true"> · </span>
+                      Pass mark <span className="font-semibold text-foreground">{passCriteria}</span>
+                    </p>
+                  </div>
+                )}
 
                 {/* Score progress bar */}
-                <div className={cn(isMobilePreview && "col-span-2")}> 
+                <div className="w-full">
                   <div className="relative h-2 rounded-full bg-muted overflow-hidden">
                     <div
                       className={cn(
@@ -295,14 +362,14 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
               <div
                 className={cn(
                   "flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5",
-                  isMobilePreview && "col-span-2 grid grid-cols-2 gap-2 border-t border-l-0 pt-3 pl-0"
+                  isMobilePreview && "w-full grid grid-cols-2 gap-2 border-t border-l-0 pt-3 pl-0"
                 )}
               >
-                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isMobilePreview && "p-2 rounded-lg")}>
+                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isMobilePreview && "text-[9px] tracking-wide")}>Score</div>
                   <div className={cn("text-lg font-semibold text-foreground tabular-nums", isMobilePreview && "text-sm")}>{correctCount}/{total}</div>
                 </div>
-                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isMobilePreview && "p-2 rounded-lg")}>
+                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide")}>Pass mark</div>
                   <div className={cn("text-lg font-semibold text-foreground tabular-nums", isMobilePreview && "text-sm")}>{passCriteria}</div>
                 </div>
