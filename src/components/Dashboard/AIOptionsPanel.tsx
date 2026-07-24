@@ -32,6 +32,11 @@ import {
   Gauge,
   Award,
   Info,
+  Rabbit,
+  Scale,
+  Gem,
+  Coins,
+  Layers,
 } from "lucide-react";
 
 const GUIDELINES_EXAMPLES = [
@@ -61,6 +66,7 @@ export interface AIOptions {
   exclusionsDocuments: string[];
   pageSpanTime: number;
   courseSpanTime: number;
+  contentDepth: ContentDepth;
 }
 
 export type AIMode = "manual-with-ai" | "ai";
@@ -79,6 +85,48 @@ const LEARNER_LEVELS = [
   { label: "Intermediate", icon: Gauge },
   { label: "Expert", icon: Award },
 ] as const;
+
+export type ContentDepth = "quick" | "balanced" | "thorough";
+
+const CONTENT_DEPTH_TIERS: Array<{
+  id: ContentDepth;
+  label: string;
+  tagline: string;
+  description: string;
+  speed: string;
+  credits: string;
+  icon: typeof Rabbit;
+  recommended?: boolean;
+}> = [
+  {
+    id: "quick",
+    label: "Quick",
+    tagline: "Fastest draft",
+    description: "Concise outlines with essential explanations. Best for rapid prototyping.",
+    speed: "~2 min",
+    credits: "Low cost",
+    icon: Rabbit,
+  },
+  {
+    id: "balanced",
+    label: "Balanced",
+    tagline: "Best all-rounder",
+    description: "Rich content with examples and interactivity. Best all-round quality vs speed.",
+    speed: "~4 min",
+    credits: "Standard",
+    icon: Scale,
+    recommended: true,
+  },
+  {
+    id: "thorough",
+    label: "Thorough",
+    tagline: "Highest quality",
+    description: "Most capable model plus a refinement pass. Deepest coverage and polish.",
+    speed: "~8 min",
+    credits: "Premium",
+    icon: Gem,
+  },
+];
 
 /** The toggle + "Configure" button shown in the main dialog view */
 export function AIToggleRow({
@@ -239,6 +287,115 @@ export function AIConfigView({
               unit="min"
             />
         
+        </div>
+
+        {/* ── Content Depth ── */}
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <SectionLabel icon={Layers} label="Content Depth" required />
+          <p className="text-xs text-muted-foreground mt-1 mb-4">
+            Choose how thorough AI-generated content should be. Locked after creation.
+          </p>
+          <div
+            role="radiogroup"
+            aria-label="Content depth"
+            aria-required="true"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+          >
+            {CONTENT_DEPTH_TIERS.map((tier) => {
+              const Icon = tier.icon;
+              const isActive = options.contentDepth === tier.id;
+              return (
+                <button
+                  key={tier.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={isActive}
+                  onClick={() => update({ contentDepth: tier.id })}
+                  className={cn(
+                    "group relative text-left rounded-xl border-2 p-4 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    isActive
+                      ? "border-primary bg-gradient-to-br from-primary/[0.10] via-primary/[0.04] to-transparent shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.35)]"
+                      : "border-border bg-background hover:border-primary/40 hover:shadow-[0_8px_24px_-16px_hsl(var(--primary)/0.18)]"
+                  )}
+                >
+                  {tier.recommended && (
+                    <span
+                      className={cn(
+                        "absolute -top-2.5 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-md",
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground border border-border"
+                      )}
+                    >
+                      <Sparkles
+                        className="w-2.5 h-2.5"
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                      Recommended
+                    </span>
+                  )}
+                  {isActive && (
+                    <span className="absolute top-3 right-3 inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground shadow-sm">
+                      <Check
+                        className="w-3 h-3"
+                        strokeWidth={3}
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                    </span>
+                  )}
+                  <div className="flex items-center gap-3 mb-3">
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300",
+                        isActive
+                          ? "bg-gradient-to-br from-primary to-[hsl(var(--primary-glow))] text-primary-foreground shadow-lg"
+                          : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                      )}
+                      aria-hidden="true"
+                    >
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-sm font-bold text-foreground leading-tight">
+                        {tier.label}
+                      </div>
+                      <div
+                        className={cn(
+                          "text-[10px] font-semibold leading-tight mt-0.5",
+                          isActive ? "text-primary" : "text-muted-foreground"
+                        )}
+                      >
+                        {tier.tagline}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-3">
+                    {tier.description}
+                  </p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-muted/80 text-[10px] font-medium text-foreground">
+                      <Timer
+                        className="w-3 h-3"
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                      {tier.speed}
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-muted/80 text-[10px] font-medium text-foreground">
+                      <Coins
+                        className="w-3 h-3"
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                      {tier.credits}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ── Bloom's Taxonomy ── */}

@@ -17,7 +17,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Wand2, FileText, GraduationCap, BookOpen, Sparkles, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X, Download, Rabbit, Scale, Gem, Lock, Coins, Timer } from "lucide-react";
+import { Wand2, FileText, GraduationCap, BookOpen, Zap, BrainCircuit, Target, BarChart3, Package, Settings2, Check, ChevronDown, Upload, FileSpreadsheet, FileJson, X, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIToggleRow, AIConfigView, type AIOptions } from "./AIOptionsPanel";
 import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -32,47 +32,6 @@ interface CreateCourseDialogProps {
 }
 
 type LayoutType = "multi-page" | "single-page";
-export type ContentDepth = "quick" | "balanced" | "thorough";
-
-const CONTENT_DEPTH_TIERS: Array<{
-  id: ContentDepth;
-  label: string;
-  tagline: string;
-  description: string;
-  speed: string;
-  credits: string;
-  icon: typeof Rabbit;
-  recommended?: boolean;
-}> = [
-  {
-    id: "quick",
-    label: "Quick",
-    tagline: "Fastest draft",
-    description: "Concise outlines with essential explanations. Best for rapid prototyping.",
-    speed: "~2 min",
-    credits: "Low cost",
-    icon: Rabbit,
-  },
-  {
-    id: "balanced",
-    label: "Balanced",
-    tagline: "Recommended",
-    description: "Rich content with examples and interactivity. Best all-round quality vs speed.",
-    speed: "~4 min",
-    credits: "Standard",
-    icon: Scale,
-    recommended: true,
-  },
-  {
-    id: "thorough",
-    label: "Thorough",
-    tagline: "Highest quality",
-    description: "Most capable model plus a refinement pass. Deepest coverage and polish.",
-    speed: "~8 min",
-    credits: "Premium",
-    icon: Gem,
-  },
-];
 
 const defaultAIOptions: AIOptions = {
   enabled: true,
@@ -85,6 +44,7 @@ const defaultAIOptions: AIOptions = {
   exclusionsDocuments: [],
   pageSpanTime: 5,
   courseSpanTime: 60,
+  contentDepth: "balanced",
 };
 
 function InlineLoader({ courseTitle, onComplete }: { courseTitle: string; onComplete: () => void }) {
@@ -328,7 +288,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const aiSectionRef = useRef<HTMLDivElement>(null);
   const outlineInputRef = useRef<HTMLInputElement>(null);
   const [outlineFile, setOutlineFile] = useState<File | null>(null);
-  const [contentDepth, setContentDepth] = useState<ContentDepth>("balanced");
 
   const isAIConfigValid = !aiOptions.enabled || (
     aiOptions.bloomsTaxonomy.length > 0 && !!aiOptions.intendedLearners
@@ -367,7 +326,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         title: courseTitle.trim(),
         layout: selectedLayout,
         aiOptions: aiOptions.enabled ? aiOptions : null,
-        contentDepth,
+        contentDepth: aiOptions.contentDepth,
         fontId,
       }
     });
@@ -483,108 +442,6 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                     {aiError}
                   </p>
                 )}
-              </div>
-
-
-              {/* Content Depth — mandatory tier selection, locked after creation */}
-              <div className="mb-4 sm:mb-5">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Content Depth
-                    </span>
-                    <span aria-hidden="true" className="text-destructive text-xs">*</span>
-                  </div>
-                  <span
-                    className="inline-flex items-center gap-1 text-[10px] text-muted-foreground"
-                    title="Depth is locked after course creation"
-                  >
-                    <Lock className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    Locked after creation
-                  </span>
-                </div>
-                <div
-                  role="radiogroup"
-                  aria-label="Content depth"
-                  aria-required="true"
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-2.5"
-                >
-                  {CONTENT_DEPTH_TIERS.map((tier) => {
-                    const Icon = tier.icon;
-                    const isActive = contentDepth === tier.id;
-                    return (
-                      <button
-                        key={tier.id}
-                        type="button"
-                        role="radio"
-                        aria-checked={isActive}
-                        onClick={() => setContentDepth(tier.id)}
-                        className={cn(
-                          "group relative text-left rounded-xl border-2 p-3 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                          isActive
-                            ? "border-primary bg-primary/[0.04] shadow-[0_4px_18px_-8px_hsl(var(--primary)/0.35)]"
-                            : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
-                        )}
-                      >
-                        {tier.recommended && (
-                          <span
-                            className={cn(
-                              "absolute -top-2 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider shadow-sm",
-                              isActive
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-foreground border border-border"
-                            )}
-                          >
-                            <Sparkles className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-                            Recommended
-                          </span>
-                        )}
-                        {isActive && (
-                          <span className="absolute top-2 right-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground shadow-sm">
-                            <Check className="w-3 h-3" strokeWidth={3} aria-hidden="true" focusable="false" />
-                          </span>
-                        )}
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span
-                            className={cn(
-                              "inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors",
-                              isActive ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-                            )}
-                            aria-hidden="true"
-                          >
-                            <Icon className="w-4 h-4" />
-                          </span>
-                          <div className="min-w-0">
-                            <div className="text-sm font-semibold text-foreground leading-tight">
-                              {tier.label}
-                            </div>
-                            <div
-                              className={cn(
-                                "text-[10px] font-medium leading-tight mt-0.5",
-                                isActive ? "text-primary" : "text-muted-foreground"
-                              )}
-                            >
-                              {tier.tagline}
-                            </div>
-                          </div>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground leading-snug mb-2.5 pr-2">
-                          {tier.description}
-                        </p>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted/70 text-[10px] font-medium text-foreground">
-                            <Timer className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-                            {tier.speed}
-                          </span>
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted/70 text-[10px] font-medium text-foreground">
-                            <Coins className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
-                            {tier.credits}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
 
 

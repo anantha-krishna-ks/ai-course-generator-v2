@@ -116,6 +116,7 @@ function buildAIGeneratedRestoreState(title: string): MultiPageCourseCreatorRest
       exclusionsDocuments: [],
       pageSpanTime: 10,
       courseSpanTime: 60,
+      contentDepth: "balanced",
     },
   };
 }
