@@ -117,6 +117,7 @@ const initialState: AIGenerateState = {
   wordsPerPage: 150,
   sectionImages: true,
   pageImages: true,
+  contentDepth: "balanced",
 };
 
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepDocumentAssessment, StepEditRefine];
