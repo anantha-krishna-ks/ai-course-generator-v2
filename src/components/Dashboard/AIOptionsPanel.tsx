@@ -32,6 +32,11 @@ import {
   Gauge,
   Award,
   Info,
+  Rabbit,
+  Scale,
+  Gem,
+  Coins,
+  Layers,
 } from "lucide-react";
 
 const GUIDELINES_EXAMPLES = [
