@@ -178,6 +178,7 @@ export default function AIGenerateCourse() {
         if ("bloomsTaxonomy" in partial && next.bloomsTaxonomy.length > 0) delete cleared.bloomsTaxonomy;
         if ("learningOutcome" in partial && next.learningOutcome.trim()) delete cleared.learningOutcome;
         if ("learningObjectives" in partial && next.learningObjectives.some((o) => o.trim())) delete cleared.learningObjectives;
+        if ("contentDepth" in partial && next.contentDepth) delete cleared.contentDepth;
         return cleared;
       });
       return next;
