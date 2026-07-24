@@ -190,8 +190,9 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
           <div className={cn("p-5 sm:p-6", isCompactView && "p-3")}>
             <div
               className={cn(
-                "flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6",
-                isCompactView && "grid grid-cols-[auto,minmax(0,1fr)] gap-3 items-center"
+                isCompactView
+                  ? "grid grid-cols-[auto,minmax(0,1fr)] gap-3 items-center"
+                  : "flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6"
               )}
             >
               {/* Score ring */}
@@ -237,10 +238,10 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
               </div>
 
               {/* Verdict + mini score */}
-              <div className={cn("flex-1 min-w-0 flex flex-col justify-between gap-4", isCompactView && "gap-2")}> 
-                <div className={cn("text-center sm:text-left", isCompactView && "text-left")}> 
-                  <div className={cn("flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2", isCompactView && "justify-start gap-1.5 mb-1.5")}> 
-                    <span className={cn("text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground", isCompactView && "text-[9px] tracking-wide")}> 
+              <div className={cn("flex-1 min-w-0 flex flex-col justify-between gap-4", isCompactView && "gap-2")}>
+                <div className={cn("text-center sm:text-left", isCompactView && "text-left")}>
+                  <div className={cn("flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2", isCompactView && "justify-start gap-1.5 mb-1.5")}>
+                    <span className={cn("text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground", isCompactView && "text-[9px] tracking-wide")}>
                       Summative Exam · Result
                     </span>
                     <span
@@ -255,10 +256,10 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       {passed ? "Passed" : "Not passed"}
                     </span>
                   </div>
-                  <h3 className={cn("text-xl sm:text-2xl font-semibold text-foreground", isCompactView && "text-base leading-snug")}> 
+                  <h3 className={cn("text-xl sm:text-2xl font-semibold text-foreground", isCompactView && "text-base leading-snug")}>
                     {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                   </h3>
-                  <p className={cn("text-sm text-muted-foreground mt-1", isCompactView && "text-xs leading-relaxed")}> 
+                  <p className={cn("text-sm text-muted-foreground mt-1", isCompactView && "text-xs leading-relaxed")}>
                     Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                     <span aria-hidden="true"> · </span>
                     <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
@@ -266,7 +267,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                 </div>
 
                 {/* Score progress bar */}
-                <div className={cn(isCompactView && "col-span-2")}> 
+                <div>
                   <div className="relative h-2 rounded-full bg-muted overflow-hidden">
                     <div
                       className={cn(
@@ -281,7 +282,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       aria-hidden="true"
                     />
                   </div>
-                  <div className={cn("flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5", isCompactView && "text-[9px]")}> 
+                  <div className={cn("flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5", isCompactView && "text-[9px]")}>
                     <span>0</span>
                     <span>Pass mark {passPct}%</span>
                     <span>100%</span>
@@ -296,11 +297,11 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                   isCompactView && "col-span-2 grid grid-cols-2 gap-2 border-t border-l-0 pt-3 pl-0"
                 )}
               >
-                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isCompactView && "p-2 rounded-lg")}> 
+                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isCompactView && "p-2 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isCompactView && "text-[9px] tracking-wide")}>Score</div>
                   <div className={cn("text-lg font-semibold text-foreground tabular-nums", isCompactView && "text-sm")}>{correctCount}/{total}</div>
                 </div>
-                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isCompactView && "p-2 rounded-lg")}> 
+                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isCompactView && "p-2 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isCompactView && "text-[9px] tracking-wide")}>Pass mark</div>
                   <div className={cn("text-lg font-semibold text-foreground tabular-nums", isCompactView && "text-sm")}>{passCriteria}</div>
                 </div>
@@ -310,7 +311,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
         </div>
 
         {/* Stats grid */}
-        <div className={cn("grid grid-cols-3 gap-3", isCompactView && "gap-2")}> 
+        <div className={cn("grid grid-cols-3 gap-3", isCompactView && "gap-2")}>
           {stats.map((s) => (
             <div
               key={s.label}
