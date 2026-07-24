@@ -170,8 +170,9 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
 
   // ------------------ Results scorecard ------------------
   if (validated) {
-    const scoreRingRadius = 48;
-    const stroke = 7;
+    const scoreRingSize = isCompactView ? 82 : 112;
+    const scoreRingRadius = isCompactView ? 35 : 48;
+    const stroke = isCompactView ? 6 : 7;
     const circumference = 2 * Math.PI * scoreRingRadius;
     const scoreOffset = circumference - (accuracyPct / 100) * circumference;
     const passPct = Math.round((passCriteria / total) * 100);
@@ -183,17 +184,34 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
     ];
 
     return (
-      <div className="space-y-5">
+      <div className={cn("space-y-5", isCompactView && "space-y-3")}>
         {/* Verdict card */}
         <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-          <div className="p-5 sm:p-6">
-            <div className="flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6">
+          <div className={cn("p-5 sm:p-6", isCompactView && "p-3")}>
+            <div
+              className={cn(
+                isCompactView
+                  ? "grid grid-cols-[auto,minmax(0,1fr)] gap-3 items-center"
+                  : "flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6"
+              )}
+            >
               {/* Score ring */}
-              <div className="relative flex-shrink-0 w-28 h-28 self-center sm:self-auto">
-                <svg width="112" height="112" viewBox="0 0 112 112" className="rotate-[-90deg]" aria-hidden="true">
+              <div
+                className={cn(
+                  "relative flex-shrink-0 w-28 h-28 self-center sm:self-auto",
+                  isCompactView && "w-[82px] h-[82px] self-start"
+                )}
+              >
+                <svg
+                  width={scoreRingSize}
+                  height={scoreRingSize}
+                  viewBox={`0 0 ${scoreRingSize} ${scoreRingSize}`}
+                  className="rotate-[-90deg]"
+                  aria-hidden="true"
+                >
                   <circle
-                    cx="56"
-                    cy="56"
+                    cx={scoreRingSize / 2}
+                    cy={scoreRingSize / 2}
                     r={scoreRingRadius}
                     stroke="currentColor"
                     strokeWidth={stroke}
@@ -201,8 +219,8 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                     className="text-muted/40"
                   />
                   <circle
-                    cx="56"
-                    cy="56"
+                    cx={scoreRingSize / 2}
+                    cy={scoreRingSize / 2}
                     r={scoreRingRadius}
                     stroke="currentColor"
                     strokeWidth={stroke}
@@ -214,21 +232,22 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-semibold text-foreground tabular-nums">{accuracyPct}%</span>
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Accuracy</span>
+                  <span className={cn("text-2xl font-semibold text-foreground tabular-nums", isCompactView && "text-lg")}>{accuracyPct}%</span>
+                  <span className={cn("text-[10px] font-medium uppercase tracking-wider text-muted-foreground", isCompactView && "text-[9px] tracking-wide")}>Accuracy</span>
                 </div>
               </div>
 
               {/* Verdict + mini score */}
-              <div className="flex-1 min-w-0 flex flex-col justify-between gap-4">
-                <div className="text-center sm:text-left">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <div className={cn("flex-1 min-w-0 flex flex-col justify-between gap-4", isCompactView && "gap-2")}>
+                <div className={cn("text-center sm:text-left", isCompactView && "text-left")}>
+                  <div className={cn("flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2", isCompactView && "justify-start gap-1.5 mb-1.5")}>
+                    <span className={cn("text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground", isCompactView && "text-[9px] tracking-wide")}>
                       Summative Exam · Result
                     </span>
                     <span
                       className={cn(
                         "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                        isCompactView && "px-2 py-0.5 text-[9px] tracking-wide",
                         passed
                           ? "bg-success text-success-foreground"
                           : "bg-destructive text-destructive-foreground"
@@ -237,12 +256,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       {passed ? "Passed" : "Not passed"}
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  <h3 className={cn("text-xl sm:text-2xl font-semibold text-foreground", isCompactView && "text-base leading-snug")}>
                     {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Score <span className="font-semibold text-foreground">{correctCount} / {total}</span> ·
-                    Pass mark <span className="font-semibold text-foreground">{passCriteria}</span>
+                  <p className={cn("text-sm text-muted-foreground mt-1", isCompactView && "text-xs leading-relaxed")}>
+                    Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
+                    <span aria-hidden="true"> · </span>
+                    <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
                   </p>
                 </div>
 
@@ -262,7 +282,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
                       aria-hidden="true"
                     />
                   </div>
-                  <div className="flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5">
+                  <div className={cn("flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5", isCompactView && "text-[9px]")}>
                     <span>0</span>
                     <span>Pass mark {passPct}%</span>
                     <span>100%</span>
@@ -271,14 +291,19 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
               </div>
 
               {/* Mini score tiles */}
-              <div className="flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5">
-                <div className="flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center">
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-success">Score</div>
-                  <div className="text-lg font-semibold text-foreground tabular-nums">{correctCount}/{total}</div>
+              <div
+                className={cn(
+                  "flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5",
+                  isCompactView && "col-span-2 grid grid-cols-2 gap-2 border-t border-l-0 pt-3 pl-0"
+                )}
+              >
+                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isCompactView && "p-2 rounded-lg")}>
+                  <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isCompactView && "text-[9px] tracking-wide")}>Score</div>
+                  <div className={cn("text-lg font-semibold text-foreground tabular-nums", isCompactView && "text-sm")}>{correctCount}/{total}</div>
                 </div>
-                <div className="flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center">
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Pass mark</div>
-                  <div className="text-lg font-semibold text-foreground tabular-nums">{passCriteria}</div>
+                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isCompactView && "p-2 rounded-lg")}>
+                  <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isCompactView && "text-[9px] tracking-wide")}>Pass mark</div>
+                  <div className={cn("text-lg font-semibold text-foreground tabular-nums", isCompactView && "text-sm")}>{passCriteria}</div>
                 </div>
               </div>
             </div>
@@ -286,21 +311,22 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView }: { questions: 
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className={cn("grid grid-cols-3 gap-3", isCompactView && "gap-2")}>
           {stats.map((s) => (
             <div
               key={s.label}
               className={cn(
                 "rounded-xl border border-border/60 p-3 flex items-center gap-3",
+                isCompactView && "rounded-lg p-2 flex-col items-center justify-center gap-1 text-center min-w-0",
                 s.bg
               )}
             >
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center bg-card border border-border/60", s.tone)}>
-                <s.icon className="w-4 h-4" aria-hidden="true" />
+              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center bg-card border border-border/60", isCompactView && "w-7 h-7 rounded-md", s.tone)}>
+                <s.icon className={cn("w-4 h-4", isCompactView && "w-3.5 h-3.5")} aria-hidden="true" />
               </div>
               <div className="min-w-0">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{s.label}</div>
-                <div className="text-lg font-semibold text-foreground tabular-nums leading-tight">{s.value}</div>
+                <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isCompactView && "text-[9px] tracking-wide leading-tight")}>{s.label}</div>
+                <div className={cn("text-lg font-semibold text-foreground tabular-nums leading-tight", isCompactView && "text-sm")}>{s.value}</div>
               </div>
             </div>
           ))}
