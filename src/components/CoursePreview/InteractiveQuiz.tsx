@@ -361,8 +361,9 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
               {/* Mini score tiles */}
               <div
                 className={cn(
-                  "flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5",
-                  isMobilePreview && "w-full grid grid-cols-2 gap-2 border-t border-l-0 pt-3 pl-0"
+                  isMobilePreview
+                    ? "w-full grid grid-cols-2 gap-2 border-t border-border/60 pt-3"
+                    : "flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5"
                 )}
               >
                 <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
