@@ -1,9 +1,11 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File, Download, AlertCircle } from "lucide-react";
+import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File, Download, AlertCircle, Check, Timer, Coins } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { TitleAutocomplete } from "./TitleAutocomplete";
+import { CONTENT_DEPTH_TIERS, type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
 import blueprintImportIllustration from "@/assets/blueprint-import.png";
 import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 
@@ -100,6 +102,116 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
             💡 Used as the primary prompt for AI content generation
           </p>
+        )}
+      </div>
+
+      {/* Content Depth */}
+      <div data-field="contentDepth" className={cn("rounded-xl border bg-card p-4", errors?.contentDepth ? "border-destructive" : "border-border")}>
+        <div className="mb-2.5">
+          <div className="text-[16px] font-semibold text-foreground leading-tight flex items-center gap-2">
+            <Layers className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+            Content Depth
+            <span className="text-destructive" aria-hidden="true">*</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Choose how thorough AI-generated content should be. Locked after creation.
+          </p>
+        </div>
+        <div
+          role="radiogroup"
+          aria-label="Content depth"
+          aria-required="true"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+        >
+          {CONTENT_DEPTH_TIERS.map((tier) => {
+            const Icon = tier.icon;
+            const isActive = state.contentDepth === tier.id;
+            return (
+              <button
+                key={tier.id}
+                type="button"
+                role="radio"
+                aria-checked={isActive}
+                onClick={() => onChange({ contentDepth: tier.id as ContentDepth })}
+                className={cn(
+                  "group relative flex flex-col text-left rounded-2xl border p-5 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  isActive
+                    ? "border-primary/40 bg-primary/[0.03] shadow-[0_10px_28px_-10px_hsl(var(--primary)/0.18),0_4px_10px_-4px_hsl(var(--primary)/0.08)]"
+                    : "border-border bg-background shadow-[0_2px_8px_-4px_hsl(0_0%_0%/0.04)] hover:border-primary/30 hover:bg-muted/30 hover:shadow-[0_12px_32px_-10px_hsl(0_0%_0%/0.08),0_4px_12px_-4px_hsl(var(--primary)/0.06)] hover:-translate-y-0.5"
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute top-4 right-4 inline-flex items-center justify-center w-5 h-5 rounded-full border transition-colors duration-200",
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background group-hover:border-primary/40"
+                  )}
+                  aria-hidden="true"
+                >
+                  {isActive && <Check className="w-3 h-3" strokeWidth={3} />}
+                </span>
+
+                {tier.recommended && (
+                  <span className="absolute -top-2 right-11 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-background border border-border text-[10px] font-semibold text-foreground shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                    Recommended
+                  </span>
+                )}
+
+                <div className="flex items-center gap-3.5 mb-4">
+                  <span
+                    className={cn(
+                      "inline-flex items-center justify-center w-11 h-11 rounded-full transition-colors duration-200",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted text-muted-foreground group-hover:bg-primary/[0.08] group-hover:text-primary"
+                    )}
+                    aria-hidden="true"
+                  >
+                    <Icon className="w-5 h-5" strokeWidth={1.5} />
+                  </span>
+                  <div className="min-w-0 pr-6">
+                    <div
+                      className={cn(
+                        "leading-tight tracking-tight transition-colors duration-200",
+                        isActive
+                          ? "text-[15px] font-bold text-primary"
+                          : "text-[13px] font-semibold text-foreground"
+                      )}
+                    >
+                      {tier.label}
+                    </div>
+                    <div
+                      className={cn(
+                        "text-[11px] font-medium leading-tight mt-0.5",
+                        isActive ? "text-primary" : "text-muted-foreground"
+                      )}
+                    >
+                      {tier.tagline}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4 flex-grow">
+                  {tier.description}
+                </p>
+                <div className="flex items-center gap-2.5 mt-auto">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                    <Timer className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    {tier.speed}
+                  </span>
+                  <span className="w-px h-3 bg-border" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                    <Coins className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                    {tier.credits}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        {errors?.contentDepth && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.contentDepth}</p>
         )}
       </div>
 
