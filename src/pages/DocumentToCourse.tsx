@@ -166,6 +166,7 @@ export default function DocumentToCourse() {
       case 1:
         if (!formState.title.trim()) fail("title", "Course title is required");
         if (formState.supportingDocuments.length === 0) fail("supportingDocuments", "Please make sure the uploaded document matches the course title, as the course will be created exactly based on what's in the document.");
+        if (!formState.contentDepth) fail("contentDepth", "Please select a content depth tier");
         break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };
