@@ -178,7 +178,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   return (
     <div role="region" aria-label="Rewrite with AI" className="mt-3 space-y-0 animate-fade-in">
       {/* ─────────── Toolbar (single row on desktop, wraps on narrow) ─────────── */}
-      <div className="rounded-2xl border border-muted/60 bg-gradient-to-br from-muted/80 via-background to-secondary/15 shadow-[0_4px_14px_-6px_hsl(var(--foreground)/0.08)] px-3 py-2 flex items-center gap-2 flex-wrap">
+      <div className="rounded-2xl border border-primary/25 bg-background shadow-[0_4px_14px_-6px_hsl(var(--primary)/0.18)] px-3 py-2 flex items-center gap-2 flex-wrap">
         {/* Brand chip */}
         <div className="inline-flex items-center gap-2 pl-2 pr-3 h-9 rounded-full bg-primary/10 text-primary flex-shrink-0">
           <AISparkles className="w-4 h-4" />
@@ -289,9 +289,9 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             aria-hidden="true"
           />
 
-            <div
+          <div
             className={cn(
-              "rounded-2xl border bg-gradient-to-b from-muted/60 to-background overflow-hidden animate-fade-in",
+              "rounded-2xl border bg-gradient-to-b from-primary/[0.04] to-background overflow-hidden animate-fade-in",
               status === "error"
                 ? "border-destructive/30 shadow-[0_6px_20px_-10px_hsl(var(--destructive)/0.25)]"
                 : "border-primary/25 shadow-[0_6px_20px_-10px_hsl(var(--primary)/0.22)]"
