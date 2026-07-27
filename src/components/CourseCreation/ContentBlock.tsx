@@ -512,15 +512,27 @@ export function ContentBlock({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    onClick={() => setShowGenerateDialog(true)}
+                    onClick={() => {
+                      if (type === "text") {
+                        if (hasContent) {
+                          setRewriteColIndex(null);
+                          setShowRewritePanel(true);
+                          setIsEditing(true);
+                        } else {
+                          setShowGenerateDialog(true);
+                        }
+                      } else {
+                        setShowGenerateDialog(true);
+                      }
+                    }}
                     className="p-1.5 rounded-md hover:bg-muted transition-colors"
-                    aria-label={type === "text" ? "Generate text with AI" : "Generate image with AI"}
+                    aria-label={type === "text" ? "Edit with AI: Rewrite text" : "Generate image with AI"}
                   >
                     <AISparkles className="w-4 h-4" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="text-xs">
-                  {type === "text" ? "Generate text with AI" : "Generate image with AI"}
+                  {type === "text" ? "Edit with AI · Rewrite text" : "Generate image with AI"}
                 </TooltipContent>
               </Tooltip>
               <SidebarButton
