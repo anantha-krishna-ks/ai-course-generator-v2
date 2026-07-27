@@ -617,38 +617,36 @@ export function ContentBlock({
                     return (
                       <div key={i} className="min-w-0">
                         <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
-                        {!(showRewritePanel && rewriteColIndex === i) && (
-                          <div className="flex items-center gap-2 mt-2 px-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
-                              onClick={() => {
-                                if (colHasContent) {
-                                  setRewriteColIndex(i);
-                                  setShowRewritePanel(true);
-                                } else {
-                                  setShowGenerateDialog(true);
-                                }
-                              }}
-                            >
-                              <AISparkles className="w-3 h-3" />
-                              {colHasContent ? "Rewrite with AI" : "Ask AI"}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
-                              onClick={() => {
-                                setVersionDialogCol(i);
-                                setSelectedVersionId(null);
-                              }}
-                            >
-                              <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
-                              Version History
-                            </Button>
-                          </div>
-                        )}
+                        <div className="flex items-center gap-2 mt-2 px-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+                            onClick={() => {
+                              if (colHasContent) {
+                                setRewriteColIndex(i);
+                                setShowRewritePanel(true);
+                              } else {
+                                setShowGenerateDialog(true);
+                              }
+                            }}
+                          >
+                            <AISparkles className="w-3 h-3" />
+                            {colHasContent ? "Rewrite with AI" : "Ask AI"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
+                            onClick={() => {
+                              setVersionDialogCol(i);
+                              setSelectedVersionId(null);
+                            }}
+                          >
+                            <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            Version History
+                          </Button>
+                        </div>
                         {showRewritePanel && rewriteColIndex === i && type === "text" && (
                           <RewriteTextPanel
                             content={col}
@@ -675,7 +673,7 @@ export function ContentBlock({
                     blockFont={font}
                     onBlockFontChange={type === "text" ? onFontChange : undefined}
                   />
-                  {aiEnabled && !(showRewritePanel && rewriteColIndex === null) && (
+                  {aiEnabled && (
                     <div className="flex items-center gap-2 mt-2 px-1">
                       <Button
                         size="sm"

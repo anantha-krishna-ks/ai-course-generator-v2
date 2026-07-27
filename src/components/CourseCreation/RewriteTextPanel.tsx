@@ -279,270 +279,345 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const isError = status === "error";
 
   return (
-    <div
-      role="region"
-      aria-label="Rewrite with AI"
-      className={cn(
-        "relative animate-fade-in mt-1 border-t border-dashed",
-        isError ? "border-destructive/30" : "border-primary/25"
-      )}
-    >
-      {/* ─── Command row: chips + inline instruction + close ─── */}
-      <div className="flex items-center gap-2 flex-wrap pt-2 px-1">
-        <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-primary">
-          <AISparkles className="w-3.5 h-3.5" />
-          Edit with AI
-        </div>
-
-        <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-none min-w-0">
-          {PRESETS.map((p) => {
-            const Icon = p.icon;
-            const isActive = activePreset === p.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => handlePreset(p.id)}
-                disabled={!hasContent || status === "loading"}
-                title={p.hint}
-                className={cn(
-                  "inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-[11px] font-medium whitespace-nowrap transition-colors flex-shrink-0",
-                  "disabled:opacity-40 disabled:cursor-not-allowed",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground/70 hover:text-foreground hover:bg-muted/60"
-                )}
-              >
-                <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground")} />
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={onCancel}
-          aria-label="Close rewrite"
-          className="w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center justify-center transition-colors ml-auto"
-        >
-          <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-        </button>
+    <div role="region" aria-label="Rewrite with AI" className="relative animate-fade-in">
+      {/* Continuation glyph — a small corner-return arrow that reads as
+          "this panel edits the text above". Sits inside the block's left gutter. */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "absolute -top-1 left-2 flex items-center justify-center w-5 h-5 rounded-full bg-background",
+          isError ? "text-destructive/70" : "text-primary/70"
+        )}
+      >
+        <CornerDownRight className="w-3.5 h-3.5" />
       </div>
 
-      {/* ─── Custom instruction — inline, borderless input with send button ─── */}
-      <div className="mt-1.5 flex items-end gap-1 px-1">
-        <textarea
-          ref={inputRef}
-          value={instruction}
-          onChange={(e) => {
-            setInstruction(e.target.value);
-            e.target.style.height = "auto";
-            e.target.style.height = Math.min(e.target.scrollHeight, 88) + "px";
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey && instruction.trim() && hasContent) {
-              e.preventDefault();
-              handleSubmitInstruction();
-            }
-            if (e.key === "Escape") {
-              e.preventDefault();
-              onCancel();
-            }
-          }}
-          placeholder={hasContent ? "Or describe the change you want… (⏎ to send)" : "Add text first"}
-          aria-label="Custom rewrite instruction"
-          disabled={!hasContent || status === "loading"}
-          rows={1}
-          className="flex-1 bg-transparent text-[12px] text-foreground placeholder:text-muted-foreground/70 outline-none resize-none min-h-[28px] max-h-[88px] py-1 px-2 disabled:opacity-50"
-        />
-        <button
-          type="button"
-          onClick={handleSubmitInstruction}
-          disabled={!instruction.trim() || !hasContent || status === "loading"}
-          aria-label="Send instruction"
+      <div
+        className={cn(
+          "relative rounded-2xl overflow-hidden bg-card border transition-colors",
+          isError
+            ? "border-destructive/30 shadow-[0_1px_0_hsl(var(--destructive)/0.05),0_12px_28px_-16px_hsl(var(--destructive)/0.28)]"
+            : "border-primary/25 shadow-[0_1px_0_hsl(var(--primary)/0.05),0_12px_28px_-16px_hsl(var(--primary)/0.28)]"
+        )}
+      >
+        {/* Left accent rail — the visual "bracket" that ties this card to the block above */}
+        <div
+          aria-hidden="true"
           className={cn(
-            "w-7 h-7 rounded-md flex-shrink-0 flex items-center justify-center transition-colors",
-            instruction.trim() && hasContent && status !== "loading"
-              ? "bg-primary text-primary-foreground hover:bg-primary/90"
-              : "text-muted-foreground/60"
+            "absolute inset-y-0 left-0 w-[3px]",
+            isError ? "bg-destructive" : "bg-primary"
           )}
-        >
-          {status === "loading" ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" focusable="false" />
-          ) : (
-            <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-          )}
-        </button>
-      </div>
+        />
 
-      {/* ─── Suggestion body — inline, no card, no bg ─── */}
-      {showSuggestion && (
-        <div className="mt-1 px-1 animate-fade-in">
-          {/* Meta row: status label + version stepper + view toggle */}
-          <div className="flex items-center gap-2 py-1.5">
-            {isError ? (
-              <AlertTriangle className="w-3 h-3 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
-            ) : status === "loading" ? (
-              <Loader2 className="w-3 h-3 text-primary animate-spin flex-shrink-0" aria-hidden="true" focusable="false" />
-            ) : (
-              <Sparkles className="w-3 h-3 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
-            )}
-            <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-              {status === "loading" && "Generating…"}
-              {status === "preview" && (current?.label ?? "Suggestion")}
-              {status === "error" && "Failed"}
-            </span>
+        {/* ─────────── Command bar ─────────── */}
+        <div className="relative pl-5 pr-2 py-2.5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/85 pr-1">
+              <AISparkles className="w-3.5 h-3.5 text-primary" />
+              Edit with AI
+            </div>
 
-            {status === "preview" && variants.length > 1 && (
-              <div className="flex items-center gap-0.5 ml-1">
-                <button
-                  type="button"
-                  onClick={() => canPrev && setVariantIndex(variantIndex - 1)}
-                  disabled={!canPrev}
-                  aria-label="Previous version"
-                  className="w-4 h-4 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronLeft className="w-3 h-3" aria-hidden="true" focusable="false" />
-                </button>
-                <span className="text-[10px] font-medium tabular-nums text-muted-foreground">
-                  v{variantIndex + 1}<span className="opacity-50">/{variants.length}</span>
+            <span className="w-px h-4 bg-border/70" aria-hidden="true" />
+
+            {/* Preset chips */}
+            <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-none flex-shrink min-w-0">
+              {PRESETS.map((p) => {
+                const Icon = p.icon;
+                const isActive = activePreset === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => handlePreset(p.id)}
+                    disabled={!hasContent || status === "loading"}
+                    title={p.hint}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-[11px] font-medium whitespace-nowrap transition-all duration-150 flex-shrink-0",
+                      "disabled:opacity-40 disabled:cursor-not-allowed",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-foreground/70 hover:text-foreground hover:bg-muted/60"
+                    )}
+                  >
+                    <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground")} />
+                    {p.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={onCancel}
+              aria-label="Close rewrite"
+              className="w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center justify-center transition-colors flex-shrink-0 ml-auto"
+            >
+              <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            </button>
+          </div>
+
+          {/* Custom instruction — dedicated row so it never fights the preset chips */}
+          <div className="mt-2 flex items-end gap-1.5 rounded-lg border border-border/70 bg-muted/30 pl-3 pr-1 py-0.5 focus-within:border-primary/40 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+            <textarea
+              ref={inputRef}
+              value={instruction}
+              onChange={(e) => {
+                setInstruction(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = Math.min(e.target.scrollHeight, 88) + "px";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && instruction.trim() && hasContent) {
+                  e.preventDefault();
+                  handleSubmitInstruction();
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault();
+                  onCancel();
+                }
+              }}
+              placeholder={hasContent ? "Or describe the change you want… (⏎ to send)" : "Add text first"}
+              aria-label="Custom rewrite instruction"
+              disabled={!hasContent || status === "loading"}
+              rows={1}
+              className="flex-1 bg-transparent text-[12px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1.5 disabled:opacity-50"
+            />
+            <button
+              type="button"
+              onClick={handleSubmitInstruction}
+              disabled={!instruction.trim() || !hasContent || status === "loading"}
+              aria-label="Send instruction"
+              className={cn(
+                "w-7 h-7 rounded-md flex-shrink-0 flex items-center justify-center transition-colors my-auto",
+                instruction.trim() && hasContent && status !== "loading"
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-transparent text-muted-foreground"
+              )}
+            >
+              {status === "loading" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" focusable="false" />
+              ) : (
+                <ArrowUp className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* ─────────── Suggestion section (same card, hairline divider) ─────────── */}
+        {showSuggestion && (
+          <div className="relative border-t border-border/60 bg-muted/20 animate-fade-in">
+            {/* Sub-header: label + version stepper + view toggle */}
+            <div className="relative flex items-center justify-between gap-3 pl-5 pr-3 py-2 border-b border-border/50">
+              <div className="flex items-center gap-2 min-w-0">
+                {isError ? (
+                  <AlertTriangle className="w-3.5 h-3.5 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
+                ) : status === "loading" ? (
+                  <Loader2 className="w-3.5 h-3.5 text-primary animate-spin flex-shrink-0" aria-hidden="true" focusable="false" />
+                ) : (
+                  <Sparkles className="w-3.5 h-3.5 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
+                )}
+                <span className="text-[11px] font-semibold text-foreground truncate">
+                  {status === "loading" && "Generating suggestion…"}
+                  {status === "preview" && (current?.label ?? "AI suggestion")}
+                  {status === "error" && "Couldn't generate"}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => canNext && setVariantIndex(variantIndex + 1)}
-                  disabled={!canNext}
-                  aria-label="Next version"
-                  className="w-4 h-4 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronRight className="w-3 h-3" aria-hidden="true" focusable="false" />
-                </button>
+
+                {status === "preview" && variants.length > 1 && (
+                  <div className="flex items-center gap-0.5 ml-1 rounded-md border border-border/70 bg-background pl-0.5 pr-1.5 h-6">
+                    <button
+                      type="button"
+                      onClick={() => canPrev && setVariantIndex(variantIndex - 1)}
+                      disabled={!canPrev}
+                      aria-label="Previous version"
+                      className="w-5 h-5 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronLeft className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    </button>
+                    <span className="text-[10px] font-medium tabular-nums text-muted-foreground">
+                      v{variantIndex + 1}<span className="opacity-50">/{variants.length}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => canNext && setVariantIndex(variantIndex + 1)}
+                      disabled={!canNext}
+                      aria-label="Next version"
+                      className="w-5 h-5 rounded inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronRight className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    </button>
+                  </div>
+                )}
+
+                {status === "preview" && (
+                  <div
+                    className="flex items-center rounded-md border border-border/70 bg-background p-0.5 h-6 ml-1"
+                    role="group"
+                    aria-label="Suggestion view mode"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("diff")}
+                      aria-pressed={viewMode === "diff"}
+                      className={cn(
+                        "inline-flex items-center gap-1 h-5 px-1.5 rounded text-[10px] font-medium transition-colors",
+                        viewMode === "diff"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <GitCompare className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Diff
+                      {(diffStats.added > 0 || diffStats.removed > 0) && (
+                        <span className="tabular-nums opacity-70">
+                          +{diffStats.added}/−{diffStats.removed}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("clean")}
+                      aria-pressed={viewMode === "clean"}
+                      className={cn(
+                        "inline-flex items-center gap-1 h-5 px-1.5 rounded text-[10px] font-medium transition-colors",
+                        viewMode === "clean"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Clean
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Body */}
+            {status === "loading" && (
+              <div className="relative pl-5 pr-4 pb-4 pt-3 space-y-2">
+                <div className="h-2.5 rounded-full bg-muted animate-pulse w-[92%]" />
+                <div className="h-2.5 rounded-full bg-muted animate-pulse w-[78%]" />
+                <div className="h-2.5 rounded-full bg-muted animate-pulse w-[85%]" />
+                <div className="h-2.5 rounded-full bg-muted animate-pulse w-[54%]" />
+                <p className="text-[11px] text-muted-foreground pt-1">
+                  Your original stays untouched until you Replace.
+                </p>
               </div>
             )}
 
-            {status === "preview" && (
-              <button
-                type="button"
-                onClick={() => setViewMode(viewMode === "diff" ? "clean" : "diff")}
-                className="ml-auto inline-flex items-center gap-1 h-5 px-1.5 rounded text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-                aria-label={`Switch to ${viewMode === "diff" ? "clean" : "diff"} view`}
-              >
+            {status === "preview" && current && (
+              <div className="relative pl-5 pr-4 pb-3 pt-3 max-h-80 overflow-y-auto">
                 {viewMode === "diff" ? (
-                  <>
-                    <GitCompare className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    <span className="tabular-nums">+{diffStats.added}/−{diffStats.removed}</span>
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    Clean
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-
-          {status === "loading" && (
-            <div className="space-y-1.5 pb-2">
-              <div className="h-2 rounded-full bg-muted animate-pulse w-[92%]" />
-              <div className="h-2 rounded-full bg-muted animate-pulse w-[78%]" />
-              <div className="h-2 rounded-full bg-muted animate-pulse w-[85%]" />
-            </div>
-          )}
-
-          {status === "preview" && current && (
-            <div className="max-h-72 overflow-y-auto py-1">
-              {viewMode === "diff" ? (
-                <div
-                  className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
-                  aria-label="Inline diff between original and rewritten text"
-                >
-                  {diffOps.length === 0 ? (
-                    <span className="text-muted-foreground italic">No textual changes detected.</span>
-                  ) : (
-                    diffOps.map((op, idx) => {
-                      if (op.type === "equal") return <span key={idx}>{op.value}</span>;
-                      if (op.type === "insert") {
+                  <div
+                    className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                    aria-label="Inline diff between original and rewritten text"
+                  >
+                    {diffOps.length === 0 ? (
+                      <span className="text-muted-foreground italic">No textual changes detected.</span>
+                    ) : (
+                      diffOps.map((op, idx) => {
+                        if (op.type === "equal") return <span key={idx}>{op.value}</span>;
+                        if (op.type === "insert") {
+                          return (
+                            <span
+                              key={idx}
+                              className="rounded-[3px] px-0.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                            >
+                              {op.value}
+                            </span>
+                          );
+                        }
                         return (
                           <span
                             key={idx}
-                            className="rounded-[3px] px-0.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                            className="rounded-[3px] px-0.5 bg-destructive/10 text-destructive/85 line-through decoration-destructive/50"
                           >
                             {op.value}
                           </span>
                         );
-                      }
-                      return (
-                        <span
-                          key={idx}
-                          className="rounded-[3px] px-0.5 bg-destructive/10 text-destructive/85 line-through decoration-destructive/50"
-                        >
-                          {op.value}
-                        </span>
-                      );
-                    })
+                      })
+                    )}
+                  </div>
+                ) : (
+                  <div
+                    className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere] text-[13px]"
+                    dangerouslySetInnerHTML={{ __html: current.html }}
+                  />
+                )}
+              </div>
+            )}
+
+            {status === "error" && (
+              <div className="relative pl-5 pr-4 pb-4 pt-3">
+                <p className="text-[12px] text-muted-foreground">
+                  The AI couldn't return a rewrite. Your original content is unchanged — try again or pick a different style.
+                </p>
+              </div>
+            )}
+
+            {/* Action bar — one clear place for decisions */}
+            {(status === "preview" || status === "error") && (
+              <div className="relative flex items-center justify-between gap-3 pl-5 pr-3 py-2 border-t border-border/50 bg-background/60">
+                {status === "preview" && viewMode === "diff" && (diffStats.added > 0 || diffStats.removed > 0) ? (
+                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground tabular-nums">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-sm bg-emerald-500/50" aria-hidden="true" />
+                      {diffStats.added} added
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-sm bg-destructive/50" aria-hidden="true" />
+                      {diffStats.removed} removed
+                    </span>
+                  </div>
+                ) : (
+                  <span />
+                )}
+
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {status === "preview" && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleDiscard}
+                        className="h-7 px-2.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        Discard
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRegenerate}
+                        className="h-7 px-2.5 rounded-md text-[11px] font-medium text-foreground/80 hover:text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        Regenerate
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleReplace}
+                        className="h-7 px-3 rounded-md text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
+                      >
+                        <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        Replace
+                      </button>
+                    </>
+                  )}
+                  {status === "error" && (
+                    <button
+                      type="button"
+                      onClick={handleRegenerate}
+                      className="h-7 px-2.5 rounded-md text-[11px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      Try again
+                    </button>
                   )}
                 </div>
-              ) : (
-                <div
-                  className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere] text-[13px]"
-                  dangerouslySetInnerHTML={{ __html: current.html }}
-                />
-              )}
-            </div>
-          )}
-
-          {status === "error" && (
-            <p className="text-[12px] text-muted-foreground py-1">
-              The AI couldn't return a rewrite. Your original content is unchanged — try again or pick a different style.
-            </p>
-          )}
-
-          {/* Inline actions */}
-          {(status === "preview" || status === "error") && (
-            <div className="flex items-center justify-end gap-1 pt-1.5 pb-1">
-              {status === "preview" && (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleDiscard}
-                    className="h-7 px-2.5 rounded-md text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    Discard
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleRegenerate}
-                    className="h-7 px-2.5 rounded-md text-[11px] font-medium text-foreground/80 hover:text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    Regenerate
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleReplace}
-                    className="h-7 px-3 rounded-md text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 transition-colors"
-                  >
-                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    Replace
-                  </button>
-                </>
-              )}
-              {status === "error" && (
-                <button
-                  type="button"
-                  onClick={handleRegenerate}
-                  className="h-7 px-2.5 rounded-md text-[11px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  Try again
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
