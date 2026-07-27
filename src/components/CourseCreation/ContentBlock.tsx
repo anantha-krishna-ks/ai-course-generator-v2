@@ -617,7 +617,20 @@ export function ContentBlock({
                     const colHasContent = colPlain.length > 0;
                     return (
                       <div key={i} className="min-w-0">
-                        <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
+                        {showRewritePanel && rewriteColIndex === i && rewritePreview !== null ? (
+                          <div className="relative rounded-xl border-2 border-primary/40 bg-primary/[0.03] shadow-[0_10px_30px_-14px_hsl(var(--primary)/0.35)] px-4 py-3 animate-fade-in">
+                            <div className="absolute -top-2.5 left-3 inline-flex items-center gap-1 h-5 px-2 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold uppercase tracking-wide shadow-[0_2px_6px_-2px_hsl(var(--primary)/0.5)]">
+                              <AISparkles className="w-2.5 h-2.5" />
+                              AI preview
+                            </div>
+                            <div
+                              className="prose prose-sm dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                              dangerouslySetInnerHTML={{ __html: rewritePreview }}
+                            />
+                          </div>
+                        ) : (
+                          <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
+                        )}
                         <div className="flex items-center gap-2 mt-2 px-1">
                           <Button
                             size="sm"
@@ -651,14 +664,17 @@ export function ContentBlock({
                         {showRewritePanel && rewriteColIndex === i && type === "text" && (
                           <RewriteTextPanel
                             content={col}
+                            onPreviewChange={setRewritePreview}
                             onReplace={(next) => {
                               handleColumnChange(i, next);
                               setShowRewritePanel(false);
                               setRewriteColIndex(null);
+                              setRewritePreview(null);
                             }}
                             onCancel={() => {
                               setShowRewritePanel(false);
                               setRewriteColIndex(null);
+                              setRewritePreview(null);
                             }}
                           />
                         )}
