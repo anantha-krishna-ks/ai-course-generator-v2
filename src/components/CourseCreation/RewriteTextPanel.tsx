@@ -244,7 +244,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                       : "bg-background text-foreground border-border hover:border-primary/40 hover:bg-primary/[0.04]"
                   )}
                 >
-                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary-foreground" : "text-primary")} aria-hidden="true" focusable="false" />
+                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary-foreground" : "text-primary")} />
                   {p.label}
                 </button>
               );
