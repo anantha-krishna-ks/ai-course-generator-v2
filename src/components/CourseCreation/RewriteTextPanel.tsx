@@ -16,6 +16,8 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  GitCompare,
+  FileText,
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { cn } from "@/lib/utils";
