@@ -183,7 +183,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         {/* Brand chip */}
         <div className="inline-flex items-center gap-2 pl-2 pr-3 h-9 rounded-full bg-primary/10 text-primary flex-shrink-0">
           <AISparkles className="w-4 h-4" />
-          <span className="text-[13px] font-semibold whitespace-nowrap">Rewrite</span>
+          <span className="text-[12px] font-semibold whitespace-nowrap">Rewrite</span>
         </div>
 
         {/* Divider */}
