@@ -328,7 +328,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 {status === "error" ? (
                   <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
                 ) : (
-                  <Sparkles className={cn("w-4 h-4 flex-shrink-0", status === "error" ? "text-destructive" : "text-warning")} aria-hidden="true" focusable="false" />
+                  <Sparkles className="w-4 h-4 text-warning flex-shrink-0" aria-hidden="true" focusable="false" />
                 )}
                 <span className="text-[14px] font-semibold text-foreground truncate">
                   {status === "loading" && "Generating suggestion…"}
