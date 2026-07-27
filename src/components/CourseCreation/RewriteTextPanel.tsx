@@ -277,15 +277,15 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
 
       {/* ─────────── Suggestion card (only when working / done / error) ─────────── */}
       {showSuggestion && (
-        <div className="relative pl-4 mt-2">
+        <div className="relative pl-5 mt-3">
           {/* Vertical connector line */}
           <span
-            className="absolute left-[10px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-primary/20 to-transparent"
+            className="absolute left-[12px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-primary/20 to-transparent"
             aria-hidden="true"
           />
           {/* Dot on connector */}
           <span
-            className="absolute left-[7px] top-3 w-[7px] h-[7px] rounded-full bg-primary ring-4 ring-background"
+            className="absolute left-[8px] top-3.5 w-[9px] h-[9px] rounded-full bg-primary ring-4 ring-background"
             aria-hidden="true"
           />
 
@@ -298,49 +298,49 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             )}
           >
             {/* Header row */}
-            <div className="flex items-center justify-between gap-3 px-3.5 py-2 border-b border-primary/10 bg-background/60">
-              <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-primary/10 bg-background/60">
+              <div className="flex items-center gap-2.5 min-w-0">
                 {status === "error" ? (
-                  <AlertTriangle className="w-3.5 h-3.5 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
+                  <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
                 ) : (
-                  <Sparkles className="w-3.5 h-3.5 text-primary flex-shrink-0" aria-hidden="true" />
+                  <Sparkles className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
                 )}
-                <span className="text-[12px] font-semibold text-foreground truncate">
+                <span className="text-[14px] font-semibold text-foreground truncate">
                   {status === "loading" && "Generating suggestion…"}
                   {status === "preview" && "AI suggestion"}
                   {status === "error" && "Couldn't generate a suggestion"}
                 </span>
                 {status !== "error" && (
-                  <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
+                  <span className="text-[13px] text-muted-foreground truncate hidden sm:inline">
                     · {labelForSuggestion}
                   </span>
                 )}
               </div>
 
               {status === "preview" && (
-                <div className="flex items-center gap-1 flex-shrink-0">
+                <div className="flex items-center gap-1.5 flex-shrink-0">
                   <button
                     type="button"
                     onClick={handleDiscard}
-                    className="h-7 px-2.5 rounded-full text-[11.5px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1 transition-colors"
+                    className="h-8 px-3 rounded-full text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
                   >
-                    <Trash2 className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Discard
                   </button>
                   <button
                     type="button"
                     onClick={handleRegenerate}
-                    className="h-7 px-2.5 rounded-full text-[11.5px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1 transition-colors"
+                    className="h-8 px-3 rounded-full text-[13px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
                   >
-                    <RefreshCw className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Regenerate
                   </button>
                   <button
                     type="button"
                     onClick={handleReplace}
-                    className="h-7 px-3 rounded-full text-[11.5px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
+                    className="h-8 px-3.5 rounded-full text-[13px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
                   >
-                    <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Replace
                   </button>
                 </div>
@@ -350,9 +350,9 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <button
                   type="button"
                   onClick={handleRegenerate}
-                  className="h-7 px-2.5 rounded-full text-[11.5px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1 transition-colors flex-shrink-0"
+                  className="h-8 px-3 rounded-full text-[13px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
                 >
-                  <RefreshCw className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                   Try again
                 </button>
               )}
@@ -360,29 +360,29 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
 
             {/* Body */}
             {status === "loading" && (
-              <div className="px-4 py-4 space-y-2">
-                <div className="h-2.5 rounded-full bg-primary/10 animate-pulse w-[92%]" />
-                <div className="h-2.5 rounded-full bg-primary/10 animate-pulse w-[78%]" />
-                <div className="h-2.5 rounded-full bg-primary/10 animate-pulse w-[85%]" />
-                <div className="h-2.5 rounded-full bg-primary/10 animate-pulse w-[64%]" />
-                <p className="text-[11px] text-muted-foreground pt-1">
+              <div className="px-5 py-5 space-y-2.5">
+                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[92%]" />
+                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[78%]" />
+                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[85%]" />
+                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[64%]" />
+                <p className="text-[13px] text-muted-foreground pt-1">
                   Your original stays untouched.
                 </p>
               </div>
             )}
 
             {status === "preview" && (
-              <div className="px-4 py-3 max-h-72 overflow-y-auto">
+              <div className="px-5 py-4 max-h-80 overflow-y-auto">
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                  className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
                   dangerouslySetInnerHTML={{ __html: preview }}
                 />
               </div>
             )}
 
             {status === "error" && (
-              <div className="px-4 py-3">
-                <p className="text-[12px] text-muted-foreground">
+              <div className="px-5 py-4">
+                <p className="text-[14px] text-muted-foreground">
                   The AI couldn't return a rewrite. Your original content is unchanged — try again or pick a different style.
                 </p>
               </div>
