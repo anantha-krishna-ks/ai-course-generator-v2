@@ -202,6 +202,8 @@ export function ContentBlock({
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [showRewritePanel, setShowRewritePanel] = useState(false);
+  const [rewriteColIndex, setRewriteColIndex] = useState<number | null>(null);
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [imageStyle, setImageStyle] = useState<typeof IMAGE_STYLE_OPTIONS[number]["value"]>("photorealistic");
