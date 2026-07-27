@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DescriptionEditor } from "./DescriptionEditor";
+import { RewriteTextPanel } from "./RewriteTextPanel";
 import { ImageBlock } from "./ImageBlock";
 import { AIBlockLoader } from "./AIBlockLoader";
 import { MediaUploadBlock } from "./MediaUploadBlock";
