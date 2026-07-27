@@ -459,6 +459,49 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                     </button>
                   </div>
                 )}
+
+                {/* Diff / Clean segmented toggle */}
+                {status === "preview" && (
+                  <div
+                    className="flex items-center rounded-full border border-border/70 bg-background/70 p-0.5 h-6 ml-1"
+                    role="group"
+                    aria-label="Suggestion view mode"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("diff")}
+                      aria-pressed={viewMode === "diff"}
+                      className={cn(
+                        "inline-flex items-center gap-1 h-5 px-1.5 rounded-full text-[10px] font-medium transition-colors",
+                        viewMode === "diff"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <GitCompare className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Diff
+                      {(diffStats.added > 0 || diffStats.removed > 0) && (
+                        <span className="tabular-nums opacity-70">
+                          +{diffStats.added}/−{diffStats.removed}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("clean")}
+                      aria-pressed={viewMode === "clean"}
+                      className={cn(
+                        "inline-flex items-center gap-1 h-5 px-1.5 rounded-full text-[10px] font-medium transition-colors",
+                        viewMode === "clean"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Clean
+                    </button>
+                  </div>
+                )}
               </div>
 
               {status === "preview" && (
