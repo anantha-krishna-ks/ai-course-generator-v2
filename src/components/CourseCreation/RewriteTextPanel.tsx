@@ -375,7 +375,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <button
                   type="button"
                   onClick={handleRegenerate}
-                  className="h-8 px-3 rounded-full text-[12px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
+                  className="h-8 px-3 rounded-full text-[11px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
                 >
                   <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                   Try again
