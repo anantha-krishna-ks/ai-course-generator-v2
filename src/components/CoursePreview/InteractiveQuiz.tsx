@@ -542,7 +542,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
   const answeredPct = total === 0 ? 0 : Math.round((answeredCount / total) * 100);
 
   return (
-    <div className="space-y-4">
+    <div className={cn("space-y-4", isCompactView && "relative")}>
       {/* Exam header */}
       <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
@@ -898,7 +898,12 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
       <AnimatePresence>
         {confirmOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/40 backdrop-blur-sm"
+            className={cn(
+              "z-50 flex bg-foreground/40 backdrop-blur-sm",
+              isCompactView
+                ? "absolute inset-0 items-end justify-stretch"
+                : "fixed inset-0 items-center justify-center p-4"
+            )}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -908,14 +913,24 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
             aria-label="Submit exam confirmation"
           >
             <motion.div
-              className="w-full max-w-xl rounded-2xl bg-card border border-border shadow-2xl overflow-hidden"
-              initial={{ y: 12, opacity: 0, scale: 0.98 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 8, opacity: 0, scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 260, damping: 24 }}
+              className={cn(
+                "bg-card border border-border shadow-2xl overflow-hidden",
+                isCompactView
+                  ? "w-full rounded-t-2xl border-b-0"
+                  : "w-full max-w-xl rounded-2xl"
+              )}
+              initial={isCompactView ? { y: "100%", opacity: 1 } : { y: 12, opacity: 0, scale: 0.98 }}
+              animate={isCompactView ? { y: 0, opacity: 1 } : { y: 0, opacity: 1, scale: 1 }}
+              exit={isCompactView ? { y: "100%", opacity: 1 } : { y: 8, opacity: 0, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 260, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-6">
+              {isCompactView && (
+                <div className="flex justify-center pt-2 pb-1" aria-hidden="true">
+                  <div className="h-1 w-10 rounded-full bg-border" />
+                </div>
+              )}
+              <div className={cn(isCompactView ? "p-4" : "p-6")}>
                 <div className="flex items-start gap-3">
                   <div className={cn(
                     "w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0",
@@ -958,7 +973,10 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                   </div>
                 </div>
               </div>
-              <div className="px-6 py-3 bg-muted/40 border-t border-border/60 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+              <div className={cn(
+                "bg-muted/40 border-t border-border/60 flex flex-col gap-2",
+                isCompactView ? "px-4 py-3" : "px-6 py-3 sm:flex-row sm:items-center sm:justify-end"
+              )}>
                 {unansweredCount > 0 && (
                   <Button variant="ghost" size="sm" onClick={jumpToFirstUnanswered} className="rounded-full w-full sm:w-auto">
                     Review unanswered
@@ -974,6 +992,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
               </div>
             </motion.div>
           </motion.div>
+
         )}
       </AnimatePresence>
     </div>
