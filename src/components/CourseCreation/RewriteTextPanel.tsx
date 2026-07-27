@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   Sparkles,
   Wand2,
@@ -106,6 +106,7 @@ function mockRewrite(original: string, preset: RewritePresetId | null, instructi
 }
 
 export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPanelProps) {
+  const dotPatternId = useId().replace(/:/g, "-");
   const [activePreset, setActivePreset] = useState<RewritePresetId | null>(null);
   const [instruction, setInstruction] = useState("");
   const [lastUsedInstruction, setLastUsedInstruction] = useState("");
@@ -280,30 +281,54 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         <div className="relative pl-5 mt-3">
           {/* Vertical connector line */}
           <span
-            className="absolute left-[12px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-primary/20 to-transparent"
+            className="absolute left-[12px] top-0 bottom-0 w-px bg-warning/30"
             aria-hidden="true"
           />
           {/* Dot on connector */}
           <span
-            className="absolute left-[8px] top-3.5 w-[9px] h-[9px] rounded-full bg-primary ring-4 ring-background"
+            className="absolute left-[8px] top-3.5 w-[9px] h-[9px] rounded-full bg-warning ring-4 ring-background"
             aria-hidden="true"
           />
 
           <div
             className={cn(
-              "rounded-2xl border bg-gradient-to-b from-primary/[0.04] to-background overflow-hidden animate-fade-in",
+              "relative rounded-2xl border overflow-hidden animate-fade-in",
               status === "error"
                 ? "border-destructive/30 shadow-[0_6px_20px_-10px_hsl(var(--destructive)/0.25)]"
-                : "border-primary/25 shadow-[0_6px_20px_-10px_hsl(var(--primary)/0.22)]"
+                : "border-warning/30 shadow-[0_6px_20px_-10px_hsl(var(--warning)/0.18)] bg-warning/[0.04]"
             )}
           >
+            {status !== "error" && (
+              <svg
+                className="absolute inset-0 w-full h-full text-warning/[0.10] pointer-events-none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <defs>
+                  <pattern
+                    id={dotPatternId}
+                    x="0"
+                    y="0"
+                    width="24"
+                    height="24"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill={`url(#${dotPatternId})`} />
+              </svg>
+            )}
             {/* Header row */}
-            <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-primary/10 bg-background/60">
+            <div className={cn(
+              "relative flex items-center justify-between gap-3 px-4 py-2.5 border-b bg-background/60",
+              status === "error" ? "border-destructive/10" : "border-warning/10"
+            )}>
               <div className="flex items-center gap-2.5 min-w-0">
                 {status === "error" ? (
                   <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
                 ) : (
-                  <Sparkles className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
+                  <Sparkles className="w-4 h-4 text-warning flex-shrink-0" aria-hidden="true" focusable="false" />
                 )}
                 <span className="text-[14px] font-semibold text-foreground truncate">
                   {status === "loading" && "Generating suggestion…"}
