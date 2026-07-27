@@ -204,6 +204,7 @@ export function ContentBlock({
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [showRewritePanel, setShowRewritePanel] = useState(false);
   const [rewriteColIndex, setRewriteColIndex] = useState<number | null>(null);
+  const [rewritePreview, setRewritePreview] = useState<string | null>(null);
   const [showVersionsDialog, setShowVersionsDialog] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [imageStyle, setImageStyle] = useState<typeof IMAGE_STYLE_OPTIONS[number]["value"]>("photorealistic");
