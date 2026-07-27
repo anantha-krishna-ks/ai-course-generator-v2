@@ -347,7 +347,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                   <button
                     type="button"
                     onClick={handleDiscard}
-                    className="h-8 px-3 rounded-full text-[12px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
+                    className="h-8 px-3 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Discard
@@ -355,7 +355,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                   <button
                     type="button"
                     onClick={handleRegenerate}
-                    className="h-8 px-3 rounded-full text-[12px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
+                    className="h-8 px-3 rounded-full text-[11px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Regenerate
@@ -363,7 +363,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                   <button
                     type="button"
                     onClick={handleReplace}
-                    className="h-8 px-3.5 rounded-full text-[12px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
+                    className="h-8 px-3.5 rounded-full text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
                   >
                     <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Replace
