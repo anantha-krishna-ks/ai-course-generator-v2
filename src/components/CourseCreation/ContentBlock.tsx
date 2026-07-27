@@ -611,33 +611,59 @@ export function ContentBlock({
             <div className="w-full">
               {colCount > 1 ? (
                 <div className={cn("grid gap-4", colCount === 3 ? "grid-cols-3" : "grid-cols-2")}>
-                  {contentColumns.map((col, i) => (
-                    <div key={i} className="min-w-0">
-                      <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
-                      <div className="flex items-center gap-2 mt-2 px-1">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
-                        >
-                          <AISparkles className="w-3 h-3" />
-                          Ask AI
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
-                          onClick={() => {
-                            setVersionDialogCol(i);
-                            setSelectedVersionId(null);
-                          }}
-                        >
-                          <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
-                          Version History
-                        </Button>
+                  {contentColumns.map((col, i) => {
+                    const colPlain = col.replace(/<!--[\s\S]*?-->/g, "").replace(/<[^>]*>/g, "").trim();
+                    const colHasContent = colPlain.length > 0;
+                    return (
+                      <div key={i} className="min-w-0">
+                        <DescriptionEditor content={col} onChange={(val) => handleColumnChange(i, val)} />
+                        <div className="flex items-center gap-2 mt-2 px-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
+                            onClick={() => {
+                              if (colHasContent) {
+                                setRewriteColIndex(i);
+                                setShowRewritePanel(true);
+                              } else {
+                                setShowGenerateDialog(true);
+                              }
+                            }}
+                          >
+                            <AISparkles className="w-3 h-3" />
+                            {colHasContent ? "Rewrite with AI" : "Ask AI"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
+                            onClick={() => {
+                              setVersionDialogCol(i);
+                              setSelectedVersionId(null);
+                            }}
+                          >
+                            <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            Version History
+                          </Button>
+                        </div>
+                        {showRewritePanel && rewriteColIndex === i && type === "text" && (
+                          <RewriteTextPanel
+                            content={col}
+                            onReplace={(next) => {
+                              handleColumnChange(i, next);
+                              setShowRewritePanel(false);
+                              setRewriteColIndex(null);
+                            }}
+                            onCancel={() => {
+                              setShowRewritePanel(false);
+                              setRewriteColIndex(null);
+                            }}
+                          />
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <>
@@ -653,10 +679,17 @@ export function ContentBlock({
                         size="sm"
                         variant="ghost"
                         className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
-                        onClick={() => setShowGenerateDialog(true)}
+                        onClick={() => {
+                          if (type === "text" && hasContent) {
+                            setRewriteColIndex(null);
+                            setShowRewritePanel(true);
+                          } else {
+                            setShowGenerateDialog(true);
+                          }
+                        }}
                       >
                         <AISparkles className="w-3 h-3" />
-                        Ask AI
+                        {type === "text" && hasContent ? "Rewrite with AI" : "Ask AI"}
                       </Button>
                       <Button
                         size="sm"
@@ -668,6 +701,16 @@ export function ContentBlock({
                         Version History
                       </Button>
                     </div>
+                  )}
+                  {aiEnabled && showRewritePanel && rewriteColIndex === null && type === "text" && (
+                    <RewriteTextPanel
+                      content={content}
+                      onReplace={(next) => {
+                        onChange(next);
+                        setShowRewritePanel(false);
+                      }}
+                      onCancel={() => setShowRewritePanel(false)}
+                    />
                   )}
                 </>
               )}
