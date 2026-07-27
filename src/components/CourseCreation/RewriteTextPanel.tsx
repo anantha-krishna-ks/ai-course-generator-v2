@@ -178,18 +178,18 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   return (
     <div role="region" aria-label="Rewrite with AI" className="mt-3 space-y-0 animate-fade-in">
       {/* ─────────── Toolbar (single row on desktop, wraps on narrow) ─────────── */}
-      <div className="rounded-2xl border border-primary/25 bg-background shadow-[0_4px_14px_-6px_hsl(var(--primary)/0.18)] px-2 py-1.5 flex items-center gap-1.5 flex-wrap">
+      <div className="rounded-2xl border border-primary/25 bg-background shadow-[0_4px_14px_-6px_hsl(var(--primary)/0.18)] px-3 py-2 flex items-center gap-2 flex-wrap">
         {/* Brand chip */}
-        <div className="inline-flex items-center gap-1.5 pl-1.5 pr-2 h-7 rounded-full bg-primary/10 text-primary flex-shrink-0">
-          <AISparkles className="w-3.5 h-3.5" />
-          <span className="text-[11.5px] font-semibold whitespace-nowrap">Rewrite</span>
+        <div className="inline-flex items-center gap-2 pl-2 pr-3 h-9 rounded-full bg-primary/10 text-primary flex-shrink-0">
+          <AISparkles className="w-4 h-4" />
+          <span className="text-[13px] font-semibold whitespace-nowrap">Rewrite</span>
         </div>
 
         {/* Divider */}
-        <span className="w-px h-5 bg-border/70 mx-0.5" aria-hidden="true" />
+        <span className="w-px h-6 bg-border/70 mx-0.5" aria-hidden="true" />
 
         {/* Preset chips */}
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none flex-shrink min-w-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-shrink min-w-0">
           {PRESETS.map((p) => {
             const Icon = p.icon;
             const isActive = activePreset === p.id;
@@ -201,14 +201,14 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 disabled={!hasContent || status === "loading"}
                 title={p.hint}
                 className={cn(
-                  "inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[11.5px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
+                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-[13px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
                   "disabled:opacity-40 disabled:cursor-not-allowed",
                   isActive
                     ? "bg-primary/10 text-primary border-primary/30"
                     : "bg-transparent text-foreground/75 border-transparent hover:text-primary hover:bg-primary/[0.06]"
                 )}
               >
-                <Icon className={cn("w-3 h-3", isActive ? "text-primary" : "text-muted-foreground")} />
+                <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
                 {p.label}
               </button>
             );
@@ -216,17 +216,17 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         </div>
 
         {/* Divider */}
-        <span className="w-px h-5 bg-border/70 mx-0.5 hidden md:inline-block" aria-hidden="true" />
+        <span className="w-px h-6 bg-border/70 mx-0.5 hidden md:inline-block" aria-hidden="true" />
 
         {/* Custom instruction — grows to fill row */}
-        <div className="flex items-end gap-1 flex-1 min-w-[180px] rounded-full border border-border/70 bg-muted/30 pl-3 pr-1 py-0.5 focus-within:border-primary/40 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+        <div className="flex items-end gap-1.5 flex-1 min-w-[220px] rounded-full border border-border/70 bg-muted/30 pl-4 pr-1.5 py-1 focus-within:border-primary/40 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/15 transition-all">
           <textarea
             ref={inputRef}
             value={instruction}
             onChange={(e) => {
               setInstruction(e.target.value);
               e.target.style.height = "auto";
-              e.target.style.height = Math.min(e.target.scrollHeight, 72) + "px";
+              e.target.style.height = Math.min(e.target.scrollHeight, 88) + "px";
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && instruction.trim() && hasContent) {
@@ -242,7 +242,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             aria-label="Custom rewrite instruction"
             disabled={!hasContent || status === "loading"}
             rows={1}
-            className="flex-1 bg-transparent text-[12.5px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[22px] max-h-[72px] py-1 disabled:opacity-50"
+            className="flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
           />
           <button
             type="button"
@@ -250,16 +250,16 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             disabled={!instruction.trim() || !hasContent || status === "loading"}
             aria-label="Send instruction"
             className={cn(
-              "w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center transition-colors my-auto",
+              "w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-colors my-auto",
               instruction.trim() && hasContent && status !== "loading"
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : "bg-transparent text-muted-foreground"
             )}
           >
             {status === "loading" ? (
-              <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" focusable="false" />
+              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" focusable="false" />
             ) : (
-              <ArrowUp className="w-3 h-3" aria-hidden="true" focusable="false" />
+              <ArrowUp className="w-4 h-4" aria-hidden="true" focusable="false" />
             )}
           </button>
         </div>
@@ -269,9 +269,9 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
           type="button"
           onClick={onCancel}
           aria-label="Close rewrite"
-          className="w-7 h-7 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center justify-center transition-colors flex-shrink-0"
+          className="w-8 h-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center justify-center transition-colors flex-shrink-0"
         >
-          <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+          <X className="w-4 h-4" aria-hidden="true" focusable="false" />
         </button>
       </div>
 
