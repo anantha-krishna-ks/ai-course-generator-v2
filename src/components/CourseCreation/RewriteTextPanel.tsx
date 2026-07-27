@@ -183,7 +183,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         {/* Brand chip */}
         <div className="inline-flex items-center gap-2 pl-2 pr-3 h-9 rounded-full bg-primary/10 text-primary flex-shrink-0">
           <AISparkles className="w-4 h-4" />
-          <span className="text-[12px] font-semibold whitespace-nowrap">Rewrite</span>
+          <span className="text-[11px] font-semibold whitespace-nowrap">Rewrite</span>
         </div>
 
         {/* Divider */}
@@ -202,7 +202,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 disabled={!hasContent || status === "loading"}
                 title={p.hint}
                 className={cn(
-                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
+                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-[11px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
                   "disabled:opacity-40 disabled:cursor-not-allowed",
                   isActive
                     ? "bg-primary/10 text-primary border-primary/30"
@@ -243,7 +243,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             aria-label="Custom rewrite instruction"
             disabled={!hasContent || status === "loading"}
             rows={1}
-            className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
+            className="flex-1 bg-transparent text-[12px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
           />
           <button
             type="button"
@@ -330,13 +330,13 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 ) : (
                   <Sparkles className="w-4 h-4 text-warning flex-shrink-0" aria-hidden="true" focusable="false" />
                 )}
-                <span className="text-[13px] font-semibold text-foreground truncate">
+                <span className="text-[12px] font-semibold text-foreground truncate">
                   {status === "loading" && "Generating suggestion…"}
                   {status === "preview" && "AI suggestion"}
                   {status === "error" && "Couldn't generate a suggestion"}
                 </span>
                 {status !== "error" && (
-                  <span className="text-[12px] text-muted-foreground truncate hidden sm:inline">
+                  <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
                     · {labelForSuggestion}
                   </span>
                 )}
@@ -347,7 +347,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                   <button
                     type="button"
                     onClick={handleDiscard}
-                    className="h-8 px-3 rounded-full text-[12px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
+                    className="h-8 px-3 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Discard
@@ -355,7 +355,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                   <button
                     type="button"
                     onClick={handleRegenerate}
-                    className="h-8 px-3 rounded-full text-[12px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
+                    className="h-8 px-3 rounded-full text-[11px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Regenerate
@@ -363,7 +363,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                   <button
                     type="button"
                     onClick={handleReplace}
-                    className="h-8 px-3.5 rounded-full text-[12px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
+                    className="h-8 px-3.5 rounded-full text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
                   >
                     <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Replace
@@ -375,7 +375,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <button
                   type="button"
                   onClick={handleRegenerate}
-                  className="h-8 px-3 rounded-full text-[12px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
+                  className="h-8 px-3 rounded-full text-[11px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
                 >
                   <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
                   Try again
@@ -390,7 +390,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[78%]" />
                 <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[85%]" />
                 <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[64%]" />
-                <p className="text-[12px] text-muted-foreground pt-1">
+                <p className="text-[11px] text-muted-foreground pt-1">
                   Your original stays untouched.
                 </p>
               </div>
