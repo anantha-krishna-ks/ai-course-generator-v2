@@ -542,7 +542,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
   const answeredPct = total === 0 ? 0 : Math.round((answeredCount / total) * 100);
 
   return (
-    <div className="space-y-4">
+    <div className={cn("space-y-4", isCompactView && "relative")}>
       {/* Exam header */}
       <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white shadow-lg">
         <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_20%_20%,#fff_1px,transparent_1px)] [background-size:14px_14px]" aria-hidden="true" />
