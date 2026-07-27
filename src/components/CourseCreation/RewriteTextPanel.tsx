@@ -311,7 +311,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
           <div className="animate-fade-in">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-medium text-primary uppercase tracking-wide flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+                <Sparkles className="w-3 h-3" aria-hidden="true" />
                 Rewrite preview
               </span>
               <span className="text-[11px] text-muted-foreground">Not applied yet</span>
