@@ -202,7 +202,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 disabled={!hasContent || status === "loading"}
                 title={p.hint}
                 className={cn(
-                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-[13px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
+                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
                   "disabled:opacity-40 disabled:cursor-not-allowed",
                   isActive
                     ? "bg-primary/10 text-primary border-primary/30"
