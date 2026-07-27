@@ -330,13 +330,13 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 ) : (
                   <Sparkles className="w-4 h-4 text-warning flex-shrink-0" aria-hidden="true" focusable="false" />
                 )}
-                <span className="text-[14px] font-semibold text-foreground truncate">
+                <span className="text-[13px] font-semibold text-foreground truncate">
                   {status === "loading" && "Generating suggestion…"}
                   {status === "preview" && "AI suggestion"}
                   {status === "error" && "Couldn't generate a suggestion"}
                 </span>
                 {status !== "error" && (
-                  <span className="text-[13px] text-muted-foreground truncate hidden sm:inline">
+                  <span className="text-[12px] text-muted-foreground truncate hidden sm:inline">
                     · {labelForSuggestion}
                   </span>
                 )}
