@@ -75,6 +75,71 @@ function htmlToPlain(html: string): string {
   return (div.textContent || div.innerText || "").trim();
 }
 
+/** Convert HTML to plain text while preserving block boundaries as newlines. */
+function htmlToText(html: string): string {
+  const div = document.createElement("div");
+  div.innerHTML = html || "";
+  div.querySelectorAll("br").forEach((el) => el.replaceWith("\n"));
+  div.querySelectorAll("li").forEach((el) => {
+    el.insertAdjacentText("afterbegin", "• ");
+    el.insertAdjacentText("beforeend", "\n");
+  });
+  div
+    .querySelectorAll("p, h1, h2, h3, h4, h5, h6, div, blockquote, ol, ul")
+    .forEach((el) => el.insertAdjacentText("beforeend", "\n"));
+  return (div.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+type DiffOp = { type: "equal" | "insert" | "delete"; value: string };
+
+/** Word-level LCS diff. Whitespace is kept as its own token so spacing survives. */
+function diffWords(a: string, b: string): DiffOp[] {
+  const tokenize = (s: string) => s.split(/(\s+)/).filter((t) => t.length > 0);
+  const aT = tokenize(a);
+  const bT = tokenize(b);
+  const n = aT.length;
+  const m = bT.length;
+  // Bounded DP — skip diff for very long payloads to keep the UI responsive.
+  if (n * m > 250_000) {
+    return [
+      { type: "delete", value: a },
+      { type: "insert", value: b },
+    ];
+  }
+  const dp: Uint32Array[] = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i][j] = aT[i] === bT[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const ops: DiffOp[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (aT[i] === bT[j]) {
+      ops.push({ type: "equal", value: aT[i] });
+      i++;
+      j++;
+    } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+      ops.push({ type: "delete", value: aT[i] });
+      i++;
+    } else {
+      ops.push({ type: "insert", value: bT[j] });
+      j++;
+    }
+  }
+  while (i < n) ops.push({ type: "delete", value: aT[i++] });
+  while (j < m) ops.push({ type: "insert", value: bT[j++] });
+  // Merge consecutive same-type runs so we render fewer spans.
+  const merged: DiffOp[] = [];
+  for (const op of ops) {
+    const last = merged[merged.length - 1];
+    if (last && last.type === op.type) last.value += op.value;
+    else merged.push({ ...op });
+  }
+  return merged;
+}
+
 function mockRewrite(original: string, preset: RewritePresetId | null, instruction: string, seed: number): string {
   const plain = htmlToPlain(original) || "Your selected text will appear here.";
   const sentences = plain.split(/(?<=[.!?])\s+/).filter(Boolean);
