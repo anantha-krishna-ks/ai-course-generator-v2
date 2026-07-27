@@ -189,15 +189,33 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const canNext = variantIndex < variants.length - 1;
 
   return (
-    <div role="region" aria-label="Rewrite with AI" className="mt-3 animate-fade-in">
+    <div role="region" aria-label="Rewrite with AI" className="relative mt-1 pt-2 animate-fade-in">
+      {/* Connector thread — visually stitches the panel to the text block above */}
+      <div
+        aria-hidden="true"
+        className={cn(
+          "absolute left-5 -top-1 w-px h-3 pointer-events-none",
+          status === "error" ? "bg-destructive/40" : "bg-primary/45"
+        )}
+      />
       <div
         className={cn(
-          "relative rounded-2xl border overflow-hidden transition-colors bg-background",
+          "relative rounded-2xl rounded-tl-md border border-l-[3px] overflow-hidden transition-colors bg-background",
           status === "error"
-            ? "border-destructive/30 shadow-[0_8px_24px_-12px_hsl(var(--destructive)/0.22)]"
-            : "border-primary/25 shadow-[0_8px_24px_-14px_hsl(var(--primary)/0.22)]"
+            ? "border-destructive/25 border-l-destructive shadow-[0_8px_24px_-12px_hsl(var(--destructive)/0.22)]"
+            : "border-primary/20 border-l-primary shadow-[0_8px_24px_-14px_hsl(var(--primary)/0.22)]"
         )}
       >
+        {/* Anchor chip — straddles the top border, labels which text is being rewritten */}
+        <div
+          className={cn(
+            "absolute -top-2 left-3 z-10 inline-flex items-center gap-1 h-4 px-1.5 rounded-full border bg-background text-[9px] font-semibold uppercase tracking-wide",
+            status === "error" ? "border-destructive/30 text-destructive" : "border-primary/30 text-primary"
+          )}
+        >
+          <Sparkles className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
+          Rewriting text above
+        </div>
         {/* ─────────── Command bar ─────────── */}
         <div className="flex items-center gap-1.5 px-2.5 py-2 flex-wrap">
           <AISparkles className="w-4 h-4 text-primary ml-1 mr-0.5 flex-shrink-0" />
