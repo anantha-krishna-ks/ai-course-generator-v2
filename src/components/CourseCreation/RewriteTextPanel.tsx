@@ -560,10 +560,60 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
 
             {status === "preview" && current && (
               <div className="relative px-5 pb-4 pt-1 max-h-80 overflow-y-auto">
-                <div
-                  className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                  dangerouslySetInnerHTML={{ __html: current.html }}
-                />
+                {viewMode === "diff" ? (
+                  <>
+                    <div
+                      className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                      aria-label="Inline diff between original and rewritten text"
+                    >
+                      {diffOps.length === 0 ? (
+                        <span className="text-muted-foreground italic">No textual changes detected.</span>
+                      ) : (
+                        diffOps.map((op, idx) => {
+                          if (op.type === "equal") {
+                            return <span key={idx}>{op.value}</span>;
+                          }
+                          if (op.type === "insert") {
+                            return (
+                              <span
+                                key={idx}
+                                className="rounded-[3px] px-0.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 decoration-emerald-500/60"
+                              >
+                                {op.value}
+                              </span>
+                            );
+                          }
+                          return (
+                            <span
+                              key={idx}
+                              className="rounded-[3px] px-0.5 bg-destructive/10 text-destructive/85 line-through decoration-destructive/50"
+                            >
+                              {op.value}
+                            </span>
+                          );
+                        })
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 mt-3 pt-2 border-t border-border/50 text-[10px] text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500/25 border border-emerald-500/40" aria-hidden="true" />
+                        Added
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-destructive/15 border border-destructive/40" aria-hidden="true" />
+                        Removed
+                      </span>
+                      <span className="ml-auto tabular-nums">
+                        {diffStats.added} added · {diffStats.removed} removed
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                    dangerouslySetInnerHTML={{ __html: current.html }}
+                  />
+                )}
               </div>
             )}
 
