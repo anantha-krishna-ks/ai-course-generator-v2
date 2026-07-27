@@ -684,12 +684,25 @@ export function ContentBlock({
                 </div>
               ) : (
                 <>
-                  <DescriptionEditor
-                    content={content}
-                    onChange={onChange}
-                    blockFont={font}
-                    onBlockFontChange={type === "text" ? onFontChange : undefined}
-                  />
+                  {showRewritePanel && rewriteColIndex === null && type === "text" && rewritePreview !== null ? (
+                    <div className="relative rounded-xl border-2 border-primary/40 bg-primary/[0.03] shadow-[0_10px_30px_-14px_hsl(var(--primary)/0.35)] px-4 py-3 animate-fade-in">
+                      <div className="absolute -top-2.5 left-3 inline-flex items-center gap-1 h-5 px-2 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold uppercase tracking-wide shadow-[0_2px_6px_-2px_hsl(var(--primary)/0.5)]">
+                        <AISparkles className="w-2.5 h-2.5" />
+                        AI preview
+                      </div>
+                      <div
+                        className="prose prose-sm dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                        dangerouslySetInnerHTML={{ __html: rewritePreview }}
+                      />
+                    </div>
+                  ) : (
+                    <DescriptionEditor
+                      content={content}
+                      onChange={onChange}
+                      blockFont={font}
+                      onBlockFontChange={type === "text" ? onFontChange : undefined}
+                    />
+                  )}
                   {aiEnabled && (
                     <div className="flex items-center gap-2 mt-2 px-1">
                       <Button
@@ -722,11 +735,16 @@ export function ContentBlock({
                   {aiEnabled && showRewritePanel && rewriteColIndex === null && type === "text" && (
                     <RewriteTextPanel
                       content={content}
+                      onPreviewChange={setRewritePreview}
                       onReplace={(next) => {
                         onChange(next);
                         setShowRewritePanel(false);
+                        setRewritePreview(null);
                       }}
-                      onCancel={() => setShowRewritePanel(false)}
+                      onCancel={() => {
+                        setShowRewritePanel(false);
+                        setRewritePreview(null);
+                      }}
                     />
                   )}
                 </>
