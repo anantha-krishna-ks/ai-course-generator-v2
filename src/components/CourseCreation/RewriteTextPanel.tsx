@@ -14,28 +14,20 @@ import {
   ArrowUp,
   Loader2,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 
 /**
- * RewriteTextPanel — Grammarly-style suggestion pattern.
+ * RewriteTextPanel — unified single-card Grammarly-style rewrite.
  *
- * Layout:
- *  ┌──────────────────────────────────────────────────────────────┐
- *  │ ✨ Rewrite  · [chips…]  │  custom instruction… ▸    ✕      │  toolbar
- *  └──────────────────────────────────────────────────────────────┘
- *      ↓ (connector when suggestion present)
- *  ┌──────────────────────────────────────────────────────────────┐
- *  │ ✨ AI suggestion · Simplify        [Discard][Regen][Replace] │
- *  │ ─────────────────────────────────────────────────────────── │
- *  │  rewritten content here…                                     │
- *  └──────────────────────────────────────────────────────────────┘
- *
- * The original editor is NEVER hidden — the panel sits alongside it so authors
- * can compare original and suggestion directly. Nothing overwrites content
- * until Replace is clicked.
+ * One continuous surface: the command bar at the top, the AI suggestion
+ * flowing directly beneath it (no floating connector, no disconnected pill).
+ * Regenerated variants are kept in an in-panel version history the author can
+ * step through with ‹ / › — nothing is thrown away until they Discard.
  */
 
 export type RewritePresetId =
@@ -66,6 +58,13 @@ interface RewriteTextPanelProps {
   content: string;
   onReplace: (nextContent: string) => void;
   onCancel: () => void;
+}
+
+interface Variant {
+  html: string;
+  presetId: RewritePresetId | null;
+  instruction: string;
+  label: string;
 }
 
 function htmlToPlain(html: string): string {
@@ -109,9 +108,9 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const dotPatternId = useId().replace(/:/g, "-");
   const [activePreset, setActivePreset] = useState<RewritePresetId | null>(null);
   const [instruction, setInstruction] = useState("");
-  const [lastUsedInstruction, setLastUsedInstruction] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "preview" | "error">("idle");
-  const [preview, setPreview] = useState<string>("");
+  const [variants, setVariants] = useState<Variant[]>([]);
+  const [variantIndex, setVariantIndex] = useState(0);
   const [seed, setSeed] = useState(0);
   const timerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -125,11 +124,10 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
     };
   }, []);
 
-  const runRewrite = (preset: RewritePresetId | null, customInstruction: string, nextSeed: number) => {
+  const runRewrite = (preset: RewritePresetId | null, customInstruction: string, nextSeed: number, keepHistory: boolean) => {
     if (!hasContent) return;
     setStatus("loading");
     setActivePreset(preset);
-    setLastUsedInstruction(customInstruction);
     if (timerRef.current) window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
       const shouldFail = nextSeed > 0 && Math.random() < 0.08;
@@ -137,7 +135,18 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         setStatus("error");
         return;
       }
-      setPreview(sanitizeHtml(mockRewrite(content, preset, customInstruction, nextSeed)));
+      const label = preset ? PRESETS.find((p) => p.id === preset)!.label : customInstruction.trim() ? "Custom" : "Rewrite";
+      const variant: Variant = {
+        html: sanitizeHtml(mockRewrite(content, preset, customInstruction, nextSeed)),
+        presetId: preset,
+        instruction: customInstruction,
+        label,
+      };
+      setVariants((prev) => {
+        const next = keepHistory ? [...prev, variant] : [variant];
+        setVariantIndex(next.length - 1);
+        return next;
+      });
       setStatus("preview");
     }, 900);
   };
@@ -145,157 +154,145 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const handlePreset = (id: RewritePresetId) => {
     setInstruction("");
     setSeed(0);
-    runRewrite(id, "", 0);
+    runRewrite(id, "", 0, false);
   };
 
   const handleSubmitInstruction = () => {
     if (!instruction.trim() || !hasContent) return;
     setActivePreset(null);
     setSeed(0);
-    runRewrite(null, instruction, 0);
+    runRewrite(null, instruction, 0, false);
   };
 
   const handleRegenerate = () => {
+    const current = variants[variantIndex];
     const next = seed + 1;
     setSeed(next);
-    runRewrite(activePreset, lastUsedInstruction, next);
+    runRewrite(current?.presetId ?? activePreset, current?.instruction ?? "", next, true);
   };
 
   const handleReplace = () => {
-    onReplace(preview);
+    const current = variants[variantIndex];
+    if (current) onReplace(current.html);
   };
 
   const handleDiscard = () => {
     setStatus("idle");
-    setPreview("");
+    setVariants([]);
+    setVariantIndex(0);
     setActivePreset(null);
-    setLastUsedInstruction("");
   };
 
-  const activePresetMeta = PRESETS.find((p) => p.id === activePreset);
+  const current = variants[variantIndex];
   const showSuggestion = status === "loading" || status === "preview" || status === "error";
-  const labelForSuggestion = activePresetMeta?.label ?? (lastUsedInstruction ? "Custom instruction" : "Rewrite");
+  const canPrev = variantIndex > 0;
+  const canNext = variantIndex < variants.length - 1;
 
   return (
-    <div role="region" aria-label="Rewrite with AI" className="mt-3 space-y-0 animate-fade-in">
-      {/* ─────────── Toolbar (single row on desktop, wraps on narrow) ─────────── */}
-      <div className="rounded-2xl border border-primary/25 bg-background shadow-[0_4px_14px_-6px_hsl(var(--primary)/0.18)] px-3 py-2 flex items-center gap-2 flex-wrap">
-        {/* Brand chip */}
-        <div className="inline-flex items-center gap-2 pl-2 pr-3 h-9 rounded-full bg-primary/10 text-primary flex-shrink-0">
-          <AISparkles className="w-4 h-4" />
-          <span className="text-[11px] font-semibold whitespace-nowrap">Rewrite</span>
-        </div>
+    <div role="region" aria-label="Rewrite with AI" className="mt-3 animate-fade-in">
+      <div
+        className={cn(
+          "relative rounded-2xl border overflow-hidden transition-colors bg-background",
+          status === "error"
+            ? "border-destructive/30 shadow-[0_8px_24px_-12px_hsl(var(--destructive)/0.22)]"
+            : "border-primary/25 shadow-[0_8px_24px_-14px_hsl(var(--primary)/0.22)]"
+        )}
+      >
+        {/* ─────────── Command bar ─────────── */}
+        <div className="flex items-center gap-1.5 px-2.5 py-2 flex-wrap">
+          <AISparkles className="w-4 h-4 text-primary ml-1 mr-0.5 flex-shrink-0" />
 
-        {/* Divider */}
-        <span className="w-px h-6 bg-border/70 mx-0.5" aria-hidden="true" />
+          {/* Preset chips */}
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-none flex-shrink min-w-0">
+            {PRESETS.map((p) => {
+              const Icon = p.icon;
+              const isActive = activePreset === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => handlePreset(p.id)}
+                  disabled={!hasContent || status === "loading"}
+                  title={p.hint}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 h-8 px-2.5 rounded-full text-[11px] font-medium whitespace-nowrap transition-all duration-150 flex-shrink-0",
+                    "disabled:opacity-40 disabled:cursor-not-allowed",
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-foreground/75 hover:text-primary hover:bg-primary/[0.06]"
+                  )}
+                >
+                  <Icon className={cn("w-3.5 h-3.5", isActive ? "text-primary" : "text-muted-foreground")} />
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Preset chips */}
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-shrink min-w-0">
-          {PRESETS.map((p) => {
-            const Icon = p.icon;
-            const isActive = activePreset === p.id;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => handlePreset(p.id)}
-                disabled={!hasContent || status === "loading"}
-                title={p.hint}
-                className={cn(
-                  "inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-[11px] font-medium border whitespace-nowrap transition-all duration-150 flex-shrink-0",
-                  "disabled:opacity-40 disabled:cursor-not-allowed",
-                  isActive
-                    ? "bg-primary/10 text-primary border-primary/30"
-                    : "bg-transparent text-foreground/75 border-transparent hover:text-primary hover:bg-primary/[0.06]"
-                )}
-              >
-                <Icon className={cn("w-4 h-4", isActive ? "text-primary" : "text-muted-foreground")} />
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
+          <span className="w-px h-5 bg-border/70 mx-1 hidden md:inline-block" aria-hidden="true" />
 
-        {/* Divider */}
-        <span className="w-px h-6 bg-border/70 mx-0.5 hidden md:inline-block" aria-hidden="true" />
+          {/* Custom instruction — grows to fill the row */}
+          <div className="flex items-end gap-1.5 flex-1 min-w-[200px] rounded-full border border-border/70 bg-muted/30 pl-3.5 pr-1 py-0.5 focus-within:border-primary/40 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+            <textarea
+              ref={inputRef}
+              value={instruction}
+              onChange={(e) => {
+                setInstruction(e.target.value);
+                e.target.style.height = "auto";
+                e.target.style.height = Math.min(e.target.scrollHeight, 88) + "px";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && instruction.trim() && hasContent) {
+                  e.preventDefault();
+                  handleSubmitInstruction();
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault();
+                  onCancel();
+                }
+              }}
+              placeholder={hasContent ? "Tell AI what to change…" : "Add text first"}
+              aria-label="Custom rewrite instruction"
+              disabled={!hasContent || status === "loading"}
+              rows={1}
+              className="flex-1 bg-transparent text-[12px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
+            />
+            <button
+              type="button"
+              onClick={handleSubmitInstruction}
+              disabled={!instruction.trim() || !hasContent || status === "loading"}
+              aria-label="Send instruction"
+              className={cn(
+                "w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-colors my-auto",
+                instruction.trim() && hasContent && status !== "loading"
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-transparent text-muted-foreground"
+              )}
+            >
+              {status === "loading" ? (
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" focusable="false" />
+              ) : (
+                <ArrowUp className="w-4 h-4" aria-hidden="true" focusable="false" />
+              )}
+            </button>
+          </div>
 
-        {/* Custom instruction — grows to fill row */}
-        <div className="flex items-end gap-1.5 flex-1 min-w-[220px] rounded-full border border-border/70 bg-muted/30 pl-4 pr-1.5 py-1 focus-within:border-primary/40 focus-within:bg-background focus-within:ring-2 focus-within:ring-primary/15 transition-all">
-          <textarea
-            ref={inputRef}
-            value={instruction}
-            onChange={(e) => {
-              setInstruction(e.target.value);
-              e.target.style.height = "auto";
-              e.target.style.height = Math.min(e.target.scrollHeight, 88) + "px";
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && instruction.trim() && hasContent) {
-                e.preventDefault();
-                handleSubmitInstruction();
-              }
-              if (e.key === "Escape") {
-                e.preventDefault();
-                onCancel();
-              }
-            }}
-            placeholder={hasContent ? "Tell AI what to change…" : "Add text first"}
-            aria-label="Custom rewrite instruction"
-            disabled={!hasContent || status === "loading"}
-            rows={1}
-            className="flex-1 bg-transparent text-[12px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
-          />
           <button
             type="button"
-            onClick={handleSubmitInstruction}
-            disabled={!instruction.trim() || !hasContent || status === "loading"}
-            aria-label="Send instruction"
-            className={cn(
-              "w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center transition-colors my-auto",
-              instruction.trim() && hasContent && status !== "loading"
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "bg-transparent text-muted-foreground"
-            )}
+            onClick={onCancel}
+            aria-label="Close rewrite"
+            className="w-8 h-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center justify-center transition-colors flex-shrink-0"
           >
-            {status === "loading" ? (
-              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" focusable="false" />
-            ) : (
-              <ArrowUp className="w-4 h-4" aria-hidden="true" focusable="false" />
-            )}
+            <X className="w-4 h-4" aria-hidden="true" focusable="false" />
           </button>
         </div>
 
-        {/* Close */}
-        <button
-          type="button"
-          onClick={onCancel}
-          aria-label="Close rewrite"
-          className="w-8 h-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center justify-center transition-colors flex-shrink-0"
-        >
-          <X className="w-4 h-4" aria-hidden="true" focusable="false" />
-        </button>
-      </div>
-
-      {/* ─────────── Suggestion card (only when working / done / error) ─────────── */}
-      {showSuggestion && (
-        <div className="relative pl-5 mt-3">
-          {/* Vertical connector line */}
-          <span
-            className="absolute left-[12px] top-0 bottom-0 w-px bg-warning/30"
-            aria-hidden="true"
-          />
-          {/* Dot on connector */}
-          <span
-            className="absolute left-[8px] top-3.5 w-[9px] h-[9px] rounded-full bg-warning ring-4 ring-background"
-            aria-hidden="true"
-          />
-
+        {/* ─────────── Suggestion section (same card, seamless) ─────────── */}
+        {showSuggestion && (
           <div
             className={cn(
-              "relative rounded-2xl border overflow-hidden animate-fade-in",
-              status === "error"
-                ? "border-destructive/30 shadow-[0_6px_20px_-10px_hsl(var(--destructive)/0.25)]"
-                : "border-warning/30 shadow-[0_6px_20px_-10px_hsl(var(--warning)/0.18)] bg-warning/[0.04]"
+              "relative border-t animate-fade-in",
+              status === "error" ? "border-destructive/15 bg-destructive/[0.03]" : "border-warning/20 bg-warning/[0.04]"
             )}
           >
             {status !== "error" && (
@@ -319,53 +316,73 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <rect width="100%" height="100%" fill={`url(#${dotPatternId})`} />
               </svg>
             )}
-            {/* Header row */}
-            <div className={cn(
-              "relative flex items-center justify-between gap-3 px-4 py-2.5 border-b bg-background/60",
-              status === "error" ? "border-destructive/10" : "border-warning/10"
-            )}>
-              <div className="flex items-center gap-2.5 min-w-0">
+
+            {/* Sub-header: label + version stepper + actions */}
+            <div className="relative flex items-center justify-between gap-3 px-4 py-2">
+              <div className="flex items-center gap-2 min-w-0">
                 {status === "error" ? (
-                  <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
+                  <AlertTriangle className="w-3.5 h-3.5 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
                 ) : (
-                  <Sparkles className="w-4 h-4 text-warning flex-shrink-0" aria-hidden="true" focusable="false" />
+                  <Sparkles className="w-3.5 h-3.5 text-warning flex-shrink-0" aria-hidden="true" focusable="false" />
                 )}
-                <span className="text-[12px] font-semibold text-foreground truncate">
-                  {status === "loading" && "Generating suggestion…"}
-                  {status === "preview" && "AI suggestion"}
-                  {status === "error" && "Couldn't generate a suggestion"}
+                <span className="text-[11px] font-semibold text-foreground truncate">
+                  {status === "loading" && "Generating…"}
+                  {status === "preview" && (current?.label ?? "AI suggestion")}
+                  {status === "error" && "Couldn't generate"}
                 </span>
-                {status !== "error" && (
-                  <span className="text-[11px] text-muted-foreground truncate hidden sm:inline">
-                    · {labelForSuggestion}
-                  </span>
+
+                {/* Version stepper — appears once there is more than one variant */}
+                {status === "preview" && variants.length > 1 && (
+                  <div className="flex items-center gap-0.5 ml-1 rounded-full border border-border/70 bg-background/70 pl-0.5 pr-1.5 h-6">
+                    <button
+                      type="button"
+                      onClick={() => canPrev && setVariantIndex(variantIndex - 1)}
+                      disabled={!canPrev}
+                      aria-label="Previous version"
+                      className="w-5 h-5 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronLeft className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    </button>
+                    <span className="text-[10px] font-medium tabular-nums text-muted-foreground">
+                      v{variantIndex + 1}<span className="opacity-50">/{variants.length}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => canNext && setVariantIndex(variantIndex + 1)}
+                      disabled={!canNext}
+                      aria-label="Next version"
+                      className="w-5 h-5 rounded-full inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronRight className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    </button>
+                  </div>
                 )}
               </div>
 
               {status === "preview" && (
-                <div className="flex items-center gap-1.5 flex-shrink-0">
+                <div className="flex items-center gap-1 flex-shrink-0">
                   <button
                     type="button"
                     onClick={handleDiscard}
-                    className="h-8 px-3 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
+                    className="h-7 px-2.5 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 inline-flex items-center gap-1.5 transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <Trash2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                     Discard
                   </button>
                   <button
                     type="button"
                     onClick={handleRegenerate}
-                    className="h-8 px-3 rounded-full text-[11px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
+                    className="h-7 px-2.5 rounded-full text-[11px] font-medium text-primary hover:bg-primary/10 inline-flex items-center gap-1.5 transition-colors"
                   >
-                    <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                     Regenerate
                   </button>
                   <button
                     type="button"
                     onClick={handleReplace}
-                    className="h-8 px-3.5 rounded-full text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
+                    className="h-7 px-3 rounded-full text-[11px] font-semibold bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 shadow-[0_2px_8px_-2px_hsl(var(--primary)/0.5)] transition-colors"
                   >
-                    <Check className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                     Replace
                   </button>
                 </div>
@@ -375,9 +392,9 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <button
                   type="button"
                   onClick={handleRegenerate}
-                  className="h-8 px-3 rounded-full text-[11px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
+                  className="h-7 px-2.5 rounded-full text-[11px] font-medium text-destructive hover:bg-destructive/10 inline-flex items-center gap-1.5 transition-colors flex-shrink-0"
                 >
-                  <RefreshCw className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                   Try again
                 </button>
               )}
@@ -385,36 +402,36 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
 
             {/* Body */}
             {status === "loading" && (
-              <div className="px-5 py-5 space-y-2.5">
-                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[92%]" />
-                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[78%]" />
-                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[85%]" />
-                <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[64%]" />
+              <div className="relative px-5 pb-5 pt-1 space-y-2.5">
+                <div className="h-3 rounded-full bg-warning/15 animate-pulse w-[92%]" />
+                <div className="h-3 rounded-full bg-warning/15 animate-pulse w-[78%]" />
+                <div className="h-3 rounded-full bg-warning/15 animate-pulse w-[85%]" />
+                <div className="h-3 rounded-full bg-warning/15 animate-pulse w-[64%]" />
                 <p className="text-[11px] text-muted-foreground pt-1">
                   Your original stays untouched.
                 </p>
               </div>
             )}
 
-            {status === "preview" && (
-              <div className="px-5 py-4 max-h-80 overflow-y-auto">
+            {status === "preview" && current && (
+              <div className="relative px-5 pb-4 pt-1 max-h-80 overflow-y-auto">
                 <div
                   className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                  dangerouslySetInnerHTML={{ __html: preview }}
+                  dangerouslySetInnerHTML={{ __html: current.html }}
                 />
               </div>
             )}
 
             {status === "error" && (
-              <div className="px-5 py-4">
-                <p className="text-[14px] text-muted-foreground">
+              <div className="relative px-5 pb-4 pt-1">
+                <p className="text-[12px] text-muted-foreground">
                   The AI couldn't return a rewrite. Your original content is unchanged — try again or pick a different style.
                 </p>
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
