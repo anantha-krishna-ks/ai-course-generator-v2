@@ -390,7 +390,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                 <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[78%]" />
                 <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[85%]" />
                 <div className="h-3 rounded-full bg-primary/10 animate-pulse w-[64%]" />
-                <p className="text-[12px] text-muted-foreground pt-1">
+                <p className="text-[11px] text-muted-foreground pt-1">
                   Your original stays untouched.
                 </p>
               </div>
