@@ -281,12 +281,12 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         <div className="relative pl-5 mt-3">
           {/* Vertical connector line */}
           <span
-            className="absolute left-[12px] top-0 bottom-0 w-px bg-gradient-to-b from-primary/40 via-primary/20 to-transparent"
+            className="absolute left-[12px] top-0 bottom-0 w-px bg-warning/30"
             aria-hidden="true"
           />
           {/* Dot on connector */}
           <span
-            className="absolute left-[8px] top-3.5 w-[9px] h-[9px] rounded-full bg-primary ring-4 ring-background"
+            className="absolute left-[8px] top-3.5 w-[9px] h-[9px] rounded-full bg-warning ring-4 ring-background"
             aria-hidden="true"
           />
 
