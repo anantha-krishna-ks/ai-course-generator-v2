@@ -289,9 +289,9 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             aria-hidden="true"
           />
 
-          <div
+            <div
             className={cn(
-              "rounded-2xl border bg-gradient-to-b from-primary/[0.04] to-background overflow-hidden animate-fade-in",
+              "rounded-2xl border bg-gradient-to-b from-muted/60 to-background overflow-hidden animate-fade-in",
               status === "error"
                 ? "border-destructive/30 shadow-[0_6px_20px_-10px_hsl(var(--destructive)/0.25)]"
                 : "border-primary/25 shadow-[0_6px_20px_-10px_hsl(var(--primary)/0.22)]"
