@@ -675,7 +675,7 @@ export function ContentBlock({
                     blockFont={font}
                     onBlockFontChange={type === "text" ? onFontChange : undefined}
                   />
-                  {aiEnabled && (
+                  {aiEnabled && !(showRewritePanel && rewriteColIndex === null) && (
                     <div className="flex items-center gap-2 mt-2 px-1">
                       <Button
                         size="sm"
