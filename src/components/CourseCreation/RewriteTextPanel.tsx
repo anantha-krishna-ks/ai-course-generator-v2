@@ -179,10 +179,12 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const [variants, setVariants] = useState<Variant[]>([]);
   const [variantIndex, setVariantIndex] = useState(0);
   const [seed, setSeed] = useState(0);
+  const [viewMode, setViewMode] = useState<"diff" | "clean">("diff");
   const timerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const plainOriginal = useMemo(() => htmlToPlain(content), [content]);
+  const originalText = useMemo(() => htmlToText(content), [content]);
   const hasContent = plainOriginal.length > 0;
 
   useEffect(() => {
