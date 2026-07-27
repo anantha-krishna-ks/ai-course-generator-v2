@@ -106,6 +106,7 @@ function mockRewrite(original: string, preset: RewritePresetId | null, instructi
 }
 
 export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPanelProps) {
+  const dotPatternId = useId().replace(/:/g, "-");
   const [activePreset, setActivePreset] = useState<RewritePresetId | null>(null);
   const [instruction, setInstruction] = useState("");
   const [lastUsedInstruction, setLastUsedInstruction] = useState("");
