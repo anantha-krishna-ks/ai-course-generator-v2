@@ -16,6 +16,8 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  GitCompare,
+  FileText,
 } from "lucide-react";
 import { AISparkles } from "@/components/ui/ai-sparkles";
 import { cn } from "@/lib/utils";
@@ -73,6 +75,71 @@ function htmlToPlain(html: string): string {
   return (div.textContent || div.innerText || "").trim();
 }
 
+/** Convert HTML to plain text while preserving block boundaries as newlines. */
+function htmlToText(html: string): string {
+  const div = document.createElement("div");
+  div.innerHTML = html || "";
+  div.querySelectorAll("br").forEach((el) => el.replaceWith("\n"));
+  div.querySelectorAll("li").forEach((el) => {
+    el.insertAdjacentText("afterbegin", "• ");
+    el.insertAdjacentText("beforeend", "\n");
+  });
+  div
+    .querySelectorAll("p, h1, h2, h3, h4, h5, h6, div, blockquote, ol, ul")
+    .forEach((el) => el.insertAdjacentText("beforeend", "\n"));
+  return (div.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+type DiffOp = { type: "equal" | "insert" | "delete"; value: string };
+
+/** Word-level LCS diff. Whitespace is kept as its own token so spacing survives. */
+function diffWords(a: string, b: string): DiffOp[] {
+  const tokenize = (s: string) => s.split(/(\s+)/).filter((t) => t.length > 0);
+  const aT = tokenize(a);
+  const bT = tokenize(b);
+  const n = aT.length;
+  const m = bT.length;
+  // Bounded DP — skip diff for very long payloads to keep the UI responsive.
+  if (n * m > 250_000) {
+    return [
+      { type: "delete", value: a },
+      { type: "insert", value: b },
+    ];
+  }
+  const dp: Uint32Array[] = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i][j] = aT[i] === bT[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const ops: DiffOp[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (aT[i] === bT[j]) {
+      ops.push({ type: "equal", value: aT[i] });
+      i++;
+      j++;
+    } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+      ops.push({ type: "delete", value: aT[i] });
+      i++;
+    } else {
+      ops.push({ type: "insert", value: bT[j] });
+      j++;
+    }
+  }
+  while (i < n) ops.push({ type: "delete", value: aT[i++] });
+  while (j < m) ops.push({ type: "insert", value: bT[j++] });
+  // Merge consecutive same-type runs so we render fewer spans.
+  const merged: DiffOp[] = [];
+  for (const op of ops) {
+    const last = merged[merged.length - 1];
+    if (last && last.type === op.type) last.value += op.value;
+    else merged.push({ ...op });
+  }
+  return merged;
+}
+
 function mockRewrite(original: string, preset: RewritePresetId | null, instruction: string, seed: number): string {
   const plain = htmlToPlain(original) || "Your selected text will appear here.";
   const sentences = plain.split(/(?<=[.!?])\s+/).filter(Boolean);
@@ -112,10 +179,12 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const [variants, setVariants] = useState<Variant[]>([]);
   const [variantIndex, setVariantIndex] = useState(0);
   const [seed, setSeed] = useState(0);
+  const [viewMode, setViewMode] = useState<"diff" | "clean">("diff");
   const timerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const plainOriginal = useMemo(() => htmlToPlain(content), [content]);
+  const originalText = useMemo(() => htmlToText(content), [content]);
   const hasContent = plainOriginal.length > 0;
 
   useEffect(() => {
@@ -187,6 +256,21 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const showSuggestion = status === "loading" || status === "preview" || status === "error";
   const canPrev = variantIndex > 0;
   const canNext = variantIndex < variants.length - 1;
+
+  const diffOps = useMemo(() => {
+    if (status !== "preview" || !current) return [] as DiffOp[];
+    return diffWords(originalText, htmlToText(current.html));
+  }, [status, current, originalText]);
+
+  const diffStats = useMemo(() => {
+    let added = 0;
+    let removed = 0;
+    for (const op of diffOps) {
+      if (op.type === "insert" && op.value.trim()) added++;
+      else if (op.type === "delete" && op.value.trim()) removed++;
+    }
+    return { added, removed };
+  }, [diffOps]);
 
   return (
     <div role="region" aria-label="Rewrite with AI" className="relative mt-1 pt-2 animate-fade-in">
@@ -375,6 +459,49 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
                     </button>
                   </div>
                 )}
+
+                {/* Diff / Clean segmented toggle */}
+                {status === "preview" && (
+                  <div
+                    className="flex items-center rounded-full border border-border/70 bg-background/70 p-0.5 h-6 ml-1"
+                    role="group"
+                    aria-label="Suggestion view mode"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("diff")}
+                      aria-pressed={viewMode === "diff"}
+                      className={cn(
+                        "inline-flex items-center gap-1 h-5 px-1.5 rounded-full text-[10px] font-medium transition-colors",
+                        viewMode === "diff"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <GitCompare className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Diff
+                      {(diffStats.added > 0 || diffStats.removed > 0) && (
+                        <span className="tabular-nums opacity-70">
+                          +{diffStats.added}/−{diffStats.removed}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("clean")}
+                      aria-pressed={viewMode === "clean"}
+                      className={cn(
+                        "inline-flex items-center gap-1 h-5 px-1.5 rounded-full text-[10px] font-medium transition-colors",
+                        viewMode === "clean"
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <FileText className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      Clean
+                    </button>
+                  </div>
+                )}
               </div>
 
               {status === "preview" && (
@@ -433,10 +560,60 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
 
             {status === "preview" && current && (
               <div className="relative px-5 pb-4 pt-1 max-h-80 overflow-y-auto">
-                <div
-                  className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
-                  dangerouslySetInnerHTML={{ __html: current.html }}
-                />
+                {viewMode === "diff" ? (
+                  <>
+                    <div
+                      className="text-[13px] leading-relaxed text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                      aria-label="Inline diff between original and rewritten text"
+                    >
+                      {diffOps.length === 0 ? (
+                        <span className="text-muted-foreground italic">No textual changes detected.</span>
+                      ) : (
+                        diffOps.map((op, idx) => {
+                          if (op.type === "equal") {
+                            return <span key={idx}>{op.value}</span>;
+                          }
+                          if (op.type === "insert") {
+                            return (
+                              <span
+                                key={idx}
+                                className="rounded-[3px] px-0.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 decoration-emerald-500/60"
+                              >
+                                {op.value}
+                              </span>
+                            );
+                          }
+                          return (
+                            <span
+                              key={idx}
+                              className="rounded-[3px] px-0.5 bg-destructive/10 text-destructive/85 line-through decoration-destructive/50"
+                            >
+                              {op.value}
+                            </span>
+                          );
+                        })
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 mt-3 pt-2 border-t border-border/50 text-[10px] text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500/25 border border-emerald-500/40" aria-hidden="true" />
+                        Added
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-sm bg-destructive/15 border border-destructive/40" aria-hidden="true" />
+                        Removed
+                      </span>
+                      <span className="ml-auto tabular-nums">
+                        {diffStats.added} added · {diffStats.removed} removed
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div
+                    className="prose dark:prose-invert max-w-none text-foreground break-words [overflow-wrap:anywhere]"
+                    dangerouslySetInnerHTML={{ __html: current.html }}
+                  />
+                )}
               </div>
             )}
 
