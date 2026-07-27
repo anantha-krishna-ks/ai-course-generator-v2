@@ -320,12 +320,15 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
               </svg>
             )}
             {/* Header row */}
-            <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-primary/10 bg-background/60">
+            <div className={cn(
+              "relative flex items-center justify-between gap-3 px-4 py-2.5 border-b bg-background/60",
+              status === "error" ? "border-destructive/10" : "border-warning/10"
+            )}>
               <div className="flex items-center gap-2.5 min-w-0">
                 {status === "error" ? (
                   <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" aria-hidden="true" focusable="false" />
                 ) : (
-                  <Sparkles className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" focusable="false" />
+                  <Sparkles className={cn("w-4 h-4 flex-shrink-0", status === "error" ? "text-destructive" : "text-warning")} aria-hidden="true" focusable="false" />
                 )}
                 <span className="text-[14px] font-semibold text-foreground truncate">
                   {status === "loading" && "Generating suggestion…"}
