@@ -292,12 +292,33 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
 
           <div
             className={cn(
-              "rounded-2xl border bg-gradient-to-b from-primary/[0.04] to-background overflow-hidden animate-fade-in",
+              "relative rounded-2xl border overflow-hidden animate-fade-in",
               status === "error"
                 ? "border-destructive/30 shadow-[0_6px_20px_-10px_hsl(var(--destructive)/0.25)]"
-                : "border-primary/25 shadow-[0_6px_20px_-10px_hsl(var(--primary)/0.22)]"
+                : "border-warning/30 shadow-[0_6px_20px_-10px_hsl(var(--warning)/0.18)] bg-warning/[0.04]"
             )}
           >
+            {status !== "error" && (
+              <svg
+                className="absolute inset-0 w-full h-full text-warning/[0.10] pointer-events-none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <defs>
+                  <pattern
+                    id={dotPatternId}
+                    x="0"
+                    y="0"
+                    width="24"
+                    height="24"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill={`url(#${dotPatternId})`} />
+              </svg>
+            )}
             {/* Header row */}
             <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-primary/10 bg-background/60">
               <div className="flex items-center gap-2.5 min-w-0">
