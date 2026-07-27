@@ -312,13 +312,6 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
         {/* ─────────── Command bar ─────────── */}
         <div className="relative pl-5 pr-2 py-2.5">
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/85 pr-1">
-              <AISparkles className="w-3.5 h-3.5 text-primary" />
-              Edit with AI
-            </div>
-
-            <span className="w-px h-4 bg-border/70" aria-hidden="true" />
-
             {/* Preset chips */}
             <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-none flex-shrink min-w-0">
               {PRESETS.map((p) => {
