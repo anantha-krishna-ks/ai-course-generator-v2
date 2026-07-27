@@ -257,6 +257,21 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
   const canPrev = variantIndex > 0;
   const canNext = variantIndex < variants.length - 1;
 
+  const diffOps = useMemo(() => {
+    if (status !== "preview" || !current) return [] as DiffOp[];
+    return diffWords(originalText, htmlToText(current.html));
+  }, [status, current, originalText]);
+
+  const diffStats = useMemo(() => {
+    let added = 0;
+    let removed = 0;
+    for (const op of diffOps) {
+      if (op.type === "insert" && op.value.trim()) added++;
+      else if (op.type === "delete" && op.value.trim()) removed++;
+    }
+    return { added, removed };
+  }, [diffOps]);
+
   return (
     <div role="region" aria-label="Rewrite with AI" className="relative mt-1 pt-2 animate-fade-in">
       {/* Connector thread — visually stitches the panel to the text block above */}
