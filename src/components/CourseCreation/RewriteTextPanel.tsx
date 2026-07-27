@@ -243,7 +243,7 @@ export function RewriteTextPanel({ content, onReplace, onCancel }: RewriteTextPa
             aria-label="Custom rewrite instruction"
             disabled={!hasContent || status === "loading"}
             rows={1}
-            className="flex-1 bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
+            className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground outline-none resize-none min-h-[28px] max-h-[88px] py-1 disabled:opacity-50"
           />
           <button
             type="button"
