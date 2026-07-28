@@ -274,7 +274,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
             </div>
             <div className="min-w-0">
               <div className="font-semibold text-foreground leading-tight">Help us improve this</div>
-              <div className="text-[11px] text-muted-foreground leading-tight">Pick what didn't land — all fields optional.</div>
+              <div className="text-[11px] text-muted-foreground leading-tight">Select what could be improved — all fields are optional.</div>
             </div>
           </div>
           <button
