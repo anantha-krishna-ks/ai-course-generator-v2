@@ -88,6 +88,7 @@ interface ContentBlockData {
   type: "text" | "image" | "description";
   content: string;
   font?: string;
+  aiGenerated?: boolean;
 }
 
 interface PageContentBlockData {
@@ -96,6 +97,7 @@ interface PageContentBlockData {
   content: string;
   variant?: string;
   font?: string;
+  aiGenerated?: boolean;
 }
 
 export interface MultiPageCourseCreatorRestoreState {
