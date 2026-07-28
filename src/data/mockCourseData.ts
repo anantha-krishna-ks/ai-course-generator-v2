@@ -81,8 +81,8 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
     pageBlocksMap: {
       "page-1-1": [
         { id: "pb-1-div", type: "text", variant: "divider-numbered", content: JSON.stringify({ number: 1, label: "Getting Started" }) },
-        { id: "pb-1-1", type: "text", content: "<p>Welcome to this course! In this module, you will learn the foundational concepts that will guide your understanding throughout the program.</p>" },
-        { id: "pb-1-2", type: "image", content: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop" },
+        { id: "pb-1-1", type: "text", content: "<p>Welcome to this course! In this module, you will learn the foundational concepts that will guide your understanding throughout the program.</p>", aiGenerated: true },
+        { id: "pb-1-2", type: "image", content: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop", aiGenerated: true },
         { id: "pb-1-info", type: "text", variant: "info-card", content: JSON.stringify({ kind: "tip", body: "Take notes as you go — the concepts introduced here build on each other in later modules." }) },
         { id: "pb-1-cont", type: "text", variant: "continue-button", content: JSON.stringify({ label: "Continue" }) },
       ],
