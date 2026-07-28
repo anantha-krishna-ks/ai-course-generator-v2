@@ -69,6 +69,7 @@ interface PageContentBlock {
   content: string;
   variant?: string;
   font?: string;
+  aiGenerated?: boolean;
 }
 
 interface CourseOutlineItem {
