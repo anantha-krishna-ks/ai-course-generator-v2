@@ -183,6 +183,8 @@ interface ContentBlockProps {
   font?: string;
   /** Update the per-block font override. Pass undefined to revert to course default. */
   onFontChange?: (fontId: string | undefined) => void;
+  /** Marks the block content as AI-generated — surfaces the "Was this generation helpful?" feedback bar. */
+  aiGenerated?: boolean;
 }
 
 export function ContentBlock({
