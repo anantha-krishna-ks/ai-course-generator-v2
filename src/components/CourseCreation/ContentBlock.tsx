@@ -584,7 +584,7 @@ export function ContentBlock({
           ) : type === "quiz" ? (
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "image" ? (
-            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
+            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => { setImageGenerating(false); setJustGenerated(true); }} />
           ) : type === "audio" && variant === "ai-audio" ? (
             <AIAudioBlock content={content} onChange={onChange} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
