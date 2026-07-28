@@ -387,6 +387,7 @@ export function ContentBlock({
       // Simulated generation — replace with real API call wiring.
       window.setTimeout(() => {
         setTextGenerating(false);
+        setJustGenerated(true);
       }, 4200);
     }
   };
