@@ -131,6 +131,14 @@ export default function AIGeneratedCourse() {
 
   const restoreState = buildAIGeneratedRestoreState(courseTitle);
 
+  // Mark every text/image block as AI-generated so the feedback bar surfaces.
+  const markAI = <T extends { type: string }>(b: T): T =>
+    b.type === "text" || b.type === "image" ? ({ ...b, aiGenerated: true } as T) : b;
+  restoreState.contentBlocks = restoreState.contentBlocks.map(markAI);
+  restoreState.pageBlocksMap = Object.fromEntries(
+    Object.entries(restoreState.pageBlocksMap).map(([k, v]) => [k, v.map(markAI)])
+  );
+
   return (
     <MultiPageCourseCreator
       courseTitle={courseTitle}

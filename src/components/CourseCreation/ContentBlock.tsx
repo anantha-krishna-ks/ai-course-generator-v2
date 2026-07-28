@@ -56,6 +56,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { AIFeedbackBar } from "./AIFeedbackBar";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
@@ -183,6 +184,8 @@ interface ContentBlockProps {
   font?: string;
   /** Update the per-block font override. Pass undefined to revert to course default. */
   onFontChange?: (fontId: string | undefined) => void;
+  /** Marks the block content as AI-generated — surfaces the "Was this generation helpful?" feedback bar. */
+  aiGenerated?: boolean;
 }
 
 export function ContentBlock({
@@ -199,6 +202,7 @@ export function ContentBlock({
   onTypeChange,
   font,
   onFontChange,
+  aiGenerated = false,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -209,6 +213,7 @@ export function ContentBlock({
   const [imageStyle, setImageStyle] = useState<typeof IMAGE_STYLE_OPTIONS[number]["value"]>("photorealistic");
   const [imageGenerating, setImageGenerating] = useState(false);
   const [textGenerating, setTextGenerating] = useState(false);
+  const [justGenerated, setJustGenerated] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
@@ -382,6 +387,7 @@ export function ContentBlock({
       // Simulated generation — replace with real API call wiring.
       window.setTimeout(() => {
         setTextGenerating(false);
+        setJustGenerated(true);
       }, 4200);
     }
   };
@@ -578,7 +584,7 @@ export function ContentBlock({
           ) : type === "quiz" ? (
             <QuizBlock content={content} onChange={onChange} aiEnabled={aiEnabled} variant={variant} />
           ) : type === "image" ? (
-            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => setImageGenerating(false)} />
+            <ImageBlock imageUrl={content} onChange={onChange} aiEnabled={aiEnabled} externalGenerating={imageGenerating} onExternalGeneratingDone={() => { setImageGenerating(false); setJustGenerated(true); }} />
           ) : type === "audio" && variant === "ai-audio" ? (
             <AIAudioBlock content={content} onChange={onChange} />
           ) : type === "video" || type === "audio" || type === "doc" ? (
@@ -772,7 +778,14 @@ export function ContentBlock({
             </button>
           )}
         </div>
+        {(aiGenerated || justGenerated) && (type === "text" || type === "image") && !textGenerating && !imageGenerating && !readOnly && (
+          <div className="px-1">
+            <AIFeedbackBar blockType={type === "image" ? "image" : "text"} />
+          </div>
+        )}
       </div>
+
+
 
       {/* Generate Content Dialog */}
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>

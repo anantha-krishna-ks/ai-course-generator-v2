@@ -88,6 +88,7 @@ interface ContentBlockData {
   type: "text" | "image" | "description";
   content: string;
   font?: string;
+  aiGenerated?: boolean;
 }
 
 interface PageContentBlockData {
@@ -96,6 +97,7 @@ interface PageContentBlockData {
   content: string;
   variant?: string;
   font?: string;
+  aiGenerated?: boolean;
 }
 
 export interface MultiPageCourseCreatorRestoreState {
@@ -1528,6 +1530,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     font={block.font}
                                     onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                     readOnly={readOnly}
+                                    aiGenerated={block.aiGenerated}
                                   />
 
                                 )}
