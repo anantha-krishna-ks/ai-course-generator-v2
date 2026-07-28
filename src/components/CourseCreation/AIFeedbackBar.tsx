@@ -87,6 +87,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
   const [reasons, setReasons] = useState<string[]>([]);
   const [message, setMessage] = useState("");
   const [burstKey, setBurstKey] = useState(0);
+  const [downBurstKey, setDownBurstKey] = useState(0);
 
   if (state === "dismissed") return null;
 
@@ -102,7 +103,10 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
     window.setTimeout(() => setState("dismissed"), 2400);
   };
 
-  const handleThumbsDown = () => setState("negative-form");
+  const handleThumbsDown = () => {
+    setDownBurstKey((k) => k + 1);
+    setState("negative-form");
+  };
 
   const handleSend = () => {
     onSubmit?.({ rating: "negative", reasons, message: message.trim() || undefined });
