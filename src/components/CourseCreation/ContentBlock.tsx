@@ -213,6 +213,7 @@ export function ContentBlock({
   const [imageStyle, setImageStyle] = useState<typeof IMAGE_STYLE_OPTIONS[number]["value"]>("photorealistic");
   const [imageGenerating, setImageGenerating] = useState(false);
   const [textGenerating, setTextGenerating] = useState(false);
+  const [justGenerated, setJustGenerated] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
