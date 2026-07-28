@@ -148,7 +148,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
               transition={{ type: "spring", stiffness: 500, damping: 22 }}
               className={cn(
                 "text-[10px] tabular-nums px-1.5 py-0.5 rounded-full",
-                count > 0 ? "bg-foreground text-background" : "text-muted-foreground bg-muted"
+                count > 0 ? "bg-primary/10 text-primary" : "text-muted-foreground bg-muted"
               )}
             >
               {count} selected
@@ -170,7 +170,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 transition-colors",
                       active
-                        ? "border-foreground bg-foreground text-background"
+                        ? "border-primary/60 bg-primary/10 text-primary"
                         : "border-border/60 bg-background hover:border-foreground/40 text-foreground"
                     )}
                   >
