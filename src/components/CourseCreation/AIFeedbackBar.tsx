@@ -284,23 +284,43 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
           <span className="font-medium text-foreground">Was this generation helpful?</span>
         </div>
         <div className="flex items-center gap-0.5">
-          {/* Thumbs up with burst */}
+          {/* Thumbs up with Lottie-like sparkle burst */}
           <motion.button
             type="button"
             onClick={handleThumbsUp}
             aria-label="Yes, this generation was helpful"
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.9, rotate: -8 }}
+            whileHover={{ y: -2, scale: 1.08 }}
+            whileTap={{ scale: 0.88, rotate: -10 }}
             transition={{ type: "spring", stiffness: 500, damping: 18 }}
             className="relative p-1.5 rounded-md text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors"
           >
-            <ThumbsUp className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            <AnimatePresence>
+              {burstKey > 0 && (
+                <motion.span
+                  key={`bg-${burstKey}`}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 rounded-md bg-emerald-500/10"
+                />
+              )}
+            </AnimatePresence>
+            <ThumbsUp
+              className={cn(
+                "w-3.5 h-3.5 relative z-10 transition-colors",
+                burstKey > 0 && "text-emerald-600"
+              )}
+              fill={burstKey > 0 ? "currentColor" : "none"}
+              aria-hidden="true"
+              focusable="false"
+            />
             {/* Ring pulse */}
             <AnimatePresence>
               {burstKey > 0 && (
                 <motion.span
                   key={`ring-${burstKey}`}
-                  className="absolute inset-0 rounded-md border border-emerald-500/60"
+                  className="absolute inset-0 rounded-md border border-emerald-500/50"
                   initial={{ opacity: 0.8, scale: 0.8 }}
                   animate={{ opacity: 0, scale: 1.8 }}
                   exit={{ opacity: 0 }}
@@ -308,40 +328,53 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
                 />
               )}
             </AnimatePresence>
-            {/* Sparkle particles */}
-            <AnimatePresence>
-              {burstKey > 0 && (
-                <span className="pointer-events-none absolute inset-0" aria-hidden="true">
-                  {[0, 60, 120, 180, 240, 300].map((deg, i) => {
-                    const rad = (deg * Math.PI) / 180;
-                    const dx = Math.cos(rad) * 14;
-                    const dy = Math.sin(rad) * 14;
-                    return (
-                      <motion.span
-                        key={`p-${burstKey}-${i}`}
-                        className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500"
-                        initial={{ x: 0, y: 0, opacity: 1, scale: 0.6 }}
-                        animate={{ x: dx, y: dy, opacity: 0, scale: 0.2 }}
-                        transition={{ duration: 0.55, ease: "easeOut" }}
-                      />
-                    );
-                  })}
-                </span>
-              )}
-            </AnimatePresence>
+            <SparkleBurst color="emerald" trigger={burstKey} />
           </motion.button>
 
-          {/* Thumbs down */}
+          {/* Thumbs down with Lottie-like sparkle burst */}
           <motion.button
             type="button"
             onClick={handleThumbsDown}
             aria-label="No, this generation was not helpful"
-            whileHover={{ y: 1 }}
-            whileTap={{ scale: 0.9, rotate: 8 }}
+            whileHover={{ y: 2, scale: 1.08 }}
+            whileTap={{ scale: 0.88, rotate: 10 }}
             transition={{ type: "spring", stiffness: 500, damping: 18 }}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+            className="relative p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
           >
-            <ThumbsDown className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            <AnimatePresence>
+              {downBurstKey > 0 && (
+                <motion.span
+                  key={`bg-down-${downBurstKey}`}
+                  initial={{ opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 rounded-md bg-destructive/10"
+                />
+              )}
+            </AnimatePresence>
+            <ThumbsDown
+              className={cn(
+                "w-3.5 h-3.5 relative z-10 transition-colors",
+                downBurstKey > 0 && "text-destructive"
+              )}
+              fill={downBurstKey > 0 ? "currentColor" : "none"}
+              aria-hidden="true"
+              focusable="false"
+            />
+            <AnimatePresence>
+              {downBurstKey > 0 && (
+                <motion.span
+                  key={`ring-down-${downBurstKey}`}
+                  className="absolute inset-0 rounded-md border border-destructive/50"
+                  initial={{ opacity: 0.8, scale: 0.8 }}
+                  animate={{ opacity: 0, scale: 1.8 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                />
+              )}
+            </AnimatePresence>
+            <SparkleBurst color="rose" trigger={downBurstKey} />
           </motion.button>
 
           <div className="w-px h-4 bg-border/60 mx-0.5" aria-hidden="true" />
