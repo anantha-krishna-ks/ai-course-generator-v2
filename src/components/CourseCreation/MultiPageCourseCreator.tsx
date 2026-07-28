@@ -1530,6 +1530,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     font={block.font}
                                     onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                     readOnly={readOnly}
+                                    aiGenerated={block.aiGenerated}
                                   />
 
                                 )}
