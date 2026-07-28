@@ -33,6 +33,53 @@ const IMAGE_REASONS = [
   "Wrong text in image",
 ];
 
+interface SparkleBurstProps {
+  color: "emerald" | "rose";
+  trigger: number;
+}
+
+function SparkleBurst({ color, trigger }: SparkleBurstProps) {
+  const particles = [
+    { deg: 0, dist: 18, size: 10, delay: 0, rotate: 0 },
+    { deg: 45, dist: 14, size: 7, delay: 0.03, rotate: 45 },
+    { deg: 90, dist: 20, size: 9, delay: 0.06, rotate: 90 },
+    { deg: 135, dist: 15, size: 7, delay: 0.04, rotate: 135 },
+    { deg: 180, dist: 18, size: 10, delay: 0.02, rotate: 180 },
+    { deg: 225, dist: 14, size: 7, delay: 0.05, rotate: 225 },
+    { deg: 270, dist: 20, size: 9, delay: 0.07, rotate: 270 },
+    { deg: 315, dist: 15, size: 7, delay: 0.03, rotate: 315 },
+    { deg: 22, dist: 10, size: 5, delay: 0.08, rotate: 22 },
+    { deg: 202, dist: 10, size: 5, delay: 0.09, rotate: 202 },
+  ];
+
+  const colorClass = color === "emerald" ? "text-emerald-500" : "text-rose-500";
+
+  return (
+    <AnimatePresence>
+      {trigger > 0 && (
+        <span className="pointer-events-none absolute inset-0" aria-hidden="true">
+          {particles.map((p, i) => {
+            const rad = (p.deg * Math.PI) / 180;
+            const dx = Math.cos(rad) * p.dist;
+            const dy = Math.sin(rad) * p.dist;
+            return (
+              <motion.span
+                key={`spark-${trigger}-${i}`}
+                className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2", colorClass)}
+                initial={{ x: 0, y: 0, opacity: 1, scale: 0.3, rotate: 0 }}
+                animate={{ x: dx, y: dy, opacity: 0, scale: 1, rotate: p.rotate + 90 }}
+                transition={{ duration: 0.7, delay: p.delay, ease: "easeOut" }}
+              >
+                <Star className="w-2.5 h-2.5" style={{ width: p.size, height: p.size }} fill="currentColor" />
+              </motion.span>
+            );
+          })}
+        </span>
+      )}
+    </AnimatePresence>
+  );
+}
+
 type State = "idle" | "positive" | "negative-form" | "submitted" | "dismissed";
 
 export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedbackBarProps) {
