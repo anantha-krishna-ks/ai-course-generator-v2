@@ -93,7 +93,7 @@ export function buildMockRestoreState(title: string, courseId?: string): MultiPa
       ],
       "page-2-1": [
         { id: "pb-2-div", type: "text", variant: "divider-numbered", content: JSON.stringify({ number: 1, label: "Fundamentals" }) },
-        { id: "pb-2-1", type: "text", content: "<p>The fundamental principles form the backbone of this discipline. Understanding these concepts is crucial for building a strong foundation.</p>" },
+        { id: "pb-2-1", type: "text", content: "<p>The fundamental principles form the backbone of this discipline. Understanding these concepts is crucial for building a strong foundation.</p>", aiGenerated: true },
         { id: "pb-2-space", type: "text", variant: "spacer", content: JSON.stringify({ height: 32 }) },
         { id: "pb-2-5", type: "audio", content: "/demo/actAudio.mp3" },
       ],
