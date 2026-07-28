@@ -64,11 +64,6 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
     window.setTimeout(() => setState("dismissed"), 2400);
   };
 
-  const handleSkip = () => {
-    onSubmit?.({ rating: "negative" });
-    setState("submitted");
-    window.setTimeout(() => setState("dismissed"), 1600);
-  };
 
   const containerBase = cn(
     "mt-2 rounded-xl border border-primary/15 bg-gradient-to-br from-primary/[0.04] via-background to-background overflow-hidden",
