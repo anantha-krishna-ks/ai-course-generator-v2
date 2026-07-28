@@ -290,7 +290,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
         {/* Body */}
         <div className="px-3 py-2.5 space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Reasons</span>
+            <span className="text-[11px] font-medium text-muted-foreground">Reasons</span>
             <motion.span
               key={count}
               initial={{ scale: 0.85, opacity: 0.6 }}
