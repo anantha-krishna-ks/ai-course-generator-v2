@@ -199,35 +199,56 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
 
   // Success / submitted
   if (state === "positive" || state === "submitted") {
+    const isPositive = state === "positive";
     return (
       <motion.div
         layout
         initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className={containerBase}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(containerBase, "relative")}
         role="status"
         aria-live="polite"
       >
-        <div className="flex items-center gap-2 px-3 py-2 text-emerald-600 dark:text-emerald-400">
-          <motion.div
-            initial={{ scale: 0.4, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 500, damping: 18 }}
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/15"
-          >
-            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-          </motion.div>
+        {/* Soft radial glow on positive */}
+        {isPositive && (
+          <motion.span
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(120px 60px at 24px 50%, hsl(152 76% 50% / 0.18), transparent 70%)",
+            }}
+          />
+        )}
+        <div className="relative flex items-center gap-2.5 px-3 py-2.5 text-emerald-600 dark:text-emerald-400">
+          <div className="relative">
+            <motion.div
+              initial={{ scale: 0.2, opacity: 0, rotate: -20 }}
+              animate={{ scale: [0.2, 1.25, 1], opacity: 1, rotate: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1.4, 0.36, 1], times: [0, 0.6, 1] }}
+              className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/15 ring-2 ring-emerald-500/30"
+            >
+              <Check className="w-3.5 h-3.5" strokeWidth={3} aria-hidden="true" focusable="false" />
+            </motion.div>
+            {isPositive && (
+              <>
+                <FloatingHearts trigger={1} />
+                <ConfettiBurst trigger={1} />
+              </>
+            )}
+          </div>
           <motion.span
             initial={{ opacity: 0, x: -4 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.08 }}
-            className="font-medium"
+            className="font-semibold tracking-tight"
           >
-            {state === "positive"
-              ? "Thanks — glad this was helpful."
-              : "Thanks — we'll use this to improve future generations."}
+            {isPositive ? "You made our day 🎉" : "Thanks — we'll tune future generations."}
           </motion.span>
         </div>
       </motion.div>
