@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ThumbsUp, ThumbsDown, Check, X, Send, Sparkles, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ThumbsUp, ThumbsDown, Check, X, Send, Sparkles, Star, Heart } from "lucide-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -36,10 +36,11 @@ const IMAGE_REASONS = [
 interface SparkleBurstProps {
   color: "emerald" | "rose";
   trigger: number;
+  intensity?: "normal" | "high";
 }
 
-function SparkleBurst({ color, trigger }: SparkleBurstProps) {
-  const particles = [
+function SparkleBurst({ color, trigger, intensity = "normal" }: SparkleBurstProps) {
+  const base = [
     { deg: 0, dist: 18, size: 10, delay: 0, rotate: 0 },
     { deg: 45, dist: 14, size: 7, delay: 0.03, rotate: 45 },
     { deg: 90, dist: 20, size: 9, delay: 0.06, rotate: 90 },
@@ -51,6 +52,20 @@ function SparkleBurst({ color, trigger }: SparkleBurstProps) {
     { deg: 22, dist: 10, size: 5, delay: 0.08, rotate: 22 },
     { deg: 202, dist: 10, size: 5, delay: 0.09, rotate: 202 },
   ];
+
+  const extra = intensity === "high"
+    ? [
+        { deg: 60, dist: 34, size: 6, delay: 0.05, rotate: 60 },
+        { deg: 120, dist: 32, size: 5, delay: 0.07, rotate: 120 },
+        { deg: 200, dist: 36, size: 6, delay: 0.06, rotate: 200 },
+        { deg: 300, dist: 34, size: 5, delay: 0.08, rotate: 300 },
+        { deg: 10, dist: 30, size: 4, delay: 0.1, rotate: 10 },
+        { deg: 170, dist: 30, size: 4, delay: 0.11, rotate: 170 },
+      ]
+    : [];
+
+  const particles = [...base, ...extra];
+  const duration = intensity === "high" ? 0.95 : 0.7;
 
   const colorClass = color === "emerald" ? "text-emerald-500" : "text-rose-500";
 
@@ -68,12 +83,75 @@ function SparkleBurst({ color, trigger }: SparkleBurstProps) {
                 className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2", colorClass)}
                 initial={{ x: 0, y: 0, opacity: 1, scale: 0.3, rotate: 0 }}
                 animate={{ x: dx, y: dy, opacity: 0, scale: 1, rotate: p.rotate + 90 }}
-                transition={{ duration: 0.7, delay: p.delay, ease: "easeOut" }}
+                transition={{ duration, delay: p.delay, ease: "easeOut" }}
               >
                 <Star className="w-2.5 h-2.5" style={{ width: p.size, height: p.size }} fill="currentColor" />
               </motion.span>
             );
           })}
+        </span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Floating hearts that drift up on thumbs-up success — pure dopamine.
+function FloatingHearts({ trigger }: { trigger: number }) {
+  const hearts = [
+    { x: -22, delay: 0.0, size: 12, rot: -14 },
+    { x: -8, delay: 0.08, size: 14, rot: 6 },
+    { x: 8, delay: 0.04, size: 11, rot: -8 },
+    { x: 22, delay: 0.12, size: 13, rot: 14 },
+    { x: 0, delay: 0.16, size: 10, rot: 0 },
+  ];
+  return (
+    <AnimatePresence>
+      {trigger > 0 && (
+        <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+          {hearts.map((h, i) => (
+            <motion.span
+              key={`heart-${trigger}-${i}`}
+              className="absolute left-0 top-0 text-emerald-500"
+              initial={{ x: 0, y: 0, opacity: 0, scale: 0.4, rotate: 0 }}
+              animate={{ x: h.x, y: -46, opacity: [0, 1, 1, 0], scale: [0.4, 1, 1, 0.9], rotate: h.rot }}
+              transition={{ duration: 1.1, delay: h.delay, ease: "easeOut", times: [0, 0.2, 0.75, 1] }}
+            >
+              <Heart className="fill-current" style={{ width: h.size, height: h.size }} />
+            </motion.span>
+          ))}
+        </span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Confetti-style ribbons for the maximum dopamine payoff.
+function ConfettiBurst({ trigger }: { trigger: number }) {
+  const pieces = Array.from({ length: 14 }).map((_, i) => {
+    const angle = (i / 14) * Math.PI * 2;
+    const dist = 40 + (i % 3) * 8;
+    return {
+      x: Math.cos(angle) * dist,
+      y: Math.sin(angle) * dist - 10,
+      rot: (i * 47) % 360,
+      color: ["bg-emerald-400", "bg-amber-400", "bg-sky-400", "bg-primary", "bg-rose-400"][i % 5],
+      delay: (i % 5) * 0.02,
+    };
+  });
+  return (
+    <AnimatePresence>
+      {trigger > 0 && (
+        <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+          {pieces.map((p, i) => (
+            <motion.span
+              key={`conf-${trigger}-${i}`}
+              className={cn("absolute left-0 top-0 rounded-[1px]", p.color)}
+              style={{ width: 6, height: 2 }}
+              initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 0.6 }}
+              animate={{ x: p.x, y: p.y, opacity: 0, rotate: p.rot, scale: 1 }}
+              transition={{ duration: 0.9, delay: p.delay, ease: [0.16, 1, 0.3, 1] }}
+            />
+          ))}
         </span>
       )}
     </AnimatePresence>
@@ -121,35 +199,56 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
 
   // Success / submitted
   if (state === "positive" || state === "submitted") {
+    const isPositive = state === "positive";
     return (
       <motion.div
         layout
         initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        className={containerBase}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(containerBase, "relative")}
         role="status"
         aria-live="polite"
       >
-        <div className="flex items-center gap-2 px-3 py-2 text-emerald-600 dark:text-emerald-400">
-          <motion.div
-            initial={{ scale: 0.4, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 500, damping: 18 }}
-            className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/15"
-          >
-            <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-          </motion.div>
+        {/* Soft radial glow on positive */}
+        {isPositive && (
+          <motion.span
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(120px 60px at 24px 50%, hsl(152 76% 50% / 0.18), transparent 70%)",
+            }}
+          />
+        )}
+        <div className="relative flex items-center gap-2.5 px-3 py-2.5 text-emerald-600 dark:text-emerald-400">
+          <div className="relative">
+            <motion.div
+              initial={{ scale: 0.2, opacity: 0, rotate: -20 }}
+              animate={{ scale: [0.2, 1.25, 1], opacity: 1, rotate: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1.4, 0.36, 1], times: [0, 0.6, 1] }}
+              className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/15 ring-2 ring-emerald-500/30"
+            >
+              <Check className="w-3.5 h-3.5" strokeWidth={3} aria-hidden="true" focusable="false" />
+            </motion.div>
+            {isPositive && (
+              <>
+                <FloatingHearts trigger={1} />
+                <ConfettiBurst trigger={1} />
+              </>
+            )}
+          </div>
           <motion.span
             initial={{ opacity: 0, x: -4 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.08 }}
-            className="font-medium"
+            className="font-semibold tracking-tight"
           >
-            {state === "positive"
-              ? "Thanks — glad this was helpful."
-              : "Thanks — we'll use this to improve future generations."}
+            {isPositive ? "You made our day 🎉" : "Thanks — we'll tune future generations."}
           </motion.span>
         </div>
       </motion.div>
@@ -276,59 +375,101 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      className={containerBase}
+      className={cn(containerBase, "relative")}
     >
-      <div className="flex items-center justify-between gap-2 px-3 py-1.5">
-        <div className="flex items-center gap-1.5 text-muted-foreground">
-          <Sparkles className="w-3.5 h-3.5 text-foreground/60" aria-hidden="true" focusable="false" />
-          <span className="font-medium text-foreground">Was this generation helpful?</span>
+      {/* Ambient hover glow — subtle premium touch */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background:
+            "radial-gradient(220px 80px at 85% 50%, hsl(var(--primary) / 0.06), transparent 70%)",
+        }}
+      />
+      <div className="relative flex items-center justify-between gap-2 px-3 py-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <motion.span
+            aria-hidden="true"
+            animate={{ rotate: [0, -8, 8, -4, 0] }}
+            transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+            className="flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-primary/15 to-emerald-500/15"
+          >
+            <Sparkles className="w-3 h-3 text-primary" focusable="false" />
+          </motion.span>
+          <span className="font-semibold tracking-tight text-foreground truncate">
+            Was this generation helpful?
+          </span>
         </div>
-        <div className="flex items-center gap-0.5">
-          {/* Thumbs up with Lottie-like sparkle burst */}
+        <div className="flex items-center gap-0.5 shrink-0">
+          {/* Thumbs up — the dopamine hit */}
           <motion.button
             type="button"
             onClick={handleThumbsUp}
             aria-label="Yes, this generation was helpful"
-            whileHover={{ y: -2, scale: 1.08 }}
-            whileTap={{ scale: 0.88, rotate: -10 }}
-            transition={{ type: "spring", stiffness: 500, damping: 18 }}
-            className="relative p-1.5 rounded-md text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors"
+            whileHover={{ y: -3, scale: 1.15, rotate: -6 }}
+            whileTap={{ scale: 0.82, rotate: -18, y: 2 }}
+            transition={{ type: "spring", stiffness: 600, damping: 14 }}
+            className="relative p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors"
           >
+            {/* Bloom background on click */}
             <AnimatePresence>
               {burstKey > 0 && (
                 <motion.span
                   key={`bg-${burstKey}`}
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, scale: 0.4 }}
+                  animate={{ opacity: [0, 1, 0.9], scale: [0.4, 1.4, 1] }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-0 rounded-md bg-emerald-500/10"
+                  transition={{ duration: 0.5, ease: [0.22, 1.4, 0.36, 1] }}
+                  className="absolute inset-0 rounded-lg bg-gradient-to-br from-emerald-400/25 via-emerald-500/20 to-teal-500/20"
                 />
               )}
             </AnimatePresence>
-            <ThumbsUp
-              className={cn(
-                "w-3.5 h-3.5 relative z-10 transition-colors",
-                burstKey > 0 && "text-emerald-600"
-              )}
-              fill={burstKey > 0 ? "currentColor" : "none"}
-              aria-hidden="true"
-              focusable="false"
-            />
-            {/* Ring pulse */}
+            {/* Icon with pop + fill */}
+            <motion.span
+              animate={
+                burstKey > 0
+                  ? { scale: [1, 1.6, 1.1], rotate: [0, -14, 0], y: [0, -3, 0] }
+                  : { scale: 1, rotate: 0, y: 0 }
+              }
+              transition={{ duration: 0.55, ease: [0.22, 1.4, 0.36, 1], times: [0, 0.5, 1] }}
+              className="relative z-10 inline-flex"
+            >
+              <ThumbsUp
+                className={cn(
+                  "w-3.5 h-3.5 transition-colors",
+                  burstKey > 0 && "text-emerald-600 drop-shadow-[0_0_6px_hsl(152_76%_50%/0.6)]"
+                )}
+                fill={burstKey > 0 ? "currentColor" : "none"}
+                aria-hidden="true"
+                focusable="false"
+              />
+            </motion.span>
+            {/* Concentric ring pulses */}
             <AnimatePresence>
               {burstKey > 0 && (
-                <motion.span
-                  key={`ring-${burstKey}`}
-                  className="absolute inset-0 rounded-md border border-emerald-500/50"
-                  initial={{ opacity: 0.8, scale: 0.8 }}
-                  animate={{ opacity: 0, scale: 1.8 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                />
+                <>
+                  <motion.span
+                    key={`ring-a-${burstKey}`}
+                    className="absolute inset-0 rounded-lg border-2 border-emerald-500/60"
+                    initial={{ opacity: 0.9, scale: 0.7 }}
+                    animate={{ opacity: 0, scale: 2.2 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.75, ease: "easeOut" }}
+                  />
+                  <motion.span
+                    key={`ring-b-${burstKey}`}
+                    className="absolute inset-0 rounded-lg border border-emerald-400/50"
+                    initial={{ opacity: 0.7, scale: 0.9 }}
+                    animate={{ opacity: 0, scale: 2.8 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.95, ease: "easeOut", delay: 0.08 }}
+                  />
+                </>
               )}
             </AnimatePresence>
-            <SparkleBurst color="emerald" trigger={burstKey} />
+            <SparkleBurst color="emerald" trigger={burstKey} intensity="high" />
+            <FloatingHearts trigger={burstKey} />
+            <ConfettiBurst trigger={burstKey} />
           </motion.button>
 
           {/* Thumbs down with Lottie-like sparkle burst */}
