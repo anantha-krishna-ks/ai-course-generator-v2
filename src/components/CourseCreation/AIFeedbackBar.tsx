@@ -375,59 +375,101 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
       initial={{ opacity: 0, y: -4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      className={containerBase}
+      className={cn(containerBase, "relative")}
     >
-      <div className="flex items-center justify-between gap-2 px-3 py-1.5">
-        <div className="flex items-center gap-1.5 text-muted-foreground">
-          <Sparkles className="w-3.5 h-3.5 text-foreground/60" aria-hidden="true" focusable="false" />
-          <span className="font-medium text-foreground">Was this generation helpful?</span>
+      {/* Ambient hover glow — subtle premium touch */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background:
+            "radial-gradient(220px 80px at 85% 50%, hsl(var(--primary) / 0.06), transparent 70%)",
+        }}
+      />
+      <div className="relative flex items-center justify-between gap-2 px-3 py-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <motion.span
+            aria-hidden="true"
+            animate={{ rotate: [0, -8, 8, -4, 0] }}
+            transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+            className="flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-primary/15 to-emerald-500/15"
+          >
+            <Sparkles className="w-3 h-3 text-primary" focusable="false" />
+          </motion.span>
+          <span className="font-semibold tracking-tight text-foreground truncate">
+            Was this generation helpful?
+          </span>
         </div>
-        <div className="flex items-center gap-0.5">
-          {/* Thumbs up with Lottie-like sparkle burst */}
+        <div className="flex items-center gap-0.5 shrink-0">
+          {/* Thumbs up — the dopamine hit */}
           <motion.button
             type="button"
             onClick={handleThumbsUp}
             aria-label="Yes, this generation was helpful"
-            whileHover={{ y: -2, scale: 1.08 }}
-            whileTap={{ scale: 0.88, rotate: -10 }}
-            transition={{ type: "spring", stiffness: 500, damping: 18 }}
-            className="relative p-1.5 rounded-md text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors"
+            whileHover={{ y: -3, scale: 1.15, rotate: -6 }}
+            whileTap={{ scale: 0.82, rotate: -18, y: 2 }}
+            transition={{ type: "spring", stiffness: 600, damping: 14 }}
+            className="relative p-1.5 rounded-lg text-muted-foreground hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors"
           >
+            {/* Bloom background on click */}
             <AnimatePresence>
               {burstKey > 0 && (
                 <motion.span
                   key={`bg-${burstKey}`}
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, scale: 0.4 }}
+                  animate={{ opacity: [0, 1, 0.9], scale: [0.4, 1.4, 1] }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute inset-0 rounded-md bg-emerald-500/10"
+                  transition={{ duration: 0.5, ease: [0.22, 1.4, 0.36, 1] }}
+                  className="absolute inset-0 rounded-lg bg-gradient-to-br from-emerald-400/25 via-emerald-500/20 to-teal-500/20"
                 />
               )}
             </AnimatePresence>
-            <ThumbsUp
-              className={cn(
-                "w-3.5 h-3.5 relative z-10 transition-colors",
-                burstKey > 0 && "text-emerald-600"
-              )}
-              fill={burstKey > 0 ? "currentColor" : "none"}
-              aria-hidden="true"
-              focusable="false"
-            />
-            {/* Ring pulse */}
+            {/* Icon with pop + fill */}
+            <motion.span
+              animate={
+                burstKey > 0
+                  ? { scale: [1, 1.6, 1.1], rotate: [0, -14, 0], y: [0, -3, 0] }
+                  : { scale: 1, rotate: 0, y: 0 }
+              }
+              transition={{ duration: 0.55, ease: [0.22, 1.4, 0.36, 1], times: [0, 0.5, 1] }}
+              className="relative z-10 inline-flex"
+            >
+              <ThumbsUp
+                className={cn(
+                  "w-3.5 h-3.5 transition-colors",
+                  burstKey > 0 && "text-emerald-600 drop-shadow-[0_0_6px_hsl(152_76%_50%/0.6)]"
+                )}
+                fill={burstKey > 0 ? "currentColor" : "none"}
+                aria-hidden="true"
+                focusable="false"
+              />
+            </motion.span>
+            {/* Concentric ring pulses */}
             <AnimatePresence>
               {burstKey > 0 && (
-                <motion.span
-                  key={`ring-${burstKey}`}
-                  className="absolute inset-0 rounded-md border border-emerald-500/50"
-                  initial={{ opacity: 0.8, scale: 0.8 }}
-                  animate={{ opacity: 0, scale: 1.8 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                />
+                <>
+                  <motion.span
+                    key={`ring-a-${burstKey}`}
+                    className="absolute inset-0 rounded-lg border-2 border-emerald-500/60"
+                    initial={{ opacity: 0.9, scale: 0.7 }}
+                    animate={{ opacity: 0, scale: 2.2 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.75, ease: "easeOut" }}
+                  />
+                  <motion.span
+                    key={`ring-b-${burstKey}`}
+                    className="absolute inset-0 rounded-lg border border-emerald-400/50"
+                    initial={{ opacity: 0.7, scale: 0.9 }}
+                    animate={{ opacity: 0, scale: 2.8 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.95, ease: "easeOut", delay: 0.08 }}
+                  />
+                </>
               )}
             </AnimatePresence>
-            <SparkleBurst color="emerald" trigger={burstKey} />
+            <SparkleBurst color="emerald" trigger={burstKey} intensity="high" />
+            <FloatingHearts trigger={burstKey} />
+            <ConfettiBurst trigger={burstKey} />
           </motion.button>
 
           {/* Thumbs down with Lottie-like sparkle burst */}
