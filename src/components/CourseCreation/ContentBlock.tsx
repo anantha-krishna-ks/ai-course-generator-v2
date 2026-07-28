@@ -778,7 +778,14 @@ export function ContentBlock({
             </button>
           )}
         </div>
+        {(aiGenerated || justGenerated) && (type === "text" || type === "image") && !textGenerating && !imageGenerating && !readOnly && (
+          <div className="px-1">
+            <AIFeedbackBar blockType={type === "image" ? "image" : "text"} />
+          </div>
+        )}
       </div>
+
+
 
       {/* Generate Content Dialog */}
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
