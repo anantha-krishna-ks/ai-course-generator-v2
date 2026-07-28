@@ -56,6 +56,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { AIFeedbackBar } from "./AIFeedbackBar";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
