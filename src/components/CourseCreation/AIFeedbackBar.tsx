@@ -36,10 +36,11 @@ const IMAGE_REASONS = [
 interface SparkleBurstProps {
   color: "emerald" | "rose";
   trigger: number;
+  intensity?: "normal" | "high";
 }
 
-function SparkleBurst({ color, trigger }: SparkleBurstProps) {
-  const particles = [
+function SparkleBurst({ color, trigger, intensity = "normal" }: SparkleBurstProps) {
+  const base = [
     { deg: 0, dist: 18, size: 10, delay: 0, rotate: 0 },
     { deg: 45, dist: 14, size: 7, delay: 0.03, rotate: 45 },
     { deg: 90, dist: 20, size: 9, delay: 0.06, rotate: 90 },
@@ -51,6 +52,20 @@ function SparkleBurst({ color, trigger }: SparkleBurstProps) {
     { deg: 22, dist: 10, size: 5, delay: 0.08, rotate: 22 },
     { deg: 202, dist: 10, size: 5, delay: 0.09, rotate: 202 },
   ];
+
+  const extra = intensity === "high"
+    ? [
+        { deg: 60, dist: 34, size: 6, delay: 0.05, rotate: 60 },
+        { deg: 120, dist: 32, size: 5, delay: 0.07, rotate: 120 },
+        { deg: 200, dist: 36, size: 6, delay: 0.06, rotate: 200 },
+        { deg: 300, dist: 34, size: 5, delay: 0.08, rotate: 300 },
+        { deg: 10, dist: 30, size: 4, delay: 0.1, rotate: 10 },
+        { deg: 170, dist: 30, size: 4, delay: 0.11, rotate: 170 },
+      ]
+    : [];
+
+  const particles = [...base, ...extra];
+  const duration = intensity === "high" ? 0.95 : 0.7;
 
   const colorClass = color === "emerald" ? "text-emerald-500" : "text-rose-500";
 
@@ -68,12 +83,75 @@ function SparkleBurst({ color, trigger }: SparkleBurstProps) {
                 className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2", colorClass)}
                 initial={{ x: 0, y: 0, opacity: 1, scale: 0.3, rotate: 0 }}
                 animate={{ x: dx, y: dy, opacity: 0, scale: 1, rotate: p.rotate + 90 }}
-                transition={{ duration: 0.7, delay: p.delay, ease: "easeOut" }}
+                transition={{ duration, delay: p.delay, ease: "easeOut" }}
               >
                 <Star className="w-2.5 h-2.5" style={{ width: p.size, height: p.size }} fill="currentColor" />
               </motion.span>
             );
           })}
+        </span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Floating hearts that drift up on thumbs-up success — pure dopamine.
+function FloatingHearts({ trigger }: { trigger: number }) {
+  const hearts = [
+    { x: -22, delay: 0.0, size: 12, rot: -14 },
+    { x: -8, delay: 0.08, size: 14, rot: 6 },
+    { x: 8, delay: 0.04, size: 11, rot: -8 },
+    { x: 22, delay: 0.12, size: 13, rot: 14 },
+    { x: 0, delay: 0.16, size: 10, rot: 0 },
+  ];
+  return (
+    <AnimatePresence>
+      {trigger > 0 && (
+        <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+          {hearts.map((h, i) => (
+            <motion.span
+              key={`heart-${trigger}-${i}`}
+              className="absolute left-0 top-0 text-emerald-500"
+              initial={{ x: 0, y: 0, opacity: 0, scale: 0.4, rotate: 0 }}
+              animate={{ x: h.x, y: -46, opacity: [0, 1, 1, 0], scale: [0.4, 1, 1, 0.9], rotate: h.rot }}
+              transition={{ duration: 1.1, delay: h.delay, ease: "easeOut", times: [0, 0.2, 0.75, 1] }}
+            >
+              <Heart className="fill-current" style={{ width: h.size, height: h.size }} />
+            </motion.span>
+          ))}
+        </span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Confetti-style ribbons for the maximum dopamine payoff.
+function ConfettiBurst({ trigger }: { trigger: number }) {
+  const pieces = Array.from({ length: 14 }).map((_, i) => {
+    const angle = (i / 14) * Math.PI * 2;
+    const dist = 40 + (i % 3) * 8;
+    return {
+      x: Math.cos(angle) * dist,
+      y: Math.sin(angle) * dist - 10,
+      rot: (i * 47) % 360,
+      color: ["bg-emerald-400", "bg-amber-400", "bg-sky-400", "bg-primary", "bg-rose-400"][i % 5],
+      delay: (i % 5) * 0.02,
+    };
+  });
+  return (
+    <AnimatePresence>
+      {trigger > 0 && (
+        <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+          {pieces.map((p, i) => (
+            <motion.span
+              key={`conf-${trigger}-${i}`}
+              className={cn("absolute left-0 top-0 rounded-[1px]", p.color)}
+              style={{ width: 6, height: 2 }}
+              initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 0.6 }}
+              animate={{ x: p.x, y: p.y, opacity: 0, rotate: p.rot, scale: 1 }}
+              transition={{ duration: 0.9, delay: p.delay, ease: [0.16, 1, 0.3, 1] }}
+            />
+          ))}
         </span>
       )}
     </AnimatePresence>
