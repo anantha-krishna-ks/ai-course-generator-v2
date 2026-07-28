@@ -64,11 +64,6 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
     window.setTimeout(() => setState("dismissed"), 2400);
   };
 
-  const handleSkip = () => {
-    onSubmit?.({ rating: "negative" });
-    setState("submitted");
-    window.setTimeout(() => setState("dismissed"), 1600);
-  };
 
   const containerBase = cn(
     "mt-2 rounded-xl border border-primary/15 bg-gradient-to-br from-primary/[0.04] via-background to-background overflow-hidden",
@@ -93,24 +88,41 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
   }
 
   if (state === "negative-form") {
+    const count = reasons.length;
     return (
-      <div className={containerBase}>
-        <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-primary/10">
-          <div className="flex items-center gap-1.5 text-foreground font-medium">
-            <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-            <span>What went wrong?</span>
-            <span className="text-muted-foreground font-normal">Optional — helps the next generation.</span>
+      <div className={cn(containerBase, "border-primary/20 shadow-sm")}>
+        {/* Header */}
+        <div className="flex items-center justify-between gap-2 px-3 py-2 bg-gradient-to-r from-primary/[0.06] to-transparent border-b border-primary/10">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 shrink-0">
+              <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
+            </div>
+            <div className="min-w-0">
+              <div className="font-semibold text-foreground leading-tight">Help us improve this</div>
+              <div className="text-[11px] text-muted-foreground leading-tight">Pick what didn't land — all fields optional.</div>
+            </div>
           </div>
           <button
             type="button"
             onClick={() => setState("dismissed")}
             aria-label="Close feedback"
-            className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
           >
             <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
           </button>
         </div>
+
+        {/* Body */}
         <div className="px-3 py-2.5 space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Reasons</span>
+            <span className={cn(
+              "text-[10px] tabular-nums px-1.5 py-0.5 rounded-full",
+              count > 0 ? "bg-primary/10 text-primary" : "text-muted-foreground"
+            )}>
+              {count} selected
+            </span>
+          </div>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Feedback reasons">
             {chips.map((r) => {
               const active = reasons.includes(r);
@@ -123,7 +135,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
                   className={cn(
                     "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 transition-all",
                     active
-                      ? "border-primary/60 bg-primary/10 text-primary"
+                      ? "border-primary/60 bg-primary/10 text-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]"
                       : "border-border/60 bg-background hover:border-foreground/25 text-foreground"
                   )}
                 >
@@ -136,25 +148,17 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Add more detail (optional)…"
+            placeholder="Tell us more (optional)…"
             aria-label="Additional feedback"
             rows={2}
-            className="w-full resize-none rounded-lg border border-border/60 bg-background px-2.5 py-2 text-[12px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/25 transition-colors"
+            className="w-full resize-none rounded-lg border border-border/60 bg-background px-2.5 py-2 text-[12px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
-          <div className="flex items-center justify-end gap-1.5">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSkip}
-              className="h-7 rounded-full px-3 text-[11px] font-medium text-muted-foreground hover:text-foreground"
-            >
-              Skip
-            </Button>
+          <div className="flex items-center justify-end">
             <Button
               size="sm"
               onClick={handleSend}
               disabled={reasons.length === 0 && !message.trim()}
-              className="h-7 rounded-full px-3 text-[11px] font-medium gap-1"
+              className="h-7 rounded-full px-3.5 text-[11px] font-medium gap-1"
             >
               <Send className="w-3 h-3" aria-hidden="true" focusable="false" />
               Send feedback
@@ -164,6 +168,7 @@ export function AIFeedbackBar({ blockType, onSubmit, dense = false }: AIFeedback
       </div>
     );
   }
+
 
   return (
     <div className={containerBase}>
