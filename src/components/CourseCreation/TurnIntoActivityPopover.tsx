@@ -53,8 +53,6 @@ interface Props {
   hasContent: boolean;
   onOpenRewrite: () => void;
   onOpenGenerate: () => void;
-  onReplace?: (targetType: ActivityChoice["targetType"], targetVariant?: string) => void;
-  onKeepBoth?: (targetType: ActivityChoice["targetType"], targetVariant?: string) => void;
   onClose: () => void;
 }
 
@@ -63,13 +61,10 @@ export function TurnIntoActivityPopover({
   hasContent,
   onOpenRewrite,
   onOpenGenerate,
-  onReplace,
-  onKeepBoth,
   onClose,
 }: Props) {
   const [view, setView] = useState<View>("root");
   const [selected, setSelected] = useState<ActivityChoice | null>(null);
-  const [regenKey, setRegenKey] = useState(0);
 
   const rewriteLabel = blockKind === "text"
     ? (hasContent ? "Rewrite with AI" : "Generate text with AI")
