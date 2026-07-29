@@ -57,6 +57,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { AIFeedbackBar } from "./AIFeedbackBar";
+import { TurnIntoActivityPopover } from "./TurnIntoActivityPopover";
 
 const COL_SEPARATOR = "<!--col-break-->";
 
@@ -186,6 +187,8 @@ interface ContentBlockProps {
   onFontChange?: (fontId: string | undefined) => void;
   /** Marks the block content as AI-generated — surfaces the "Was this generation helpful?" feedback bar. */
   aiGenerated?: boolean;
+  /** Optional: adds a new interactive block AFTER this one instead of replacing. */
+  onConvertKeepBoth?: (nextType: "text" | "tabs" | "flashcards" | "hotspot", nextVariant?: string) => void;
 }
 
 export function ContentBlock({
@@ -203,6 +206,7 @@ export function ContentBlock({
   font,
   onFontChange,
   aiGenerated = false,
+  onConvertKeepBoth,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
@@ -217,6 +221,7 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+  const [isAIMenuOpen, setIsAIMenuOpen] = useState(false);
   
   const layout = detectContentLayout(content);
 
@@ -515,32 +520,44 @@ export function ContentBlock({
           {aiEnabled && (type === "text" || type === "image") && !isLayoutUtilityVariant(variant) && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => {
-                      if (type === "text") {
-                        if (hasContent) {
-                          setRewriteColIndex(null);
-                          setShowRewritePanel(true);
-                          setIsEditing(true);
-                        } else {
-                          setShowGenerateDialog(true);
-                        }
-                      } else {
-                        setShowGenerateDialog(true);
-                      }
+              <Popover open={isAIMenuOpen} onOpenChange={setIsAIMenuOpen}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                        aria-label="AI actions"
+                      >
+                        <AISparkles className="w-4 h-4" />
+                      </button>
+                    </PopoverTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="text-xs">
+                    Ask AI
+                  </TooltipContent>
+                </Tooltip>
+                <PopoverContent side="left" align="start" className="p-0 w-auto">
+                  <TurnIntoActivityPopover
+                    blockKind={type === "image" ? "image" : "text"}
+                    hasContent={hasContent}
+                    onOpenRewrite={() => {
+                      setRewriteColIndex(null);
+                      setShowRewritePanel(true);
+                      setIsEditing(true);
                     }}
-                    className="p-1.5 rounded-md hover:bg-muted transition-colors"
-                    aria-label={type === "text" ? "Edit with AI: Rewrite text" : "Generate image with AI"}
-                  >
-                    <AISparkles className="w-4 h-4" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="left" className="text-xs">
-                  {type === "text" ? "Edit with AI · Rewrite text" : "Generate image with AI"}
-                </TooltipContent>
-              </Tooltip>
+                    onOpenGenerate={() => setShowGenerateDialog(true)}
+                    onReplace={onTypeChange
+                      ? (targetType, targetVariant) => {
+                          onTypeChange(targetType as any, "", targetVariant);
+                        }
+                      : undefined}
+                    onKeepBoth={onConvertKeepBoth
+                      ? (targetType, targetVariant) => onConvertKeepBoth(targetType, targetVariant)
+                      : undefined}
+                    onClose={() => setIsAIMenuOpen(false)}
+                  />
+                </PopoverContent>
+              </Popover>
               <SidebarButton
                 icon={GitBranch}
                 label="Versions"
