@@ -794,6 +794,46 @@ export function ContentBlock({
             </button>
           )}
         </div>
+        {activityDraft && (
+          <div className="mt-3 rounded-xl border border-border/60 bg-background/80 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border/60 bg-muted/30">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <AISparkles className="w-3.5 h-3.5" />
+                <span className="text-[12px] font-semibold text-foreground truncate">
+                  {activityDraft.phase === "generating"
+                    ? `Building ${activityDraft.choice.label.toLowerCase()}…`
+                    : `Preview · ${activityDraft.choice.label}`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActivityDraft(null)}
+                aria-label="Close activity preview"
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <X className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="p-3">
+              {activityDraft.phase === "generating" ? (
+                <div className="px-4 py-8 flex flex-col items-center justify-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-full border-2 border-primary/25 border-t-primary animate-spin"
+                    aria-hidden="true"
+                  />
+                  <p className="text-[12px] font-medium text-foreground">
+                    Building {activityDraft.choice.label.toLowerCase()} from your content
+                  </p>
+                  <p className="text-[11px] text-muted-foreground text-center max-w-[280px]">
+                    The AI is structuring your text into the activity format.
+                  </p>
+                </div>
+              ) : (
+                <ActivityPreview kind={activityDraft.choice.id} />
+              )}
+            </div>
+          </div>
+        )}
         {(aiGenerated || justGenerated) && (type === "text" || type === "image") && !textGenerating && !imageGenerating && !readOnly && (
           <div className="px-1">
             <AIFeedbackBar blockType={type === "image" ? "image" : "text"} />
