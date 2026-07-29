@@ -520,32 +520,44 @@ export function ContentBlock({
           {aiEnabled && (type === "text" || type === "image") && !isLayoutUtilityVariant(variant) && (
             <>
               <div className="w-5 h-px bg-border/60 my-0.5" />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => {
-                      if (type === "text") {
-                        if (hasContent) {
-                          setRewriteColIndex(null);
-                          setShowRewritePanel(true);
-                          setIsEditing(true);
-                        } else {
-                          setShowGenerateDialog(true);
-                        }
-                      } else {
-                        setShowGenerateDialog(true);
-                      }
+              <Popover open={isAIMenuOpen} onOpenChange={setIsAIMenuOpen}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                        aria-label="AI actions"
+                      >
+                        <AISparkles className="w-4 h-4" />
+                      </button>
+                    </PopoverTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="text-xs">
+                    Ask AI
+                  </TooltipContent>
+                </Tooltip>
+                <PopoverContent side="left" align="start" className="p-0 w-auto">
+                  <TurnIntoActivityPopover
+                    blockKind={type === "image" ? "image" : "text"}
+                    hasContent={hasContent}
+                    onOpenRewrite={() => {
+                      setRewriteColIndex(null);
+                      setShowRewritePanel(true);
+                      setIsEditing(true);
                     }}
-                    className="p-1.5 rounded-md hover:bg-muted transition-colors"
-                    aria-label={type === "text" ? "Edit with AI: Rewrite text" : "Generate image with AI"}
-                  >
-                    <AISparkles className="w-4 h-4" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="left" className="text-xs">
-                  {type === "text" ? "Edit with AI · Rewrite text" : "Generate image with AI"}
-                </TooltipContent>
-              </Tooltip>
+                    onOpenGenerate={() => setShowGenerateDialog(true)}
+                    onReplace={onTypeChange
+                      ? (targetType, targetVariant) => {
+                          onTypeChange(targetType as any, "", targetVariant);
+                        }
+                      : undefined}
+                    onKeepBoth={onConvertKeepBoth
+                      ? (targetType, targetVariant) => onConvertKeepBoth(targetType, targetVariant)
+                      : undefined}
+                    onClose={() => setIsAIMenuOpen(false)}
+                  />
+                </PopoverContent>
+              </Popover>
               <SidebarButton
                 icon={GitBranch}
                 label="Versions"
