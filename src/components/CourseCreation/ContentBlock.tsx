@@ -712,36 +712,6 @@ export function ContentBlock({
                     blockFont={font}
                     onBlockFontChange={type === "text" ? onFontChange : undefined}
                   />
-                  {aiEnabled && (
-                    <div className="flex items-center gap-2 mt-2 px-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="rounded-full px-4 gap-1.5 h-8 text-xs bg-primary/5 text-primary hover:bg-primary/10 border border-primary/15"
-                        onClick={() => {
-                          if (type === "text" && hasContent) {
-                            setRewriteColIndex(null);
-                            setShowRewritePanel(true);
-                          } else {
-                            setShowGenerateDialog(true);
-                          }
-                        }}
-                      >
-                        <AISparkles className="w-3 h-3" />
-                        {type === "text" && hasContent ? "Rewrite with AI" : "Ask AI"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="rounded-full px-4 gap-1.5 h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/60"
-                        onClick={() => setShowVersionsDialog(true)}
-                      >
-                        <GitBranch className="w-3 h-3" aria-hidden="true" focusable="false" />
-                        Version History
-                      </Button>
-                    </div>
-                  )}
-                  {aiEnabled && showRewritePanel && rewriteColIndex === null && type === "text" && (
                     <RewriteTextPanel
                       content={content}
                       onReplace={(next) => {
