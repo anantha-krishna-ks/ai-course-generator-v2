@@ -37,7 +37,7 @@ export interface ActivityChoice {
   targetVariant?: string;
 }
 
-const ACTIVITIES: ActivityChoice[] = [
+export const ACTIVITIES: ActivityChoice[] = [
   { id: "accordion", label: "Accordion", hint: "Collapsible panels from each sub-topic", icon: Rows3, needs: "text", targetType: "text", targetVariant: "accordion" },
   { id: "horizontal-tabs", label: "Horizontal Tabs", hint: "2–5 sub-topics as tabs across the top", icon: LayoutPanelTop, needs: "text", targetType: "tabs", targetVariant: "horizontal-tabs" },
   { id: "vertical-tabs", label: "Vertical Tabs", hint: "2–5 sub-topics as a stacked list", icon: LayoutPanelLeft, needs: "text", targetType: "tabs", targetVariant: "vertical-tabs" },
@@ -46,13 +46,14 @@ const ACTIVITIES: ActivityChoice[] = [
   { id: "hotspot", label: "Hotspot on Image", hint: "Place labelled points on an image", icon: MousePointerClick, needs: "image", targetType: "hotspot", targetVariant: "hotspot" },
 ];
 
-type View = "root" | "activities" | "preview" | "generating";
+type View = "root" | "activities";
 
 interface Props {
   blockKind: BlockKind;
   hasContent: boolean;
   onOpenRewrite: () => void;
   onOpenGenerate: () => void;
+  onSelectActivity: (choice: ActivityChoice) => void;
   onClose: () => void;
 }
 
@@ -61,10 +62,10 @@ export function TurnIntoActivityPopover({
   hasContent,
   onOpenRewrite,
   onOpenGenerate,
+  onSelectActivity,
   onClose,
 }: Props) {
   const [view, setView] = useState<View>("root");
-  const [selected, setSelected] = useState<ActivityChoice | null>(null);
 
   const rewriteLabel = blockKind === "text"
     ? (hasContent ? "Rewrite with AI" : "Generate text with AI")
@@ -79,12 +80,6 @@ export function TurnIntoActivityPopover({
     onClose();
   };
 
-  const startGenerate = (choice: ActivityChoice) => {
-    setSelected(choice);
-    setView("generating");
-    window.setTimeout(() => setView("preview"), 1400);
-  };
-
   return (
     <div className="w-[340px] overflow-hidden">
       {/* Header */}
@@ -93,10 +88,7 @@ export function TurnIntoActivityPopover({
           {view !== "root" && (
             <button
               type="button"
-              onClick={() => {
-                if (view === "preview" || view === "generating") setView("activities");
-                else setView("root");
-              }}
+              onClick={() => setView("root")}
               className="p-1 -ml-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               aria-label="Back"
             >
@@ -106,10 +98,7 @@ export function TurnIntoActivityPopover({
           <div className="flex items-center gap-1.5 min-w-0">
             <AISparkles className="w-3.5 h-3.5" />
             <span className="text-[12px] font-semibold text-foreground truncate">
-              {view === "root" && "Ask AI"}
-              {view === "activities" && "Turn into activity"}
-              {view === "preview" && `Preview · ${selected?.label}`}
-              {view === "generating" && `Building ${selected?.label}…`}
+              {view === "root" ? "Ask AI" : "Turn into activity"}
             </span>
           </div>
         </div>
@@ -176,46 +165,13 @@ export function TurnIntoActivityPopover({
                         : "Needs a text block"
                       : undefined
                   }
-                  onSelect={() => startGenerate(a)}
+                  onSelect={() => {
+                    onSelectActivity(a);
+                    onClose();
+                  }}
                 />
               );
             })}
-          </motion.div>
-        )}
-
-        {view === "generating" && selected && (
-          <motion.div
-            key="generating"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="px-4 py-8 flex flex-col items-center justify-center gap-3"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
-              className="w-9 h-9 rounded-full border-2 border-primary/25 border-t-primary"
-              aria-hidden="true"
-            />
-            <p className="text-[12px] font-medium text-foreground">Building {selected.label.toLowerCase()} from your content</p>
-            <p className="text-[11px] text-muted-foreground text-center max-w-[240px]">
-              The AI is structuring your text into the activity format.
-            </p>
-          </motion.div>
-        )}
-
-        {view === "preview" && selected && (
-          <motion.div
-            key="preview"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="flex flex-col"
-          >
-            <div className="px-3 py-3">
-              <ActivityPreview kind={selected.id} />
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -304,7 +260,7 @@ function ActivityRow({
   );
 }
 
-function ActivityPreview({ kind }: { kind: ActivityKind }) {
+export function ActivityPreview({ kind }: { kind: ActivityKind }) {
   if (kind === "accordion") {
     return (
       <div className="rounded-lg border border-border/60 bg-background overflow-hidden">
@@ -314,7 +270,6 @@ function ActivityPreview({ kind }: { kind: ActivityKind }) {
             <span className={cn("w-4 h-4 rounded-full border border-border flex items-center justify-center text-muted-foreground text-[10px]", i === 0 && "bg-primary/10 border-primary/30 text-primary")}>{i === 0 ? "−" : "+"}</span>
           </div>
         ))}
-        {/* first panel open */}
         <div className="px-3 pb-2.5 -mt-1 text-[11px] text-muted-foreground leading-relaxed">
           A short introduction summarising this sub-topic in a couple of lines.
         </div>
@@ -368,7 +323,6 @@ function ActivityPreview({ kind }: { kind: ActivityKind }) {
       </div>
     );
   }
-  // hotspot
   return (
     <div className="relative rounded-lg border border-border/60 overflow-hidden bg-gradient-to-br from-muted/40 to-muted/10 aspect-[16/9]">
       {[
