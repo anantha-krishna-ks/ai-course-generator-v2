@@ -85,8 +85,9 @@ interface CourseItem {
 
 interface ContentBlockData {
   id: string;
-  type: "text" | "image" | "description";
+  type: "text" | "image" | "description" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards";
   content: string;
+  variant?: string;
   font?: string;
   aiGenerated?: boolean;
 }
@@ -573,6 +574,12 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const updateBlockFont = (id: string, fontIdValue: string | undefined) => {
     setContentBlocks((prev) =>
       prev.map((b) => (b.id === id ? { ...b, font: fontIdValue } : b))
+    );
+  };
+
+  const updateBlockType = (id: string, newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards", newContent: string, newVariant?: string) => {
+    setContentBlocks((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, type: newType, content: newContent, variant: newVariant } : b))
     );
   };
 
@@ -1520,7 +1527,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                 ) : (
                                   <ContentBlock
                                     id={block.id}
-                                    type={block.type as "text" | "image"}
+                                    type={block.type as "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards"}
                                     content={block.content}
                                     onChange={(content) => updateBlockContent(block.id, content)}
                                     onDelete={() => deleteBlock(block.id)}
@@ -1530,6 +1537,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     font={block.font}
                                     onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                     readOnly={readOnly}
+                                    variant={block.variant}
+                                    onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
                                     aiGenerated={block.aiGenerated}
                                   />
 

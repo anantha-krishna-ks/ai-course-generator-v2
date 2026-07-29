@@ -435,6 +435,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
     }));
   }, []);
 
+  const updateItemBlockType = useCallback((itemId: string, blockId: string, newType: "text" | "image" | "video" | "audio" | "doc" | "quiz" | "image-description" | "video-description" | "hotspot" | "tabs" | "flashcards", newContent: string, newVariant?: string) => {
+    setPageBlocksMap((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || []).map((b) => (b.id === blockId ? { ...b, type: newType, content: newContent, variant: newVariant } : b)),
+    }));
+  }, []);
+
   const deleteItemBlock = useCallback((itemId: string, blockId: string) => {
     setPageBlocksMap((prev) => {
       const blocks = prev[itemId] || [];
@@ -676,6 +683,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                         aiEnabled={aiEnabled}
                         font={block.font}
                         onFontChange={(fid) => updateItemBlockFont(itemId, block.id, fid)}
+                        variant={block.variant}
+                        onTypeChange={(t, c, v) => updateItemBlockType(itemId, block.id, t, c, v)}
                       />
                     );
                     if (blockIdx < blocks.length - 1) {
