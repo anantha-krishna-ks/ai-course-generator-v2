@@ -506,6 +506,7 @@ export function NestedLayoutBlock({
                       onTypeChange={(t, c, v) =>
                         updateChild(colIdx, child.id, { type: t, content: c, variant: v })
                       }
+                      onConvertKeepBoth={(t, v) => insertChild(colIdx, i + 1, t as NestedChildType, v)}
                       onFontChange={(fid) => updateChild(colIdx, child.id, { font: fid })}
                       aiEnabled={aiEnabled}
                     />
