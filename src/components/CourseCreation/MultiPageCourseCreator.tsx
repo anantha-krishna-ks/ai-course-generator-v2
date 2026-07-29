@@ -1539,6 +1539,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                                     readOnly={readOnly}
                                     variant={block.variant}
                                     onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                    onConvertKeepBoth={(t, v) => addGenericBlock(t, index + 1, v)}
                                     aiGenerated={block.aiGenerated}
                                   />
 

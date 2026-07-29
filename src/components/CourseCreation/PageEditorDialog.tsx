@@ -1504,6 +1504,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
                                       readOnly={readOnly}
                                       variant={block.variant}
                                       onTypeChange={(t, c, v) => updateBlockType(block.id, t, c, v)}
+                                      onConvertKeepBoth={(t, v) => addBlock(t, currentBlockIdx + 1, v)}
                                       font={block.font}
                                       onFontChange={(fid) => updateBlockFont(block.id, fid)}
                                       aiGenerated={block.aiGenerated}
