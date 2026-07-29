@@ -206,6 +206,7 @@ export function ContentBlock({
   font,
   onFontChange,
   aiGenerated = false,
+  onConvertKeepBoth,
 }: ContentBlockProps) {
   const [isEditing, setIsEditing] = useState(autoFocus && !readOnly);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
