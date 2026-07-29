@@ -206,7 +206,7 @@ export function TurnIntoActivityPopover({
 
         {view === "preview" && selected && (
           <motion.div
-            key={`preview-${regenKey}`}
+            key="preview"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
