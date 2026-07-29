@@ -221,6 +221,7 @@ export function ContentBlock({
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
+  const [isAIMenuOpen, setIsAIMenuOpen] = useState(false);
   
   const layout = detectContentLayout(content);
 
