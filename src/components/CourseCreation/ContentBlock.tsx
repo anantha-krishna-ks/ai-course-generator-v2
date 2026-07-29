@@ -812,8 +812,8 @@ export function ContentBlock({
           )}
         </div>
         {activityDraft && (
-          <div className="mt-3 rounded-xl border border-border/60 bg-background/80 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-border/60 bg-muted/30">
+          <div className="mt-3 rounded-2xl border border-border/60 bg-gradient-to-br from-background via-background to-primary/[0.03] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-12px_hsl(var(--primary)/0.18)] overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/60 bg-muted/30">
               <div className="flex items-center gap-1.5 min-w-0">
                 <AISparkles className="w-3.5 h-3.5" />
                 <span className="text-[12px] font-semibold text-foreground truncate">
@@ -830,18 +830,16 @@ export function ContentBlock({
               </button>
             </div>
             <div className="p-3">
-              <div className="px-4 py-8 flex flex-col items-center justify-center gap-3">
-                <div
-                  className="w-9 h-9 rounded-full border-2 border-primary/25 border-t-primary animate-spin"
-                  aria-hidden="true"
-                />
-                <p className="text-[12px] font-medium text-foreground">
-                  Building {activityDraft.choice.label.toLowerCase()} from your content
-                </p>
-                <p className="text-[11px] text-muted-foreground text-center max-w-[280px]">
-                  The AI is structuring your text into the activity format.
-                </p>
-              </div>
+              <AIBlockLoader
+                stages={[
+                  "Analyzing your content",
+                  `Structuring the ${activityDraft.choice.label.toLowerCase()}`,
+                  "Generating activity items",
+                  "Refining clarity & flow",
+                  "Finalizing layout",
+                ]}
+                className="min-h-[12rem]"
+              />
             </div>
           </div>
         )}
