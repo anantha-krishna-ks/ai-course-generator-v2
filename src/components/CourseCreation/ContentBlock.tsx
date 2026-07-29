@@ -547,6 +547,12 @@ export function ContentBlock({
                       setIsEditing(true);
                     }}
                     onOpenGenerate={() => setShowGenerateDialog(true)}
+                    onSelectActivity={(choice) => {
+                      setActivityDraft({ choice, phase: "generating" });
+                      window.setTimeout(() => {
+                        setActivityDraft((prev) => (prev && prev.choice.id === choice.id ? { choice, phase: "preview" } : prev));
+                      }, 1400);
+                    }}
                     onClose={() => setIsAIMenuOpen(false)}
                   />
                 </PopoverContent>
