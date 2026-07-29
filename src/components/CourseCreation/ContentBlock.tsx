@@ -712,6 +712,7 @@ export function ContentBlock({
                     blockFont={font}
                     onBlockFontChange={type === "text" ? onFontChange : undefined}
                   />
+                  {aiEnabled && showRewritePanel && rewriteColIndex === null && type === "text" && (
                     <RewriteTextPanel
                       content={content}
                       onReplace={(next) => {
