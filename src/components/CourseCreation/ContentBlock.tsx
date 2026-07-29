@@ -546,14 +546,6 @@ export function ContentBlock({
                       setIsEditing(true);
                     }}
                     onOpenGenerate={() => setShowGenerateDialog(true)}
-                    onReplace={onTypeChange
-                      ? (targetType, targetVariant) => {
-                          onTypeChange(targetType as any, "", targetVariant);
-                        }
-                      : undefined}
-                    onKeepBoth={onConvertKeepBoth
-                      ? (targetType, targetVariant) => onConvertKeepBoth(targetType, targetVariant)
-                      : undefined}
                     onClose={() => setIsAIMenuOpen(false)}
                   />
                 </PopoverContent>
