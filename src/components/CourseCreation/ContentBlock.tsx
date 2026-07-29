@@ -552,7 +552,13 @@ export function ContentBlock({
                       window.setTimeout(() => {
                         setActivityDraft((prev) => {
                           if (!prev || prev.choice.id !== choice.id) return prev;
-                          if (onTypeChange) {
+                          if (onConvertKeepBoth) {
+                            onConvertKeepBoth(
+                              choice.targetType as "text" | "tabs" | "flashcards" | "hotspot",
+                              choice.targetVariant
+                            );
+                          } else if (onTypeChange) {
+                            // Fallback: replace current block if parent hasn't wired keep-both.
                             onTypeChange(
                               choice.targetType as ContentBlockProps["type"],
                               "",
