@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Sparkles,
   PenLine,
   Wand2,
   ChevronRight,
@@ -12,15 +11,10 @@ import {
   Group,
   MousePointerClick,
   Info,
-  RotateCw,
-  Check,
-  Copy as CopyIcon,
-  ExternalLink,
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export type ActivityKind =
