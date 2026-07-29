@@ -222,6 +222,7 @@ export function ContentBlock({
   const [versionDialogCol, setVersionDialogCol] = useState<number | null>(null);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
   const [isAIMenuOpen, setIsAIMenuOpen] = useState(false);
+  const [activityDraft, setActivityDraft] = useState<{ choice: ActivityChoice; phase: "generating" | "preview" } | null>(null);
   
   const layout = detectContentLayout(content);
 
