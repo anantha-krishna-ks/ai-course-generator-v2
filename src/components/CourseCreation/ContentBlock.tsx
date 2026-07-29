@@ -187,6 +187,8 @@ interface ContentBlockProps {
   onFontChange?: (fontId: string | undefined) => void;
   /** Marks the block content as AI-generated — surfaces the "Was this generation helpful?" feedback bar. */
   aiGenerated?: boolean;
+  /** Optional: adds a new interactive block AFTER this one instead of replacing. */
+  onConvertKeepBoth?: (nextType: "text" | "tabs" | "flashcards" | "hotspot", nextVariant?: string) => void;
 }
 
 export function ContentBlock({
