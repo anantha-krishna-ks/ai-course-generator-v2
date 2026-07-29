@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Sparkles,
   PenLine,
   Wand2,
   ChevronRight,
@@ -12,15 +11,10 @@ import {
   Group,
   MousePointerClick,
   Info,
-  RotateCw,
-  Check,
-  Copy as CopyIcon,
-  ExternalLink,
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AISparkles } from "@/components/ui/ai-sparkles";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export type ActivityKind =
@@ -59,8 +53,6 @@ interface Props {
   hasContent: boolean;
   onOpenRewrite: () => void;
   onOpenGenerate: () => void;
-  onReplace?: (targetType: ActivityChoice["targetType"], targetVariant?: string) => void;
-  onKeepBoth?: (targetType: ActivityChoice["targetType"], targetVariant?: string) => void;
   onClose: () => void;
 }
 
@@ -69,13 +61,10 @@ export function TurnIntoActivityPopover({
   hasContent,
   onOpenRewrite,
   onOpenGenerate,
-  onReplace,
-  onKeepBoth,
   onClose,
 }: Props) {
   const [view, setView] = useState<View>("root");
   const [selected, setSelected] = useState<ActivityChoice | null>(null);
-  const [regenKey, setRegenKey] = useState(0);
 
   const rewriteLabel = blockKind === "text"
     ? (hasContent ? "Rewrite with AI" : "Generate text with AI")
@@ -217,7 +206,7 @@ export function TurnIntoActivityPopover({
 
         {view === "preview" && selected && (
           <motion.div
-            key={`preview-${regenKey}`}
+            key="preview"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
@@ -226,51 +215,6 @@ export function TurnIntoActivityPopover({
           >
             <div className="px-3 py-3">
               <ActivityPreview kind={selected.id} />
-            </div>
-
-            <div className="border-t border-border/60 bg-muted/20 px-2.5 py-2 flex items-center justify-between gap-2">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => { setRegenKey((k) => k + 1); setView("generating"); window.setTimeout(() => setView("preview"), 1200); }}
-                className="h-7 px-2 rounded-full text-[11px] gap-1 text-muted-foreground hover:text-foreground"
-              >
-                <RotateCw className="w-3 h-3" aria-hidden="true" />
-                Regenerate
-              </Button>
-              <div className="flex items-center gap-1.5">
-                {onKeepBoth && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => { onKeepBoth(selected.targetType, selected.targetVariant); onClose(); }}
-                    className="h-7 px-2.5 rounded-full text-[11px] gap-1"
-                  >
-                    <CopyIcon className="w-3 h-3" aria-hidden="true" />
-                    Keep both
-                  </Button>
-                )}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => { onReplace?.(selected.targetType, selected.targetVariant); onClose(); }}
-                  className="h-7 px-2.5 rounded-full text-[11px] gap-1"
-                  disabled={!onReplace}
-                  title={!onReplace ? "Not available in this view" : undefined}
-                >
-                  <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                  Open in editor
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => { onReplace?.(selected.targetType, selected.targetVariant); onClose(); }}
-                  disabled={!onReplace}
-                  className="h-7 px-3 rounded-full text-[11px] gap-1"
-                >
-                  <Check className="w-3 h-3" aria-hidden="true" />
-                  Replace
-                </Button>
-              </div>
             </div>
           </motion.div>
         )}
