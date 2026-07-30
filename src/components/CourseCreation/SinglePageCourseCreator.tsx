@@ -851,11 +851,12 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
             <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full border-border" onClick={handlePreview} aria-label="Preview course">
+                <Button variant="outline" className="rounded-full border-border gap-2" onClick={handlePreview}>
                   <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
+                  <span className="hidden sm:inline">Preview</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Preview</TooltipContent>
+              <TooltipContent>Preview course</TooltipContent>
             </Tooltip>
             <Popover open={scormOpen} onOpenChange={setScormOpen}>
               <Tooltip>
