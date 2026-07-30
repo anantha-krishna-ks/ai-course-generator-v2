@@ -307,6 +307,8 @@ export function ScormPageDurationPopover({
           )}
         </div>
       </div>
+      )}
+
     </div>
   );
 }
