@@ -92,12 +92,19 @@ export function ScormPageDurationPopover({
   const query = search.trim().toLowerCase();
 
   const filteredItems = useMemo(() => {
-    if (!query) return items;
+    const visible = (i: DurationItem) => i.type !== "question";
+    const visibleChildren = (children?: DurationItem[]) =>
+      children?.filter(visible).map((page) => ({ ...page, children: undefined })) ?? [];
+
+    if (!query) return items.filter(visible).map((s) => ({ ...s, children: visibleChildren(s.children) }));
     return items
       .map((section) => {
+        if (!visible(section)) return null;
         const sectionMatch = section.title.toLowerCase().includes(query);
-        const children = section.children?.filter((page) => page.title.toLowerCase().includes(query)) ?? [];
-        if (sectionMatch) return { ...section, children };
+        const children = visibleChildren(section.children).filter((page) =>
+          page.title.toLowerCase().includes(query)
+        );
+        if (sectionMatch) return { ...section, children: visibleChildren(section.children) };
         if (children.length) return { ...section, children };
         return null;
       })
