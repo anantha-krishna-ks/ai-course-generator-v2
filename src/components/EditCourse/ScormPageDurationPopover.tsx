@@ -1,7 +1,10 @@
 import { useState, useMemo } from "react";
-import { Clock, BookOpen, FileText, Search, RotateCcw, X } from "lucide-react";
+import { Clock, BookOpen, FileText, Search, RotateCcw, X, Settings, ArrowLeft, MessageSquareText, CheckCircle2, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+
 
 export interface DurationItem {
   id: string;
