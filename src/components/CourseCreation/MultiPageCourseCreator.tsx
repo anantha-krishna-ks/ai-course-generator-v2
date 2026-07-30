@@ -1071,19 +1071,18 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </Tooltip>
             )}
             {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
-             <Tooltip>
-               <TooltipTrigger asChild>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button
                     variant="outline"
-                    size="icon"
-                    className="rounded-full border-border"
+                    className="rounded-full border-border gap-2"
                     onClick={() => handlePreview()}
-                    aria-label="Preview course"
                   >
                     <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <span className="hidden sm:inline">Preview</span>
                   </Button>
-               </TooltipTrigger>
-               <TooltipContent>Preview</TooltipContent>
+                </TooltipTrigger>
+                <TooltipContent>Preview course</TooltipContent>
               </Tooltip>
               <Popover open={scormOpen} onOpenChange={setScormOpen}>
                 <Tooltip>
