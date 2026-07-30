@@ -62,6 +62,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
+import { useCourseLanguage } from "@/services/courseLanguageStore";
 
 interface PageContentBlock {
   id: string;
