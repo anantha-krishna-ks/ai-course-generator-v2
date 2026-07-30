@@ -877,19 +877,17 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 sideOffset={8}
                 className="w-[420px] sm:w-[520px] p-0 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-sm shadow-xl"
               >
-                <div className="max-h-[75vh] overflow-y-auto p-5 scorm-dark-scrollbar">
-                  <style>{`
-                    .scorm-dark-scrollbar { scrollbar-width: thin; scrollbar-color: hsl(var(--muted-foreground) / 0.55) transparent; }
-                    .scorm-dark-scrollbar::-webkit-scrollbar { width: 8px; }
-                    .scorm-dark-scrollbar::-webkit-scrollbar-track { background: hsl(var(--muted) / 0.4); border-radius: 9999px; }
-                    .scorm-dark-scrollbar::-webkit-scrollbar-thumb { background-color: hsl(var(--muted-foreground) / 0.55); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
-                    .scorm-dark-scrollbar::-webkit-scrollbar-thumb:hover { background-color: hsl(var(--foreground) / 0.65); }
-                  `}</style>
-                  <ScormPreferencesContent
-                    showHeader={false}
-                    onSave={() => setScormOpen(false)}
-                  />
-                </div>
+                <ScormPageDurationPopover
+                  items={items}
+                  defaultDurationSec={60}
+                  onClose={() => setScormOpen(false)}
+                  onReset={() => {
+                    toast({
+                      title: "Page durations reset",
+                      description: "All section and page durations restored to the course default.",
+                    });
+                  }}
+                />
               </PopoverContent>
             </Popover>
             {isEditCoursePage && (
