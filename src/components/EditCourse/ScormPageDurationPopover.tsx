@@ -222,7 +222,7 @@ export function ScormPageDurationPopover({
                 value={failMessage}
                 onChange={(e) => setFailMessage(e.target.value)}
                 rows={3}
-                className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+                className="text-[14px] min-h-[80px] max-h-[320px] resize-y overflow-auto [overflow-wrap:anywhere] break-words border-0 bg-transparent rounded-none focus-visible:ring-0"
               />
             </div>
           </div>
