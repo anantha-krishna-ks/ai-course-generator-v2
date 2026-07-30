@@ -151,6 +151,8 @@ const initialState: AIGenerateState = {
   language: "en",
 };
 
+import { setCourseLanguage } from "@/services/courseLanguageStore";
+
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
 
 export default function AIGenerateCourse() {
@@ -276,6 +278,7 @@ export default function AIGenerateCourse() {
       navigate("/dashboard");
       return;
     }
+    setCourseLanguage("draft", formState.language, true);
     setShowGenerating(true);
   };
 
