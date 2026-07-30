@@ -3,11 +3,14 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, MoreVertical, Copy, Trash2, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, MoreVertical, Copy, Trash2, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders, Languages } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
+import { TranslateCourseDialog } from "@/components/EditCourse/TranslateCourseDialog";
+import { CourseLanguagePicker } from "./CourseLanguagePicker";
+import { useCourseLanguage, getLanguage } from "@/services/courseLanguageStore";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
@@ -203,6 +206,8 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   const { toast } = useToast();
   const [title, setTitle] = useState(initialRestoreState?.title ?? courseTitle);
   const [showCloneDialog, setShowCloneDialog] = useState(false);
+  const [showTranslateDialog, setShowTranslateDialog] = useState(false);
+  const courseLanguage = useCourseLanguage(courseId);
   const [showFinishReviewDialog, setShowFinishReviewDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showTour, setShowTour] = useState(() => {
@@ -1071,6 +1076,13 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </Tooltip>
             )}
             {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
+            <CourseLanguagePicker
+              value={courseLanguage.code}
+              onChange={courseLanguage.setCode}
+              locked={courseLanguage.locked}
+              variant="chip"
+              className="hidden md:inline-flex"
+            />
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -1135,7 +1147,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                    <TooltipContent>More</TooltipContent>
                  </Tooltip>
                   <DropdownMenuContent align="end" className="w-52">
-                   <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
+                    <DropdownMenuItem onClick={() => setShowTranslateDialog(true)} className="gap-2 cursor-pointer">
+                      <Languages className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      Translate course
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
                    </DropdownMenuItem>
@@ -1983,6 +1999,18 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
       )}
       {isEditCoursePage && (
         <>
+          <TranslateCourseDialog
+            open={showTranslateDialog}
+            onOpenChange={setShowTranslateDialog}
+            courseTitle={title}
+            sourceLanguage={courseLanguage.code}
+            onTranslate={(code) => {
+              toast({
+                title: `Translated copy created (${getLanguage(code).label})`,
+                description: "A new course was created in the target language. The original course is unchanged.",
+              });
+            }}
+          />
           <CloneCourseDialog
             open={showCloneDialog}
             onClose={setShowCloneDialog}

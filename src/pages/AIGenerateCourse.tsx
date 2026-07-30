@@ -79,6 +79,7 @@ export interface AIGenerateState {
   scormPassMessage: string;
   scormFailMessage: string;
   contentDepth: ContentDepth;
+  language: string;
 }
 
 export interface QuizVariantConfig {
@@ -147,7 +148,10 @@ const initialState: AIGenerateState = {
   scormPassMessage: "Congratulations! You have successfully completed the course.",
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
   contentDepth: "balanced",
+  language: "en",
 };
+
+import { setCourseLanguage } from "@/services/courseLanguageStore";
 
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepCourseIntent, StepCourseDetails, StepBlueprintGenerate, StepEditRefine];
 
@@ -274,6 +278,7 @@ export default function AIGenerateCourse() {
       navigate("/dashboard");
       return;
     }
+    setCourseLanguage("draft", formState.language, true);
     setShowGenerating(true);
   };
 

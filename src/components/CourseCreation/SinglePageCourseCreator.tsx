@@ -7,7 +7,7 @@ import {
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
   Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen,
   MoreVertical, UsersRound, CaseSensitive, Palette,
-  Sliders,
+  Sliders, Languages,
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
@@ -17,6 +17,9 @@ import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
+import { TranslateCourseDialog } from "@/components/EditCourse/TranslateCourseDialog";
+import { CourseLanguagePicker } from "./CourseLanguagePicker";
+import { useCourseLanguage, getLanguage } from "@/services/courseLanguageStore";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
@@ -130,6 +133,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [aiOptions, setAIOptions] = useState<AIOptions | null>(initialRestoreState?.aiOptions ?? initialAIOptions);
   const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
   const [showCloneDialog, setShowCloneDialog] = useState(false);
+  const [showTranslateDialog, setShowTranslateDialog] = useState(false);
+  const courseLanguage = useCourseLanguage(courseId);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const [scormOpen, setScormOpen] = useState(false);
@@ -858,6 +863,13 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               </TooltipTrigger>
               <TooltipContent>Preview course</TooltipContent>
             </Tooltip>
+            <CourseLanguagePicker
+              value={courseLanguage.code}
+              onChange={courseLanguage.setCode}
+              locked={courseLanguage.locked}
+              variant="chip"
+              className="hidden md:inline-flex"
+            />
             <Popover open={scormOpen} onOpenChange={setScormOpen}>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -909,6 +921,10 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                   <TooltipContent>More</TooltipContent>
                 </Tooltip>
                 <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuItem onClick={() => setShowTranslateDialog(true)} className="gap-2 cursor-pointer">
+                    <Languages className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    Translate course
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
                     <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Clone course
@@ -1470,7 +1486,19 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       <CollaboratorsDrawer open={showCollaboratorsDrawer} onOpenChange={setShowCollaboratorsDrawer} courseId={courseId} courseTitle={title} />
       {isEditCoursePage && (
         <>
-          <CloneCourseDialog
+          <TranslateCourseDialog
+          open={showTranslateDialog}
+          onOpenChange={setShowTranslateDialog}
+          courseTitle={title}
+          sourceLanguage={courseLanguage.code}
+          onTranslate={(code) => {
+            toast({
+              title: `Translated copy created (${getLanguage(code).label})`,
+              description: "A new course was created in the target language. The original course is unchanged.",
+            });
+          }}
+        />
+        <CloneCourseDialog
             open={showCloneDialog}
             onClose={setShowCloneDialog}
             currentTitle={title}

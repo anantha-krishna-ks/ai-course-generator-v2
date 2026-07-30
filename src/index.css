@@ -444,3 +444,27 @@ All colors MUST be HSL.
   border-radius: 0.75rem;
   animation: comment-anchor-flash 1.6s ease-out;
 }
+
+/* ============================================================
+   RTL support — learner-facing content mirrors when the course
+   language is right-to-left (Arabic, Hebrew, Persian, Urdu).
+   UI labels stay in English (v1); only direction/alignment flip.
+   ============================================================ */
+[dir="rtl"] {
+  text-align: right;
+}
+[dir="rtl"] .text-left { text-align: right; }
+[dir="rtl"] .text-right { text-align: left; }
+
+/* Mirror directional affordances (arrows, chevrons, progress fills) */
+[dir="rtl"] [data-rtl-flip="true"],
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Numeric/latin fragments inside RTL prose stay legible */
+[dir="rtl"] .tabular-nums,
+[dir="rtl"] [data-ltr-inline="true"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

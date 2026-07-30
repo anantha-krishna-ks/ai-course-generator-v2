@@ -11,6 +11,7 @@ import { InteractiveQuiz } from "@/components/CoursePreview/InteractiveQuiz";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
+import { useCourseLanguage } from "@/services/courseLanguageStore";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
@@ -69,6 +70,7 @@ const SinglepageCoursePreview = () => {
   const [completed, setCompleted] = useState(false);
   const completionRef = useRef<HTMLDivElement | null>(null);
   const contentBgStyle = useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""));
+  const courseLanguage = useCourseLanguage(String((data ?? previewState)?.courseId ?? "draft"));
 
   const handleFinish = () => {
     setCompleted(true);
@@ -885,7 +887,12 @@ const SinglepageCoursePreview = () => {
   );
 
   return (
-    <div className="h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
+    <div
+      className="h-screen bg-background flex flex-col"
+      lang={courseLanguage.code}
+      dir={courseLanguage.dir}
+      style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}
+    >
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2 sm:gap-3">
