@@ -5,8 +5,8 @@ import {
   ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Eye, Wand2, Plus, X, Undo2,
   FileStack, Layers, HelpCircle, Sparkles, Type, ImageIcon, Video, FileText as DocIcon,
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
-  Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen, Download,
-  MoreVertical, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, CaseSensitive, Palette,
+  Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen,
+  MoreVertical, UsersRound, CaseSensitive, Palette,
   Sliders,
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
@@ -18,7 +18,7 @@ import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
-import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
+
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 import { ScormPageDurationPopover } from "@/components/EditCourse/ScormPageDurationPopover";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
@@ -131,7 +131,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
   const [showCloneDialog, setShowCloneDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
+  
   const [scormOpen, setScormOpen] = useState(false);
   const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
 
