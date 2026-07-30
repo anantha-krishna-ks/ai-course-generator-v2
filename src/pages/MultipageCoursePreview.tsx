@@ -13,6 +13,7 @@ import { GlossaryDialog } from "@/components/CoursePreview/GlossaryDialog";
 import { GenerateExportDialog } from "@/components/CourseCreation/GenerateExportDialog";
 import { getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { CourseBrandingLogo } from "@/components/CourseCreation/CourseBrandingLogo";
+import { useCourseLanguage } from "@/services/courseLanguageStore";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
 import { CoursePreviewStatusBanner } from "@/components/Course/CoursePreviewStatusBanner";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
@@ -70,6 +71,7 @@ const MultipageCoursePreview = () => {
   const [completed, setCompleted] = useState(false);
   const completionRef = useRef<HTMLDivElement | null>(null);
   const contentBgStyle = useCourseContentBackgroundStyle(String((data ?? previewState)?.courseId ?? ""));
+  const courseLanguage = useCourseLanguage(String((data ?? previewState)?.courseId ?? "draft"));
 
   const isMobileView = deviceView === 'mobile';
   const isTabletView = deviceView === 'tablet';
@@ -955,7 +957,12 @@ const MultipageCoursePreview = () => {
   // Hero / Landing view
   if (!started) {
     return (
-      <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
+      <div
+      className="min-h-screen bg-background flex flex-col"
+      lang={courseLanguage.code}
+      dir={courseLanguage.dir}
+      style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}
+    >
         {/* Top bar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center gap-2 min-w-0">
@@ -1206,7 +1213,12 @@ const MultipageCoursePreview = () => {
 
   // Content view with sidebar (desktop) / bottom bar + sheet (mobile)
   return (
-    <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}>
+    <div
+      className="min-h-screen bg-background flex flex-col"
+      lang={courseLanguage.code}
+      dir={courseLanguage.dir}
+      style={{ fontFamily: getFontStack(data?.fontId ?? previewState?.fontId ?? "default") }}
+    >
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-3 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2 min-w-0">
