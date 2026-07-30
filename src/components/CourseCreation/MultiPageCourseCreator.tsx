@@ -67,7 +67,7 @@ import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, FONT_OPTIONS } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
-import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
+
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 import { ScormPageDurationPopover } from "@/components/EditCourse/ScormPageDurationPopover";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
