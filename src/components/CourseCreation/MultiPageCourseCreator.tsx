@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, MoreVertical, Copy, Trash2, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -211,7 +211,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showCopyContentDialog, setShowCopyContentDialog] = useState(false);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [scormOpen, setScormOpen] = useState(false);
   const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
   const [tourStep, setTourStep] = useState(0);
