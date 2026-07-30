@@ -1147,7 +1147,11 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                    <TooltipContent>More</TooltipContent>
                  </Tooltip>
                   <DropdownMenuContent align="end" className="w-52">
-                   <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
+                    <DropdownMenuItem onClick={() => setShowTranslateDialog(true)} className="gap-2 cursor-pointer">
+                      <Languages className="w-4 h-4" aria-hidden="true" focusable="false" />
+                      Translate course
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowCloneDialog(true)} className="gap-2 cursor-pointer">
                      <Copy className="w-4 h-4" aria-hidden="true" focusable="false" />
                      Clone course
                    </DropdownMenuItem>
