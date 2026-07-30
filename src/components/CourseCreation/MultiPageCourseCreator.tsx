@@ -14,6 +14,7 @@ import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
