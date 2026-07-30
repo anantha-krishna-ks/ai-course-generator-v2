@@ -7,6 +7,7 @@ import {
   LayoutGrid, FileText, MoreHorizontal, MessageCircleQuestion, GripVertical, Pencil, Copy, Trash2,
   Check, Send, Loader2, ArrowLeft as ArrowLeftIcon, BookOpen, Download,
   MoreVertical, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, CaseSensitive, Palette,
+  Sliders,
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
@@ -17,7 +18,7 @@ import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
-import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPreferencesDialog, ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent,
@@ -129,7 +130,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
   const [showCloneDialog, setShowCloneDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showTokenDialog, setShowTokenDialog] = useState(false);
-  const [showScormDialog, setShowScormDialog] = useState(false);
+  const [scormOpen, setScormOpen] = useState(false);
   const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
 
   // Course outline items
@@ -908,10 +909,6 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
-                  <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
-                    <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
-                    SCORM preferences
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate(`/edit-course/${courseId}/branding?layout=single-page`)} className="gap-2 cursor-pointer">
                     <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
                     Branding
@@ -1535,7 +1532,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
       <GenerateExportDialog open={showExportDialog} onOpenChange={setShowExportDialog} courseTitle={title} />
 
       <TokenConsumptionDialog open={showTokenDialog} onClose={() => setShowTokenDialog(false)} imageVersionHistory={[]} />
-      <ScormPreferencesDialog open={showScormDialog} onOpenChange={setShowScormDialog} />
+      
       <CollaboratorsDrawer open={showCollaboratorsDrawer} onOpenChange={setShowCollaboratorsDrawer} courseId={courseId} courseTitle={title} />
       {isEditCoursePage && (
         <>
