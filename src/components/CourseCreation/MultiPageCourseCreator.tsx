@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -67,7 +67,7 @@ import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelect
 import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, FONT_OPTIONS } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
-import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPreferencesDialog, ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import { CourseStatusBadge } from "@/components/Course/CourseStatusBadge";
