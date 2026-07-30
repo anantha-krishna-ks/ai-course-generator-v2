@@ -2059,10 +2059,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         courseTitle={title}
       />
 
-      <ScormPreferencesDialog
-        open={showScormDialog}
-        onOpenChange={setShowScormDialog}
-      />
 
       <CopyContentDialog
         open={showCopyContentDialog}
