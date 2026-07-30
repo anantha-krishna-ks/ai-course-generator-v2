@@ -31,6 +31,7 @@ const Header = ({ showTokens = true, onTokenClick, tokenCount = "932,679" }: Hea
   const navigate = useNavigate();
   const [branding, setBranding] = useState<BrandingSettings | null>(null);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [scormOpen, setScormOpen] = useState(false);
 
   useEffect(() => {
     // Load initial branding
