@@ -1465,7 +1465,7 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
 
       <GenerateExportDialog open={showExportDialog} onOpenChange={setShowExportDialog} courseTitle={title} />
 
-      <TokenConsumptionDialog open={showTokenDialog} onClose={() => setShowTokenDialog(false)} imageVersionHistory={[]} />
+      
       
       <CollaboratorsDrawer open={showCollaboratorsDrawer} onOpenChange={setShowCollaboratorsDrawer} courseId={courseId} courseTitle={title} />
       {isEditCoursePage && (
