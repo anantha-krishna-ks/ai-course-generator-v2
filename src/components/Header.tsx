@@ -8,12 +8,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, KeyRound, Shield, HelpCircle } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { LogOut, KeyRound, Shield, HelpCircle, Sliders } from "lucide-react";
 import logo from "@/assets/logo.png";
 import excelsoftLogo from "@/assets/courseed-logo.png";
 import { brandingService, BrandingSettings } from "@/services/brandingService";
 import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
 
 interface HeaderProps {
   showTokens?: boolean;
