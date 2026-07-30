@@ -855,6 +855,42 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
               </TooltipTrigger>
               <TooltipContent>Preview</TooltipContent>
             </Tooltip>
+            <Popover open={scormOpen} onOpenChange={setScormOpen}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="rounded-full border-border"
+                      aria-label="SCORM preferences"
+                    >
+                      <Sliders className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    </Button>
+                  </PopoverTrigger>
+                </TooltipTrigger>
+                <TooltipContent>SCORM</TooltipContent>
+              </Tooltip>
+              <PopoverContent
+                align="end"
+                sideOffset={8}
+                className="w-[420px] sm:w-[520px] p-0 rounded-2xl border border-border/60 bg-card/95 backdrop-blur-sm shadow-xl"
+              >
+                <div className="max-h-[75vh] overflow-y-auto p-5 scorm-dark-scrollbar">
+                  <style>{`
+                    .scorm-dark-scrollbar { scrollbar-width: thin; scrollbar-color: hsl(var(--muted-foreground) / 0.55) transparent; }
+                    .scorm-dark-scrollbar::-webkit-scrollbar { width: 8px; }
+                    .scorm-dark-scrollbar::-webkit-scrollbar-track { background: hsl(var(--muted) / 0.4); border-radius: 9999px; }
+                    .scorm-dark-scrollbar::-webkit-scrollbar-thumb { background-color: hsl(var(--muted-foreground) / 0.55); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
+                    .scorm-dark-scrollbar::-webkit-scrollbar-thumb:hover { background-color: hsl(var(--foreground) / 0.65); }
+                  `}</style>
+                  <ScormPreferencesContent
+                    showHeader={false}
+                    onSave={() => setScormOpen(false)}
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
             {isEditCoursePage && (
               <DropdownMenu>
                 <Tooltip>
