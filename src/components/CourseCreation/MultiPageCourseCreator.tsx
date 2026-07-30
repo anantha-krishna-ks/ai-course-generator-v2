@@ -1090,15 +1090,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        size="icon"
-                        className="rounded-full border-border"
-                        aria-label="SCORM preferences"
+                        className="rounded-full border-border gap-2"
                       >
                         <Sliders className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        <span className="hidden sm:inline">SCORM</span>
                       </Button>
                     </PopoverTrigger>
                   </TooltipTrigger>
-                  <TooltipContent>SCORM</TooltipContent>
+                  <TooltipContent>SCORM preferences</TooltipContent>
                 </Tooltip>
                 <PopoverContent
                   align="end"
