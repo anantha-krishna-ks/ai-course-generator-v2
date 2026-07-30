@@ -1266,7 +1266,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
 
           {/* Content */}
           <ScrollArea className="relative z-10 flex-1 min-h-[300px] [&_[data-radix-scroll-area-thumb]]:!bg-muted-foreground/50 [&_[data-radix-scroll-area-thumb]:hover]:!bg-muted-foreground/70">
-            <div className="p-6 sm:p-8 lg:py-10 lg:pr-10 lg:pl-16">
+            <div className="p-6 sm:p-8 lg:py-10 lg:pr-10 lg:pl-16" dir={courseLanguage.dir} lang={courseLanguage.code}>
               {/* Course branding logo (intro) */}
               <CourseBrandingLogo courseId={courseId} slot="intro" />
 
@@ -1560,7 +1560,7 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
           className="lg:w-[60%] bg-background border-t lg:border-t-0 lg:border-l border-border flex flex-col overflow-y-auto"
           style={contentBgStyle}
         >
-            <div className="p-6 sm:p-10">
+            <div className="p-6 sm:p-10" dir={courseLanguage.dir} lang={courseLanguage.code}>
 
               {/* Header row: Course outline + Add item */}
               <div className="flex items-center justify-between mb-6">
