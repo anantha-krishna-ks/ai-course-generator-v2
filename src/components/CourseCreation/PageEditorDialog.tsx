@@ -1098,7 +1098,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onDrop={handleContentDrop}
             >
 
-            <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
+            <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14" dir={courseDir} lang={courseLangCode}>
               {/* Course branding logo (content) */}
               <CourseBrandingLogo courseId={courseId} slot="content" />
               {isCurrentSection ? (
