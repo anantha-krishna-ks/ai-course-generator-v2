@@ -18,7 +18,8 @@ import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer
 import { CloneCourseDialog } from "@/components/EditCourse/CloneCourseDialog";
 import { DeleteCourseDialog } from "@/components/EditCourse/DeleteCourseDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
-import { ScormPreferencesDialog, ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPageDurationPopover } from "@/components/EditCourse/ScormPageDurationPopover";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent,
