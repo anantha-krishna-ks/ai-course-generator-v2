@@ -1138,10 +1138,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                        </DropdownMenuSubContent>
                      </DropdownMenuPortal>
                    </DropdownMenuSub>
-                    <DropdownMenuItem onClick={() => setShowScormDialog(true)} className="gap-2 cursor-pointer">
-                      <FileStack className="w-4 h-4" aria-hidden="true" focusable="false" />
-                      SCORM preferences
-                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate(`/edit-course/${courseId}/branding`)} className="gap-2 cursor-pointer">
                       <Palette className="w-4 h-4" aria-hidden="true" focusable="false" />
                       Branding
