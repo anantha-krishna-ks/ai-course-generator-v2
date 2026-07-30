@@ -91,6 +91,14 @@ export function ScormPageDurationPopover({
   const [courseDefault, setCourseDefault] = useState(defaultDurationSec);
   const [search, setSearch] = useState("");
   const [overrides, setOverrides] = useState<Record<string, number>>({});
+  const [view, setView] = useState<"duration" | "messages">("duration");
+  const [passMessage, setPassMessage] = useState(
+    "Congratulations! You have successfully completed this course."
+  );
+  const [failMessage, setFailMessage] = useState(
+    "You did not meet the passing criteria. Please review the content and try again."
+  );
+
 
   const query = search.trim().toLowerCase();
 
