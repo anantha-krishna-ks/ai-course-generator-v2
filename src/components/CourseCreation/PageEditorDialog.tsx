@@ -134,6 +134,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const { toast } = useToast();
   const courseId = routeCourseId ?? routeId ?? "draft";
   const contentBgStyle = useCourseContentBackgroundStyle(courseId);
+  const { dir: courseDir, code: courseLangCode } = useCourseLanguage(courseId);
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
