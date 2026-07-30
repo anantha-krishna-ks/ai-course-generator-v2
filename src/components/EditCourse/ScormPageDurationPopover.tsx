@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 
 export interface DurationItem {
   id: string;
-  type: "section" | "page";
+  type: "section" | "page" | "question";
   title: string;
   children?: DurationItem[];
 }
+
 
 interface ScormPageDurationPopoverProps {
   items: DurationItem[];
