@@ -24,6 +24,8 @@ import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreference
 import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
+import { CourseLanguagePicker } from "@/components/CourseCreation/CourseLanguagePicker";
+import { DEFAULT_LANGUAGE_CODE, setCourseLanguage } from "@/services/courseLanguageStore";
 
 
 interface CreateCourseDialogProps {
@@ -282,6 +284,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
   const [showAIConfig, setShowAIConfig] = useState(false);
   const [showScormConfig, setShowScormConfig] = useState(false);
   const [fontId, setFontId] = useState<string>(DEFAULT_FONT_ID);
+  const [languageCode, setLanguageCode] = useState<string>(DEFAULT_LANGUAGE_CODE);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -321,6 +324,8 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
   const handleLoaderComplete = () => {
     const route = selectedLayout === "multi-page" ? "/create-course-multipage" : "/create-course-singlepage";
+    // Language is fixed at creation and locked for the lifetime of the course.
+    setCourseLanguage("draft", languageCode, true);
     navigate(route, {
       state: {
         title: courseTitle.trim(),
@@ -328,6 +333,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
         aiOptions: aiOptions.enabled ? aiOptions : null,
         contentDepth: aiOptions.contentDepth,
         fontId,
+        languageCode,
       }
     });
     setIsLoading(false);
@@ -337,6 +343,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
     setAIOptions(defaultAIOptions);
     setShowAIConfig(false);
     setFontId(DEFAULT_FONT_ID);
+    setLanguageCode(DEFAULT_LANGUAGE_CODE);
   };
 
   const handleClose = (isOpen: boolean) => {
@@ -583,7 +590,10 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
 
               {/* Footer: secondary action (font) on the left, primary CTA on the right */}
               <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
-                <FontPopover value={fontId} onChange={setFontId} />
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <FontPopover value={fontId} onChange={setFontId} />
+                  <CourseLanguagePicker value={languageCode} onChange={setLanguageCode} />
+                </div>
 
                 <Button
                   onClick={handleStartCreating}
