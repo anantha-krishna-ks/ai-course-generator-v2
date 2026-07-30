@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import emptyOutlineAnimation from "@/assets/empty-outline.json";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, Download, MoreVertical, Copy, Trash2, Coins, TrendingUp, ArrowUpRight, ArrowDownRight, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Wand2, Plus, X, Undo2, LayoutGrid, FileText, HelpCircle, Layers, FileStack, Check, Sparkles, Image, Type, MoreVertical, Copy, Trash2, UsersRound, ShieldCheck, CaseSensitive, Palette, CopyPlus, Sliders } from "lucide-react";
 import { CollaboratorsDrawer } from "@/components/EditCourse/CollaboratorsDrawer";
 import { FinishReviewDialog } from "@/components/EditCourse/FinishReviewDialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -67,7 +67,7 @@ import { PageItemCard } from "./PageItemCard";
 import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelectorDropdown";
 import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, FONT_OPTIONS } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
-import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
+
 import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
 import { ScormPageDurationPopover } from "@/components/EditCourse/ScormPageDurationPopover";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
@@ -211,7 +211,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
   });
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [showCopyContentDialog, setShowCopyContentDialog] = useState(false);
-  const [showTokenDialog, setShowTokenDialog] = useState(false);
   const [scormOpen, setScormOpen] = useState(false);
   const [showCollaboratorsDrawer, setShowCollaboratorsDrawer] = useState(false);
   const [tourStep, setTourStep] = useState(0);
@@ -1072,19 +1071,18 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
               </Tooltip>
             )}
             {!readOnly && <AIHeaderButton aiOptions={aiOptions} onOptionsChange={setAIOptions} />}
-             <Tooltip>
-               <TooltipTrigger asChild>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button
                     variant="outline"
-                    size="icon"
-                    className="rounded-full border-border"
+                    className="rounded-full border-border gap-2"
                     onClick={() => handlePreview()}
-                    aria-label="Preview course"
                   >
                     <Eye className="w-4 h-4" aria-hidden="true" focusable="false" />
+                    <span className="hidden sm:inline">Preview</span>
                   </Button>
-               </TooltipTrigger>
-               <TooltipContent>Preview</TooltipContent>
+                </TooltipTrigger>
+                <TooltipContent>Preview course</TooltipContent>
               </Tooltip>
               <Popover open={scormOpen} onOpenChange={setScormOpen}>
                 <Tooltip>
@@ -1092,15 +1090,14 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        size="icon"
-                        className="rounded-full border-border"
-                        aria-label="SCORM preferences"
+                        className="rounded-full border-border gap-2"
                       >
                         <Sliders className="w-4 h-4" aria-hidden="true" focusable="false" />
+                        <span className="hidden sm:inline">SCORM</span>
                       </Button>
                     </PopoverTrigger>
                   </TooltipTrigger>
-                  <TooltipContent>SCORM</TooltipContent>
+                  <TooltipContent>SCORM preferences</TooltipContent>
                 </Tooltip>
                 <PopoverContent
                   align="end"
@@ -1190,130 +1187,17 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  </DropdownMenuContent>
                </DropdownMenu>
              )}
-             {!readOnly && isEditCoursePage && (
-               <span
-                 aria-hidden="true"
-                 className="hidden sm:block h-7 w-px bg-gradient-to-b from-transparent via-border to-transparent mx-1"
-               />
-             )}
-             {!readOnly && (
-               <Button
-                 variant="outline"
-                 className="rounded-full border-primary text-primary hover:bg-primary/5 gap-2"
-                 onClick={() => setShowExportDialog(true)}
-               >
-                 <Download className="w-4 h-4" />
-                 <span className="hidden sm:inline">Export</span>
-               </Button>
-             )}
-               {isEditCoursePage ? (
-                 <Popover>
-                   <Tooltip>
-                     <TooltipTrigger asChild>
-                       <PopoverTrigger asChild>
-                         <Button
-                           variant="outline"
-                           size="icon"
-                           className="rounded-full border-primary text-primary hover:bg-primary/5"
-                           aria-label="View token usage"
-                         >
-                           <Coins className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-                         </Button>
-                       </PopoverTrigger>
-                     </TooltipTrigger>
-                     <TooltipContent>Token usage</TooltipContent>
-                   </Tooltip>
-                   <PopoverContent
-                     align="end"
-                     sideOffset={10}
-                     className="w-[340px] p-0 overflow-hidden rounded-2xl border border-border/70 shadow-xl"
-                   >
-                     {/* Header */}
-                     <div className="relative px-5 pt-5 pb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-                       <div className="flex items-start justify-between">
-                         <div className="flex items-center gap-2.5">
-                           <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center">
-                             <Coins className="w-4.5 h-4.5 text-primary" aria-hidden="true" focusable="false" />
-                           </div>
-                           <div>
-                             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Token Usage</p>
-                             <p className="text-sm font-semibold text-foreground leading-tight">This course</p>
-                           </div>
-                         </div>
-                       </div>
-
-                       {/* Total */}
-                       <div className="mt-4">
-                         <div className="flex items-baseline gap-1.5">
-                           <span className="text-[28px] font-bold text-foreground tabular-nums leading-none">40,444</span>
-                           <span className="text-xs font-medium text-muted-foreground">tokens</span>
-                         </div>
-                         <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                           <div className="h-full w-[42%] rounded-full bg-gradient-to-r from-primary to-[hsl(var(--primary)/0.6)]" />
-                         </div>
-                         <div className="mt-1.5 flex items-center justify-between text-[10px] text-muted-foreground">
-                           <span>42% of monthly quota</span>
-                           <span className="tabular-nums">96,000 left</span>
-                         </div>
-                       </div>
-                     </div>
-
-                     {/* Breakdown */}
-                     <div className="px-5 py-4 space-y-2.5 border-t border-border/60">
-                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                           <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
-                             <ArrowDownRight className="w-3.5 h-3.5 text-accent-foreground" aria-hidden="true" focusable="false" />
-                           </div>
-                           <div>
-                             <p className="text-xs font-medium text-foreground">Input</p>
-                             <p className="text-[10px] text-muted-foreground">Prompts & context</p>
-                           </div>
-                         </div>
-                         <span className="text-sm font-semibold text-foreground tabular-nums">17,716</span>
-                       </div>
-                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                           <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                             <ArrowUpRight className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                           </div>
-                           <div>
-                             <p className="text-xs font-medium text-foreground">Output</p>
-                             <p className="text-[10px] text-muted-foreground">Generated content</p>
-                           </div>
-                         </div>
-                         <span className="text-sm font-semibold text-foreground tabular-nums">22,728</span>
-                       </div>
-                     </div>
-
-                     {/* Footer action */}
-                     <div className="px-5 py-3 border-t border-border/60 bg-muted/30 flex items-center justify-between">
-                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                         <TrendingUp className="w-3 h-3" aria-hidden="true" focusable="false" />
-                         <span>Updated just now</span>
-                       </div>
-                       <Button
-                         variant="ghost"
-                         size="sm"
-                         className="h-7 px-2.5 text-[11px] font-medium text-primary hover:bg-primary/10 rounded-full"
-                         onClick={() => setShowTokenDialog(true)}
-                       >
-                         View details
-                       </Button>
-                     </div>
-                   </PopoverContent>
-                 </Popover>
-               ) : (
-                 <Button
-                   variant="ghost"
-                   size="icon"
-                   className="rounded-full"
-                   onClick={() => setShowTour(true)}
-                   aria-label="Start guided tour"
-                 >
-                   <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-                 </Button>
-                )}
+              {isEditCoursePage ? null : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={() => setShowTour(true)}
+                  aria-label="Start guided tour"
+                >
+                  <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                </Button>
+              )}
                 <ProfileMenu compact />
 
                </div>
@@ -2080,11 +1964,6 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
         courseTitle={title}
       />
 
-      <TokenConsumptionDialog
-        open={showTokenDialog}
-        onClose={() => setShowTokenDialog(false)}
-        imageVersionHistory={[]}
-      />
 
       <CollaboratorsDrawer
         open={showCollaboratorsDrawer}
