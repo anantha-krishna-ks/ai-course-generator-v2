@@ -67,7 +67,8 @@ import { LayoutSelectorDropdown, type LayoutTransferState } from "./LayoutSelect
 import { FontSelectorDropdown, DEFAULT_FONT_ID, getFontStack, FONT_OPTIONS } from "./FontSelectorDropdown";
 import { GenerateExportDialog } from "./GenerateExportDialog";
 import { TokenConsumptionDialog } from "@/components/EditCourse/TokenConsumptionDialog";
-import { ScormPreferencesDialog, ScormPreferencesContent } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPreferencesDialog } from "@/components/EditCourse/ScormPreferencesDialog";
+import { ScormPageDurationPopover } from "@/components/EditCourse/ScormPageDurationPopover";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
 import { CourseStatusMenu } from "@/components/Course/CourseStatusMenu";
 import { CourseStatusBadge } from "@/components/Course/CourseStatusBadge";
