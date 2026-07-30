@@ -24,6 +24,7 @@ import { SideRibbon } from "@/components/AIGenerate/SideRibbon";
 import { StepDocumentIntent } from "@/components/AIGenerate/StepDocumentIntent";
 import { StepDocumentPreferences } from "@/components/AIGenerate/StepDocumentPreferences";
 import { StepDocumentAssessment } from "@/components/AIGenerate/StepDocumentAssessment";
+import { setCourseLanguage } from "@/services/courseLanguageStore";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
 
@@ -75,6 +76,7 @@ export interface AIGenerateState {
   sectionImages: boolean;
   pageImages: boolean;
   contentDepth: "quick" | "balanced" | "thorough";
+  language: string;
 }
 
 const initialState: AIGenerateState = {
@@ -118,6 +120,7 @@ const initialState: AIGenerateState = {
   sectionImages: true,
   pageImages: true,
   contentDepth: "balanced",
+  language: "en",
 };
 
 const STEP_COMPONENTS: React.ComponentType<any>[] = [StepDocumentIntent, StepDocumentPreferences, StepDocumentAssessment, StepEditRefine];
@@ -246,10 +249,12 @@ export default function DocumentToCourse() {
   const handleGenerationComplete = useCallback(() => {
     const newCourseId = `gen-${Date.now()}`;
     setCourseStatus(newCourseId, "draft");
+    setCourseLanguage("draft", formState.language, true);
+    setCourseLanguage(newCourseId, formState.language, true);
     navigate(`/edit-course/${newCourseId}`, {
       state: { title: formState.title || "AI Generated Course", justGenerated: true },
     });
-  }, [navigate, formState.title]);
+  }, [navigate, formState.title, formState.language]);
 
   const remainingCards = STEPS.length - currentStep;
   const StepComponent = STEP_COMPONENTS[currentStep - 1];
