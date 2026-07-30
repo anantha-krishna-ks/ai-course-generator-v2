@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { GuidedTour, type TourStep } from "@/components/GuidedTour/GuidedTour";
 import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import { AIHeaderButton } from "./AIHeaderButton";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
@@ -1069,6 +1070,8 @@ export function SinglePageCourseCreator({ courseTitle, aiOptions: initialAIOptio
                 <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
               </Button>
             )}
+            <ProfileMenu compact />
+
           </div>
         </div>
       </header>

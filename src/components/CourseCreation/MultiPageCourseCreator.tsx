@@ -14,6 +14,7 @@ import type { AIOptions } from "@/components/Dashboard/AIOptionsPanel";
 import { PageEditorDialog } from "./PageEditorDialog";
 import { CourseBrandingLogo } from "./CourseBrandingLogo";
 import { useCourseContentBackgroundStyle } from "@/services/contentBackgrounds";
+import { ProfileMenu } from "@/components/ProfileMenu";
 import { AIHeaderButton } from "./AIHeaderButton";
 import {
   DndContext,
@@ -1312,7 +1313,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  >
                    <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                  </Button>
-               )}
+                )}
+                <ProfileMenu compact />
+
                </div>
              </div>
          </header>
