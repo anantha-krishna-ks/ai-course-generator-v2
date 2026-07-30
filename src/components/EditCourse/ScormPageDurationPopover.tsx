@@ -1,7 +1,10 @@
 import { useState, useMemo } from "react";
-import { Clock, BookOpen, FileText, Search, RotateCcw, X } from "lucide-react";
+import { Clock, BookOpen, FileText, Search, RotateCcw, X, Settings, ArrowLeft, MessageSquareText, CheckCircle2, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+
 
 export interface DurationItem {
   id: string;
@@ -88,6 +91,14 @@ export function ScormPageDurationPopover({
   const [courseDefault, setCourseDefault] = useState(defaultDurationSec);
   const [search, setSearch] = useState("");
   const [overrides, setOverrides] = useState<Record<string, number>>({});
+  const [view, setView] = useState<"duration" | "messages">("duration");
+  const [passMessage, setPassMessage] = useState(
+    "Congratulations! You have successfully completed this course."
+  );
+  const [failMessage, setFailMessage] = useState(
+    "You did not meet the passing criteria. Please review the content and try again."
+  );
+
 
   const query = search.trim().toLowerCase();
 
@@ -123,21 +134,48 @@ export function ScormPageDurationPopover({
       {/* Header */}
       <div className="flex items-start gap-3 px-5 pt-5 pb-4 border-b border-border">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
-          <Clock className="h-5 w-5 text-primary" aria-hidden="true" focusable="false" />
+          {view === "duration" ? (
+            <Clock className="h-5 w-5 text-primary" aria-hidden="true" focusable="false" />
+          ) : (
+            <MessageSquareText className="h-5 w-5 text-primary" aria-hidden="true" focusable="false" />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="text-base font-semibold text-foreground leading-tight">SCORM Preferences</h3>
-          <p className="text-[13px] text-muted-foreground">Page duration</p>
+          <p className="text-[13px] text-muted-foreground">
+            {view === "duration" ? "Page duration" : "Completion messages"}
+          </p>
         </div>
         <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={handleReset}
-            aria-label="Reset page durations"
-            className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden="true" focusable="false" />
-          </button>
+          {view === "duration" ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setView("messages")}
+                aria-label="Open completion messages settings"
+                className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <Settings className="h-4 w-4" aria-hidden="true" focusable="false" />
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                aria-label="Reset page durations"
+                className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" focusable="false" />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setView("duration")}
+              aria-label="Back to page duration"
+              className="h-8 w-8 inline-flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" focusable="false" />
+            </button>
+          )}
           <button
             type="button"
             onClick={onClose}
@@ -149,8 +187,49 @@ export function ScormPageDurationPopover({
         </div>
       </div>
 
-      {/* Body */}
+      {view === "messages" ? (
+        <div className="flex-1 overflow-y-auto p-5 scorm-page-duration-scrollbar max-h-[60vh]">
+          <p className="text-[13px] text-muted-foreground mb-3">
+            Shown to learners based on their final result.
+          </p>
+          <div className="grid grid-cols-1 gap-3">
+            <div className="rounded-xl border border-border bg-background overflow-hidden">
+              <div className="flex items-center gap-2 px-3.5 py-2.5 bg-primary/5 border-b border-border">
+                <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
+                <Label htmlFor="scorm-pass-msg" className="text-[14px] font-semibold text-foreground">
+                  Pass criteria message
+                </Label>
+              </div>
+              <Textarea
+                id="scorm-pass-msg"
+                value={passMessage}
+                onChange={(e) => setPassMessage(e.target.value)}
+                rows={3}
+                className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+              />
+            </div>
+
+            <div className="rounded-xl border border-border bg-background overflow-hidden">
+              <div className="flex items-center gap-2 px-3.5 py-2.5 bg-destructive/5 border-b border-border">
+                <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" focusable="false" />
+                <Label htmlFor="scorm-fail-msg" className="text-[14px] font-semibold text-foreground">
+                  Fail criteria message
+                </Label>
+              </div>
+              <Textarea
+                id="scorm-fail-msg"
+                value={failMessage}
+                onChange={(e) => setFailMessage(e.target.value)}
+                rows={3}
+                className="text-[14px] min-h-[80px] resize-none border-0 bg-transparent rounded-none focus-visible:ring-0"
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+      /* Body */
       <div className="flex-1 overflow-y-auto p-5 scorm-page-duration-scrollbar max-h-[60vh]">
+
         <style>{`
           .scorm-page-duration-scrollbar { scrollbar-width: thin; scrollbar-color: hsl(var(--muted-foreground) / 0.55) transparent; }
           .scorm-page-duration-scrollbar::-webkit-scrollbar { width: 8px; }
@@ -239,6 +318,8 @@ export function ScormPageDurationPopover({
           )}
         </div>
       </div>
+      )}
+
     </div>
   );
 }
