@@ -1313,7 +1313,9 @@ export function MultiPageCourseCreator({ courseTitle, aiOptions: initialAIOption
                  >
                    <HelpCircle className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
                  </Button>
-               )}
+                )}
+                <ProfileMenu compact />
+
                </div>
              </div>
          </header>
