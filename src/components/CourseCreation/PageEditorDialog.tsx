@@ -62,6 +62,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { GenerateQuizDialog, type GenerateQuizConfig } from "./GenerateQuizDialog";
 import { BlockSkeleton, type BlockSkeletonVariant } from "./BlockSkeleton";
 import { OutlineItemSkeleton } from "./OutlineItemSkeleton";
+import { useCourseLanguage } from "@/services/courseLanguageStore";
 
 interface PageContentBlock {
   id: string;
@@ -134,6 +135,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
   const { toast } = useToast();
   const courseId = routeCourseId ?? routeId ?? "draft";
   const contentBgStyle = useCourseContentBackgroundStyle(courseId);
+  const { dir: courseDir, code: courseLangCode } = useCourseLanguage(courseId);
   const [activeTab, setActiveTab] = useState<"outline" | "blocks">("outline");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [flashBlocks, setFlashBlocks] = useState(false);
@@ -1098,7 +1100,7 @@ export function PageEditorDialog({ open, onClose, pageTitle, onPageTitleChange, 
               onDrop={handleContentDrop}
             >
 
-            <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14">
+            <div className="max-w-[900px] mx-auto py-10 px-6 sm:px-10 lg:px-14" dir={courseDir} lang={courseLangCode}>
               {/* Course branding logo (content) */}
               <CourseBrandingLogo courseId={courseId} slot="content" />
               {isCurrentSection ? (
