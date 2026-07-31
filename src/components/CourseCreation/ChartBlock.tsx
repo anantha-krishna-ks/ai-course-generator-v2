@@ -437,11 +437,11 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
                   strokeWidth={active ? 32 : 26}
                   strokeLinecap="butt"
                   transform="rotate(-90 100 100)"
-                  strokeDasharray={`${s.dash} ${C - s.dash}`}
                   strokeDashoffset={-s.offset}
-                  initial={{ opacity: 0, pathLength: 0 }}
-                  animate={inView ? { opacity: hover && !active ? 0.35 : 1, pathLength: 1 } : {}}
-                  transition={{ pathLength: { duration: 1.1, delay: 0.1 * s.i, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.3 }, strokeWidth: { duration: 0.25 } }}
+                  initial={{ opacity: 0, strokeDasharray: `0 ${C}` }}
+                  animate={inView ? { opacity: hover && !active ? 0.35 : 1, strokeDasharray: `${s.dash} ${C - s.dash}` } : {}}
+                  transition={{ strokeDasharray: { duration: 1.1, delay: 0.1 * s.i, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.3 }, strokeWidth: { duration: 0.25 } }}
+
                   onMouseEnter={() => setHover(s.d.id)}
                   onMouseLeave={() => setHover(null)}
                   style={{ cursor: "pointer" }}
