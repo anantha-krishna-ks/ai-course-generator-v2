@@ -581,25 +581,48 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1.5" onDragLeave={() => setOverId(null)}>
                 {data.data.map((item, i) => {
                   const pal = getItemColor(item, i);
-                  const canMoveUp = i > 0;
-                  const canMoveDown = i < data.data.length - 1;
-                  const move = (dir: -1 | 1) => {
-                    const next = [...data.data];
-                    const [moved] = next.splice(i, 1);
-                    next.splice(i + dir, 0, moved);
-                    update({ ...data, data: next });
-                  };
                   const setColor = (from: string, to: string) => {
                     update({
                       ...data,
                       data: data.data.map((d) => (d.id === item.id ? { ...d, color: { from, to } } : d)),
                     });
                   };
+                  const isDragging = dragId === item.id;
+                  const isOver = overId === item.id && dragId !== item.id;
                   return (
-                    <div key={item.id} className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-muted/20 px-2 py-1.5">
+                    <div
+                      key={item.id}
+                      draggable={dragId === item.id}
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = "move";
+                        e.dataTransfer.setData("text/plain", item.id);
+                      }}
+                      onDragEnd={() => {
+                        setDragId(null);
+                        setOverId(null);
+                      }}
+                      onDragOver={(e) => {
+                        if (!dragId) return;
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        setOverId(item.id);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (dragId) reorder(dragId, item.id);
+                        setDragId(null);
+                        setOverId(null);
+                      }}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-xl border bg-muted/20 px-2 py-1.5 transition-all duration-200",
+                        isDragging ? "border-primary/50 opacity-50 shadow-sm" : "border-border/60",
+                        isOver && "border-primary/60 ring-2 ring-primary/20"
+                      )}
+                    >
+
                       {/* Color picker */}
                       <Popover>
                         <PopoverTrigger asChild>
