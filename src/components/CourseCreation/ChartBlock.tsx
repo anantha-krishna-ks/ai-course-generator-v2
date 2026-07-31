@@ -596,7 +596,23 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
               <p className="text-[13px] font-semibold text-foreground">Chart data</p>
               <p className="text-[11px] text-muted-foreground">Add items and values — the chart updates live.</p>
             </div>
-            <div className="max-h-[min(60vh,420px)] space-y-3 overflow-y-auto px-4 py-3">
+            <div
+              ref={scrollRef}
+              onWheel={(e) => {
+                const el = scrollRef.current;
+                if (!el) return;
+                e.stopPropagation();
+                el.scrollTop += e.deltaY;
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                handleDragAutoScroll(e.clientY);
+              }}
+              onDragLeave={stopAutoScroll}
+              onDrop={stopAutoScroll}
+              onDragEnd={stopAutoScroll}
+              className="thin-scrollbar max-h-[min(60vh,420px)] space-y-3 overflow-y-auto overscroll-contain px-4 py-3"
+            >
               <div className="space-y-1.5">
                 <Label htmlFor={`${uid}-title`} className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Title</Label>
                 <Input id={`${uid}-title`} value={data.title} onChange={(e) => update({ ...data, title: e.target.value })} className="h-8 text-[13px]" />
