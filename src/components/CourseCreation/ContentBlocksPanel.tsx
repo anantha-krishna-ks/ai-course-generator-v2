@@ -33,6 +33,7 @@ import {
   MoveVertical,
   ArrowRight,
   Group,
+  BarChart3,
   Info,
 
 
