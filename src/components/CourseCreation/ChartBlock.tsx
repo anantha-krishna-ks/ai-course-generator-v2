@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView, animate } from "framer-motion";
-import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, ChevronUp, ChevronDown, Paintbrush } from "lucide-react";
+import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, Paintbrush } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -131,6 +131,73 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
   const [hover, setHover] = useState<string | null>(null);
   const max = Math.max(...content.data.map((d) => d.value), 1);
   const ticks = [0, 0.25, 0.5, 0.75, 1];
+  // Smart orientation: long labels or many items read far better horizontally,
+  // which removes any chance of x-axis labels colliding.
+  const longest = content.data.reduce((m, d) => Math.max(m, d.label.length), 0);
+  const horizontal = content.data.length > 6 || longest > 12;
+
+  if (horizontal) {
+    return (
+      <div ref={wrapRef} className="w-full space-y-2.5">
+        {content.data.map((d, i) => {
+          const pal = getItemColor(d, i);
+          const pct = (d.value / max) * 100;
+          const active = hover === d.id;
+          return (
+            <div
+              key={d.id}
+              className={cn(
+                "flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors duration-300",
+                active ? "bg-foreground/[0.04]" : "bg-transparent"
+              )}
+              onMouseEnter={() => setHover(d.id)}
+              onMouseLeave={() => setHover(null)}
+            >
+              <span
+                title={d.label}
+                className="w-[92px] shrink-0 truncate text-[11px] font-medium text-muted-foreground sm:w-[132px]"
+              >
+                {d.label}
+              </span>
+              <div className="relative h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={inView ? { width: `${pct}%` } : {}}
+                  transition={{ duration: 1, delay: 0.07 * i, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative h-full overflow-hidden rounded-full"
+                  style={{
+                    background: `linear-gradient(90deg, ${pal.from} 0%, ${pal.to} 100%)`,
+                    boxShadow: active
+                      ? `0 8px 18px -8px ${pal.to}99, inset 0 1px 0 rgba(255,255,255,0.5)`
+                      : `0 6px 14px -10px ${pal.to}80, inset 0 1px 0 rgba(255,255,255,0.35)`,
+                  }}
+                >
+                  <span
+                    className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-full"
+                    style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0))" }}
+                    aria-hidden="true"
+                  />
+                  <motion.span
+                    className="pointer-events-none absolute inset-y-0 w-1/3"
+                    style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)" }}
+                    initial={{ x: "-120%" }}
+                    animate={inView ? { x: ["-120%", "320%"] } : {}}
+                    transition={{ duration: 1.4, delay: 0.5 + 0.07 * i, ease: "easeInOut" }}
+                    aria-hidden="true"
+                  />
+                </motion.div>
+              </div>
+              <span className="w-[52px] shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                <CountUp value={d.value} unit={content.unit} delay={0.3 + 0.07 * i} />
+              </span>
+            </div>
+          );
+        })}
+        <span className="sr-only">{`Bar chart ${uid}`}</span>
+      </div>
+    );
+  }
+
 
   return (
     <div ref={wrapRef} className="relative w-full">
@@ -213,13 +280,19 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
       </div>
 
       {/* labels */}
-      <div className="mt-3 flex gap-2 pl-11 sm:gap-4">
+      <div className="mt-3 flex items-start gap-2 pl-11 sm:gap-4">
         {content.data.map((d) => (
-          <div key={d.id} className="flex-1 text-center">
-            <span className="block truncate text-[11px] font-medium text-muted-foreground [overflow-wrap:anywhere]">{d.label}</span>
+          <div key={d.id} className="min-w-0 flex-1 text-center">
+            <span
+              title={d.label}
+              className="mx-auto block max-w-full text-[11px] font-medium leading-tight text-muted-foreground [display:-webkit-box] [overflow-wrap:anywhere] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden"
+            >
+              {d.label}
+            </span>
           </div>
         ))}
       </div>
+
       <span className="sr-only">{`Bar chart ${uid}`}</span>
     </div>
   );
@@ -414,14 +487,29 @@ interface ChartBlockProps {
 export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
   const [data, setData] = useState<ChartContent>(() => parseChartContent(content));
   const [dataOpen, setDataOpen] = useState(false);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
   const uid = useMemo(() => `ce${Math.random().toString(36).slice(2, 8)}`, []);
+
 
   const update = (next: ChartContent) => {
     setData(next);
     onChange?.(serializeChartContent(next));
   };
 
+  const reorder = (fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    const next = [...data.data];
+    const from = next.findIndex((d) => d.id === fromId);
+    const to = next.findIndex((d) => d.id === toId);
+    if (from < 0 || to < 0) return;
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    update({ ...data, data: next });
+  };
+
   if (readOnly) return <ChartPreview content={content} />;
+
 
   const addItem = () =>
     update({
@@ -493,25 +581,48 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1.5" onDragLeave={() => setOverId(null)}>
                 {data.data.map((item, i) => {
                   const pal = getItemColor(item, i);
-                  const canMoveUp = i > 0;
-                  const canMoveDown = i < data.data.length - 1;
-                  const move = (dir: -1 | 1) => {
-                    const next = [...data.data];
-                    const [moved] = next.splice(i, 1);
-                    next.splice(i + dir, 0, moved);
-                    update({ ...data, data: next });
-                  };
                   const setColor = (from: string, to: string) => {
                     update({
                       ...data,
                       data: data.data.map((d) => (d.id === item.id ? { ...d, color: { from, to } } : d)),
                     });
                   };
+                  const isDragging = dragId === item.id;
+                  const isOver = overId === item.id && dragId !== item.id;
                   return (
-                    <div key={item.id} className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-muted/20 px-2 py-1.5">
+                    <div
+                      key={item.id}
+                      draggable={dragId === item.id}
+                      onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = "move";
+                        e.dataTransfer.setData("text/plain", item.id);
+                      }}
+                      onDragEnd={() => {
+                        setDragId(null);
+                        setOverId(null);
+                      }}
+                      onDragOver={(e) => {
+                        if (!dragId) return;
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        setOverId(item.id);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (dragId) reorder(dragId, item.id);
+                        setDragId(null);
+                        setOverId(null);
+                      }}
+                      className={cn(
+                        "flex items-center gap-1.5 rounded-xl border bg-muted/20 px-2 py-1.5 transition-all duration-200",
+                        isDragging ? "border-primary/50 opacity-50 shadow-sm" : "border-border/60",
+                        isOver && "border-primary/60 ring-2 ring-primary/20"
+                      )}
+                    >
+
                       {/* Color picker */}
                       <Popover>
                         <PopoverTrigger asChild>
@@ -556,29 +667,28 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                         </PopoverContent>
                       </Popover>
 
-                      {/* Reorder controls */}
-                      <div className="flex flex-col gap-px">
-                        <button
-                          type="button"
-                          aria-label={`Move ${item.label} up`}
-                          disabled={!canMoveUp}
-                          onClick={() => move(-1)}
-                          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary disabled:pointer-events-none disabled:opacity-30"
-                        >
-                          <ChevronUp className="h-3 w-3" aria-hidden="true" focusable="false" />
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={`Move ${item.label} down`}
-                          disabled={!canMoveDown}
-                          onClick={() => move(1)}
-                          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary disabled:pointer-events-none disabled:opacity-30"
-                        >
-                          <ChevronDown className="h-3 w-3" aria-hidden="true" focusable="false" />
-                        </button>
-                      </div>
+                      {/* Drag handle */}
+                      <button
+                        type="button"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Drag to reorder ${item.label}. Use arrow up or down keys to move.`}
+                        onPointerDown={() => setDragId(item.id)}
+                        onPointerUp={() => !overId && setDragId(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "ArrowUp" && i > 0) {
+                            e.preventDefault();
+                            reorder(item.id, data.data[i - 1].id);
+                          } else if (e.key === "ArrowDown" && i < data.data.length - 1) {
+                            e.preventDefault();
+                            reorder(item.id, data.data[i + 1].id);
+                          }
+                        }}
+                        className="shrink-0 cursor-grab rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      >
+                        <GripVertical className="h-4 w-4" aria-hidden="true" focusable="false" />
+                      </button>
 
-                      <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" aria-hidden="true" focusable="false" />
 
                       <Input
                         value={item.label}
