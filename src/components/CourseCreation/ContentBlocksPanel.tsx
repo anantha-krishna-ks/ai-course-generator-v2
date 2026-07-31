@@ -33,6 +33,7 @@ import {
   MoveVertical,
   ArrowRight,
   Group,
+  BarChart3,
   Info,
 
 
@@ -119,6 +120,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
   { id: "flashcards", label: "Flashcards", icon: Layers, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "flashcards", variant: "flashcards", description: "Two-sided cards learners flip to reveal answers, definitions or images" },
   { id: "card-sort", label: "Card Sorting", icon: Group, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "card-sort", description: "Learners drag items into the right category — great for grouping and classification exercises" },
+  { id: "chart", label: "Chart", icon: BarChart3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "chart", description: "Visualise data as a glossy animated bar or pie chart — add your own items and values" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
@@ -686,6 +688,32 @@ function BlockPreview({ id }: { id: string }) {
             <RefreshCw className="w-2.5 h-2.5" aria-hidden="true" focusable="false" />
             Click cards to flip front ↔ back
           </p>
+        </div>
+      );
+    case "chart":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <p className="text-[9px] font-semibold text-[hsl(220,15%,18%)] mb-2">Completion rate by format</p>
+            <div className="flex items-end justify-between gap-1.5 h-[70px]">
+              {[
+                { l: "Micro", h: 82 },
+                { l: "Blended", h: 68 },
+                { l: "ILT", h: 61 },
+                { l: "Self", h: 44 },
+                { l: "MOOC", h: 13 },
+              ].map((b, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1">
+                  <div
+                    className="w-full rounded-t-[3px] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+                    style={{ height: `${b.h}%`, background: "linear-gradient(180deg,#3B82F6,#1D4ED8)" }}
+                  />
+                  <span className="text-[6px] text-[hsl(220,8%,46%)]">{b.l}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between bar and pie, and edit items & values</p>
         </div>
       );
     case "card-sort":
@@ -1372,6 +1400,20 @@ function BlockThumbnail({ id }: { id: string }) {
                 <span className="text-[3px] font-bold tracking-wide" style={{ color: "#713F12" }}>DEF</span>
               </div>
             </div>
+          </div>
+        </div>
+      );
+    case "chart":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] h-[44px] flex items-end justify-center gap-[3px]")}>
+            {[60, 85, 45, 70, 30].map((h, i) => (
+              <div
+                key={i}
+                className="w-[6px] rounded-t-[1.5px]"
+                style={{ height: `${h}%`, background: "linear-gradient(180deg,#3B82F6,#1D4ED8)" }}
+              />
+            ))}
           </div>
         </div>
       );
