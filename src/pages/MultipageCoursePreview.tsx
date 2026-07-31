@@ -530,6 +530,9 @@ const MultipageCoursePreview = () => {
         if (block.variant === "card-sort") {
           return <CardSortPreview content={content} />;
         }
+        if (block.variant === "chart") {
+          return <ChartPreview content={content} />;
+        }
 
         // Vertical tabs variant renders using the tabs preview in vertical orientation
         if (block.variant === "vertical-tabs") {
