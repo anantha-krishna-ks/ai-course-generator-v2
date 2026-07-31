@@ -497,7 +497,19 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
     onChange?.(serializeChartContent(next));
   };
 
+  const reorder = (fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    const next = [...data.data];
+    const from = next.findIndex((d) => d.id === fromId);
+    const to = next.findIndex((d) => d.id === toId);
+    if (from < 0 || to < 0) return;
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    update({ ...data, data: next });
+  };
+
   if (readOnly) return <ChartPreview content={content} />;
+
 
   const addItem = () =>
     update({
