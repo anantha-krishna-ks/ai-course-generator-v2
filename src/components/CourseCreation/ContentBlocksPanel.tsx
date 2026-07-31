@@ -1377,6 +1377,20 @@ function BlockThumbnail({ id }: { id: string }) {
           </div>
         </div>
       );
+    case "chart":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-[4px] h-[44px] flex items-end justify-center gap-[3px]")}>
+            {[60, 85, 45, 70, 30].map((h, i) => (
+              <div
+                key={i}
+                className="w-[6px] rounded-t-[1.5px]"
+                style={{ height: `${h}%`, background: "linear-gradient(180deg,#3B82F6,#1D4ED8)" }}
+              />
+            ))}
+          </div>
+        </div>
+      );
     case "card-sort":
       return (
         <div className={wrapper}>
