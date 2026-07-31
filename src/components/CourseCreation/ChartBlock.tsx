@@ -280,13 +280,19 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
       </div>
 
       {/* labels */}
-      <div className="mt-3 flex gap-2 pl-11 sm:gap-4">
+      <div className="mt-3 flex items-start gap-2 pl-11 sm:gap-4">
         {content.data.map((d) => (
-          <div key={d.id} className="flex-1 text-center">
-            <span className="block truncate text-[11px] font-medium text-muted-foreground [overflow-wrap:anywhere]">{d.label}</span>
+          <div key={d.id} className="min-w-0 flex-1 text-center">
+            <span
+              title={d.label}
+              className="mx-auto block max-w-full text-[11px] font-medium leading-tight text-muted-foreground [display:-webkit-box] [overflow-wrap:anywhere] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden"
+            >
+              {d.label}
+            </span>
           </div>
         ))}
       </div>
+
       <span className="sr-only">{`Bar chart ${uid}`}</span>
     </div>
   );
