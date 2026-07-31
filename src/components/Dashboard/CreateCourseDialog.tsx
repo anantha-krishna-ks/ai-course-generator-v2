@@ -604,7 +604,7 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
               <div className="flex items-center justify-between gap-3 pt-2 sm:pt-3">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <FontPopover value={fontId} onChange={setFontId} />
-                  <CourseLanguagePicker value={languageCode} onChange={setLanguageCode} />
+                  
                 </div>
 
                 <Button
