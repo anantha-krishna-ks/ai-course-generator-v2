@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView, animate } from "framer-motion";
-import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical } from "lucide-react";
+import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, ChevronUp, ChevronDown, Paintbrush } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ export interface ChartDatum {
   id: string;
   label: string;
   value: number;
+  color?: { from: string; to: string };
 }
 
 export interface ChartContent {
@@ -59,6 +60,18 @@ export const CHART_PALETTE = [
   { from: "#F472B6", to: "#9D174D" },
 ];
 
+export function getItemColor(item: ChartDatum, index: number) {
+  return item.color ?? CHART_PALETTE[index % CHART_PALETTE.length];
+}
+
+function darkerTone(hex: string) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const r = Math.max(0, ((n >> 16) & 0xff) - 36);
+  const g = Math.max(0, ((n >> 8) & 0xff) - 36);
+  const b = Math.max(0, (n & 0xff) - 36);
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+}
+
 export function parseChartContent(raw?: string): ChartContent {
   if (!raw) return DEFAULT_CHART_CONTENT;
   try {
@@ -74,6 +87,7 @@ export function parseChartContent(raw?: string): ChartContent {
           id: d.id ?? `c${i}`,
           label: String(d.label ?? `Item ${i + 1}`),
           value: Number(d.value) || 0,
+          color: d.color && typeof d.color.from === "string" && typeof d.color.to === "string" ? d.color : undefined,
         })),
       };
     }
@@ -136,7 +150,7 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
 
         <div className="absolute inset-0 pl-11 flex items-end gap-2 sm:gap-4">
           {content.data.map((d, i) => {
-            const pal = CHART_PALETTE[i % CHART_PALETTE.length];
+            const pal = getItemColor(d, i);
             const pct = (d.value / max) * 100;
             const active = hover === d.id;
             return (
@@ -247,7 +261,7 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
         >
           <defs>
             {content.data.map((d, i) => {
-              const pal = CHART_PALETTE[i % CHART_PALETTE.length];
+              const pal = getItemColor(d, i);
               return (
                 <linearGradient key={d.id} id={`${uid}-g${i}`} x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor={pal.from} />
@@ -323,7 +337,7 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
       {/* legend */}
       <ul className="w-full max-w-[260px] space-y-1.5">
         {segs.map((s) => {
-          const pal = CHART_PALETTE[s.i % CHART_PALETTE.length];
+          const pal = getItemColor(s.d, s.i);
           const active = hover === s.d.id;
           return (
             <motion.li
@@ -481,15 +495,91 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
 
               <div className="space-y-1.5">
                 {data.data.map((item, i) => {
-                  const pal = CHART_PALETTE[i % CHART_PALETTE.length];
+                  const pal = getItemColor(item, i);
+                  const canMoveUp = i > 0;
+                  const canMoveDown = i < data.data.length - 1;
+                  const move = (dir: -1 | 1) => {
+                    const next = [...data.data];
+                    const [moved] = next.splice(i, 1);
+                    next.splice(i + dir, 0, moved);
+                    update({ ...data, data: next });
+                  };
+                  const setColor = (from: string, to: string) => {
+                    update({
+                      ...data,
+                      data: data.data.map((d) => (d.id === item.id ? { ...d, color: { from, to } } : d)),
+                    });
+                  };
                   return (
                     <div key={item.id} className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-muted/20 px-2 py-1.5">
-                      <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" focusable="false" />
-                      <span
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ background: `linear-gradient(135deg, ${pal.from}, ${pal.to})` }}
-                        aria-hidden="true"
-                      />
+                      {/* Color picker */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            aria-label={`Change color for ${item.label}`}
+                            className="group relative h-6 w-6 shrink-0 overflow-hidden rounded-full ring-1 ring-border/60 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                            style={{ background: `linear-gradient(135deg, ${pal.from}, ${pal.to})` }}
+                          >
+                            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-colors group-hover:bg-black/10">
+                              <Paintbrush className="h-3 w-3 text-white opacity-0 drop-shadow-sm transition-opacity group-hover:opacity-100" aria-hidden="true" focusable="false" />
+                            </span>
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className="w-[220px] rounded-2xl p-3">
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Preset colors</p>
+                          <div className="mb-3 grid grid-cols-4 gap-2">
+                            {CHART_PALETTE.map((c, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                aria-label={`Select color ${idx + 1}`}
+                                onClick={() => setColor(c.from, c.to)}
+                                className="h-8 w-full rounded-full ring-1 ring-border/40 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                                style={{ background: `linear-gradient(135deg, ${c.from}, ${c.to})` }}
+                              />
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Custom</span>
+                            <label className="relative flex h-7 flex-1 cursor-pointer items-center gap-2 rounded-full border border-border/60 bg-muted/30 px-2 text-[11px] font-medium text-foreground hover:bg-muted/50">
+                              <input
+                                type="color"
+                                value={pal.from}
+                                aria-label={`Custom color for ${item.label}`}
+                                onChange={(e) => setColor(e.target.value, darkerTone(e.target.value))}
+                                className="h-4 w-4 cursor-pointer appearance-none rounded-full border-0 p-0 [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-full [&::-webkit-color-swatch]:border-0"
+                              />
+                              Pick color
+                            </label>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+
+                      {/* Reorder controls */}
+                      <div className="flex flex-col gap-px">
+                        <button
+                          type="button"
+                          aria-label={`Move ${item.label} up`}
+                          disabled={!canMoveUp}
+                          onClick={() => move(-1)}
+                          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary disabled:pointer-events-none disabled:opacity-30"
+                        >
+                          <ChevronUp className="h-3 w-3" aria-hidden="true" focusable="false" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Move ${item.label} down`}
+                          disabled={!canMoveDown}
+                          onClick={() => move(1)}
+                          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary disabled:pointer-events-none disabled:opacity-30"
+                        >
+                          <ChevronDown className="h-3 w-3" aria-hidden="true" focusable="false" />
+                        </button>
+                      </div>
+
+                      <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" aria-hidden="true" focusable="false" />
+
                       <Input
                         value={item.label}
                         aria-label={`Item ${i + 1} label`}
@@ -505,7 +595,7 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                         onChange={(e) =>
                           update({ ...data, data: data.data.map((d) => (d.id === item.id ? { ...d, value: Number(e.target.value) || 0 } : d)) })
                         }
-                        className="h-7 w-[62px] shrink-0 text-[12px] tabular-nums"
+                        className="h-7 w-[56px] shrink-0 text-[12px] tabular-nums"
                       />
                       <button
                         type="button"
