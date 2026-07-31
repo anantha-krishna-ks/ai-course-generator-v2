@@ -489,6 +489,37 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
   const [dataOpen, setDataOpen] = useState(false);
   const [dragId, setDragId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef<number | null>(null);
+
+  const stopAutoScroll = () => {
+    if (autoScrollRef.current !== null) {
+      cancelAnimationFrame(autoScrollRef.current);
+      autoScrollRef.current = null;
+    }
+  };
+
+  // Auto-scroll the list while dragging near its top/bottom edges
+  const handleDragAutoScroll = (clientY: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const zone = 48;
+    let speed = 0;
+    if (clientY < rect.top + zone) speed = -Math.ceil((rect.top + zone - clientY) / 4);
+    else if (clientY > rect.bottom - zone) speed = Math.ceil((clientY - (rect.bottom - zone)) / 4);
+
+    stopAutoScroll();
+    if (speed === 0) return;
+    const step = () => {
+      el.scrollTop += speed;
+      autoScrollRef.current = requestAnimationFrame(step);
+    };
+    autoScrollRef.current = requestAnimationFrame(step);
+  };
+
+  useEffect(() => stopAutoScroll, []);
+
   const uid = useMemo(() => `ce${Math.random().toString(36).slice(2, 8)}`, []);
 
 
@@ -565,7 +596,23 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
               <p className="text-[13px] font-semibold text-foreground">Chart data</p>
               <p className="text-[11px] text-muted-foreground">Add items and values — the chart updates live.</p>
             </div>
-            <div className="max-h-[min(60vh,420px)] space-y-3 overflow-y-auto px-4 py-3">
+            <div
+              ref={scrollRef}
+              onWheel={(e) => {
+                const el = scrollRef.current;
+                if (!el) return;
+                e.stopPropagation();
+                el.scrollTop += e.deltaY;
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                handleDragAutoScroll(e.clientY);
+              }}
+              onDragLeave={stopAutoScroll}
+              onDrop={stopAutoScroll}
+              onDragEnd={stopAutoScroll}
+              className="thin-scrollbar max-h-[min(60vh,420px)] space-y-3 overflow-y-auto overscroll-contain px-4 py-3"
+            >
               <div className="space-y-1.5">
                 <Label htmlFor={`${uid}-title`} className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Title</Label>
                 <Input id={`${uid}-title`} value={data.title} onChange={(e) => update({ ...data, title: e.target.value })} className="h-8 text-[13px]" />
