@@ -694,27 +694,46 @@ function BlockPreview({ id }: { id: string }) {
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
           <div className={cn(card, "p-3")}>
-            <p className="text-[9px] font-semibold text-[hsl(220,15%,18%)] mb-2">Completion rate by format</p>
-            <div className="flex items-end justify-between gap-1.5 h-[70px]">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[9px] font-semibold text-[hsl(220,15%,18%)]">Completion rate by format</p>
+              <div className="flex items-center gap-[2px] rounded-full bg-[hsl(220,14%,95%)] p-[2px]">
+                <span className="px-1.5 py-[1px] rounded-full bg-white text-[6px] font-semibold text-[hsl(220,15%,20%)] shadow-[0_1px_2px_rgba(0,0,0,0.08)]">Bar</span>
+                <span className="px-1.5 py-[1px] rounded-full text-[6px] font-medium text-[hsl(220,8%,50%)]">Pie</span>
+              </div>
+            </div>
+            <div className="relative flex items-end justify-between gap-1.5 h-[70px]">
+              {/* grid lines */}
+              <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" aria-hidden="true">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="h-px w-full bg-[hsl(220,13%,92%)]" />
+                ))}
+              </div>
               {[
-                { l: "Micro", h: 82 },
-                { l: "Blended", h: 68 },
-                { l: "ILT", h: 61 },
-                { l: "Self", h: 44 },
-                { l: "MOOC", h: 13 },
+                { l: "Micro", h: 82, from: "#3B82F6", to: "#1D4ED8" },
+                { l: "Blended", h: 68, from: "#22D3EE", to: "#0891B2" },
+                { l: "ILT", h: 61, from: "#A78BFA", to: "#6D28D9" },
+                { l: "Self", h: 44, from: "#34D399", to: "#059669" },
+                { l: "MOOC", h: 22, from: "#FBBF24", to: "#D97706" },
               ].map((b, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1">
+                <div key={i} className="relative flex-1 flex flex-col items-center justify-end h-full gap-1">
+                  <span className="text-[6px] font-semibold text-[hsl(220,15%,25%)] tabular-nums">{b.h}</span>
                   <div
-                    className="w-full rounded-t-[3px] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
-                    style={{ height: `${b.h}%`, background: "linear-gradient(180deg,#3B82F6,#1D4ED8)" }}
-                  />
-                  <span className="text-[6px] text-[hsl(220,8%,46%)]">{b.l}</span>
+                    className="w-full rounded-t-[4px] relative overflow-hidden shadow-[0_2px_5px_-1px_rgba(0,0,0,0.25)]"
+                    style={{ height: `${b.h}%`, background: `linear-gradient(180deg, ${b.from}, ${b.to})` }}
+                  >
+                    <div
+                      className="absolute inset-y-0 left-0 w-1/2"
+                      style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.38), rgba(255,255,255,0))" }}
+                    />
+                  </div>
+                  <span className="text-[6px] text-[hsl(220,8%,46%)] leading-tight text-center">{b.l}</span>
                 </div>
               ))}
             </div>
           </div>
-          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between bar and pie, and edit items & values</p>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between bar and pie, recolour and reorder items</p>
         </div>
+
       );
     case "card-sort":
       return (
