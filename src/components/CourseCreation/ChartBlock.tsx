@@ -468,7 +468,7 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 </div>
               </div>
 
-              <div className="max-h-[240px] space-y-1.5 overflow-y-auto pr-1">
+              <div className="space-y-1.5">
                 {data.data.map((item, i) => {
                   const pal = CHART_PALETTE[i % CHART_PALETTE.length];
                   return (
