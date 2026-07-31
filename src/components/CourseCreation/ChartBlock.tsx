@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView, animate } from "framer-motion";
-import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, Check } from "lucide-react";
+import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export type ChartKind = "bar" | "pie";
 
