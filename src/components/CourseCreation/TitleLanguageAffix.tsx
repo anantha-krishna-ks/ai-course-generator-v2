@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, Globe, Lock } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { getLanguage } from "@/services/courseLanguageStore";
 import { CourseLanguageList } from "@/components/CourseCreation/CourseLanguagePicker";
@@ -63,39 +64,55 @@ export function TitleLanguageAffix({ value, onChange, locked = false, className 
     className,
   );
 
-  if (locked) {
-    return (
-      <span className={cn(base, "opacity-90")} title={`Course language: ${lang.label} (locked)`}>
-        {inner}
-        <span className="sr-only">Course language {lang.label} is locked</span>
-      </span>
-    );
-  }
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={`Course language: ${lang.label}. Click to change.`}
-          className={cn(
-            base,
-            "hover:border-primary/50 hover:shadow-[0_2px_8px_hsl(var(--primary)/0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-            open && "border-primary/60 ring-2 ring-primary/20",
+    <TooltipProvider delayDuration={180}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {locked ? (
+            <span className={cn(base, "opacity-90 cursor-default")}>
+              {inner}
+              <span className="sr-only">Course language {lang.label} is locked</span>
+            </span>
+          ) : (
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={`Course language: ${lang.label}. Click to change.`}
+                  className={cn(
+                    base,
+                    "hover:border-primary/50 hover:shadow-[0_2px_8px_hsl(var(--primary)/0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                    open && "border-primary/60 ring-2 ring-primary/20",
+                  )}
+                >
+                  {inner}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-[300px] p-3 rounded-2xl shadow-xl">
+                <CourseLanguageList
+                  value={value}
+                  onSelect={(code) => {
+                    onChange(code);
+                    setOpen(false);
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
           )}
-        >
-          {inner}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-[300px] p-3 rounded-2xl shadow-xl">
-        <CourseLanguageList
-          value={value}
-          onSelect={(code) => {
-            onChange(code);
-            setOpen(false);
-          }}
-        />
-      </PopoverContent>
-    </Popover>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" sideOffset={8} className="rounded-lg px-2.5 py-1.5 text-xs font-medium">
+          {locked ? (
+            <span>Course language: <span className="font-semibold">{lang.label}</span> (locked)</span>
+          ) : (
+            <span>
+              Course language: <span className="font-semibold">{lang.label}</span>
+              <span className="text-muted-foreground"> · {lang.dir === "rtl" ? "RTL" : "LTR"}</span>
+              <span className="text-muted-foreground"> — click to change</span>
+            </span>
+          )}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
+
