@@ -83,7 +83,7 @@ function generateSuggestions(input: string): string[] {
   ];
 }
 
-export function TitleAutocomplete({ value, onChange, id, placeholder }: TitleAutocompleteProps) {
+export function TitleAutocomplete({ value, onChange, id, placeholder, language, onLanguageChange, languageLocked }: TitleAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
