@@ -354,6 +354,19 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
   const wrapRef = useRef<HTMLDivElement>(null);
   const inView = useInView(wrapRef, { once: true, amount: 0.3 });
   const [hover, setHover] = useState<string | null>(null);
+  // Container-based sizing: device preview frames keep the viewport wide, so
+  // CSS breakpoints can't detect a narrow mobile canvas.
+  const [width, setWidth] = useState<number>(0);
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    ro.observe(node);
+    setWidth(node.getBoundingClientRect().width);
+    return () => ro.disconnect();
+  }, []);
+  const narrow = width > 0 && width < 520;
+  const size = narrow ? Math.max(150, Math.min(220, width - 24)) : 200;
   const total = content.data.reduce((s, d) => s + d.value, 0) || 1;
   const R = 68;
   const C = 2 * Math.PI * R;
@@ -369,12 +382,19 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
   const activeSeg = segs.find((s) => s.d.id === hover);
 
   return (
-    <div ref={wrapRef} className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center sm:gap-10">
-      <div className="relative">
+    <div
+      ref={wrapRef}
+      className={cn(
+        "flex w-full flex-col items-center gap-6",
+        !narrow && "sm:flex-row sm:items-center sm:justify-center sm:gap-10"
+      )}
+    >
+      <div className="relative shrink-0" style={{ width: size, height: size }}>
         <motion.svg
-          width={200}
-          height={200}
+          width={size}
+          height={size}
           viewBox="0 0 200 200"
+
           initial={{ opacity: 0, scale: 0.92, rotate: -12 }}
           animate={inView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
@@ -457,7 +477,7 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
       </div>
 
       {/* legend */}
-      <ul className="w-full max-w-[260px] space-y-1.5">
+      <ul className={cn("w-full space-y-1.5", narrow ? "max-w-full" : "max-w-[260px]")}>
         {segs.map((s) => {
           const pal = getItemColor(s.d, s.i);
           const active = hover === s.d.id;
