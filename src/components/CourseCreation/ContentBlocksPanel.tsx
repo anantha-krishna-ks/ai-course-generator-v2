@@ -690,6 +690,32 @@ function BlockPreview({ id }: { id: string }) {
           </p>
         </div>
       );
+    case "chart":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <p className="text-[9px] font-semibold text-[hsl(220,15%,18%)] mb-2">Completion rate by format</p>
+            <div className="flex items-end justify-between gap-1.5 h-[70px]">
+              {[
+                { l: "Micro", h: 82 },
+                { l: "Blended", h: 68 },
+                { l: "ILT", h: 61 },
+                { l: "Self", h: 44 },
+                { l: "MOOC", h: 13 },
+              ].map((b, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1">
+                  <div
+                    className="w-full rounded-t-[3px] shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]"
+                    style={{ height: `${b.h}%`, background: "linear-gradient(180deg,#3B82F6,#1D4ED8)" }}
+                  />
+                  <span className="text-[6px] text-[hsl(220,8%,46%)]">{b.l}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">Switch between bar and pie, and edit items & values</p>
+        </div>
+      );
     case "card-sort":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
