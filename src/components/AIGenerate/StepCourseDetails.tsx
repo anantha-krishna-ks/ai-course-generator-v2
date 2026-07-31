@@ -6,10 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 import { CONTENT_DEPTH_TIERS, type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
-import { CourseLanguageList } from "@/components/CourseCreation/CourseLanguagePicker";
-import { getLanguage } from "@/services/courseLanguageStore";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Languages, Lock } from "lucide-react";
 
 interface StepCourseDetailsProps {
   state: AIGenerateState;

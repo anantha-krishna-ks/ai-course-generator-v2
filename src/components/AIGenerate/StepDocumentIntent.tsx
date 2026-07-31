@@ -1,8 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
-import { Upload, X, FileText, AlertCircle, Info, Check, Layers, Timer, Coins, Languages, Lock, ChevronDown } from "lucide-react";
+import { Upload, X, FileText, AlertCircle, Info, Check, Layers, Timer, Coins } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CourseLanguageList } from "@/components/CourseCreation/CourseLanguagePicker";
-import { getLanguage } from "@/services/courseLanguageStore";
 import { useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
