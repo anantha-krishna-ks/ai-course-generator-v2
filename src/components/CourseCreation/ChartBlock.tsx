@@ -745,10 +745,10 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                           <button
                             type="button"
                             aria-label={`Change color for ${item.label}`}
-                            className="group relative h-6 w-6 shrink-0 overflow-hidden rounded-full ring-1 ring-border/60 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                            className="group relative h-6 w-6 shrink-0 overflow-hidden rounded-md ring-1 ring-border/60 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                             style={{ background: `linear-gradient(135deg, ${pal.from}, ${pal.to})` }}
                           >
-                            <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black/0 transition-colors group-hover:bg-black/10">
+                            <span className="absolute inset-0 flex items-center justify-center rounded-md bg-black/0 transition-colors group-hover:bg-black/10">
                               <Paintbrush className="h-3 w-3 text-white opacity-0 drop-shadow-sm transition-opacity group-hover:opacity-100" aria-hidden="true" focusable="false" />
                             </span>
                           </button>
