@@ -24,8 +24,9 @@ import { ScormPreferencesContent } from "@/components/EditCourse/ScormPreference
 import { FONT_OPTIONS, DEFAULT_FONT_ID, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CourseGenerationAnimation } from "./CourseGenerationAnimation";
-import { CourseLanguagePicker } from "@/components/CourseCreation/CourseLanguagePicker";
-import { DEFAULT_LANGUAGE_CODE, setCourseLanguage } from "@/services/courseLanguageStore";
+import { TitleLanguageAffix } from "@/components/CourseCreation/TitleLanguageAffix";
+import { DEFAULT_LANGUAGE_CODE, setCourseLanguage, getLanguage } from "@/services/courseLanguageStore";
+
 
 
 interface CreateCourseDialogProps {
