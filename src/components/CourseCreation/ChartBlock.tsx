@@ -487,7 +487,10 @@ interface ChartBlockProps {
 export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
   const [data, setData] = useState<ChartContent>(() => parseChartContent(content));
   const [dataOpen, setDataOpen] = useState(false);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
   const uid = useMemo(() => `ce${Math.random().toString(36).slice(2, 8)}`, []);
+
 
   const update = (next: ChartContent) => {
     setData(next);
