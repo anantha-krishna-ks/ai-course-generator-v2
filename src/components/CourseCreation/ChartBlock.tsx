@@ -87,6 +87,7 @@ export function parseChartContent(raw?: string): ChartContent {
           id: d.id ?? `c${i}`,
           label: String(d.label ?? `Item ${i + 1}`),
           value: Number(d.value) || 0,
+          color: d.color && typeof d.color.from === "string" && typeof d.color.to === "string" ? d.color : undefined,
         })),
       };
     }
