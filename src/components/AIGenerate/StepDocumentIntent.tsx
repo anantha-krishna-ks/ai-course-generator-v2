@@ -73,8 +73,11 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
           id="course-title"
           value={state.title}
           onChange={(v) => onChange({ title: v })}
+          language={state.language}
+          onLanguageChange={(code) => onChange({ language: code })}
           placeholder="What will you teach?"
         />
+
         {errors.title ? (
           <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
             <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
