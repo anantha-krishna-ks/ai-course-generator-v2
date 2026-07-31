@@ -60,6 +60,18 @@ export const CHART_PALETTE = [
   { from: "#F472B6", to: "#9D174D" },
 ];
 
+export function getItemColor(item: ChartDatum, index: number) {
+  return item.color ?? CHART_PALETTE[index % CHART_PALETTE.length];
+}
+
+function darkerTone(hex: string) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const r = Math.max(0, ((n >> 16) & 0xff) - 36);
+  const g = Math.max(0, ((n >> 8) & 0xff) - 36);
+  const b = Math.max(0, (n & 0xff) - 36);
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
+}
+
 export function parseChartContent(raw?: string): ChartContent {
   if (!raw) return DEFAULT_CHART_CONTENT;
   try {
