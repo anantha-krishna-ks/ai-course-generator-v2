@@ -150,7 +150,7 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
 
         <div className="absolute inset-0 pl-11 flex items-end gap-2 sm:gap-4">
           {content.data.map((d, i) => {
-            const pal = CHART_PALETTE[i % CHART_PALETTE.length];
+            const pal = getItemColor(d, i);
             const pct = (d.value / max) * 100;
             const active = hover === d.id;
             return (
