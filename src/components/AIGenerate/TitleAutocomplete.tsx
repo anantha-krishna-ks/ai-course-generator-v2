@@ -2,6 +2,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getLanguage } from "@/services/courseLanguageStore";
+import { TitleLanguageAffix } from "@/components/CourseCreation/TitleLanguageAffix";
+
 
 interface TitleAutocompleteProps {
   value: string;
