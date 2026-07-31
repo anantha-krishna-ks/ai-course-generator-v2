@@ -337,7 +337,7 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
       {/* legend */}
       <ul className="w-full max-w-[260px] space-y-1.5">
         {segs.map((s) => {
-          const pal = CHART_PALETTE[s.i % CHART_PALETTE.length];
+          const pal = getItemColor(s.d, s.i);
           const active = hover === s.d.id;
           return (
             <motion.li
