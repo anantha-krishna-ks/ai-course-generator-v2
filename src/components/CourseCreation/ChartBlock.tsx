@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView, animate } from "framer-motion";
-import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, ChevronUp, ChevronDown, Paintbrush } from "lucide-react";
+import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, Paintbrush } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
