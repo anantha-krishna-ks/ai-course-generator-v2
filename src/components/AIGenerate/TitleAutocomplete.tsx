@@ -8,7 +8,12 @@ interface TitleAutocompleteProps {
   onChange: (value: string) => void;
   id?: string;
   placeholder?: string;
+  /** Course language embedded into the title field. */
+  language?: string;
+  onLanguageChange?: (code: string) => void;
+  languageLocked?: boolean;
 }
+
 
 // Mock AI suggestions based on input keywords
 function generateSuggestions(input: string): string[] {
