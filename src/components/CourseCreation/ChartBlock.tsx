@@ -739,6 +739,28 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                       )}
                     >
 
+                      {/* Drag handle */}
+                      <button
+                        type="button"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Drag to reorder ${item.label}. Use arrow up or down keys to move.`}
+                        onPointerDown={() => setDragId(item.id)}
+                        onPointerUp={() => !overId && setDragId(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "ArrowUp" && i > 0) {
+                            e.preventDefault();
+                            reorder(item.id, data.data[i - 1].id);
+                          } else if (e.key === "ArrowDown" && i < data.data.length - 1) {
+                            e.preventDefault();
+                            reorder(item.id, data.data[i + 1].id);
+                          }
+                        }}
+                        className="shrink-0 cursor-grab rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      >
+                        <GripVertical className="h-4 w-4" aria-hidden="true" focusable="false" />
+                      </button>
+
                       {/* Color picker */}
                       <Popover>
                         <PopoverTrigger asChild>
@@ -782,28 +804,6 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                           </div>
                         </PopoverContent>
                       </Popover>
-
-                      {/* Drag handle */}
-                      <button
-                        type="button"
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`Drag to reorder ${item.label}. Use arrow up or down keys to move.`}
-                        onPointerDown={() => setDragId(item.id)}
-                        onPointerUp={() => !overId && setDragId(null)}
-                        onKeyDown={(e) => {
-                          if (e.key === "ArrowUp" && i > 0) {
-                            e.preventDefault();
-                            reorder(item.id, data.data[i - 1].id);
-                          } else if (e.key === "ArrowDown" && i < data.data.length - 1) {
-                            e.preventDefault();
-                            reorder(item.id, data.data[i + 1].id);
-                          }
-                        }}
-                        className="shrink-0 cursor-grab rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      >
-                        <GripVertical className="h-4 w-4" aria-hidden="true" focusable="false" />
-                      </button>
 
 
                       <Input
