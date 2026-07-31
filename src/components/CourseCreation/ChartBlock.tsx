@@ -129,16 +129,30 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
   const wrapRef = useRef<HTMLDivElement>(null);
   const inView = useInView(wrapRef, { once: true, amount: 0.3 });
   const [hover, setHover] = useState<string | null>(null);
+  // Container-based width (device preview frames don't change the viewport,
+  // so CSS breakpoints can't detect a narrow mobile canvas).
+  const [width, setWidth] = useState<number>(0);
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    ro.observe(node);
+    setWidth(node.getBoundingClientRect().width);
+    return () => ro.disconnect();
+  }, []);
   const max = Math.max(...content.data.map((d) => d.value), 1);
   const ticks = [0, 0.25, 0.5, 0.75, 1];
-  // Smart orientation: long labels or many items read far better horizontally,
-  // which removes any chance of x-axis labels colliding.
+  // Smart orientation: long labels, many items, or a narrow container read far
+  // better horizontally — this removes squeezed bars and colliding x labels.
   const longest = content.data.reduce((m, d) => Math.max(m, d.label.length), 0);
-  const horizontal = content.data.length > 6 || longest > 12;
+  const narrow = width > 0 && width < 520;
+  const tooTight = width > 0 && width / Math.max(content.data.length, 1) < 52;
+  const horizontal = content.data.length > 6 || longest > 12 || narrow || tooTight;
 
   if (horizontal) {
     return (
       <div ref={wrapRef} className="w-full space-y-2.5">
+
         {content.data.map((d, i) => {
           const pal = getItemColor(d, i);
           const pct = (d.value / max) * 100;
@@ -147,7 +161,8 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
             <div
               key={d.id}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors duration-300",
+                "rounded-xl px-2 py-1.5 transition-colors duration-300",
+                narrow ? "space-y-1" : "flex items-center gap-3",
                 active ? "bg-foreground/[0.04]" : "bg-transparent"
               )}
               onMouseEnter={() => setHover(d.id)}
@@ -155,41 +170,75 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
             >
               <span
                 title={d.label}
-                className="w-[92px] shrink-0 truncate text-[11px] font-medium text-muted-foreground sm:w-[132px]"
+                className={cn(
+                  "block text-[11px] font-medium text-muted-foreground",
+                  narrow ? "w-full [overflow-wrap:anywhere]" : "w-[92px] shrink-0 truncate sm:w-[132px]"
+                )}
               >
                 {d.label}
               </span>
-              <div className="relative h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={inView ? { width: `${pct}%` } : {}}
-                  transition={{ duration: 1, delay: 0.07 * i, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative h-full overflow-hidden rounded-full"
-                  style={{
-                    background: `linear-gradient(90deg, ${pal.from} 0%, ${pal.to} 100%)`,
-                    boxShadow: active
-                      ? `0 8px 18px -8px ${pal.to}99, inset 0 1px 0 rgba(255,255,255,0.5)`
-                      : `0 6px 14px -10px ${pal.to}80, inset 0 1px 0 rgba(255,255,255,0.35)`,
-                  }}
-                >
-                  <span
-                    className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-full"
-                    style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0))" }}
-                    aria-hidden="true"
-                  />
-                  <motion.span
-                    className="pointer-events-none absolute inset-y-0 w-1/3"
-                    style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)" }}
-                    initial={{ x: "-120%" }}
-                    animate={inView ? { x: ["-120%", "320%"] } : {}}
-                    transition={{ duration: 1.4, delay: 0.5 + 0.07 * i, ease: "easeInOut" }}
-                    aria-hidden="true"
-                  />
-                </motion.div>
-              </div>
-              <span className="w-[52px] shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
-                <CountUp value={d.value} unit={content.unit} delay={0.3 + 0.07 * i} />
-              </span>
+              {narrow ? (
+                <div className="flex items-center gap-2">
+                  <div className="relative h-3.5 min-w-0 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={inView ? { width: `${pct}%` } : {}}
+                      transition={{ duration: 1, delay: 0.07 * i, ease: [0.16, 1, 0.3, 1] }}
+                      className="relative h-full overflow-hidden rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${pal.from} 0%, ${pal.to} 100%)`,
+                        boxShadow: `0 6px 14px -10px ${pal.to}80, inset 0 1px 0 rgba(255,255,255,0.35)`,
+                      }}
+                    >
+                      <span
+                        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-full"
+                        style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0))" }}
+                        aria-hidden="true"
+                      />
+                    </motion.div>
+                  </div>
+                  <span className="shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                    <CountUp value={d.value} unit={content.unit} delay={0.3 + 0.07 * i} />
+                  </span>
+                </div>
+              ) : null}
+
+              {!narrow && (
+                <>
+                  <div className="relative h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={inView ? { width: `${pct}%` } : {}}
+                      transition={{ duration: 1, delay: 0.07 * i, ease: [0.16, 1, 0.3, 1] }}
+                      className="relative h-full overflow-hidden rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${pal.from} 0%, ${pal.to} 100%)`,
+                        boxShadow: active
+                          ? `0 8px 18px -8px ${pal.to}99, inset 0 1px 0 rgba(255,255,255,0.5)`
+                          : `0 6px 14px -10px ${pal.to}80, inset 0 1px 0 rgba(255,255,255,0.35)`,
+                      }}
+                    >
+                      <span
+                        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-full"
+                        style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0))" }}
+                        aria-hidden="true"
+                      />
+                      <motion.span
+                        className="pointer-events-none absolute inset-y-0 w-1/3"
+                        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)" }}
+                        initial={{ x: "-120%" }}
+                        animate={inView ? { x: ["-120%", "320%"] } : {}}
+                        transition={{ duration: 1.4, delay: 0.5 + 0.07 * i, ease: "easeInOut" }}
+                        aria-hidden="true"
+                      />
+                    </motion.div>
+                  </div>
+                  <span className="w-[52px] shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                    <CountUp value={d.value} unit={content.unit} delay={0.3 + 0.07 * i} />
+                  </span>
+                </>
+              )}
+
             </div>
           );
         })}
