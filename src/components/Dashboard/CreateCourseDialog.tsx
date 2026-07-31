@@ -403,21 +403,32 @@ export function CreateCourseDialog({ open, onOpenChange }: CreateCourseDialogPro
                   Course Title
                   <span aria-hidden="true" className="text-destructive ml-0.5">*</span>
                 </label>
-                <input
-                  ref={titleInputRef}
-                  id="cc-title-input"
-                  value={courseTitle}
-                  onChange={(e) => setCourseTitle(e.target.value)}
-                  placeholder="What will you teach?"
-                  aria-required="true"
-                  aria-invalid={!!titleError}
-                  aria-describedby="cc-title-helper"
+                <div
                   className={cn(
-                    "w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 outline-none pb-2 sm:pb-2.5 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground",
-                    titleError ? "border-destructive focus:border-destructive" : "border-border focus:border-primary"
+                    "flex items-end gap-2 border-b-2 pb-2 sm:pb-2.5 transition-colors focus-within:border-primary",
+                    titleError ? "border-destructive focus-within:border-destructive" : "border-border",
                   )}
-                  autoFocus
-                />
+                >
+                  <input
+                    ref={titleInputRef}
+                    id="cc-title-input"
+                    value={courseTitle}
+                    onChange={(e) => setCourseTitle(e.target.value)}
+                    placeholder="What will you teach?"
+                    dir={getLanguage(languageCode).dir}
+                    aria-required="true"
+                    aria-invalid={!!titleError}
+                    aria-describedby="cc-title-helper"
+                    className="flex-1 min-w-0 text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 outline-none placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
+                    autoFocus
+                  />
+                  <TitleLanguageAffix
+                    value={languageCode}
+                    onChange={setLanguageCode}
+                    className="mb-0.5"
+                  />
+                </div>
+
                 {titleError ? (
                   <p id="cc-title-helper" role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium">
                     {titleError}
