@@ -489,6 +489,37 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
   const [dataOpen, setDataOpen] = useState(false);
   const [dragId, setDragId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef<number | null>(null);
+
+  const stopAutoScroll = () => {
+    if (autoScrollRef.current !== null) {
+      cancelAnimationFrame(autoScrollRef.current);
+      autoScrollRef.current = null;
+    }
+  };
+
+  // Auto-scroll the list while dragging near its top/bottom edges
+  const handleDragAutoScroll = (clientY: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const zone = 48;
+    let speed = 0;
+    if (clientY < rect.top + zone) speed = -Math.ceil((rect.top + zone - clientY) / 4);
+    else if (clientY > rect.bottom - zone) speed = Math.ceil((clientY - (rect.bottom - zone)) / 4);
+
+    stopAutoScroll();
+    if (speed === 0) return;
+    const step = () => {
+      el.scrollTop += speed;
+      autoScrollRef.current = requestAnimationFrame(step);
+    };
+    autoScrollRef.current = requestAnimationFrame(step);
+  };
+
+  useEffect(() => stopAutoScroll, []);
+
   const uid = useMemo(() => `ce${Math.random().toString(36).slice(2, 8)}`, []);
 
 
