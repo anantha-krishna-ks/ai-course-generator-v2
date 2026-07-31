@@ -667,29 +667,28 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                         </PopoverContent>
                       </Popover>
 
-                      {/* Reorder controls */}
-                      <div className="flex flex-col gap-px">
-                        <button
-                          type="button"
-                          aria-label={`Move ${item.label} up`}
-                          disabled={!canMoveUp}
-                          onClick={() => move(-1)}
-                          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary disabled:pointer-events-none disabled:opacity-30"
-                        >
-                          <ChevronUp className="h-3 w-3" aria-hidden="true" focusable="false" />
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={`Move ${item.label} down`}
-                          disabled={!canMoveDown}
-                          onClick={() => move(1)}
-                          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary disabled:pointer-events-none disabled:opacity-30"
-                        >
-                          <ChevronDown className="h-3 w-3" aria-hidden="true" focusable="false" />
-                        </button>
-                      </div>
+                      {/* Drag handle */}
+                      <button
+                        type="button"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Drag to reorder ${item.label}. Use arrow up or down keys to move.`}
+                        onPointerDown={() => setDragId(item.id)}
+                        onPointerUp={() => !overId && setDragId(null)}
+                        onKeyDown={(e) => {
+                          if (e.key === "ArrowUp" && i > 0) {
+                            e.preventDefault();
+                            reorder(item.id, data.data[i - 1].id);
+                          } else if (e.key === "ArrowDown" && i < data.data.length - 1) {
+                            e.preventDefault();
+                            reorder(item.id, data.data[i + 1].id);
+                          }
+                        }}
+                        className="shrink-0 cursor-grab rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                      >
+                        <GripVertical className="h-4 w-4" aria-hidden="true" focusable="false" />
+                      </button>
 
-                      <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" aria-hidden="true" focusable="false" />
 
                       <Input
                         value={item.label}
