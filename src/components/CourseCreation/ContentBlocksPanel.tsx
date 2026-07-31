@@ -119,6 +119,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "accordion", label: "Accordion", icon: Rows3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "accordion", description: "Collapsible panels — click a heading to expand or collapse its content" },
   { id: "flashcards", label: "Flashcards", icon: Layers, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "flashcards", variant: "flashcards", description: "Two-sided cards learners flip to reveal answers, definitions or images" },
   { id: "card-sort", label: "Card Sorting", icon: Group, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "card-sort", description: "Learners drag items into the right category — great for grouping and classification exercises" },
+  { id: "chart", label: "Chart", icon: BarChart3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "chart", description: "Visualise data as a glossy animated bar or pie chart — add your own items and values" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
