@@ -261,7 +261,7 @@ function GlossyPieChart({ content, uid }: { content: ChartContent; uid: string }
         >
           <defs>
             {content.data.map((d, i) => {
-              const pal = CHART_PALETTE[i % CHART_PALETTE.length];
+              const pal = getItemColor(d, i);
               return (
                 <linearGradient key={d.id} id={`${uid}-g${i}`} x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor={pal.from} />
