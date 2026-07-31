@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Lock } from "lucide-react";
+import { ChevronDown, Globe, Lock } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { getLanguage } from "@/services/courseLanguageStore";
@@ -26,32 +26,46 @@ export function TitleLanguageAffix({ value, onChange, locked = false, className 
     <>
       <span
         aria-hidden="true"
-        className="text-[10px] font-bold uppercase tracking-wider text-primary"
+        className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-sm"
       >
+        <Globe className="w-3 h-3" />
+      </span>
+      <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-foreground">
         {lang.code}
       </span>
-      <span className="text-xs font-medium text-muted-foreground max-w-[92px] truncate hidden sm:inline">
+      <span aria-hidden="true" className="h-3 w-px bg-border hidden sm:block" />
+      <span className="text-[11px] font-medium text-muted-foreground max-w-[92px] truncate hidden sm:inline">
         {lang.label}
       </span>
       {lang.dir === "rtl" && (
-        <span className="text-[9px] font-semibold uppercase tracking-wide text-primary/80">RTL</span>
+        <span className="text-[9px] font-bold uppercase tracking-wide text-primary bg-primary/10 rounded-full px-1.5 py-px">
+          RTL
+        </span>
       )}
       {locked ? (
         <Lock className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
       ) : (
-        <ChevronDown className="w-3 h-3 text-muted-foreground" aria-hidden="true" focusable="false" />
+        <ChevronDown
+          className={cn(
+            "w-3 h-3 text-muted-foreground transition-transform duration-200",
+            open && "rotate-180 text-primary",
+          )}
+          aria-hidden="true"
+          focusable="false"
+        />
       )}
     </>
   );
 
   const base = cn(
-    "inline-flex items-center gap-1.5 h-7 px-2 rounded-full bg-muted/60 border border-transparent transition-colors shrink-0",
+    "inline-flex items-center gap-1.5 h-8 ps-1 pe-2.5 rounded-full shrink-0 transition-all duration-200",
+    "border border-border/70 bg-gradient-to-b from-background to-muted/60 shadow-[0_1px_2px_hsl(var(--foreground)/0.06)] backdrop-blur-sm",
     className,
   );
 
   if (locked) {
     return (
-      <span className={base} title={`Course language: ${lang.label} (locked)`}>
+      <span className={cn(base, "opacity-90")} title={`Course language: ${lang.label} (locked)`}>
         {inner}
         <span className="sr-only">Course language {lang.label} is locked</span>
       </span>
@@ -66,13 +80,14 @@ export function TitleLanguageAffix({ value, onChange, locked = false, className 
           aria-label={`Course language: ${lang.label}. Click to change.`}
           className={cn(
             base,
-            "hover:bg-muted hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+            "hover:border-primary/50 hover:shadow-[0_2px_8px_hsl(var(--primary)/0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+            open && "border-primary/60 ring-2 ring-primary/20",
           )}
         >
           {inner}
         </button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[300px] p-3">
+      <PopoverContent align="end" className="w-[300px] p-3 rounded-2xl shadow-xl">
         <CourseLanguageList
           value={value}
           onSelect={(code) => {
