@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView, animate } from "framer-motion";
-import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical, Check } from "lucide-react";
+import { BarChart3, PieChart as PieIcon, Plus, Trash2, Settings2, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export type ChartKind = "bar" | "pie";
 
@@ -412,32 +419,36 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
     <div className="w-full px-1 py-2">
       {/* Toolbar */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <div className="flex items-center gap-1 rounded-full border border-border/60 bg-muted/30 p-1">
-          {([
-            { kind: "bar" as const, label: "Bar", Icon: BarChart3 },
-            { kind: "pie" as const, label: "Pie", Icon: PieIcon },
-          ]).map(({ kind, label, Icon }) => {
-            const active = data.kind === kind;
-            return (
-              <button
+        <Select
+          value={data.kind}
+          onValueChange={(value) => update({ ...data, kind: value as ChartKind })}
+        >
+          <SelectTrigger
+            aria-label="Chart type"
+            className="h-9 w-auto min-w-[140px] gap-2 rounded-full border border-border/60 bg-muted/30 px-3 py-1.5 text-[12px] font-medium text-foreground shadow-none hover:bg-muted/50 focus:ring-1 focus:ring-primary/25 focus:ring-offset-0 [&>svg]:text-muted-foreground"
+          >
+            <SelectValue placeholder="Pick chart type" />
+          </SelectTrigger>
+          <SelectContent className="rounded-2xl border border-border/60 p-1.5 shadow-lg">
+            {[
+              { kind: "bar" as const, label: "Bar chart", Icon: BarChart3 },
+              { kind: "pie" as const, label: "Pie chart", Icon: PieIcon },
+            ].map(({ kind, label, Icon }) => (
+              <SelectItem
                 key={kind}
-                type="button"
-                onClick={() => update({ ...data, kind })}
-                aria-pressed={active}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium transition-all duration-200",
-                  active
-                    ? "bg-background text-foreground shadow-sm ring-1 ring-primary/25"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
+                value={kind}
+                className="gap-2.5 rounded-xl px-2.5 py-2 text-[12px] font-medium focus:bg-primary/10 focus:text-foreground"
               >
-                <Icon className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
-                {label}
-                {active && <Check className="h-3 w-3 text-primary" aria-hidden="true" focusable="false" />}
-              </button>
-            );
-          })}
-        </div>
+                <span className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
+                  </span>
+                  {label}
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <Popover open={dataOpen} onOpenChange={setDataOpen}>
           <PopoverTrigger asChild>
