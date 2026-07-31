@@ -320,6 +320,9 @@ const SinglepageCoursePreview = () => {
         if (block.variant === "card-sort") {
           return <CardSortPreview content={content} />;
         }
+        if (block.variant === "chart") {
+          return <ChartPreview content={content} />;
+        }
 
 
 
