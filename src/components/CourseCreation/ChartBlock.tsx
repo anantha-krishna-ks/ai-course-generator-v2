@@ -452,7 +452,7 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
               <p className="text-[13px] font-semibold text-foreground">Chart data</p>
               <p className="text-[11px] text-muted-foreground">Add items and values — the chart updates live.</p>
             </div>
-            <div className="space-y-3 px-4 py-3">
+            <div className="max-h-[min(60vh,420px)] space-y-3 overflow-y-auto px-4 py-3">
               <div className="space-y-1.5">
                 <Label htmlFor={`${uid}-title`} className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Title</Label>
                 <Input id={`${uid}-title`} value={data.title} onChange={(e) => update({ ...data, title: e.target.value })} className="h-8 text-[13px]" />
@@ -468,7 +468,7 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 </div>
               </div>
 
-              <div className="max-h-[240px] space-y-1.5 overflow-y-auto pr-1">
+              <div className="space-y-1.5">
                 {data.data.map((item, i) => {
                   const pal = CHART_PALETTE[i % CHART_PALETTE.length];
                   return (
@@ -509,7 +509,7 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 })}
               </div>
 
-              <Button variant="ghost" size="sm" onClick={addItem} className="w-full gap-1.5 rounded-xl border border-dashed border-border/70 text-[12px] text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" onClick={addItem} className="sticky bottom-0 w-full gap-1.5 rounded-xl border border-dashed border-border/70 bg-popover text-[12px] text-muted-foreground hover:text-foreground">
                 <Plus className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
                 Add item
               </Button>
