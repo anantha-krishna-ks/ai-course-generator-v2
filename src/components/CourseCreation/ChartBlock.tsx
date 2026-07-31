@@ -129,16 +129,30 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
   const wrapRef = useRef<HTMLDivElement>(null);
   const inView = useInView(wrapRef, { once: true, amount: 0.3 });
   const [hover, setHover] = useState<string | null>(null);
+  // Container-based width (device preview frames don't change the viewport,
+  // so CSS breakpoints can't detect a narrow mobile canvas).
+  const [width, setWidth] = useState<number>(0);
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    ro.observe(node);
+    setWidth(node.getBoundingClientRect().width);
+    return () => ro.disconnect();
+  }, []);
   const max = Math.max(...content.data.map((d) => d.value), 1);
   const ticks = [0, 0.25, 0.5, 0.75, 1];
-  // Smart orientation: long labels or many items read far better horizontally,
-  // which removes any chance of x-axis labels colliding.
+  // Smart orientation: long labels, many items, or a narrow container read far
+  // better horizontally — this removes squeezed bars and colliding x labels.
   const longest = content.data.reduce((m, d) => Math.max(m, d.label.length), 0);
-  const horizontal = content.data.length > 6 || longest > 12;
+  const narrow = width > 0 && width < 520;
+  const tooTight = width > 0 && width / Math.max(content.data.length, 1) < 52;
+  const horizontal = content.data.length > 6 || longest > 12 || narrow || tooTight;
 
   if (horizontal) {
     return (
       <div ref={wrapRef} className="w-full space-y-2.5">
+
         {content.data.map((d, i) => {
           const pal = getItemColor(d, i);
           const pct = (d.value / max) * 100;
