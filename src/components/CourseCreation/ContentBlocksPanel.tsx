@@ -1406,16 +1406,28 @@ function BlockThumbnail({ id }: { id: string }) {
     case "chart":
       return (
         <div className={wrapper}>
-          <div className={cn(miniCard, "p-[4px] h-[44px] flex items-end justify-center gap-[3px]")}>
-            {[60, 85, 45, 70, 30].map((h, i) => (
+          <div className={cn(miniCard, "p-[4px] h-[44px] flex items-end justify-center gap-[3px] relative overflow-hidden")}>
+            {[
+              { h: 60, from: "#3B82F6", to: "#1D4ED8" },
+              { h: 85, from: "#22D3EE", to: "#0891B2" },
+              { h: 45, from: "#A78BFA", to: "#6D28D9" },
+              { h: 70, from: "#34D399", to: "#059669" },
+              { h: 30, from: "#FBBF24", to: "#D97706" },
+            ].map((b, i) => (
               <div
                 key={i}
-                className="w-[6px] rounded-t-[1.5px]"
-                style={{ height: `${h}%`, background: "linear-gradient(180deg,#3B82F6,#1D4ED8)" }}
-              />
+                className="w-[6px] rounded-t-[2px] relative overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.18)]"
+                style={{ height: `${b.h}%`, background: `linear-gradient(180deg, ${b.from}, ${b.to})` }}
+              >
+                <div
+                  className="absolute inset-x-0 top-0 h-1/2 rounded-t-[2px]"
+                  style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0))" }}
+                />
+              </div>
             ))}
           </div>
         </div>
+
       );
     case "card-sort":
       return (
