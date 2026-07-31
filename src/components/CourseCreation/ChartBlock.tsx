@@ -509,7 +509,7 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 })}
               </div>
 
-              <Button variant="ghost" size="sm" onClick={addItem} className="w-full gap-1.5 rounded-xl border border-dashed border-border/70 text-[12px] text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" onClick={addItem} className="sticky bottom-0 w-full gap-1.5 rounded-xl border border-dashed border-border/70 bg-popover text-[12px] text-muted-foreground hover:text-foreground">
                 <Plus className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
                 Add item
               </Button>
