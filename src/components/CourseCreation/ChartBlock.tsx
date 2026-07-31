@@ -509,8 +509,14 @@ export function ChartBlock({ content, onChange, readOnly }: ChartBlockProps) {
                 })}
               </div>
 
-              <Button variant="ghost" size="sm" onClick={addItem} className="sticky bottom-0 w-full gap-1.5 rounded-xl border border-dashed border-border/70 bg-popover text-[12px] text-muted-foreground hover:text-foreground">
-                <Plus className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
+              <Button
+                size="sm"
+                onClick={addItem}
+                className="sticky bottom-0 w-full gap-2 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/90 to-primary/70 py-2 text-[12px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-200 hover:scale-[1.02] hover:from-primary hover:to-primary/80 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98]"
+              >
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
+                  <Plus className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
+                </span>
                 Add item
               </Button>
             </div>
