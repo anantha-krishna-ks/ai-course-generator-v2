@@ -20,6 +20,7 @@ export interface ChartDatum {
   id: string;
   label: string;
   value: number;
+  color?: { from: string; to: string };
 }
 
 export interface ChartContent {
