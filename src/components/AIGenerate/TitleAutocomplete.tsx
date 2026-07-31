@@ -91,6 +91,8 @@ export function TitleAutocomplete({ value, onChange, id, placeholder, language, 
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [focused, setFocused] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
