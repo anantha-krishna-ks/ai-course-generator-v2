@@ -1,8 +1,6 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
-import { Upload, X, FileText, AlertCircle, Info, Check, Layers, Timer, Coins, Languages, Lock, ChevronDown } from "lucide-react";
+import { Upload, X, FileText, AlertCircle, Info, Check, Layers, Timer, Coins } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CourseLanguageList } from "@/components/CourseCreation/CourseLanguagePicker";
-import { getLanguage } from "@/services/courseLanguageStore";
 import { useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
@@ -73,8 +71,11 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
           id="course-title"
           value={state.title}
           onChange={(v) => onChange({ title: v })}
+          language={state.language}
+          onLanguageChange={(code) => onChange({ language: code })}
           placeholder="What will you teach?"
         />
+
         {errors.title ? (
           <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
             <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -341,52 +342,8 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
         )}
       </div>
 
-      {/* Course Language */}
-      <div data-field="language" className="rounded-xl border border-border bg-card p-4">
-        <div className="mb-2.5">
-          <div className="text-[16px] font-semibold text-foreground leading-tight flex items-center gap-2">
-            <Languages className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
-            Course Language
-            <span className="text-destructive" aria-hidden="true">*</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Content is generated in this language and right-to-left languages are rendered RTL.
-            Locked once generation starts.
-          </p>
-        </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              aria-label={`Course language: ${getLanguage(state.language).label}. Click to change.`}
-              className="w-full sm:w-auto inline-flex items-center gap-2.5 rounded-xl border border-border bg-background hover:bg-muted px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            >
-              <span aria-hidden="true" className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary text-[11px] font-bold uppercase">
-                {getLanguage(state.language).code}
-              </span>
-              <span className="flex flex-col items-start leading-tight text-left">
-                <span className="text-sm font-semibold text-foreground">{getLanguage(state.language).label}</span>
-                <span className="text-xs text-muted-foreground" dir={getLanguage(state.language).dir}>
-                  {getLanguage(state.language).native}
-                </span>
-              </span>
-              {getLanguage(state.language).dir === "rtl" && (
-                <span className="ms-2 text-[10px] font-semibold uppercase tracking-wide text-primary rounded-full bg-primary/10 px-1.5 py-0.5">
-                  RTL
-                </span>
-              )}
-              <ChevronDown className="w-4 h-4 text-muted-foreground ms-2" aria-hidden="true" focusable="false" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent align="start" className="w-[300px] p-3">
-            <CourseLanguageList value={state.language} onSelect={(code) => onChange({ language: code })} />
-          </PopoverContent>
-        </Popover>
-        <p className="text-[11px] text-muted-foreground mt-2 flex items-center gap-1.5">
-          <Lock className="w-3 h-3" aria-hidden="true" focusable="false" />
-          App labels remain in English. Only learner-facing content is translated.
-        </p>
-      </div>
+
+
 
       {/* Content Rules Upload Helper */}
       <ContentRulesUpload
