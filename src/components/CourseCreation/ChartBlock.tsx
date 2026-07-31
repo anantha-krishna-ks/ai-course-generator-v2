@@ -203,37 +203,42 @@ function GlossyBarChart({ content, uid }: { content: ChartContent; uid: string }
                 </div>
               ) : null}
 
-              <div className="relative h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={inView ? { width: `${pct}%` } : {}}
-                  transition={{ duration: 1, delay: 0.07 * i, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative h-full overflow-hidden rounded-full"
-                  style={{
-                    background: `linear-gradient(90deg, ${pal.from} 0%, ${pal.to} 100%)`,
-                    boxShadow: active
-                      ? `0 8px 18px -8px ${pal.to}99, inset 0 1px 0 rgba(255,255,255,0.5)`
-                      : `0 6px 14px -10px ${pal.to}80, inset 0 1px 0 rgba(255,255,255,0.35)`,
-                  }}
-                >
-                  <span
-                    className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-full"
-                    style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0))" }}
-                    aria-hidden="true"
-                  />
-                  <motion.span
-                    className="pointer-events-none absolute inset-y-0 w-1/3"
-                    style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)" }}
-                    initial={{ x: "-120%" }}
-                    animate={inView ? { x: ["-120%", "320%"] } : {}}
-                    transition={{ duration: 1.4, delay: 0.5 + 0.07 * i, ease: "easeInOut" }}
-                    aria-hidden="true"
-                  />
-                </motion.div>
-              </div>
-              <span className="w-[52px] shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
-                <CountUp value={d.value} unit={content.unit} delay={0.3 + 0.07 * i} />
-              </span>
+              {!narrow && (
+                <>
+                  <div className="relative h-4 min-w-0 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={inView ? { width: `${pct}%` } : {}}
+                      transition={{ duration: 1, delay: 0.07 * i, ease: [0.16, 1, 0.3, 1] }}
+                      className="relative h-full overflow-hidden rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, ${pal.from} 0%, ${pal.to} 100%)`,
+                        boxShadow: active
+                          ? `0 8px 18px -8px ${pal.to}99, inset 0 1px 0 rgba(255,255,255,0.5)`
+                          : `0 6px 14px -10px ${pal.to}80, inset 0 1px 0 rgba(255,255,255,0.35)`,
+                      }}
+                    >
+                      <span
+                        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-full"
+                        style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(255,255,255,0))" }}
+                        aria-hidden="true"
+                      />
+                      <motion.span
+                        className="pointer-events-none absolute inset-y-0 w-1/3"
+                        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)" }}
+                        initial={{ x: "-120%" }}
+                        animate={inView ? { x: ["-120%", "320%"] } : {}}
+                        transition={{ duration: 1.4, delay: 0.5 + 0.07 * i, ease: "easeInOut" }}
+                        aria-hidden="true"
+                      />
+                    </motion.div>
+                  </div>
+                  <span className="w-[52px] shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                    <CountUp value={d.value} unit={content.unit} delay={0.3 + 0.07 * i} />
+                  </span>
+                </>
+              )}
+
             </div>
           );
         })}
