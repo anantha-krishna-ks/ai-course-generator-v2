@@ -169,7 +169,12 @@ export function TitleAutocomplete({ value, onChange, id, placeholder, language, 
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="relative">
+      <div
+        className={cn(
+          "relative flex items-end gap-2 border-b-2 pb-2 sm:pb-2.5 transition-colors",
+          focused ? "border-primary" : "border-border",
+        )}
+      >
         <input
           ref={inputRef}
           id={id}
@@ -178,10 +183,13 @@ export function TitleAutocomplete({ value, onChange, id, placeholder, language, 
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onFocus={() => {
+            setFocused(true);
             if (suggestions.length > 0) setShowDropdown(true);
           }}
+          onBlur={() => setFocused(false)}
+          dir={language ? getLanguage(language).dir : undefined}
           placeholder={placeholder}
-          className="w-full text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 border-b-2 border-border focus:border-primary outline-none pb-2 sm:pb-2.5 pr-8 transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
+          className="flex-1 min-w-0 text-lg sm:text-xl md:text-2xl font-bold bg-transparent border-0 outline-none transition-colors placeholder:text-muted-foreground/40 placeholder:font-normal text-foreground"
           autoComplete="off"
           role="combobox"
           aria-expanded={showDropdown}
@@ -191,17 +199,26 @@ export function TitleAutocomplete({ value, onChange, id, placeholder, language, 
         />
         <AnimatePresence>
           {isGenerating && (
-            <motion.div
+            <motion.span
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 -mt-1"
+              className="mb-1 shrink-0"
             >
               <Sparkles className="w-4 h-4 text-primary animate-pulse" aria-hidden="true" focusable="false" />
-            </motion.div>
+            </motion.span>
           )}
         </AnimatePresence>
+        {language && onLanguageChange && (
+          <TitleLanguageAffix
+            value={language}
+            onChange={onLanguageChange}
+            locked={languageLocked}
+            className="mb-0.5"
+          />
+        )}
       </div>
+
 
       <AnimatePresence>
         {showDropdown && suggestions.length > 0 && (
