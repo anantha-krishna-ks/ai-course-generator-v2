@@ -15,6 +15,7 @@ import { useCourseLanguage } from "@/services/courseLanguageStore";
 import { FlashcardsPreview } from "@/components/CourseCreation/FlashcardsBlock";
 import { CardSortPreview } from "@/components/CourseCreation/CardSortBlock";
 import { ChartPreview } from "@/components/CourseCreation/ChartBlock";
+import { VideoGenerationPreview } from "@/components/CourseCreation/VideoGenerationBlock";
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "@/components/CourseCreation/LayoutUtilityBlock";
 import { PreviewAudioTranscript } from "@/components/CoursePreview/PreviewAudioTranscript";
 import { ImageLightbox } from "@/components/CoursePreview/ImageLightbox";
@@ -319,6 +320,9 @@ const SinglepageCoursePreview = () => {
         }
         if (block.variant === "card-sort") {
           return <CardSortPreview content={content} />;
+        }
+        if (block.variant === "video-generation") {
+          return <VideoGenerationPreview content={content} />;
         }
         if (block.variant === "chart") {
           return <ChartPreview content={content} />;
