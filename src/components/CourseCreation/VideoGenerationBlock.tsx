@@ -400,7 +400,7 @@ export function VideoStage({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.35 }}
-            className={cn("absolute inset-0 flex p-3", zoneClass[state.avatarZone])}
+            className={cn("pointer-events-none absolute inset-0 flex p-3", zoneClass[state.avatarZone])}
           >
             <div
               className="relative rounded-xl overflow-hidden ring-2 ring-primary-foreground/30 shadow-2xl"
@@ -432,7 +432,7 @@ export function VideoStage({
             initial={el.animation === "fade" ? { opacity: 0, y: 8 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className={cn("absolute inset-0 flex p-4", zoneClass[el.zone])}
+            className={cn("pointer-events-none absolute inset-0 flex p-4", zoneClass[el.zone])}
           >
             <button
               type="button"
@@ -758,12 +758,12 @@ export function VideoGenerationBlock({
 
       {/* ---- Full configuration workspace ---- */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className="max-w-[1080px] w-[96vw] max-h-[92vh] overflow-y-auto p-0 gap-0">
+        <DialogContent className="max-w-[1440px] w-[97vw] max-h-[92vh] overflow-hidden p-0 gap-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Configure video generation</DialogTitle>
             <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
           </DialogHeader>
-          <div className="w-full overflow-hidden">
+          <div className="w-full max-h-[92vh] overflow-y-auto lg:overflow-hidden">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
 
@@ -822,9 +822,9 @@ export function VideoGenerationBlock({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] items-start">
         {/* Stage + timeline */}
-        <div className="p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border">
+        <div className="min-w-0 p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border overflow-y-auto lg:max-h-[calc(92vh-120px)]">
           <VideoStage
             state={state}
             time={time}
@@ -902,7 +902,7 @@ export function VideoGenerationBlock({
         </div>
 
         {/* Properties panel */}
-        <div className="p-4">
+        <div className="min-w-0 p-4 overflow-y-auto lg:max-h-[calc(92vh-120px)]">
           <div className="grid grid-cols-4 gap-1 rounded-full bg-muted p-1 mb-3">
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
