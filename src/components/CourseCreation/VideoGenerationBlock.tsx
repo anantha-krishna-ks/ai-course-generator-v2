@@ -765,7 +765,7 @@ export function VideoGenerationBlock({
 
       {/* ---- Full configuration workspace ---- */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className="max-w-[1440px] w-[97vw] max-h-[92vh] overflow-hidden p-0 gap-0">
+        <DialogContent className="max-w-[1440px] w-[97vw] h-[92vh] overflow-hidden p-0 gap-0 flex flex-col">
           <DialogHeader className="sr-only">
             <DialogTitle>Configure video generation</DialogTitle>
             <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
