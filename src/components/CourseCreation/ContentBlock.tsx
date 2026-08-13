@@ -52,6 +52,8 @@ import { AccordionBlock } from "./AccordionBlock";
 import { FlashcardsBlock } from "./FlashcardsBlock";
 import { CardSortBlock } from "./CardSortBlock";
 import { ChartBlock } from "./ChartBlock";
+import { VideoGenerationBlock } from "./VideoGenerationBlock";
+
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "./LayoutUtilityBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
