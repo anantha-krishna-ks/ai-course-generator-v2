@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
   Pause,
-  Search,
   Check,
   Loader2,
   Sparkles,
@@ -37,7 +36,6 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
@@ -57,17 +55,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { toast } from "@/hooks/use-toast";
 
 import ariaImg from "@/assets/voices/aria.jpg";
-import sarahImg from "@/assets/voices/sarah.jpg";
 import georgeImg from "@/assets/voices/george.jpg";
-import liamImg from "@/assets/voices/liam.jpg";
-import matildaImg from "@/assets/voices/matilda.jpg";
-import brianImg from "@/assets/voices/brian.jpg";
-import lilyImg from "@/assets/voices/lily.jpg";
-import danielImg from "@/assets/voices/daniel.jpg";
-import charlotteImg from "@/assets/voices/charlotte.jpg";
-import ethanImg from "@/assets/voices/ethan.jpg";
-import sofiaImg from "@/assets/voices/sofia.jpg";
-import hugoImg from "@/assets/voices/hugo.jpg";
 
 /* ------------------------------------------------------------------ */
 /* Avatar library (mirrors the shipped Voice Library)                  */
@@ -87,16 +75,6 @@ export interface AvatarOption {
 export const AVATAR_LIBRARY: AvatarOption[] = [
   { id: "av-aria", name: "Aria", style: "Corporate", setting: "Studio", gender: "Female", voice: "Aria · English (US)", image: ariaImg, enabled: true },
   { id: "av-george", name: "George", style: "Corporate", setting: "Office", gender: "Male", voice: "George · English (UK)", image: georgeImg, enabled: true },
-  { id: "av-lily", name: "Lily", style: "Educator", setting: "Classroom", gender: "Female", voice: "Lily · English (UK)", image: lilyImg, enabled: true },
-  { id: "av-liam", name: "Liam", style: "Casual", setting: "Neutral", gender: "Male", voice: "Liam · English (US)", image: liamImg, enabled: true },
-  { id: "av-charlotte", name: "Charlotte", style: "Educator", setting: "Studio", gender: "Female", voice: "Charlotte · English (US)", image: charlotteImg, enabled: true },
-  { id: "av-brian", name: "Brian", style: "Corporate", setting: "Office", gender: "Male", voice: "Brian · English (US)", image: brianImg, enabled: true },
-  { id: "av-matilda", name: "Matilda", style: "Clinical", setting: "Neutral", gender: "Female", voice: "Matilda · English (AU)", image: matildaImg, enabled: true },
-  { id: "av-daniel", name: "Daniel", style: "Corporate", setting: "Studio", gender: "Male", voice: "Daniel · English (UK)", image: danielImg, enabled: true },
-  { id: "av-sarah", name: "Sarah", style: "Casual", setting: "Neutral", gender: "Female", voice: "Sarah · English (US)", image: sarahImg, enabled: true },
-  { id: "av-ethan", name: "Ethan", style: "Casual", setting: "Office", gender: "Male", voice: "Ethan · English (US)", image: ethanImg, enabled: true },
-  { id: "av-sofia", name: "Sofia", style: "Educator", setting: "Classroom", gender: "Female", voice: "Sofia · Spanish (ES)", image: sofiaImg, enabled: false },
-  { id: "av-hugo", name: "Hugo", style: "Clinical", setting: "Studio", gender: "Male", voice: "Hugo · French (FR)", image: hugoImg, enabled: false },
 ];
 
 export function getAvatar(id?: string) {
@@ -420,7 +398,7 @@ export function VideoStage({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.35 }}
-            className={cn("absolute inset-0 flex p-3", zoneClass[state.avatarZone])}
+            className={cn("pointer-events-none absolute inset-0 flex p-3", zoneClass[state.avatarZone])}
           >
             <div
               className="relative rounded-xl overflow-hidden ring-2 ring-primary-foreground/30 shadow-2xl"
@@ -452,7 +430,7 @@ export function VideoStage({
             initial={el.animation === "fade" ? { opacity: 0, y: 8 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className={cn("absolute inset-0 flex p-4", zoneClass[el.zone])}
+            className={cn("pointer-events-none absolute inset-0 flex p-4", zoneClass[el.zone])}
           >
             <button
               type="button"
@@ -496,105 +474,66 @@ function AvatarLibraryDialog({
   selectedId: string;
   onSelect: (id: string) => void;
 }) {
-  const [q, setQ] = useState("");
-  const [style, setStyle] = useState("all");
-  const [setting, setSetting] = useState("all");
-  const [gender, setGender] = useState("all");
   const [playing, setPlaying] = useState<string | null>(null);
-
-  const list = AVATAR_LIBRARY.filter((a) => a.enabled)
-    .filter((a) => a.name.toLowerCase().includes(q.toLowerCase()))
-    .filter((a) => style === "all" || a.style === style)
-    .filter((a) => setting === "all" || a.setting === setting)
-    .filter((a) => gender === "all" || a.gender === gender);
+  const list = AVATAR_LIBRARY.filter((a) => a.enabled);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[880px] max-h-[86vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[620px]">
         <DialogHeader>
-          <DialogTitle>Avatar library</DialogTitle>
+          <DialogTitle>Choose a presenter</DialogTitle>
           <DialogDescription>
-            Only avatars your admin has enabled are shown. Sample clips are pre-recorded and cost nothing.
+            Two presenters are available. Sample clips are pre-recorded and cost nothing.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-wrap gap-2">
-          <div className="relative flex-1 min-w-[180px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search avatars" className="pl-9 rounded-full" aria-label="Search avatars" />
-          </div>
-          {[
-            { v: style, set: setStyle, label: "Style", opts: ["Corporate", "Casual", "Educator", "Clinical"] },
-            { v: setting, set: setSetting, label: "Setting", opts: ["Office", "Studio", "Classroom", "Neutral"] },
-            { v: gender, set: setGender, label: "Gender", opts: ["Female", "Male"] },
-          ].map((f) => (
-            <Select key={f.label} value={f.v} onValueChange={f.set}>
-              <SelectTrigger className="w-[140px] rounded-full" aria-label={`Filter by ${f.label.toLowerCase()}`}>
-                <SelectValue placeholder={f.label} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All {f.label.toLowerCase()}s</SelectItem>
-                {f.opts.map((o) => (
-                  <SelectItem key={o} value={o}>{o}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="grid grid-cols-2 gap-4">
+          {list.map((a) => (
+            <div
+              key={a.id}
+              className={cn(
+                "rounded-2xl border bg-card overflow-hidden transition-all",
+                selectedId === a.id ? "border-primary ring-2 ring-primary/25" : "border-border hover:border-primary/40"
+              )}
+            >
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <img src={a.image} alt={`${a.name} avatar`} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlaying(playing === a.id ? null : a.id);
+                    toast({ title: `Sample clip — ${a.name}`, description: "Pre-recorded sample. No generation used." });
+                  }}
+                  aria-label={`Play sample clip for ${a.name}`}
+                  className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center shadow-md hover:bg-background"
+                >
+                  {playing === a.id ? (
+                    <Pause className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <Play className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
+                  )}
+                </button>
+                {selectedId === a.id && (
+                  <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  </span>
+                )}
+              </div>
+              <div className="p-3">
+                <p className="text-sm font-semibold text-foreground">{a.name} · {a.gender}</p>
+                <p className="text-xs text-muted-foreground truncate">{a.voice}</p>
+                <Button
+                  size="sm"
+                  variant={selectedId === a.id ? "secondary" : "default"}
+                  className="w-full mt-2 rounded-full h-8 text-xs"
+                  onClick={() => { onSelect(a.id); onOpenChange(false); }}
+                >
+                  {selectedId === a.id ? "Selected" : `Use ${a.name}`}
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
-
-        <ScrollArea className="flex-1 -mx-2 px-2">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 py-1">
-            {list.map((a) => (
-              <div
-                key={a.id}
-                className={cn(
-                  "group rounded-2xl border bg-card overflow-hidden transition-all",
-                  selectedId === a.id ? "border-primary ring-2 ring-primary/25" : "border-border hover:border-primary/40"
-                )}
-              >
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <img src={a.image} alt={`${a.name} avatar`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPlaying(playing === a.id ? null : a.id);
-                      toast({ title: `Sample clip — ${a.name}`, description: "Pre-recorded sample. No generation used." });
-                    }}
-                    aria-label={`Play sample clip for ${a.name}`}
-                    className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center shadow-md hover:bg-background"
-                  >
-                    {playing === a.id ? (
-                      <Pause className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
-                    ) : (
-                      <Play className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
-                    )}
-                  </button>
-                  {selectedId === a.id && (
-                    <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    </span>
-                  )}
-                </div>
-                <div className="p-2.5">
-                  <p className="text-sm font-semibold text-foreground">{a.name}</p>
-                  <p className="text-[11px] text-muted-foreground">{a.style} · {a.setting}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{a.voice}</p>
-                  <Button
-                    size="sm"
-                    variant={selectedId === a.id ? "secondary" : "default"}
-                    className="w-full mt-2 rounded-full h-8 text-xs"
-                    onClick={() => { onSelect(a.id); onOpenChange(false); }}
-                  >
-                    {selectedId === a.id ? "Selected" : "Use this avatar"}
-                  </Button>
-                </div>
-              </div>
-            ))}
-            {list.length === 0 && (
-              <p className="col-span-full text-center text-sm text-muted-foreground py-10">No avatars match those filters.</p>
-            )}
-          </div>
-        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
@@ -698,6 +637,19 @@ export function VideoGenerationBlock({
   );
   const ready = checklist.every((c) => c.ok);
 
+  const timerRef = useRef<number | null>(null);
+  useEffect(() => () => { if (timerRef.current) window.clearInterval(timerRef.current); }, []);
+
+  const finishGenerate = () => {
+    generatingRef.current = false;
+    setState((prev) => {
+      const next: VideoGenState = { ...prev, status: "generated", paidSignature: paidSignature(prev) };
+      onChange(serializeVideoGenContent(next));
+      return next;
+    });
+    toast({ title: "Video ready", description: "Captions and the written version were generated free of charge." });
+  };
+
   const runGenerate = () => {
     if (generatingRef.current) return; // second press ignored, never queued twice
     generatingRef.current = true;
@@ -705,21 +657,17 @@ export function VideoGenerationBlock({
     update({ status: "generating" });
     setProgress(0);
     toast({ title: "Generating video", description: "It runs in the background — you can leave this page." });
-    const id = window.setInterval(() => {
-      setProgress((p) => {
-        if (p >= 100) {
-          window.clearInterval(id);
-          generatingRef.current = false;
-          setState((prev) => {
-            const next: VideoGenState = { ...prev, status: "generated", paidSignature: paidSignature(prev) };
-            onChange(serializeVideoGenContent(next));
-            return next;
-          });
-          toast({ title: "Video ready", description: "Captions and the written version were generated free of charge." });
-          return 100;
-        }
-        return p + 5;
-      });
+
+    let p = 0;
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    timerRef.current = window.setInterval(() => {
+      p += 5;
+      setProgress(Math.min(p, 100));
+      if (p >= 100) {
+        if (timerRef.current) window.clearInterval(timerRef.current);
+        timerRef.current = null;
+        finishGenerate();
+      }
     }, 220);
   };
 
@@ -817,12 +765,12 @@ export function VideoGenerationBlock({
 
       {/* ---- Full configuration workspace ---- */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className="max-w-[1080px] w-[96vw] max-h-[92vh] overflow-y-auto p-0 gap-0">
+        <DialogContent className="max-w-[1440px] w-[97vw] max-h-[92vh] overflow-hidden p-0 gap-0">
           <DialogHeader className="sr-only">
             <DialogTitle>Configure video generation</DialogTitle>
             <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
           </DialogHeader>
-          <div className="w-full overflow-hidden">
+          <div className="w-full max-h-[92vh] overflow-y-auto lg:overflow-hidden">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
 
@@ -848,8 +796,19 @@ export function VideoGenerationBlock({
         <Button
           size="sm"
           className="rounded-full h-8"
-          disabled={!ready || state.status === "generating"}
-          onClick={() => setGenerateOpen(true)}
+          disabled={state.status === "generating"}
+          onClick={() => {
+            const missing = checklist.filter((c) => !c.ok);
+            if (missing.length) {
+              toast({
+                title: "Almost there",
+                description: `Still needed: ${missing.map((m) => m.label).join(", ")}`,
+                variant: "destructive",
+              });
+              return;
+            }
+            setGenerateOpen(true);
+          }}
         >
           {state.status === "generating" ? (
             <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" aria-hidden="true" focusable="false" />
@@ -881,9 +840,9 @@ export function VideoGenerationBlock({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] items-start">
         {/* Stage + timeline */}
-        <div className="p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border">
+        <div className="min-w-0 p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border overflow-y-auto lg:max-h-[calc(92vh-120px)]">
           <VideoStage
             state={state}
             time={time}
@@ -921,45 +880,47 @@ export function VideoGenerationBlock({
           {/* Timeline lanes */}
           <div className="rounded-xl border border-border bg-muted/30 p-3">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Timeline</p>
-            <div className="space-y-1.5">
-              <TimelineLane
-                label={avatar ? avatar.name : "Avatar"}
-                total={total}
-                start={state.avatarFullRange ? 0 : state.avatarStart}
-                end={state.avatarFullRange ? total : state.avatarEnd || total}
-                tone="primary"
-              />
-              {state.elements.map((e) => {
-                const w = elementWindow(state, e);
-                return (
-                  <TimelineLane
-                    key={e.id}
-                    label={e.text.split("\n")[0].slice(0, 22) || e.style}
-                    total={total}
-                    start={w.start}
-                    end={w.end}
-                    tone={selectedEl === e.id ? "primary" : "muted"}
-                    onClick={() => { setSelectedEl(e.id); setTab("text"); }}
-                  />
-                );
-              })}
-              {state.elements.length === 0 && (
-                <p className="text-[11px] text-muted-foreground">No on-screen text yet — add one from the panel.</p>
-              )}
-            </div>
-            <div className="relative mt-2 h-3">
-              <div className="absolute inset-x-[112px] top-0 h-px bg-border" />
-              <div
-                className="absolute top-[-70px] bottom-0 w-px bg-primary"
-                style={{ left: `calc(112px + ${(total ? time / total : 0) * 100}% - ${(total ? time / total : 0) * 112}px)` }}
-                aria-hidden="true"
-              />
+            <div className="relative">
+              <div className="space-y-1.5">
+                <TimelineLane
+                  label={avatar ? avatar.name : "Avatar"}
+                  total={total}
+                  start={state.avatarFullRange ? 0 : state.avatarStart}
+                  end={state.avatarFullRange ? total : state.avatarEnd || total}
+                  tone="primary"
+                />
+                {state.elements.map((e) => {
+                  const w = elementWindow(state, e);
+                  return (
+                    <TimelineLane
+                      key={e.id}
+                      label={e.text.split("\n")[0].slice(0, 22) || e.style}
+                      total={total}
+                      start={w.start}
+                      end={w.end}
+                      tone={selectedEl === e.id ? "primary" : "muted"}
+                      onClick={() => { setSelectedEl(e.id); setTab("text"); }}
+                    />
+                  );
+                })}
+                {state.elements.length === 0 && (
+                  <p className="text-[11px] text-muted-foreground">No on-screen text yet — add one from the panel.</p>
+                )}
+              </div>
+              {/* Playhead — confined to the lane track so it never overlaps the stage */}
+              <div className="pointer-events-none absolute inset-y-0 left-[112px] right-0" aria-hidden="true">
+                <div
+                  className="absolute inset-y-0 w-px bg-primary"
+                  style={{ left: `${(total ? Math.min(time / total, 1) : 0) * 100}%` }}
+                />
+              </div>
             </div>
           </div>
+
         </div>
 
         {/* Properties panel */}
-        <div className="p-4">
+        <div className="min-w-0 p-4 overflow-y-auto lg:max-h-[calc(92vh-120px)]">
           <div className="grid grid-cols-4 gap-1 rounded-full bg-muted p-1 mb-3">
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
