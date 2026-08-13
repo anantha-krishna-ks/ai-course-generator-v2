@@ -862,41 +862,43 @@ export function VideoGenerationBlock({
           {/* Timeline lanes */}
           <div className="rounded-xl border border-border bg-muted/30 p-3">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Timeline</p>
-            <div className="space-y-1.5">
-              <TimelineLane
-                label={avatar ? avatar.name : "Avatar"}
-                total={total}
-                start={state.avatarFullRange ? 0 : state.avatarStart}
-                end={state.avatarFullRange ? total : state.avatarEnd || total}
-                tone="primary"
-              />
-              {state.elements.map((e) => {
-                const w = elementWindow(state, e);
-                return (
-                  <TimelineLane
-                    key={e.id}
-                    label={e.text.split("\n")[0].slice(0, 22) || e.style}
-                    total={total}
-                    start={w.start}
-                    end={w.end}
-                    tone={selectedEl === e.id ? "primary" : "muted"}
-                    onClick={() => { setSelectedEl(e.id); setTab("text"); }}
-                  />
-                );
-              })}
-              {state.elements.length === 0 && (
-                <p className="text-[11px] text-muted-foreground">No on-screen text yet — add one from the panel.</p>
-              )}
-            </div>
-            <div className="relative mt-2 h-3">
-              <div className="absolute inset-x-[112px] top-0 h-px bg-border" />
-              <div
-                className="absolute top-[-70px] bottom-0 w-px bg-primary"
-                style={{ left: `calc(112px + ${(total ? time / total : 0) * 100}% - ${(total ? time / total : 0) * 112}px)` }}
-                aria-hidden="true"
-              />
+            <div className="relative">
+              <div className="space-y-1.5">
+                <TimelineLane
+                  label={avatar ? avatar.name : "Avatar"}
+                  total={total}
+                  start={state.avatarFullRange ? 0 : state.avatarStart}
+                  end={state.avatarFullRange ? total : state.avatarEnd || total}
+                  tone="primary"
+                />
+                {state.elements.map((e) => {
+                  const w = elementWindow(state, e);
+                  return (
+                    <TimelineLane
+                      key={e.id}
+                      label={e.text.split("\n")[0].slice(0, 22) || e.style}
+                      total={total}
+                      start={w.start}
+                      end={w.end}
+                      tone={selectedEl === e.id ? "primary" : "muted"}
+                      onClick={() => { setSelectedEl(e.id); setTab("text"); }}
+                    />
+                  );
+                })}
+                {state.elements.length === 0 && (
+                  <p className="text-[11px] text-muted-foreground">No on-screen text yet — add one from the panel.</p>
+                )}
+              </div>
+              {/* Playhead — confined to the lane track so it never overlaps the stage */}
+              <div className="pointer-events-none absolute inset-y-0 left-[112px] right-0" aria-hidden="true">
+                <div
+                  className="absolute inset-y-0 w-px bg-primary"
+                  style={{ left: `${(total ? Math.min(time / total, 1) : 0) * 100}%` }}
+                />
+              </div>
             </div>
           </div>
+
         </div>
 
         {/* Properties panel */}
