@@ -853,69 +853,54 @@ export function VideoGenerationBlock({
             generated={state.status === "generated"}
           />
 
-          {/* Free preview controls */}
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setPlaying((p) => !p)}
-              disabled={total === 0}
-              aria-label={playing ? "Pause preview" : "Play preview"}
-              className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 disabled:opacity-40"
-            >
-              {playing ? <Pause className="w-4 h-4" aria-hidden="true" focusable="false" /> : <Play className="w-4 h-4 ml-[1px]" aria-hidden="true" focusable="false" />}
-            </button>
-            <span className="text-[11px] tabular-nums text-muted-foreground w-9">{formatTime(time)}</span>
-            <Slider
-              value={[Math.min(time, total)]}
-              max={Math.max(total, 1)}
-              step={0.25}
-              onValueChange={(v) => setTime(v[0])}
-              aria-label="Preview position"
-              className="flex-1"
-            />
-            <span className="text-[11px] tabular-nums text-muted-foreground w-9 text-right">{formatTime(total)}</span>
+          {/* Free preview note */}
+          <div className="flex items-center justify-end">
             <Badge variant="secondary" className="rounded-full text-[10px] font-semibold shrink-0">Preview is free</Badge>
           </div>
 
-          {/* Timeline lanes */}
-          <div className="rounded-xl border border-border bg-muted/30 p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Timeline</p>
-            <div className="relative">
-              <div className="space-y-1.5">
-                <TimelineLane
-                  label={avatar ? avatar.name : "Avatar"}
-                  total={total}
-                  start={state.avatarFullRange ? 0 : state.avatarStart}
-                  end={state.avatarFullRange ? total : state.avatarEnd || total}
-                  tone="primary"
-                />
-                {state.elements.map((e) => {
+
+          {/* Timeline — NLE style */}
+          <NleTimeline
+            total={total}
+            time={time}
+            onSeek={setTime}
+            playing={playing}
+            onTogglePlay={() => setPlaying((p) => !p)}
+            tracks={[
+              {
+                id: "avatar",
+                kind: "avatar",
+                header: avatar ? avatar.name : "Avatar",
+                clips: [
+                  {
+                    id: "avatar-clip",
+                    label: avatar ? `${avatar.name} — presenter` : "Presenter",
+                    start: state.avatarFullRange ? 0 : state.avatarStart,
+                    end: state.avatarFullRange ? total : state.avatarEnd || total,
+                    selected: false,
+                  },
+                ],
+              },
+              {
+                id: "text",
+                kind: "text",
+                header: "Graphics",
+                clips: state.elements.map((e) => {
                   const w = elementWindow(state, e);
-                  return (
-                    <TimelineLane
-                      key={e.id}
-                      label={e.text.split("\n")[0].slice(0, 22) || e.style}
-                      total={total}
-                      start={w.start}
-                      end={w.end}
-                      tone={selectedEl === e.id ? "primary" : "muted"}
-                      onClick={() => { setSelectedEl(e.id); setTab("text"); }}
-                    />
-                  );
-                })}
-                {state.elements.length === 0 && (
-                  <p className="text-[11px] text-muted-foreground">No on-screen text yet — add one from the panel.</p>
-                )}
-              </div>
-              {/* Playhead — confined to the lane track so it never overlaps the stage */}
-              <div className="pointer-events-none absolute inset-y-0 left-[112px] right-0" aria-hidden="true">
-                <div
-                  className="absolute inset-y-0 w-px bg-primary"
-                  style={{ left: `${(total ? Math.min(time / total, 1) : 0) * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
+                  return {
+                    id: e.id,
+                    label: e.text.split("\n")[0].slice(0, 28) || e.style,
+                    start: w.start,
+                    end: w.end,
+                    selected: selectedEl === e.id,
+                    onClick: () => { setSelectedEl(e.id); setTab("text"); },
+                  };
+                }),
+                emptyHint: "No on-screen text yet — add one from the Text panel.",
+              },
+            ]}
+          />
+
 
         </div>
 
@@ -1432,48 +1417,210 @@ function Mic2Icon({ className }: { className?: string }) {
   );
 }
 
-function TimelineLane({
-  label,
-  total,
-  start,
-  end,
-  tone,
-  onClick,
-}: {
+type NleClip = {
+  id: string;
   label: string;
-  total: number;
   start: number;
   end: number;
-  tone: "primary" | "muted";
+  selected?: boolean;
   onClick?: () => void;
+};
+
+type NleTrack = {
+  id: string;
+  kind: "avatar" | "text";
+  header: string;
+  clips: NleClip[];
+  emptyHint?: string;
+};
+
+function NleTimeline({
+  total,
+  time,
+  onSeek,
+  playing,
+  onTogglePlay,
+  tracks,
+}: {
+  total: number;
+  time: number;
+  onSeek: (t: number) => void;
+  playing: boolean;
+  onTogglePlay: () => void;
+  tracks: NleTrack[];
 }) {
-  const left = total ? (start / total) * 100 : 0;
-  const width = total ? Math.max(((end - start) / total) * 100, 4) : 100;
+  const trackAreaRef = useRef<HTMLDivElement>(null);
+  const safeTotal = Math.max(total, 1);
+  const pct = Math.min(time / safeTotal, 1) * 100;
+
+  const seekFromEvent = (clientX: number) => {
+    const el = trackAreaRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const ratio = Math.min(Math.max((clientX - r.left) / r.width, 0), 1);
+    onSeek(Number((ratio * safeTotal).toFixed(2)));
+  };
+
+  // Ruler ticks — aim for ~10 major divisions
+  const step = safeTotal <= 12 ? 1 : safeTotal <= 30 ? 5 : safeTotal <= 90 ? 10 : 30;
+  const ticks: number[] = [];
+  for (let t = 0; t <= safeTotal; t += step) ticks.push(t);
+
   return (
-    <div className="flex items-center gap-2">
-      <span className="w-[104px] shrink-0 text-[10px] text-muted-foreground truncate">{label}</span>
-      <button
-        type="button"
-        onClick={onClick}
-        disabled={!onClick}
-        aria-label={`${label} appears from ${formatTime(start)} to ${formatTime(end)}`}
-        className="relative flex-1 h-5 rounded-md bg-muted overflow-hidden"
-      >
-        <span
-          className={cn(
-            "absolute top-0 bottom-0 rounded-md",
-            tone === "primary" ? "bg-gradient-to-r from-primary to-primary/70" : "bg-foreground/25"
-          )}
-          style={{ left: `${left}%`, width: `${Math.min(width, 100 - left)}%` }}
-        />
-      </button>
+    <div className="dark rounded-xl border border-border bg-card overflow-hidden shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)]">
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 px-3 h-10 bg-muted/40 border-b border-border">
+        <button
+          type="button"
+          onClick={onTogglePlay}
+          aria-label={playing ? "Pause preview" : "Play preview"}
+          className="w-6 h-6 rounded-[5px] bg-primary text-primary-foreground flex items-center justify-center hover:brightness-110 transition"
+        >
+          {playing
+            ? <Pause className="w-3 h-3" aria-hidden="true" focusable="false" />
+            : <Play className="w-3 h-3 ml-[1px]" aria-hidden="true" focusable="false" />}
+        </button>
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Timeline</span>
+        <span className="ml-auto font-mono text-[12px] tabular-nums text-foreground bg-background/70 border border-border rounded px-2 py-0.5">
+          {formatTime(time)}
+          <span className="text-muted-foreground"> / {formatTime(total)}</span>
+        </span>
+      </div>
+
+      <div className="flex">
+        {/* Track headers */}
+        <div className="w-[124px] shrink-0 border-r border-border bg-muted/25">
+          <div className="h-6 border-b border-border" aria-hidden="true" />
+          {tracks.map((tr) => (
+            <div
+              key={tr.id}
+              className="h-[46px] flex items-center gap-2 px-2.5 border-b border-border/70 last:border-b-0"
+            >
+              <span
+                className={cn(
+                  "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0",
+                  tr.kind === "avatar" ? "bg-primary/20 text-primary" : "bg-foreground/10 text-foreground"
+                )}
+                aria-hidden="true"
+              >
+                {tr.kind === "avatar"
+                  ? <UserRound className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  : <TypeIcon className="w-3 h-3" aria-hidden="true" focusable="false" />}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11px] font-semibold text-foreground truncate">{tr.header}</span>
+                <span className="block text-[9px] uppercase tracking-wider text-muted-foreground">
+                  {tr.kind === "avatar" ? "V1" : "V2"}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Track area */}
+        <div
+          ref={trackAreaRef}
+          className="relative flex-1 min-w-0 cursor-col-resize select-none"
+          onPointerDown={(e) => {
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+            seekFromEvent(e.clientX);
+          }}
+          onPointerMove={(e) => { if (e.buttons === 1) seekFromEvent(e.clientX); }}
+        >
+          {/* Ruler */}
+          <div className="relative h-6 border-b border-border bg-background/40">
+            {ticks.map((t) => (
+              <div
+                key={t}
+                className="absolute top-0 bottom-0 border-l border-border/70"
+                style={{ left: `${(t / safeTotal) * 100}%` }}
+                aria-hidden="true"
+              >
+                <span className="absolute left-1 top-[3px] font-mono text-[9px] text-muted-foreground">
+                  {formatTime(t)}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Lanes */}
+          {tracks.map((tr) => (
+            <div
+              key={tr.id}
+              className="relative h-[46px] border-b border-border/70 last:border-b-0 bg-background/20"
+            >
+              {/* grid lines */}
+              {ticks.map((t) => (
+                <div
+                  key={t}
+                  className="absolute top-0 bottom-0 border-l border-border/40"
+                  style={{ left: `${(t / safeTotal) * 100}%` }}
+                  aria-hidden="true"
+                />
+              ))}
+
+              {tr.clips.length === 0 && tr.emptyHint && (
+                <p className="absolute inset-0 flex items-center px-3 text-[10px] text-muted-foreground">
+                  {tr.emptyHint}
+                </p>
+              )}
+
+              {tr.clips.map((c) => {
+                const left = (c.start / safeTotal) * 100;
+                const width = Math.max(((c.end - c.start) / safeTotal) * 100, 3);
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={c.onClick}
+                    disabled={!c.onClick}
+                    aria-label={`${c.label}, ${formatTime(c.start)} to ${formatTime(c.end)}`}
+                    className={cn(
+                      "group absolute top-[5px] bottom-[5px] rounded-[6px] overflow-hidden text-left transition-shadow",
+                      "border",
+                      tr.kind === "avatar"
+                        ? "border-primary/60 bg-gradient-to-b from-primary/70 to-primary/40"
+                        : "border-foreground/25 bg-gradient-to-b from-foreground/35 to-foreground/20",
+                      c.selected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
+                      c.onClick && "hover:brightness-110"
+                    )}
+                    style={{ left: `${left}%`, width: `${Math.min(width, 100 - left)}%` }}
+                  >
+                    {/* clip top strip */}
+                    <span
+                      className={cn(
+                        "absolute inset-x-0 top-0 h-[3px]",
+                        tr.kind === "avatar" ? "bg-primary" : "bg-foreground/60"
+                      )}
+                      aria-hidden="true"
+                    />
+                    <span className="absolute inset-0 flex items-center px-2 pt-[3px]">
+                      <span className="text-[10px] font-semibold text-background dark:text-foreground truncate drop-shadow-sm">
+                        {c.label}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+
+          {/* Playhead */}
+          <div
+            className="pointer-events-none absolute top-0 bottom-0 z-20"
+            style={{ left: `${pct}%` }}
+            aria-hidden="true"
+          >
+            <div className="absolute -top-[1px] -left-[5px] w-[10px] h-[9px] rounded-[2px] bg-primary shadow" />
+            <div className="absolute top-0 bottom-0 w-[2px] -left-[1px] bg-primary/90" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Learner-facing preview                                              */
-/* ------------------------------------------------------------------ */
 
 export function VideoGenerationPreview({ content }: { content: string }) {
   const state = useMemo(() => parseVideoGenContent(content), [content]);
