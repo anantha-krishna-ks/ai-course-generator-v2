@@ -26,6 +26,7 @@ import {
   MoveDiagonal,
   RotateCcw,
   Download,
+  Settings2,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -642,6 +643,7 @@ export function VideoGenerationBlock({
 }) {
   const [state, setState] = useState<VideoGenState>(() => parseVideoGenContent(content));
   const [tab, setTab] = useState<"avatar" | "speech" | "text" | "timing">("avatar");
+  const [editorOpen, setEditorOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [selectedEl, setSelectedEl] = useState<string | null>(null);
@@ -758,9 +760,72 @@ export function VideoGenerationBlock({
   }
 
   return (
-    <div className="w-full rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+    <>
+      {/* ---- Compact block shown in the editor ---- */}
+      {state.status === "generated" || state.status === "outdated" ? (
+        <div className="w-full space-y-2">
+          <VideoGenerationPreview content={content} />
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold", statusChip.cls)}>
+              {statusChip.label}
+            </span>
+            {state.status === "outdated" && (
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3 text-amber-600 dark:text-amber-400" aria-hidden="true" focusable="false" />
+                Regenerate to publish your latest changes
+              </span>
+            )}
+            <div className="flex-1" />
+            <Button size="sm" variant="outline" className="rounded-full h-8 text-xs" onClick={() => setEditorOpen(true)}>
+              <Settings2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Edit video
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+          <div className="relative aspect-video bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))] flex flex-col items-center justify-center gap-3">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.22),transparent_60%)]" aria-hidden="true" />
+            {state.status === "generating" ? (
+              <div className="relative w-[70%] max-w-[320px] text-center">
+                <Loader2 className="w-6 h-6 mx-auto text-primary-foreground animate-spin mb-2" aria-hidden="true" focusable="false" />
+                <p className="text-xs font-medium text-primary-foreground">Generating your video — {progress}%</p>
+                <div className="h-1.5 mt-2 rounded-full bg-primary-foreground/25 overflow-hidden">
+                  <div className="h-full rounded-full bg-primary-foreground transition-all" style={{ width: `${progress}%` }} />
+                </div>
+                <p className="text-[11px] text-primary-foreground/80 mt-2">Runs in the background — you can keep editing.</p>
+              </div>
+            ) : (
+              <>
+                <span className="relative w-11 h-11 rounded-2xl bg-background/90 flex items-center justify-center shadow-lg">
+                  <VideoIcon className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
+                </span>
+                <div className="relative text-center px-6">
+                  <p className="text-sm font-semibold text-primary-foreground">Video Generation</p>
+                  <p className="text-[11px] text-primary-foreground/80 mt-0.5">
+                    {avatar ? `${avatar.name} · ${formatTime(total)} · ${words} words` : "Choose an avatar, add a script and generate"}
+                  </p>
+                </div>
+                <Button size="sm" className="relative rounded-full h-8" onClick={() => setEditorOpen(true)}>
+                  <Settings2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
+                  {avatar || words ? "Continue setup" : "Set up video"}
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ---- Full configuration workspace ---- */}
+      <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
+        <DialogContent className="max-w-[1080px] w-[96vw] max-h-[92vh] overflow-y-auto p-0 gap-0">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Configure video generation</DialogTitle>
+            <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
+          </DialogHeader>
+          <div className="w-full overflow-hidden">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
+
         <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <VideoIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
         </span>
@@ -1320,6 +1385,11 @@ export function VideoGenerationBlock({
           )}
         </div>
       </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
 
       <AvatarLibraryDialog
         open={libraryOpen}
@@ -1376,7 +1446,8 @@ export function VideoGenerationBlock({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
+
   );
 }
 
