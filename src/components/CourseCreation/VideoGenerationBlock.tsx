@@ -853,29 +853,11 @@ export function VideoGenerationBlock({
             generated={state.status === "generated"}
           />
 
-          {/* Free preview controls */}
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setPlaying((p) => !p)}
-              disabled={total === 0}
-              aria-label={playing ? "Pause preview" : "Play preview"}
-              className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 disabled:opacity-40"
-            >
-              {playing ? <Pause className="w-4 h-4" aria-hidden="true" focusable="false" /> : <Play className="w-4 h-4 ml-[1px]" aria-hidden="true" focusable="false" />}
-            </button>
-            <span className="text-[11px] tabular-nums text-muted-foreground w-9">{formatTime(time)}</span>
-            <Slider
-              value={[Math.min(time, total)]}
-              max={Math.max(total, 1)}
-              step={0.25}
-              onValueChange={(v) => setTime(v[0])}
-              aria-label="Preview position"
-              className="flex-1"
-            />
-            <span className="text-[11px] tabular-nums text-muted-foreground w-9 text-right">{formatTime(total)}</span>
+          {/* Free preview note */}
+          <div className="flex items-center justify-end">
             <Badge variant="secondary" className="rounded-full text-[10px] font-semibold shrink-0">Preview is free</Badge>
           </div>
+
 
           {/* Timeline — NLE style */}
           <NleTimeline
