@@ -639,6 +639,19 @@ export function VideoGenerationBlock({
   );
   const ready = checklist.every((c) => c.ok);
 
+  const timerRef = useRef<number | null>(null);
+  useEffect(() => () => { if (timerRef.current) window.clearInterval(timerRef.current); }, []);
+
+  const finishGenerate = () => {
+    generatingRef.current = false;
+    setState((prev) => {
+      const next: VideoGenState = { ...prev, status: "generated", paidSignature: paidSignature(prev) };
+      onChange(serializeVideoGenContent(next));
+      return next;
+    });
+    toast({ title: "Video ready", description: "Captions and the written version were generated free of charge." });
+  };
+
   const runGenerate = () => {
     if (generatingRef.current) return; // second press ignored, never queued twice
     generatingRef.current = true;
@@ -646,21 +659,17 @@ export function VideoGenerationBlock({
     update({ status: "generating" });
     setProgress(0);
     toast({ title: "Generating video", description: "It runs in the background — you can leave this page." });
-    const id = window.setInterval(() => {
-      setProgress((p) => {
-        if (p >= 100) {
-          window.clearInterval(id);
-          generatingRef.current = false;
-          setState((prev) => {
-            const next: VideoGenState = { ...prev, status: "generated", paidSignature: paidSignature(prev) };
-            onChange(serializeVideoGenContent(next));
-            return next;
-          });
-          toast({ title: "Video ready", description: "Captions and the written version were generated free of charge." });
-          return 100;
-        }
-        return p + 5;
-      });
+
+    let p = 0;
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    timerRef.current = window.setInterval(() => {
+      p += 5;
+      setProgress(Math.min(p, 100));
+      if (p >= 100) {
+        if (timerRef.current) window.clearInterval(timerRef.current);
+        timerRef.current = null;
+        finishGenerate();
+      }
     }, 220);
   };
 
@@ -789,8 +798,19 @@ export function VideoGenerationBlock({
         <Button
           size="sm"
           className="rounded-full h-8"
-          disabled={!ready || state.status === "generating"}
-          onClick={() => setGenerateOpen(true)}
+          disabled={state.status === "generating"}
+          onClick={() => {
+            const missing = checklist.filter((c) => !c.ok);
+            if (missing.length) {
+              toast({
+                title: "Almost there",
+                description: `Still needed: ${missing.map((m) => m.label).join(", ")}`,
+                variant: "destructive",
+              });
+              return;
+            }
+            setGenerateOpen(true);
+          }}
         >
           {state.status === "generating" ? (
             <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" aria-hidden="true" focusable="false" />
