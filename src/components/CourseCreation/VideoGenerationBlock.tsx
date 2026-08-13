@@ -1376,7 +1376,8 @@ export function VideoGenerationBlock({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
+
   );
 }
 
