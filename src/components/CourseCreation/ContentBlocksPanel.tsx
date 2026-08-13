@@ -693,6 +693,51 @@ function BlockPreview({ id }: { id: string }) {
           </p>
         </div>
       );
+    case "video-generation":
+      return (
+        <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
+          <div className={cn(card, "p-3")}>
+            <div className="relative rounded-md overflow-hidden aspect-video" style={{ background: "linear-gradient(150deg,#0F172A,#1D4ED8)" }}>
+              <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.22), transparent 60%)" }} />
+              <div className="absolute top-2 left-2 rounded bg-white/95 px-1.5 py-[2px] text-[6.5px] font-bold text-[hsl(220,15%,18%)] shadow-[0_1px_3px_rgba(0,0,0,0.25)]">Spotting hazards</div>
+              <div className="absolute bottom-1.5 left-2 rounded-[3px] bg-[#3B82F6] px-1.5 py-[2px] text-[6px] font-semibold text-white">Safety lead</div>
+              <div className="absolute bottom-1.5 right-1.5 w-[26px] h-[34px] rounded-[3px] bg-[linear-gradient(160deg,#E2E8F0,#94A3B8)] ring-1 ring-white/40 shadow-[0_2px_6px_rgba(0,0,0,0.3)] flex items-end justify-center">
+                <span className="w-3.5 h-3.5 rounded-t-full bg-white/85 mb-0" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-white/95 flex items-center justify-center shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
+                  <span className="ml-[1px] border-y-[3.5px] border-y-transparent border-l-[6px] border-l-[hsl(220,15%,18%)]" />
+                </span>
+              </div>
+            </div>
+            <div className="mt-2 flex items-center gap-1.5">
+              <span className="text-[6.5px] text-[hsl(220,8%,46%)] tabular-nums">0:12</span>
+              <span className="relative flex-1 h-[3px] rounded-full bg-[hsl(220,13%,90%)] overflow-hidden">
+                <span className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-[#3B82F6]" />
+              </span>
+              <span className="text-[6.5px] text-[hsl(220,8%,46%)] tabular-nums">0:48</span>
+              <span className="rounded bg-[hsl(220,14%,94%)] px-1 py-[1px] text-[6px] font-semibold text-[hsl(220,15%,25%)]">CC</span>
+            </div>
+            <div className="mt-2 space-y-[3px]">
+              {[
+                { l: "Avatar", w: "100%", c: "#3B82F6" },
+                { l: "Title", w: "35%", c: "#A78BFA" },
+                { l: "Key term", w: "22%", c: "#34D399" },
+              ].map((r, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <span className="w-[30px] text-[6px] text-[hsl(220,8%,50%)]">{r.l}</span>
+                  <span className="flex-1 h-[6px] rounded-[2px] bg-[hsl(220,14%,93%)] overflow-hidden">
+                    <span className="block h-full rounded-[2px]" style={{ width: r.w, marginLeft: i === 2 ? "40%" : i === 1 ? "10%" : 0, background: r.c }} />
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-[9px] text-[hsl(220,8%,46%)] mt-2 px-0.5">
+            Avatar + script + on-screen text · preview free, generate when ready
+          </p>
+        </div>
+      );
     case "chart":
       return (
         <div className="w-64 p-4 bg-[hsl(220,14%,96%)]">
@@ -1422,6 +1467,24 @@ function BlockThumbnail({ id }: { id: string }) {
                 <span className="text-[3px] font-bold tracking-wide" style={{ color: "#713F12" }}>DEF</span>
               </div>
             </div>
+          </div>
+        </div>
+      );
+    case "video-generation":
+      return (
+        <div className={wrapper}>
+          <div className={cn(miniCard, "p-0 h-[44px] overflow-hidden relative")}>
+            <div className="absolute inset-0" style={{ background: "linear-gradient(150deg,#0F172A,#1D4ED8)" }} />
+            <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.22), transparent 60%)" }} />
+            <span className="absolute top-[4px] left-[4px] h-[3px] w-[18px] rounded-full bg-white/85" />
+            <span className="absolute top-[10px] left-[4px] h-[2px] w-[11px] rounded-full bg-white/50" />
+            <span className="absolute bottom-[4px] right-[4px] w-[11px] h-[15px] rounded-[2px] bg-[linear-gradient(160deg,#E2E8F0,#94A3B8)] ring-[0.5px] ring-white/50" />
+            <span className="absolute bottom-[4px] left-[4px] h-[4px] w-[14px] rounded-[1px] bg-[#3B82F6]" />
+            <span className="absolute inset-0 flex items-center justify-center">
+              <span className="w-[12px] h-[12px] rounded-full bg-white/95 flex items-center justify-center">
+                <span className="ml-[1px] border-y-[2.5px] border-y-transparent border-l-[4px] border-l-[hsl(220,15%,18%)]" />
+              </span>
+            </span>
           </div>
         </div>
       );
