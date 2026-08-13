@@ -920,7 +920,7 @@ export function VideoGenerationBlock({
         </div>
 
         {/* Properties panel */}
-        <div className="min-w-0 p-4 overflow-y-auto lg:max-h-[calc(92vh-120px)]">
+        <div className="min-w-0 h-full p-4 overflow-y-auto">
           <div className="grid grid-cols-4 gap-1 rounded-full bg-muted p-1 mb-3">
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
