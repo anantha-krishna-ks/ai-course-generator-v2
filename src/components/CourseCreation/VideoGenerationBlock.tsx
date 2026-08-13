@@ -921,7 +921,16 @@ export function VideoGenerationBlock({
 
         {/* Properties panel */}
         <div className="min-w-0 h-full p-4 overflow-y-auto">
-          <div className="grid grid-cols-4 gap-1 rounded-full bg-muted p-1 mb-3">
+          <div className="relative flex items-center bg-foreground/[0.06] border border-border/50 rounded-lg p-[3px] mb-3">
+            {/* Sliding pill indicator */}
+            <div
+              className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+              style={{
+                width: "calc(25% - 1.5px)",
+                left: `calc(${["avatar", "speech", "text", "timing"].indexOf(tab) * 25}% + 3px)`,
+              }}
+              aria-hidden="true"
+            />
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
               { id: "speech", label: "Speech", icon: Mic2Icon },
@@ -934,8 +943,8 @@ export function VideoGenerationBlock({
                 onClick={() => setTab(t.id)}
                 aria-pressed={tab === t.id}
                 className={cn(
-                  "flex items-center justify-center gap-1 rounded-full py-1.5 text-[11px] font-medium transition-all",
-                  tab === t.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
+                  tab === t.id ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <t.icon className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -943,6 +952,7 @@ export function VideoGenerationBlock({
               </button>
             ))}
           </div>
+
 
           {tab === "avatar" && (
             <div className="space-y-4">
