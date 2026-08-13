@@ -1320,6 +1320,11 @@ export function VideoGenerationBlock({
           )}
         </div>
       </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
 
       <AvatarLibraryDialog
         open={libraryOpen}
