@@ -57,17 +57,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { toast } from "@/hooks/use-toast";
 
 import ariaImg from "@/assets/voices/aria.jpg";
-import sarahImg from "@/assets/voices/sarah.jpg";
 import georgeImg from "@/assets/voices/george.jpg";
-import liamImg from "@/assets/voices/liam.jpg";
-import matildaImg from "@/assets/voices/matilda.jpg";
-import brianImg from "@/assets/voices/brian.jpg";
-import lilyImg from "@/assets/voices/lily.jpg";
-import danielImg from "@/assets/voices/daniel.jpg";
-import charlotteImg from "@/assets/voices/charlotte.jpg";
-import ethanImg from "@/assets/voices/ethan.jpg";
-import sofiaImg from "@/assets/voices/sofia.jpg";
-import hugoImg from "@/assets/voices/hugo.jpg";
 
 /* ------------------------------------------------------------------ */
 /* Avatar library (mirrors the shipped Voice Library)                  */
@@ -87,16 +77,6 @@ export interface AvatarOption {
 export const AVATAR_LIBRARY: AvatarOption[] = [
   { id: "av-aria", name: "Aria", style: "Corporate", setting: "Studio", gender: "Female", voice: "Aria · English (US)", image: ariaImg, enabled: true },
   { id: "av-george", name: "George", style: "Corporate", setting: "Office", gender: "Male", voice: "George · English (UK)", image: georgeImg, enabled: true },
-  { id: "av-lily", name: "Lily", style: "Educator", setting: "Classroom", gender: "Female", voice: "Lily · English (UK)", image: lilyImg, enabled: true },
-  { id: "av-liam", name: "Liam", style: "Casual", setting: "Neutral", gender: "Male", voice: "Liam · English (US)", image: liamImg, enabled: true },
-  { id: "av-charlotte", name: "Charlotte", style: "Educator", setting: "Studio", gender: "Female", voice: "Charlotte · English (US)", image: charlotteImg, enabled: true },
-  { id: "av-brian", name: "Brian", style: "Corporate", setting: "Office", gender: "Male", voice: "Brian · English (US)", image: brianImg, enabled: true },
-  { id: "av-matilda", name: "Matilda", style: "Clinical", setting: "Neutral", gender: "Female", voice: "Matilda · English (AU)", image: matildaImg, enabled: true },
-  { id: "av-daniel", name: "Daniel", style: "Corporate", setting: "Studio", gender: "Male", voice: "Daniel · English (UK)", image: danielImg, enabled: true },
-  { id: "av-sarah", name: "Sarah", style: "Casual", setting: "Neutral", gender: "Female", voice: "Sarah · English (US)", image: sarahImg, enabled: true },
-  { id: "av-ethan", name: "Ethan", style: "Casual", setting: "Office", gender: "Male", voice: "Ethan · English (US)", image: ethanImg, enabled: true },
-  { id: "av-sofia", name: "Sofia", style: "Educator", setting: "Classroom", gender: "Female", voice: "Sofia · Spanish (ES)", image: sofiaImg, enabled: false },
-  { id: "av-hugo", name: "Hugo", style: "Clinical", setting: "Studio", gender: "Male", voice: "Hugo · French (FR)", image: hugoImg, enabled: false },
 ];
 
 export function getAvatar(id?: string) {
