@@ -770,7 +770,7 @@ export function VideoGenerationBlock({
             <DialogTitle>Configure video generation</DialogTitle>
             <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
           </DialogHeader>
-          <div className="w-full max-h-[92vh] overflow-y-auto lg:overflow-hidden">
+          <div className="w-full h-full overflow-hidden flex flex-col">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
 
