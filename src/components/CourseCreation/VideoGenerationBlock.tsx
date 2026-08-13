@@ -765,12 +765,12 @@ export function VideoGenerationBlock({
 
       {/* ---- Full configuration workspace ---- */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className="max-w-[1440px] w-[97vw] max-h-[92vh] overflow-hidden p-0 gap-0">
+        <DialogContent className="max-w-[1440px] w-[97vw] h-[92vh] overflow-hidden p-0 gap-0 flex flex-col">
           <DialogHeader className="sr-only">
             <DialogTitle>Configure video generation</DialogTitle>
             <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
           </DialogHeader>
-          <div className="w-full max-h-[92vh] overflow-y-auto lg:overflow-hidden">
+          <div className="w-full h-full overflow-hidden flex flex-col">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
 
@@ -840,9 +840,9 @@ export function VideoGenerationBlock({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] items-start flex-1 min-h-0">
         {/* Stage + timeline */}
-        <div className="min-w-0 p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border overflow-y-auto lg:max-h-[calc(92vh-120px)]">
+        <div className="min-w-0 h-full p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border overflow-y-auto">
           <VideoStage
             state={state}
             time={time}
@@ -920,7 +920,7 @@ export function VideoGenerationBlock({
         </div>
 
         {/* Properties panel */}
-        <div className="min-w-0 p-4 overflow-y-auto lg:max-h-[calc(92vh-120px)]">
+        <div className="min-w-0 h-full p-4 overflow-y-auto">
           <div className="grid grid-cols-4 gap-1 rounded-full bg-muted p-1 mb-3">
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
