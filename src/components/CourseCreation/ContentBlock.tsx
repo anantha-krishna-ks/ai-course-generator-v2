@@ -52,6 +52,8 @@ import { AccordionBlock } from "./AccordionBlock";
 import { FlashcardsBlock } from "./FlashcardsBlock";
 import { CardSortBlock } from "./CardSortBlock";
 import { ChartBlock } from "./ChartBlock";
+import { VideoGenerationBlock } from "./VideoGenerationBlock";
+
 import { LayoutUtilityBlock, isLayoutUtilityVariant } from "./LayoutUtilityBlock";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -605,6 +607,9 @@ export function ContentBlock({
             <AccordionBlock content={content} onChange={onChange} />
           ) : type === "text" && variant === "chart" ? (
             <ChartBlock content={content} onChange={onChange} readOnly={readOnly} />
+          ) : type === "text" && variant === "video-generation" ? (
+            <VideoGenerationBlock content={content} onChange={onChange} readOnly={readOnly} />
+
           ) : type === "text" && variant === "card-sort" ? (
             <CardSortBlock content={content} onChange={onChange} />
 
