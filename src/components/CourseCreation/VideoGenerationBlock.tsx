@@ -26,6 +26,7 @@ import {
   MoveDiagonal,
   RotateCcw,
   Download,
+  Settings2,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -642,6 +643,7 @@ export function VideoGenerationBlock({
 }) {
   const [state, setState] = useState<VideoGenState>(() => parseVideoGenContent(content));
   const [tab, setTab] = useState<"avatar" | "speech" | "text" | "timing">("avatar");
+  const [editorOpen, setEditorOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [selectedEl, setSelectedEl] = useState<string | null>(null);
