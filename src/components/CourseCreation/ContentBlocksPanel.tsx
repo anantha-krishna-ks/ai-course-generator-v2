@@ -1,7 +1,8 @@
+import { useState } from "react";
 import {
-  Clapperboard, useState } from "react";
-import {
+  Clapperboard,
   Type,
+
   ImageIcon,
   Video,
   Mic,
