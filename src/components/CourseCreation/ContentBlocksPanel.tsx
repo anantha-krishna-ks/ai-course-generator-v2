@@ -99,6 +99,7 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "video-upload", label: "Video", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video", variant: "video-upload", description: "Embed or upload a video clip" },
   { id: "video-left", label: "Video on Left", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-left", description: "Video on the left with text on the right" },
   { id: "video-right", label: "Video on Right", icon: Video, category: "video", categoryLabel: "VIDEO", type: "video-description", variant: "video-right", description: "Text on the left with video on the right" },
+  { id: "video-generation", label: "Video Generation", icon: Clapperboard, category: "video", categoryLabel: "VIDEO", type: "text", variant: "video-generation", description: "Create a presenter-led video from a script — pick an avatar, place on-screen text, preview free and generate when ready" },
   // AUDIO
   { id: "audio-upload", label: "Audio", icon: Mic, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "audio-upload", description: "Embed or upload an audio track" },
   { id: "audio-ai", label: "AI Audio", icon: Sparkles, category: "audio", categoryLabel: "AUDIO", type: "audio", variant: "ai-audio", description: "Generate lifelike voiceover narration from a typed script — pick a voice from the AI library" },
@@ -123,7 +124,6 @@ const ALL_BLOCKS: BlockItem[] = [
   { id: "flashcards", label: "Flashcards", icon: Layers, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "flashcards", variant: "flashcards", description: "Two-sided cards learners flip to reveal answers, definitions or images" },
   { id: "card-sort", label: "Card Sorting", icon: Group, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "card-sort", description: "Learners drag items into the right category — great for grouping and classification exercises" },
   { id: "chart", label: "Chart", icon: BarChart3, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "chart", description: "Visualise data as a glossy animated bar or pie chart — add your own items and values" },
-  { id: "video-generation", label: "Video Generation", icon: Clapperboard, category: "interactivity", categoryLabel: "INTERACTIVITY", type: "text", variant: "video-generation", description: "Create a presenter-led video from a script — pick an avatar, place on-screen text, preview free and generate when ready" },
 ];
 
 /** Resolve a dropped template into a block type and variant. Returns null for quiz-generate (needs dialog). */
