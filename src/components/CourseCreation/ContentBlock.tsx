@@ -605,6 +605,9 @@ export function ContentBlock({
             <AccordionBlock content={content} onChange={onChange} />
           ) : type === "text" && variant === "chart" ? (
             <ChartBlock content={content} onChange={onChange} readOnly={readOnly} />
+          ) : type === "text" && variant === "video-generation" ? (
+            <VideoGenerationBlock content={content} onChange={onChange} readOnly={readOnly} />
+
           ) : type === "text" && variant === "card-sort" ? (
             <CardSortBlock content={content} onChange={onChange} />
 
