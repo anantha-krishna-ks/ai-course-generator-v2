@@ -476,105 +476,66 @@ function AvatarLibraryDialog({
   selectedId: string;
   onSelect: (id: string) => void;
 }) {
-  const [q, setQ] = useState("");
-  const [style, setStyle] = useState("all");
-  const [setting, setSetting] = useState("all");
-  const [gender, setGender] = useState("all");
   const [playing, setPlaying] = useState<string | null>(null);
-
-  const list = AVATAR_LIBRARY.filter((a) => a.enabled)
-    .filter((a) => a.name.toLowerCase().includes(q.toLowerCase()))
-    .filter((a) => style === "all" || a.style === style)
-    .filter((a) => setting === "all" || a.setting === setting)
-    .filter((a) => gender === "all" || a.gender === gender);
+  const list = AVATAR_LIBRARY.filter((a) => a.enabled);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[880px] max-h-[86vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[620px]">
         <DialogHeader>
-          <DialogTitle>Avatar library</DialogTitle>
+          <DialogTitle>Choose a presenter</DialogTitle>
           <DialogDescription>
-            Only avatars your admin has enabled are shown. Sample clips are pre-recorded and cost nothing.
+            Two presenters are available. Sample clips are pre-recorded and cost nothing.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-wrap gap-2">
-          <div className="relative flex-1 min-w-[180px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search avatars" className="pl-9 rounded-full" aria-label="Search avatars" />
-          </div>
-          {[
-            { v: style, set: setStyle, label: "Style", opts: ["Corporate", "Casual", "Educator", "Clinical"] },
-            { v: setting, set: setSetting, label: "Setting", opts: ["Office", "Studio", "Classroom", "Neutral"] },
-            { v: gender, set: setGender, label: "Gender", opts: ["Female", "Male"] },
-          ].map((f) => (
-            <Select key={f.label} value={f.v} onValueChange={f.set}>
-              <SelectTrigger className="w-[140px] rounded-full" aria-label={`Filter by ${f.label.toLowerCase()}`}>
-                <SelectValue placeholder={f.label} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All {f.label.toLowerCase()}s</SelectItem>
-                {f.opts.map((o) => (
-                  <SelectItem key={o} value={o}>{o}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="grid grid-cols-2 gap-4">
+          {list.map((a) => (
+            <div
+              key={a.id}
+              className={cn(
+                "rounded-2xl border bg-card overflow-hidden transition-all",
+                selectedId === a.id ? "border-primary ring-2 ring-primary/25" : "border-border hover:border-primary/40"
+              )}
+            >
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <img src={a.image} alt={`${a.name} avatar`} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPlaying(playing === a.id ? null : a.id);
+                    toast({ title: `Sample clip — ${a.name}`, description: "Pre-recorded sample. No generation used." });
+                  }}
+                  aria-label={`Play sample clip for ${a.name}`}
+                  className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center shadow-md hover:bg-background"
+                >
+                  {playing === a.id ? (
+                    <Pause className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <Play className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
+                  )}
+                </button>
+                {selectedId === a.id && (
+                  <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  </span>
+                )}
+              </div>
+              <div className="p-3">
+                <p className="text-sm font-semibold text-foreground">{a.name} · {a.gender}</p>
+                <p className="text-xs text-muted-foreground truncate">{a.voice}</p>
+                <Button
+                  size="sm"
+                  variant={selectedId === a.id ? "secondary" : "default"}
+                  className="w-full mt-2 rounded-full h-8 text-xs"
+                  onClick={() => { onSelect(a.id); onOpenChange(false); }}
+                >
+                  {selectedId === a.id ? "Selected" : `Use ${a.name}`}
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
-
-        <ScrollArea className="flex-1 -mx-2 px-2">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 py-1">
-            {list.map((a) => (
-              <div
-                key={a.id}
-                className={cn(
-                  "group rounded-2xl border bg-card overflow-hidden transition-all",
-                  selectedId === a.id ? "border-primary ring-2 ring-primary/25" : "border-border hover:border-primary/40"
-                )}
-              >
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <img src={a.image} alt={`${a.name} avatar`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPlaying(playing === a.id ? null : a.id);
-                      toast({ title: `Sample clip — ${a.name}`, description: "Pre-recorded sample. No generation used." });
-                    }}
-                    aria-label={`Play sample clip for ${a.name}`}
-                    className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center shadow-md hover:bg-background"
-                  >
-                    {playing === a.id ? (
-                      <Pause className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
-                    ) : (
-                      <Play className="w-3.5 h-3.5 text-foreground" aria-hidden="true" focusable="false" />
-                    )}
-                  </button>
-                  {selectedId === a.id && (
-                    <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    </span>
-                  )}
-                </div>
-                <div className="p-2.5">
-                  <p className="text-sm font-semibold text-foreground">{a.name}</p>
-                  <p className="text-[11px] text-muted-foreground">{a.style} · {a.setting}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{a.voice}</p>
-                  <Button
-                    size="sm"
-                    variant={selectedId === a.id ? "secondary" : "default"}
-                    className="w-full mt-2 rounded-full h-8 text-xs"
-                    onClick={() => { onSelect(a.id); onOpenChange(false); }}
-                  >
-                    {selectedId === a.id ? "Selected" : "Use this avatar"}
-                  </Button>
-                </div>
-              </div>
-            ))}
-            {list.length === 0 && (
-              <p className="col-span-full text-center text-sm text-muted-foreground py-10">No avatars match those filters.</p>
-            )}
-          </div>
-        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
