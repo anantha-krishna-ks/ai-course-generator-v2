@@ -840,9 +840,9 @@ export function VideoGenerationBlock({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] items-start flex-1 min-h-0">
         {/* Stage + timeline */}
-        <div className="min-w-0 p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border overflow-y-auto lg:max-h-[calc(92vh-120px)]">
+        <div className="min-w-0 h-full p-4 space-y-3 border-b lg:border-b-0 lg:border-r border-border overflow-y-auto">
           <VideoStage
             state={state}
             time={time}
