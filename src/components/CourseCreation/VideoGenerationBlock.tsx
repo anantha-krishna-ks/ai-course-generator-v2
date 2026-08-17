@@ -1758,6 +1758,13 @@ export function VideoGenerationBlock({
           )}
           {state.status === "generated" ? "Regenerate" : "Generate video"}
         </Button>
+        <button
+          onClick={() => setEditorOpen(false)}
+          className="p-2.5 rounded-md hover:bg-muted transition-colors"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
+        </button>
       </div>
 
       {state.status === "outdated" && (
