@@ -2085,16 +2085,25 @@ type NleClip = {
   start: number;
   end: number;
   selected?: boolean;
+  draggable?: boolean;
   onClick?: () => void;
+  onChange?: (start: number, end: number) => void;
 };
 
 type NleTrack = {
   id: string;
-  kind: "avatar" | "text";
+  kind: "avatar" | "text" | "shape" | "image";
   header: string;
   clips: NleClip[];
   emptyHint?: string;
 };
+
+const TRACK_ICON = {
+  avatar: UserRound,
+  text: TypeIcon,
+  shape: Shapes,
+  image: ImageIcon,
+} as const;
 
 function NleTimeline({
   total,
@@ -2153,26 +2162,29 @@ function NleTimeline({
         {/* Track headers */}
         <div className="w-[124px] shrink-0 border-r border-border bg-muted/25">
           <div className="h-6 border-b border-border" aria-hidden="true" />
-          {tracks.map((tr) => (
+          {tracks.map((tr, i) => (
             <div
               key={tr.id}
               className="h-[46px] flex items-center gap-2 px-2.5 border-b border-border/70 last:border-b-0"
             >
-              <span
-                className={cn(
-                  "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0",
-                  tr.kind === "avatar" ? "bg-primary/20 text-primary" : "bg-foreground/10 text-foreground"
-                )}
-                aria-hidden="true"
-              >
-                {tr.kind === "avatar"
-                  ? <UserRound className="w-3 h-3" aria-hidden="true" focusable="false" />
-                  : <TypeIcon className="w-3 h-3" aria-hidden="true" focusable="false" />}
-              </span>
+              {(() => {
+                const Icon = TRACK_ICON[tr.kind];
+                return (
+                  <span
+                    className={cn(
+                      "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0",
+                      tr.kind === "avatar" ? "bg-primary/20 text-primary" : "bg-foreground/10 text-foreground"
+                    )}
+                    aria-hidden="true"
+                  >
+                    <Icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  </span>
+                );
+              })()}
               <span className="min-w-0 flex-1">
                 <span className="block text-[11px] font-semibold text-foreground truncate">{tr.header}</span>
                 <span className="block text-[9px] uppercase tracking-wider text-muted-foreground">
-                  {tr.kind === "avatar" ? "V1" : "V2"}
+                  V{i + 1}
                 </span>
               </span>
             </div>
@@ -2230,14 +2242,68 @@ function NleTimeline({
               {tr.clips.map((c) => {
                 const left = (c.start / safeTotal) * 100;
                 const width = Math.max(((c.end - c.start) / safeTotal) * 100, 3);
+
+                /** Drag the clip body (move) or an edge handle (trim), clamped to the video. */
+                const beginDrag = (
+                  e: React.PointerEvent,
+                  mode: "move" | "left" | "right"
+                ) => {
+                  if (!c.draggable || !c.onChange) return;
+                  e.stopPropagation();
+                  e.preventDefault();
+                  const area = trackAreaRef.current;
+                  if (!area) return;
+                  const rect = area.getBoundingClientRect();
+                  const startX = e.clientX;
+                  const s0 = c.start;
+                  const e0 = c.end;
+                  const toSec = (dx: number) => (dx / rect.width) * safeTotal;
+
+                  const onMove = (ev: PointerEvent) => {
+                    const d = toSec(ev.clientX - startX);
+                    if (mode === "move") {
+                      const len = e0 - s0;
+                      const ns = Math.min(Math.max(0, s0 + d), Math.max(0, safeTotal - len));
+                      c.onChange!(ns, ns + len);
+                    } else if (mode === "left") {
+                      const ns = Math.min(Math.max(0, s0 + d), e0 - 0.5);
+                      c.onChange!(ns, e0);
+                    } else {
+                      const ne = Math.max(Math.min(safeTotal, e0 + d), s0 + 0.5);
+                      c.onChange!(s0, ne);
+                    }
+                  };
+                  const onUp = () => {
+                    window.removeEventListener("pointermove", onMove);
+                    window.removeEventListener("pointerup", onUp);
+                  };
+                  window.addEventListener("pointermove", onMove);
+                  window.addEventListener("pointerup", onUp);
+                };
+
                 return (
-                  <button
+                  <div
                     key={c.id}
-                    type="button"
-                    onPointerDown={(e) => e.stopPropagation()}
+                    role="button"
+                    tabIndex={0}
+                    onPointerDown={(e) => { e.stopPropagation(); beginDrag(e, "move"); }}
                     onClick={c.onClick}
-                    disabled={!c.onClick}
-                    aria-label={`${c.label}, ${formatTime(c.start)} to ${formatTime(c.end)}`}
+                    onKeyDown={(ev) => {
+                      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); c.onClick?.(); return; }
+                      if (!c.draggable || !c.onChange) return;
+                      const len = c.end - c.start;
+                      if (ev.key === "ArrowLeft") {
+                        ev.preventDefault();
+                        const ns = Math.max(0, c.start - 0.5);
+                        c.onChange(ns, ns + len);
+                      }
+                      if (ev.key === "ArrowRight") {
+                        ev.preventDefault();
+                        const ns = Math.min(safeTotal - len, c.start + 0.5);
+                        c.onChange(ns, ns + len);
+                      }
+                    }}
+                    aria-label={`${c.label}, ${formatTime(c.start)} to ${formatTime(c.end)}${c.draggable ? ". Drag or use the arrow keys to move it." : ""}`}
                     className={cn(
                       "group absolute top-[5px] bottom-[5px] rounded-[6px] overflow-hidden text-left transition-shadow",
                       "border",
@@ -2245,10 +2311,25 @@ function NleTimeline({
                         ? "border-primary/60 bg-gradient-to-b from-primary/70 to-primary/40"
                         : "border-foreground/25 bg-gradient-to-b from-foreground/35 to-foreground/20",
                       c.selected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
-                      c.onClick && "hover:brightness-110"
+                      c.draggable ? "cursor-grab active:cursor-grabbing" : "cursor-default",
+                      (c.onClick || c.draggable) && "hover:brightness-110"
                     )}
                     style={{ left: `${left}%`, width: `${Math.min(width, 100 - left)}%` }}
                   >
+                    {c.draggable && (
+                      <>
+                        <span
+                          role="presentation"
+                          onPointerDown={(e) => beginDrag(e, "left")}
+                          className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                        <span
+                          role="presentation"
+                          onPointerDown={(e) => beginDrag(e, "right")}
+                          className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                      </>
+                    )}
                     {/* clip top strip */}
                     <span
                       className={cn(
@@ -2257,12 +2338,12 @@ function NleTimeline({
                       )}
                       aria-hidden="true"
                     />
-                    <span className="absolute inset-0 flex items-center px-2 pt-[3px]">
+                    <span className="absolute inset-0 flex items-center px-2.5 pt-[3px] pointer-events-none">
                       <span className="text-[10px] font-semibold text-background dark:text-foreground truncate drop-shadow-sm">
                         {c.label}
                       </span>
                     </span>
-                  </button>
+                  </div>
                 );
               })}
             </div>
