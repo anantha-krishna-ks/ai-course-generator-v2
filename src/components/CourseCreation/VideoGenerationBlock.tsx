@@ -1908,33 +1908,49 @@ export function VideoGenerationBlock({
 
               <div>
                 <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-                  <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> Size
+                  <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> Avatar size on screen
                 </Label>
-                <div className="mt-1.5 flex gap-1.5">
+                <div className="mt-2 grid grid-cols-3 gap-2">
                   {[
-                    { label: "Small", icon: Minimize2 },
-                    { label: "Medium", icon: Square },
-                    { label: "Large", icon: Maximize2 },
+                    { label: "Small", hint: "Slide stays the hero", box: "w-3 h-4" },
+                    { label: "Medium", hint: "Balanced split", box: "w-4 h-6" },
+                    { label: "Large", hint: "Presenter up close", box: "w-5 h-8" },
                   ].map((s, i) => {
-                    const Icon = s.icon;
+                    const active = state.avatarSize === i + 1;
                     return (
                       <button
                         key={s.label}
                         type="button"
                         onClick={() => update({ avatarSize: i + 1 })}
-                        aria-pressed={state.avatarSize === i + 1}
+                        aria-pressed={active}
+                        aria-label={`${s.label} avatar — ${s.hint}`}
                         className={cn(
-                          "flex-1 flex items-center justify-center gap-1.5 rounded-full border py-1.5 text-[11px] font-medium transition-all",
-                          state.avatarSize === i + 1 ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
+                          "group rounded-xl border p-2 text-left transition-all",
+                          active
+                            ? "border-primary bg-primary/10 ring-1 ring-primary/30"
+                            : "border-border hover:border-primary/40 hover:bg-muted/40"
                         )}
                       >
-                        <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" focusable="false" />
-                        {s.label}
+                        {/* mini stage preview */}
+                        <span
+                          className={cn(
+                            "relative flex h-11 w-full items-end justify-end overflow-hidden rounded-lg border p-1",
+                            active ? "border-primary/30 bg-background" : "border-border bg-muted/50"
+                          )}
+                          aria-hidden="true"
+                        >
+                          <span className={cn("rounded-sm", s.box, active ? "bg-primary" : "bg-muted-foreground/50")} />
+                        </span>
+                        <span className={cn("mt-1.5 block text-xs font-semibold", active ? "text-primary" : "text-foreground")}>
+                          {s.label}
+                        </span>
+                        <span className="block text-[11px] leading-tight text-muted-foreground">{s.hint}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
+
 
               <div className="rounded-xl border border-border p-2.5 space-y-2">
                 <div className="flex items-center justify-between">
