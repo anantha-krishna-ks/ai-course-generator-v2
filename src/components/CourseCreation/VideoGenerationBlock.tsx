@@ -1081,7 +1081,7 @@ const AVATAR_SAMPLE_SCRIPT: Record<string, string[]> = {
 
 const SAMPLE_LINE_MS = 2600;
 
-/** Plays a short pre-recorded style sample: subtle camera move, lip-sync pulse and captions. */
+/** Plays a short sample clip: cinematic camera move, word-synced captions and glass transport. */
 function AvatarSampleStage({
   avatar,
   playing,
@@ -1093,28 +1093,41 @@ function AvatarSampleStage({
 }) {
   const lines = AVATAR_SAMPLE_SCRIPT[avatar.id] ?? [`Hi, I'm ${avatar.name}.`];
   const [index, setIndex] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const total = lines.length * SAMPLE_LINE_MS;
 
   useEffect(() => {
     if (!playing) {
       setIndex(0);
+      setElapsed(0);
       return;
     }
     setIndex(0);
-    let i = 0;
-    const timer = window.setInterval(() => {
-      i += 1;
-      if (i >= lines.length) {
-        window.clearInterval(timer);
+    setElapsed(0);
+    const start = performance.now();
+    let raf = 0;
+    const tick = () => {
+      const t = performance.now() - start;
+      if (t >= total) {
+        setElapsed(total);
         onEnded();
         return;
       }
-      setIndex(i);
-    }, SAMPLE_LINE_MS);
-    return () => window.clearInterval(timer);
+      setElapsed(t);
+      setIndex(Math.min(lines.length - 1, Math.floor(t / SAMPLE_LINE_MS)));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, avatar.id]);
 
-  const progress = playing ? ((index + 1) / lines.length) * 100 : 0;
+  const words = lines[index].split(" ");
+  const lineProgress = ((elapsed % SAMPLE_LINE_MS) / SAMPLE_LINE_MS) * words.length;
+  const progress = playing ? (elapsed / total) * 100 : 0;
+  const seconds = Math.floor(elapsed / 1000);
+  const totalSeconds = Math.round(total / 1000);
+  const fmt = (s: number) => `0:${String(s).padStart(2, "0")}`;
 
   return (
     <>
@@ -1122,8 +1135,8 @@ function AvatarSampleStage({
         src={avatar.image}
         alt={`${avatar.name} avatar`}
         className="w-full h-full object-cover"
-        animate={playing ? { scale: [1, 1.06, 1.02], y: [0, -6, -2] } : { scale: 1, y: 0 }}
-        transition={playing ? { duration: lines.length * (SAMPLE_LINE_MS / 1000), ease: "easeInOut" } : { duration: 0.4 }}
+        animate={playing ? { scale: [1.02, 1.09, 1.04], y: [0, -8, -3], x: [0, 4, 0] } : { scale: 1, y: 0, x: 0 }}
+        transition={playing ? { duration: total / 1000, ease: [0.33, 0, 0.2, 1] } : { duration: 0.5, ease: "easeOut" }}
       />
 
       <AnimatePresence>
@@ -1133,54 +1146,104 @@ function AvatarSampleStage({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent"
+            transition={{ duration: 0.25 }}
+            className="absolute inset-0"
           >
-            {/* live badge */}
-            <span className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-foreground">
+            {/* cinematic grade: vignette + bottom scrim */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(120% 80% at 50% 30%, transparent 40%, hsl(var(--background) / 0.55) 100%), linear-gradient(to top, hsl(var(--background) / 0.92) 0%, hsl(var(--background) / 0.35) 34%, transparent 62%)",
+              }}
+              aria-hidden="true"
+            />
+
+            {/* light sweep */}
+            <motion.div
+              className="absolute inset-y-0 w-1/3 pointer-events-none"
+              style={{ background: "linear-gradient(100deg, transparent, hsl(0 0% 100% / 0.16), transparent)" }}
+              initial={{ x: "-120%" }}
+              animate={{ x: ["-120%", "320%"] }}
+              transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+              aria-hidden="true"
+            />
+
+            {/* now-playing chip */}
+            <motion.span
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-background/60 backdrop-blur-md px-2.5 py-1 text-[10px] font-semibold tracking-wide text-foreground shadow-lg"
+            >
               <motion.span
-                className="w-1.5 h-1.5 rounded-full bg-primary"
-                animate={{ opacity: [1, 0.25, 1] }}
-                transition={{ duration: 1.1, repeat: Infinity }}
+                className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]"
+                animate={{ opacity: [1, 0.3, 1], scale: [1, 0.85, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
                 aria-hidden="true"
               />
-              Sample
-            </span>
+              SAMPLE
+            </motion.span>
 
-            {/* speaking waveform */}
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-end gap-[3px] h-6" aria-hidden="true">
-              {[0, 1, 2, 3, 4, 5, 6].map((b) => (
-                <motion.span
-                  key={b}
-                  className="w-[3px] rounded-full bg-primary/80"
-                  animate={{ height: ["20%", "100%", "40%", "80%", "25%"] }}
-                  transition={{ duration: 0.9, repeat: Infinity, delay: b * 0.08, ease: "easeInOut" }}
-                  style={{ height: "30%" }}
-                />
-              ))}
+            {/* equaliser + timecode */}
+            <div className="absolute bottom-[62px] left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full border border-white/12 bg-background/55 backdrop-blur-md px-2.5 py-1 shadow-lg">
+              <span className="flex items-end gap-[2.5px] h-3.5" aria-hidden="true">
+                {[0, 1, 2, 3, 4, 5, 6].map((b) => (
+                  <motion.span
+                    key={b}
+                    className="w-[2.5px] rounded-full bg-gradient-to-t from-primary/60 to-primary"
+                    style={{ height: "35%" }}
+                    animate={{ height: ["25%", "100%", "45%", "85%", "30%"] }}
+                    transition={{ duration: 0.85, repeat: Infinity, delay: b * 0.07, ease: "easeInOut" }}
+                  />
+                ))}
+              </span>
+              <span className="text-[9px] font-mono font-medium text-foreground tabular-nums">
+                {fmt(seconds)} / {fmt(totalSeconds)}
+              </span>
             </div>
 
-            {/* caption */}
-            <div className="absolute bottom-3 left-2 right-2">
+            {/* word-synced caption */}
+            <div className="absolute bottom-3 left-2.5 right-2.5">
               <AnimatePresence mode="wait">
                 <motion.p
                   key={index}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.25 }}
-                  className="text-center text-[11px] leading-snug font-medium text-foreground bg-background/75 backdrop-blur rounded-lg px-2 py-1.5"
+                  initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  className="text-center text-[11px] leading-relaxed font-medium rounded-xl border border-white/12 bg-background/65 backdrop-blur-md px-2.5 py-1.5 shadow-xl"
                 >
-                  {lines[index]}
+                  {words.map((w, i) => (
+                    <span
+                      key={`${w}-${i}`}
+                      className={cn(
+                        "transition-colors duration-200",
+                        i <= lineProgress ? "text-foreground" : "text-muted-foreground"
+                      )}
+                    >
+                      {w}{i < words.length - 1 ? " " : ""}
+                    </span>
+                  ))}
                 </motion.p>
               </AnimatePresence>
-              <div className="mt-1.5 h-1 rounded-full bg-foreground/15 overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full bg-primary"
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: SAMPLE_LINE_MS / 1000, ease: "linear" }}
-                />
+
+              {/* chaptered scrubber */}
+              <div className="mt-2 flex items-center gap-1">
+                {lines.map((_, i) => {
+                  const seg = clamp((elapsed - i * SAMPLE_LINE_MS) / SAMPLE_LINE_MS, 0, 1) * 100;
+                  return (
+                    <span key={i} className="h-[3px] flex-1 rounded-full bg-foreground/20 overflow-hidden">
+                      <span
+                        className="block h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
+                        style={{ width: `${seg}%` }}
+                      />
+                    </span>
+                  );
+                })}
               </div>
             </div>
+
+            <span className="sr-only">{`${Math.round(progress)} percent played`}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1188,6 +1251,7 @@ function AvatarSampleStage({
         {playing ? `Playing sample clip for ${avatar.name}: ${lines[index]}` : ""}
       </span>
     </>
+
   );
 }
 
