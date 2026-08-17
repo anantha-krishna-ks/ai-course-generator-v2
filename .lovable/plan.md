@@ -1,23 +1,21 @@
-## Plan
+# Portable Toast UI spec (`docs/toast-ui.md`)
 
-You’re right — the **Page duration** control was added to the AI generation step-by-step screen, but not to the dashboard **Create Course** popup you’re looking at.
+Create a single self-contained markdown file that anyone can drop into another project (or paste to an AI agent) to reproduce this app's exact toast system.
 
-I’ll add it directly in this modal so it appears in the same screen as **Course Title**, **AI Support**, **SCORM Preferences**, and **Import outline**.
+## What the file will contain
 
-### Changes
+1. **Overview** — Radix-based toast with left color ribbon, variant icon, title + description, hover-revealed close, top-right viewport, one toast at a time.
+2. **Dependencies** — `@radix-ui/react-toast`, `class-variance-authority`, `lucide-react`, `tailwind-merge`/`clsx` (`cn` helper), Tailwind + `tailwindcss-animate`.
+3. **Design tokens** — the exact HSL values to add to `index.css` for light and dark: `--success`, `--success-foreground`, `--warning`, `--warning-foreground`, `--info`, `--destructive`, plus the `tailwind.config.ts` color mappings for `success`, `warning`, `info`.
+4. **Full source of 4 files**, copied verbatim from this project so it works on paste:
+   - `src/components/ui/toast.tsx` — viewport (`fixed top-4 right-4 z-[100] … sm:max-w-[420px]`), `toastVariants` cva with `default | destructive | success | warning | info` and the `[&_.toast-ribbon]:bg-*` selectors, swipe/animation data-attributes, Title, Description, Action, Close.
+   - `src/components/ui/toaster.tsx` — variant→icon map (`Info`, `CheckCircle2`, `AlertCircle`, `AlertTriangle`), icon color map, the 1px-wide ribbon div, spacing (`pl-4 pr-8 py-4`, `gap-3`).
+   - `src/hooks/use-toast.ts` — reducer store, `TOAST_LIMIT = 1`, and the `inferVariant()` keyword auto-inference (error/failed/invalid → destructive, removed/deleted → warning, saved/created/copied… → success, info/level → info).
+   - `src/components/ui/sonner.tsx` — the optional sonner variant with matching token classNames.
+5. **Install steps** — where to mount `<Toaster />` in `App.tsx`, and the token/config edits.
+6. **Usage examples** — `toast({ title, description })` with auto-inferred variant, explicit `variant: "success"`, and with an action button.
+7. **Accessibility notes** — `aria-label="Close notification"`, `aria-hidden`/`focusable="false"` on decorative icons, no opacity-modified text colors.
 
-1. **Add Page duration to Create Course popup**
-   - Place the shared **Page duration** card inside `CreateCourseDialog`, likely between **AI Support** and **SCORM Preferences** so it is easy to find.
-   - Bind it to the existing `aiOptions.pageSpanTime` value already used by this flow.
+## Technical detail
 
-2. **Keep it separate from SCORM**
-   - The control will not live inside SCORM Preferences.
-   - SCORM will remain only for packaging/completion rules.
-
-3. **Reuse the same UI**
-   - Use the existing shared `PageDurationDefaultCard` so the visual style stays consistent with the other workflows.
-   - Store minutes/seconds cleanly while preserving this modal’s existing minute-based `pageSpanTime` data.
-
-4. **Accessibility and layout**
-   - Keep the inputs labeled with accessible names.
-   - Make the card compact enough for the popup and aligned with the surrounding rows.
+Single new file `docs/toast-ui.md`; no source code in the app changes. Code blocks are fenced with `tsx`/`css`/`bash` and paths are stated above each block so the file is directly actionable.
