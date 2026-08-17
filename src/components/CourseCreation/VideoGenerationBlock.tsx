@@ -36,6 +36,11 @@ import {
   Palette,
   Shapes,
   Volume2,
+  Volume1,
+  VolumeX,
+  PictureInPicture2,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
