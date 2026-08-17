@@ -771,9 +771,14 @@ export function VideoGenerationBlock({
   readOnly?: boolean;
 }) {
   const [state, setState] = useState<VideoGenState>(() => parseVideoGenContent(content));
-  const [tab, setTab] = useState<"avatar" | "speech" | "text" | "timing">("avatar");
+  const [tab, setTab] = useState<"avatar" | "speech" | "media" | "timing">("avatar");
   const [editorOpen, setEditorOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [mediaSection, setMediaSection] = useState<"text" | "shapes" | "images">("text");
+  const bgInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [selectedEl, setSelectedEl] = useState<string | null>(null);
   const [time, setTime] = useState(0);
@@ -785,8 +790,7 @@ export function VideoGenerationBlock({
   const total = estimateDuration(state);
   const avatar = getAvatar(state.avatarId);
   const words = wordCount(state.script);
-  const costMinutes = Math.max(total / 60, 0);
-  const cost = Math.max(1, Math.ceil(costMinutes * COST_PER_MINUTE));
+  const voice = VOICE_LIBRARY.find((v) => v.id === state.voiceId) ?? VOICE_LIBRARY[0];
 
   const update = (patch: Partial<VideoGenState>) => {
     setState((prev) => {
@@ -797,6 +801,22 @@ export function VideoGenerationBlock({
       onChange(serializeVideoGenContent(next));
       return next;
     });
+  };
+
+  /** Reads an image upload into a data URL after validating type and size. */
+  const readImage = (file: File | undefined, onDone: (dataUrl: string, name: string) => void) => {
+    if (!file) return;
+    if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
+      toast({ title: "Unsupported file", description: "Use a PNG, JPG, SVG or WebP image.", variant: "destructive" });
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast({ title: "File too large", description: "Images must be 2 MB or smaller.", variant: "destructive" });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => onDone(String(reader.result), file.name);
+    reader.readAsDataURL(file);
   };
 
   // Free preview playhead
@@ -877,7 +897,60 @@ export function VideoGenerationBlock({
     };
     update({ elements: [...state.elements, el] });
     setSelectedEl(el.id);
-    setTab("text");
+    setTab("media");
+  };
+
+  const addShape = (shape: ShapeId) => {
+    const el: VideoTextElement = {
+      id: `el-${Date.now()}`,
+      kind: "shape",
+      shape,
+      color: SHAPE_COLOURS[0],
+      size: 2,
+      style: "chip",
+      text: shape === "comment" ? "Add a note" : "",
+      zone: "centre",
+      timingMode: "fixed",
+      anchorPhrase: "",
+      start: 0,
+      duration: 4,
+      staysUntil: "seconds",
+      animation: "fade",
+    };
+    update({ elements: [...state.elements, el] });
+    setSelectedEl(el.id);
+  };
+
+  const addImage = (src: string, name: string) => {
+    const el: VideoTextElement = {
+      id: `el-${Date.now()}`,
+      kind: "image",
+      src,
+      size: 2,
+      style: "chip",
+      text: name,
+      zone: "centre",
+      timingMode: "fixed",
+      anchorPhrase: "",
+      start: 0,
+      duration: 4,
+      staysUntil: "seconds",
+      animation: "fade",
+    };
+    update({ elements: [...state.elements, el] });
+    setSelectedEl(el.id);
+  };
+
+  /** Timeline drag handler — moving or trimming a clip pins it to a fixed time. */
+  const retimeElement = (id: string, start: number, end: number) => {
+    const target = state.elements.find((e) => e.id === id);
+    if (!target) return;
+    patchElement(id, {
+      timingMode: "fixed",
+      staysUntil: "seconds",
+      start: Math.max(0, Number(start.toFixed(1))),
+      duration: Math.max(0.5, Number((end - start).toFixed(1))),
+    });
   };
 
   const patchElement = (id: string, patch: Partial<VideoTextElement>) =>
@@ -979,10 +1052,6 @@ export function VideoGenerationBlock({
           <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
           {formatTime(total)}
         </span>
-        <span className="flex items-center gap-1.5 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-          <Coins className="w-3 h-3" aria-hidden="true" focusable="false" />
-          {cost} credits to generate
-        </span>
         <Button
           size="sm"
           className="rounded-full h-8"
@@ -1039,13 +1108,13 @@ export function VideoGenerationBlock({
             compact
             selectedId={selectedEl}
             onSelect={setSelectedEl}
-            showZones={tab === "avatar" || tab === "text"}
+            showZones={tab === "avatar" || tab === "media"}
             generated={state.status === "generated"}
           />
 
           {/* Free preview note */}
           <div className="flex items-center justify-end">
-            <Badge variant="secondary" className="rounded-full text-[10px] font-semibold shrink-0">Preview is free</Badge>
+            <Badge variant="secondary" className="rounded-full text-[10px] font-semibold shrink-0">Live preview</Badge>
           </div>
 
 
@@ -1102,14 +1171,14 @@ export function VideoGenerationBlock({
               className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
               style={{
                 width: "calc(25% - 1.5px)",
-                left: `calc(${["avatar", "speech", "text", "timing"].indexOf(tab) * 25}% + 3px)`,
+                left: `calc(${["avatar", "speech", "media", "timing"].indexOf(tab) * 25}% + 3px)`,
               }}
               aria-hidden="true"
             />
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
               { id: "speech", label: "Speech", icon: Mic2Icon },
-              { id: "text", label: "Text", icon: TypeIcon },
+              { id: "media", label: "Media", icon: Shapes },
               { id: "timing", label: "Output", icon: Captions },
             ] as const).map((t) => (
               <button
@@ -1329,7 +1398,7 @@ export function VideoGenerationBlock({
             </div>
           )}
 
-          {tab === "text" && (
+          {tab === "media" && (
             <div className="space-y-3">
               <Popover>
                 <PopoverTrigger asChild>
