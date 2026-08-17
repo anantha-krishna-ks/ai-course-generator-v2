@@ -862,11 +862,24 @@ export function VideoStage({
     transform: "translate(-50%, -50%)",
   });
 
+  /** current centre of a zone-placed node, so dragging starts where it sits */
+  const centreOf = (node: HTMLElement): { x: number; y: number } => {
+    const stage = stageRef.current?.getBoundingClientRect();
+    const box = node.getBoundingClientRect();
+    if (!stage) return { x: 50, y: 50 };
+    return {
+      x: clamp(((box.left + box.width / 2 - stage.left) / stage.width) * 100, 2, 98),
+      y: clamp(((box.top + box.height / 2 - stage.top) / stage.height) * 100, 2, 98),
+    };
+  };
+
   const dragAvatar = (e: React.PointerEvent) =>
     startFreeDrag(
       e,
       stageRef.current,
-      { x: state.avatarX ?? 50, y: state.avatarY ?? 50 },
+      avatarFree
+        ? { x: state.avatarX!, y: state.avatarY! }
+        : centreOf(e.currentTarget as HTMLElement),
       (x, y) => onPatchState?.({ avatarX: x, avatarY: y })
     );
 
@@ -874,7 +887,9 @@ export function VideoStage({
     startFreeDrag(
       e,
       stageRef.current,
-      { x: state.logo?.x ?? 50, y: state.logo?.y ?? 50 },
+      logoFree
+        ? { x: state.logo.x!, y: state.logo.y! }
+        : centreOf(e.currentTarget as HTMLElement),
       (x, y) => onPatchState?.({ logo: { ...state.logo, x, y } })
     );
 
