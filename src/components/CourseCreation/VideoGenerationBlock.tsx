@@ -3208,6 +3208,60 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         >
           <Captions className="w-4 h-4" aria-hidden="true" focusable="false" />
         </button>
+
+        {/* Volume */}
+        <div className="group/vol flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => setMuted((m) => !m)}
+            aria-label={muted || volume === 0 ? "Unmute" : "Mute"}
+            aria-pressed={muted}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
+          >
+            {muted || volume === 0 ? (
+              <VolumeX className="w-4 h-4" aria-hidden="true" focusable="false" />
+            ) : volume < 50 ? (
+              <Volume1 className="w-4 h-4" aria-hidden="true" focusable="false" />
+            ) : (
+              <Volume2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+            )}
+          </button>
+          <Slider
+            value={[muted ? 0 : volume]}
+            max={100}
+            step={1}
+            onValueChange={(v) => { setVolume(v[0]); setMuted(v[0] === 0); }}
+            aria-label="Volume"
+            className="w-0 opacity-0 transition-all duration-200 group-hover/vol:w-20 group-hover/vol:opacity-100 focus-within:w-20 focus-within:opacity-100"
+          />
+        </div>
+
+        {/* Picture in picture */}
+        <button
+          type="button"
+          onClick={() => setPip((p) => !p)}
+          aria-label="Toggle picture in picture"
+          aria-pressed={pip}
+          className={cn("w-8 h-8 rounded-full flex items-center justify-center transition-colors", pip ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted")}
+        >
+          <PictureInPicture2 className="w-4 h-4" aria-hidden="true" focusable="false" />
+        </button>
+
+        {/* Fullscreen */}
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          aria-label={fullscreen ? "Exit full screen" : "Enter full screen"}
+          aria-pressed={fullscreen}
+          className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
+        >
+          {fullscreen ? (
+            <Minimize className="w-4 h-4" aria-hidden="true" focusable="false" />
+          ) : (
+            <Maximize className="w-4 h-4" aria-hidden="true" focusable="false" />
+          )}
+        </button>
+
         <button
           type="button"
           onClick={() => setTime(0)}
@@ -3217,6 +3271,33 @@ export function VideoGenerationPreview({ content }: { content: string }) {
           <RotateCcw className="w-4 h-4" aria-hidden="true" focusable="false" />
         </button>
       </div>
+
+      {pip && !fullscreen && (
+        <div className="fixed bottom-4 right-4 z-50 w-[260px] rounded-xl overflow-hidden border border-border bg-card shadow-2xl">
+          <div className="relative">
+            <VideoStage state={state} time={time} generated={state.status === "generated"} />
+            <button
+              type="button"
+              onClick={() => setPip(false)}
+              aria-label="Close picture in picture"
+              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-background/85 text-foreground flex items-center justify-center hover:bg-background transition-colors"
+            >
+              <Minimize className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            </button>
+          </div>
+          <div className="flex items-center gap-2 px-2 py-1.5 border-t border-border">
+            <button
+              type="button"
+              onClick={() => setPlaying((p) => !p)}
+              aria-label={playing ? "Pause video" : "Play video"}
+              className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0"
+            >
+              {playing ? <Pause className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> : <Play className="w-3.5 h-3.5 ml-[1px]" aria-hidden="true" focusable="false" />}
+            </button>
+            <span className="text-[10px] tabular-nums text-muted-foreground">{formatTime(time)} / {formatTime(total)}</span>
+          </div>
+        </div>
+      )}
 
       {state.script && (
         <div className="border-t border-border">
