@@ -1990,7 +1990,7 @@ export function VideoGenerationBlock({
 
                   {state.background.mode === "color" && (
                     <div className="space-y-2">
-                      <div className="grid grid-cols-5 gap-2">
+                      <div className="grid grid-cols-7 gap-2">
                         {STUDIO_BG_COLORS.map((c) => {
                           const selected = state.background.color?.toLowerCase() === c.hex.toLowerCase();
                           return (
@@ -2002,7 +2002,7 @@ export function VideoGenerationBlock({
                               aria-pressed={selected}
                               onClick={() => update({ background: { ...state.background, mode: "color", color: c.hex } })}
                               className={cn(
-                                "group relative h-11 w-full rounded-xl border-2 transition-all duration-200",
+                                "group relative h-10 w-full rounded-lg border-2 transition-all duration-200",
                                 selected
                                   ? "border-primary ring-2 ring-primary/25 scale-[1.02]"
                                   : "border-transparent hover:scale-[1.02] hover:border-primary/30"
