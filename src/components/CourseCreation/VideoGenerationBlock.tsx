@@ -1632,63 +1632,148 @@ export function VideoGenerationBlock({
 
           {tab === "media" && (
             <div className="space-y-3">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs">
-                    <Plus className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Add on-screen text
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-[280px] p-1.5">
-                  <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
-                    Fonts and colours come from the workspace brand kit.
-                  </p>
-                  <div className="max-h-[260px] overflow-y-auto thin-scrollbar">
-                    {TEXT_STYLES.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => addElement(s.id)}
-                        className="w-full text-left rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-foreground">{s.label}</span>
-                          <span className="text-[10px] text-muted-foreground">{s.limit} chars</span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground">{s.purpose}</p>
-                      </button>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              {state.elements.length === 0 && (
-                <p className="text-[11px] text-muted-foreground">
-                  On-screen labels carry a term, a number or a name — captions handle the full narration.
-                </p>
-              )}
-
-              <div className="space-y-1.5">
-                {state.elements.map((e) => (
+              {/* Sub-section switch */}
+              <div className="grid grid-cols-3 gap-1.5">
+                {([
+                  { id: "text", label: "Text", icon: TypeIcon },
+                  { id: "shapes", label: "Shapes", icon: Shapes },
+                  { id: "images", label: "Images", icon: ImageIcon },
+                ] as const).map((sct) => (
                   <button
-                    key={e.id}
+                    key={sct.id}
                     type="button"
-                    onClick={() => setSelectedEl(e.id)}
+                    onClick={() => setMediaSection(sct.id)}
+                    aria-pressed={mediaSection === sct.id}
                     className={cn(
-                      "w-full flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-all",
-                      selectedEl === e.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                      "rounded-full border py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all",
+                      mediaSection === sct.id
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40"
                     )}
                   >
-                    <TypeIcon className="w-3 h-3 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                    <span className="text-xs text-foreground truncate flex-1">{e.text.split("\n")[0] || e.style}</span>
-                    <span className="text-[10px] text-muted-foreground shrink-0">{formatTime(elementWindow(state, e).start)}</span>
+                    <sct.icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    {sct.label}
                   </button>
                 ))}
               </div>
 
-              {el && elDef && (
+              {mediaSection === "text" && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs">
+                      <Plus className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Add on-screen text
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-[280px] p-1.5">
+                    <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
+                      Fonts and colours come from the workspace brand kit.
+                    </p>
+                    <div className="max-h-[260px] overflow-y-auto thin-scrollbar">
+                      {TEXT_STYLES.map((st) => (
+                        <button
+                          key={st.id}
+                          type="button"
+                          onClick={() => addElement(st.id)}
+                          className="w-full text-left rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-foreground">{st.label}</span>
+                            <span className="text-[10px] text-muted-foreground">{st.limit} chars</span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground">{st.purpose}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
+
+              {mediaSection === "shapes" && (
+                <div className="grid grid-cols-4 gap-1.5">
+                  {SHAPES.map((sh) => {
+                    const rotate = sh.id === "arrow-left" ? "rotate-180" : sh.id === "arrow-up" ? "-rotate-90" : sh.id === "arrow-down" ? "rotate-90" : "";
+                    return (
+                      <button
+                        key={sh.id}
+                        type="button"
+                        onClick={() => addShape(sh.id)}
+                        aria-label={`Add ${sh.label}`}
+                        className="rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 p-2 flex flex-col items-center gap-1 transition-all"
+                      >
+                        <sh.icon className={cn("w-4 h-4 text-foreground", rotate)} aria-hidden="true" focusable="false" />
+                        <span className="text-[9px] text-muted-foreground text-center leading-tight">{sh.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {mediaSection === "images" && (
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/50 p-4 text-center transition-all"
+                  >
+                    <Upload className="w-4 h-4 mx-auto text-muted-foreground mb-1" aria-hidden="true" focusable="false" />
+                    <p className="text-xs font-medium text-foreground">Add an image to the frame</p>
+                    <p className="text-[11px] text-muted-foreground">PNG, JPG, SVG or WebP · up to 2 MB</p>
+                  </button>
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept={SUPPORTED_IMAGE_TYPES.join(",")}
+                    className="hidden"
+                    aria-label="Upload on-screen image"
+                    onChange={(e) => {
+                      readImage(e.target.files?.[0], (dataUrl, name) => addImage(dataUrl, name));
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
+              )}
+
+              {state.elements.length === 0 && (
+                <p className="text-[11px] text-muted-foreground">
+                  Text, shapes and images all sit on their own timeline track — drag a clip to change when it appears.
+                </p>
+              )}
+
+              <div className="space-y-1.5">
+                {state.elements.map((e) => {
+                  const Icon = e.kind === "shape" ? Shapes : e.kind === "image" ? ImageIcon : TypeIcon;
+                  const label =
+                    e.kind === "shape"
+                      ? SHAPES.find((sh) => sh.id === e.shape)?.label ?? "Shape"
+                      : e.text.split("\n")[0] || e.style;
+                  return (
+                    <button
+                      key={e.id}
+                      type="button"
+                      onClick={() => setSelectedEl(e.id)}
+                      className={cn(
+                        "w-full flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-all",
+                        selectedEl === e.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                      )}
+                    >
+                      <Icon className="w-3 h-3 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                      <span className="text-xs text-foreground truncate flex-1">{label}</span>
+                      <span className="text-[10px] text-muted-foreground shrink-0">{formatTime(elementWindow(state, e).start)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {el && (
                 <div className="rounded-xl border border-border p-3 space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-foreground">{elDef.label}</p>
+                    <p className="text-xs font-semibold text-foreground">
+                      {el.kind === "shape"
+                        ? SHAPES.find((sh) => sh.id === el.shape)?.label
+                        : el.kind === "image"
+                          ? "Image"
+                          : elDef?.label}
+                    </p>
                     <button
                       type="button"
                       onClick={() => { update({ elements: state.elements.filter((x) => x.id !== el.id) }); setSelectedEl(null); }}
@@ -1699,17 +1784,79 @@ export function VideoGenerationBlock({
                     </button>
                   </div>
 
-                  <div>
-                    <Label htmlFor="el-text" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Text</Label>
-                    <Textarea
-                      id="el-text"
-                      value={el.text}
-                      maxLength={elDef.limit}
-                      onChange={(ev) => patchElement(el.id, { text: ev.target.value })}
-                      className="mt-1 min-h-[56px] text-xs"
-                    />
-                    <p className="text-[10px] text-muted-foreground mt-1 text-right">{el.text.length}/{elDef.limit}</p>
-                  </div>
+                  {(el.kind ?? "text") === "text" && elDef && (
+                    <div>
+                      <Label htmlFor="el-text" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Text</Label>
+                      <Textarea
+                        id="el-text"
+                        value={el.text}
+                        maxLength={elDef.limit}
+                        onChange={(ev) => patchElement(el.id, { text: ev.target.value })}
+                        className="mt-1 min-h-[56px] text-xs"
+                      />
+                      <p className="text-[10px] text-muted-foreground mt-1 text-right">{el.text.length}/{elDef.limit}</p>
+                    </div>
+                  )}
+
+                  {el.kind === "shape" && (
+                    <>
+                      {el.shape === "comment" && (
+                        <div>
+                          <Label htmlFor="shape-text" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Note</Label>
+                          <Input
+                            id="shape-text"
+                            value={el.text}
+                            maxLength={60}
+                            onChange={(ev) => patchElement(el.id, { text: ev.target.value })}
+                            className="h-8 mt-1 text-xs"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Colour</Label>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {SHAPE_COLOURS.map((c) => (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => patchElement(el.id, { color: c })}
+                              aria-label={`Use colour ${c}`}
+                              aria-pressed={el.color === c}
+                              className={cn(
+                                "w-7 h-7 rounded-full border transition-all",
+                                el.color === c ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40"
+                              )}
+                              style={{ backgroundColor: c }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {(el.kind === "shape" || el.kind === "image") && (
+                    <div>
+                      <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Size</Label>
+                      <div className="mt-1.5 flex gap-1.5">
+                        {["Small", "Medium", "Large"].map((sz, i) => (
+                          <button
+                            key={sz}
+                            type="button"
+                            onClick={() => patchElement(el.id, { size: i + 1 })}
+                            aria-pressed={(el.size ?? 2) === i + 1}
+                            className={cn(
+                              "flex-1 rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                              (el.size ?? 2) === i + 1
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border text-muted-foreground hover:border-primary/40"
+                            )}
+                          >
+                            {sz}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <ZonePicker value={el.zone} onChange={(z) => patchElement(el.id, { zone: z })} label="Zone" />
 
@@ -1780,11 +1927,6 @@ export function VideoGenerationBlock({
                       </Select>
                     </div>
                   </div>
-
-                  <p className="text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                    <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    Restyling and re-timing never costs a generate.
-                  </p>
                 </div>
               )}
             </div>
