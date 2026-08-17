@@ -612,35 +612,18 @@ export function VideoStage({
         const visible = time >= start && time <= end;
         if (!visible) return null;
         return (
-          <motion.div
+          <StageElement
             key={el.id}
-            initial={el.animation === "fade" ? { opacity: 0, y: 8 } : false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className={cn("pointer-events-none absolute inset-0 flex p-4", zoneClass[el.zone])}
-          >
-            <button
-              type="button"
-              onClick={() => onSelect?.(el.id)}
-              disabled={!onSelect}
-              aria-label={`Select ${el.kind === "shape" ? el.shape : el.kind === "image" ? "image" : el.style} element`}
-              className={cn(
-                "pointer-events-auto rounded-lg",
-                onSelect && "cursor-pointer",
-                selectedId === el.id && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
-              )}
-            >
-              {el.kind === "shape" ? (
-                <ShapeGlyph el={el} compact={compact} />
-              ) : el.kind === "image" ? (
-                <ImageGlyph el={el} compact={compact} />
-              ) : (
-                <TextElementChip el={el} compact={compact} />
-              )}
-            </button>
-          </motion.div>
+            el={el}
+            compact={compact}
+            selected={selectedId === el.id}
+            onSelect={onSelect}
+            onPatch={onPatch}
+            stageRef={stageRef}
+          />
         );
       })}
+
 
       {!avatar && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-primary-foreground/80">
