@@ -2300,8 +2300,8 @@ export function VideoGenerationBlock({
           {tab === "speech" && (
             <div className="space-y-3">
               {/* Voice (CR-06) */}
-              <div className="flex items-center gap-3 rounded-xl border border-border p-2.5">
-                <span className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-2.5">
+                <span className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex items-center justify-center shrink-0 ring-1 ring-border">
                   {voice ? (
                     <img src={voice.image} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -2314,32 +2314,38 @@ export function VideoGenerationBlock({
                     {voice ? `${voice.name} · ${voice.language}` : "No voice selected"}
                   </p>
                 </div>
-                <Button size="sm" className="rounded-full h-8 text-xs bg-primary text-primary-foreground hover:bg-[hsl(var(--primary-hover))] shadow-[var(--shadow-card)]" onClick={() => setVoiceOpen(true)}>
+                <Button size="sm" className="rounded-full h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setVoiceOpen(true)}>
                   <Volume2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
                   Change voice
                 </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-1.5">
+              {/* Script source switch — segmented glass pill */}
+              <div className="relative grid grid-cols-3 gap-1 rounded-full border border-border bg-muted/60 p-1 backdrop-blur-sm">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
                   { id: "self", label: "Write myself", icon: PenLine },
                   { id: "upload", label: "Upload audio", icon: Upload },
-                ] as const).map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => update({ source: r.id })}
-                    aria-pressed={state.source === r.id}
-                    className={cn(
-                      "rounded-xl border p-2 flex flex-col items-center gap-1 text-[10px] font-medium transition-all",
-                      state.source === r.id ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
-                    )}
-                  >
-                    <r.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                    <span className="text-center leading-tight">{r.label}</span>
-                  </button>
-                ))}
+                ] as const).map((r) => {
+                  const active = state.source === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => update({ source: r.id })}
+                      aria-pressed={active}
+                      className={cn(
+                        "relative rounded-full py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        active
+                          ? "bg-primary text-primary-foreground ring-1 ring-inset ring-primary-foreground/25"
+                          : "text-muted-foreground hover:bg-background hover:text-foreground"
+                      )}
+                    >
+                      <r.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      {r.label}
+                    </button>
+                  );
+                })}
               </div>
 
               {state.source === "ai" && (
