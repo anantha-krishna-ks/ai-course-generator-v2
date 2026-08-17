@@ -1137,26 +1137,70 @@ export function VideoGenerationBlock({
                     start: state.avatarFullRange ? 0 : state.avatarStart,
                     end: state.avatarFullRange ? total : state.avatarEnd || total,
                     selected: false,
+                    draggable: !state.avatarFullRange,
+                    onChange: (st: number, en: number) =>
+                      update({ avatarStart: Number(st.toFixed(1)), avatarEnd: Number(en.toFixed(1)) }),
                   },
                 ],
               },
-              {
-                id: "text",
-                kind: "text",
-                header: "Graphics",
-                clips: state.elements.map((e) => {
-                  const w = elementWindow(state, e);
-                  return {
-                    id: e.id,
-                    label: e.text.split("\n")[0].slice(0, 28) || e.style,
-                    start: w.start,
-                    end: w.end,
-                    selected: selectedEl === e.id,
-                    onClick: () => { setSelectedEl(e.id); setTab("text"); },
-                  };
-                }),
-                emptyHint: "No on-screen text yet — add one from the Text panel.",
-              },
+              ...(state.logo.src
+                ? [
+                    {
+                      id: "logo",
+                      kind: "image" as const,
+                      header: "Logo",
+                      clips: [
+                        {
+                          id: "logo-clip",
+                          label: state.logo.name || "Logo",
+                          start: state.logo.fullRange ? 0 : state.logo.start,
+                          end: state.logo.fullRange ? total : state.logo.end || total,
+                          selected: false,
+                          draggable: !state.logo.fullRange,
+                          onChange: (st: number, en: number) =>
+                            update({ logo: { ...state.logo, start: Number(st.toFixed(1)), end: Number(en.toFixed(1)) } }),
+                        },
+                      ],
+                    },
+                  ]
+                : []),
+              // One track per on-screen element so every item can be timed independently
+              ...state.elements.map((e) => {
+                const w = elementWindow(state, e);
+                const kind = (e.kind ?? "text") as "text" | "shape" | "image";
+                const label =
+                  kind === "shape"
+                    ? SHAPES.find((sh) => sh.id === e.shape)?.label ?? "Shape"
+                    : e.text.split("\n")[0].slice(0, 28) || (kind === "image" ? "Image" : e.style);
+                return {
+                  id: e.id,
+                  kind,
+                  header: label,
+                  clips: [
+                    {
+                      id: e.id,
+                      label,
+                      start: w.start,
+                      end: w.end,
+                      selected: selectedEl === e.id,
+                      draggable: e.staysUntil !== "video",
+                      onClick: () => { setSelectedEl(e.id); setTab("media"); },
+                      onChange: (st: number, en: number) => retimeElement(e.id, st, en),
+                    },
+                  ],
+                };
+              }),
+              ...(state.elements.length === 0
+                ? [
+                    {
+                      id: "graphics-empty",
+                      kind: "text" as const,
+                      header: "Graphics",
+                      clips: [],
+                      emptyHint: "Nothing on screen yet — add text, a shape or an image from the Media panel.",
+                    },
+                  ]
+                : []),
             ]}
           />
 
