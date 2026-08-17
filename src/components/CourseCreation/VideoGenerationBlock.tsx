@@ -193,6 +193,11 @@ export interface VideoTextElement {
   color?: string;
   src?: string;
   size?: number; // 1 - 3, shapes & images
+  /** free positioning on the stage — percent of stage width/height (element centre) */
+  x?: number;
+  y?: number;
+  /** free resize multiplier applied on top of `size` */
+  scale?: number;
   style: TextStyleId;
   text: string;
   zone: ZoneId;
@@ -509,12 +514,170 @@ function ImageGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }
   );
 }
 
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+/** Free move + resize wrapper for an on-stage element. */
+function StageElement({
+  el,
+  compact,
+  selected,
+  onSelect,
+  onPatch,
+  stageRef,
+}: {
+  el: VideoTextElement;
+  compact?: boolean;
+  selected: boolean;
+  onSelect?: (id: string | null) => void;
+  onPatch?: (id: string, patch: Partial<VideoTextElement>) => void;
+  stageRef: React.RefObject<HTMLDivElement>;
+}) {
+  const [mode, setMode] = useState<"idle" | "move" | "resize">("idle");
+  const interactive = Boolean(onPatch);
+  const free = el.x !== undefined && el.y !== undefined;
+  const scale = el.scale ?? 1;
+
+  const glyph =
+    el.kind === "shape" ? (
+      <ShapeGlyph el={el} compact={compact} />
+    ) : el.kind === "image" ? (
+      <ImageGlyph el={el} compact={compact} />
+    ) : (
+      <TextElementChip el={el} compact={compact} />
+    );
+
+  const beginMove = (e: React.PointerEvent) => {
+    if (!onPatch || !stageRef.current) return;
+    e.preventDefault();
+    e.stopPropagation();
+    onSelect?.(el.id);
+    const rect = stageRef.current.getBoundingClientRect();
+    const startX = el.x ?? 50;
+    const startY = el.y ?? 50;
+    const originX = e.clientX;
+    const originY = e.clientY;
+    setMode("move");
+    const move = (ev: PointerEvent) => {
+      const nx = startX + ((ev.clientX - originX) / rect.width) * 100;
+      const ny = startY + ((ev.clientY - originY) / rect.height) * 100;
+      onPatch(el.id, { x: clamp(nx, 2, 98), y: clamp(ny, 2, 98) });
+    };
+    const up = () => {
+      setMode("idle");
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+
+  const beginResize = (e: React.PointerEvent) => {
+    if (!onPatch) return;
+    e.preventDefault();
+    e.stopPropagation();
+    onSelect?.(el.id);
+    const target = (e.currentTarget as HTMLElement).parentElement;
+    const box = target?.getBoundingClientRect();
+    const cx = box ? box.left + box.width / 2 : e.clientX;
+    const cy = box ? box.top + box.height / 2 : e.clientY;
+    const startDist = Math.max(12, Math.hypot(e.clientX - cx, e.clientY - cy));
+    const startScale = scale;
+    setMode("resize");
+    const move = (ev: PointerEvent) => {
+      const dist = Math.hypot(ev.clientX - cx, ev.clientY - cy);
+      onPatch(el.id, { scale: clamp((startScale * dist) / startDist, 0.3, 4) });
+    };
+    const up = () => {
+      setMode("idle");
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (!onPatch) return;
+    const step = e.shiftKey ? 5 : 1;
+    const x = el.x ?? 50;
+    const y = el.y ?? 50;
+    if (e.key === "ArrowLeft") { e.preventDefault(); onPatch(el.id, { x: clamp(x - step, 2, 98), y }); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); onPatch(el.id, { x: clamp(x + step, 2, 98), y }); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); onPatch(el.id, { y: clamp(y - step, 2, 98), x }); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); onPatch(el.id, { y: clamp(y + step, 2, 98), x }); }
+    else if (e.key === "+" || e.key === "=") { e.preventDefault(); onPatch(el.id, { scale: clamp(scale + 0.1, 0.3, 4) }); }
+    else if (e.key === "-") { e.preventDefault(); onPatch(el.id, { scale: clamp(scale - 0.1, 0.3, 4) }); }
+  };
+
+  const inner = (
+    <div
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={
+        interactive
+          ? `${el.kind === "shape" ? el.shape : el.kind === "image" ? "Image" : el.style} element — drag to move, arrow keys to nudge, plus and minus to resize`
+          : undefined
+      }
+      onPointerDown={interactive ? beginMove : undefined}
+      onKeyDown={interactive ? onKeyDown : undefined}
+      onClick={() => onSelect?.(el.id)}
+      className={cn(
+        "relative rounded-lg",
+        interactive && "pointer-events-auto cursor-grab touch-none select-none",
+        mode === "move" && "cursor-grabbing",
+        selected && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
+      )}
+      style={{ transform: `scale(${scale})`, transformOrigin: "center", transition: mode === "idle" ? "transform 120ms ease-out" : "none" }}
+    >
+      {glyph}
+      {interactive && selected && (
+        <span
+          role="button"
+          tabIndex={0}
+          aria-label="Resize element"
+          onPointerDown={beginResize}
+          onKeyDown={onKeyDown}
+          className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-background shadow cursor-nwse-resize touch-none"
+        />
+      )}
+    </div>
+  );
+
+  if (free) {
+    return (
+      <div
+        className="absolute z-20"
+        style={{
+          left: `${el.x}%`,
+          top: `${el.y}%`,
+          transform: "translate(-50%, -50%)",
+          transition: mode === "move" ? "none" : "left 120ms ease-out, top 120ms ease-out",
+        }}
+      >
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={el.animation === "fade" ? { opacity: 0, y: 8 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={cn("pointer-events-none absolute inset-0 flex p-4 z-20", zoneClass[el.zone])}
+    >
+      {inner}
+    </motion.div>
+  );
+}
+
 export function VideoStage({
   state,
   time,
   compact,
   selectedId,
   onSelect,
+  onPatchElement,
   showZones,
   generated,
 }: {
@@ -523,12 +686,15 @@ export function VideoStage({
   compact?: boolean;
   selectedId?: string | null;
   onSelect?: (id: string | null) => void;
+  onPatchElement?: (id: string, patch: Partial<VideoTextElement>) => void;
   showZones?: boolean;
   generated?: boolean;
 }) {
   const avatar = getAvatar(state.avatarId);
   const total = estimateDuration(state);
   const rtl = LANGUAGES.find((l) => l.id === state.language)?.rtl;
+  const stageRef = useRef<HTMLDivElement>(null);
+  const onPatch = onPatchElement;
   const avatarVisible =
     state.avatarFullRange || (time >= state.avatarStart && time <= (state.avatarEnd || total));
 
@@ -536,6 +702,7 @@ export function VideoStage({
 
   return (
     <div
+      ref={stageRef}
       dir={rtl ? "rtl" : "ltr"}
       className="relative w-full aspect-video rounded-xl overflow-hidden bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))]"
     >
@@ -607,35 +774,18 @@ export function VideoStage({
         const visible = time >= start && time <= end;
         if (!visible) return null;
         return (
-          <motion.div
+          <StageElement
             key={el.id}
-            initial={el.animation === "fade" ? { opacity: 0, y: 8 } : false}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className={cn("pointer-events-none absolute inset-0 flex p-4", zoneClass[el.zone])}
-          >
-            <button
-              type="button"
-              onClick={() => onSelect?.(el.id)}
-              disabled={!onSelect}
-              aria-label={`Select ${el.kind === "shape" ? el.shape : el.kind === "image" ? "image" : el.style} element`}
-              className={cn(
-                "pointer-events-auto rounded-lg",
-                onSelect && "cursor-pointer",
-                selectedId === el.id && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
-              )}
-            >
-              {el.kind === "shape" ? (
-                <ShapeGlyph el={el} compact={compact} />
-              ) : el.kind === "image" ? (
-                <ImageGlyph el={el} compact={compact} />
-              ) : (
-                <TextElementChip el={el} compact={compact} />
-              )}
-            </button>
-          </motion.div>
+            el={el}
+            compact={compact}
+            selected={selectedId === el.id}
+            onSelect={onSelect}
+            onPatch={onPatch}
+            stageRef={stageRef}
+          />
         );
       })}
+
 
       {!avatar && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-primary-foreground/80">
@@ -905,6 +1055,9 @@ export function VideoGenerationBlock({
       shape,
       color: SHAPE_COLOURS[0],
       size: 2,
+      x: 50,
+      y: 50,
+      scale: 1,
       style: "chip",
       text: shape === "comment" ? "Add a note" : "",
       zone: "centre",
@@ -925,6 +1078,9 @@ export function VideoGenerationBlock({
       kind: "image",
       src,
       size: 2,
+      x: 50,
+      y: 50,
+      scale: 1,
       style: "chip",
       text: name,
       zone: "centre",
@@ -1106,6 +1262,7 @@ export function VideoGenerationBlock({
             compact
             selectedId={selectedEl}
             onSelect={setSelectedEl}
+            onPatchElement={patchElement}
             showZones={tab === "avatar" || tab === "media"}
             generated={state.status === "generated"}
           />
@@ -1900,7 +2057,16 @@ export function VideoGenerationBlock({
                     </div>
                   )}
 
-                  <ZonePicker value={el.zone} onChange={(z) => patchElement(el.id, { zone: z })} label="Zone" />
+                  <ZonePicker
+                    value={el.zone}
+                    onChange={(z) => patchElement(el.id, { zone: z, x: undefined, y: undefined })}
+                    label="Zone"
+                  />
+                  {(el.kind === "shape" || el.kind === "image") && (
+                    <p className="text-[10px] text-muted-foreground">
+                      Drag the element on the stage to place it freely, or drag the corner dot to resize. Arrow keys nudge, + / − resize.
+                    </p>
+                  )}
 
                   <div className="flex gap-1.5">
                     {(["anchor", "fixed"] as const).map((m) => (
