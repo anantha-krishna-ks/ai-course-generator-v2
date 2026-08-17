@@ -1262,6 +1262,218 @@ export function VideoGenerationBlock({
                   </>
                 )}
               </div>
+
+              {/* ---- Background (CR-01) ---- */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/40">
+                  <Palette className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1">Background</p>
+                  {state.background.mode !== "none" && (
+                    <button
+                      type="button"
+                      onClick={() => update({ background: { ...DEFAULT_BACKGROUND } })}
+                      className="text-[11px] font-medium text-muted-foreground hover:text-destructive"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="p-3 space-y-3">
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {([
+                      { id: "none", label: "Default" },
+                      { id: "color", label: "Colour" },
+                      { id: "preset", label: "Preset" },
+                      { id: "image", label: "Upload" },
+                    ] as const).map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        aria-pressed={state.background.mode === m.id}
+                        onClick={() => {
+                          if (m.id === "image") { bgInputRef.current?.click(); return; }
+                          update({ background: { ...state.background, mode: m.id } });
+                        }}
+                        className={cn(
+                          "rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                          state.background.mode === m.id
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border text-muted-foreground hover:border-primary/40"
+                        )}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {state.background.mode === "color" && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={state.background.color}
+                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                        aria-label="Background colour"
+                        className="h-8 w-12 rounded-md border border-border bg-background p-0.5 cursor-pointer"
+                      />
+                      <Input
+                        value={state.background.color}
+                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                        aria-label="Background colour hex value"
+                        className="h-8 text-xs font-mono"
+                      />
+                    </div>
+                  )}
+
+                  {state.background.mode === "preset" && (
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {CONTENT_BACKGROUNDS.filter((b) => b.id !== "default").map((b) => (
+                        <button
+                          key={b.id}
+                          type="button"
+                          aria-label={`Use ${b.label} background`}
+                          aria-pressed={state.background.presetId === b.id}
+                          onClick={() => update({ background: { ...state.background, mode: "preset", presetId: b.id } })}
+                          className={cn(
+                            "h-10 rounded-lg border transition-all",
+                            state.background.presetId === b.id
+                              ? "border-primary ring-2 ring-primary/25"
+                              : "border-border hover:border-primary/40"
+                          )}
+                          style={b.swatchStyle}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {state.background.mode === "image" && state.background.image && (
+                    <div className="flex items-center gap-2 rounded-lg border border-border p-2">
+                      <img src={state.background.image} alt="" className="w-14 h-9 rounded object-cover" />
+                      <span className="text-[11px] text-muted-foreground truncate flex-1">{state.background.imageName}</span>
+                      <Button size="sm" variant="outline" className="h-7 rounded-full text-[11px]" onClick={() => bgInputRef.current?.click()}>
+                        Replace
+                      </Button>
+                    </div>
+                  )}
+
+                  <input
+                    ref={bgInputRef}
+                    type="file"
+                    accept={SUPPORTED_IMAGE_TYPES.join(",")}
+                    className="hidden"
+                    aria-label="Upload background image"
+                    onChange={(e) => {
+                      readImage(e.target.files?.[0], (dataUrl, name) =>
+                        update({ background: { ...state.background, mode: "image", image: dataUrl, imageName: name } })
+                      );
+                      e.target.value = "";
+                    }}
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    The avatar always sits above the background. PNG, JPG, SVG or WebP up to 2 MB.
+                  </p>
+                </div>
+              </div>
+
+              {/* ---- Logo (CR-02) ---- */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/40">
+                  <ImageIcon className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1">Logo</p>
+                  {state.logo.src && (
+                    <button
+                      type="button"
+                      onClick={() => update({ logo: { ...DEFAULT_LOGO } })}
+                      className="text-[11px] font-medium text-muted-foreground hover:text-destructive"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="p-3 space-y-3">
+                  {state.logo.src ? (
+                    <div className="flex items-center gap-2 rounded-lg border border-border p-2">
+                      <img src={state.logo.src} alt="" className="w-12 h-8 object-contain" />
+                      <span className="text-[11px] text-muted-foreground truncate flex-1">{state.logo.name}</span>
+                      <Button size="sm" variant="outline" className="h-7 rounded-full text-[11px]" onClick={() => logoInputRef.current?.click()}>
+                        Replace
+                      </Button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => logoInputRef.current?.click()}
+                      className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/50 p-3 text-center transition-all"
+                    >
+                      <Upload className="w-4 h-4 mx-auto text-muted-foreground mb-1" aria-hidden="true" focusable="false" />
+                      <p className="text-xs font-medium text-foreground">Upload a logo</p>
+                      <p className="text-[11px] text-muted-foreground">PNG, JPG, SVG or WebP · up to 2 MB</p>
+                    </button>
+                  )}
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept={SUPPORTED_IMAGE_TYPES.join(",")}
+                    className="hidden"
+                    aria-label="Upload logo"
+                    onChange={(e) => {
+                      readImage(e.target.files?.[0], (dataUrl, name) =>
+                        update({ logo: { ...state.logo, src: dataUrl, name } })
+                      );
+                      e.target.value = "";
+                    }}
+                  />
+
+                  {state.logo.src && (
+                    <>
+                      <ZonePicker
+                        value={state.logo.zone}
+                        onChange={(z) => update({ logo: { ...state.logo, zone: z } })}
+                        label="Logo zone"
+                      />
+                      {state.logo.zone === state.avatarZone && (
+                        <p className="text-[11px] text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
+                          <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                          The logo shares a zone with the avatar — move one of them to avoid an overlap.
+                        </p>
+                      )}
+                      <div>
+                        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Logo size</Label>
+                        <div className="mt-1.5 flex gap-1.5">
+                          {["Small", "Medium", "Large"].map((sz, i) => (
+                            <button
+                              key={sz}
+                              type="button"
+                              aria-pressed={state.logo.size === i + 1}
+                              onClick={() => update({ logo: { ...state.logo, size: i + 1 } })}
+                              className={cn(
+                                "flex-1 rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                                state.logo.size === i + 1
+                                  ? "border-primary bg-primary/10 text-primary"
+                                  : "border-border text-muted-foreground hover:border-primary/40"
+                              )}
+                            >
+                              {sz}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border border-border p-2.5">
+                        <Label htmlFor="logo-range" className="text-xs font-medium text-foreground">Show for the whole video</Label>
+                        <Switch
+                          id="logo-range"
+                          checked={state.logo.fullRange}
+                          onCheckedChange={(v) => update({ logo: { ...state.logo, fullRange: v, start: 0, end: v ? 0 : total } })}
+                        />
+                      </div>
+                      {!state.logo.fullRange && (
+                        <p className="text-[11px] text-muted-foreground">
+                          Drag the logo clip on the timeline to set exactly when it appears.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
