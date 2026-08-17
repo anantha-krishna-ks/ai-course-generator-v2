@@ -2321,7 +2321,7 @@ export function VideoGenerationBlock({
               </div>
 
               {/* Script source tabs */}
-              <div className="grid grid-cols-3 gap-1 rounded-lg border border-border bg-muted/40 p-1">
+              <div className="relative grid grid-cols-3 gap-1 rounded-xl border border-border bg-muted/40 p-1">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
                   { id: "self", label: "Write myself", icon: PenLine },
@@ -2335,14 +2335,14 @@ export function VideoGenerationBlock({
                       onClick={() => update({ source: r.id })}
                       aria-pressed={active}
                       className={cn(
-                        "relative rounded-md py-2 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        "relative overflow-hidden rounded-lg py-2 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         active
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-primary text-primary-foreground ring-1 ring-inset ring-primary-foreground/20"
                           : "text-muted-foreground hover:bg-background hover:text-foreground"
                       )}
                     >
-                      <r.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      {r.label}
+                      <r.icon className={cn("w-3.5 h-3.5 transition-colors", active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground")} aria-hidden="true" focusable="false" />
+                      <span className="relative z-10">{r.label}</span>
                     </button>
                   );
                 })}
