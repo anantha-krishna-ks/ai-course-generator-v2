@@ -388,61 +388,131 @@ function TextElementChip({
   el: VideoTextElement;
   compact?: boolean;
 }) {
-  const base = "pointer-events-none max-w-[70%] shadow-lg";
+  const base = "pointer-events-none max-w-[70%] [overflow-wrap:anywhere]";
+  /** soft, single-source lighting instead of a hard drop shadow */
+  const lift = { boxShadow: "0 8px 24px -12px hsl(222 47% 6% / 0.45)" } as CSSProperties;
+  const inkGlow = { textShadow: "0 1px 2px hsl(222 47% 6% / 0.35)" } as CSSProperties;
+
   switch (el.style) {
     case "title":
       return (
-        <span className={cn(base, "font-bold tracking-tight text-primary-foreground drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]", compact ? "text-base" : "text-3xl")}>
+        <span
+          style={inkGlow}
+          className={cn(
+            base,
+            "block font-semibold tracking-[-0.02em] leading-tight text-primary-foreground",
+            compact ? "text-base" : "text-[2rem]"
+          )}
+        >
           {el.text}
         </span>
       );
     case "subtitle":
       return (
-        <span className={cn(base, "font-medium text-primary-foreground/90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]", compact ? "text-[10px]" : "text-lg")}>
+        <span
+          style={inkGlow}
+          className={cn(
+            base,
+            "block font-medium tracking-tight text-primary-foreground/85",
+            compact ? "text-[10px]" : "text-lg"
+          )}
+        >
           {el.text}
         </span>
       );
     case "bullets":
       return (
-        <div className={cn(base, "rounded-xl bg-background/90 backdrop-blur-md border border-border px-3 py-2 space-y-1", compact ? "text-[9px]" : "text-sm")}>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "rounded-2xl bg-background/70 backdrop-blur-xl border border-primary-foreground/15 px-4 py-3 space-y-1.5",
+            compact ? "text-[9px] px-2.5 py-2" : "text-sm"
+          )}
+        >
           {el.text.split("\n").slice(0, 4).map((line, i) => (
-            <div key={i} className="flex items-start gap-1.5 text-foreground">
-              <span className="mt-[6px] w-1 h-1 rounded-full bg-primary shrink-0" aria-hidden="true" />
-              <span className="[overflow-wrap:anywhere]">{line}</span>
+            <div key={i} className="flex items-start gap-2 text-foreground">
+              <span
+                className="mt-[7px] w-1.5 h-1.5 rounded-full bg-gradient-to-br from-primary to-primary/50 shrink-0"
+                aria-hidden="true"
+              />
+              <span>{line}</span>
             </div>
           ))}
         </div>
       );
     case "bubble":
       return (
-        <div className={cn(base, "relative rounded-2xl bg-background/95 border border-border px-3 py-2 text-foreground", compact ? "text-[9px]" : "text-sm")}>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "relative rounded-2xl bg-background/85 backdrop-blur-xl border border-primary-foreground/15 text-foreground",
+            compact ? "text-[9px] px-2.5 py-1.5" : "text-sm px-4 py-2.5"
+          )}
+        >
           {el.text}
-          <span className="absolute -bottom-1 left-5 w-2.5 h-2.5 rotate-45 bg-background border-b border-r border-border" aria-hidden="true" />
+          <span
+            className="absolute -bottom-1 left-5 w-2.5 h-2.5 rotate-45 bg-background/85 border-b border-r border-primary-foreground/15"
+            aria-hidden="true"
+          />
         </div>
       );
     case "chip":
       return (
-        <span className={cn(base, "rounded-full bg-primary text-primary-foreground font-semibold px-3 py-1", compact ? "text-[9px]" : "text-sm")}>
+        <span
+          style={lift}
+          className={cn(
+            base,
+            "inline-flex items-center rounded-full bg-gradient-to-b from-primary to-primary/80 text-primary-foreground font-semibold tracking-tight border border-primary-foreground/20",
+            compact ? "text-[9px] px-2.5 py-0.5" : "text-sm px-4 py-1.5"
+          )}
+        >
           {el.text}
         </span>
       );
     case "lower-third":
       return (
-        <div className={cn(base, "rounded-md bg-primary/90 text-primary-foreground px-3 py-1.5 border-l-4 border-primary-foreground/70", compact ? "text-[9px]" : "text-sm")}>
-          <span className="font-semibold">{el.text}</span>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/95 to-primary/70 backdrop-blur-md text-primary-foreground pl-4 pr-5",
+            compact ? "text-[9px] py-1.5" : "text-sm py-2.5"
+          )}
+        >
+          <span
+            className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-primary-foreground/80"
+            aria-hidden="true"
+          />
+          <span className="font-semibold tracking-tight">{el.text}</span>
         </div>
       );
     case "callout":
       return (
-        <div className={cn(base, "flex items-center gap-1.5 rounded-lg bg-accent text-accent-foreground px-2.5 py-1.5 font-medium", compact ? "text-[9px]" : "text-sm")}>
-          <span aria-hidden="true">➜</span>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "flex items-center gap-2 rounded-xl bg-background/80 backdrop-blur-xl border border-primary/25 text-foreground font-medium",
+            compact ? "text-[9px] px-2.5 py-1.5" : "text-sm px-3.5 py-2"
+          )}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
           {el.text}
         </div>
       );
     case "quote":
     default:
       return (
-        <span className={cn(base, "italic text-primary-foreground border-l-2 border-primary pl-3", compact ? "text-[9px]" : "text-base")}>
+        <span
+          style={inkGlow}
+          className={cn(
+            base,
+            "block italic font-light text-primary-foreground/95 border-l-2 border-primary-foreground/50 pl-4",
+            compact ? "text-[9px]" : "text-lg leading-snug"
+          )}
+        >
           “{el.text}”
         </span>
       );
