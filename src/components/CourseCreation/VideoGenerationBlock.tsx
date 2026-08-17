@@ -21,7 +21,6 @@ import {
   AlertTriangle,
   Languages,
   Gauge,
-  Eye,
   MoveDiagonal,
   RotateCcw,
   Download,
@@ -35,7 +34,6 @@ import {
   Palette,
   Shapes,
   Volume2,
-  X,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
