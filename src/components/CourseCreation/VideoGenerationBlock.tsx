@@ -1100,14 +1100,11 @@ function AvatarLibraryDialog({
               )}
             >
               <div className="relative aspect-[4/5] overflow-hidden">
-                <img src={a.image} alt={`${a.name} avatar`} className="w-full h-full object-cover" />
+                <AvatarSampleStage avatar={a} playing={playing === a.id} onEnded={() => setPlaying(null)} />
                 <button
                   type="button"
-                  onClick={() => {
-                    setPlaying(playing === a.id ? null : a.id);
-                    toast({ title: `Sample clip — ${a.name}`, description: "Pre-recorded sample. No generation used." });
-                  }}
-                  aria-label={`Play sample clip for ${a.name}`}
+                  onClick={() => setPlaying(playing === a.id ? null : a.id)}
+                  aria-label={`${playing === a.id ? "Pause" : "Play"} sample clip for ${a.name}`}
                   className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center shadow-md hover:bg-background"
                 >
                   {playing === a.id ? (
@@ -1122,6 +1119,7 @@ function AvatarLibraryDialog({
                   </span>
                 )}
               </div>
+
               <div className="p-3">
                 <p className="text-sm font-semibold text-foreground">{a.name} · {a.gender}</p>
                 <p className="text-xs text-muted-foreground truncate">{a.voice}</p>
