@@ -637,6 +637,35 @@ function ImageGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
+/** Shared pointer-drag: reports new centre position in stage percentages. */
+function startFreeDrag(
+  e: React.PointerEvent,
+  stage: HTMLDivElement | null,
+  from: { x: number; y: number },
+  onMove: (x: number, y: number) => void,
+  onEnd?: () => void
+) {
+  if (!stage) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const rect = stage.getBoundingClientRect();
+  const originX = e.clientX;
+  const originY = e.clientY;
+  const move = (ev: PointerEvent) => {
+    onMove(
+      clamp(from.x + ((ev.clientX - originX) / rect.width) * 100, 2, 98),
+      clamp(from.y + ((ev.clientY - originY) / rect.height) * 100, 2, 98)
+    );
+  };
+  const up = () => {
+    onEnd?.();
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", up);
+  };
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", up);
+}
+
 /** Free move + resize wrapper for an on-stage element. */
 function StageElement({
   el,
