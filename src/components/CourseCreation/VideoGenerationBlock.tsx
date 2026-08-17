@@ -2543,7 +2543,7 @@ export function VideoGenerationBlock({
                     onClick={() => imageInputRef.current?.click()}
                     className="group w-full rounded-2xl border-2 border-dashed border-primary/30 bg-primary/[0.04] hover:border-primary hover:bg-primary/10 p-4 text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <span className="mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(140deg,hsl(var(--primary)),hsl(var(--primary)/0.75))] shadow-[0_6px_16px_-8px_hsl(var(--primary))] transition-transform duration-200 motion-safe:group-hover:scale-105">
+                    <span className="mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-primary transition-transform duration-200 motion-safe:group-hover:scale-105">
                       <Upload className="w-4 h-4 text-primary-foreground" aria-hidden="true" focusable="false" />
                     </span>
                     <p className="text-xs font-medium text-foreground">Add an image to the frame</p>
