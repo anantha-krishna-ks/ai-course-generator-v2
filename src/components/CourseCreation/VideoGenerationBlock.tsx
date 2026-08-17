@@ -1205,16 +1205,15 @@ function AvatarSampleStage({
             {/* equaliser + timecode */}
             <div className="absolute bottom-[62px] left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full border border-white/12 bg-background/55 backdrop-blur-md px-2.5 py-1 shadow-lg">
               <span className="flex items-end gap-[2.5px] h-3.5" aria-hidden="true">
-                {[0, 1, 2, 3, 4, 5, 6].map((b) => (
-                  <motion.span
+                {[0.7, 1, 0.55, 0.9, 0.45, 0.8, 0.6].map((w, b) => (
+                  <span
                     key={b}
-                    className="w-[2.5px] rounded-full bg-gradient-to-t from-primary/60 to-primary"
-                    style={{ height: "35%" }}
-                    animate={{ height: ["25%", "100%", "45%", "85%", "30%"] }}
-                    transition={{ duration: 0.85, repeat: Infinity, delay: b * 0.07, ease: "easeInOut" }}
+                    className="w-[2.5px] rounded-full bg-gradient-to-t from-primary/60 to-primary transition-[height] duration-75"
+                    style={{ height: `${Math.max(18, Math.min(100, mouth * 100 * w + 18))}%` }}
                   />
                 ))}
               </span>
+
               <span className="text-[9px] font-mono font-medium text-foreground tabular-nums">
                 {fmt(seconds)} / {fmt(totalSeconds)}
               </span>
