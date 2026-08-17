@@ -2453,37 +2453,51 @@ export function VideoGenerationBlock({
 
           {tab === "media" && (
             <div className="space-y-3">
-              {/* Sub-section switch */}
-              <div className="grid grid-cols-3 gap-1.5">
+              {/* Sub-section switch — segmented glass pill */}
+              <div className="relative grid grid-cols-3 gap-1 rounded-full border border-border bg-muted/60 p-1 shadow-inner backdrop-blur-sm">
                 {([
                   { id: "text", label: "Text", icon: TypeIcon },
                   { id: "shapes", label: "Shapes", icon: Shapes },
                   { id: "images", label: "Images", icon: ImageIcon },
-                ] as const).map((sct) => (
-                  <button
-                    key={sct.id}
-                    type="button"
-                    onClick={() => setMediaSection(sct.id)}
-                    aria-pressed={mediaSection === sct.id}
-                    className={cn(
-                      "rounded-full border py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all",
-                      mediaSection === sct.id
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40"
-                    )}
-                  >
-                    <sct.icon className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    {sct.label}
-                  </button>
-                ))}
+                ] as const).map((sct) => {
+                  const active = mediaSection === sct.id;
+                  return (
+                    <button
+                      key={sct.id}
+                      type="button"
+                      onClick={() => setMediaSection(sct.id)}
+                      aria-pressed={active}
+                      className={cn(
+                        "relative rounded-full py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        active
+                          ? "bg-[linear-gradient(140deg,hsl(var(--primary)),hsl(var(--primary)/0.82))] text-primary-foreground shadow-[0_6px_16px_-6px_hsl(var(--primary)/0.9)] ring-1 ring-inset ring-primary-foreground/25"
+                          : "text-muted-foreground hover:bg-background hover:text-foreground"
+                      )}
+                    >
+                      <sct.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      {sct.label}
+                    </button>
+                  );
+                })}
               </div>
 
               {mediaSection === "text" && (
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs">
-                      <Plus className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Add on-screen text
-                    </Button>
+                    <button
+                      type="button"
+                      className="group relative w-full overflow-hidden rounded-full h-10 px-4 inline-flex items-center justify-center gap-2 text-xs font-semibold text-primary-foreground bg-[linear-gradient(140deg,hsl(var(--primary)),hsl(var(--primary)/0.78))] shadow-[0_8px_22px_-8px_hsl(var(--primary)/0.9)] ring-1 ring-inset ring-primary-foreground/25 transition-all duration-200 hover:shadow-[0_12px_28px_-10px_hsl(var(--primary))] motion-safe:hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <span
+                        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full bg-[linear-gradient(to_bottom,hsl(var(--primary-foreground)/0.28),transparent)]"
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-[linear-gradient(90deg,transparent,hsl(var(--primary-foreground)/0.4),transparent)] opacity-0 transition-all duration-700 group-hover:left-[120%] group-hover:opacity-100"
+                        aria-hidden="true"
+                      />
+                      <Plus className="relative w-4 h-4" aria-hidden="true" focusable="false" /> <span className="relative">Add on-screen text</span>
+                    </button>
                   </PopoverTrigger>
                   <PopoverContent align="end" className="w-[280px] p-1.5">
                     <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
@@ -2509,6 +2523,7 @@ export function VideoGenerationBlock({
                 </Popover>
               )}
 
+
               {mediaSection === "shapes" && (
                 <div className="grid grid-cols-4 gap-1.5">
                   {SHAPES.map((sh) => {
@@ -2519,9 +2534,9 @@ export function VideoGenerationBlock({
                         type="button"
                         onClick={() => addShape(sh.id)}
                         aria-label={`Add ${sh.label}`}
-                        className="rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 p-2 flex flex-col items-center gap-1 transition-all"
+                        className="group rounded-xl border border-border bg-gradient-to-b from-card to-muted/60 hover:border-primary/60 hover:from-primary/10 hover:to-primary/5 hover:shadow-[0_6px_16px_-8px_hsl(var(--primary)/0.7)] motion-safe:hover:-translate-y-0.5 p-2 flex flex-col items-center gap-1 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
-                        <sh.icon className={cn("w-4 h-4 text-foreground", rotate)} aria-hidden="true" focusable="false" />
+                        <sh.icon className={cn("w-4 h-4 text-foreground transition-colors group-hover:text-primary", rotate)} aria-hidden="true" focusable="false" />
                         <span className="text-[9px] text-muted-foreground text-center leading-tight">{sh.label}</span>
                       </button>
                     );
@@ -2534,9 +2549,11 @@ export function VideoGenerationBlock({
                   <button
                     type="button"
                     onClick={() => imageInputRef.current?.click()}
-                    className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/50 p-4 text-center transition-all"
+                    className="group w-full rounded-2xl border-2 border-dashed border-primary/30 bg-primary/[0.04] hover:border-primary hover:bg-primary/10 p-4 text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <Upload className="w-4 h-4 mx-auto text-muted-foreground mb-1" aria-hidden="true" focusable="false" />
+                    <span className="mx-auto mb-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(140deg,hsl(var(--primary)),hsl(var(--primary)/0.75))] shadow-[0_6px_16px_-8px_hsl(var(--primary))] transition-transform duration-200 motion-safe:group-hover:scale-105">
+                      <Upload className="w-4 h-4 text-primary-foreground" aria-hidden="true" focusable="false" />
+                    </span>
                     <p className="text-xs font-medium text-foreground">Add an image to the frame</p>
                     <p className="text-[11px] text-muted-foreground">PNG, JPG, SVG or WebP · up to 2 MB</p>
                   </button>
