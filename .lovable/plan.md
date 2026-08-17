@@ -1,21 +1,29 @@
-# Portable Toast UI spec (`docs/toast-ui.md`)
+# Premium "Set up video" call-to-action
 
-Create a single self-contained markdown file that anyone can drop into another project (or paste to an AI agent) to reproduce this app's exact toast system.
+Revamp the empty-state video block in `src/components/CourseCreation/VideoGenerationBlock.tsx` (lines 1621–1653) so the primary action reads as the clear, premium focal point of the card.
 
-## What the file will contain
+## What changes
 
-1. **Overview** — Radix-based toast with left color ribbon, variant icon, title + description, hover-revealed close, top-right viewport, one toast at a time.
-2. **Dependencies** — `@radix-ui/react-toast`, `class-variance-authority`, `lucide-react`, `tailwind-merge`/`clsx` (`cn` helper), Tailwind + `tailwindcss-animate`.
-3. **Design tokens** — the exact HSL values to add to `index.css` for light and dark: `--success`, `--success-foreground`, `--warning`, `--warning-foreground`, `--info`, `--destructive`, plus the `tailwind.config.ts` color mappings for `success`, `warning`, `info`.
-4. **Full source of 4 files**, copied verbatim from this project so it works on paste:
-   - `src/components/ui/toast.tsx` — viewport (`fixed top-4 right-4 z-[100] … sm:max-w-[420px]`), `toastVariants` cva with `default | destructive | success | warning | info` and the `[&_.toast-ribbon]:bg-*` selectors, swipe/animation data-attributes, Title, Description, Action, Close.
-   - `src/components/ui/toaster.tsx` — variant→icon map (`Info`, `CheckCircle2`, `AlertCircle`, `AlertTriangle`), icon color map, the 1px-wide ribbon div, spacing (`pl-4 pr-8 py-4`, `gap-3`).
-   - `src/hooks/use-toast.ts` — reducer store, `TOAST_LIMIT = 1`, and the `inferVariant()` keyword auto-inference (error/failed/invalid → destructive, removed/deleted → warning, saved/created/copied… → success, info/level → info).
-   - `src/components/ui/sonner.tsx` — the optional sonner variant with matching token classNames.
-5. **Install steps** — where to mount `<Toaster />` in `App.tsx`, and the token/config edits.
-6. **Usage examples** — `toast({ title, description })` with auto-inferred variant, explicit `variant: "success"`, and with an action button.
-7. **Accessibility notes** — `aria-label="Close notification"`, `aria-hidden`/`focusable="false"` on decorative icons, no opacity-modified text colors.
+**The card**
+- Keep the 16:9 cinematic stage, but layer it properly: deep gradient base, a soft radial key light behind the CTA, and a very subtle grid/noise sheen so the surface feels like a studio backdrop rather than a flat gradient.
+- Tighten the copy stack: a small "AI VIDEO" eyebrow label, the "Video Generation" title, and the avatar/duration/word summary line beneath it.
+- Add a faint bottom scrim so the button always sits on high contrast.
 
-## Technical detail
+**The button (the focal point)**
+- Move from the current small `size="sm"` pill to a large, prominent CTA: taller height, wider horizontal padding, larger semibold label, `rounded-full`.
+- Premium treatment: gradient fill built from `--primary` tokens, a soft primary-colored glow shadow, a thin light ring, and an inner highlight along the top edge for the glossy read.
+- Motion: gentle lift and glow intensification on hover, press-down on active, animated shine sweep on hover, plus a slow ambient pulse ring while the block is untouched so the eye lands there first.
+- Icon: `Sparkles` (with `Play`/arrow motion on hover) instead of the settings gear, since this is a create action, not a config action.
+- Secondary affordance: a quiet ghost "See how it works" / avatar-preview link under the CTA so the primary button stays visually singular.
 
-Single new file `docs/toast-ui.md`; no source code in the app changes. Code blocks are fenced with `tsx`/`css`/`bash` and paths are stated above each block so the file is directly actionable.
+**States**
+- Untouched: "Set up video" with the ambient pulse.
+- Partially configured: "Continue setup" plus a small progress chip (e.g. "2 of 4 ready") derived from the existing `checklist`, and the pulse is dropped.
+- Generating state stays as-is, with the progress bar restyled to match the new surface.
+
+**Accessibility**
+- Real `<button>` with a descriptive label, all decorative layers `aria-hidden="true"`, focus-visible ring kept clearly visible against the dark stage, motion respecting `prefers-reduced-motion`.
+
+## Technical notes
+
+Changes are confined to the non-generated branch of the block render in `VideoGenerationBlock.tsx`; no logic, state, or generation behaviour changes. Colors use existing semantic tokens (`--primary`, `--primary-foreground`, `--background`) — no hardcoded hex or `text-white`. Any new gradient/shadow values are expressed with token-based HSL.
