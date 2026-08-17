@@ -1658,7 +1658,7 @@ export function VideoGenerationBlock({
                 </Button>
               </div>
 
-              <ZonePicker value={state.avatarZone} onChange={(z) => update({ avatarZone: z })} label="Placement zone" />
+              <ZonePicker value={state.avatarZone} onChange={(z) => update({ avatarZone: z, avatarX: undefined, avatarY: undefined })} label="Placement zone" />
               <p className="text-[11px] text-muted-foreground -mt-2">
                 Zones keep the layout predictable across languages, aspect ratios and screen sizes.
               </p>
@@ -1868,7 +1868,7 @@ export function VideoGenerationBlock({
                     <>
                       <ZonePicker
                         value={state.logo.zone}
-                        onChange={(z) => update({ logo: { ...state.logo, zone: z } })}
+                        onChange={(z) => update({ logo: { ...state.logo, zone: z, x: undefined, y: undefined } })}
                         label="Logo zone"
                       />
                       {state.logo.zone === state.avatarZone && (
