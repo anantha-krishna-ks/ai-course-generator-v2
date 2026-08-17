@@ -1246,7 +1246,7 @@ function AvatarSampleStage({
               {/* chaptered scrubber */}
               <div className="mt-2 flex items-center gap-1">
                 {lines.map((_, i) => {
-                  const seg = clamp((elapsed - i * SAMPLE_LINE_MS) / SAMPLE_LINE_MS, 0, 1) * 100;
+                  const seg = clamp(i < index ? 1 : i > index ? 0 : (lineProgress + 1) / Math.max(1, words.length), 0, 1) * 100;
                   return (
                     <span key={i} className="h-[3px] flex-1 rounded-full bg-foreground/20 overflow-hidden">
                       <span
