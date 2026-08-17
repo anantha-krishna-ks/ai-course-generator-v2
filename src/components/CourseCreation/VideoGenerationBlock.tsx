@@ -2057,7 +2057,16 @@ export function VideoGenerationBlock({
                     </div>
                   )}
 
-                  <ZonePicker value={el.zone} onChange={(z) => patchElement(el.id, { zone: z })} label="Zone" />
+                  <ZonePicker
+                    value={el.zone}
+                    onChange={(z) => patchElement(el.id, { zone: z, x: undefined, y: undefined })}
+                    label="Zone"
+                  />
+                  {(el.kind === "shape" || el.kind === "image") && (
+                    <p className="text-[10px] text-muted-foreground">
+                      Drag the element on the stage to place it freely, or drag the corner dot to resize. Arrow keys nudge, + / − resize.
+                    </p>
+                  )}
 
                   <div className="flex gap-1.5">
                     {(["anchor", "fixed"] as const).map((m) => (
