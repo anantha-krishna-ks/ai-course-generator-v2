@@ -3273,8 +3273,10 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         {/* Picture in picture */}
         <button
           type="button"
-          onClick={() => setPip((p) => !p)}
+          ref={pipButtonRef}
+          onClick={() => (pip ? exitPip() : enterPip())}
           aria-label="Toggle picture in picture"
+
           aria-pressed={pip}
           className={cn("w-8 h-8 rounded-full flex items-center justify-center transition-colors", pip ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted")}
         >
