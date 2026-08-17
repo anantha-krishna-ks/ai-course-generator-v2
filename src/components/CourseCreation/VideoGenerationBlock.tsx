@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -10,7 +11,6 @@ import {
   Upload,
   PenLine,
   Clock,
-  Coins,
   Video as VideoIcon,
   UserRound,
   Trash2,
@@ -21,11 +21,19 @@ import {
   AlertTriangle,
   Languages,
   Gauge,
-  Eye,
   MoveDiagonal,
   RotateCcw,
   Download,
   Settings2,
+  Image as ImageIcon,
+  Square,
+  Circle,
+  Triangle,
+  MessageSquare,
+  ArrowRight,
+  Palette,
+  Shapes,
+  Volume2,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -53,6 +61,8 @@ import {
 } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
+import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
+import { VOICE_LIBRARY, VoiceLibraryDialog } from "@/components/CourseCreation/AIAudioBlock";
 
 import ariaImg from "@/assets/voices/aria.jpg";
 import georgeImg from "@/assets/voices/george.jpg";
@@ -132,8 +142,57 @@ export const LANGUAGES = [
 /* State + serialisation                                               */
 /* ------------------------------------------------------------------ */
 
+export type ShapeId =
+  | "rectangle"
+  | "circle"
+  | "triangle"
+  | "comment"
+  | "arrow-right"
+  | "arrow-left"
+  | "arrow-up"
+  | "arrow-down";
+
+export const SHAPES: { id: ShapeId; label: string; icon: typeof Square }[] = [
+  { id: "rectangle", label: "Rectangle", icon: Square },
+  { id: "circle", label: "Circle", icon: Circle },
+  { id: "triangle", label: "Triangle", icon: Triangle },
+  { id: "comment", label: "Comment", icon: MessageSquare },
+  { id: "arrow-right", label: "Arrow right", icon: ArrowRight },
+  { id: "arrow-left", label: "Arrow left", icon: ArrowRight },
+  { id: "arrow-up", label: "Arrow up", icon: ArrowRight },
+  { id: "arrow-down", label: "Arrow down", icon: ArrowRight },
+];
+
+export const SHAPE_COLOURS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#0F172A", "#FFFFFF"];
+
+export type MediaKind = "text" | "shape" | "image";
+
+export interface VideoBackground {
+  mode: "none" | "color" | "preset" | "image";
+  color: string;
+  presetId: string;
+  image: string | null;
+  imageName: string;
+}
+
+export interface VideoLogo {
+  src: string | null;
+  name: string;
+  zone: ZoneId;
+  size: number; // 1 - 3
+  fullRange: boolean;
+  start: number;
+  end: number;
+}
+
 export interface VideoTextElement {
   id: string;
+  /** text (default), shape or image */
+  kind?: MediaKind;
+  shape?: ShapeId;
+  color?: string;
+  src?: string;
+  size?: number; // 1 - 3, shapes & images
   style: TextStyleId;
   text: string;
   zone: ZoneId;
@@ -162,19 +221,41 @@ export interface VideoGenState {
   transcriptEdited: boolean;
   language: string;
   pace: "slow" | "natural" | "fast";
+  voiceId: string;
+  background: VideoBackground;
+  logo: VideoLogo;
   elements: VideoTextElement[];
   status: "draft" | "generating" | "generated" | "outdated";
   paidSignature: string;
   captions: boolean;
-  writtenVersion: boolean;
-  audioOnly: boolean;
+  /** legacy fields — no longer surfaced in the UI */
+  writtenVersion?: boolean;
+  audioOnly?: boolean;
 }
+
+export const DEFAULT_BACKGROUND: VideoBackground = {
+  mode: "none",
+  color: "#0F172A",
+  presetId: "aurora",
+  image: null,
+  imageName: "",
+};
+
+export const DEFAULT_LOGO: VideoLogo = {
+  src: null,
+  name: "",
+  zone: "top-right",
+  size: 2,
+  fullRange: true,
+  start: 0,
+  end: 0,
+};
+
+export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
+export const SUPPORTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
 
 export const MAX_SCRIPT_WORDS = 900;
 export const MAX_DURATION_SEC = 360;
-const COST_PER_MINUTE = 4;
-const ALLOWANCE_MINUTES = 60;
-const USED_MINUTES = 23.5;
 
 const EMPTY_STATE: VideoGenState = {
   avatarId: "",
@@ -193,12 +274,13 @@ const EMPTY_STATE: VideoGenState = {
   transcriptEdited: false,
   language: "en",
   pace: "natural",
+  voiceId: "aria",
+  background: { ...DEFAULT_BACKGROUND },
+  logo: { ...DEFAULT_LOGO },
   elements: [],
   status: "draft",
   paidSignature: "",
   captions: true,
-  writtenVersion: true,
-  audioOnly: false,
 };
 
 export function parseVideoGenContent(raw?: string): VideoGenState {
@@ -206,7 +288,15 @@ export function parseVideoGenContent(raw?: string): VideoGenState {
   try {
     const stripped = raw.replace(/^<!--videogen:/, "").replace(/-->$/, "");
     const parsed = JSON.parse(stripped);
-    return { ...EMPTY_STATE, ...parsed, elements: Array.isArray(parsed.elements) ? parsed.elements : [] };
+    return {
+      ...EMPTY_STATE,
+      ...parsed,
+      background: { ...DEFAULT_BACKGROUND, ...(parsed.background ?? {}) },
+      logo: { ...DEFAULT_LOGO, ...(parsed.logo ?? {}) },
+      elements: Array.isArray(parsed.elements)
+        ? parsed.elements.map((e: VideoTextElement) => ({ kind: "text" as MediaKind, ...e }))
+        : [],
+    };
   } catch {
     return { ...EMPTY_STATE };
   }
@@ -348,6 +438,77 @@ function TextElementChip({
   }
 }
 
+export function backgroundStyle(bg: VideoBackground | undefined): CSSProperties {
+  if (!bg) return {};
+  if (bg.mode === "color") return { backgroundColor: bg.color };
+  if (bg.mode === "preset")
+    return CONTENT_BACKGROUNDS.find((p) => p.id === bg.presetId)?.style ?? {};
+  if (bg.mode === "image" && bg.image)
+    return { backgroundImage: `url(${bg.image})`, backgroundSize: "cover", backgroundPosition: "center" };
+  return {};
+}
+
+const SHAPE_SIZE_PCT = [10, 16, 24];
+
+function ShapeGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }) {
+  const colour = el.color ?? "#3B82F6";
+  const pct = SHAPE_SIZE_PCT[(el.size ?? 2) - 1] ?? 16;
+  const px = (compact ? 2.6 : 5.2) * pct;
+  const common = { width: px, height: px } as CSSProperties;
+
+  switch (el.shape) {
+    case "circle":
+      return <span className="block rounded-full shadow-lg" style={{ ...common, backgroundColor: colour, opacity: 0.9 }} />;
+    case "triangle":
+      return (
+        <span
+          className="block shadow-lg"
+          style={{ ...common, backgroundColor: colour, opacity: 0.9, clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
+        />
+      );
+    case "comment":
+      return (
+        <span
+          className="relative flex items-center justify-center rounded-xl shadow-lg text-background px-3 py-2"
+          style={{ backgroundColor: colour, minWidth: px }}
+        >
+          <span className={cn("font-medium text-primary-foreground", compact ? "text-[9px]" : "text-sm")}>{el.text}</span>
+          <span className="absolute -bottom-1 left-4 w-2.5 h-2.5 rotate-45" style={{ backgroundColor: colour }} aria-hidden="true" />
+        </span>
+      );
+    case "arrow-right":
+    case "arrow-left":
+    case "arrow-up":
+    case "arrow-down": {
+      const rotate = { "arrow-right": 0, "arrow-left": 180, "arrow-up": -90, "arrow-down": 90 }[el.shape] ?? 0;
+      return (
+        <span className="block shadow-lg" style={{ ...common, transform: `rotate(${rotate}deg)` }}>
+          <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false">
+            <path d="M2 9h12V4l8 8-8 8v-5H2z" fill={colour} opacity="0.92" />
+          </svg>
+        </span>
+      );
+    }
+    case "rectangle":
+    default:
+      return <span className="block rounded-md shadow-lg" style={{ ...common, height: px * 0.6, backgroundColor: colour, opacity: 0.9 }} />;
+  }
+}
+
+function ImageGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }) {
+  const pct = SHAPE_SIZE_PCT[(el.size ?? 2) - 1] ?? 16;
+  const px = (compact ? 2.6 : 5.2) * pct;
+  if (!el.src) return null;
+  return (
+    <img
+      src={el.src}
+      alt={el.text || "On-screen image"}
+      style={{ width: px }}
+      className="rounded-lg object-contain shadow-lg"
+    />
+  );
+}
+
 export function VideoStage({
   state,
   time,
@@ -378,6 +539,11 @@ export function VideoStage({
       dir={rtl ? "rtl" : "ltr"}
       className="relative w-full aspect-video rounded-xl overflow-hidden bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))]"
     >
+      {/* Background layer (solid colour, preset or uploaded image) */}
+      {state.background && state.background.mode !== "none" && (
+        <div className="absolute inset-0" style={backgroundStyle(state.background)} aria-hidden="true" />
+      )}
+
       {/* subtle studio vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.22),transparent_60%)]" aria-hidden="true" />
 
@@ -419,7 +585,23 @@ export function VideoStage({
         )}
       </AnimatePresence>
 
-      {/* Text elements */}
+      {/* Brand logo */}
+      {state.logo?.src &&
+        (state.logo.fullRange || (time >= state.logo.start && time <= (state.logo.end || total))) && (
+          <div
+            className={cn("pointer-events-none absolute inset-0 flex p-3 z-10", zoneClass[state.logo.zone])}
+            aria-hidden="true"
+          >
+            <img
+              src={state.logo.src}
+              alt=""
+              style={{ width: `${[8, 12, 18][state.logo.size - 1] ?? 12}%` }}
+              className="object-contain drop-shadow-md"
+            />
+          </div>
+        )}
+
+      {/* On-screen elements — text, shapes and images */}
       {state.elements.map((el) => {
         const { start, end } = elementWindow(state, el);
         const visible = time >= start && time <= end;
@@ -436,14 +618,20 @@ export function VideoStage({
               type="button"
               onClick={() => onSelect?.(el.id)}
               disabled={!onSelect}
-              aria-label={`Select ${el.style} element`}
+              aria-label={`Select ${el.kind === "shape" ? el.shape : el.kind === "image" ? "image" : el.style} element`}
               className={cn(
                 "pointer-events-auto rounded-lg",
                 onSelect && "cursor-pointer",
                 selectedId === el.id && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
               )}
             >
-              <TextElementChip el={el} compact={compact} />
+              {el.kind === "shape" ? (
+                <ShapeGlyph el={el} compact={compact} />
+              ) : el.kind === "image" ? (
+                <ImageGlyph el={el} compact={compact} />
+              ) : (
+                <TextElementChip el={el} compact={compact} />
+              )}
             </button>
           </motion.div>
         );
@@ -581,9 +769,14 @@ export function VideoGenerationBlock({
   readOnly?: boolean;
 }) {
   const [state, setState] = useState<VideoGenState>(() => parseVideoGenContent(content));
-  const [tab, setTab] = useState<"avatar" | "speech" | "text" | "timing">("avatar");
+  const [tab, setTab] = useState<"avatar" | "speech" | "media" | "timing">("avatar");
   const [editorOpen, setEditorOpen] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [mediaSection, setMediaSection] = useState<"text" | "shapes" | "images">("text");
+  const bgInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
   const [selectedEl, setSelectedEl] = useState<string | null>(null);
   const [time, setTime] = useState(0);
@@ -595,8 +788,7 @@ export function VideoGenerationBlock({
   const total = estimateDuration(state);
   const avatar = getAvatar(state.avatarId);
   const words = wordCount(state.script);
-  const costMinutes = Math.max(total / 60, 0);
-  const cost = Math.max(1, Math.ceil(costMinutes * COST_PER_MINUTE));
+  const voice = VOICE_LIBRARY.find((v) => v.id === state.voiceId) ?? VOICE_LIBRARY[0];
 
   const update = (patch: Partial<VideoGenState>) => {
     setState((prev) => {
@@ -607,6 +799,22 @@ export function VideoGenerationBlock({
       onChange(serializeVideoGenContent(next));
       return next;
     });
+  };
+
+  /** Reads an image upload into a data URL after validating type and size. */
+  const readImage = (file: File | undefined, onDone: (dataUrl: string, name: string) => void) => {
+    if (!file) return;
+    if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
+      toast({ title: "Unsupported file", description: "Use a PNG, JPG, SVG or WebP image.", variant: "destructive" });
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast({ title: "File too large", description: "Images must be 2 MB or smaller.", variant: "destructive" });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => onDone(String(reader.result), file.name);
+    reader.readAsDataURL(file);
   };
 
   // Free preview playhead
@@ -647,7 +855,7 @@ export function VideoGenerationBlock({
       onChange(serializeVideoGenContent(next));
       return next;
     });
-    toast({ title: "Video ready", description: "Captions and the written version were generated free of charge." });
+    toast({ title: "Video ready", description: "Captions were generated alongside the video." });
   };
 
   const runGenerate = () => {
@@ -687,7 +895,60 @@ export function VideoGenerationBlock({
     };
     update({ elements: [...state.elements, el] });
     setSelectedEl(el.id);
-    setTab("text");
+    setTab("media");
+  };
+
+  const addShape = (shape: ShapeId) => {
+    const el: VideoTextElement = {
+      id: `el-${Date.now()}`,
+      kind: "shape",
+      shape,
+      color: SHAPE_COLOURS[0],
+      size: 2,
+      style: "chip",
+      text: shape === "comment" ? "Add a note" : "",
+      zone: "centre",
+      timingMode: "fixed",
+      anchorPhrase: "",
+      start: 0,
+      duration: 4,
+      staysUntil: "seconds",
+      animation: "fade",
+    };
+    update({ elements: [...state.elements, el] });
+    setSelectedEl(el.id);
+  };
+
+  const addImage = (src: string, name: string) => {
+    const el: VideoTextElement = {
+      id: `el-${Date.now()}`,
+      kind: "image",
+      src,
+      size: 2,
+      style: "chip",
+      text: name,
+      zone: "centre",
+      timingMode: "fixed",
+      anchorPhrase: "",
+      start: 0,
+      duration: 4,
+      staysUntil: "seconds",
+      animation: "fade",
+    };
+    update({ elements: [...state.elements, el] });
+    setSelectedEl(el.id);
+  };
+
+  /** Timeline drag handler — moving or trimming a clip pins it to a fixed time. */
+  const retimeElement = (id: string, start: number, end: number) => {
+    const target = state.elements.find((e) => e.id === id);
+    if (!target) return;
+    patchElement(id, {
+      timingMode: "fixed",
+      staysUntil: "seconds",
+      start: Math.max(0, Number(start.toFixed(1))),
+      duration: Math.max(0.5, Number((end - start).toFixed(1))),
+    });
   };
 
   const patchElement = (id: string, patch: Partial<VideoTextElement>) =>
@@ -789,10 +1050,6 @@ export function VideoGenerationBlock({
           <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
           {formatTime(total)}
         </span>
-        <span className="flex items-center gap-1.5 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
-          <Coins className="w-3 h-3" aria-hidden="true" focusable="false" />
-          {cost} credits to generate
-        </span>
         <Button
           size="sm"
           className="rounded-full h-8"
@@ -849,13 +1106,13 @@ export function VideoGenerationBlock({
             compact
             selectedId={selectedEl}
             onSelect={setSelectedEl}
-            showZones={tab === "avatar" || tab === "text"}
+            showZones={tab === "avatar" || tab === "media"}
             generated={state.status === "generated"}
           />
 
           {/* Free preview note */}
           <div className="flex items-center justify-end">
-            <Badge variant="secondary" className="rounded-full text-[10px] font-semibold shrink-0">Preview is free</Badge>
+            <Badge variant="secondary" className="rounded-full text-[10px] font-semibold shrink-0">Live preview</Badge>
           </div>
 
 
@@ -878,26 +1135,70 @@ export function VideoGenerationBlock({
                     start: state.avatarFullRange ? 0 : state.avatarStart,
                     end: state.avatarFullRange ? total : state.avatarEnd || total,
                     selected: false,
+                    draggable: !state.avatarFullRange,
+                    onChange: (st: number, en: number) =>
+                      update({ avatarStart: Number(st.toFixed(1)), avatarEnd: Number(en.toFixed(1)) }),
                   },
                 ],
               },
-              {
-                id: "text",
-                kind: "text",
-                header: "Graphics",
-                clips: state.elements.map((e) => {
-                  const w = elementWindow(state, e);
-                  return {
-                    id: e.id,
-                    label: e.text.split("\n")[0].slice(0, 28) || e.style,
-                    start: w.start,
-                    end: w.end,
-                    selected: selectedEl === e.id,
-                    onClick: () => { setSelectedEl(e.id); setTab("text"); },
-                  };
-                }),
-                emptyHint: "No on-screen text yet — add one from the Text panel.",
-              },
+              ...(state.logo.src
+                ? [
+                    {
+                      id: "logo",
+                      kind: "image" as const,
+                      header: "Logo",
+                      clips: [
+                        {
+                          id: "logo-clip",
+                          label: state.logo.name || "Logo",
+                          start: state.logo.fullRange ? 0 : state.logo.start,
+                          end: state.logo.fullRange ? total : state.logo.end || total,
+                          selected: false,
+                          draggable: !state.logo.fullRange,
+                          onChange: (st: number, en: number) =>
+                            update({ logo: { ...state.logo, start: Number(st.toFixed(1)), end: Number(en.toFixed(1)) } }),
+                        },
+                      ],
+                    },
+                  ]
+                : []),
+              // One track per on-screen element so every item can be timed independently
+              ...state.elements.map((e) => {
+                const w = elementWindow(state, e);
+                const kind = (e.kind ?? "text") as "text" | "shape" | "image";
+                const label =
+                  kind === "shape"
+                    ? SHAPES.find((sh) => sh.id === e.shape)?.label ?? "Shape"
+                    : e.text.split("\n")[0].slice(0, 28) || (kind === "image" ? "Image" : e.style);
+                return {
+                  id: e.id,
+                  kind,
+                  header: label,
+                  clips: [
+                    {
+                      id: e.id,
+                      label,
+                      start: w.start,
+                      end: w.end,
+                      selected: selectedEl === e.id,
+                      draggable: e.staysUntil !== "video",
+                      onClick: () => { setSelectedEl(e.id); setTab("media"); },
+                      onChange: (st: number, en: number) => retimeElement(e.id, st, en),
+                    },
+                  ],
+                };
+              }),
+              ...(state.elements.length === 0
+                ? [
+                    {
+                      id: "graphics-empty",
+                      kind: "text" as const,
+                      header: "Graphics",
+                      clips: [],
+                      emptyHint: "Nothing on screen yet — add text, a shape or an image from the Media panel.",
+                    },
+                  ]
+                : []),
             ]}
           />
 
@@ -912,14 +1213,14 @@ export function VideoGenerationBlock({
               className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
               style={{
                 width: "calc(25% - 1.5px)",
-                left: `calc(${["avatar", "speech", "text", "timing"].indexOf(tab) * 25}% + 3px)`,
+                left: `calc(${["avatar", "speech", "media", "timing"].indexOf(tab) * 25}% + 3px)`,
               }}
               aria-hidden="true"
             />
             {([
               { id: "avatar", label: "Avatar", icon: UserRound },
               { id: "speech", label: "Speech", icon: Mic2Icon },
-              { id: "text", label: "Text", icon: TypeIcon },
+              { id: "media", label: "Media", icon: Shapes },
               { id: "timing", label: "Output", icon: Captions },
             ] as const).map((t) => (
               <button
@@ -1003,11 +1304,243 @@ export function VideoGenerationBlock({
                   </>
                 )}
               </div>
+
+              {/* ---- Background (CR-01) ---- */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/40">
+                  <Palette className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1">Background</p>
+                  {state.background.mode !== "none" && (
+                    <button
+                      type="button"
+                      onClick={() => update({ background: { ...DEFAULT_BACKGROUND } })}
+                      className="text-[11px] font-medium text-muted-foreground hover:text-destructive"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="p-3 space-y-3">
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {([
+                      { id: "none", label: "Default" },
+                      { id: "color", label: "Colour" },
+                      { id: "preset", label: "Preset" },
+                      { id: "image", label: "Upload" },
+                    ] as const).map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        aria-pressed={state.background.mode === m.id}
+                        onClick={() => {
+                          if (m.id === "image") { bgInputRef.current?.click(); return; }
+                          update({ background: { ...state.background, mode: m.id } });
+                        }}
+                        className={cn(
+                          "rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                          state.background.mode === m.id
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border text-muted-foreground hover:border-primary/40"
+                        )}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {state.background.mode === "color" && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={state.background.color}
+                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                        aria-label="Background colour"
+                        className="h-8 w-12 rounded-md border border-border bg-background p-0.5 cursor-pointer"
+                      />
+                      <Input
+                        value={state.background.color}
+                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                        aria-label="Background colour hex value"
+                        className="h-8 text-xs font-mono"
+                      />
+                    </div>
+                  )}
+
+                  {state.background.mode === "preset" && (
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {CONTENT_BACKGROUNDS.filter((b) => b.id !== "default").map((b) => (
+                        <button
+                          key={b.id}
+                          type="button"
+                          aria-label={`Use ${b.label} background`}
+                          aria-pressed={state.background.presetId === b.id}
+                          onClick={() => update({ background: { ...state.background, mode: "preset", presetId: b.id } })}
+                          className={cn(
+                            "h-10 rounded-lg border transition-all",
+                            state.background.presetId === b.id
+                              ? "border-primary ring-2 ring-primary/25"
+                              : "border-border hover:border-primary/40"
+                          )}
+                          style={b.swatchStyle}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {state.background.mode === "image" && state.background.image && (
+                    <div className="flex items-center gap-2 rounded-lg border border-border p-2">
+                      <img src={state.background.image} alt="" className="w-14 h-9 rounded object-cover" />
+                      <span className="text-[11px] text-muted-foreground truncate flex-1">{state.background.imageName}</span>
+                      <Button size="sm" variant="outline" className="h-7 rounded-full text-[11px]" onClick={() => bgInputRef.current?.click()}>
+                        Replace
+                      </Button>
+                    </div>
+                  )}
+
+                  <input
+                    ref={bgInputRef}
+                    type="file"
+                    accept={SUPPORTED_IMAGE_TYPES.join(",")}
+                    className="hidden"
+                    aria-label="Upload background image"
+                    onChange={(e) => {
+                      readImage(e.target.files?.[0], (dataUrl, name) =>
+                        update({ background: { ...state.background, mode: "image", image: dataUrl, imageName: name } })
+                      );
+                      e.target.value = "";
+                    }}
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    The avatar always sits above the background. PNG, JPG, SVG or WebP up to 2 MB.
+                  </p>
+                </div>
+              </div>
+
+              {/* ---- Logo (CR-02) ---- */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/40">
+                  <ImageIcon className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1">Logo</p>
+                  {state.logo.src && (
+                    <button
+                      type="button"
+                      onClick={() => update({ logo: { ...DEFAULT_LOGO } })}
+                      className="text-[11px] font-medium text-muted-foreground hover:text-destructive"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                <div className="p-3 space-y-3">
+                  {state.logo.src ? (
+                    <div className="flex items-center gap-2 rounded-lg border border-border p-2">
+                      <img src={state.logo.src} alt="" className="w-12 h-8 object-contain" />
+                      <span className="text-[11px] text-muted-foreground truncate flex-1">{state.logo.name}</span>
+                      <Button size="sm" variant="outline" className="h-7 rounded-full text-[11px]" onClick={() => logoInputRef.current?.click()}>
+                        Replace
+                      </Button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => logoInputRef.current?.click()}
+                      className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/50 p-3 text-center transition-all"
+                    >
+                      <Upload className="w-4 h-4 mx-auto text-muted-foreground mb-1" aria-hidden="true" focusable="false" />
+                      <p className="text-xs font-medium text-foreground">Upload a logo</p>
+                      <p className="text-[11px] text-muted-foreground">PNG, JPG, SVG or WebP · up to 2 MB</p>
+                    </button>
+                  )}
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept={SUPPORTED_IMAGE_TYPES.join(",")}
+                    className="hidden"
+                    aria-label="Upload logo"
+                    onChange={(e) => {
+                      readImage(e.target.files?.[0], (dataUrl, name) =>
+                        update({ logo: { ...state.logo, src: dataUrl, name } })
+                      );
+                      e.target.value = "";
+                    }}
+                  />
+
+                  {state.logo.src && (
+                    <>
+                      <ZonePicker
+                        value={state.logo.zone}
+                        onChange={(z) => update({ logo: { ...state.logo, zone: z } })}
+                        label="Logo zone"
+                      />
+                      {state.logo.zone === state.avatarZone && (
+                        <p className="text-[11px] text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
+                          <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" aria-hidden="true" focusable="false" />
+                          The logo shares a zone with the avatar — move one of them to avoid an overlap.
+                        </p>
+                      )}
+                      <div>
+                        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Logo size</Label>
+                        <div className="mt-1.5 flex gap-1.5">
+                          {["Small", "Medium", "Large"].map((sz, i) => (
+                            <button
+                              key={sz}
+                              type="button"
+                              aria-pressed={state.logo.size === i + 1}
+                              onClick={() => update({ logo: { ...state.logo, size: i + 1 } })}
+                              className={cn(
+                                "flex-1 rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                                state.logo.size === i + 1
+                                  ? "border-primary bg-primary/10 text-primary"
+                                  : "border-border text-muted-foreground hover:border-primary/40"
+                              )}
+                            >
+                              {sz}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border border-border p-2.5">
+                        <Label htmlFor="logo-range" className="text-xs font-medium text-foreground">Show for the whole video</Label>
+                        <Switch
+                          id="logo-range"
+                          checked={state.logo.fullRange}
+                          onCheckedChange={(v) => update({ logo: { ...state.logo, fullRange: v, start: 0, end: v ? 0 : total } })}
+                        />
+                      </div>
+                      {!state.logo.fullRange && (
+                        <p className="text-[11px] text-muted-foreground">
+                          Drag the logo clip on the timeline to set exactly when it appears.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
           {tab === "speech" && (
             <div className="space-y-3">
+              {/* Voice (CR-06) */}
+              <div className="flex items-center gap-3 rounded-xl border border-border p-2.5">
+                <span className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex items-center justify-center shrink-0">
+                  {voice ? (
+                    <img src={voice.image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <Volume2 className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  )}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Voice</p>
+                  <p className="text-xs font-medium text-foreground truncate">
+                    {voice ? `${voice.name} · ${voice.language}` : "No voice selected"}
+                  </p>
+                </div>
+                <Button size="sm" variant="outline" className="rounded-full h-8 text-xs" onClick={() => setVoiceOpen(true)}>
+                  Change voice
+                </Button>
+              </div>
+
               <div className="grid grid-cols-3 gap-1.5">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
@@ -1102,7 +1635,7 @@ export function VideoGenerationBlock({
                   </p>
                   {state.scriptIsDraft && !state.scriptApproved && (
                     <Button size="sm" variant="outline" className="h-7 rounded-full text-[11px]" onClick={() => update({ scriptApproved: true })}>
-                      <Check className="w-3 h-3 mr-1" aria-hidden="true" focusable="false" /> Approve draft
+                      <Check className="w-3 h-3 mr-1" aria-hidden="true" focusable="false" /> Save
                     </Button>
                   )}
                 </div>
@@ -1139,65 +1672,150 @@ export function VideoGenerationBlock({
             </div>
           )}
 
-          {tab === "text" && (
+          {tab === "media" && (
             <div className="space-y-3">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs">
-                    <Plus className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Add on-screen text
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-[280px] p-1.5">
-                  <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
-                    Fonts and colours come from the workspace brand kit.
-                  </p>
-                  <div className="max-h-[260px] overflow-y-auto thin-scrollbar">
-                    {TEXT_STYLES.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => addElement(s.id)}
-                        className="w-full text-left rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-foreground">{s.label}</span>
-                          <span className="text-[10px] text-muted-foreground">{s.limit} chars</span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground">{s.purpose}</p>
-                      </button>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              {state.elements.length === 0 && (
-                <p className="text-[11px] text-muted-foreground">
-                  On-screen labels carry a term, a number or a name — captions handle the full narration.
-                </p>
-              )}
-
-              <div className="space-y-1.5">
-                {state.elements.map((e) => (
+              {/* Sub-section switch */}
+              <div className="grid grid-cols-3 gap-1.5">
+                {([
+                  { id: "text", label: "Text", icon: TypeIcon },
+                  { id: "shapes", label: "Shapes", icon: Shapes },
+                  { id: "images", label: "Images", icon: ImageIcon },
+                ] as const).map((sct) => (
                   <button
-                    key={e.id}
+                    key={sct.id}
                     type="button"
-                    onClick={() => setSelectedEl(e.id)}
+                    onClick={() => setMediaSection(sct.id)}
+                    aria-pressed={mediaSection === sct.id}
                     className={cn(
-                      "w-full flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-all",
-                      selectedEl === e.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                      "rounded-full border py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all",
+                      mediaSection === sct.id
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40"
                     )}
                   >
-                    <TypeIcon className="w-3 h-3 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
-                    <span className="text-xs text-foreground truncate flex-1">{e.text.split("\n")[0] || e.style}</span>
-                    <span className="text-[10px] text-muted-foreground shrink-0">{formatTime(elementWindow(state, e).start)}</span>
+                    <sct.icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    {sct.label}
                   </button>
                 ))}
               </div>
 
-              {el && elDef && (
+              {mediaSection === "text" && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs">
+                      <Plus className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Add on-screen text
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-[280px] p-1.5">
+                    <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
+                      Fonts and colours come from the workspace brand kit.
+                    </p>
+                    <div className="max-h-[260px] overflow-y-auto thin-scrollbar">
+                      {TEXT_STYLES.map((st) => (
+                        <button
+                          key={st.id}
+                          type="button"
+                          onClick={() => addElement(st.id)}
+                          className="w-full text-left rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-foreground">{st.label}</span>
+                            <span className="text-[10px] text-muted-foreground">{st.limit} chars</span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground">{st.purpose}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
+
+              {mediaSection === "shapes" && (
+                <div className="grid grid-cols-4 gap-1.5">
+                  {SHAPES.map((sh) => {
+                    const rotate = sh.id === "arrow-left" ? "rotate-180" : sh.id === "arrow-up" ? "-rotate-90" : sh.id === "arrow-down" ? "rotate-90" : "";
+                    return (
+                      <button
+                        key={sh.id}
+                        type="button"
+                        onClick={() => addShape(sh.id)}
+                        aria-label={`Add ${sh.label}`}
+                        className="rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 p-2 flex flex-col items-center gap-1 transition-all"
+                      >
+                        <sh.icon className={cn("w-4 h-4 text-foreground", rotate)} aria-hidden="true" focusable="false" />
+                        <span className="text-[9px] text-muted-foreground text-center leading-tight">{sh.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {mediaSection === "images" && (
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/50 p-4 text-center transition-all"
+                  >
+                    <Upload className="w-4 h-4 mx-auto text-muted-foreground mb-1" aria-hidden="true" focusable="false" />
+                    <p className="text-xs font-medium text-foreground">Add an image to the frame</p>
+                    <p className="text-[11px] text-muted-foreground">PNG, JPG, SVG or WebP · up to 2 MB</p>
+                  </button>
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept={SUPPORTED_IMAGE_TYPES.join(",")}
+                    className="hidden"
+                    aria-label="Upload on-screen image"
+                    onChange={(e) => {
+                      readImage(e.target.files?.[0], (dataUrl, name) => addImage(dataUrl, name));
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
+              )}
+
+              {state.elements.length === 0 && (
+                <p className="text-[11px] text-muted-foreground">
+                  Text, shapes and images all sit on their own timeline track — drag a clip to change when it appears.
+                </p>
+              )}
+
+              <div className="space-y-1.5">
+                {state.elements.map((e) => {
+                  const Icon = e.kind === "shape" ? Shapes : e.kind === "image" ? ImageIcon : TypeIcon;
+                  const label =
+                    e.kind === "shape"
+                      ? SHAPES.find((sh) => sh.id === e.shape)?.label ?? "Shape"
+                      : e.text.split("\n")[0] || e.style;
+                  return (
+                    <button
+                      key={e.id}
+                      type="button"
+                      onClick={() => setSelectedEl(e.id)}
+                      className={cn(
+                        "w-full flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-all",
+                        selectedEl === e.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                      )}
+                    >
+                      <Icon className="w-3 h-3 text-muted-foreground shrink-0" aria-hidden="true" focusable="false" />
+                      <span className="text-xs text-foreground truncate flex-1">{label}</span>
+                      <span className="text-[10px] text-muted-foreground shrink-0">{formatTime(elementWindow(state, e).start)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {el && (
                 <div className="rounded-xl border border-border p-3 space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-foreground">{elDef.label}</p>
+                    <p className="text-xs font-semibold text-foreground">
+                      {el.kind === "shape"
+                        ? SHAPES.find((sh) => sh.id === el.shape)?.label
+                        : el.kind === "image"
+                          ? "Image"
+                          : elDef?.label}
+                    </p>
                     <button
                       type="button"
                       onClick={() => { update({ elements: state.elements.filter((x) => x.id !== el.id) }); setSelectedEl(null); }}
@@ -1208,17 +1826,79 @@ export function VideoGenerationBlock({
                     </button>
                   </div>
 
-                  <div>
-                    <Label htmlFor="el-text" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Text</Label>
-                    <Textarea
-                      id="el-text"
-                      value={el.text}
-                      maxLength={elDef.limit}
-                      onChange={(ev) => patchElement(el.id, { text: ev.target.value })}
-                      className="mt-1 min-h-[56px] text-xs"
-                    />
-                    <p className="text-[10px] text-muted-foreground mt-1 text-right">{el.text.length}/{elDef.limit}</p>
-                  </div>
+                  {(el.kind ?? "text") === "text" && elDef && (
+                    <div>
+                      <Label htmlFor="el-text" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Text</Label>
+                      <Textarea
+                        id="el-text"
+                        value={el.text}
+                        maxLength={elDef.limit}
+                        onChange={(ev) => patchElement(el.id, { text: ev.target.value })}
+                        className="mt-1 min-h-[56px] text-xs"
+                      />
+                      <p className="text-[10px] text-muted-foreground mt-1 text-right">{el.text.length}/{elDef.limit}</p>
+                    </div>
+                  )}
+
+                  {el.kind === "shape" && (
+                    <>
+                      {el.shape === "comment" && (
+                        <div>
+                          <Label htmlFor="shape-text" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Note</Label>
+                          <Input
+                            id="shape-text"
+                            value={el.text}
+                            maxLength={60}
+                            onChange={(ev) => patchElement(el.id, { text: ev.target.value })}
+                            className="h-8 mt-1 text-xs"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Colour</Label>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                          {SHAPE_COLOURS.map((c) => (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => patchElement(el.id, { color: c })}
+                              aria-label={`Use colour ${c}`}
+                              aria-pressed={el.color === c}
+                              className={cn(
+                                "w-7 h-7 rounded-full border transition-all",
+                                el.color === c ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40"
+                              )}
+                              style={{ backgroundColor: c }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {(el.kind === "shape" || el.kind === "image") && (
+                    <div>
+                      <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Size</Label>
+                      <div className="mt-1.5 flex gap-1.5">
+                        {["Small", "Medium", "Large"].map((sz, i) => (
+                          <button
+                            key={sz}
+                            type="button"
+                            onClick={() => patchElement(el.id, { size: i + 1 })}
+                            aria-pressed={(el.size ?? 2) === i + 1}
+                            className={cn(
+                              "flex-1 rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                              (el.size ?? 2) === i + 1
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border text-muted-foreground hover:border-primary/40"
+                            )}
+                          >
+                            {sz}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <ZonePicker value={el.zone} onChange={(z) => patchElement(el.id, { zone: z })} label="Zone" />
 
@@ -1289,11 +1969,6 @@ export function VideoGenerationBlock({
                       </Select>
                     </div>
                   </div>
-
-                  <p className="text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                    <Check className="w-3 h-3" aria-hidden="true" focusable="false" />
-                    Restyling and re-timing never costs a generate.
-                  </p>
                 </div>
               )}
             </div>
@@ -1301,39 +1976,23 @@ export function VideoGenerationBlock({
 
           {tab === "timing" && (
             <div className="space-y-3">
-              {[
-                { key: "captions" as const, icon: Captions, label: "Captions", hint: "Generated from the script, free" },
-                { key: "writtenVersion" as const, icon: FileText, label: "Written version", hint: "Readable and searchable across the course" },
-                { key: "audioOnly" as const, icon: Eye, label: "Audio-only version", hint: "For learners on poor connections" },
-              ].map((o) => (
-                <div key={o.key} className="flex items-start gap-2.5 rounded-xl border border-border p-2.5">
-                  <o.icon className="w-4 h-4 text-muted-foreground mt-0.5" aria-hidden="true" focusable="false" />
-                  <div className="flex-1 min-w-0">
-                    <Label htmlFor={`opt-${o.key}`} className="text-xs font-medium text-foreground">{o.label}</Label>
-                    <p className="text-[11px] text-muted-foreground">{o.hint}</p>
-                  </div>
-                  <Switch id={`opt-${o.key}`} checked={state[o.key]} onCheckedChange={(v) => update({ [o.key]: v } as Partial<VideoGenState>)} />
+              <div className="flex items-start gap-2.5 rounded-xl border border-border p-2.5">
+                <Captions className="w-4 h-4 text-muted-foreground mt-0.5" aria-hidden="true" focusable="false" />
+                <div className="flex-1 min-w-0">
+                  <Label htmlFor="opt-captions" className="text-xs font-medium text-foreground">Captions</Label>
+                  <p className="text-[11px] text-muted-foreground">Generated from the script and shown in the player</p>
                 </div>
-              ))}
+                <Switch id="opt-captions" checked={state.captions} onCheckedChange={(v) => update({ captions: v })} />
+              </div>
 
-              <div className="rounded-xl border border-border overflow-hidden">
-                <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted/40">
-                  What costs money
-                </p>
-                <div className="p-3 space-y-2">
-                  <p className="text-[11px] text-foreground flex items-start gap-1.5">
-                    <Check className="w-3 h-3 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" focusable="false" />
-                    Free: browsing avatars, sample clips, writing or drafting the script, previewing, moving the avatar, adding or re-timing text.
-                  </p>
-                  <p className="text-[11px] text-foreground flex items-start gap-1.5">
-                    <Coins className="w-3 h-3 mt-0.5 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" focusable="false" />
-                    Paid: generating the video, and generating again after a change to the script, avatar, voice, pace or language.
-                  </p>
-                </div>
+              <div className="rounded-xl border border-border p-3 space-y-1.5">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Summary</p>
+                <p className="text-xs text-foreground">{avatar ? avatar.name : "No avatar"} · {voice?.name ?? "No voice"} · {formatTime(total)}</p>
+                <p className="text-[11px] text-muted-foreground">{state.elements.length} on-screen element{state.elements.length === 1 ? "" : "s"}{state.logo.src ? " · logo applied" : ""}{state.background.mode !== "none" ? " · custom background" : ""}</p>
               </div>
 
               {state.status === "generated" && (
-                <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs" onClick={() => toast({ title: "Download prepared", description: "A plain file loses captions, the written version and course search." })}>
+                <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs" onClick={() => toast({ title: "Download prepared", description: "A plain file loses captions and in-course search." })}>
                   <Download className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Download video file
                 </Button>
               )}
@@ -1347,6 +2006,16 @@ export function VideoGenerationBlock({
 
 
 
+      <VoiceLibraryDialog
+        open={voiceOpen}
+        onOpenChange={setVoiceOpen}
+        voices={VOICE_LIBRARY}
+        currentVoiceId={state.voiceId}
+        favourites={[]}
+        onToggleFavourite={() => {}}
+        onSelect={(id) => { update({ voiceId: id }); setVoiceOpen(false); }}
+      />
+
       <AvatarLibraryDialog
         open={libraryOpen}
         onOpenChange={setLibraryOpen}
@@ -1359,7 +2028,7 @@ export function VideoGenerationBlock({
         <DialogContent className="max-w-[520px]">
           <DialogHeader>
             <DialogTitle>Generate this video</DialogTitle>
-            <DialogDescription>Everything is checked and priced before anything runs.</DialogDescription>
+            <DialogDescription>Everything is checked before the video is built.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-2">
@@ -1375,17 +2044,8 @@ export function VideoGenerationBlock({
 
           <div className="rounded-xl border border-border p-3 space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Estimated cost</span>
-              <span className="font-semibold text-foreground">{cost} credits · {formatTime(total)}</span>
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-                <span>Team allowance this month</span>
-                <span>{Math.round(ALLOWANCE_MINUTES - USED_MINUTES)} of {ALLOWANCE_MINUTES} min left</span>
-              </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-primary" style={{ width: `${(USED_MINUTES / ALLOWANCE_MINUTES) * 100}%` }} />
-              </div>
+              <span className="text-muted-foreground">Estimated length</span>
+              <span className="font-semibold text-foreground">{formatTime(total)}</span>
             </div>
             <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
               <ShieldCheck className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -1397,7 +2057,7 @@ export function VideoGenerationBlock({
             <Button variant="outline" className="rounded-full" onClick={() => setGenerateOpen(false)}>Cancel</Button>
             <Button className="rounded-full" disabled={!ready} onClick={runGenerate}>
               <Sparkles className="w-4 h-4 mr-1.5" aria-hidden="true" focusable="false" />
-              Generate for {cost} credits
+              Generate video
             </Button>
           </div>
         </DialogContent>
@@ -1423,16 +2083,25 @@ type NleClip = {
   start: number;
   end: number;
   selected?: boolean;
+  draggable?: boolean;
   onClick?: () => void;
+  onChange?: (start: number, end: number) => void;
 };
 
 type NleTrack = {
   id: string;
-  kind: "avatar" | "text";
+  kind: "avatar" | "text" | "shape" | "image";
   header: string;
   clips: NleClip[];
   emptyHint?: string;
 };
+
+const TRACK_ICON = {
+  avatar: UserRound,
+  text: TypeIcon,
+  shape: Shapes,
+  image: ImageIcon,
+} as const;
 
 function NleTimeline({
   total,
@@ -1491,26 +2160,29 @@ function NleTimeline({
         {/* Track headers */}
         <div className="w-[124px] shrink-0 border-r border-border bg-muted/25">
           <div className="h-6 border-b border-border" aria-hidden="true" />
-          {tracks.map((tr) => (
+          {tracks.map((tr, i) => (
             <div
               key={tr.id}
               className="h-[46px] flex items-center gap-2 px-2.5 border-b border-border/70 last:border-b-0"
             >
-              <span
-                className={cn(
-                  "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0",
-                  tr.kind === "avatar" ? "bg-primary/20 text-primary" : "bg-foreground/10 text-foreground"
-                )}
-                aria-hidden="true"
-              >
-                {tr.kind === "avatar"
-                  ? <UserRound className="w-3 h-3" aria-hidden="true" focusable="false" />
-                  : <TypeIcon className="w-3 h-3" aria-hidden="true" focusable="false" />}
-              </span>
+              {(() => {
+                const Icon = TRACK_ICON[tr.kind];
+                return (
+                  <span
+                    className={cn(
+                      "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0",
+                      tr.kind === "avatar" ? "bg-primary/20 text-primary" : "bg-foreground/10 text-foreground"
+                    )}
+                    aria-hidden="true"
+                  >
+                    <Icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                  </span>
+                );
+              })()}
               <span className="min-w-0 flex-1">
                 <span className="block text-[11px] font-semibold text-foreground truncate">{tr.header}</span>
                 <span className="block text-[9px] uppercase tracking-wider text-muted-foreground">
-                  {tr.kind === "avatar" ? "V1" : "V2"}
+                  V{i + 1}
                 </span>
               </span>
             </div>
@@ -1568,14 +2240,68 @@ function NleTimeline({
               {tr.clips.map((c) => {
                 const left = (c.start / safeTotal) * 100;
                 const width = Math.max(((c.end - c.start) / safeTotal) * 100, 3);
+
+                /** Drag the clip body (move) or an edge handle (trim), clamped to the video. */
+                const beginDrag = (
+                  e: React.PointerEvent,
+                  mode: "move" | "left" | "right"
+                ) => {
+                  if (!c.draggable || !c.onChange) return;
+                  e.stopPropagation();
+                  e.preventDefault();
+                  const area = trackAreaRef.current;
+                  if (!area) return;
+                  const rect = area.getBoundingClientRect();
+                  const startX = e.clientX;
+                  const s0 = c.start;
+                  const e0 = c.end;
+                  const toSec = (dx: number) => (dx / rect.width) * safeTotal;
+
+                  const onMove = (ev: PointerEvent) => {
+                    const d = toSec(ev.clientX - startX);
+                    if (mode === "move") {
+                      const len = e0 - s0;
+                      const ns = Math.min(Math.max(0, s0 + d), Math.max(0, safeTotal - len));
+                      c.onChange!(ns, ns + len);
+                    } else if (mode === "left") {
+                      const ns = Math.min(Math.max(0, s0 + d), e0 - 0.5);
+                      c.onChange!(ns, e0);
+                    } else {
+                      const ne = Math.max(Math.min(safeTotal, e0 + d), s0 + 0.5);
+                      c.onChange!(s0, ne);
+                    }
+                  };
+                  const onUp = () => {
+                    window.removeEventListener("pointermove", onMove);
+                    window.removeEventListener("pointerup", onUp);
+                  };
+                  window.addEventListener("pointermove", onMove);
+                  window.addEventListener("pointerup", onUp);
+                };
+
                 return (
-                  <button
+                  <div
                     key={c.id}
-                    type="button"
-                    onPointerDown={(e) => e.stopPropagation()}
+                    role="button"
+                    tabIndex={0}
+                    onPointerDown={(e) => { e.stopPropagation(); beginDrag(e, "move"); }}
                     onClick={c.onClick}
-                    disabled={!c.onClick}
-                    aria-label={`${c.label}, ${formatTime(c.start)} to ${formatTime(c.end)}`}
+                    onKeyDown={(ev) => {
+                      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); c.onClick?.(); return; }
+                      if (!c.draggable || !c.onChange) return;
+                      const len = c.end - c.start;
+                      if (ev.key === "ArrowLeft") {
+                        ev.preventDefault();
+                        const ns = Math.max(0, c.start - 0.5);
+                        c.onChange(ns, ns + len);
+                      }
+                      if (ev.key === "ArrowRight") {
+                        ev.preventDefault();
+                        const ns = Math.min(safeTotal - len, c.start + 0.5);
+                        c.onChange(ns, ns + len);
+                      }
+                    }}
+                    aria-label={`${c.label}, ${formatTime(c.start)} to ${formatTime(c.end)}${c.draggable ? ". Drag or use the arrow keys to move it." : ""}`}
                     className={cn(
                       "group absolute top-[5px] bottom-[5px] rounded-[6px] overflow-hidden text-left transition-shadow",
                       "border",
@@ -1583,10 +2309,25 @@ function NleTimeline({
                         ? "border-primary/60 bg-gradient-to-b from-primary/70 to-primary/40"
                         : "border-foreground/25 bg-gradient-to-b from-foreground/35 to-foreground/20",
                       c.selected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
-                      c.onClick && "hover:brightness-110"
+                      c.draggable ? "cursor-grab active:cursor-grabbing" : "cursor-default",
+                      (c.onClick || c.draggable) && "hover:brightness-110"
                     )}
                     style={{ left: `${left}%`, width: `${Math.min(width, 100 - left)}%` }}
                   >
+                    {c.draggable && (
+                      <>
+                        <span
+                          role="presentation"
+                          onPointerDown={(e) => beginDrag(e, "left")}
+                          className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                        <span
+                          role="presentation"
+                          onPointerDown={(e) => beginDrag(e, "right")}
+                          className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize bg-background/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                      </>
+                    )}
                     {/* clip top strip */}
                     <span
                       className={cn(
@@ -1595,12 +2336,12 @@ function NleTimeline({
                       )}
                       aria-hidden="true"
                     />
-                    <span className="absolute inset-0 flex items-center px-2 pt-[3px]">
+                    <span className="absolute inset-0 flex items-center px-2.5 pt-[3px] pointer-events-none">
                       <span className="text-[10px] font-semibold text-background dark:text-foreground truncate drop-shadow-sm">
                         {c.label}
                       </span>
                     </span>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -1716,7 +2457,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         </button>
       </div>
 
-      {state.writtenVersion && state.script && (
+      {state.script && (
         <div className="border-t border-border">
           <button
             type="button"
