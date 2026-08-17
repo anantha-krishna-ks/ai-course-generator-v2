@@ -183,6 +183,9 @@ export interface VideoLogo {
   fullRange: boolean;
   start: number;
   end: number;
+  /** free placement on the stage — percent of stage width/height (centre) */
+  x?: number;
+  y?: number;
 }
 
 export interface VideoTextElement {
@@ -216,6 +219,9 @@ export interface VideoGenState {
   avatarFullRange: boolean;
   avatarStart: number;
   avatarEnd: number;
+  /** free placement on the stage — percent of stage width/height (centre) */
+  avatarX?: number;
+  avatarY?: number;
   source: "ai" | "self" | "upload";
   aiTopic: string;
   script: string;
@@ -382,61 +388,131 @@ function TextElementChip({
   el: VideoTextElement;
   compact?: boolean;
 }) {
-  const base = "pointer-events-none max-w-[70%] shadow-lg";
+  const base = "pointer-events-none max-w-[70%] [overflow-wrap:anywhere]";
+  /** soft, single-source lighting instead of a hard drop shadow */
+  const lift = { boxShadow: "0 8px 24px -12px hsl(222 47% 6% / 0.45)" } as CSSProperties;
+  const inkGlow = { textShadow: "0 1px 2px hsl(222 47% 6% / 0.35)" } as CSSProperties;
+
   switch (el.style) {
     case "title":
       return (
-        <span className={cn(base, "font-bold tracking-tight text-primary-foreground drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]", compact ? "text-base" : "text-3xl")}>
+        <span
+          style={inkGlow}
+          className={cn(
+            base,
+            "block font-semibold tracking-[-0.02em] leading-tight text-primary-foreground",
+            compact ? "text-base" : "text-[2rem]"
+          )}
+        >
           {el.text}
         </span>
       );
     case "subtitle":
       return (
-        <span className={cn(base, "font-medium text-primary-foreground/90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]", compact ? "text-[10px]" : "text-lg")}>
+        <span
+          style={inkGlow}
+          className={cn(
+            base,
+            "block font-medium tracking-tight text-primary-foreground/85",
+            compact ? "text-[10px]" : "text-lg"
+          )}
+        >
           {el.text}
         </span>
       );
     case "bullets":
       return (
-        <div className={cn(base, "rounded-xl bg-background/90 backdrop-blur-md border border-border px-3 py-2 space-y-1", compact ? "text-[9px]" : "text-sm")}>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "rounded-2xl bg-background/70 backdrop-blur-xl border border-primary-foreground/15 px-4 py-3 space-y-1.5",
+            compact ? "text-[9px] px-2.5 py-2" : "text-sm"
+          )}
+        >
           {el.text.split("\n").slice(0, 4).map((line, i) => (
-            <div key={i} className="flex items-start gap-1.5 text-foreground">
-              <span className="mt-[6px] w-1 h-1 rounded-full bg-primary shrink-0" aria-hidden="true" />
-              <span className="[overflow-wrap:anywhere]">{line}</span>
+            <div key={i} className="flex items-start gap-2 text-foreground">
+              <span
+                className="mt-[7px] w-1.5 h-1.5 rounded-full bg-gradient-to-br from-primary to-primary/50 shrink-0"
+                aria-hidden="true"
+              />
+              <span>{line}</span>
             </div>
           ))}
         </div>
       );
     case "bubble":
       return (
-        <div className={cn(base, "relative rounded-2xl bg-background/95 border border-border px-3 py-2 text-foreground", compact ? "text-[9px]" : "text-sm")}>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "relative rounded-2xl bg-background/85 backdrop-blur-xl border border-primary-foreground/15 text-foreground",
+            compact ? "text-[9px] px-2.5 py-1.5" : "text-sm px-4 py-2.5"
+          )}
+        >
           {el.text}
-          <span className="absolute -bottom-1 left-5 w-2.5 h-2.5 rotate-45 bg-background border-b border-r border-border" aria-hidden="true" />
+          <span
+            className="absolute -bottom-1 left-5 w-2.5 h-2.5 rotate-45 bg-background/85 border-b border-r border-primary-foreground/15"
+            aria-hidden="true"
+          />
         </div>
       );
     case "chip":
       return (
-        <span className={cn(base, "rounded-full bg-primary text-primary-foreground font-semibold px-3 py-1", compact ? "text-[9px]" : "text-sm")}>
+        <span
+          style={lift}
+          className={cn(
+            base,
+            "inline-flex items-center rounded-full bg-gradient-to-b from-primary to-primary/80 text-primary-foreground font-semibold tracking-tight border border-primary-foreground/20",
+            compact ? "text-[9px] px-2.5 py-0.5" : "text-sm px-4 py-1.5"
+          )}
+        >
           {el.text}
         </span>
       );
     case "lower-third":
       return (
-        <div className={cn(base, "rounded-md bg-primary/90 text-primary-foreground px-3 py-1.5 border-l-4 border-primary-foreground/70", compact ? "text-[9px]" : "text-sm")}>
-          <span className="font-semibold">{el.text}</span>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/95 to-primary/70 backdrop-blur-md text-primary-foreground pl-4 pr-5",
+            compact ? "text-[9px] py-1.5" : "text-sm py-2.5"
+          )}
+        >
+          <span
+            className="absolute left-0 top-0 bottom-0 w-1 rounded-full bg-primary-foreground/80"
+            aria-hidden="true"
+          />
+          <span className="font-semibold tracking-tight">{el.text}</span>
         </div>
       );
     case "callout":
       return (
-        <div className={cn(base, "flex items-center gap-1.5 rounded-lg bg-accent text-accent-foreground px-2.5 py-1.5 font-medium", compact ? "text-[9px]" : "text-sm")}>
-          <span aria-hidden="true">➜</span>
+        <div
+          style={lift}
+          className={cn(
+            base,
+            "flex items-center gap-2 rounded-xl bg-background/80 backdrop-blur-xl border border-primary/25 text-foreground font-medium",
+            compact ? "text-[9px] px-2.5 py-1.5" : "text-sm px-3.5 py-2"
+          )}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
           {el.text}
         </div>
       );
     case "quote":
     default:
       return (
-        <span className={cn(base, "italic text-primary-foreground border-l-2 border-primary pl-3", compact ? "text-[9px]" : "text-base")}>
+        <span
+          style={inkGlow}
+          className={cn(
+            base,
+            "block italic font-light text-primary-foreground/95 border-l-2 border-primary-foreground/50 pl-4",
+            compact ? "text-[9px]" : "text-lg leading-snug"
+          )}
+        >
           “{el.text}”
         </span>
       );
@@ -455,30 +531,51 @@ export function backgroundStyle(bg: VideoBackground | undefined): CSSProperties 
 
 const SHAPE_SIZE_PCT = [10, 16, 24];
 
+/** glossy fill: a soft top-light sheen laid over the chosen colour */
+const glossFill = (colour: string) =>
+  `linear-gradient(155deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.08) 42%, rgba(0,0,0,0.10) 100%), ${colour}`;
+const glossShadow = (colour: string) =>
+  `0 14px 30px -12px ${colour}99, 0 1px 0 0 rgba(255,255,255,0.35) inset`;
+
 function ShapeGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }) {
   const colour = el.color ?? "#3B82F6";
   const pct = SHAPE_SIZE_PCT[(el.size ?? 2) - 1] ?? 16;
   const px = (compact ? 2.6 : 5.2) * pct;
   const common = { width: px, height: px } as CSSProperties;
+  const gradId = `shape-grad-${el.id}`;
 
   switch (el.shape) {
     case "circle":
-      return <span className="block rounded-full shadow-lg" style={{ ...common, backgroundColor: colour, opacity: 0.9 }} />;
+      return (
+        <span
+          className="block rounded-full"
+          style={{ ...common, background: glossFill(colour), boxShadow: glossShadow(colour) }}
+        />
+      );
     case "triangle":
       return (
         <span
-          className="block shadow-lg"
-          style={{ ...common, backgroundColor: colour, opacity: 0.9, clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
+          className="block"
+          style={{
+            ...common,
+            background: glossFill(colour),
+            clipPath: "polygon(50% 4%, 96% 94%, 4% 94%)",
+            filter: `drop-shadow(0 10px 18px ${colour}66)`,
+          }}
         />
       );
     case "comment":
       return (
         <span
-          className="relative flex items-center justify-center rounded-xl shadow-lg text-background px-3 py-2"
-          style={{ backgroundColor: colour, minWidth: px }}
+          className="relative flex items-center justify-center rounded-2xl px-3.5 py-2 border border-white/25"
+          style={{ background: glossFill(colour), minWidth: px, boxShadow: glossShadow(colour) }}
         >
           <span className={cn("font-medium text-primary-foreground", compact ? "text-[9px]" : "text-sm")}>{el.text}</span>
-          <span className="absolute -bottom-1 left-4 w-2.5 h-2.5 rotate-45" style={{ backgroundColor: colour }} aria-hidden="true" />
+          <span
+            className="absolute -bottom-1 left-4 w-2.5 h-2.5 rotate-45"
+            style={{ background: colour }}
+            aria-hidden="true"
+          />
         </span>
       );
     case "arrow-right":
@@ -487,16 +584,36 @@ function ShapeGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }
     case "arrow-down": {
       const rotate = { "arrow-right": 0, "arrow-left": 180, "arrow-up": -90, "arrow-down": 90 }[el.shape] ?? 0;
       return (
-        <span className="block shadow-lg" style={{ ...common, transform: `rotate(${rotate}deg)` }}>
+        <span
+          className="block"
+          style={{ ...common, transform: `rotate(${rotate}deg)`, filter: `drop-shadow(0 10px 18px ${colour}66)` }}
+        >
           <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false">
-            <path d="M2 9h12V4l8 8-8 8v-5H2z" fill={colour} opacity="0.92" />
+            <defs>
+              <linearGradient id={gradId} x1="0" y1="0" x2="0.6" y2="1">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
+                <stop offset="45%" stopColor={colour} />
+                <stop offset="100%" stopColor={colour} stopOpacity="0.85" />
+              </linearGradient>
+            </defs>
+            <path d="M2 9.2h11.4V4.4l8.2 7.6-8.2 7.6v-4.8H2z" fill={`url(#${gradId})`} />
           </svg>
         </span>
       );
     }
     case "rectangle":
     default:
-      return <span className="block rounded-md shadow-lg" style={{ ...common, height: px * 0.6, backgroundColor: colour, opacity: 0.9 }} />;
+      return (
+        <span
+          className="block rounded-xl"
+          style={{
+            ...common,
+            height: px * 0.6,
+            background: glossFill(colour),
+            boxShadow: glossShadow(colour),
+          }}
+        />
+      );
   }
 }
 
@@ -505,16 +622,49 @@ function ImageGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }
   const px = (compact ? 2.6 : 5.2) * pct;
   if (!el.src) return null;
   return (
-    <img
-      src={el.src}
-      alt={el.text || "On-screen image"}
-      style={{ width: px }}
-      className="rounded-lg object-contain shadow-lg"
-    />
+    <span
+      className="relative block rounded-2xl overflow-hidden ring-1 ring-white/25"
+      style={{ width: px, boxShadow: "0 18px 36px -16px hsl(222 47% 6% / 0.6)" }}
+    >
+      <img src={el.src} alt={el.text || "On-screen image"} className="w-full h-auto object-contain" />
+      <span
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(150deg,rgba(255,255,255,0.28),transparent_45%)]"
+        aria-hidden="true"
+      />
+    </span>
   );
 }
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+/** Shared pointer-drag: reports new centre position in stage percentages. */
+function startFreeDrag(
+  e: React.PointerEvent,
+  stage: HTMLDivElement | null,
+  from: { x: number; y: number },
+  onMove: (x: number, y: number) => void,
+  onEnd?: () => void
+) {
+  if (!stage) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const rect = stage.getBoundingClientRect();
+  const originX = e.clientX;
+  const originY = e.clientY;
+  const move = (ev: PointerEvent) => {
+    onMove(
+      clamp(from.x + ((ev.clientX - originX) / rect.width) * 100, 2, 98),
+      clamp(from.y + ((ev.clientY - originY) / rect.height) * 100, 2, 98)
+    );
+  };
+  const up = () => {
+    onEnd?.();
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", up);
+  };
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", up);
+}
 
 /** Free move + resize wrapper for an on-stage element. */
 function StageElement({
@@ -678,6 +828,7 @@ export function VideoStage({
   selectedId,
   onSelect,
   onPatchElement,
+  onPatchState,
   showZones,
   generated,
 }: {
@@ -687,6 +838,7 @@ export function VideoStage({
   selectedId?: string | null;
   onSelect?: (id: string | null) => void;
   onPatchElement?: (id: string, patch: Partial<VideoTextElement>) => void;
+  onPatchState?: (patch: Partial<VideoGenState>) => void;
   showZones?: boolean;
   generated?: boolean;
 }) {
@@ -699,6 +851,65 @@ export function VideoStage({
     state.avatarFullRange || (time >= state.avatarStart && time <= (state.avatarEnd || total));
 
   const sizePct = [18, 26, 36][state.avatarSize - 1] ?? 26;
+  const logoPct = [8, 12, 18][state.logo?.size - 1] ?? 12;
+  const canMove = Boolean(onPatchState);
+  const avatarFree = state.avatarX !== undefined && state.avatarY !== undefined;
+  const logoFree = state.logo?.x !== undefined && state.logo?.y !== undefined;
+
+  const freeStyle = (x?: number, y?: number): CSSProperties => ({
+    left: `${x}%`,
+    top: `${y}%`,
+    transform: "translate(-50%, -50%)",
+  });
+
+  /** current centre of a zone-placed node, so dragging starts where it sits */
+  const centreOf = (node: HTMLElement): { x: number; y: number } => {
+    const stage = stageRef.current?.getBoundingClientRect();
+    const box = node.getBoundingClientRect();
+    if (!stage) return { x: 50, y: 50 };
+    return {
+      x: clamp(((box.left + box.width / 2 - stage.left) / stage.width) * 100, 2, 98),
+      y: clamp(((box.top + box.height / 2 - stage.top) / stage.height) * 100, 2, 98),
+    };
+  };
+
+  const dragAvatar = (e: React.PointerEvent) =>
+    startFreeDrag(
+      e,
+      stageRef.current,
+      avatarFree
+        ? { x: state.avatarX!, y: state.avatarY! }
+        : centreOf(e.currentTarget as HTMLElement),
+      (x, y) => onPatchState?.({ avatarX: x, avatarY: y })
+    );
+
+  const dragLogo = (e: React.PointerEvent) =>
+    startFreeDrag(
+      e,
+      stageRef.current,
+      logoFree
+        ? { x: state.logo.x!, y: state.logo.y! }
+        : centreOf(e.currentTarget as HTMLElement),
+      (x, y) => onPatchState?.({ logo: { ...state.logo, x, y } })
+    );
+
+  const nudge = (
+    e: React.KeyboardEvent,
+    cur: { x: number; y: number },
+    apply: (x: number, y: number) => void
+  ) => {
+    const step = e.shiftKey ? 5 : 1;
+    const map: Record<string, [number, number]> = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, -step],
+      ArrowDown: [0, step],
+    };
+    const d = map[e.key];
+    if (!d) return;
+    e.preventDefault();
+    apply(clamp(cur.x + d[0], 2, 98), clamp(cur.y + d[1], 2, 98));
+  };
 
   return (
     <div
@@ -731,16 +942,40 @@ export function VideoStage({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.35 }}
-            className={cn("pointer-events-none absolute inset-0 flex p-3", zoneClass[state.avatarZone])}
+            className={cn(
+              "absolute",
+              avatarFree ? "z-[15]" : cn("inset-0 flex p-3", zoneClass[state.avatarZone]),
+              !canMove && "pointer-events-none"
+            )}
+            style={avatarFree ? { ...freeStyle(state.avatarX, state.avatarY), width: `${sizePct}%` } : undefined}
           >
             <div
-              className="relative rounded-xl overflow-hidden ring-2 ring-primary-foreground/30 shadow-2xl"
-              style={{ width: `${sizePct}%` }}
+              role={canMove ? "button" : undefined}
+              tabIndex={canMove ? 0 : undefined}
+              aria-label={canMove ? "Avatar — drag to move, arrow keys to nudge" : undefined}
+              onPointerDown={canMove ? dragAvatar : undefined}
+              onKeyDown={
+                canMove
+                  ? (e) =>
+                      nudge(e, { x: state.avatarX ?? 50, y: state.avatarY ?? 50 }, (x, y) =>
+                        onPatchState?.({ avatarX: x, avatarY: y })
+                      )
+                  : undefined
+              }
+              className={cn(
+                "relative rounded-2xl overflow-hidden ring-1 ring-white/25",
+                canMove ? "cursor-grab touch-none select-none" : "pointer-events-none"
+              )}
+              style={{ width: avatarFree ? "100%" : `${sizePct}%`, boxShadow: "0 24px 48px -20px hsl(222 47% 6% / 0.7)" }}
             >
               <img
                 src={avatar.image}
                 alt={`${avatar.name} presenter avatar`}
                 className="w-full h-full object-cover aspect-[3/4]"
+              />
+              <span
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),transparent_40%)]"
+                aria-hidden="true"
               />
               {generated && (
                 <span className="absolute bottom-1 left-1 rounded-full bg-background/85 px-1.5 py-[1px] text-[8px] font-semibold text-foreground">
@@ -756,15 +991,36 @@ export function VideoStage({
       {state.logo?.src &&
         (state.logo.fullRange || (time >= state.logo.start && time <= (state.logo.end || total))) && (
           <div
-            className={cn("pointer-events-none absolute inset-0 flex p-3 z-10", zoneClass[state.logo.zone])}
-            aria-hidden="true"
+            className={cn(
+              "absolute z-10",
+              logoFree ? "" : cn("inset-0 flex p-3", zoneClass[state.logo.zone]),
+              !canMove && "pointer-events-none"
+            )}
+            style={logoFree ? { ...freeStyle(state.logo.x, state.logo.y), width: `${logoPct}%` } : undefined}
           >
-            <img
-              src={state.logo.src}
-              alt=""
-              style={{ width: `${[8, 12, 18][state.logo.size - 1] ?? 12}%` }}
-              className="object-contain drop-shadow-md"
-            />
+            <span
+              role={canMove ? "button" : undefined}
+              tabIndex={canMove ? 0 : undefined}
+              aria-label={canMove ? "Brand logo — drag to move, arrow keys to nudge" : undefined}
+              onPointerDown={canMove ? dragLogo : undefined}
+              onKeyDown={
+                canMove
+                  ? (e) =>
+                      nudge(e, { x: state.logo.x ?? 50, y: state.logo.y ?? 50 }, (x, y) =>
+                        onPatchState?.({ logo: { ...state.logo, x, y } })
+                      )
+                  : undefined
+              }
+              className={cn("block", canMove ? "cursor-grab touch-none select-none" : "pointer-events-none")}
+              style={{ width: logoFree ? "100%" : `${logoPct}%` }}
+            >
+              <img
+                src={state.logo.src}
+                alt=""
+                className="w-full object-contain"
+                style={{ filter: "drop-shadow(0 6px 14px hsl(222 47% 6% / 0.45))" }}
+              />
+            </span>
           </div>
         )}
 
@@ -1263,6 +1519,7 @@ export function VideoGenerationBlock({
             selectedId={selectedEl}
             onSelect={setSelectedEl}
             onPatchElement={patchElement}
+            onPatchState={update}
             showZones={tab === "avatar" || tab === "media"}
             generated={state.status === "generated"}
           />
@@ -1416,7 +1673,7 @@ export function VideoGenerationBlock({
                 </Button>
               </div>
 
-              <ZonePicker value={state.avatarZone} onChange={(z) => update({ avatarZone: z })} label="Placement zone" />
+              <ZonePicker value={state.avatarZone} onChange={(z) => update({ avatarZone: z, avatarX: undefined, avatarY: undefined })} label="Placement zone" />
               <p className="text-[11px] text-muted-foreground -mt-2">
                 Zones keep the layout predictable across languages, aspect ratios and screen sizes.
               </p>
@@ -1626,7 +1883,7 @@ export function VideoGenerationBlock({
                     <>
                       <ZonePicker
                         value={state.logo.zone}
-                        onChange={(z) => update({ logo: { ...state.logo, zone: z } })}
+                        onChange={(z) => update({ logo: { ...state.logo, zone: z, x: undefined, y: undefined } })}
                         label="Logo zone"
                       />
                       {state.logo.zone === state.avatarZone && (
