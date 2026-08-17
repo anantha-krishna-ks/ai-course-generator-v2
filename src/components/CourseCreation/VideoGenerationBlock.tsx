@@ -1141,20 +1141,35 @@ function AvatarSampleStage({
   return (
     <>
       {/* head/jaw motion driven by the live speech amplitude */}
-      <motion.img
-        src={avatar.image}
-        alt={`${avatar.name} avatar`}
-        className="w-full h-full object-cover origin-bottom"
-        style={
-          playing
-            ? {
-                transform: `scale(${1.05 + mouth * 0.012}) translateY(${-4 - mouth * 3}px) rotate(${(mouth - 0.5) * 0.5}deg)`,
-              }
-            : undefined
-        }
-        animate={playing ? undefined : { scale: 1, y: 0, x: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-      />
+      <div className="absolute inset-0 overflow-hidden">
+        <img
+          src={avatar.image}
+          alt={`${avatar.name} avatar`}
+          className="w-full h-full object-cover origin-bottom will-change-transform"
+          style={{
+            transform: playing
+              ? `scale(${(1.05 + mouth * 0.035).toFixed(4)}) translateY(${(-4 - mouth * 8).toFixed(2)}px) rotate(${((mouth - 0.5) * 1.6).toFixed(2)}deg)`
+              : "scale(1) translateY(0) rotate(0deg)",
+            transition: playing ? "transform 70ms linear" : "transform 500ms ease-out",
+          }}
+        />
+        {/* jaw squash: lower third of the face stretches with the amplitude */}
+        {playing && (
+          <img
+            src={avatar.image}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover will-change-transform pointer-events-none"
+            style={{
+              clipPath: "polygon(0 62%, 100% 62%, 100% 100%, 0 100%)",
+              transformOrigin: "50% 62%",
+              transform: `scale(${(1.05 + mouth * 0.035).toFixed(4)}) translateY(${(-4 - mouth * 8).toFixed(2)}px) rotate(${((mouth - 0.5) * 1.6).toFixed(2)}deg) scaleY(${(1 + mouth * 0.07).toFixed(4)})`,
+              transition: "transform 70ms linear",
+            }}
+          />
+        )}
+      </div>
+
 
 
       <AnimatePresence>
