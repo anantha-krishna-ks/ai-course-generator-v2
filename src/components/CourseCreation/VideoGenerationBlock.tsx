@@ -2534,7 +2534,7 @@ export function VideoGenerationBlock({
                         type="button"
                         onClick={() => addShape(sh.id)}
                         aria-label={`Add ${sh.label}`}
-                        className="rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 p-2 flex flex-col items-center gap-1 transition-all"
+                        className="group rounded-xl border border-border bg-gradient-to-b from-card to-muted/60 hover:border-primary/60 hover:from-primary/10 hover:to-primary/5 hover:shadow-[0_6px_16px_-8px_hsl(var(--primary)/0.7)] motion-safe:hover:-translate-y-0.5 p-2 flex flex-col items-center gap-1 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <sh.icon className={cn("w-4 h-4 text-foreground", rotate)} aria-hidden="true" focusable="false" />
                         <span className="text-[9px] text-muted-foreground text-center leading-tight">{sh.label}</span>
