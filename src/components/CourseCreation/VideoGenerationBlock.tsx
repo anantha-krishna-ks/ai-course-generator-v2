@@ -2321,7 +2321,7 @@ export function VideoGenerationBlock({
               </div>
 
               {/* Script source tabs */}
-              <div className="relative grid grid-cols-3 gap-1 rounded-xl border border-border bg-muted/40 p-1">
+              <div className="relative flex items-end border-b border-border">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
                   { id: "self", label: "Write myself", icon: PenLine },
@@ -2335,14 +2335,14 @@ export function VideoGenerationBlock({
                       onClick={() => update({ source: r.id })}
                       aria-pressed={active}
                       className={cn(
-                        "relative overflow-hidden rounded-lg py-2 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        "relative flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-t-lg",
                         active
-                          ? "bg-primary text-primary-foreground ring-1 ring-inset ring-primary-foreground/20"
-                          : "text-muted-foreground hover:bg-background hover:text-foreground"
+                          ? "text-primary bg-muted/60 border-x border-t border-border border-b-background -mb-px"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                       )}
                     >
-                      <r.icon className={cn("w-3.5 h-3.5 transition-colors", active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground")} aria-hidden="true" focusable="false" />
-                      <span className="relative z-10">{r.label}</span>
+                      <r.icon className={cn("w-3.5 h-3.5", active ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+                      {r.label}
                     </button>
                   );
                 })}
