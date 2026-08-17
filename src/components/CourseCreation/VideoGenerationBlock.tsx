@@ -1199,7 +1199,8 @@ function AvatarSampleStage({
                 transition={{ duration: 1.2, repeat: Infinity }}
                 aria-hidden="true"
               />
-              SAMPLE
+              {hasVoice ? "SPEAKING LIVE" : "SAMPLE"}
+
             </motion.span>
 
             {/* equaliser + timecode */}
