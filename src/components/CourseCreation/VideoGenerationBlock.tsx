@@ -62,6 +62,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
 import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
+import { readableTextColor } from "@/services/courseBrandingStore";
 import { VOICE_LIBRARY, VoiceLibraryDialog } from "@/components/CourseCreation/AIAudioBlock";
 
 import ariaImg from "@/assets/voices/aria.jpg";
@@ -1989,24 +1990,40 @@ export function VideoGenerationBlock({
 
                   {state.background.mode === "color" && (
                     <div className="space-y-2">
-                      <div className="grid grid-cols-8 gap-1.5">
-                        {STUDIO_BG_COLORS.map((c) => (
-                          <button
-                            key={c.hex}
-                            type="button"
-                            title={c.label}
-                            aria-label={`Use ${c.label} background`}
-                            aria-pressed={state.background.color?.toLowerCase() === c.hex.toLowerCase()}
-                            onClick={() => update({ background: { ...state.background, mode: "color", color: c.hex } })}
-                            className={cn(
-                              "h-7 w-full rounded-md border transition-all",
-                              state.background.color?.toLowerCase() === c.hex.toLowerCase()
-                                ? "border-primary ring-2 ring-primary/30 scale-105"
-                                : "border-border/70 hover:scale-105 hover:border-primary/40"
-                            )}
-                            style={{ background: c.hex, boxShadow: `0 2px 8px -2px ${c.hex}` }}
-                          />
-                        ))}
+                      <div className="grid grid-cols-5 gap-2">
+                        {STUDIO_BG_COLORS.map((c) => {
+                          const selected = state.background.color?.toLowerCase() === c.hex.toLowerCase();
+                          return (
+                            <button
+                              key={c.hex}
+                              type="button"
+                              title={c.label}
+                              aria-label={`Use ${c.label} background`}
+                              aria-pressed={selected}
+                              onClick={() => update({ background: { ...state.background, mode: "color", color: c.hex } })}
+                              className={cn(
+                                "group relative h-11 w-full rounded-xl border-2 transition-all duration-200",
+                                selected
+                                  ? "border-primary ring-2 ring-primary/25 scale-[1.02]"
+                                  : "border-transparent hover:scale-[1.02] hover:border-primary/30"
+                              )}
+                              style={{ background: c.hex }}
+                            >
+                              {selected && (
+                                <span className="absolute inset-0 flex items-center justify-center">
+                                  <Check
+                                    className={cn(
+                                      "w-4 h-4 drop-shadow-md",
+                                      readableTextColor(c.hex) === "#FFFFFF" ? "text-white" : "text-black"
+                                    )}
+                                    aria-hidden="true"
+                                    focusable="false"
+                                  />
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                       <div className="flex items-center gap-2">
                         <input
