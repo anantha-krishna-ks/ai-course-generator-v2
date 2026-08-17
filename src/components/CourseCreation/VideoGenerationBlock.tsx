@@ -857,7 +857,7 @@ export function VideoGenerationBlock({
       onChange(serializeVideoGenContent(next));
       return next;
     });
-    toast({ title: "Video ready", description: "Captions and the written version were generated free of charge." });
+    toast({ title: "Video ready", description: "Captions were generated alongside the video." });
   };
 
   const runGenerate = () => {
@@ -1479,6 +1479,26 @@ export function VideoGenerationBlock({
 
           {tab === "speech" && (
             <div className="space-y-3">
+              {/* Voice (CR-06) */}
+              <div className="flex items-center gap-3 rounded-xl border border-border p-2.5">
+                <span className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex items-center justify-center shrink-0">
+                  {voice ? (
+                    <img src={voice.image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <Volume2 className="w-4 h-4 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  )}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Voice</p>
+                  <p className="text-xs font-medium text-foreground truncate">
+                    {voice ? `${voice.name} · ${voice.language}` : "No voice selected"}
+                  </p>
+                </div>
+                <Button size="sm" variant="outline" className="rounded-full h-8 text-xs" onClick={() => setVoiceOpen(true)}>
+                  Change voice
+                </Button>
+              </div>
+
               <div className="grid grid-cols-3 gap-1.5">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
@@ -1573,7 +1593,7 @@ export function VideoGenerationBlock({
                   </p>
                   {state.scriptIsDraft && !state.scriptApproved && (
                     <Button size="sm" variant="outline" className="h-7 rounded-full text-[11px]" onClick={() => update({ scriptApproved: true })}>
-                      <Check className="w-3 h-3 mr-1" aria-hidden="true" focusable="false" /> Approve draft
+                      <Check className="w-3 h-3 mr-1" aria-hidden="true" focusable="false" /> Save
                     </Button>
                   )}
                 </div>
@@ -1772,39 +1792,23 @@ export function VideoGenerationBlock({
 
           {tab === "timing" && (
             <div className="space-y-3">
-              {[
-                { key: "captions" as const, icon: Captions, label: "Captions", hint: "Generated from the script, free" },
-                { key: "writtenVersion" as const, icon: FileText, label: "Written version", hint: "Readable and searchable across the course" },
-                { key: "audioOnly" as const, icon: Eye, label: "Audio-only version", hint: "For learners on poor connections" },
-              ].map((o) => (
-                <div key={o.key} className="flex items-start gap-2.5 rounded-xl border border-border p-2.5">
-                  <o.icon className="w-4 h-4 text-muted-foreground mt-0.5" aria-hidden="true" focusable="false" />
-                  <div className="flex-1 min-w-0">
-                    <Label htmlFor={`opt-${o.key}`} className="text-xs font-medium text-foreground">{o.label}</Label>
-                    <p className="text-[11px] text-muted-foreground">{o.hint}</p>
-                  </div>
-                  <Switch id={`opt-${o.key}`} checked={state[o.key]} onCheckedChange={(v) => update({ [o.key]: v } as Partial<VideoGenState>)} />
+              <div className="flex items-start gap-2.5 rounded-xl border border-border p-2.5">
+                <Captions className="w-4 h-4 text-muted-foreground mt-0.5" aria-hidden="true" focusable="false" />
+                <div className="flex-1 min-w-0">
+                  <Label htmlFor="opt-captions" className="text-xs font-medium text-foreground">Captions</Label>
+                  <p className="text-[11px] text-muted-foreground">Generated from the script and shown in the player</p>
                 </div>
-              ))}
+                <Switch id="opt-captions" checked={state.captions} onCheckedChange={(v) => update({ captions: v })} />
+              </div>
 
-              <div className="rounded-xl border border-border overflow-hidden">
-                <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted/40">
-                  What costs money
-                </p>
-                <div className="p-3 space-y-2">
-                  <p className="text-[11px] text-foreground flex items-start gap-1.5">
-                    <Check className="w-3 h-3 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" focusable="false" />
-                    Free: browsing avatars, sample clips, writing or drafting the script, previewing, moving the avatar, adding or re-timing text.
-                  </p>
-                  <p className="text-[11px] text-foreground flex items-start gap-1.5">
-                    <Coins className="w-3 h-3 mt-0.5 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" focusable="false" />
-                    Paid: generating the video, and generating again after a change to the script, avatar, voice, pace or language.
-                  </p>
-                </div>
+              <div className="rounded-xl border border-border p-3 space-y-1.5">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Summary</p>
+                <p className="text-xs text-foreground">{avatar ? avatar.name : "No avatar"} · {voice?.name ?? "No voice"} · {formatTime(total)}</p>
+                <p className="text-[11px] text-muted-foreground">{state.elements.length} on-screen element{state.elements.length === 1 ? "" : "s"}{state.logo.src ? " · logo applied" : ""}{state.background.mode !== "none" ? " · custom background" : ""}</p>
               </div>
 
               {state.status === "generated" && (
-                <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs" onClick={() => toast({ title: "Download prepared", description: "A plain file loses captions, the written version and course search." })}>
+                <Button variant="outline" size="sm" className="w-full rounded-full h-8 text-xs" onClick={() => toast({ title: "Download prepared", description: "A plain file loses captions and in-course search." })}>
                   <Download className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Download video file
                 </Button>
               )}
@@ -1818,6 +1822,16 @@ export function VideoGenerationBlock({
 
 
 
+      <VoiceLibraryDialog
+        open={voiceOpen}
+        onOpenChange={setVoiceOpen}
+        voices={VOICE_LIBRARY}
+        currentVoiceId={state.voiceId}
+        favourites={[]}
+        onToggleFavourite={() => {}}
+        onSelect={(id) => { update({ voiceId: id }); setVoiceOpen(false); }}
+      />
+
       <AvatarLibraryDialog
         open={libraryOpen}
         onOpenChange={setLibraryOpen}
@@ -1830,7 +1844,7 @@ export function VideoGenerationBlock({
         <DialogContent className="max-w-[520px]">
           <DialogHeader>
             <DialogTitle>Generate this video</DialogTitle>
-            <DialogDescription>Everything is checked and priced before anything runs.</DialogDescription>
+            <DialogDescription>Everything is checked before the video is built.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-2">
@@ -1846,17 +1860,8 @@ export function VideoGenerationBlock({
 
           <div className="rounded-xl border border-border p-3 space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Estimated cost</span>
-              <span className="font-semibold text-foreground">{cost} credits · {formatTime(total)}</span>
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-                <span>Team allowance this month</span>
-                <span>{Math.round(ALLOWANCE_MINUTES - USED_MINUTES)} of {ALLOWANCE_MINUTES} min left</span>
-              </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-primary" style={{ width: `${(USED_MINUTES / ALLOWANCE_MINUTES) * 100}%` }} />
-              </div>
+              <span className="text-muted-foreground">Estimated length</span>
+              <span className="font-semibold text-foreground">{formatTime(total)}</span>
             </div>
             <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
               <ShieldCheck className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -1868,7 +1873,7 @@ export function VideoGenerationBlock({
             <Button variant="outline" className="rounded-full" onClick={() => setGenerateOpen(false)}>Cancel</Button>
             <Button className="rounded-full" disabled={!ready} onClick={runGenerate}>
               <Sparkles className="w-4 h-4 mr-1.5" aria-hidden="true" focusable="false" />
-              Generate for {cost} credits
+              Generate video
             </Button>
           </div>
         </DialogContent>
@@ -2187,7 +2192,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         </button>
       </div>
 
-      {state.writtenVersion && state.script && (
+      {state.script && (
         <div className="border-t border-border">
           <button
             type="button"
