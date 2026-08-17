@@ -10,7 +10,6 @@ import {
   Upload,
   PenLine,
   Clock,
-  Coins,
   Video as VideoIcon,
   UserRound,
   Trash2,
@@ -26,6 +25,16 @@ import {
   RotateCcw,
   Download,
   Settings2,
+  Image as ImageIcon,
+  Square,
+  Circle,
+  Triangle,
+  MessageSquare,
+  ArrowRight,
+  Palette,
+  Shapes,
+  Volume2,
+  X,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -53,6 +62,8 @@ import {
 } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
+import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
+import { VOICE_LIBRARY, VoiceLibraryDialog } from "@/components/CourseCreation/AIAudioBlock";
 
 import ariaImg from "@/assets/voices/aria.jpg";
 import georgeImg from "@/assets/voices/george.jpg";
@@ -132,8 +143,57 @@ export const LANGUAGES = [
 /* State + serialisation                                               */
 /* ------------------------------------------------------------------ */
 
+export type ShapeId =
+  | "rectangle"
+  | "circle"
+  | "triangle"
+  | "comment"
+  | "arrow-right"
+  | "arrow-left"
+  | "arrow-up"
+  | "arrow-down";
+
+export const SHAPES: { id: ShapeId; label: string; icon: typeof Square }[] = [
+  { id: "rectangle", label: "Rectangle", icon: Square },
+  { id: "circle", label: "Circle", icon: Circle },
+  { id: "triangle", label: "Triangle", icon: Triangle },
+  { id: "comment", label: "Comment", icon: MessageSquare },
+  { id: "arrow-right", label: "Arrow right", icon: ArrowRight },
+  { id: "arrow-left", label: "Arrow left", icon: ArrowRight },
+  { id: "arrow-up", label: "Arrow up", icon: ArrowRight },
+  { id: "arrow-down", label: "Arrow down", icon: ArrowRight },
+];
+
+export const SHAPE_COLOURS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#0F172A", "#FFFFFF"];
+
+export type MediaKind = "text" | "shape" | "image";
+
+export interface VideoBackground {
+  mode: "none" | "color" | "preset" | "image";
+  color: string;
+  presetId: string;
+  image: string | null;
+  imageName: string;
+}
+
+export interface VideoLogo {
+  src: string | null;
+  name: string;
+  zone: ZoneId;
+  size: number; // 1 - 3
+  fullRange: boolean;
+  start: number;
+  end: number;
+}
+
 export interface VideoTextElement {
   id: string;
+  /** text (default), shape or image */
+  kind?: MediaKind;
+  shape?: ShapeId;
+  color?: string;
+  src?: string;
+  size?: number; // 1 - 3, shapes & images
   style: TextStyleId;
   text: string;
   zone: ZoneId;
@@ -162,19 +222,41 @@ export interface VideoGenState {
   transcriptEdited: boolean;
   language: string;
   pace: "slow" | "natural" | "fast";
+  voiceId: string;
+  background: VideoBackground;
+  logo: VideoLogo;
   elements: VideoTextElement[];
   status: "draft" | "generating" | "generated" | "outdated";
   paidSignature: string;
   captions: boolean;
-  writtenVersion: boolean;
-  audioOnly: boolean;
+  /** legacy fields — no longer surfaced in the UI */
+  writtenVersion?: boolean;
+  audioOnly?: boolean;
 }
+
+export const DEFAULT_BACKGROUND: VideoBackground = {
+  mode: "none",
+  color: "#0F172A",
+  presetId: "aurora",
+  image: null,
+  imageName: "",
+};
+
+export const DEFAULT_LOGO: VideoLogo = {
+  src: null,
+  name: "",
+  zone: "top-right",
+  size: 2,
+  fullRange: true,
+  start: 0,
+  end: 0,
+};
+
+export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
+export const SUPPORTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
 
 export const MAX_SCRIPT_WORDS = 900;
 export const MAX_DURATION_SEC = 360;
-const COST_PER_MINUTE = 4;
-const ALLOWANCE_MINUTES = 60;
-const USED_MINUTES = 23.5;
 
 const EMPTY_STATE: VideoGenState = {
   avatarId: "",
@@ -193,12 +275,13 @@ const EMPTY_STATE: VideoGenState = {
   transcriptEdited: false,
   language: "en",
   pace: "natural",
+  voiceId: "aria",
+  background: { ...DEFAULT_BACKGROUND },
+  logo: { ...DEFAULT_LOGO },
   elements: [],
   status: "draft",
   paidSignature: "",
   captions: true,
-  writtenVersion: true,
-  audioOnly: false,
 };
 
 export function parseVideoGenContent(raw?: string): VideoGenState {
@@ -206,7 +289,15 @@ export function parseVideoGenContent(raw?: string): VideoGenState {
   try {
     const stripped = raw.replace(/^<!--videogen:/, "").replace(/-->$/, "");
     const parsed = JSON.parse(stripped);
-    return { ...EMPTY_STATE, ...parsed, elements: Array.isArray(parsed.elements) ? parsed.elements : [] };
+    return {
+      ...EMPTY_STATE,
+      ...parsed,
+      background: { ...DEFAULT_BACKGROUND, ...(parsed.background ?? {}) },
+      logo: { ...DEFAULT_LOGO, ...(parsed.logo ?? {}) },
+      elements: Array.isArray(parsed.elements)
+        ? parsed.elements.map((e: VideoTextElement) => ({ kind: "text" as MediaKind, ...e }))
+        : [],
+    };
   } catch {
     return { ...EMPTY_STATE };
   }
