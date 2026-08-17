@@ -183,6 +183,9 @@ export interface VideoLogo {
   fullRange: boolean;
   start: number;
   end: number;
+  /** free placement on the stage — percent of stage width/height (centre) */
+  x?: number;
+  y?: number;
 }
 
 export interface VideoTextElement {
