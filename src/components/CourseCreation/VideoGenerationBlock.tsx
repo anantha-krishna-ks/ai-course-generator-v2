@@ -932,7 +932,7 @@ export function VideoStage({
               avatarFree ? "z-[15]" : cn("inset-0 flex p-3", zoneClass[state.avatarZone]),
               !canMove && "pointer-events-none"
             )}
-            style={avatarFree ? freeStyle(state.avatarX, state.avatarY) : undefined}
+            style={avatarFree ? { ...freeStyle(state.avatarX, state.avatarY), width: `${sizePct}%` } : undefined}
           >
             <div
               role={canMove ? "button" : undefined}
@@ -951,7 +951,7 @@ export function VideoStage({
                 "relative rounded-2xl overflow-hidden ring-1 ring-white/25",
                 canMove ? "cursor-grab touch-none select-none" : "pointer-events-none"
               )}
-              style={{ width: avatarFree ? `${sizePct * 5.2}px` : `${sizePct}%`, boxShadow: "0 24px 48px -20px hsl(222 47% 6% / 0.7)" }}
+              style={{ width: avatarFree ? "100%" : `${sizePct}%`, boxShadow: "0 24px 48px -20px hsl(222 47% 6% / 0.7)" }}
             >
               <img
                 src={avatar.image}
@@ -981,7 +981,7 @@ export function VideoStage({
               logoFree ? "" : cn("inset-0 flex p-3", zoneClass[state.logo.zone]),
               !canMove && "pointer-events-none"
             )}
-            style={logoFree ? freeStyle(state.logo.x, state.logo.y) : undefined}
+            style={logoFree ? { ...freeStyle(state.logo.x, state.logo.y), width: `${logoPct}%` } : undefined}
           >
             <span
               role={canMove ? "button" : undefined}
@@ -997,7 +997,7 @@ export function VideoStage({
                   : undefined
               }
               className={cn("block", canMove ? "cursor-grab touch-none select-none" : "pointer-events-none")}
-              style={{ width: logoFree ? `${logoPct * 5.2}px` : `${logoPct}%` }}
+              style={{ width: logoFree ? "100%" : `${logoPct}%` }}
             >
               <img
                 src={state.logo.src}
