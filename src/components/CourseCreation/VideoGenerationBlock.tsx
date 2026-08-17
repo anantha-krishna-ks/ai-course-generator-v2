@@ -828,6 +828,7 @@ export function VideoStage({
   selectedId,
   onSelect,
   onPatchElement,
+  onPatchState,
   showZones,
   generated,
 }: {
@@ -837,6 +838,7 @@ export function VideoStage({
   selectedId?: string | null;
   onSelect?: (id: string | null) => void;
   onPatchElement?: (id: string, patch: Partial<VideoTextElement>) => void;
+  onPatchState?: (patch: Partial<VideoGenState>) => void;
   showZones?: boolean;
   generated?: boolean;
 }) {
@@ -849,6 +851,50 @@ export function VideoStage({
     state.avatarFullRange || (time >= state.avatarStart && time <= (state.avatarEnd || total));
 
   const sizePct = [18, 26, 36][state.avatarSize - 1] ?? 26;
+  const logoPct = [8, 12, 18][state.logo?.size - 1] ?? 12;
+  const canMove = Boolean(onPatchState);
+  const avatarFree = state.avatarX !== undefined && state.avatarY !== undefined;
+  const logoFree = state.logo?.x !== undefined && state.logo?.y !== undefined;
+
+  const freeStyle = (x?: number, y?: number): CSSProperties => ({
+    left: `${x}%`,
+    top: `${y}%`,
+    transform: "translate(-50%, -50%)",
+  });
+
+  const dragAvatar = (e: React.PointerEvent) =>
+    startFreeDrag(
+      e,
+      stageRef.current,
+      { x: state.avatarX ?? 50, y: state.avatarY ?? 50 },
+      (x, y) => onPatchState?.({ avatarX: x, avatarY: y })
+    );
+
+  const dragLogo = (e: React.PointerEvent) =>
+    startFreeDrag(
+      e,
+      stageRef.current,
+      { x: state.logo?.x ?? 50, y: state.logo?.y ?? 50 },
+      (x, y) => onPatchState?.({ logo: { ...state.logo, x, y } })
+    );
+
+  const nudge = (
+    e: React.KeyboardEvent,
+    cur: { x: number; y: number },
+    apply: (x: number, y: number) => void
+  ) => {
+    const step = e.shiftKey ? 5 : 1;
+    const map: Record<string, [number, number]> = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, -step],
+      ArrowDown: [0, step],
+    };
+    const d = map[e.key];
+    if (!d) return;
+    e.preventDefault();
+    apply(clamp(cur.x + d[0], 2, 98), clamp(cur.y + d[1], 2, 98));
+  };
 
   return (
     <div
@@ -881,16 +927,40 @@ export function VideoStage({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.35 }}
-            className={cn("pointer-events-none absolute inset-0 flex p-3", zoneClass[state.avatarZone])}
+            className={cn(
+              "absolute",
+              avatarFree ? "z-[15]" : cn("inset-0 flex p-3", zoneClass[state.avatarZone]),
+              !canMove && "pointer-events-none"
+            )}
+            style={avatarFree ? freeStyle(state.avatarX, state.avatarY) : undefined}
           >
             <div
-              className="relative rounded-xl overflow-hidden ring-2 ring-primary-foreground/30 shadow-2xl"
-              style={{ width: `${sizePct}%` }}
+              role={canMove ? "button" : undefined}
+              tabIndex={canMove ? 0 : undefined}
+              aria-label={canMove ? "Avatar — drag to move, arrow keys to nudge" : undefined}
+              onPointerDown={canMove ? dragAvatar : undefined}
+              onKeyDown={
+                canMove
+                  ? (e) =>
+                      nudge(e, { x: state.avatarX ?? 50, y: state.avatarY ?? 50 }, (x, y) =>
+                        onPatchState?.({ avatarX: x, avatarY: y })
+                      )
+                  : undefined
+              }
+              className={cn(
+                "relative rounded-2xl overflow-hidden ring-1 ring-white/25",
+                canMove ? "cursor-grab touch-none select-none" : "pointer-events-none"
+              )}
+              style={{ width: avatarFree ? `${sizePct * 5.2}px` : `${sizePct}%`, boxShadow: "0 24px 48px -20px hsl(222 47% 6% / 0.7)" }}
             >
               <img
                 src={avatar.image}
                 alt={`${avatar.name} presenter avatar`}
                 className="w-full h-full object-cover aspect-[3/4]"
+              />
+              <span
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.2),transparent_40%)]"
+                aria-hidden="true"
               />
               {generated && (
                 <span className="absolute bottom-1 left-1 rounded-full bg-background/85 px-1.5 py-[1px] text-[8px] font-semibold text-foreground">
@@ -906,15 +976,36 @@ export function VideoStage({
       {state.logo?.src &&
         (state.logo.fullRange || (time >= state.logo.start && time <= (state.logo.end || total))) && (
           <div
-            className={cn("pointer-events-none absolute inset-0 flex p-3 z-10", zoneClass[state.logo.zone])}
-            aria-hidden="true"
+            className={cn(
+              "absolute z-10",
+              logoFree ? "" : cn("inset-0 flex p-3", zoneClass[state.logo.zone]),
+              !canMove && "pointer-events-none"
+            )}
+            style={logoFree ? freeStyle(state.logo.x, state.logo.y) : undefined}
           >
-            <img
-              src={state.logo.src}
-              alt=""
-              style={{ width: `${[8, 12, 18][state.logo.size - 1] ?? 12}%` }}
-              className="object-contain drop-shadow-md"
-            />
+            <span
+              role={canMove ? "button" : undefined}
+              tabIndex={canMove ? 0 : undefined}
+              aria-label={canMove ? "Brand logo — drag to move, arrow keys to nudge" : undefined}
+              onPointerDown={canMove ? dragLogo : undefined}
+              onKeyDown={
+                canMove
+                  ? (e) =>
+                      nudge(e, { x: state.logo.x ?? 50, y: state.logo.y ?? 50 }, (x, y) =>
+                        onPatchState?.({ logo: { ...state.logo, x, y } })
+                      )
+                  : undefined
+              }
+              className={cn("block", canMove ? "cursor-grab touch-none select-none" : "pointer-events-none")}
+              style={{ width: logoFree ? `${logoPct * 5.2}px` : `${logoPct}%` }}
+            >
+              <img
+                src={state.logo.src}
+                alt=""
+                className="w-full object-contain"
+                style={{ filter: "drop-shadow(0 6px 14px hsl(222 47% 6% / 0.45))" }}
+              />
+            </span>
           </div>
         )}
 
