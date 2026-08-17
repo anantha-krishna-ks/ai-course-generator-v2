@@ -514,6 +514,8 @@ function ImageGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }
   );
 }
 
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
 /** Free move + resize wrapper for an on-stage element. */
 function StageElement({
   el,
