@@ -56,7 +56,7 @@ import hugoImg from "@/assets/voices/hugo.jpg";
 
 // ---------- Voice Library ----------
 
-interface VoiceOption {
+export interface VoiceOption {
   id: string;
   name: string;
   language: string;
@@ -68,7 +68,7 @@ interface VoiceOption {
   image: string;
 }
 
-const VOICE_LIBRARY: VoiceOption[] = [
+export const VOICE_LIBRARY: VoiceOption[] = [
   { id: "aria", name: "Aria", language: "English (US)", gender: "Female", age: "Adult", category: "Narration", accent: "American", gradient: "from-rose-400 to-pink-500", image: ariaImg },
   { id: "sarah", name: "Sarah", language: "English (US)", gender: "Female", age: "Young", category: "Conversational", accent: "American", gradient: "from-fuchsia-400 to-purple-500", image: sarahImg },
   { id: "george", name: "George", language: "English (UK)", gender: "Male", age: "Adult", category: "Narration", accent: "British", gradient: "from-sky-400 to-blue-500", image: georgeImg },
@@ -502,7 +502,7 @@ interface VoiceLibraryDialogProps {
 
 const PREVIEW_DURATION_MS = 2600;
 
-function VoiceLibraryDialog({
+export function VoiceLibraryDialog({
   open,
   onOpenChange,
   voices,
