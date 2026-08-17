@@ -25,6 +25,7 @@ import {
   Minimize2,
   Maximize2,
   RotateCcw,
+  X,
   Download,
   Settings2,
   Image as ImageIcon,
