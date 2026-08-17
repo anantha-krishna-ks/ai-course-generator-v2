@@ -1063,8 +1063,138 @@ export function VideoStage({
 }
 
 /* ------------------------------------------------------------------ */
+/* Avatar sample clip player                                           */
+/* ------------------------------------------------------------------ */
+
+const AVATAR_SAMPLE_SCRIPT: Record<string, string[]> = {
+  "av-aria": [
+    "Hi, I'm Aria — your studio presenter.",
+    "I'll narrate your lesson in a clear, warm voice.",
+    "Add slides, captions and key terms as I speak.",
+  ],
+  "av-george": [
+    "Hello, I'm George — your corporate presenter.",
+    "I keep the pace steady and the tone professional.",
+    "Perfect for compliance and onboarding modules.",
+  ],
+};
+
+const SAMPLE_LINE_MS = 2600;
+
+/** Plays a short pre-recorded style sample: subtle camera move, lip-sync pulse and captions. */
+function AvatarSampleStage({
+  avatar,
+  playing,
+  onEnded,
+}: {
+  avatar: AvatarOption;
+  playing: boolean;
+  onEnded: () => void;
+}) {
+  const lines = AVATAR_SAMPLE_SCRIPT[avatar.id] ?? [`Hi, I'm ${avatar.name}.`];
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!playing) {
+      setIndex(0);
+      return;
+    }
+    setIndex(0);
+    let i = 0;
+    const timer = window.setInterval(() => {
+      i += 1;
+      if (i >= lines.length) {
+        window.clearInterval(timer);
+        onEnded();
+        return;
+      }
+      setIndex(i);
+    }, SAMPLE_LINE_MS);
+    return () => window.clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, avatar.id]);
+
+  const progress = playing ? ((index + 1) / lines.length) * 100 : 0;
+
+  return (
+    <>
+      <motion.img
+        src={avatar.image}
+        alt={`${avatar.name} avatar`}
+        className="w-full h-full object-cover"
+        animate={playing ? { scale: [1, 1.06, 1.02], y: [0, -6, -2] } : { scale: 1, y: 0 }}
+        transition={playing ? { duration: lines.length * (SAMPLE_LINE_MS / 1000), ease: "easeInOut" } : { duration: 0.4 }}
+      />
+
+      <AnimatePresence>
+        {playing && (
+          <motion.div
+            key="sample-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent"
+          >
+            {/* live badge */}
+            <span className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur px-2 py-0.5 text-[10px] font-semibold text-foreground">
+              <motion.span
+                className="w-1.5 h-1.5 rounded-full bg-primary"
+                animate={{ opacity: [1, 0.25, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity }}
+                aria-hidden="true"
+              />
+              Sample
+            </span>
+
+            {/* speaking waveform */}
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-end gap-[3px] h-6" aria-hidden="true">
+              {[0, 1, 2, 3, 4, 5, 6].map((b) => (
+                <motion.span
+                  key={b}
+                  className="w-[3px] rounded-full bg-primary/80"
+                  animate={{ height: ["20%", "100%", "40%", "80%", "25%"] }}
+                  transition={{ duration: 0.9, repeat: Infinity, delay: b * 0.08, ease: "easeInOut" }}
+                  style={{ height: "30%" }}
+                />
+              ))}
+            </div>
+
+            {/* caption */}
+            <div className="absolute bottom-3 left-2 right-2">
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={index}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25 }}
+                  className="text-center text-[11px] leading-snug font-medium text-foreground bg-background/75 backdrop-blur rounded-lg px-2 py-1.5"
+                >
+                  {lines[index]}
+                </motion.p>
+              </AnimatePresence>
+              <div className="mt-1.5 h-1 rounded-full bg-foreground/15 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-primary"
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: SAMPLE_LINE_MS / 1000, ease: "linear" }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <span className="sr-only" aria-live="polite">
+        {playing ? `Playing sample clip for ${avatar.name}: ${lines[index]}` : ""}
+      </span>
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Avatar library dialog                                               */
 /* ------------------------------------------------------------------ */
+
 
 function AvatarLibraryDialog({
   open,
@@ -1100,14 +1230,11 @@ function AvatarLibraryDialog({
               )}
             >
               <div className="relative aspect-[4/5] overflow-hidden">
-                <img src={a.image} alt={`${a.name} avatar`} className="w-full h-full object-cover" />
+                <AvatarSampleStage avatar={a} playing={playing === a.id} onEnded={() => setPlaying(null)} />
                 <button
                   type="button"
-                  onClick={() => {
-                    setPlaying(playing === a.id ? null : a.id);
-                    toast({ title: `Sample clip — ${a.name}`, description: "Pre-recorded sample. No generation used." });
-                  }}
-                  aria-label={`Play sample clip for ${a.name}`}
+                  onClick={() => setPlaying(playing === a.id ? null : a.id)}
+                  aria-label={`${playing === a.id ? "Pause" : "Play"} sample clip for ${a.name}`}
                   className="absolute bottom-2 left-2 w-8 h-8 rounded-full bg-background/90 flex items-center justify-center shadow-md hover:bg-background"
                 >
                   {playing === a.id ? (
@@ -1122,6 +1249,7 @@ function AvatarLibraryDialog({
                   </span>
                 )}
               </div>
+
               <div className="p-3">
                 <p className="text-sm font-semibold text-foreground">{a.name} · {a.gender}</p>
                 <p className="text-xs text-muted-foreground truncate">{a.voice}</p>
