@@ -22,6 +22,8 @@ import {
   Languages,
   Gauge,
   MoveDiagonal,
+  Minimize2,
+  Maximize2,
   RotateCcw,
   Download,
   Settings2,
