@@ -3108,12 +3108,46 @@ export function VideoGenerationPreview({ content }: { content: string }) {
   const [pip, setPip] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
+  const pipButtonRef = useRef<HTMLButtonElement | null>(null);
+  const restoreRef = useRef<{ scrollY: number; scrollX: number; focus: HTMLElement | null } | null>(null);
 
   useEffect(() => {
     const onChange = () => setFullscreen(document.fullscreenElement === rootRef.current);
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
+
+  const enterPip = () => {
+    const active = document.activeElement as HTMLElement | null;
+    restoreRef.current = {
+      scrollY: window.scrollY,
+      scrollX: window.scrollX,
+      focus: active && active !== document.body && active !== pipButtonRef.current ? active : null,
+    };
+    setPip(true);
+  };
+
+  const exitPip = () => {
+    setPip(false);
+    const saved = restoreRef.current;
+    restoreRef.current = null;
+    requestAnimationFrame(() => {
+      const el = rootRef.current;
+      if (saved && el) {
+        // Restore the exact scroll offset, unless the player has scrolled out of view.
+        window.scrollTo({ left: saved.scrollX, top: saved.scrollY, behavior: "smooth" });
+        const rect = el.getBoundingClientRect();
+        const visible = rect.top < window.innerHeight - 80 && rect.bottom > 80;
+        if (!visible) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      const target =
+        saved?.focus && document.contains(saved.focus) ? saved.focus : pipButtonRef.current;
+      target?.focus({ preventScroll: true });
+    });
+  };
+
 
   const toggleFullscreen = () => {
     const el = rootRef.current;
