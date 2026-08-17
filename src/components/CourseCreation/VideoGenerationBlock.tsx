@@ -774,10 +774,17 @@ function StageElement({
       className={cn(
         "relative rounded-lg",
         interactive && "pointer-events-auto cursor-grab touch-none select-none",
-        mode === "move" && "cursor-grabbing",
-        selected && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
+        mode === "move" && "cursor-grabbing"
       )}
-      style={{ transform: `scale(${scale})`, transformOrigin: "center", transition: mode === "idle" ? "transform 120ms ease-out" : "none" }}
+      style={{
+        transform: `scale(${scale})`,
+        transformOrigin: "center",
+        transition: mode === "idle" ? "transform 120ms ease-out" : "none",
+        // ring drawn with a scale-compensated box-shadow so it stays 2px visually
+        boxShadow: selected
+          ? `0 0 0 ${2 / scale}px hsl(var(--primary)), 0 0 0 ${4 / scale}px hsl(var(--primary) / 0.18)`
+          : undefined,
+      }}
     >
       {glyph}
       {interactive && selected && (
@@ -787,9 +794,11 @@ function StageElement({
           aria-label="Resize element"
           onPointerDown={beginResize}
           onKeyDown={onKeyDown}
-          className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-primary border-2 border-background shadow cursor-nwse-resize touch-none"
+          className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-primary border-2 border-background shadow cursor-nwse-resize touch-none"
+          style={{ transform: `scale(${1 / scale}) translate(50%, 50%)`, transformOrigin: "bottom right" }}
         />
       )}
+
     </div>
   );
 
