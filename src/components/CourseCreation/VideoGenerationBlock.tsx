@@ -1620,37 +1620,90 @@ export function VideoGenerationBlock({
         </div>
       ) : (
         <div className="w-full rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
-          <div className="relative aspect-video bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))] flex flex-col items-center justify-center gap-3">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.22),transparent_60%)]" aria-hidden="true" />
+          <div className="relative aspect-video bg-[linear-gradient(150deg,hsl(var(--foreground)/0.94),hsl(var(--primary)/0.6))] flex flex-col items-center justify-center gap-3">
+            {/* Studio lighting layers */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_18%,hsl(var(--background)/0.22),transparent_60%)]" aria-hidden="true" />
+            <div
+              className="absolute inset-0 opacity-[0.14] bg-[linear-gradient(hsl(var(--background)/0.6)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--background)/0.6)_1px,transparent_1px)] bg-[size:38px_38px]"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,hsl(var(--foreground)/0.55),transparent)]" aria-hidden="true" />
+
             {state.status === "generating" ? (
               <div className="relative w-[70%] max-w-[320px] text-center">
                 <Loader2 className="w-6 h-6 mx-auto text-primary-foreground animate-spin mb-2" aria-hidden="true" focusable="false" />
                 <p className="text-xs font-medium text-primary-foreground">Generating your video — {progress}%</p>
-                <div className="h-1.5 mt-2 rounded-full bg-primary-foreground/25 overflow-hidden">
-                  <div className="h-full rounded-full bg-primary-foreground transition-all" style={{ width: `${progress}%` }} />
+                <div className="h-1.5 mt-2 rounded-full bg-primary-foreground/25 overflow-hidden ring-1 ring-inset ring-primary-foreground/20">
+                  <div
+                    className="h-full rounded-full bg-[linear-gradient(90deg,hsl(var(--primary-foreground)/0.75),hsl(var(--primary-foreground)))] transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
                 <p className="text-[11px] text-primary-foreground/80 mt-2">Runs in the background — you can keep editing.</p>
               </div>
             ) : (
               <>
-                <span className="relative w-11 h-11 rounded-2xl bg-background/90 flex items-center justify-center shadow-lg">
-                  <VideoIcon className="w-5 h-5 text-primary" aria-hidden="true" focusable="false" />
-                </span>
-                <div className="relative text-center px-6">
-                  <p className="text-sm font-semibold text-primary-foreground">Video Generation</p>
-                  <p className="text-[11px] text-primary-foreground/80 mt-0.5">
+                {/* Key light behind the CTA */}
+                <div
+                  className="absolute left-1/2 top-1/2 h-[240px] w-[240px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.55),transparent_70%)] blur-2xl"
+                  aria-hidden="true"
+                />
+
+                <div className="relative text-center px-6 space-y-1">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-primary-foreground ring-1 ring-inset ring-primary-foreground/25">
+                    <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
+                    AI Video
+                  </span>
+                  <p className="text-base font-semibold text-primary-foreground pt-1">Video Generation</p>
+                  <p className="text-[11px] text-primary-foreground/80">
                     {avatar ? `${avatar.name} · ${formatTime(total)} · ${words} words` : "Choose an avatar, add a script and generate"}
                   </p>
                 </div>
-                <Button size="sm" className="relative rounded-full h-8" onClick={() => setEditorOpen(true)}>
-                  <Settings2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
-                  {avatar || words ? "Continue setup" : "Set up video"}
-                </Button>
+
+                {/* Primary call to action */}
+                <div className="relative flex flex-col items-center gap-2">
+                  <span className="relative inline-flex">
+                    {!hasProgress && (
+                      <span
+                        className="absolute -inset-1 rounded-full bg-primary/45 blur-md motion-safe:animate-[pulse_2.6s_cubic-bezier(0.4,0,0.6,1)_infinite]"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setEditorOpen(true)}
+                      aria-label={hasProgress ? "Continue setting up the generated video" : "Set up the generated video"}
+                      className="group relative inline-flex h-12 items-center gap-2.5 overflow-hidden rounded-full bg-[linear-gradient(140deg,hsl(var(--primary)),hsl(var(--primary)/0.78))] px-7 text-sm font-semibold text-primary-foreground shadow-[0_10px_28px_-8px_hsl(var(--primary)/0.85)] ring-1 ring-inset ring-primary-foreground/25 transition-all duration-200 hover:shadow-[0_16px_38px_-10px_hsl(var(--primary))] motion-safe:hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_6px_18px_-8px_hsl(var(--primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                    >
+                      <span
+                        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full bg-[linear-gradient(to_bottom,hsl(var(--primary-foreground)/0.28),transparent)]"
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-[linear-gradient(90deg,transparent,hsl(var(--primary-foreground)/0.45),transparent)] opacity-0 transition-all duration-700 group-hover:left-[120%] group-hover:opacity-100"
+                        aria-hidden="true"
+                      />
+                      <Sparkles className="relative w-4 h-4" aria-hidden="true" focusable="false" />
+                      <span className="relative">{hasProgress ? "Continue setup" : "Set up video"}</span>
+                      <ArrowRight
+                        className="relative w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                    </button>
+                  </span>
+                  {hasProgress && (
+                    <span className="rounded-full bg-primary-foreground/15 px-2.5 py-0.5 text-[10px] font-semibold text-primary-foreground ring-1 ring-inset ring-primary-foreground/20">
+                      {readyCount} of {checklist.length} ready
+                    </span>
+                  )}
+                </div>
               </>
             )}
           </div>
         </div>
       )}
+
 
       {/* ---- Full configuration workspace ---- */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
