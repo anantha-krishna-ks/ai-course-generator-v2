@@ -1504,6 +1504,7 @@ export function VideoGenerationBlock({
             selectedId={selectedEl}
             onSelect={setSelectedEl}
             onPatchElement={patchElement}
+            onPatchState={update}
             showZones={tab === "avatar" || tab === "media"}
             generated={state.status === "generated"}
           />
