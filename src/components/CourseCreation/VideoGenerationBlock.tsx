@@ -3273,19 +3273,29 @@ export function VideoGenerationPreview({ content }: { content: string }) {
       </div>
 
       {pip && !fullscreen && (
-        <div className="fixed bottom-4 right-4 z-50 w-[260px] rounded-xl overflow-hidden border border-border bg-card shadow-2xl">
+        <div
+          className="fixed bottom-4 right-4 z-50 w-[280px] rounded-2xl overflow-hidden border border-border bg-card shadow-2xl ring-1 ring-primary/10"
+          role="dialog"
+          aria-label="Picture in picture video"
+        >
           <div className="relative">
             <VideoStage state={state} time={time} generated={state.status === "generated"} />
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 px-2.5 py-2 bg-gradient-to-b from-background/80 to-transparent pointer-events-none">
+              <span className="text-[10px] font-semibold text-foreground/80 uppercase tracking-wider pointer-events-none">
+                Mini player
+              </span>
+            </div>
             <button
               type="button"
               onClick={() => setPip(false)}
-              aria-label="Close picture in picture"
-              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-background/85 text-foreground flex items-center justify-center hover:bg-background transition-colors"
+              aria-label="Expand back to main video"
+              title="Back to video"
+              className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-background/90 text-foreground flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-lg pointer-events-auto"
             >
-              <Minimize className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+              <Maximize2 className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
             </button>
           </div>
-          <div className="flex items-center gap-2 px-2 py-1.5 border-t border-border">
+          <div className="flex items-center gap-2 px-2.5 py-2 border-t border-border bg-card/95 backdrop-blur">
             <button
               type="button"
               onClick={() => setPlaying((p) => !p)}
@@ -3295,6 +3305,16 @@ export function VideoGenerationPreview({ content }: { content: string }) {
               {playing ? <Pause className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> : <Play className="w-3.5 h-3.5 ml-[1px]" aria-hidden="true" focusable="false" />}
             </button>
             <span className="text-[10px] tabular-nums text-muted-foreground">{formatTime(time)} / {formatTime(total)}</span>
+            <div className="flex-1" />
+            <button
+              type="button"
+              onClick={() => setPip(false)}
+              aria-label="Expand back to main video"
+              title="Back to video"
+              className="text-[10px] font-medium text-primary hover:text-primary-foreground hover:bg-primary px-2 py-1 rounded-full transition-colors"
+            >
+              Back to video
+            </button>
           </div>
         </div>
       )}
