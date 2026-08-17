@@ -13,18 +13,33 @@ export function ImageLightbox() {
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
+      // Never swallow clicks while an external element-picker / inspect overlay
+      // is driving the page (Lovable "select element" mode, browser devtools
+      // inspect, etc.) — those need the raw click to reach the target.
+      if (
+        document.documentElement.hasAttribute("data-lov-select-mode") ||
+        document.body.classList.contains("lov-select-mode") ||
+        e.altKey ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.shiftKey
+      ) {
+        return;
+      }
       const target = e.target as HTMLElement | null;
       if (!target) return;
       const img = target.closest?.("img[data-zoomable='true']") as HTMLImageElement | null;
       if (!img) return;
       e.preventDefault();
-      e.stopPropagation();
       setSrc(img.currentSrc || img.src);
       setAlt(img.alt || "Expanded image");
     };
-    document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
+    // Bubble phase: lets any overlay / picker above the page handle the click
+    // first instead of it being captured at the document root.
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
   }, []);
+
 
   useEffect(() => {
     if (!src) return;
