@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -439,6 +440,77 @@ function TextElementChip({
   }
 }
 
+export function backgroundStyle(bg: VideoBackground | undefined): CSSProperties {
+  if (!bg) return {};
+  if (bg.mode === "color") return { backgroundColor: bg.color };
+  if (bg.mode === "preset")
+    return CONTENT_BACKGROUNDS.find((p) => p.id === bg.presetId)?.style ?? {};
+  if (bg.mode === "image" && bg.image)
+    return { backgroundImage: `url(${bg.image})`, backgroundSize: "cover", backgroundPosition: "center" };
+  return {};
+}
+
+const SHAPE_SIZE_PCT = [10, 16, 24];
+
+function ShapeGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }) {
+  const colour = el.color ?? "#3B82F6";
+  const pct = SHAPE_SIZE_PCT[(el.size ?? 2) - 1] ?? 16;
+  const px = (compact ? 2.6 : 5.2) * pct;
+  const common = { width: px, height: px } as CSSProperties;
+
+  switch (el.shape) {
+    case "circle":
+      return <span className="block rounded-full shadow-lg" style={{ ...common, backgroundColor: colour, opacity: 0.9 }} />;
+    case "triangle":
+      return (
+        <span
+          className="block shadow-lg"
+          style={{ ...common, backgroundColor: colour, opacity: 0.9, clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" }}
+        />
+      );
+    case "comment":
+      return (
+        <span
+          className="relative flex items-center justify-center rounded-xl shadow-lg text-background px-3 py-2"
+          style={{ backgroundColor: colour, minWidth: px }}
+        >
+          <span className={cn("font-medium text-primary-foreground", compact ? "text-[9px]" : "text-sm")}>{el.text}</span>
+          <span className="absolute -bottom-1 left-4 w-2.5 h-2.5 rotate-45" style={{ backgroundColor: colour }} aria-hidden="true" />
+        </span>
+      );
+    case "arrow-right":
+    case "arrow-left":
+    case "arrow-up":
+    case "arrow-down": {
+      const rotate = { "arrow-right": 0, "arrow-left": 180, "arrow-up": -90, "arrow-down": 90 }[el.shape] ?? 0;
+      return (
+        <span className="block shadow-lg" style={{ ...common, transform: `rotate(${rotate}deg)` }}>
+          <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false">
+            <path d="M2 9h12V4l8 8-8 8v-5H2z" fill={colour} opacity="0.92" />
+          </svg>
+        </span>
+      );
+    }
+    case "rectangle":
+    default:
+      return <span className="block rounded-md shadow-lg" style={{ ...common, height: px * 0.6, backgroundColor: colour, opacity: 0.9 }} />;
+  }
+}
+
+function ImageGlyph({ el, compact }: { el: VideoTextElement; compact?: boolean }) {
+  const pct = SHAPE_SIZE_PCT[(el.size ?? 2) - 1] ?? 16;
+  const px = (compact ? 2.6 : 5.2) * pct;
+  if (!el.src) return null;
+  return (
+    <img
+      src={el.src}
+      alt={el.text || "On-screen image"}
+      style={{ width: px }}
+      className="rounded-lg object-contain shadow-lg"
+    />
+  );
+}
+
 export function VideoStage({
   state,
   time,
@@ -469,6 +541,11 @@ export function VideoStage({
       dir={rtl ? "rtl" : "ltr"}
       className="relative w-full aspect-video rounded-xl overflow-hidden bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))]"
     >
+      {/* Background layer (solid colour, preset or uploaded image) */}
+      {state.background && state.background.mode !== "none" && (
+        <div className="absolute inset-0" style={backgroundStyle(state.background)} aria-hidden="true" />
+      )}
+
       {/* subtle studio vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.22),transparent_60%)]" aria-hidden="true" />
 
@@ -510,7 +587,23 @@ export function VideoStage({
         )}
       </AnimatePresence>
 
-      {/* Text elements */}
+      {/* Brand logo */}
+      {state.logo?.src &&
+        (state.logo.fullRange || (time >= state.logo.start && time <= (state.logo.end || total))) && (
+          <div
+            className={cn("pointer-events-none absolute inset-0 flex p-3 z-10", zoneClass[state.logo.zone])}
+            aria-hidden="true"
+          >
+            <img
+              src={state.logo.src}
+              alt=""
+              style={{ width: `${[8, 12, 18][state.logo.size - 1] ?? 12}%` }}
+              className="object-contain drop-shadow-md"
+            />
+          </div>
+        )}
+
+      {/* On-screen elements — text, shapes and images */}
       {state.elements.map((el) => {
         const { start, end } = elementWindow(state, el);
         const visible = time >= start && time <= end;
@@ -527,14 +620,20 @@ export function VideoStage({
               type="button"
               onClick={() => onSelect?.(el.id)}
               disabled={!onSelect}
-              aria-label={`Select ${el.style} element`}
+              aria-label={`Select ${el.kind === "shape" ? el.shape : el.kind === "image" ? "image" : el.style} element`}
               className={cn(
                 "pointer-events-auto rounded-lg",
                 onSelect && "cursor-pointer",
                 selectedId === el.id && "ring-2 ring-primary ring-offset-2 ring-offset-transparent"
               )}
             >
-              <TextElementChip el={el} compact={compact} />
+              {el.kind === "shape" ? (
+                <ShapeGlyph el={el} compact={compact} />
+              ) : el.kind === "image" ? (
+                <ImageGlyph el={el} compact={compact} />
+              ) : (
+                <TextElementChip el={el} compact={compact} />
+              )}
             </button>
           </motion.div>
         );
