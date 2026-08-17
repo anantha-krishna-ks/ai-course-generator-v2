@@ -219,6 +219,9 @@ export interface VideoGenState {
   avatarFullRange: boolean;
   avatarStart: number;
   avatarEnd: number;
+  /** free placement on the stage — percent of stage width/height (centre) */
+  avatarX?: number;
+  avatarY?: number;
   source: "ai" | "self" | "upload";
   aiTopic: string;
   script: string;
