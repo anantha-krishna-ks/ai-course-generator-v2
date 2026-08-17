@@ -25,6 +25,7 @@ import {
   Minimize2,
   Maximize2,
   RotateCcw,
+  X,
   Download,
   Settings2,
   Image as ImageIcon,
@@ -1709,14 +1710,14 @@ export function VideoGenerationBlock({
 
       {/* ---- Full configuration workspace ---- */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className="max-w-[1440px] w-[97vw] h-[92vh] overflow-hidden p-0 gap-0 flex flex-col">
+        <DialogContent className="max-w-[1440px] w-[97vw] h-[92vh] overflow-hidden p-0 gap-0 flex flex-col [&>button]:hidden">
           <DialogHeader className="sr-only">
             <DialogTitle>Configure video generation</DialogTitle>
             <DialogDescription>Choose an avatar, write the script, add on-screen text and generate the video.</DialogDescription>
           </DialogHeader>
           <div className="w-full h-full overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-2 pl-4 pr-14 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
+      <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
 
         <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <VideoIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
@@ -1757,6 +1758,13 @@ export function VideoGenerationBlock({
           )}
           {state.status === "generated" ? "Regenerate" : "Generate video"}
         </Button>
+        <button
+          onClick={() => setEditorOpen(false)}
+          className="p-2.5 rounded-md hover:bg-muted transition-colors"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
+        </button>
       </div>
 
       {state.status === "outdated" && (
