@@ -1909,20 +1909,28 @@ export function VideoGenerationBlock({
                   <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> Size
                 </Label>
                 <div className="mt-1.5 flex gap-1.5">
-                  {["Small", "Medium", "Large"].map((s, i) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => update({ avatarSize: i + 1 })}
-                      aria-pressed={state.avatarSize === i + 1}
-                      className={cn(
-                        "flex-1 rounded-full border py-1.5 text-[11px] font-medium transition-all",
-                        state.avatarSize === i + 1 ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
-                      )}
-                    >
-                      {s}
-                    </button>
-                  ))}
+                  {[
+                    { label: "Small", icon: Square, iconSize: 10 },
+                    { label: "Medium", icon: Square, iconSize: 13 },
+                    { label: "Large", icon: Square, iconSize: 16 },
+                  ].map((s, i) => {
+                    const Icon = s.icon;
+                    return (
+                      <button
+                        key={s.label}
+                        type="button"
+                        onClick={() => update({ avatarSize: i + 1 })}
+                        aria-pressed={state.avatarSize === i + 1}
+                        className={cn(
+                          "flex-1 flex items-center justify-center gap-1.5 rounded-full border py-1.5 text-[11px] font-medium transition-all",
+                          state.avatarSize === i + 1 ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
+                        )}
+                      >
+                        <Icon className="shrink-0" size={s.iconSize} aria-hidden="true" focusable="false" />
+                        {s.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
