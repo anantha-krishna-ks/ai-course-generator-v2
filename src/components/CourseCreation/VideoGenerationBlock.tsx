@@ -252,6 +252,30 @@ export const DEFAULT_BACKGROUND: VideoBackground = {
   imageName: "",
 };
 
+/** Curated studio backdrop colours — broadcast-grade, avatar-friendly. */
+export const STUDIO_BG_COLORS: { label: string; hex: string }[] = [
+  { label: "Midnight Ink", hex: "#0F172A" },
+  { label: "Graphite", hex: "#1F2430" },
+  { label: "Deep Teal", hex: "#0B3B3C" },
+  { label: "Forest Noir", hex: "#12281F" },
+  { label: "Royal Indigo", hex: "#1E1B4B" },
+  { label: "Aubergine", hex: "#2E1065" },
+  { label: "Oxblood", hex: "#4C1D24" },
+  { label: "Espresso", hex: "#2B211B" },
+  { label: "Studio Blue", hex: "#1D4ED8" },
+  { label: "Cyan Wash", hex: "#0E7490" },
+  { label: "Emerald", hex: "#047857" },
+  { label: "Amber Glow", hex: "#B45309" },
+  { label: "Terracotta", hex: "#C2603F" },
+  { label: "Dusty Rose", hex: "#B76E79" },
+  { label: "Slate Mist", hex: "#94A3B8" },
+  { label: "Sandstone", hex: "#D6C7AE" },
+  { label: "Soft Linen", hex: "#F1EBE1" },
+  { label: "Cloud Grey", hex: "#E5E7EB" },
+  { label: "Pale Sky", hex: "#DCEAF7" },
+  { label: "Chroma Green", hex: "#00B140" },
+];
+
 export const DEFAULT_LOGO: VideoLogo = {
   src: null,
   name: "",
@@ -1964,22 +1988,47 @@ export function VideoGenerationBlock({
                   </div>
 
                   {state.background.mode === "color" && (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={state.background.color}
-                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
-                        aria-label="Background colour"
-                        className="h-8 w-12 rounded-md border border-border bg-background p-0.5 cursor-pointer"
-                      />
-                      <Input
-                        value={state.background.color}
-                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
-                        aria-label="Background colour hex value"
-                        className="h-8 text-xs font-mono"
-                      />
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-8 gap-1.5">
+                        {STUDIO_BG_COLORS.map((c) => (
+                          <button
+                            key={c.hex}
+                            type="button"
+                            title={c.label}
+                            aria-label={`Use ${c.label} background`}
+                            aria-pressed={state.background.color?.toLowerCase() === c.hex.toLowerCase()}
+                            onClick={() => update({ background: { ...state.background, mode: "color", color: c.hex } })}
+                            className={cn(
+                              "h-7 w-full rounded-md border transition-all",
+                              state.background.color?.toLowerCase() === c.hex.toLowerCase()
+                                ? "border-primary ring-2 ring-primary/30 scale-105"
+                                : "border-border/70 hover:scale-105 hover:border-primary/40"
+                            )}
+                            style={{ background: c.hex, boxShadow: `0 2px 8px -2px ${c.hex}` }}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={state.background.color}
+                          onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                          aria-label="Background colour"
+                          className="h-8 w-12 rounded-md border border-border bg-background p-0.5 cursor-pointer"
+                        />
+                        <Input
+                          value={state.background.color}
+                          onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                          aria-label="Background colour hex value"
+                          className="h-8 text-xs font-mono"
+                        />
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        {STUDIO_BG_COLORS.find((c) => c.hex.toLowerCase() === state.background.color?.toLowerCase())?.label ?? "Custom colour"}
+                      </p>
                     </div>
                   )}
+
 
                   {state.background.mode === "preset" && (
                     <div className="grid grid-cols-5 gap-1.5">
