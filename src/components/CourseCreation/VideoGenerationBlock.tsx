@@ -1867,20 +1867,36 @@ export function VideoGenerationBlock({
 
           {tab === "avatar" && (
             <div className="space-y-4">
-              <div className="flex items-center gap-3 rounded-xl border border-border p-2.5">
+              <div className="flex items-center gap-3 rounded-2xl border border-border bg-gradient-to-r from-primary/5 via-card to-secondary/10 p-3 shadow-[var(--shadow-card)]">
                 {avatar ? (
-                  <img src={avatar.image} alt={`${avatar.name} avatar`} className="w-12 h-14 rounded-lg object-cover" />
+                  <div className="relative shrink-0">
+                    <img src={avatar.image} alt={`${avatar.name} avatar`} className="w-14 h-16 rounded-xl object-cover ring-2 ring-primary/20" />
+                    <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground ring-2 ring-card">
+                      <Check className="h-3 w-3" aria-hidden="true" focusable="false" />
+                    </span>
+                  </div>
                 ) : (
-                  <span className="w-12 h-14 rounded-lg bg-muted flex items-center justify-center">
-                    <UserRound className="w-5 h-5 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  <span className="relative shrink-0 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                    <UserRound className="h-6 w-6 text-primary" aria-hidden="true" focusable="false" />
+                    <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground ring-2 ring-card">
+                      <Sparkles className="h-3 w-3" aria-hidden="true" focusable="false" />
+                    </span>
                   </span>
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-foreground truncate">{avatar ? avatar.name : "No avatar yet"}</p>
                   <p className="text-[11px] text-muted-foreground truncate">{avatar ? avatar.voice : "Browsing and samples are free"}</p>
                 </div>
-                <Button size="sm" variant="outline" className="rounded-full h-8 text-xs" onClick={() => setLibraryOpen(true)}>
-                  {avatar ? "Change" : "Browse"}
+                <Button size="sm" className="gap-1.5 rounded-full h-8 text-xs px-4" onClick={() => setLibraryOpen(true)}>
+                  {avatar ? (
+                    <>
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" focusable="false" /> Change
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-3.5 w-3.5" aria-hidden="true" focusable="false" /> Browse
+                    </>
+                  )}
                 </Button>
               </div>
 
