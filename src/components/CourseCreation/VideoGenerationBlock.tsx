@@ -66,6 +66,8 @@ import { toast } from "@/hooks/use-toast";
 import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
 import { readableTextColor } from "@/services/courseBrandingStore";
 import { VOICE_LIBRARY, VoiceLibraryDialog } from "@/components/CourseCreation/AIAudioBlock";
+import { useSpeechNarration } from "@/hooks/useSpeechNarration";
+
 
 import ariaImg from "@/assets/voices/aria.jpg";
 import georgeImg from "@/assets/voices/george.jpg";
@@ -1106,9 +1108,7 @@ const AVATAR_SAMPLE_SCRIPT: Record<string, string[]> = {
   ],
 };
 
-const SAMPLE_LINE_MS = 2600;
-
-/** Plays a short sample clip: cinematic camera move, word-synced captions and glass transport. */
+/** Plays a live sample: the browser speaks the script while the avatar lip-syncs. */
 function AvatarSampleStage({
   avatar,
   playing,
@@ -1119,52 +1119,43 @@ function AvatarSampleStage({
   onEnded: () => void;
 }) {
   const lines = AVATAR_SAMPLE_SCRIPT[avatar.id] ?? [`Hi, I'm ${avatar.name}.`];
-  const [index, setIndex] = useState(0);
-  const [elapsed, setElapsed] = useState(0);
-  const total = lines.length * SAMPLE_LINE_MS;
 
-  useEffect(() => {
-    if (!playing) {
-      setIndex(0);
-      setElapsed(0);
-      return;
-    }
-    setIndex(0);
-    setElapsed(0);
-    const start = performance.now();
-    let raf = 0;
-    const tick = () => {
-      const t = performance.now() - start;
-      if (t >= total) {
-        setElapsed(total);
-        onEnded();
-        return;
-      }
-      setElapsed(t);
-      setIndex(Math.min(lines.length - 1, Math.floor(t / SAMPLE_LINE_MS)));
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, avatar.id]);
+  const { lineIndex, wordIndex, mouth, progress, hasVoice } = useSpeechNarration({
+    lines,
+    active: playing,
+    gender: avatar.gender === "Female" ? "female" : "male",
+    lang: avatar.voice.includes("(UK)") ? "en-GB" : "en-US",
+    rate: avatar.gender === "Female" ? 1.02 : 0.96,
+    pitch: avatar.gender === "Female" ? 1.08 : 0.9,
+    onEnded,
+  });
 
+  const index = Math.min(lineIndex, lines.length - 1);
   const words = lines[index].split(" ");
-  const lineProgress = ((elapsed % SAMPLE_LINE_MS) / SAMPLE_LINE_MS) * words.length;
-  const progress = playing ? (elapsed / total) * 100 : 0;
-  const seconds = Math.floor(elapsed / 1000);
-  const totalSeconds = Math.round(total / 1000);
+  const lineProgress = wordIndex;
+  const elapsedRatio = progress / 100;
+  const totalSeconds = Math.max(1, Math.round(lines.join(" ").split(/\s+/).length * 0.36));
+  const seconds = Math.min(totalSeconds, Math.round(elapsedRatio * totalSeconds));
   const fmt = (s: number) => `0:${String(s).padStart(2, "0")}`;
 
   return (
     <>
+      {/* head/jaw motion driven by the live speech amplitude */}
       <motion.img
         src={avatar.image}
         alt={`${avatar.name} avatar`}
-        className="w-full h-full object-cover"
-        animate={playing ? { scale: [1.02, 1.09, 1.04], y: [0, -8, -3], x: [0, 4, 0] } : { scale: 1, y: 0, x: 0 }}
-        transition={playing ? { duration: total / 1000, ease: [0.33, 0, 0.2, 1] } : { duration: 0.5, ease: "easeOut" }}
+        className="w-full h-full object-cover origin-bottom"
+        style={
+          playing
+            ? {
+                transform: `scale(${1.05 + mouth * 0.012}) translateY(${-4 - mouth * 3}px) rotate(${(mouth - 0.5) * 0.5}deg)`,
+              }
+            : undefined
+        }
+        animate={playing ? undefined : { scale: 1, y: 0, x: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       />
+
 
       <AnimatePresence>
         {playing && (
@@ -1208,22 +1199,22 @@ function AvatarSampleStage({
                 transition={{ duration: 1.2, repeat: Infinity }}
                 aria-hidden="true"
               />
-              SAMPLE
+              {hasVoice ? "SPEAKING LIVE" : "SAMPLE"}
+
             </motion.span>
 
             {/* equaliser + timecode */}
             <div className="absolute bottom-[62px] left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full border border-white/12 bg-background/55 backdrop-blur-md px-2.5 py-1 shadow-lg">
               <span className="flex items-end gap-[2.5px] h-3.5" aria-hidden="true">
-                {[0, 1, 2, 3, 4, 5, 6].map((b) => (
-                  <motion.span
+                {[0.7, 1, 0.55, 0.9, 0.45, 0.8, 0.6].map((w, b) => (
+                  <span
                     key={b}
-                    className="w-[2.5px] rounded-full bg-gradient-to-t from-primary/60 to-primary"
-                    style={{ height: "35%" }}
-                    animate={{ height: ["25%", "100%", "45%", "85%", "30%"] }}
-                    transition={{ duration: 0.85, repeat: Infinity, delay: b * 0.07, ease: "easeInOut" }}
+                    className="w-[2.5px] rounded-full bg-gradient-to-t from-primary/60 to-primary transition-[height] duration-75"
+                    style={{ height: `${Math.max(18, Math.min(100, mouth * 100 * w + 18))}%` }}
                   />
                 ))}
               </span>
+
               <span className="text-[9px] font-mono font-medium text-foreground tabular-nums">
                 {fmt(seconds)} / {fmt(totalSeconds)}
               </span>
@@ -1257,7 +1248,7 @@ function AvatarSampleStage({
               {/* chaptered scrubber */}
               <div className="mt-2 flex items-center gap-1">
                 {lines.map((_, i) => {
-                  const seg = clamp((elapsed - i * SAMPLE_LINE_MS) / SAMPLE_LINE_MS, 0, 1) * 100;
+                  const seg = clamp(i < index ? 1 : i > index ? 0 : (lineProgress + 1) / Math.max(1, words.length), 0, 1) * 100;
                   return (
                     <span key={i} className="h-[3px] flex-1 rounded-full bg-foreground/20 overflow-hidden">
                       <span
