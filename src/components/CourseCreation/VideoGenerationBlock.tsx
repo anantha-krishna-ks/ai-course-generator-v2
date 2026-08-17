@@ -62,6 +62,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
 import { CONTENT_BACKGROUNDS } from "@/services/contentBackgrounds";
+import { readableTextColor } from "@/services/courseBrandingStore";
 import { VOICE_LIBRARY, VoiceLibraryDialog } from "@/components/CourseCreation/AIAudioBlock";
 
 import ariaImg from "@/assets/voices/aria.jpg";
