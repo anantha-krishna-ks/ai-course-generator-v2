@@ -1717,7 +1717,7 @@ export function VideoGenerationBlock({
           </DialogHeader>
           <div className="w-full h-full overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-2 pl-4 pr-14 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
+      <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
 
         <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <VideoIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
