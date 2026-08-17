@@ -3103,6 +3103,28 @@ export function VideoGenerationPreview({ content }: { content: string }) {
   const [playing, setPlaying] = useState(false);
   const [showCaptions, setShowCaptions] = useState(state.captions);
   const [showTranscript, setShowTranscript] = useState(false);
+  const [volume, setVolume] = useState(80);
+  const [muted, setMuted] = useState(false);
+  const [pip, setPip] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const rootRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const onChange = () => setFullscreen(document.fullscreenElement === rootRef.current);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    const el = rootRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else {
+      void el.requestFullscreen?.();
+    }
+  };
+
 
   const sentences = useMemo(
     () => state.script.split(/(?<=[.!?])\s+/).filter(Boolean),
