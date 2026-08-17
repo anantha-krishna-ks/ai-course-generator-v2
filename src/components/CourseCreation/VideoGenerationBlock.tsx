@@ -1964,22 +1964,47 @@ export function VideoGenerationBlock({
                   </div>
 
                   {state.background.mode === "color" && (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={state.background.color}
-                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
-                        aria-label="Background colour"
-                        className="h-8 w-12 rounded-md border border-border bg-background p-0.5 cursor-pointer"
-                      />
-                      <Input
-                        value={state.background.color}
-                        onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
-                        aria-label="Background colour hex value"
-                        className="h-8 text-xs font-mono"
-                      />
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-8 gap-1.5">
+                        {STUDIO_BG_COLORS.map((c) => (
+                          <button
+                            key={c.hex}
+                            type="button"
+                            title={c.label}
+                            aria-label={`Use ${c.label} background`}
+                            aria-pressed={state.background.color?.toLowerCase() === c.hex.toLowerCase()}
+                            onClick={() => update({ background: { ...state.background, mode: "color", color: c.hex } })}
+                            className={cn(
+                              "h-7 w-full rounded-md border transition-all",
+                              state.background.color?.toLowerCase() === c.hex.toLowerCase()
+                                ? "border-primary ring-2 ring-primary/30 scale-105"
+                                : "border-border/70 hover:scale-105 hover:border-primary/40"
+                            )}
+                            style={{ background: c.hex, boxShadow: `0 2px 8px -2px ${c.hex}` }}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={state.background.color}
+                          onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                          aria-label="Background colour"
+                          className="h-8 w-12 rounded-md border border-border bg-background p-0.5 cursor-pointer"
+                        />
+                        <Input
+                          value={state.background.color}
+                          onChange={(e) => update({ background: { ...state.background, mode: "color", color: e.target.value } })}
+                          aria-label="Background colour hex value"
+                          className="h-8 text-xs font-mono"
+                        />
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        {STUDIO_BG_COLORS.find((c) => c.hex.toLowerCase() === state.background.color?.toLowerCase())?.label ?? "Custom colour"}
+                      </p>
                     </div>
                   )}
+
 
                   {state.background.mode === "preset" && (
                     <div className="grid grid-cols-5 gap-1.5">
