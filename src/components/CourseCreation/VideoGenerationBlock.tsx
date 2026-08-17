@@ -2320,8 +2320,8 @@ export function VideoGenerationBlock({
                 </Button>
               </div>
 
-              {/* Script source switch — segmented glass pill */}
-              <div className="relative grid grid-cols-3 gap-1 rounded-full border border-border bg-muted/60 p-1 backdrop-blur-sm">
+              {/* Script source tabs */}
+              <div className="grid grid-cols-3 gap-1 rounded-lg border border-border bg-muted/40 p-1">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
                   { id: "self", label: "Write myself", icon: PenLine },
@@ -2335,9 +2335,9 @@ export function VideoGenerationBlock({
                       onClick={() => update({ source: r.id })}
                       aria-pressed={active}
                       className={cn(
-                        "relative rounded-full py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        "relative rounded-md py-2 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         active
-                          ? "bg-primary text-primary-foreground ring-1 ring-inset ring-primary-foreground/25"
+                          ? "bg-primary text-primary-foreground"
                           : "text-muted-foreground hover:bg-background hover:text-foreground"
                       )}
                     >
