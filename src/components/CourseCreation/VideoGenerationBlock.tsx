@@ -1908,48 +1908,60 @@ export function VideoGenerationBlock({
 
               <div>
                 <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-                  <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> Avatar size on screen
+                  <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> How much of the frame the presenter fills
                 </Label>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {[
-                    { label: "Small", hint: "Slide stays the hero", box: "w-3 h-4" },
-                    { label: "Medium", hint: "Balanced split", box: "w-4 h-6" },
-                    { label: "Large", hint: "Presenter up close", box: "w-5 h-8" },
+                    { label: "25%", name: "Small", scale: 0.4 },
+                    { label: "40%", name: "Medium", scale: 0.62 },
+                    { label: "60%", name: "Large", scale: 0.9 },
                   ].map((s, i) => {
                     const active = state.avatarSize === i + 1;
                     return (
                       <button
-                        key={s.label}
+                        key={s.name}
                         type="button"
                         onClick={() => update({ avatarSize: i + 1 })}
                         aria-pressed={active}
-                        aria-label={`${s.label} avatar — ${s.hint}`}
+                        aria-label={`${s.name} presenter, fills about ${s.label} of the frame height`}
                         className={cn(
-                          "group rounded-xl border p-2 text-left transition-all",
+                          "group rounded-xl border p-2 transition-all",
                           active
                             ? "border-primary bg-primary/10 ring-1 ring-primary/30"
                             : "border-border hover:border-primary/40 hover:bg-muted/40"
                         )}
                       >
-                        {/* mini stage preview */}
+                        {/* 16:9 mini frame with proportional presenter silhouette */}
                         <span
                           className={cn(
-                            "relative flex h-11 w-full items-end justify-end overflow-hidden rounded-lg border p-1",
+                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border",
                             active ? "border-primary/30 bg-background" : "border-border bg-muted/50"
                           )}
                           aria-hidden="true"
                         >
-                          <span className={cn("rounded-sm", s.box, active ? "bg-primary" : "bg-muted-foreground/50")} />
+                          <span className="flex flex-col items-center" style={{ height: `${s.scale * 100}%` }}>
+                            {/* head */}
+                            <span
+                              className={cn("rounded-full", active ? "bg-primary" : "bg-muted-foreground/60")}
+                              style={{ width: `${s.scale * 14}px`, height: `${s.scale * 14}px` }}
+                            />
+                            {/* shoulders */}
+                            <span
+                              className={cn("mt-[2px] flex-1 rounded-t-full", active ? "bg-primary" : "bg-muted-foreground/60")}
+                              style={{ width: `${s.scale * 26}px` }}
+                            />
+                          </span>
                         </span>
                         <span className={cn("mt-1.5 block text-xs font-semibold", active ? "text-primary" : "text-foreground")}>
-                          {s.label}
+                          {s.name}
                         </span>
-                        <span className="block text-[11px] leading-tight text-muted-foreground">{s.hint}</span>
+                        <span className="block text-[11px] leading-tight text-muted-foreground">≈ {s.label} of frame</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
+
 
 
               <div className="rounded-xl border border-border p-2.5 space-y-2">
