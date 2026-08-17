@@ -22,6 +22,8 @@ import {
   Languages,
   Gauge,
   MoveDiagonal,
+  Minimize2,
+  Maximize2,
   RotateCcw,
   Download,
   Settings2,
@@ -1910,9 +1912,9 @@ export function VideoGenerationBlock({
                 </Label>
                 <div className="mt-1.5 flex gap-1.5">
                   {[
-                    { label: "Small", icon: Square, iconSize: 10 },
-                    { label: "Medium", icon: Square, iconSize: 13 },
-                    { label: "Large", icon: Square, iconSize: 16 },
+                    { label: "Small", icon: Minimize2 },
+                    { label: "Medium", icon: Square },
+                    { label: "Large", icon: Maximize2 },
                   ].map((s, i) => {
                     const Icon = s.icon;
                     return (
@@ -1926,7 +1928,7 @@ export function VideoGenerationBlock({
                           state.avatarSize === i + 1 ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
                         )}
                       >
-                        <Icon className="shrink-0" size={s.iconSize} aria-hidden="true" focusable="false" />
+                        <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" focusable="false" />
                         {s.label}
                       </button>
                     );
