@@ -193,6 +193,11 @@ export interface VideoTextElement {
   color?: string;
   src?: string;
   size?: number; // 1 - 3, shapes & images
+  /** free positioning on the stage — percent of stage width/height (element centre) */
+  x?: number;
+  y?: number;
+  /** free resize multiplier applied on top of `size` */
+  scale?: number;
   style: TextStyleId;
   text: string;
   zone: ZoneId;
