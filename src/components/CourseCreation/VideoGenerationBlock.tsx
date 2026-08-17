@@ -1466,6 +1466,8 @@ export function VideoGenerationBlock({
     [state, words, total]
   );
   const ready = checklist.every((c) => c.ok);
+  const readyCount = checklist.filter((c) => c.ok).length;
+  const hasProgress = !!state.avatarId || words > 0;
 
   const timerRef = useRef<number | null>(null);
   useEffect(() => () => { if (timerRef.current) window.clearInterval(timerRef.current); }, []);
