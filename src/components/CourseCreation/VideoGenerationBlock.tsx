@@ -2254,7 +2254,8 @@ export function VideoGenerationBlock({
                     {voice ? `${voice.name} · ${voice.language}` : "No voice selected"}
                   </p>
                 </div>
-                <Button size="sm" variant="outline" className="rounded-full h-8 text-xs" onClick={() => setVoiceOpen(true)}>
+                <Button size="sm" className="rounded-full h-8 text-xs bg-primary text-primary-foreground hover:bg-[hsl(var(--primary-hover))] shadow-[var(--shadow-card)]" onClick={() => setVoiceOpen(true)}>
+                  <Volume2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
                   Change voice
                 </Button>
               </div>
