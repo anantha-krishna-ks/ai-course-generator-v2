@@ -3154,7 +3154,13 @@ export function VideoGenerationPreview({ content }: { content: string }) {
   }
 
   return (
-    <figure className="w-full rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
+    <figure
+      ref={rootRef}
+      className={cn(
+        "w-full rounded-2xl overflow-hidden border border-border bg-card shadow-sm",
+        fullscreen && "rounded-none border-0 flex flex-col justify-center"
+      )}
+    >
       <div className="relative">
         <VideoStage state={state} time={time} generated={state.status === "generated"} />
 
