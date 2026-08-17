@@ -3323,7 +3323,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
             </div>
             <button
               type="button"
-              onClick={() => setPip(false)}
+              onClick={exitPip}
               aria-label="Expand back to main video"
               title="Back to video"
               className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-background/90 text-foreground flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors shadow-lg pointer-events-auto"
@@ -3344,7 +3344,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
             <div className="flex-1" />
             <button
               type="button"
-              onClick={() => setPip(false)}
+              onClick={exitPip}
               aria-label="Expand back to main video"
               title="Back to video"
               className="text-[10px] font-medium text-primary hover:text-primary-foreground hover:bg-primary px-2 py-1 rounded-full transition-colors"
