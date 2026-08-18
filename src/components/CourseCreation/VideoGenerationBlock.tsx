@@ -1979,9 +1979,9 @@ export function VideoGenerationBlock({
                 </Label>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {[
-                    { label: "25%", name: "Small", scale: 0.4 },
-                    { label: "40%", name: "Medium", scale: 0.62 },
-                    { label: "60%", name: "Large", scale: 0.9 },
+                    { name: "Small", pct: 18 },
+                    { name: "Medium", pct: 26 },
+                    { name: "Large", pct: 36 },
                   ].map((s, i) => {
                     const active = state.avatarSize === i + 1;
                     return (
@@ -1990,64 +1990,69 @@ export function VideoGenerationBlock({
                         type="button"
                         onClick={() => update({ avatarSize: i + 1 })}
                         aria-pressed={active}
-                        aria-label={`${s.name} presenter, fills about ${s.label} of the frame height`}
+                        aria-label={`${s.name} presenter, about ${s.pct}% of the frame width`}
                         className={cn(
-                          "group rounded-xl border p-2 transition-all",
+                          "group rounded-xl border p-1.5 text-left transition-all",
                           active
                             ? "border-primary bg-primary/10 ring-1 ring-primary/30"
                             : "border-border bg-white hover:border-primary/40"
                         )}
                       >
-                        {/* 16:9 mini frame previewing the real avatar on the real background */}
+                        {/* True-to-stage mini frame: same zone, same proportions as the real render */}
                         <span
                           className={cn(
-                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border",
+                            "relative block aspect-video w-full overflow-hidden rounded-md border",
                             active ? "border-primary/40" : "border-border"
                           )}
                           style={
                             state.background && state.background.mode !== "none"
                               ? backgroundStyle(state.background)
-                              : { background: "linear-gradient(180deg, hsl(var(--muted)) 0%, hsl(var(--background)) 100%)" }
+                              : { background: "linear-gradient(160deg, hsl(215 28% 22%), hsl(215 30% 12%))" }
                           }
                           aria-hidden="true"
                         >
-                          {/* studio floor sheen */}
-                          <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent" aria-hidden="true" />
-                          {/* fill badge */}
+                          {/* subtle stage vignette */}
+                          <span className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_0%,rgba(255,255,255,0.14),transparent_65%)]" />
+                          {/* placeholder slide content, so the avatar has real scale context */}
+                          <span className="absolute left-[8%] top-[18%] flex w-[42%] flex-col gap-[3px]">
+                            <span className="h-[3px] w-full rounded-full bg-white/60" />
+                            <span className="h-[2px] w-[85%] rounded-full bg-white/30" />
+                            <span className="h-[2px] w-[70%] rounded-full bg-white/30" />
+                          </span>
+                          {/* presenter card, mirroring zone + width used on the real stage */}
+                          <span className={cn("absolute inset-0 flex p-[6%]", zoneClass[state.avatarZone])}>
+                            <span
+                              className="relative block overflow-hidden rounded-[4px] ring-1 ring-white/30"
+                              style={{
+                                width: `${s.pct}%`,
+                                boxShadow: "0 6px 12px -6px rgba(0,0,0,0.8)",
+                              }}
+                            >
+                              {avatar?.image ? (
+                                <img
+                                  src={avatar.image}
+                                  alt=""
+                                  className="block aspect-[3/4] w-full object-cover"
+                                />
+                              ) : (
+                                <span className="block aspect-[3/4] w-full bg-white/25" />
+                              )}
+                            </span>
+                          </span>
+                        </span>
+                        <span className="mt-1.5 flex items-center justify-between gap-1">
+                          <span className={cn("text-[11px] font-semibold", active ? "text-primary" : "text-foreground")}>
+                            {s.name}
+                          </span>
                           <span
                             className={cn(
-                              "absolute top-1 right-1 z-10 text-[9px] font-bold px-1.5 py-0.5 rounded-full border backdrop-blur-sm",
-                              active
-                                ? "bg-primary text-primary-foreground border-primary/20"
-                                : "bg-background/85 text-muted-foreground border-border"
+                              "rounded-full px-1.5 py-[1px] text-[9px] font-bold",
+                              active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                             )}
                           >
-                            {s.label}
+                            {s.pct}%
                           </span>
-                          {/* real presenter */}
-                          {avatar?.image ? (
-                            <img
-                              src={avatar.image}
-                              alt=""
-                              className="relative z-[1] w-auto object-cover object-top"
-                              style={{
-                                height: `${s.scale * 100}%`,
-                                maskImage: "linear-gradient(180deg, #000 82%, transparent 100%)",
-                                WebkitMaskImage: "linear-gradient(180deg, #000 82%, transparent 100%)",
-                              }}
-                            />
-                          ) : (
-                            <span
-                              className="relative z-[1] rounded-t-full bg-foreground/25"
-                              style={{ height: `${s.scale * 100}%`, aspectRatio: "3 / 4" }}
-                              aria-hidden="true"
-                            />
-                          )}
                         </span>
-                        <span className={cn("mt-1.5 block text-xs font-semibold", active ? "text-primary" : "text-foreground")}>
-                          {s.name}
-                        </span>
-                        <span className="block text-[11px] leading-tight text-muted-foreground">≈ {s.label} of frame</span>
                       </button>
                     );
                   })}
