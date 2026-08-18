@@ -2329,7 +2329,11 @@ export function VideoGenerationBlock({
               </div>
 
               {/* Script source tabs */}
-              <div className="relative flex items-end border-b border-border">
+              <div
+                role="tablist"
+                aria-label="Script source"
+                className="relative inline-flex w-full items-center gap-1 p-1 rounded-full bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
+              >
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
                   { id: "self", label: "Write myself", icon: PenLine },
@@ -2340,17 +2344,33 @@ export function VideoGenerationBlock({
                     <button
                       key={r.id}
                       type="button"
+                      role="tab"
+                      aria-selected={active}
                       onClick={() => update({ source: r.id })}
-                      aria-pressed={active}
                       className={cn(
-                        "relative flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-t-lg",
+                        "group relative flex-1 inline-flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 text-[11px] font-semibold",
                         active
-                          ? "text-primary bg-muted/60 border-x border-t border-border border-b-background -mb-px"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      <r.icon className={cn("w-3.5 h-3.5", active ? "text-primary" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
-                      {r.label}
+                      {active && (
+                        <motion.span
+                          layoutId="vg-script-source-active"
+                          className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] shadow-[0_6px_18px_-8px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.18)]"
+                          transition={{ type: "spring", stiffness: 360, damping: 30 }}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <r.icon
+                        className={cn(
+                          "relative z-10 w-3.5 h-3.5 shrink-0",
+                          active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        )}
+                        aria-hidden="true"
+                        focusable="false"
+                      />
+                      <span className="relative z-10">{r.label}</span>
                     </button>
                   );
                 })}
