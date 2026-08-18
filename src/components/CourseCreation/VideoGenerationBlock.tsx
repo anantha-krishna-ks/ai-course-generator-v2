@@ -1354,7 +1354,7 @@ function AvatarLibraryDialog({
 /* Zone picker                                                         */
 /* ------------------------------------------------------------------ */
 
-const ZONE_META: Record<ZoneId, { abbr: string; icon: React.ReactNode }> = {
+const ZONE_META: Record<ZoneId, { abbr: string; icon: ReactNode }> = {
   "top-left":     { abbr: "TL", icon: <MoveDiagonal className="h-3 w-3 rotate-180" /> },
   "top-centre":   { abbr: "TC", icon: <MoveDiagonal className="h-3 w-3 -rotate-90" /> },
   "top-right":    { abbr: "TR", icon: <MoveDiagonal className="h-3 w-3 -rotate-45" /> },
