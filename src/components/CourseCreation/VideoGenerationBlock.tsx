@@ -1383,7 +1383,7 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
     <div className="flex items-center gap-4">
       {/* Modern 3×3 placement grid */}
       <div
-        className="grid aspect-video w-44 grid-cols-3 grid-rows-3 gap-1 rounded-xl border border-border/60 bg-white p-1.5 shadow-sm shrink-0"
+        className="grid aspect-video w-56 grid-cols-3 grid-rows-3 gap-1.5 rounded-xl border border-border/60 bg-white p-2 shadow-sm shrink-0"
         role="radiogroup"
         aria-label={label}
       >
@@ -1406,11 +1406,11 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
               )}
             >
               {active ? (
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-                  <UserRound className="h-4 w-4" aria-hidden="true" focusable="false" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                  <UserRound className="h-5 w-5" aria-hidden="true" focusable="false" />
                 </div>
               ) : (
-                <span className="h-2 w-2 rounded-full bg-muted-foreground/25 group-hover:bg-primary/50 transition-colors" />
+                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/25 group-hover:bg-primary/50 transition-colors" />
               )}
             </button>
           );
