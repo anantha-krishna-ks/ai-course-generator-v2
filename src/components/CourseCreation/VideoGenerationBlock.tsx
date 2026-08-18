@@ -3404,10 +3404,11 @@ export function VideoGenerationPreview({ content }: { content: string }) {
       ref={rootRef}
       className={cn(
         "w-full rounded-2xl overflow-hidden border border-border bg-card shadow-sm",
-        fullscreen && "rounded-none border-0 flex flex-col justify-center"
+        fullscreen && "rounded-none border-0 flex flex-row h-screen"
       )}
     >
-      <div className="relative">
+      <div className={cn("flex flex-col", fullscreen ? "w-[60%] h-full justify-center" : "w-full")}>
+        <div className="relative">
         <VideoStage state={state} time={time} generated={state.status === "generated"} />
 
         {!playing && (
