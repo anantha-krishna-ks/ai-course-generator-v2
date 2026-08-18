@@ -1665,7 +1665,12 @@ export function VideoGenerationBlock({
             <VideoGenerationPreview content={content} />
             <span
               className={cn(
-                "absolute top-3 left-3 z-10 rounded-full px-2.5 py-1 text-[11px] font-semibold shadow-sm border border-white/10",
+                "absolute top-3 left-3 z-10 rounded-full px-2.5 py-1 text-[11px] font-semibold shadow-md border backdrop-blur-sm",
+                state.status === "generated"
+                  ? "bg-background/95 text-success border-success/30"
+                  : state.status === "outdated"
+                    ? "bg-background/95 text-amber-600 border-amber-500/30"
+                    : "bg-muted text-muted-foreground border-border",
                 statusChip.cls
               )}
             >
