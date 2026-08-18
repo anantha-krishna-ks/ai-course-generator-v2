@@ -3592,7 +3592,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         </div>
       )}
 
-      {state.script && (
+      {!fullscreen && state.script && (
         <div className="border-t border-border">
           <button
             type="button"
