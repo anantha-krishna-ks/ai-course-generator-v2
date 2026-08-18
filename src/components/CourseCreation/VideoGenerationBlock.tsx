@@ -34,6 +34,7 @@ import {
   Triangle,
   MessageSquare,
   ArrowRight,
+  ArrowLeft,
   Palette,
   Shapes,
   Volume2,
@@ -1783,6 +1784,17 @@ export function VideoGenerationBlock({
           <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
           {formatTime(total)}
         </span>
+        {(state.status === "generated" || state.status === "outdated") && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="rounded-full h-8"
+            onClick={() => setEditorOpen(false)}
+          >
+            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
+            Back to editor
+          </Button>
+        )}
         <Button
           size="sm"
           className="rounded-full h-8"
@@ -1805,7 +1817,7 @@ export function VideoGenerationBlock({
           ) : (
             <Sparkles className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
           )}
-          {state.status === "generated" ? "Regenerate" : "Generate video"}
+          {state.status === "generated" || state.status === "outdated" ? "Regenerate" : "Generate video"}
         </Button>
         <button
           onClick={() => setEditorOpen(false)}
