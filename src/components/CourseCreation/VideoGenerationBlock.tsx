@@ -2001,22 +2001,46 @@ export function VideoGenerationBlock({
                         {/* 16:9 mini frame with proportional presenter silhouette */}
                         <span
                           className={cn(
-                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border",
-                            active ? "border-primary/30 bg-background" : "border-border bg-white"
+                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border bg-gradient-to-b",
+                            active
+                              ? "border-primary/30 from-primary/5 to-primary/[0.02]"
+                              : "border-border from-muted/40 to-muted/10"
                           )}
                           aria-hidden="true"
                         >
-                          <span className="flex flex-col items-center" style={{ height: `${s.scale * 100}%` }}>
-                            {/* head */}
-                            <span
-                              className={cn("rounded-full", active ? "bg-primary" : "bg-muted-foreground/60")}
-                              style={{ width: `${s.scale * 14}px`, height: `${s.scale * 14}px` }}
-                            />
-                            {/* shoulders */}
-                            <span
-                              className={cn("mt-[2px] flex-1 rounded-t-full", active ? "bg-primary" : "bg-muted-foreground/60")}
-                              style={{ width: `${s.scale * 26}px` }}
-                            />
+                          <span
+                            className="flex flex-col items-center justify-end"
+                            style={{ height: `${s.scale * 100}%`, width: `${s.scale * 70}%` }}
+                          >
+                            <svg
+                              viewBox="0 0 48 72"
+                              className={cn(
+                                "h-full w-auto drop-shadow-sm transition-colors duration-200",
+                                active ? "text-primary" : "text-muted-foreground/55 group-hover:text-muted-foreground/75"
+                              )}
+                              preserveAspectRatio="xMidYMax meet"
+                              aria-hidden="true"
+                              focusable="false"
+                            >
+                              <defs>
+                                <linearGradient id={`avatar-silhouette-${s.name}`} x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
+                                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.75" />
+                                </linearGradient>
+                              </defs>
+                              <path
+                                d="M24 26c6.6 0 12-5.4 12-12S30.6 2 24 2 12 7.4 12 14s5.4 12 12 12z"
+                                fill={`url(#avatar-silhouette-${s.name})`}
+                              />
+                              <path
+                                d="M24 32c-8.5 0-16.2 4.3-20.7 10.8C2.8 45.2 8.8 52 24 52s21.2-6.8 20.7-9.2C40.2 36.3 32.5 32 24 32z"
+                                fill={`url(#avatar-silhouette-${s.name})`}
+                              />
+                              <path
+                                d="M2 46v26h44V46c-4.5 4.8-12.2 8-22 8s-17.5-3.2-22-8z"
+                                fill={`url(#avatar-silhouette-${s.name})`}
+                              />
+                            </svg>
                           </span>
                         </span>
                         <span className={cn("mt-1.5 block text-xs font-semibold", active ? "text-primary" : "text-foreground")}>
