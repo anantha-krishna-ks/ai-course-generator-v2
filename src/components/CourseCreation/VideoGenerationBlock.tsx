@@ -1119,10 +1119,12 @@ function AvatarSampleStage({
   avatar,
   playing,
   onEnded,
+  onUse,
 }: {
   avatar: AvatarOption;
   playing: boolean;
   onEnded: () => void;
+  onUse?: () => void;
 }) {
   const lines = AVATAR_SAMPLE_SCRIPT[avatar.id] ?? [`Hi, I'm ${avatar.name}.`];
 
@@ -1146,14 +1148,19 @@ function AvatarSampleStage({
 
   return (
     <>
-      {/* static avatar image — lip/head motion removed for a cleaner look */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* static avatar image — clickable to select/use this avatar */}
+      <button
+        type="button"
+        onClick={onUse}
+        aria-label={`Use ${avatar.name}`}
+        className="absolute inset-0 overflow-hidden p-0 border-0 bg-transparent cursor-pointer"
+      >
         <img
           src={avatar.image}
           alt={`${avatar.name} avatar`}
           className="w-full h-full object-cover"
         />
-      </div>
+      </button>
 
       <AnimatePresence>
         {playing && (
@@ -1310,7 +1317,12 @@ function AvatarLibraryDialog({
               )}
             >
               <div className="relative aspect-[4/5] overflow-hidden">
-                <AvatarSampleStage avatar={a} playing={playing === a.id} onEnded={() => setPlaying(null)} />
+                <AvatarSampleStage
+                  avatar={a}
+                  playing={playing === a.id}
+                  onEnded={() => setPlaying(null)}
+                  onUse={() => { onSelect(a.id); onOpenChange(false); }}
+                />
                 <button
                   type="button"
                   onClick={() => setPlaying(playing === a.id ? null : a.id)}
