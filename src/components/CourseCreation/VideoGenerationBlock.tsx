@@ -1654,7 +1654,17 @@ export function VideoGenerationBlock({
       {/* ---- Compact block shown in the editor ---- */}
       {state.status === "generated" || state.status === "outdated" ? (
         <div className="w-full space-y-2">
-          <VideoGenerationPreview content={content} />
+          <div className="relative group">
+            <VideoGenerationPreview content={content} />
+            <Button
+              size="sm"
+              className="absolute top-3 right-3 rounded-full h-8 text-xs bg-background/90 backdrop-blur shadow-sm border border-border hover:bg-background z-10"
+              onClick={() => setEditorOpen(true)}
+              aria-label="Edit video"
+            >
+              <Settings2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Edit video
+            </Button>
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold", statusChip.cls)}>
               {statusChip.label}
@@ -1665,10 +1675,6 @@ export function VideoGenerationBlock({
                 Regenerate to publish your latest changes
               </span>
             )}
-            <div className="flex-1" />
-            <Button size="sm" variant="outline" className="rounded-full h-8 text-xs" onClick={() => setEditorOpen(true)}>
-              <Settings2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Edit video
-            </Button>
           </div>
         </div>
       ) : (
