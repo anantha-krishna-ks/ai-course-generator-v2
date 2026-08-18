@@ -1360,8 +1360,8 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
       <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
       {/* A mini video frame: tap the spot where the element should sit */}
       <div className="mt-1.5 flex items-center gap-3">
-        <div className="relative w-[168px] shrink-0 rounded-lg border border-border bg-background p-1.5">
-          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-[3px]">
+        <div className="relative w-[168px] shrink-0 rounded-xl border border-border bg-muted/30 p-2 shadow-sm">
+          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-1">
             {ZONES.map((z) => {
               const active = value === z;
               return (
@@ -1371,15 +1371,20 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
                   onClick={() => onChange(z)}
                   aria-label={`Place in ${z.replace("-", " ")} zone`}
                   aria-pressed={active}
-                  className="group flex items-center justify-center rounded-[4px] bg-muted/60 transition-colors hover:bg-primary/10"
+                  className={cn(
+                    "group flex items-center justify-center rounded-md border transition-all",
+                    active
+                      ? "border-primary bg-primary/15"
+                      : "border-border bg-background hover:border-primary/40 hover:bg-accent"
+                  )}
                 >
-                  {/* proxy of the element, shown solid when selected, ghosted on hover */}
+                  {/* proxy of the element — always visible, solid when selected */}
                   <span
                     className={cn(
-                      "h-[62%] w-[46%] rounded-[2px] transition-all",
+                      "h-[55%] w-[42%] rounded-sm border-2 transition-all",
                       active
-                        ? "bg-primary"
-                        : "bg-transparent group-hover:bg-primary/30"
+                        ? "border-primary bg-primary"
+                        : "border-dashed border-muted-foreground/40 bg-muted group-hover:border-primary/60 group-hover:bg-primary/20"
                     )}
                     aria-hidden="true"
                   />
