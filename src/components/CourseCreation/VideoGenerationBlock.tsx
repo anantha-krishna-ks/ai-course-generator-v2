@@ -3520,6 +3520,23 @@ export function VideoGenerationPreview({ content }: { content: string }) {
           />
         </div>
 
+        {/* Transcript toggle — only in fullscreen so it controls the side panel */}
+        {fullscreen && state.script && (
+          <button
+            type="button"
+            onClick={() => setTranscriptOpen((o) => !o)}
+            aria-label={transcriptOpen ? "Hide written version" : "Show written version"}
+            aria-pressed={transcriptOpen}
+            className={cn(
+              "h-8 pl-2.5 pr-3 rounded-full flex items-center gap-1.5 text-xs font-medium transition-colors",
+              transcriptOpen ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+            )}
+          >
+            <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+            Written version
+          </button>
+        )}
+
         {/* Picture in picture */}
         <button
           type="button"
@@ -3588,18 +3605,6 @@ export function VideoGenerationPreview({ content }: { content: string }) {
             ))}
           </div>
         </div>
-      )}
-
-      {fullscreen && state.script && !transcriptOpen && (
-        <button
-          type="button"
-          onClick={() => setTranscriptOpen(true)}
-          aria-label="Expand written version"
-          className="fixed right-4 top-1/2 -translate-y-1/2 z-50 h-10 pl-3 pr-4 rounded-full bg-card border border-border shadow-lg flex items-center gap-2 text-xs font-medium text-foreground hover:bg-muted transition-colors"
-        >
-          <PanelRightOpen className="w-4 h-4" aria-hidden="true" focusable="false" />
-          Written version
-        </button>
       )}
 
       {pip && !fullscreen && (
