@@ -2334,7 +2334,7 @@ export function VideoGenerationBlock({
               </div>
 
               {/* Script source tabs */}
-              <div className="relative flex items-center gap-1 rounded-xl border border-border bg-muted/30 p-1.5">
+              <div className="relative flex items-center gap-1 rounded-xl border border-border/60 bg-muted/70 p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_1px_2px_rgba(0,0,0,0.04)]">
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
                   { id: "self", label: "Write myself", icon: PenLine },
@@ -2350,11 +2350,16 @@ export function VideoGenerationBlock({
                       className={cn(
                         "relative flex-1 flex items-center justify-center gap-1.5 py-2 px-2 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg",
                         active
-                          ? "bg-primary text-primary-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                          ? "bg-primary text-primary-foreground shadow-[0_1px_3px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.25)] ring-1 ring-inset ring-primary-foreground/30"
+                          : "text-muted-foreground hover:text-foreground hover:bg-background/70 hover:shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]"
                       )}
                     >
-                      <r.icon className={cn("w-3.5 h-3.5", active ? "text-primary-foreground" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+                      <span className={cn(
+                        "flex items-center justify-center w-5 h-5 rounded-md transition-colors duration-200",
+                        active ? "bg-primary-foreground/20" : "bg-transparent"
+                      )}>
+                        <r.icon className={cn("w-3.5 h-3.5", active ? "text-primary-foreground" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
+                      </span>
                       {r.label}
                     </button>
                   );
