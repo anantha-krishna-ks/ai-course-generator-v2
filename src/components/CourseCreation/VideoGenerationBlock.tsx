@@ -1380,15 +1380,10 @@ const ZONE_LABEL: Record<ZoneId, string> = {
 
 function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: ZoneId) => void; label: string }) {
   return (
-    <div>
-      <div className="flex items-center justify-between gap-2">
-        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-        <span className="text-[10px] font-medium text-primary">{ZONE_LABEL[value]}</span>
-      </div>
-
-      {/* Compact 16:9 mini stage */}
+    <div className="flex items-center gap-3">
+      {/* Tight 16:9 mini stage */}
       <div
-        className="mt-1.5 grid aspect-video grid-cols-3 grid-rows-3 gap-[3px] rounded-lg border border-border/60 bg-muted/30 p-[3px]"
+        className="grid h-14 w-24 grid-cols-3 grid-rows-3 gap-[2px] rounded-md border border-border/60 bg-muted/30 p-[2px] shrink-0"
         role="radiogroup"
         aria-label={label}
       >
@@ -1404,20 +1399,25 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
               aria-label={ZONE_LABEL[z]}
               title={ZONE_LABEL[z]}
               className={cn(
-                "group flex items-center justify-center rounded-[5px] transition-colors duration-150",
+                "group flex items-center justify-center rounded-[3px] transition-colors duration-150",
                 active ? "bg-primary/15" : "bg-transparent hover:bg-muted/60"
               )}
             >
               <span
                 aria-hidden="true"
                 className={cn(
-                  "h-2 w-2 rounded-full transition-all duration-150",
+                  "h-1.5 w-1.5 rounded-full transition-all duration-150",
                   active ? "bg-primary scale-125" : "bg-muted-foreground/30 group-hover:bg-primary/50"
                 )}
               />
             </button>
           );
         })}
+      </div>
+
+      <div className="min-w-0">
+        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
+        <p className="text-xs font-medium text-foreground truncate">{ZONE_LABEL[value]}</p>
       </div>
     </div>
   );
