@@ -1380,10 +1380,10 @@ const ZONE_LABEL: Record<ZoneId, string> = {
 
 function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: ZoneId) => void; label: string }) {
   return (
-    <div className="flex items-center gap-3">
-      {/* Tight 16:9 mini stage */}
+    <div className="flex items-center gap-4">
+      {/* Intuitive 16:9 mini stage */}
       <div
-        className="grid h-14 w-24 grid-cols-3 grid-rows-3 gap-[2px] rounded-md border border-border/60 bg-muted/30 p-[2px] shrink-0"
+        className="grid aspect-video w-36 grid-cols-3 grid-rows-3 gap-1 rounded-lg border border-border/60 bg-muted/30 p-1 shrink-0"
         role="radiogroup"
         aria-label={label}
       >
@@ -1399,15 +1399,28 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
               aria-label={ZONE_LABEL[z]}
               title={ZONE_LABEL[z]}
               className={cn(
-                "group flex items-center justify-center rounded-[3px] transition-colors duration-150",
-                active ? "bg-primary/15" : "bg-transparent hover:bg-muted/60"
+                "group relative flex items-center justify-center rounded-md transition-all duration-150",
+                active
+                  ? "bg-primary/15 ring-1 ring-primary/40"
+                  : "bg-transparent hover:bg-muted/60"
               )}
             >
+              {/* Hover ghost proxy */}
               <span
                 aria-hidden="true"
                 className={cn(
-                  "h-1.5 w-1.5 rounded-full transition-all duration-150",
-                  active ? "bg-primary scale-125" : "bg-muted-foreground/30 group-hover:bg-primary/50"
+                  "absolute inset-1 rounded-sm transition-all duration-150 opacity-0 group-hover:opacity-100",
+                  active ? "bg-primary/0" : "bg-primary/10"
+                )}
+              />
+              {/* Active marker */}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "relative h-2.5 w-2.5 rounded-full transition-all duration-150",
+                  active
+                    ? "bg-primary scale-110 shadow-sm"
+                    : "bg-muted-foreground/30 group-hover:bg-primary/60"
                 )}
               />
             </button>
@@ -1417,7 +1430,8 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
 
       <div className="min-w-0">
         <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-        <p className="text-xs font-medium text-foreground truncate">{ZONE_LABEL[value]}</p>
+        <p className="text-sm font-medium text-foreground truncate">{ZONE_LABEL[value]}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">Tap a cell to place the presenter</p>
       </div>
     </div>
   );
