@@ -1785,6 +1785,7 @@ export function VideoGenerationBlock({
         </span>
         <Button
           size="sm"
+          variant={state.status === "generated" || state.status === "outdated" ? "outline" : "default"}
           className="rounded-full h-8"
           disabled={state.status === "generating"}
           onClick={() => {
