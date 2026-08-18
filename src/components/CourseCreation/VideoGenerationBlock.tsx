@@ -3520,6 +3520,30 @@ export function VideoGenerationPreview({ content }: { content: string }) {
           <RotateCcw className="w-4 h-4" aria-hidden="true" focusable="false" />
         </button>
       </div>
+      </div>
+
+      {fullscreen && state.script && (
+        <div className="w-[40%] h-full border-l border-border bg-card flex flex-col">
+          <div className="px-4 py-3 border-b border-border bg-muted/30">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
+              <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Written version
+            </h3>
+          </div>
+          <div className="flex-1 overflow-y-auto p-5 space-y-3">
+            {sentences.map((s, i) => (
+              <p
+                key={i}
+                className={cn(
+                  "text-sm leading-relaxed [overflow-wrap:anywhere] transition-colors",
+                  perSentence && Math.floor(time / perSentence) === i ? "text-foreground font-medium" : "text-muted-foreground"
+                )}
+              >
+                {s}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {pip && !fullscreen && (
         <div
