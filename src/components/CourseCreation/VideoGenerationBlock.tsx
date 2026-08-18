@@ -2001,46 +2001,88 @@ export function VideoGenerationBlock({
                         {/* 16:9 mini frame with proportional presenter silhouette */}
                         <span
                           className={cn(
-                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border bg-gradient-to-b",
+                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-xl border bg-gradient-to-b shadow-inner",
                             active
-                              ? "border-primary/30 from-primary/5 to-primary/[0.02]"
-                              : "border-border from-muted/40 to-muted/10"
+                              ? "border-primary/40 from-primary/[0.08] via-primary/[0.03] to-primary/[0.01] shadow-[inset_0_1px_2px_hsl(var(--primary)/0.08)]"
+                              : "border-border from-muted/50 via-muted/30 to-muted/10 shadow-[inset_0_1px_2px_hsl(0_0%_0%/0.03)]"
                           )}
                           aria-hidden="true"
                         >
+                          {/* studio floor */}
                           <span
-                            className="flex flex-col items-center justify-end"
-                            style={{ height: `${s.scale * 100}%`, width: `${s.scale * 70}%` }}
+                            className={cn(
+                              "absolute bottom-0 left-1/2 -translate-x-1/2 h-px w-[70%] rounded-full",
+                              active ? "bg-primary/20" : "bg-border"
+                            )}
+                            aria-hidden="true"
+                          />
+                          {/* fill badge */}
+                          <span
+                            className={cn(
+                              "absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full border",
+                              active
+                                ? "bg-primary text-primary-foreground border-primary/20"
+                                : "bg-background/80 text-muted-foreground border-border"
+                            )}
+                          >
+                            {s.label}
+                          </span>
+                          {/* presenter bust */}
+                          <span
+                            className="relative flex flex-col items-center justify-end"
+                            style={{ height: `${s.scale * 100}%`, width: `${s.scale * 72}%` }}
                           >
                             <svg
-                              viewBox="0 0 48 72"
+                              viewBox="0 0 80 100"
                               className={cn(
-                                "h-full w-auto drop-shadow-sm transition-colors duration-200",
-                                active ? "text-primary" : "text-muted-foreground/55 group-hover:text-muted-foreground/75"
+                                "h-full w-auto drop-shadow-md transition-all duration-200",
+                                active ? "text-primary" : "text-muted-foreground/50 group-hover:text-muted-foreground/70"
                               )}
                               preserveAspectRatio="xMidYMax meet"
                               aria-hidden="true"
                               focusable="false"
                             >
                               <defs>
-                                <linearGradient id={`avatar-silhouette-${s.name}`} x1="0" y1="0" x2="0" y2="1">
-                                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
-                                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.75" />
+                                <linearGradient id={`avatar-bust-${s.name}`} x1="0.5" y1="0" x2="0.5" y2="1">
+                                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.92" />
+                                  <stop offset="55%" stopColor="currentColor" stopOpacity="0.85" />
+                                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.65" />
                                 </linearGradient>
+                                <filter id={`avatar-glow-${s.name}`} x="-50%" y="-50%" width="200%" height="200%">
+                                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
                               </defs>
+                              {/* shoulders / torso */}
                               <path
-                                d="M24 26c6.6 0 12-5.4 12-12S30.6 2 24 2 12 7.4 12 14s5.4 12 12 12z"
-                                fill={`url(#avatar-silhouette-${s.name})`}
+                                d="M8 100h64c0-18-10-30-20-34-2.5-1-5-1.5-7.5-1.8V58h-9v6.2c-2.5.3-5 .8-7.5 1.8-10 4-20 16-20 34z"
+                                fill={`url(#avatar-bust-${s.name})`}
                               />
+                              {/* neck */}
+                              <rect x="33" y="48" width="14" height="16" rx="4" fill={`url(#avatar-bust-${s.name})`} />
+                              {/* head */}
+                              <ellipse cx="40" cy="34" rx="17" ry="20" fill={`url(#avatar-bust-${s.name})`} />
+                              {/* hair hint */}
                               <path
-                                d="M24 32c-8.5 0-16.2 4.3-20.7 10.8C2.8 45.2 8.8 52 24 52s21.2-6.8 20.7-9.2C40.2 36.3 32.5 32 24 32z"
-                                fill={`url(#avatar-silhouette-${s.name})`}
+                                d="M26 26c2-10 10-16 14-16s12 6 14 16c-3-6-8-9-14-9s-11 3-14 9z"
+                                fill="currentColor"
+                                opacity="0.35"
                               />
+                              {/* collar */}
                               <path
-                                d="M2 46v26h44V46c-4.5 4.8-12.2 8-22 8s-17.5-3.2-22-8z"
-                                fill={`url(#avatar-silhouette-${s.name})`}
+                                d="M32 60c3 3 8 4 8 4s5-1 8-4l-4-6h-8l-4 6z"
+                                fill="white"
+                                opacity="0.25"
                               />
                             </svg>
+                            {/* soft reflection */}
+                            <span
+                              className={cn(
+                                "absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-[60%] rounded-full blur-sm",
+                                active ? "bg-primary/25" : "bg-muted-foreground/15"
+                              )}
+                              aria-hidden="true"
+                            />
                           </span>
                         </span>
                         <span className={cn("mt-1.5 block text-xs font-semibold", active ? "text-primary" : "text-foreground")}>
