@@ -3404,10 +3404,11 @@ export function VideoGenerationPreview({ content }: { content: string }) {
       ref={rootRef}
       className={cn(
         "w-full rounded-2xl overflow-hidden border border-border bg-card shadow-sm",
-        fullscreen && "rounded-none border-0 flex flex-col justify-center"
+        fullscreen && "rounded-none border-0 flex flex-row h-screen"
       )}
     >
-      <div className="relative">
+      <div className={cn("flex flex-col", fullscreen ? "w-[60%] h-full justify-center" : "w-full")}>
+        <div className="relative">
         <VideoStage state={state} time={time} generated={state.status === "generated"} />
 
         {!playing && (
@@ -3519,6 +3520,30 @@ export function VideoGenerationPreview({ content }: { content: string }) {
           <RotateCcw className="w-4 h-4" aria-hidden="true" focusable="false" />
         </button>
       </div>
+      </div>
+
+      {fullscreen && state.script && (
+        <div className="w-[40%] h-full border-l border-border bg-card flex flex-col">
+          <div className="px-4 py-3 border-b border-border bg-muted/30">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
+              <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Written version
+            </h3>
+          </div>
+          <div className="flex-1 overflow-y-auto p-5 space-y-3">
+            {sentences.map((s, i) => (
+              <p
+                key={i}
+                className={cn(
+                  "text-sm leading-relaxed [overflow-wrap:anywhere] transition-colors",
+                  perSentence && Math.floor(time / perSentence) === i ? "text-foreground font-medium" : "text-muted-foreground"
+                )}
+              >
+                {s}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {pip && !fullscreen && (
         <div
@@ -3567,7 +3592,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         </div>
       )}
 
-      {state.script && (
+      {!fullscreen && state.script && (
         <div className="border-t border-border">
           <button
             type="button"
