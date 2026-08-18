@@ -43,6 +43,8 @@ import {
   PictureInPicture2,
   Maximize,
   Minimize,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -876,6 +878,7 @@ export function VideoStage({
   onPatchState,
   showZones,
   generated,
+  className,
 }: {
   state: VideoGenState;
   time: number;
@@ -886,6 +889,7 @@ export function VideoStage({
   onPatchState?: (patch: Partial<VideoGenState>) => void;
   showZones?: boolean;
   generated?: boolean;
+  className?: string;
 }) {
   const avatar = getAvatar(state.avatarId);
   const total = estimateDuration(state);
@@ -960,7 +964,10 @@ export function VideoStage({
     <div
       ref={stageRef}
       dir={rtl ? "rtl" : "ltr"}
-      className="relative w-full aspect-video rounded-xl overflow-hidden bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))]"
+      className={cn(
+        "relative w-full aspect-video rounded-xl overflow-hidden bg-[linear-gradient(150deg,hsl(var(--foreground)/0.92),hsl(var(--primary)/0.55))]",
+        className
+      )}
     >
       {/* Background layer (solid colour, preset or uploaded image) */}
       {state.background && state.background.mode !== "none" && (
@@ -3319,6 +3326,7 @@ export function VideoGenerationPreview({ content }: { content: string }) {
   const [muted, setMuted] = useState(false);
   const [pip, setPip] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [transcriptOpen, setTranscriptOpen] = useState(true);
   const rootRef = useRef<HTMLElement | null>(null);
   const pipButtonRef = useRef<HTMLButtonElement | null>(null);
   const restoreRef = useRef<{ scrollY: number; scrollX: number; focus: HTMLElement | null } | null>(null);
@@ -3407,34 +3415,63 @@ export function VideoGenerationPreview({ content }: { content: string }) {
         fullscreen && "rounded-none border-0 flex flex-row h-screen"
       )}
     >
-      <div className={cn("flex flex-col", fullscreen ? "w-[60%] h-full justify-center" : "w-full")}>
-        <div className="relative">
-        <VideoStage state={state} time={time} generated={state.status === "generated"} />
+      <div className={cn("flex flex-col", fullscreen ? "h-full" : "w-full", fullscreen && (transcriptOpen ? "w-[75%]" : "w-full"))}>
+        {fullscreen ? (
+          <div className="relative flex-1 flex items-center justify-center bg-black overflow-hidden">
+            <div className="relative w-full max-w-[calc(100vh*16/9)] aspect-video">
+              <VideoStage className="absolute inset-0 rounded-none" state={state} time={time} generated={state.status === "generated"} />
 
-        {!playing && (
-          <button
-            type="button"
-            onClick={() => { if (time >= total) setTime(0); setPlaying(true); }}
-            aria-label="Play video"
-            className="absolute inset-0 flex items-center justify-center bg-foreground/25 backdrop-blur-[1px] transition-opacity hover:bg-foreground/35"
-          >
-            <span className="w-14 h-14 rounded-full bg-background/95 flex items-center justify-center shadow-xl">
-              <Play className="w-6 h-6 ml-1 text-foreground" aria-hidden="true" focusable="false" />
-            </span>
-          </button>
-        )}
+              {!playing && (
+                <button
+                  type="button"
+                  onClick={() => { if (time >= total) setTime(0); setPlaying(true); }}
+                  aria-label="Play video"
+                  className="absolute inset-0 flex items-center justify-center bg-foreground/25 backdrop-blur-[1px] transition-opacity hover:bg-foreground/35"
+                >
+                  <span className="w-14 h-14 rounded-full bg-background/95 flex items-center justify-center shadow-xl">
+                    <Play className="w-6 h-6 ml-1 text-foreground" aria-hidden="true" focusable="false" />
+                  </span>
+                </button>
+              )}
 
-        {showCaptions && caption && (
-          <div className="absolute inset-x-0 bottom-3 flex justify-center px-6 pointer-events-none">
-            <p className="rounded-lg bg-foreground/80 text-background text-sm px-3 py-1.5 max-w-[85%] text-center [overflow-wrap:anywhere]">
-              {caption}
-            </p>
+              {showCaptions && caption && (
+                <div className="absolute inset-x-0 bottom-3 flex justify-center px-6 pointer-events-none">
+                  <p className="rounded-lg bg-foreground/80 text-background text-sm px-3 py-1.5 max-w-[85%] text-center [overflow-wrap:anywhere]">
+                    {caption}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="relative">
+            <VideoStage state={state} time={time} generated={state.status === "generated"} />
+
+            {!playing && (
+              <button
+                type="button"
+                onClick={() => { if (time >= total) setTime(0); setPlaying(true); }}
+                aria-label="Play video"
+                className="absolute inset-0 flex items-center justify-center bg-foreground/25 backdrop-blur-[1px] transition-opacity hover:bg-foreground/35"
+              >
+                <span className="w-14 h-14 rounded-full bg-background/95 flex items-center justify-center shadow-xl">
+                  <Play className="w-6 h-6 ml-1 text-foreground" aria-hidden="true" focusable="false" />
+                </span>
+              </button>
+            )}
+
+            {showCaptions && caption && (
+              <div className="absolute inset-x-0 bottom-3 flex justify-center px-6 pointer-events-none">
+                <p className="rounded-lg bg-foreground/80 text-background text-sm px-3 py-1.5 max-w-[85%] text-center [overflow-wrap:anywhere]">
+                  {caption}
+                </p>
+              </div>
+            )}
           </div>
         )}
-      </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-3 px-3 py-2.5 border-t border-border">
+      <div className={cn("flex items-center gap-3 px-3 py-2.5 border-t border-border", fullscreen && "shrink-0 bg-card")}>
         <button
           type="button"
           onClick={() => setPlaying((p) => !p)}
@@ -3522,12 +3559,20 @@ export function VideoGenerationPreview({ content }: { content: string }) {
       </div>
       </div>
 
-      {fullscreen && state.script && (
-        <div className="w-[40%] h-full border-l border-border bg-card flex flex-col">
-          <div className="px-4 py-3 border-b border-border bg-muted/30">
+      {fullscreen && state.script && transcriptOpen && (
+        <div className="w-[25%] h-full border-l border-border bg-card flex flex-col">
+          <div className="px-4 py-3 border-b border-border bg-muted/30 flex items-center justify-between gap-2">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
               <FileText className="w-3.5 h-3.5" aria-hidden="true" focusable="false" /> Written version
             </h3>
+            <button
+              type="button"
+              onClick={() => setTranscriptOpen(false)}
+              aria-label="Collapse written version"
+              className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:bg-muted transition-colors"
+            >
+              <PanelRightClose className="w-4 h-4" aria-hidden="true" focusable="false" />
+            </button>
           </div>
           <div className="flex-1 overflow-y-auto p-5 space-y-3">
             {sentences.map((s, i) => (
@@ -3543,6 +3588,18 @@ export function VideoGenerationPreview({ content }: { content: string }) {
             ))}
           </div>
         </div>
+      )}
+
+      {fullscreen && state.script && !transcriptOpen && (
+        <button
+          type="button"
+          onClick={() => setTranscriptOpen(true)}
+          aria-label="Expand written version"
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-50 h-10 pl-3 pr-4 rounded-full bg-card border border-border shadow-lg flex items-center gap-2 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+        >
+          <PanelRightOpen className="w-4 h-4" aria-hidden="true" focusable="false" />
+          Written version
+        </button>
       )}
 
       {pip && !fullscreen && (
