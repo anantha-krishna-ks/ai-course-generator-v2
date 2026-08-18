@@ -282,6 +282,36 @@ const video = (id: string, url = "/demo/Motion_Video.mp4"): Block => ({ id, type
 const videoDesc = (id: string, layout: "video-left" | "video-right", videoUrl: string, description: string): Block => ({
   id, type: "video-description", variant: layout, content: J({ layout, videoUrl, description }),
 });
+const videoGen = (id: string, script: string): Block => ({
+  id,
+  type: "text",
+  variant: "video-generation",
+  content: `<!--videogen:${JSON.stringify({
+    avatarId: "av-aria",
+    avatarZone: "bottom-right",
+    avatarSize: 2,
+    avatarFullRange: true,
+    avatarStart: 0,
+    avatarEnd: 0,
+    source: "ai",
+    aiTopic: "",
+    script,
+    scriptIsDraft: false,
+    scriptApproved: true,
+    uploadName: "",
+    rightsConfirmed: true,
+    transcriptEdited: true,
+    language: "en",
+    pace: "natural",
+    voiceId: "aria",
+    background: { mode: "preset", color: "#0F172A", presetId: "aurora", image: null, imageName: "" },
+    logo: { src: null, name: "", zone: "top-right", size: 2, fullRange: true, start: 0, end: 0 },
+    elements: [],
+    status: "generated",
+    paidSignature: "",
+    captions: true,
+  })}-->`,
+});
 const audio = (id: string, url = "/demo/actAudio.mp3"): Block => ({ id, type: "audio", content: url });
 const audioAI = (id: string, url = "/demo/actAudio.mp3"): Block => ({ id, type: "audio", variant: "ai-audio", content: url });
 const doc = (id: string, url = "/demo/G2_EVS.pdf"): Block => ({ id, type: "doc", content: url });
@@ -416,6 +446,7 @@ function enrichCourseOne(base: MultiPageCourseCreatorRestoreState): void {
   p["page-2-3"] = [
     ...(p["page-2-3"] || []),
     videoDesc("bk-231-vd", "video-right", "/demo/Motion_Video.mp4", "<p>Watch a 60-second walkthrough of how a mid-sized manufacturer built its first inventory.</p>"),
+    videoGen("bk-231-vg", "Welcome to this module on practical carbon accounting. In the next few minutes, you'll see how a mid-sized manufacturer mapped its emissions across all three scopes and built its first inventory. Pay close attention to the boundary decisions — they shape every number that follows."),
     hotspot("bk-231-hs", IMG.workspace, [
       { x: 20, y: 30, title: "Meters", description: "Electricity meters feed Scope 2 emissions data." },
       { x: 55, y: 55, title: "Fleet", description: "Owned vehicles fall under Scope 1 direct emissions." },
