@@ -34,6 +34,7 @@ import {
   Triangle,
   MessageSquare,
   ArrowRight,
+  ArrowLeft,
   Palette,
   Shapes,
   Volume2,
