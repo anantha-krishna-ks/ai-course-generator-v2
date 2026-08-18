@@ -1358,10 +1358,10 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
   return (
     <div>
       <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-      {/* 16:9 stage wireframe — the 9 zones map 1:1 to where the element lands on screen */}
-      <div className="mt-1.5 flex items-end gap-3">
-        <div className="relative w-[152px] shrink-0 overflow-hidden rounded-lg border border-border bg-muted/40 p-1">
-          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-1">
+      {/* A mini video frame: tap the spot where the element should sit */}
+      <div className="mt-1.5 flex items-center gap-3">
+        <div className="relative w-[168px] shrink-0 rounded-lg border border-border bg-background p-1.5">
+          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-[3px]">
             {ZONES.map((z) => {
               const active = value === z;
               return (
@@ -1371,19 +1371,15 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
                   onClick={() => onChange(z)}
                   aria-label={`Place in ${z.replace("-", " ")} zone`}
                   aria-pressed={active}
-                  className={cn(
-                    "group flex items-center justify-center rounded-[5px] border transition-all",
-                    active
-                      ? "border-primary bg-primary"
-                      : "border-transparent bg-background/70 hover:border-primary/40 hover:bg-primary/10"
-                  )}
+                  className="group flex items-center justify-center rounded-[4px] bg-muted/60 transition-colors hover:bg-primary/10"
                 >
+                  {/* proxy of the element, shown solid when selected, ghosted on hover */}
                   <span
                     className={cn(
-                      "rounded-full transition-all",
+                      "h-[62%] w-[46%] rounded-[2px] transition-all",
                       active
-                        ? "h-1.5 w-1.5 bg-primary-foreground"
-                        : "h-1 w-1 bg-muted-foreground/40 group-hover:bg-primary/60"
+                        ? "bg-primary"
+                        : "bg-transparent group-hover:bg-primary/30"
                     )}
                     aria-hidden="true"
                   />
@@ -1392,9 +1388,9 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
             })}
           </div>
         </div>
-        <p className="pb-0.5 text-[11px] leading-tight text-muted-foreground">
-          <span className="block font-semibold capitalize text-foreground">{value.replace("-", " ")}</span>
-          Pick a spot on the frame
+        <p className="text-[11px] leading-tight text-muted-foreground">
+          <span className="block text-xs font-semibold capitalize text-foreground">{value.replace("-", " ")}</span>
+          Tap a cell to move it there
         </p>
       </div>
     </div>
