@@ -2357,7 +2357,7 @@ export function VideoGenerationBlock({
                       {active && (
                         <motion.span
                           layoutId="vg-script-source-active"
-                          className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(220,90%,52%)] shadow-[0_8px_22px_-7px_hsl(var(--primary)/0.55),inset_0_1px_1px_hsl(0_0%_100%/0.25)]"
+                          className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(220,90%,52%)] shadow-[0_6px_16px_-6px_hsl(var(--primary)/0.45),inset_0_1px_1px_hsl(0_0%_100%/0.25)]"
                           transition={{ type: "spring", stiffness: 360, damping: 30 }}
                           aria-hidden="true"
                         >
