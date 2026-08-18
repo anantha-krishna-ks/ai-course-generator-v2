@@ -2332,7 +2332,7 @@ export function VideoGenerationBlock({
               <div
                 role="tablist"
                 aria-label="Script source"
-                className="relative inline-flex w-full items-center gap-1 p-1.5 rounded-full bg-white border border-border/80 shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_6px_18px_-10px_hsl(var(--primary)/0.12)]"
+                className="relative inline-flex w-full items-center gap-1 p-1.5 rounded-full bg-gradient-to-b from-white to-[hsl(210_40%_98%)] border border-border/80 shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_6px_18px_-10px_hsl(var(--primary)/0.14)]"
               >
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
@@ -2351,17 +2351,18 @@ export function VideoGenerationBlock({
                         "group relative flex-1 inline-flex items-center justify-center gap-2 px-2 sm:px-3 py-2.5 rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 text-[11px] font-semibold",
                         active
                           ? "text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                          : "text-muted-foreground hover:text-foreground hover:bg-white/60"
                       )}
                     >
                       {active && (
                         <motion.span
                           layoutId="vg-script-source-active"
-                          className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(220,90%,52%)] shadow-[0_6px_16px_-6px_hsl(var(--primary)/0.45),inset_0_1px_1px_hsl(0_0%_100%/0.25)]"
+                          className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(217_90%_58%)] via-primary to-[hsl(220_90%_48%)] shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5),inset_0_1px_1px_hsl(0_0%_100%/0.35)]"
                           transition={{ type: "spring", stiffness: 360, damping: 30 }}
                           aria-hidden="true"
                         >
-                          <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" aria-hidden="true" />
+                          <span className="absolute inset-x-4 top-[1px] h-[1px] rounded-full bg-gradient-to-r from-transparent via-white/70 to-transparent" aria-hidden="true" />
+                          <span className="absolute inset-x-0 bottom-0 h-1/2 rounded-b-full bg-gradient-to-t from-black/10 to-transparent" aria-hidden="true" />
                         </motion.span>
                       )}
                       <span className={cn(
