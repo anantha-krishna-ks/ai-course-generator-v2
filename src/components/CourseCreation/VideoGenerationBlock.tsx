@@ -1358,22 +1358,45 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
   return (
     <div>
       <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-      <div className="mt-1.5 grid grid-cols-3 gap-1 w-[108px]">
-        {ZONES.map((z) => (
-          <button
-            key={z}
-            type="button"
-            onClick={() => onChange(z)}
-            aria-label={`Place in ${z.replace("-", " ")} zone`}
-            aria-pressed={value === z}
-            className={cn(
-              "h-8 rounded-md border transition-all",
-              value === z ? "bg-primary border-primary shadow-sm" : "bg-muted/50 border-border hover:border-primary/50"
-            )}
-          />
-        ))}
+      {/* 16:9 stage wireframe — the 9 zones map 1:1 to where the element lands on screen */}
+      <div className="mt-1.5 flex items-end gap-3">
+        <div className="relative w-[152px] shrink-0 overflow-hidden rounded-lg border border-border bg-muted/40 p-1">
+          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-1">
+            {ZONES.map((z) => {
+              const active = value === z;
+              return (
+                <button
+                  key={z}
+                  type="button"
+                  onClick={() => onChange(z)}
+                  aria-label={`Place in ${z.replace("-", " ")} zone`}
+                  aria-pressed={active}
+                  className={cn(
+                    "group flex items-center justify-center rounded-[5px] border transition-all",
+                    active
+                      ? "border-primary bg-primary"
+                      : "border-transparent bg-background/70 hover:border-primary/40 hover:bg-primary/10"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "rounded-full transition-all",
+                      active
+                        ? "h-1.5 w-1.5 bg-primary-foreground"
+                        : "h-1 w-1 bg-muted-foreground/40 group-hover:bg-primary/60"
+                    )}
+                    aria-hidden="true"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <p className="pb-0.5 text-[11px] leading-tight text-muted-foreground">
+          <span className="block font-semibold capitalize text-foreground">{value.replace("-", " ")}</span>
+          Pick a spot on the frame
+        </p>
       </div>
-      <p className="text-[11px] text-muted-foreground mt-1.5 capitalize">{value.replace("-", " ")}</p>
     </div>
   );
 }
