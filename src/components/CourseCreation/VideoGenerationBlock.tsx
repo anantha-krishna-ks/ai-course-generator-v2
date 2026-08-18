@@ -1900,13 +1900,13 @@ export function VideoGenerationBlock({
 
         {/* Properties panel */}
         <div className="min-w-0 h-full p-4 overflow-y-auto bg-muted/40">
-          <div className="relative flex items-center bg-foreground/[0.06] border border-border/50 rounded-lg p-[3px] mb-3">
+          <div className="relative flex items-center rounded-xl bg-muted/60 border border-border/60 p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_1px_2px_rgba(0,0,0,0.04)] mb-3">
             {/* Sliding pill indicator */}
             <div
-              className="absolute top-[3px] bottom-[3px] rounded-md bg-background shadow-[0_1px_3px_0_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+              className="absolute top-1 bottom-1 rounded-lg bg-background shadow-[0_2px_4px_-1px_rgba(0,0,0,0.08),0_1px_2px_-1px_rgba(0,0,0,0.05),inset_0_1px_0_rgba(255,255,255,0.7)] border border-border/40 transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
               style={{
-                width: "calc(25% - 1.5px)",
-                left: `calc(${["avatar", "speech", "media", "timing"].indexOf(tab) * 25}% + 3px)`,
+                width: "calc(25% - 2px)",
+                left: `calc(${["avatar", "speech", "media", "timing"].indexOf(tab) * 25}% + 1px)`,
               }}
               aria-hidden="true"
             />
@@ -1922,11 +1922,16 @@ export function VideoGenerationBlock({
                 onClick={() => setTab(t.id)}
                 aria-pressed={tab === t.id}
                 className={cn(
-                  "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 text-xs font-semibold rounded-md transition-colors duration-300",
+                  "relative z-10 flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-xs font-semibold rounded-lg transition-all duration-300",
                   tab === t.id ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <t.icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                <span className={cn(
+                  "flex items-center justify-center w-5 h-5 rounded-md transition-colors duration-300",
+                  tab === t.id ? "bg-primary/10 text-primary" : "bg-transparent"
+                )}>
+                  <t.icon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                </span>
                 {t.label}
               </button>
             ))}
