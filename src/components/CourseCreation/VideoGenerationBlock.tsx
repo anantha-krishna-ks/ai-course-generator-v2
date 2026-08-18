@@ -2365,7 +2365,7 @@ export function VideoGenerationBlock({
                       value={state.aiTopic}
                       onChange={(e) => update({ aiTopic: e.target.value })}
                       placeholder="e.g. Spotting workplace hazards"
-                      className="h-9 text-xs"
+                      className="h-9 text-xs bg-white"
                     />
                     <Button
                       size="sm"
@@ -2419,7 +2419,7 @@ export function VideoGenerationBlock({
                   value={state.script}
                   onChange={(e) => update({ script: e.target.value, scriptApproved: state.scriptIsDraft ? false : state.scriptApproved })}
                   placeholder={state.source === "upload" ? "The transcript appears here once the file is processed" : "Type or paste the script the avatar will speak"}
-                  className="min-h-[140px] text-xs leading-relaxed"
+                  className="min-h-[140px] text-xs leading-relaxed bg-white"
                 />
                 <div className="flex items-center justify-between mt-1.5">
                   <p className={cn("text-[11px]", words > MAX_SCRIPT_WORDS ? "text-destructive" : "text-muted-foreground")}>
@@ -2440,7 +2440,7 @@ export function VideoGenerationBlock({
                     <Languages className="w-3 h-3" aria-hidden="true" focusable="false" /> Language
                   </Label>
                   <Select value={state.language} onValueChange={(v) => update({ language: v })}>
-                    <SelectTrigger className="h-8 mt-1 text-xs" aria-label="Video language"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 mt-1 text-xs bg-white" aria-label="Video language"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {LANGUAGES.map((l) => (
                         <SelectItem key={l.id} value={l.id}>{l.label}{l.rtl ? " (RTL)" : ""}</SelectItem>
@@ -2453,7 +2453,7 @@ export function VideoGenerationBlock({
                     <Gauge className="w-3 h-3" aria-hidden="true" focusable="false" /> Pace
                   </Label>
                   <Select value={state.pace} onValueChange={(v) => update({ pace: v as VideoGenState["pace"] })}>
-                    <SelectTrigger className="h-8 mt-1 text-xs" aria-label="Speaking pace"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="h-8 mt-1 text-xs bg-white" aria-label="Speaking pace"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="slow">Slow</SelectItem>
                       <SelectItem value="natural">Natural</SelectItem>
