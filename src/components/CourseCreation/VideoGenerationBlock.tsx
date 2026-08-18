@@ -1317,7 +1317,12 @@ function AvatarLibraryDialog({
               )}
             >
               <div className="relative aspect-[4/5] overflow-hidden">
-                <AvatarSampleStage avatar={a} playing={playing === a.id} onEnded={() => setPlaying(null)} />
+                <AvatarSampleStage
+                  avatar={a}
+                  playing={playing === a.id}
+                  onEnded={() => setPlaying(null)}
+                  onUse={() => { onSelect(a.id); onOpenChange(false); }}
+                />
                 <button
                   type="button"
                   onClick={() => setPlaying(playing === a.id ? null : a.id)}
