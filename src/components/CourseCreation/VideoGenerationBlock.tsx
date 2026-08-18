@@ -1663,6 +1663,14 @@ export function VideoGenerationBlock({
         <div className="w-full space-y-2">
           <div className="relative group">
             <VideoGenerationPreview content={content} />
+            <span
+              className={cn(
+                "absolute top-3 left-3 z-10 rounded-full px-2.5 py-1 text-[11px] font-semibold shadow-sm border border-white/10",
+                statusChip.cls
+              )}
+            >
+              {statusChip.label}
+            </span>
             <Button
               size="sm"
               variant="outline"
@@ -1673,17 +1681,12 @@ export function VideoGenerationBlock({
               <Settings2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" /> Edit video
             </Button>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-semibold", statusChip.cls)}>
-              {statusChip.label}
-            </span>
-            {state.status === "outdated" && (
-              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3 text-amber-600 dark:text-amber-400" aria-hidden="true" focusable="false" />
-                Regenerate to publish your latest changes
-              </span>
-            )}
-          </div>
+          {state.status === "outdated" && (
+            <div className="flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" focusable="false" />
+              Regenerate to publish your latest changes
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-full rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
