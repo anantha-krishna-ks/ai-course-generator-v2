@@ -2920,6 +2920,23 @@ export function VideoGenerationBlock({
           )}
         </div>
       </div>
+
+      {(state.status === "generated" || state.status === "outdated") && (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0">
+          <div className="flex items-center gap-2 text-sm text-foreground">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <Check className="h-3.5 w-3.5" aria-hidden="true" focusable="false" />
+            </span>
+            <span className="font-medium">Your video is ready</span>
+            <span className="hidden sm:inline text-muted-foreground">· {formatTime(total)}</span>
+          </div>
+          <Button size="sm" className="rounded-full h-9 px-4" onClick={() => setEditorOpen(false)}>
+            <ArrowLeft className="w-4 h-4 mr-1.5" aria-hidden="true" focusable="false" />
+            Back to editor
+          </Button>
+        </div>
+      )}
+
           </div>
         </DialogContent>
       </Dialog>
