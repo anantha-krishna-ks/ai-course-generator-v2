@@ -1995,14 +1995,14 @@ export function VideoGenerationBlock({
                           "group rounded-xl border p-2 transition-all",
                           active
                             ? "border-primary bg-primary/10 ring-1 ring-primary/30"
-                            : "border-border hover:border-primary/40 hover:bg-muted/40"
+                            : "border-border bg-white hover:border-primary/40"
                         )}
                       >
                         {/* 16:9 mini frame with proportional presenter silhouette */}
                         <span
                           className={cn(
                             "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border",
-                            active ? "border-primary/30 bg-background" : "border-border bg-muted/50"
+                            active ? "border-primary/30 bg-background" : "border-border bg-white"
                           )}
                           aria-hidden="true"
                         >
