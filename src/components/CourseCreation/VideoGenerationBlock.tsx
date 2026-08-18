@@ -1658,6 +1658,7 @@ export function VideoGenerationBlock({
             <VideoGenerationPreview content={content} />
             <Button
               size="sm"
+              variant="outline"
               className="absolute top-3 right-3 rounded-full h-8 text-xs bg-background/90 backdrop-blur shadow-sm border border-border hover:bg-background z-10"
               onClick={() => setEditorOpen(true)}
               aria-label="Edit video"
