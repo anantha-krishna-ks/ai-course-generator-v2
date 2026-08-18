@@ -1935,7 +1935,7 @@ export function VideoGenerationBlock({
 
           {tab === "avatar" && (
             <div className="space-y-4">
-              <div className="flex items-center gap-3 rounded-2xl border border-border bg-gradient-to-r from-primary/5 via-card to-secondary/10 p-3 shadow-[var(--shadow-card)]">
+              <div className="flex items-center gap-3 rounded-2xl border border-border bg-white p-3 shadow-[var(--shadow-card)]">
                 {avatar ? (
                   <div className="relative shrink-0">
                     <img src={avatar.image} alt={`${avatar.name} avatar`} className="w-14 h-16 rounded-xl object-cover ring-2 ring-primary/20" />
@@ -2031,7 +2031,7 @@ export function VideoGenerationBlock({
 
 
 
-              <div className="rounded-xl border border-border p-2.5 space-y-2">
+              <div className="rounded-xl border border-border bg-white p-2.5 space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="avatar-range" className="text-xs font-medium text-foreground">On screen for the whole video</Label>
                   <Switch id="avatar-range" checked={state.avatarFullRange} onCheckedChange={(v) => update({ avatarFullRange: v, avatarEnd: v ? 0 : total })} />
@@ -2051,8 +2051,8 @@ export function VideoGenerationBlock({
               </div>
 
               {/* ---- Background (CR-01) ---- */}
-              <div className="rounded-xl border border-border overflow-hidden">
-                <div className="flex items-center gap-2 px-3 py-2 bg-muted/40">
+              <div className="rounded-xl border border-border overflow-hidden bg-white">
+                <div className="flex items-center gap-2 px-3 py-2 bg-white">
                   <Palette className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1">Background</p>
                   {state.background.mode !== "none" && (
@@ -2203,8 +2203,8 @@ export function VideoGenerationBlock({
               </div>
 
               {/* ---- Logo (CR-02) ---- */}
-              <div className="rounded-xl border border-border overflow-hidden">
-                <div className="flex items-center gap-2 px-3 py-2 bg-muted/40">
+              <div className="rounded-xl border border-border overflow-hidden bg-white">
+                <div className="flex items-center gap-2 px-3 py-2 bg-white">
                   <ImageIcon className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" focusable="false" />
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1">Logo</p>
                   {state.logo.src && (
@@ -2308,7 +2308,7 @@ export function VideoGenerationBlock({
           {tab === "speech" && (
             <div className="space-y-3">
               {/* Voice (CR-06) */}
-              <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-2.5">
+              <div className="flex items-center gap-3 rounded-xl border border-border bg-white p-2.5">
                 <span className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex items-center justify-center shrink-0 ring-1 ring-border">
                   {voice ? (
                     <img src={voice.image} alt="" className="w-full h-full object-cover" />
