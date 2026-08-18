@@ -1975,13 +1975,13 @@ export function VideoGenerationBlock({
 
               <div>
                 <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-                  <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> How much of the frame the presenter fills
+                  <MoveDiagonal className="w-3 h-3" aria-hidden="true" focusable="false" /> Presenter size on screen
                 </Label>
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {[
-                    { name: "Small", pct: 18 },
-                    { name: "Medium", pct: 26 },
-                    { name: "Large", pct: 36 },
+                    { name: "Small", pct: 18, hint: "Slide first" },
+                    { name: "Medium", pct: 26, hint: "Balanced" },
+                    { name: "Large", pct: 36, hint: "Presenter first" },
                   ].map((s, i) => {
                     const active = state.avatarSize === i + 1;
                     return (
@@ -1990,69 +1990,46 @@ export function VideoGenerationBlock({
                         type="button"
                         onClick={() => update({ avatarSize: i + 1 })}
                         aria-pressed={active}
-                        aria-label={`${s.name} presenter, about ${s.pct}% of the frame width`}
+                        aria-label={`${s.name} presenter — takes about ${s.pct}% of the video width`}
                         className={cn(
-                          "group rounded-xl border p-1.5 text-left transition-all",
+                          "group rounded-xl border p-1.5 text-center transition-all",
                           active
                             ? "border-primary bg-primary/10 ring-1 ring-primary/30"
                             : "border-border bg-white hover:border-primary/40"
                         )}
                       >
-                        {/* True-to-stage mini frame: same zone, same proportions as the real render */}
+                        {/* Simple wireframe of the video frame: grey slide area + presenter block to scale */}
                         <span
                           className={cn(
-                            "relative block aspect-video w-full overflow-hidden rounded-md border",
+                            "relative block aspect-video w-full overflow-hidden rounded-md border bg-muted/50",
                             active ? "border-primary/40" : "border-border"
                           )}
-                          style={
-                            state.background && state.background.mode !== "none"
-                              ? backgroundStyle(state.background)
-                              : { background: "linear-gradient(160deg, hsl(215 28% 22%), hsl(215 30% 12%))" }
-                          }
                           aria-hidden="true"
                         >
-                          {/* subtle stage vignette */}
-                          <span className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_0%,rgba(255,255,255,0.14),transparent_65%)]" />
-                          {/* placeholder slide content, so the avatar has real scale context */}
-                          <span className="absolute left-[8%] top-[18%] flex w-[42%] flex-col gap-[3px]">
-                            <span className="h-[3px] w-full rounded-full bg-white/60" />
-                            <span className="h-[2px] w-[85%] rounded-full bg-white/30" />
-                            <span className="h-[2px] w-[70%] rounded-full bg-white/30" />
-                          </span>
-                          {/* presenter card, mirroring zone + width used on the real stage */}
-                          <span className={cn("absolute inset-0 flex p-[6%]", zoneClass[state.avatarZone])}>
+                          <span className="absolute inset-0 flex items-end justify-end p-[7%]">
                             <span
-                              className="relative block overflow-hidden rounded-[4px] ring-1 ring-white/30"
-                              style={{
-                                width: `${s.pct}%`,
-                                boxShadow: "0 6px 12px -6px rgba(0,0,0,0.8)",
-                              }}
-                            >
-                              {avatar?.image ? (
-                                <img
-                                  src={avatar.image}
-                                  alt=""
-                                  className="block aspect-[3/4] w-full object-cover"
-                                />
-                              ) : (
-                                <span className="block aspect-[3/4] w-full bg-white/25" />
+                              className={cn(
+                                "flex items-end justify-center rounded-[3px] transition-colors",
+                                active ? "bg-primary" : "bg-muted-foreground/45 group-hover:bg-muted-foreground/60"
                               )}
+                              style={{ width: `${s.pct}%`, aspectRatio: "3 / 4" }}
+                            >
+                              <UserRound
+                                className={cn(
+                                  "h-[70%] w-[70%] translate-y-[12%]",
+                                  active ? "text-primary-foreground/90" : "text-background"
+                                )}
+                                strokeWidth={2.4}
+                                aria-hidden="true"
+                                focusable="false"
+                              />
                             </span>
                           </span>
                         </span>
-                        <span className="mt-1.5 flex items-center justify-between gap-1">
-                          <span className={cn("text-[11px] font-semibold", active ? "text-primary" : "text-foreground")}>
-                            {s.name}
-                          </span>
-                          <span
-                            className={cn(
-                              "rounded-full px-1.5 py-[1px] text-[9px] font-bold",
-                              active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                            )}
-                          >
-                            {s.pct}%
-                          </span>
+                        <span className={cn("mt-1.5 block text-[11px] font-semibold", active ? "text-primary" : "text-foreground")}>
+                          {s.name}
                         </span>
+                        <span className="block text-[10px] leading-tight text-muted-foreground">{s.hint}</span>
                       </button>
                     );
                   })}
