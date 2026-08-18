@@ -1670,8 +1670,7 @@ export function VideoGenerationBlock({
                   ? "bg-background/95 text-success border-success/30"
                   : state.status === "outdated"
                     ? "bg-background/95 text-amber-600 border-amber-500/30"
-                    : "bg-muted text-muted-foreground border-border",
-                statusChip.cls
+                    : "bg-muted text-muted-foreground border-border"
               )}
             >
               {statusChip.label}
