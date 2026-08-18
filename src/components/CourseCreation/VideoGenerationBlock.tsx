@@ -2787,7 +2787,7 @@ export function VideoGenerationBlock({
 
           {tab === "timing" && (
             <div className="space-y-3">
-              <div className="flex items-start gap-2.5 rounded-xl border border-border p-2.5">
+              <div className="flex items-start gap-2.5 rounded-xl border border-border bg-white p-2.5">
                 <Captions className="w-4 h-4 text-muted-foreground mt-0.5" aria-hidden="true" focusable="false" />
                 <div className="flex-1 min-w-0">
                   <Label htmlFor="opt-captions" className="text-xs font-medium text-foreground">Captions</Label>
@@ -2796,7 +2796,7 @@ export function VideoGenerationBlock({
                 <Switch id="opt-captions" checked={state.captions} onCheckedChange={(v) => update({ captions: v })} />
               </div>
 
-              <div className="rounded-xl border border-border p-3 space-y-1.5">
+              <div className="rounded-xl border border-border bg-white p-3 space-y-1.5">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Summary</p>
                 <p className="text-xs text-foreground">{avatar ? avatar.name : "No avatar"} · {voice?.name ?? "No voice"} · {formatTime(total)}</p>
                 <p className="text-[11px] text-muted-foreground">{state.elements.length} on-screen element{state.elements.length === 1 ? "" : "s"}{state.logo.src ? " · logo applied" : ""}{state.background.mode !== "none" ? " · custom background" : ""}</p>
