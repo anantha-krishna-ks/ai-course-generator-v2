@@ -1998,92 +1998,51 @@ export function VideoGenerationBlock({
                             : "border-border bg-white hover:border-primary/40"
                         )}
                       >
-                        {/* 16:9 mini frame with proportional presenter silhouette */}
+                        {/* 16:9 mini frame previewing the real avatar on the real background */}
                         <span
                           className={cn(
-                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-xl border bg-gradient-to-b shadow-inner",
-                            active
-                              ? "border-primary/40 from-primary/[0.08] via-primary/[0.03] to-primary/[0.01] shadow-[inset_0_1px_2px_hsl(var(--primary)/0.08)]"
-                              : "border-border from-muted/50 via-muted/30 to-muted/10 shadow-[inset_0_1px_2px_hsl(0_0%_0%/0.03)]"
+                            "relative flex aspect-video w-full items-end justify-center overflow-hidden rounded-lg border",
+                            active ? "border-primary/40" : "border-border"
                           )}
+                          style={
+                            state.background && state.background.mode !== "none"
+                              ? backgroundStyle(state.background)
+                              : { background: "linear-gradient(180deg, hsl(var(--muted)) 0%, hsl(var(--background)) 100%)" }
+                          }
                           aria-hidden="true"
                         >
-                          {/* studio floor */}
-                          <span
-                            className={cn(
-                              "absolute bottom-0 left-1/2 -translate-x-1/2 h-px w-[70%] rounded-full",
-                              active ? "bg-primary/20" : "bg-border"
-                            )}
-                            aria-hidden="true"
-                          />
+                          {/* studio floor sheen */}
+                          <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent" aria-hidden="true" />
                           {/* fill badge */}
                           <span
                             className={cn(
-                              "absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full border",
+                              "absolute top-1 right-1 z-10 text-[9px] font-bold px-1.5 py-0.5 rounded-full border backdrop-blur-sm",
                               active
                                 ? "bg-primary text-primary-foreground border-primary/20"
-                                : "bg-background/80 text-muted-foreground border-border"
+                                : "bg-background/85 text-muted-foreground border-border"
                             )}
                           >
                             {s.label}
                           </span>
-                          {/* presenter bust */}
-                          <span
-                            className="relative flex flex-col items-center justify-end"
-                            style={{ height: `${s.scale * 100}%`, width: `${s.scale * 72}%` }}
-                          >
-                            <svg
-                              viewBox="0 0 80 100"
-                              className={cn(
-                                "h-full w-auto drop-shadow-md transition-all duration-200",
-                                active ? "text-primary" : "text-muted-foreground/50 group-hover:text-muted-foreground/70"
-                              )}
-                              preserveAspectRatio="xMidYMax meet"
-                              aria-hidden="true"
-                              focusable="false"
-                            >
-                              <defs>
-                                <linearGradient id={`avatar-bust-${s.name}`} x1="0.5" y1="0" x2="0.5" y2="1">
-                                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.92" />
-                                  <stop offset="55%" stopColor="currentColor" stopOpacity="0.85" />
-                                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.65" />
-                                </linearGradient>
-                                <filter id={`avatar-glow-${s.name}`} x="-50%" y="-50%" width="200%" height="200%">
-                                  <feGaussianBlur stdDeviation="2.5" result="blur" />
-                                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                                </filter>
-                              </defs>
-                              {/* shoulders / torso */}
-                              <path
-                                d="M8 100h64c0-18-10-30-20-34-2.5-1-5-1.5-7.5-1.8V58h-9v6.2c-2.5.3-5 .8-7.5 1.8-10 4-20 16-20 34z"
-                                fill={`url(#avatar-bust-${s.name})`}
-                              />
-                              {/* neck */}
-                              <rect x="33" y="48" width="14" height="16" rx="4" fill={`url(#avatar-bust-${s.name})`} />
-                              {/* head */}
-                              <ellipse cx="40" cy="34" rx="17" ry="20" fill={`url(#avatar-bust-${s.name})`} />
-                              {/* hair hint */}
-                              <path
-                                d="M26 26c2-10 10-16 14-16s12 6 14 16c-3-6-8-9-14-9s-11 3-14 9z"
-                                fill="currentColor"
-                                opacity="0.35"
-                              />
-                              {/* collar */}
-                              <path
-                                d="M32 60c3 3 8 4 8 4s5-1 8-4l-4-6h-8l-4 6z"
-                                fill="white"
-                                opacity="0.25"
-                              />
-                            </svg>
-                            {/* soft reflection */}
+                          {/* real presenter */}
+                          {avatar?.image ? (
+                            <img
+                              src={avatar.image}
+                              alt=""
+                              className="relative z-[1] w-auto object-cover object-top"
+                              style={{
+                                height: `${s.scale * 100}%`,
+                                maskImage: "linear-gradient(180deg, #000 82%, transparent 100%)",
+                                WebkitMaskImage: "linear-gradient(180deg, #000 82%, transparent 100%)",
+                              }}
+                            />
+                          ) : (
                             <span
-                              className={cn(
-                                "absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 w-[60%] rounded-full blur-sm",
-                                active ? "bg-primary/25" : "bg-muted-foreground/15"
-                              )}
+                              className="relative z-[1] rounded-t-full bg-foreground/25"
+                              style={{ height: `${s.scale * 100}%`, aspectRatio: "3 / 4" }}
                               aria-hidden="true"
                             />
-                          </span>
+                          )}
                         </span>
                         <span className={cn("mt-1.5 block text-xs font-semibold", active ? "text-primary" : "text-foreground")}>
                           {s.name}
