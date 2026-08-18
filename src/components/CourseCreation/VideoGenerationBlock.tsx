@@ -2332,7 +2332,7 @@ export function VideoGenerationBlock({
               <div
                 role="tablist"
                 aria-label="Script source"
-                className="relative inline-flex w-full items-center gap-1 p-1 rounded-full bg-white border border-border shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_8px_24px_-12px_hsl(var(--primary)/0.12)]"
+                className="relative inline-flex w-full items-center gap-1 p-1.5 rounded-full bg-white border border-border/80 shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_10px_28px_-12px_hsl(var(--primary)/0.18)]"
               >
                 {([
                   { id: "ai", label: "Let AI write", icon: Sparkles },
@@ -2348,28 +2348,35 @@ export function VideoGenerationBlock({
                       aria-selected={active}
                       onClick={() => update({ source: r.id })}
                       className={cn(
-                        "group relative flex-1 inline-flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 text-[11px] font-semibold",
+                        "group relative flex-1 inline-flex items-center justify-center gap-2 px-2 sm:px-3 py-2.5 rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 text-[11px] font-semibold",
                         active
                           ? "text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                       )}
                     >
                       {active && (
                         <motion.span
                           layoutId="vg-script-source-active"
-                          className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] shadow-[0_6px_18px_-8px_hsl(var(--primary)/0.55),inset_0_1px_0_hsl(0_0%_100%/0.18)]"
+                          className="absolute inset-0 rounded-full bg-gradient-to-br from-primary via-primary to-[hsl(220,90%,52%)] shadow-[0_8px_22px_-7px_hsl(var(--primary)/0.55),inset_0_1px_1px_hsl(0_0%_100%/0.25)]"
                           transition={{ type: "spring", stiffness: 360, damping: 30 }}
                           aria-hidden="true"
-                        />
+                        >
+                          <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" aria-hidden="true" />
+                        </motion.span>
                       )}
-                      <r.icon
-                        className={cn(
-                          "relative z-10 w-3.5 h-3.5 shrink-0",
-                          active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
-                        )}
-                        aria-hidden="true"
-                        focusable="false"
-                      />
+                      <span className={cn(
+                        "relative z-10 flex items-center justify-center w-5 h-5 rounded-full transition-colors duration-200",
+                        active ? "bg-white/15" : "bg-muted group-hover:bg-muted-foreground/10"
+                      )} aria-hidden="true">
+                        <r.icon
+                          className={cn(
+                            "w-3 h-3 shrink-0",
+                            active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                          )}
+                          aria-hidden="true"
+                          focusable="false"
+                        />
+                      </span>
                       <span className="relative z-10">{r.label}</span>
                     </button>
                   );
