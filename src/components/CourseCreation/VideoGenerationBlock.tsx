@@ -2495,8 +2495,12 @@ export function VideoGenerationBlock({
 
           {tab === "media" && (
             <div className="space-y-3">
-              {/* Sub-section switch — segmented glass pill */}
-              <div className="relative grid grid-cols-3 gap-1 rounded-full border border-border bg-muted/60 p-1 backdrop-blur-sm">
+              {/* Sub-section switch — glossy pill tabs */}
+              <div
+                role="tablist"
+                aria-label="Media type"
+                className="relative inline-flex w-full items-center gap-1 p-1.5 rounded-full bg-gradient-to-b from-white to-[hsl(210_40%_98%)] border border-border/80 shadow-[0_1px_2px_hsl(0_0%_0%/0.04),0_6px_18px_-10px_hsl(var(--primary)/0.14)]"
+              >
                 {([
                   { id: "text", label: "Text", icon: TypeIcon },
                   { id: "shapes", label: "Shapes", icon: Shapes },
@@ -2507,17 +2511,41 @@ export function VideoGenerationBlock({
                     <button
                       key={sct.id}
                       type="button"
+                      role="tab"
+                      aria-selected={active}
                       onClick={() => setMediaSection(sct.id)}
-                      aria-pressed={active}
                       className={cn(
-                        "relative rounded-full py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        "group relative flex-1 inline-flex items-center justify-center gap-2 px-2 sm:px-3 py-2.5 rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 text-[11px] font-semibold",
                         active
-                          ? "bg-primary text-primary-foreground ring-1 ring-inset ring-primary-foreground/25"
-                          : "text-muted-foreground hover:bg-background hover:text-foreground"
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-white/60"
                       )}
                     >
-                      <sct.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                      {sct.label}
+                      {active && (
+                        <motion.span
+                          layoutId="vg-media-section-active"
+                          className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(217_90%_58%)] via-primary to-[hsl(220_90%_48%)] shadow-[0_8px_20px_-6px_hsl(var(--primary)/0.5),inset_0_1px_1px_hsl(0_0%_100%/0.35)]"
+                          transition={{ type: "spring", stiffness: 360, damping: 30 }}
+                          aria-hidden="true"
+                        >
+                          <span className="absolute inset-x-4 top-[1px] h-[1px] rounded-full bg-gradient-to-r from-transparent via-white/70 to-transparent" aria-hidden="true" />
+                          <span className="absolute inset-x-0 bottom-0 h-1/2 rounded-b-full bg-gradient-to-t from-black/10 to-transparent" aria-hidden="true" />
+                        </motion.span>
+                      )}
+                      <span className={cn(
+                        "relative z-10 flex items-center justify-center w-5 h-5 rounded-full transition-colors duration-200",
+                        active ? "bg-white/15" : "bg-muted group-hover:bg-muted-foreground/10"
+                      )} aria-hidden="true">
+                        <sct.icon
+                          className={cn(
+                            "w-3 h-3 shrink-0",
+                            active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                          )}
+                          aria-hidden="true"
+                          focusable="false"
+                        />
+                      </span>
+                      <span className="relative z-10">{sct.label}</span>
                     </button>
                   );
                 })}
