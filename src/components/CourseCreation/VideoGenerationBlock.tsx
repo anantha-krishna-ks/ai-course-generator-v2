@@ -2011,13 +2011,10 @@ export function VideoGenerationBlock({
                       <Sparkles className="h-3.5 w-3.5" aria-hidden="true" focusable="false" /> Browse
                     </>
                   )}
-                </Button>
+               </Button>
               </div>
 
               <ZonePicker value={state.avatarZone} onChange={(z) => update({ avatarZone: z, avatarX: undefined, avatarY: undefined })} label="Placement zone" />
-              <p className="text-[11px] text-muted-foreground -mt-2">
-                Zones keep the layout predictable across languages, aspect ratios and screen sizes.
-              </p>
 
               <div>
                 <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
