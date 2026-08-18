@@ -1381,55 +1381,44 @@ const ZONE_LABEL: Record<ZoneId, string> = {
 function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: ZoneId) => void; label: string }) {
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-        <span className="text-[11px] font-semibold text-primary">{ZONE_LABEL[value]}</span>
+        <span className="text-[10px] font-medium text-primary">{ZONE_LABEL[value]}</span>
       </div>
 
-      {/* Mini stage: 16:9 preview of the video frame, 9 tap targets */}
-      <div className="mt-2 rounded-xl border border-border bg-white p-2 shadow-sm">
-        <div
-          className="grid aspect-video grid-cols-3 grid-rows-3 gap-1 rounded-lg bg-muted/50 p-1"
-          role="radiogroup"
-          aria-label={label}
-        >
-          {ZONES.map((z) => {
-            const active = value === z;
-            return (
-              <button
-                key={z}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                onClick={() => onChange(z)}
-                aria-label={ZONE_LABEL[z]}
-                title={ZONE_LABEL[z]}
+      {/* Compact 16:9 mini stage */}
+      <div
+        className="mt-1.5 grid aspect-video grid-cols-3 grid-rows-3 gap-[3px] rounded-lg border border-border/60 bg-muted/30 p-[3px]"
+        role="radiogroup"
+        aria-label={label}
+      >
+        {ZONES.map((z) => {
+          const active = value === z;
+          return (
+            <button
+              key={z}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(z)}
+              aria-label={ZONE_LABEL[z]}
+              title={ZONE_LABEL[z]}
+              className={cn(
+                "group flex items-center justify-center rounded-[5px] transition-colors duration-150",
+                active ? "bg-primary/15" : "bg-transparent hover:bg-muted/60"
+              )}
+            >
+              <span
+                aria-hidden="true"
                 className={cn(
-                  "group flex items-center justify-center rounded-md border transition-colors duration-150",
-                  active
-                    ? "border-primary bg-primary/10"
-                    : "border-transparent bg-white/70 hover:border-primary/40 hover:bg-white"
+                  "h-2 w-2 rounded-full transition-all duration-150",
+                  active ? "bg-primary scale-125" : "bg-muted-foreground/30 group-hover:bg-primary/50"
                 )}
-              >
-                {/* element proxy */}
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "h-3.5 w-3.5 rounded-[4px] transition-all duration-150",
-                    active
-                      ? "scale-110 bg-primary shadow-sm"
-                      : "bg-muted-foreground/25 group-hover:bg-primary/40"
-                  )}
-                />
-              </button>
-            );
-          })}
-        </div>
+              />
+            </button>
+          );
+        })}
       </div>
-
-      <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
-        Pick where this element sits on the video frame.
-      </p>
     </div>
   );
 }
