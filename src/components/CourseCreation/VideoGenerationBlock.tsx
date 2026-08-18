@@ -1768,6 +1768,17 @@ export function VideoGenerationBlock({
           <div className="w-full h-full overflow-hidden flex flex-col">
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-b border-border bg-gradient-to-r from-primary/[0.06] to-transparent">
+        {(state.status === "generated" || state.status === "outdated") && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="rounded-full h-8 -ml-2 px-2.5 text-muted-foreground hover:text-foreground"
+            onClick={() => setEditorOpen(false)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-1.5" aria-hidden="true" focusable="false" />
+            Back to editor
+          </Button>
+        )}
 
         <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <VideoIcon className="w-4 h-4 text-primary" aria-hidden="true" focusable="false" />
@@ -1784,17 +1795,6 @@ export function VideoGenerationBlock({
           <Clock className="w-3 h-3" aria-hidden="true" focusable="false" />
           {formatTime(total)}
         </span>
-        {(state.status === "generated" || state.status === "outdated") && (
-          <Button
-            size="sm"
-            variant="outline"
-            className="rounded-full h-8"
-            onClick={() => setEditorOpen(false)}
-          >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" focusable="false" />
-            Back to editor
-          </Button>
-        )}
         <Button
           size="sm"
           className="rounded-full h-8"
