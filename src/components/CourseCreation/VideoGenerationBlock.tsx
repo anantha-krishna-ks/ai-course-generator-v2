@@ -1354,76 +1354,74 @@ function AvatarLibraryDialog({
 /* Zone picker                                                         */
 /* ------------------------------------------------------------------ */
 
-const ZONE_META: Record<ZoneId, { abbr: string; icon: ReactNode }> = {
-  "top-left":     { abbr: "TL", icon: <MoveDiagonal className="h-3 w-3 rotate-180" /> },
-  "top-centre":   { abbr: "TC", icon: <MoveDiagonal className="h-3 w-3 -rotate-90" /> },
-  "top-right":    { abbr: "TR", icon: <MoveDiagonal className="h-3 w-3 -rotate-45" /> },
-  "middle-left":  { abbr: "ML", icon: <MoveDiagonal className="h-3 w-3 rotate-90" /> },
-  "centre":       { abbr: "C",  icon: <Circle className="h-3 w-3" /> },
-  "middle-right": { abbr: "MR", icon: <MoveDiagonal className="h-3 w-3 -rotate-90" /> },
-  "bottom-left":  { abbr: "BL", icon: <MoveDiagonal className="h-3 w-3 rotate-90" /> },
-  "bottom-centre":{ abbr: "BC", icon: <MoveDiagonal className="h-3 w-3 rotate-90" /> },
-  "bottom-right": { abbr: "BR", icon: <MoveDiagonal className="h-3 w-3" /> },
+const ZONE_LABEL: Record<ZoneId, string> = {
+  "top-left": "Top left",
+  "top-centre": "Top centre",
+  "top-right": "Top right",
+  "middle-left": "Middle left",
+  "centre": "Centre",
+  "middle-right": "Middle right",
+  "bottom-left": "Bottom left",
+  "bottom-centre": "Bottom centre",
+  "bottom-right": "Bottom right",
 };
 
 function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: ZoneId) => void; label: string }) {
   return (
     <div>
-      <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-      <div className="mt-2 flex items-start gap-4">
-        {/* Mini stage — 16:9 frame with clear, tappable zones */}
-        <div className="relative w-[220px] shrink-0 overflow-hidden rounded-2xl border border-border bg-background p-2 shadow-sm">
-          {/* subtle stage crosshair */}
-          <div className="pointer-events-none absolute inset-2 rounded-xl border border-dashed border-muted-foreground/20" aria-hidden="true" />
-          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-1.5">
-            {ZONES.map((z) => {
-              const active = value === z;
-              const meta = ZONE_META[z];
-              return (
-                <button
-                  key={z}
-                  type="button"
-                  onClick={() => onChange(z)}
-                  aria-label={`Place in ${z.replace("-", " ")} zone`}
-                  aria-pressed={active}
+      <div className="flex items-baseline justify-between gap-2">
+        <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
+        <span className="text-[11px] font-semibold text-primary">{ZONE_LABEL[value]}</span>
+      </div>
+
+      {/* Mini stage: 16:9 preview of the video frame, 9 tap targets */}
+      <div className="mt-2 rounded-xl border border-border bg-white p-2 shadow-sm">
+        <div
+          className="grid aspect-video grid-cols-3 grid-rows-3 gap-1 rounded-lg bg-muted/50 p-1"
+          role="radiogroup"
+          aria-label={label}
+        >
+          {ZONES.map((z) => {
+            const active = value === z;
+            return (
+              <button
+                key={z}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => onChange(z)}
+                aria-label={ZONE_LABEL[z]}
+                title={ZONE_LABEL[z]}
+                className={cn(
+                  "group flex items-center justify-center rounded-md border transition-colors duration-150",
+                  active
+                    ? "border-primary bg-primary/10"
+                    : "border-transparent bg-white/70 hover:border-primary/40 hover:bg-white"
+                )}
+              >
+                {/* element proxy */}
+                <span
+                  aria-hidden="true"
                   className={cn(
-                    "group relative flex flex-col items-center justify-center gap-0.5 rounded-lg border text-[10px] font-semibold transition-all duration-200",
+                    "h-3.5 w-3.5 rounded-[4px] transition-all duration-150",
                     active
-                      ? "border-primary bg-primary text-primary-foreground shadow-md"
-                      : "border-border bg-muted/40 text-muted-foreground hover:border-primary/50 hover:bg-accent hover:text-foreground"
+                      ? "scale-110 bg-primary shadow-sm"
+                      : "bg-muted-foreground/25 group-hover:bg-primary/40"
                   )}
-                >
-                  <span className={cn("transition-transform", active ? "scale-110" : "opacity-60 group-hover:opacity-100")}>
-                    {meta.icon}
-                  </span>
-                  <span className="uppercase tracking-wider">{meta.abbr}</span>
-
-                  {/* active marker dot */}
-                  {active && (
-                    <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary-foreground/80" aria-hidden="true" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Selected zone read-out */}
-        <div className="flex min-w-0 flex-1 flex-col justify-center py-1">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
-              {ZONE_META[value].icon}
-            </span>
-            <span className="text-sm font-semibold capitalize text-foreground">{value.replace("-", " ")}</span>
-          </div>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            Tap a zone on the mini stage to move the element there. The centre keeps it focused; corners leave room for slide content.
-          </p>
+                />
+              </button>
+            );
+          })}
         </div>
       </div>
+
+      <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+        Pick where this element sits on the video frame.
+      </p>
     </div>
   );
 }
+
 
 /* ------------------------------------------------------------------ */
 /* Editor block                                                        */
