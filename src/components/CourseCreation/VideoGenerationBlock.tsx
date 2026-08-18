@@ -1899,7 +1899,7 @@ export function VideoGenerationBlock({
         </div>
 
         {/* Properties panel */}
-        <div className="min-w-0 h-full p-4 overflow-y-auto">
+        <div className="min-w-0 h-full p-4 overflow-y-auto bg-muted/40">
           <div className="relative flex items-center bg-foreground/[0.06] border border-border/50 rounded-lg p-[3px] mb-3">
             {/* Sliding pill indicator */}
             <div
