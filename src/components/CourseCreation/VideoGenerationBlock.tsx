@@ -2844,71 +2844,14 @@ export function VideoGenerationBlock({
                     </p>
                   )}
 
-                  <div className="flex gap-1.5">
-                    {(["anchor", "fixed"] as const).map((m) => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => patchElement(el.id, { timingMode: m })}
-                        aria-pressed={el.timingMode === m}
-                        className={cn(
-                          "flex-1 rounded-full border py-1.5 text-[11px] font-medium transition-all",
-                          el.timingMode === m ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
-                        )}
-                      >
-                        {m === "anchor" ? "Anchor to a word" : "Fixed time"}
-                      </button>
-                    ))}
-                  </div>
-
-                  {el.timingMode === "anchor" ? (
-                    <div>
-                      <Label htmlFor="el-anchor" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Spoken phrase</Label>
-                      <Input
-                        id="el-anchor"
-                        value={el.anchorPhrase}
-                        onChange={(ev) => patchElement(el.id, { anchorPhrase: ev.target.value })}
-                        placeholder="Paste a phrase from the script"
-                        className="h-8 mt-1 text-xs"
-                      />
-                      <p className="text-[11px] text-muted-foreground mt-1">
-                        Appears at {formatTime(anchorTime(state, el.anchorPhrase))} — it moves with the words if the script changes.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <Label htmlFor="el-start" className="text-[11px] text-muted-foreground">Start (s)</Label>
-                        <Input id="el-start" type="number" min={0} value={el.start} onChange={(ev) => patchElement(el.id, { start: Number(ev.target.value) })} className="h-8 text-xs" />
-                      </div>
-                      <div>
-                        <Label htmlFor="el-dur" className="text-[11px] text-muted-foreground">Length (s)</Label>
-                        <Input id="el-dur" type="number" min={1} value={el.duration} onChange={(ev) => patchElement(el.id, { duration: Number(ev.target.value) })} className="h-8 text-xs" />
-                      </div>
-                    </div>
-                  )}
-
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <Label className="text-[11px] text-muted-foreground">Stays until</Label>
-                      <Select value={el.staysUntil} onValueChange={(v) => patchElement(el.id, { staysUntil: v as VideoTextElement["staysUntil"] })}>
-                        <SelectTrigger className="h-8 mt-1 text-xs" aria-label="Stays until"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="seconds">A number of seconds</SelectItem>
-                          <SelectItem value="sentence">End of the sentence</SelectItem>
-                          <SelectItem value="video">End of the video</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="el-start" className="text-[11px] text-muted-foreground">Start (s)</Label>
+                      <Input id="el-start" type="number" min={0} value={el.start} onChange={(ev) => patchElement(el.id, { start: Number(ev.target.value) })} className="h-8 text-xs" />
                     </div>
                     <div>
-                      <Label className="text-[11px] text-muted-foreground">Animation</Label>
-                      <Select value={el.animation} onValueChange={(v) => patchElement(el.id, { animation: v as VideoTextElement["animation"] })}>
-                        <SelectTrigger className="h-8 mt-1 text-xs" aria-label="Animation"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="fade">Fade</SelectItem>
-                          <SelectItem value="none">None</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="el-dur" className="text-[11px] text-muted-foreground">Length (s)</Label>
+                      <Input id="el-dur" type="number" min={1} value={el.duration} onChange={(ev) => patchElement(el.id, { duration: Number(ev.target.value) })} className="h-8 text-xs" />
                     </div>
                   </div>
                 </div>
