@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -1354,16 +1354,31 @@ function AvatarLibraryDialog({
 /* Zone picker                                                         */
 /* ------------------------------------------------------------------ */
 
+const ZONE_META: Record<ZoneId, { abbr: string; icon: ReactNode }> = {
+  "top-left":     { abbr: "TL", icon: <MoveDiagonal className="h-3 w-3 rotate-180" /> },
+  "top-centre":   { abbr: "TC", icon: <MoveDiagonal className="h-3 w-3 -rotate-90" /> },
+  "top-right":    { abbr: "TR", icon: <MoveDiagonal className="h-3 w-3 -rotate-45" /> },
+  "middle-left":  { abbr: "ML", icon: <MoveDiagonal className="h-3 w-3 rotate-90" /> },
+  "centre":       { abbr: "C",  icon: <Circle className="h-3 w-3" /> },
+  "middle-right": { abbr: "MR", icon: <MoveDiagonal className="h-3 w-3 -rotate-90" /> },
+  "bottom-left":  { abbr: "BL", icon: <MoveDiagonal className="h-3 w-3 rotate-90" /> },
+  "bottom-centre":{ abbr: "BC", icon: <MoveDiagonal className="h-3 w-3 rotate-90" /> },
+  "bottom-right": { abbr: "BR", icon: <MoveDiagonal className="h-3 w-3" /> },
+};
+
 function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: ZoneId) => void; label: string }) {
   return (
     <div>
       <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
-      {/* A mini video frame: tap the spot where the element should sit */}
-      <div className="mt-1.5 flex items-center gap-3">
-        <div className="relative w-[168px] shrink-0 rounded-xl border border-border bg-muted/30 p-2 shadow-sm">
-          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-1">
+      <div className="mt-2 flex items-start gap-4">
+        {/* Mini stage — 16:9 frame with clear, tappable zones */}
+        <div className="relative w-[220px] shrink-0 overflow-hidden rounded-2xl border border-border bg-background p-2 shadow-sm">
+          {/* subtle stage crosshair */}
+          <div className="pointer-events-none absolute inset-2 rounded-xl border border-dashed border-muted-foreground/20" aria-hidden="true" />
+          <div className="grid aspect-video grid-cols-3 grid-rows-3 gap-1.5">
             {ZONES.map((z) => {
               const active = value === z;
+              const meta = ZONE_META[z];
               return (
                 <button
                   key={z}
@@ -1372,31 +1387,39 @@ function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: Z
                   aria-label={`Place in ${z.replace("-", " ")} zone`}
                   aria-pressed={active}
                   className={cn(
-                    "group flex items-center justify-center rounded-md border transition-all",
+                    "group relative flex flex-col items-center justify-center gap-0.5 rounded-lg border text-[10px] font-semibold transition-all duration-200",
                     active
-                      ? "border-primary bg-primary/15"
-                      : "border-border bg-background hover:border-primary/40 hover:bg-accent"
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-border bg-muted/40 text-muted-foreground hover:border-primary/50 hover:bg-accent hover:text-foreground"
                   )}
                 >
-                  {/* proxy of the element — always visible, solid when selected */}
-                  <span
-                    className={cn(
-                      "h-[55%] w-[42%] rounded-sm border-2 transition-all",
-                      active
-                        ? "border-primary bg-primary"
-                        : "border-dashed border-muted-foreground/40 bg-muted group-hover:border-primary/60 group-hover:bg-primary/20"
-                    )}
-                    aria-hidden="true"
-                  />
+                  <span className={cn("transition-transform", active ? "scale-110" : "opacity-60 group-hover:opacity-100")}>
+                    {meta.icon}
+                  </span>
+                  <span className="uppercase tracking-wider">{meta.abbr}</span>
+
+                  {/* active marker dot */}
+                  {active && (
+                    <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary-foreground/80" aria-hidden="true" />
+                  )}
                 </button>
               );
             })}
           </div>
         </div>
-        <p className="text-[11px] leading-tight text-muted-foreground">
-          <span className="block text-xs font-semibold capitalize text-foreground">{value.replace("-", " ")}</span>
-          Tap a cell to move it there
-        </p>
+
+        {/* Selected zone read-out */}
+        <div className="flex min-w-0 flex-1 flex-col justify-center py-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
+              {ZONE_META[value].icon}
+            </span>
+            <span className="text-sm font-semibold capitalize text-foreground">{value.replace("-", " ")}</span>
+          </div>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+            Tap a zone on the mini stage to move the element there. The centre keeps it focused; corners leave room for slide content.
+          </p>
+        </div>
       </div>
     </div>
   );
