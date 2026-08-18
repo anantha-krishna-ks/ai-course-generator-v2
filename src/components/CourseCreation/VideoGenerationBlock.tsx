@@ -1379,76 +1379,48 @@ const ZONE_LABEL: Record<ZoneId, string> = {
 };
 
 function ZonePicker({ value, onChange, label }: { value: ZoneId; onChange: (z: ZoneId) => void; label: string }) {
-  const [row, col] = value.split("-") as [string, string];
-  const rowIdx = { top: 0, middle: 1, centre: 1, bottom: 2 }[row] ?? 1;
-  const colIdx = { left: 0, centre: 1, right: 2 }[col] ?? 1;
-
   return (
-    <div className="flex items-start gap-4">
-      {/* Realistic 16:9 mini stage */}
-      <div className="shrink-0">
-        <div
-          className="relative aspect-video w-56 overflow-hidden rounded-xl border border-border/70 bg-white shadow-sm"
-          role="radiogroup"
-          aria-label={label}
-        >
-          {/* Slide content backdrop */}
-          <div className="absolute inset-0 p-3">
-            <div className="h-full w-full rounded-lg bg-muted/40 p-2 space-y-1.5">
-              <div className="h-2 w-3/4 rounded-full bg-muted-foreground/20" />
-              <div className="h-2 w-1/2 rounded-full bg-muted-foreground/15" />
-              <div className="h-2 w-5/6 rounded-full bg-muted-foreground/15" />
-              <div className="h-2 w-2/3 rounded-full bg-muted-foreground/20" />
-            </div>
-          </div>
-
-          {/* Grid tap targets */}
-          <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
-            {ZONES.map((z) => {
-              const active = value === z;
-              return (
-                <button
-                  key={z}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => onChange(z)}
-                  aria-label={ZONE_LABEL[z]}
-                  title={ZONE_LABEL[z]}
-                  className={cn(
-                    "group relative transition-colors duration-150",
-                    active ? "bg-primary/5" : "hover:bg-primary/5"
-                  )}
-                />
-              );
-            })}
-          </div>
-
-          {/* Presenter marker */}
-          <div
-            className="pointer-events-none absolute flex transition-all duration-300 ease-out"
-            style={{
-              left: `${(colIdx / 2) * 100}%`,
-              top: `${(rowIdx / 2) * 100}%`,
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/30 bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20">
-                <UserRound className="h-5 w-5" aria-hidden="true" focusable="false" />
-              </div>
-              <span className="rounded-full bg-primary px-2 py-0.5 text-[9px] font-semibold text-primary-foreground shadow-sm">
-                {ZONE_LABEL[value]}
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="flex items-center gap-4">
+      {/* Modern 3×3 placement grid */}
+      <div
+        className="grid aspect-video w-44 grid-cols-3 grid-rows-3 gap-1 rounded-xl border border-border/60 bg-white p-1.5 shadow-sm shrink-0"
+        role="radiogroup"
+        aria-label={label}
+      >
+        {ZONES.map((z) => {
+          const active = value === z;
+          return (
+            <button
+              key={z}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(z)}
+              aria-label={ZONE_LABEL[z]}
+              title={ZONE_LABEL[z]}
+              className={cn(
+                "group relative flex items-center justify-center rounded-lg border transition-all duration-150",
+                active
+                  ? "border-primary bg-primary/10 ring-1 ring-primary/30"
+                  : "border-border/80 bg-muted/30 hover:border-primary/40 hover:bg-primary/5"
+              )}
+            >
+              {active ? (
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                  <UserRound className="h-4 w-4" aria-hidden="true" focusable="false" />
+                </div>
+              ) : (
+                <span className="h-2 w-2 rounded-full bg-muted-foreground/25 group-hover:bg-primary/50 transition-colors" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="min-w-0 pt-1">
+      <div className="min-w-0">
         <Label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</Label>
         <p className="text-sm font-medium text-foreground truncate">{ZONE_LABEL[value]}</p>
-        <p className="text-[10px] text-muted-foreground mt-0.5">Tap anywhere on the stage to move the presenter.</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">Pick a cell to place the presenter.</p>
       </div>
     </div>
   );
