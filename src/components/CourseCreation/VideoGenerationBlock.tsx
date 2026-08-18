@@ -2473,7 +2473,7 @@ export function VideoGenerationBlock({
           {tab === "media" && (
             <div className="space-y-3">
               {/* Sub-section switch — segmented glass pill */}
-              <div className="relative grid grid-cols-3 gap-1 rounded-full border border-border bg-muted/60 p-1 backdrop-blur-sm">
+              <div className="relative grid grid-cols-3 gap-1 rounded-full border border-border/60 bg-muted/70 p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_1px_2px_rgba(0,0,0,0.04)] backdrop-blur-sm">
                 {([
                   { id: "text", label: "Text", icon: TypeIcon },
                   { id: "shapes", label: "Shapes", icon: Shapes },
@@ -2489,11 +2489,11 @@ export function VideoGenerationBlock({
                       className={cn(
                         "relative rounded-full py-1.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         active
-                          ? "bg-primary text-primary-foreground ring-1 ring-inset ring-primary-foreground/25"
-                          : "text-muted-foreground hover:bg-background hover:text-foreground"
+                          ? "bg-primary text-primary-foreground shadow-[0_1px_3px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.25)] ring-1 ring-inset ring-primary-foreground/30"
+                          : "text-muted-foreground hover:bg-background/70 hover:text-foreground hover:shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]"
                       )}
                     >
-                      <sct.icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                      <sct.icon className={cn("w-3.5 h-3.5 transition-colors duration-200", active ? "text-primary-foreground" : "text-muted-foreground")} aria-hidden="true" focusable="false" />
                       {sct.label}
                     </button>
                   );
