@@ -612,7 +612,7 @@ function detectBloom(text: string): string | null {
 }
 
 function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & { errors: Record<string, string> }) {
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
