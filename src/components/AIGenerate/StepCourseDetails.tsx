@@ -781,13 +781,25 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
 
-      {/* Intended Learners */}
-      <AudienceSection state={state} onChange={onChange} errors={errors} />
+      {/* ── Audience ───────────────────────────────── */}
+      <section aria-labelledby="group-audience" className="space-y-4">
+        <h3 id="group-audience" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Audience
+        </h3>
+        <AudienceSection state={state} onChange={onChange} errors={errors} />
+      </section>
+
+      {/* ── Outcomes ───────────────────────────────── */}
+      <section aria-labelledby="group-outcomes" className="space-y-4">
+        <h3 id="group-outcomes" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Outcomes
+        </h3>
 
       {/* Learning Outcome with AI suggestions */}
       <div data-field="learningOutcome">
+
         <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground mb-2 block">
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
