@@ -833,6 +833,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
 
 
 
+      {/* Learning Objectives + Bloom's Taxonomy */}
+      <OutcomesSection state={state} onChange={onChange} errors={errors} />
+
       <div data-field="pageSpanTime">
         <PageDurationDefaultCard
           valueSec={(state.pageSpanTime || 5) * 60}
@@ -957,8 +960,6 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-      {/* Learning Objectives + Bloom's Taxonomy */}
-      <OutcomesSection state={state} onChange={onChange} errors={errors} />
 
 
     </div>
