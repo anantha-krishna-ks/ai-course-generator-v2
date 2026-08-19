@@ -726,17 +726,18 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
                       next[idx] = e.target.value;
                       onChange({ learningObjectives: next });
                       e.target.style.height = "auto";
-                      e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+                      e.target.style.height = `${Math.min(e.target.scrollHeight, 220)}px`;
                     }}
                     ref={(el) => {
                       if (el) {
                         el.style.height = "auto";
-                        el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+                        el.style.height = `${Math.min(el.scrollHeight, 220)}px`;
                       }
                     }}
                     placeholder={`Objective ${idx + 1}`}
                     rows={1}
-                    className="flex-1 min-h-[36px] max-h-[160px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
+                    className="flex-1 min-h-[36px] max-h-[220px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
+
                     aria-label={`Learning objective ${idx + 1}`}
                   />
                   <Popover>
