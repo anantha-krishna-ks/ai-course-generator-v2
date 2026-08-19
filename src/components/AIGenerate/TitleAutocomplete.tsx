@@ -4,6 +4,8 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getLanguage } from "@/services/courseLanguageStore";
 import { TitleLanguageAffix } from "@/components/CourseCreation/TitleLanguageAffix";
+import { ContentDepthAffix } from "@/components/AIGenerate/ContentDepthAffix";
+import type { ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
 
 
 interface TitleAutocompleteProps {
@@ -15,6 +17,10 @@ interface TitleAutocompleteProps {
   language?: string;
   onLanguageChange?: (code: string) => void;
   languageLocked?: boolean;
+  /** Content depth embedded into the title field, next to the language pill. */
+  contentDepth?: ContentDepth;
+  onContentDepthChange?: (v: ContentDepth) => void;
+  contentDepthInvalid?: boolean;
 }
 
 
@@ -86,7 +92,7 @@ function generateSuggestions(input: string): string[] {
   ];
 }
 
-export function TitleAutocomplete({ value, onChange, id, placeholder, language, onLanguageChange, languageLocked }: TitleAutocompleteProps) {
+export function TitleAutocomplete({ value, onChange, id, placeholder, language, onLanguageChange, languageLocked, contentDepth, onContentDepthChange, contentDepthInvalid }: TitleAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -214,6 +220,14 @@ export function TitleAutocomplete({ value, onChange, id, placeholder, language, 
             </motion.span>
           )}
         </AnimatePresence>
+        {onContentDepthChange && (
+          <ContentDepthAffix
+            value={contentDepth}
+            onChange={onContentDepthChange}
+            invalid={contentDepthInvalid}
+            className="mb-0.5"
+          />
+        )}
         {language && onLanguageChange && (
           <TitleLanguageAffix
             value={language}
