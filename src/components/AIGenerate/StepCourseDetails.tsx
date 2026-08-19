@@ -600,8 +600,9 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
               </p>
             )}
             {objectives.map((obj, idx) => {
-              const bloom = detectBloom(obj);
+              const bloom = tags[idx];
               const bloomLabel = BLOOMS_OPTIONS.find((b) => b.value === bloom)?.label;
+              const isAuto = !state.objectiveBlooms?.[idx] && !!bloom;
               return (
                 <div
                   key={idx}
@@ -667,14 +668,63 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
                     className="flex-1 min-h-[36px] max-h-[160px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
                     aria-label={`Learning objective ${idx + 1}`}
                   />
-                  {bloomLabel && (
-                    <span className="mt-1.5 shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                      {bloomLabel}
-                    </span>
-                  )}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label={`Bloom's taxonomy level for objective ${idx + 1}${bloomLabel ? `: ${bloomLabel}` : ": not tagged"}`}
+                        className={cn(
+                          "mt-1.5 shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+                          bloomLabel
+                            ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/15"
+                            : "bg-background text-muted-foreground border-dashed border-border hover:text-foreground hover:border-primary/40"
+                        )}
+                      >
+                        {bloomLabel ? (
+                          <>
+                            {bloomLabel}
+                            {isAuto && <span className="text-[10px] opacity-80">auto</span>}
+                          </>
+                        ) : (
+                          <>
+                            <PlusIcon className="w-3 h-3" aria-hidden="true" focusable="false" />
+                            Tag level
+                          </>
+                        )}
+                        <ChevronDown className="w-3 h-3" aria-hidden="true" focusable="false" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-52 p-1.5 bg-background">
+                      <p className="px-2 py-1.5 text-xs font-semibold text-foreground">Bloom's level</p>
+                      <div className="space-y-0.5">
+                        {BLOOMS_OPTIONS.map((b) => (
+                          <button
+                            key={b.value}
+                            type="button"
+                            onClick={() => setTag(idx, b.value)}
+                            aria-pressed={bloom === b.value}
+                            className={cn(
+                              "w-full flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                              bloom === b.value ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-muted"
+                            )}
+                          >
+                            {b.label}
+                            {bloom === b.value && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                          </button>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => setTag(idx, "")}
+                          className="w-full text-left rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          Clear tag
+                        </button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                   <button
                     type="button"
-                    onClick={() => onChange({ learningObjectives: objectives.filter((_, i) => i !== idx) })}
+                    onClick={() => onChange({ learningObjectives: objectives.filter((_, i) => i !== idx), objectiveBlooms: tags.filter((_, i) => i !== idx) })}
                     aria-label={`Remove objective ${idx + 1}`}
                     className="mt-1 w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
@@ -687,7 +737,7 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
             <div className="flex flex-wrap items-center gap-4 pt-0.5">
               <button
                 type="button"
-                onClick={() => onChange({ learningObjectives: [...objectives, ""] })}
+                onClick={() => onChange({ learningObjectives: [...objectives, ""], objectiveBlooms: [...tags, ""] })}
                 className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
                 aria-label="Add another learning objective"
               >
