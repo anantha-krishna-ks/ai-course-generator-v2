@@ -512,9 +512,9 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
           />
 
           {/* Real slider */}
-          <div className="relative h-10 px-5">
+          <div className="relative h-10">
             {/* Track */}
-            <div className="pointer-events-none absolute left-5 right-5 top-1/2 -translate-y-1/2 h-3 rounded-full bg-muted border border-border/70 shadow-inner overflow-hidden">
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 rounded-full bg-muted border border-border/70 shadow-inner overflow-hidden">
               <motion.div
                 className="relative h-full rounded-full bg-gradient-to-r from-emerald-500 via-primary to-violet-500"
                 initial={false}
@@ -526,7 +526,7 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
             </div>
 
             {/* Tick marks */}
-            <div className="pointer-events-none absolute left-5 right-5 top-1/2 -translate-y-1/2 flex justify-between">
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between">
               {AUDIENCE_LEVELS.map((lvl, i) => (
                 <span
                   key={`tick-${lvl.value}`}
@@ -585,7 +585,7 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
           </div>
 
           {/* Labels */}
-          <div className="relative flex justify-between mt-3 px-5">
+          <div className="relative flex justify-between mt-3">
             {AUDIENCE_LEVELS.map((lvl, i) => {
               const active = hasLevel && levelIndex === i;
               return (
