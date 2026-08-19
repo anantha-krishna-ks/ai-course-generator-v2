@@ -454,28 +454,57 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
           Intended Learners
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
         </div>
-        <motion.span
-          key={hasLevel ? AUDIENCE_LEVELS[levelIndex].value : "unset"}
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={cn(
-            "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border transition-colors",
-            hasLevel
-              ? "bg-primary/10 text-primary border-primary/20"
-              : "bg-muted text-muted-foreground border-border"
-          )}
-        >
-          {hasLevel && (() => {
-            const ActiveIcon = AUDIENCE_LEVELS[levelIndex].icon;
-            return <ActiveIcon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />;
-          })()}
-          {hasLevel ? AUDIENCE_LEVELS[levelIndex].label : "Level not set"}
-        </motion.span>
+        <span className="text-xs text-muted-foreground">
+          {hasLevel ? "Level set" : "Pick an experience level"}
+        </span>
       </div>
 
-      {/* Description */}
-      <div className="relative px-4">
-        <div className="rounded-xl border border-border bg-white overflow-hidden">
+      {/* Level chips + description — one connected surface */}
+      <div className="relative px-4 pb-4">
+        <div
+          className={cn(
+            "rounded-xl border bg-white overflow-hidden transition-colors",
+            errors.intendedLearners ? "border-destructive/60" : "border-border"
+          )}
+        >
+          {/* Chip tab bar on the top edge */}
+          <div
+            role="radiogroup"
+            aria-label="Learner experience level"
+            className="flex items-center gap-1.5 px-2 pt-2 pb-2 border-b border-border bg-muted/30"
+          >
+            {AUDIENCE_LEVELS.map((lvl) => {
+              const active = state.intendedLearners === lvl.value;
+              const Icon = lvl.icon;
+              return (
+                <button
+                  key={lvl.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => selectLevel(lvl.value)}
+                  className={cn(
+                    "relative flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1",
+                    active
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-background"
+                  )}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="audience-level-chip"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      className="absolute inset-0 rounded-lg bg-primary shadow-sm"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <Icon className="relative w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  <span className="relative">{lvl.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
           <Textarea
             id="audience-description"
             aria-label="Describe your intended learners"
@@ -484,15 +513,20 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
             placeholder={`e.g., ${AUDIENCE_EXAMPLE}`}
             className="min-h-[96px] max-h-[220px] resize-none text-sm border-0 rounded-none bg-white focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
           />
+
           <div className="flex items-center justify-between gap-3 px-3 py-2 border-t border-border bg-muted/30">
             <span className="text-xs text-muted-foreground">
-              {state.title.trim() ? "Drafted from your course title." : "Add a course title for a sharper draft."}
+              {hasLevel
+                ? AUDIENCE_LEVELS[levelIndex].hint
+                : state.title.trim()
+                ? "Drafted from your course title."
+                : "Add a course title for a sharper draft."}
             </span>
             <button
               type="button"
               onClick={regenerate}
               disabled={regenerating}
-              className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1.5 py-1"
+              className="shrink-0 flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1.5 py-1"
               aria-label="Regenerate learner description from course title"
             >
               <RefreshCw className={cn("w-3.5 h-3.5", regenerating && "animate-spin")} aria-hidden="true" focusable="false" />
@@ -500,131 +534,13 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Seamless divider */}
-      <div className="relative mt-4 px-4">
-        <div className="h-px bg-border" aria-hidden="true" />
-      </div>
-
-      {/* Level slider — same card, no nested box */}
-      <div className="relative px-4 pt-4 pb-4">
-        <span className="block text-sm font-semibold text-foreground mb-1">Experience level</span>
-
-        {/* Real slider */}
-        <div className="relative h-11 mx-[18px]">
-
-          {/* Track */}
-          <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 rounded-full bg-muted border border-border/70 shadow-inner overflow-hidden">
-            <motion.div
-              className="relative h-full rounded-full bg-gradient-to-r from-emerald-500 via-primary to-violet-500"
-              initial={false}
-              animate={{ width: hasLevel ? `${(levelIndex / (AUDIENCE_LEVELS.length - 1)) * 100}%` : "0%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <span className="absolute inset-x-0 top-0 h-1/2 rounded-full bg-gradient-to-b from-white/40 to-transparent" />
-            </motion.div>
-          </div>
-
-          {/* Tick marks */}
-          <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between">
-            {AUDIENCE_LEVELS.map((lvl, i) => (
-              <span
-                key={`tick-${lvl.value}`}
-                className={cn(
-                  "h-3 w-3 rounded-full border-2 transition-colors duration-300",
-                  hasLevel && levelIndex >= i
-                    ? "bg-background border-primary"
-                    : "bg-background border-border"
-                )}
-              />
-            ))}
-          </div>
-
-          {/* Thumb */}
-          <motion.div
-            className="pointer-events-none absolute top-1/2 z-10"
-            initial={false}
-            animate={{ left: `${(hasLevel ? levelIndex : 0) / (AUDIENCE_LEVELS.length - 1) * 100}%` }}
-            transition={{ type: "spring", stiffness: 320, damping: 26 }}
-            style={{ translateX: "-50%", translateY: "-50%" }}
-          >
-            <span
-              className={cn(
-                "relative flex h-9 w-9 items-center justify-center rounded-full border-2 bg-background transition-colors duration-300",
-                hasLevel
-                  ? "border-primary shadow-[0_0_0_5px_hsl(var(--primary)/0.12),0_8px_20px_-6px_hsl(var(--primary)/0.5)]"
-                  : "border-border shadow-[0_2px_10px_-2px_hsl(var(--foreground)/0.2)]"
-              )}
-            >
-              <span className="absolute inset-0.5 rounded-full bg-gradient-to-b from-primary/10 to-transparent" />
-              {(() => {
-                const Icon = AUDIENCE_LEVELS[hasLevel ? levelIndex : 0].icon;
-                return (
-                  <Icon
-                    className={cn("relative w-4 h-4", hasLevel ? "text-primary" : "text-muted-foreground")}
-                    aria-hidden="true"
-                    focusable="false"
-                  />
-                );
-              })()}
-            </span>
-          </motion.div>
-
-          {/* Native range input drives the interaction */}
-          <input
-            type="range"
-            min={0}
-            max={AUDIENCE_LEVELS.length - 1}
-            step={1}
-            value={hasLevel ? levelIndex : 0}
-            onChange={(e) => onChange({ intendedLearners: AUDIENCE_LEVELS[Number(e.target.value)].value })}
-            aria-label="Experience level"
-            aria-valuetext={hasLevel ? AUDIENCE_LEVELS[levelIndex].label : "Not set"}
-            className="absolute inset-0 z-20 w-full h-full cursor-pointer appearance-none bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-9 [&::-webkit-slider-thumb]:w-9 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-transparent [&::-moz-range-thumb]:h-9 [&::-moz-range-thumb]:w-9 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent"
-          />
-        </div>
-
-        {/* Labels */}
-        <div className="relative flex justify-between mt-2 mx-[18px]">
-          {AUDIENCE_LEVELS.map((lvl, i) => {
-            const active = hasLevel && levelIndex === i;
-            return (
-              <button
-                key={`${lvl.value}-label`}
-                type="button"
-                onClick={() => onChange({ intendedLearners: lvl.value })}
-                className={cn(
-                  "text-xs transition-colors duration-200 rounded-md px-1.5 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
-                  i === 0 ? "text-left" : i === AUDIENCE_LEVELS.length - 1 ? "text-right" : "text-center",
-                  active ? "text-primary font-semibold" : "text-muted-foreground font-medium hover:text-foreground"
-                )}
-                aria-label={`Select ${lvl.label}`}
-              >
-                {lvl.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Contextual hint */}
-        <motion.p
-          key={hasLevel ? AUDIENCE_LEVELS[levelIndex].value : "unset-hint"}
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-          className="relative mt-3 text-xs text-muted-foreground"
-        >
-          {hasLevel
-            ? AUDIENCE_LEVELS[levelIndex].hint
-            : "Drag the slider or pick a label to set the learner experience level."}
-        </motion.p>
 
         {errors.intendedLearners && (
           <p role="alert" className="text-xs text-destructive mt-3 font-medium">{errors.intendedLearners}</p>
         )}
       </div>
     </div>
+
   );
 }
 
