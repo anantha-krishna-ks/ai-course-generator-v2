@@ -500,59 +500,80 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
 
         <div
           className={cn(
-            "relative rounded-2xl border bg-muted/40 p-3 transition-all duration-300",
+            "relative rounded-2xl border bg-card p-4 pt-5 transition-all duration-300",
             errors.intendedLearners ? "border-destructive/50" : "border-border hover:border-primary/20"
           )}
         >
-          {/* Segmented track with stops */}
-          <div className="relative h-12 flex items-center">
-            {/* Track background */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2.5 rounded-full bg-background shadow-inner border border-border/60 overflow-hidden">
+          {/* Real slider */}
+          <div className="relative h-9">
+            {/* Track */}
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-2 rounded-full bg-muted border border-border/60 overflow-hidden">
               <motion.div
                 className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-primary to-violet-500"
                 initial={false}
-                animate={{
-                  width: hasLevel ? `${(levelIndex / (AUDIENCE_LEVELS.length - 1)) * 100}%` : "0%",
-                }}
-                transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                animate={{ width: hasLevel ? `${(levelIndex / (AUDIENCE_LEVELS.length - 1)) * 100}%` : "0%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               />
             </div>
 
-            {/* Stops / segments */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-[10px]">
-              {AUDIENCE_LEVELS.map((lvl, i) => {
-                const Icon = lvl.icon;
-                const active = hasLevel && levelIndex === i;
-                const passed = hasLevel && levelIndex > i;
-                return (
-                  <button
-                    key={lvl.value}
-                    type="button"
-                    onClick={() => onChange({ intendedLearners: lvl.value })}
-                    aria-label={`Set experience level to ${lvl.label}`}
-                    className={cn(
-                      "relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
-                      active
-                        ? "bg-background border-primary shadow-[0_0_0_4px_hsl(var(--primary)/0.15),0_8px_24px_-6px_hsl(var(--primary)/0.35)] scale-110"
-                        : passed
-                        ? "bg-primary/90 border-primary/50 text-primary-foreground shadow-md"
-                        : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:text-foreground shadow-sm"
-                    )}
-                  >
-                    <Icon className={cn("w-4 h-4 transition-transform duration-300", active && "scale-110")} aria-hidden="true" focusable="false" />
-                    {active && (
-                      <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                        <Check className="w-2.5 h-2.5" strokeWidth={3} aria-hidden="true" focusable="false" />
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+            {/* Tick marks */}
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between">
+              {AUDIENCE_LEVELS.map((lvl, i) => (
+                <span
+                  key={`tick-${lvl.value}`}
+                  className={cn(
+                    "h-2.5 w-2.5 rounded-full border transition-colors duration-300",
+                    hasLevel && levelIndex >= i
+                      ? "bg-primary border-primary"
+                      : "bg-background border-border"
+                  )}
+                />
+              ))}
             </div>
+
+            {/* Thumb */}
+            <motion.div
+              className="pointer-events-none absolute top-1/2 z-10"
+              initial={false}
+              animate={{ left: `${(hasLevel ? levelIndex : 0) / (AUDIENCE_LEVELS.length - 1) * 100}%` }}
+              transition={{ type: "spring", stiffness: 320, damping: 28 }}
+              style={{ translateX: "-50%", translateY: "-50%" }}
+            >
+              <span
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center rounded-full border-2 bg-background shadow-[0_2px_10px_-2px_hsl(var(--foreground)/0.25)] transition-colors duration-300",
+                  hasLevel ? "border-primary" : "border-border"
+                )}
+              >
+                {(() => {
+                  const Icon = AUDIENCE_LEVELS[hasLevel ? levelIndex : 0].icon;
+                  return (
+                    <Icon
+                      className={cn("w-3.5 h-3.5", hasLevel ? "text-primary" : "text-muted-foreground")}
+                      aria-hidden="true"
+                      focusable="false"
+                    />
+                  );
+                })()}
+              </span>
+            </motion.div>
+
+            {/* Native range input drives the interaction */}
+            <input
+              type="range"
+              min={0}
+              max={AUDIENCE_LEVELS.length - 1}
+              step={1}
+              value={hasLevel ? levelIndex : 0}
+              onChange={(e) => onChange({ intendedLearners: AUDIENCE_LEVELS[Number(e.target.value)].value })}
+              aria-label="Experience level"
+              aria-valuetext={hasLevel ? AUDIENCE_LEVELS[levelIndex].label : "Not set"}
+              className="absolute inset-0 z-20 w-full h-full cursor-pointer appearance-none bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-transparent [&::-moz-range-thumb]:h-7 [&::-moz-range-thumb]:w-7 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent"
+            />
           </div>
 
           {/* Labels */}
-          <div className="flex justify-between mt-2 px-0.5">
+          <div className="flex justify-between mt-3">
             {AUDIENCE_LEVELS.map((lvl, i) => {
               const active = hasLevel && levelIndex === i;
               return (
@@ -561,26 +582,18 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
                   type="button"
                   onClick={() => onChange({ intendedLearners: lvl.value })}
                   className={cn(
-                    "flex flex-col items-center gap-1 text-xs font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-lg px-2 py-1",
-                    active ? "text-primary translate-y-0" : "text-muted-foreground hover:text-foreground"
+                    "text-xs font-medium transition-colors duration-200 rounded-md px-1.5 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+                    active ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
                   )}
                   aria-label={`Select ${lvl.label}`}
                 >
-                  <span>{lvl.label}</span>
-                  <motion.span
-                    initial={false}
-                    animate={{
-                      width: active ? "100%" : "0%",
-                      opacity: active ? 1 : 0,
-                    }}
-                    className="h-0.5 rounded-full bg-primary"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
+                  {lvl.label}
                 </button>
               );
             })}
           </div>
         </div>
+
       </div>
 
       {errors.intendedLearners && (
