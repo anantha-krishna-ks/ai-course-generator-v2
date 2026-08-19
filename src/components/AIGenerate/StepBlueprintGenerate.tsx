@@ -317,7 +317,7 @@ function DocUploadZone({
   );
 }
 
-export function StepBlueprintGenerate({ state, onChange }: StepBlueprintGenerateProps) {
+export function StepBlueprintGenerate({ state, onChange, errors }: StepBlueprintGenerateProps) {
   const togglePref = (key: keyof AIGenerateState["contentPreferences"]) => {
     onChange({
       contentPreferences: {
