@@ -586,7 +586,7 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
           </div>
 
           {/* Labels */}
-          <div className="relative flex justify-between mt-3">
+          <div className="relative flex justify-between mt-3 mx-[18px]">
             {AUDIENCE_LEVELS.map((lvl, i) => {
               const active = hasLevel && levelIndex === i;
               return (
