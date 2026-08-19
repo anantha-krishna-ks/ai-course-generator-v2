@@ -46,7 +46,6 @@ import imgStyleSketch from "@/assets/image-style-sketch.jpg";
 import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
-import { ContentDepthSegmented } from "@/components/AIGenerate/ContentDepthSelect";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -329,13 +328,6 @@ export function StepBlueprintGenerate({ state, onChange, errors }: StepBlueprint
 
   return (
     <div className="space-y-4">
-      {/* Content depth — always-visible required choice */}
-      <ContentDepthSegmented
-        value={state.contentDepth}
-        onChange={(v) => onChange({ contentDepth: v } as Partial<AIGenerateState>)}
-        error={errors?.contentDepth}
-      />
-
       {/* Assessment scopes — Course / Section / Page quizzes */}
       <QuizScopeCard
         scope="course"

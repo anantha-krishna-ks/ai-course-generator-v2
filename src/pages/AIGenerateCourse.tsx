@@ -204,6 +204,7 @@ export default function AIGenerateCourse() {
     switch (currentStep) {
       case 1:
         if (!formState.title.trim()) fail("title", "Course title is required");
+        if (!formState.contentDepth) fail("contentDepth", "Choose a content depth for the title");
         break;
       case 2:
         if (!formState.learningOutcome.trim()) fail("learningOutcome", "Please describe what learners should be able to do");
@@ -211,9 +212,6 @@ export default function AIGenerateCourse() {
         if (!formState.pageSpanTime) fail("pageSpanTime", "Please set a page duration");
         if (formState.bloomsTaxonomy.length === 0) fail("bloomsTaxonomy", "Select at least one Bloom's Taxonomy level");
         if (!formState.learningObjectives.some((o) => o.trim())) fail("learningObjectives", "Add at least one learning objective");
-        break;
-      case 3:
-        if (!formState.contentDepth) fail("contentDepth", "Select a content depth");
         break;
     }
     return { ok: Object.keys(e).length === 0, errors: e, firstField };
