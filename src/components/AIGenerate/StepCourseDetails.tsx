@@ -546,10 +546,11 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
   const objectives = state.learningObjectives;
-  const detected = objectives.map((o) => detectBloom(o)).filter(Boolean) as string[];
+  const tags = objectives.map((o, i) => state.objectiveBlooms?.[i] || detectBloom(o) || "");
+  const detected = tags.filter(Boolean);
   const detectedKey = Array.from(new Set(detected)).sort().join(",");
 
-  // Read Bloom levels from the objectives; the user can still adjust them.
+  // Roll the per-objective tags up into the course-level Bloom levels.
   useEffect(() => {
     if (!detectedKey) return;
     const levels = detectedKey.split(",");
@@ -560,12 +561,20 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detectedKey]);
 
+  const setTag = (idx: number, level: string) => {
+    const next = objectives.map((_, i) => (i === idx ? level : tags[i]));
+    onChange({ objectiveBlooms: next });
+  };
+
   const reorder = (from: number, to: number) => {
     if (from === to) return;
     const next = [...objectives];
     const [moved] = next.splice(from, 1);
     next.splice(to, 0, moved);
-    onChange({ learningObjectives: next });
+    const nextTags = [...tags];
+    const [movedTag] = nextTags.splice(from, 1);
+    nextTags.splice(to, 0, movedTag);
+    onChange({ learningObjectives: next, objectiveBlooms: nextTags });
   };
 
   const move = (idx: number, dir: -1 | 1) => {
@@ -573,6 +582,7 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
     if (target < 0 || target >= objectives.length) return;
     reorder(idx, target);
   };
+
 
   return (
     <>
