@@ -24,6 +24,7 @@ import { StepCourseIntent } from "@/components/AIGenerate/StepCourseIntent";
 import { StepCourseDetails } from "@/components/AIGenerate/StepCourseDetails";
 import { StepBlueprintGenerate } from "@/components/AIGenerate/StepBlueprintGenerate";
 import { StepEditRefine } from "@/components/AIGenerate/StepEditRefine";
+import { ContentDepthSummary } from "@/components/AIGenerate/ContentDepthSelect";
 import { AIGenerationLoadingDialog } from "@/components/AIGenerate/AIGenerationLoadingDialog";
 import type { ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
 
@@ -628,6 +629,9 @@ export default function AIGenerateCourse() {
               Confirm to start generating "{formState.title || "your course"}". You can let it run in the background and keep working from the dashboard.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="mx-auto max-w-sm w-full flex justify-center">
+            <ContentDepthSummary value={formState.contentDepth} />
+          </div>
           <div className="flex items-start gap-2.5 mx-auto max-w-sm rounded-xl border border-border/70 bg-muted/30 px-3.5 py-3">
             <Checkbox
               id="make-as-loading"
