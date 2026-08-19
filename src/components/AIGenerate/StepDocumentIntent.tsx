@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
-import { CONTENT_DEPTH_TIERS, type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
+import { type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
+import { ContentDepthSelect } from "@/components/AIGenerate/ContentDepthSelect";
 
 interface StepDocumentIntentProps {
   state: AIGenerateState;
