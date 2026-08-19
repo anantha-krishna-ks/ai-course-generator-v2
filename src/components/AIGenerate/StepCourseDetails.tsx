@@ -479,43 +479,61 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
           )}
         >
           {/* Chip tab bar on the top edge */}
-          <div
-            role="radiogroup"
-            aria-label="Learner experience level"
-            className="flex items-center gap-1.5 px-2 pt-2 pb-2 border-b border-border bg-muted/30"
-          >
-            {AUDIENCE_LEVELS.map((lvl) => {
-              const active = state.intendedLearners === lvl.value;
-              const Icon = lvl.icon;
-              return (
-                <button
-                  key={lvl.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => selectLevel(lvl.value)}
-                  className={cn(
-                    "relative flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1",
-                    active
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-background"
-                  )}
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="audience-level-chip"
-                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      className="pointer-events-none absolute inset-0 rounded-lg bg-primary shadow-sm"
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  <Icon className="relative w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                  <span className="relative">{lvl.label}</span>
-                </button>
-              );
-            })}
+          <div className="px-3 pt-3 pb-3 border-b border-border bg-muted/30">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span id="audience-level-label" className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Experience level
+              </span>
+              {!hasLevel && (
+                <span className="text-[11px] font-medium text-primary">Select one to continue</span>
+              )}
+            </div>
+            <div
+              role="radiogroup"
+              aria-labelledby="audience-level-label"
+              className="grid grid-cols-3 gap-2"
+            >
+              {AUDIENCE_LEVELS.map((lvl) => {
+                const active = state.intendedLearners === lvl.value;
+                const Icon = lvl.icon;
+                return (
+                  <button
+                    key={lvl.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => selectLevel(lvl.value)}
+                    className={cn(
+                      "group relative cursor-pointer overflow-hidden rounded-xl border px-3 py-2.5 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2",
+                      active
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : cn(
+                            "border-border bg-background text-foreground hover:-translate-y-0.5 hover:border-primary/60 hover:bg-primary/5 hover:shadow-sm",
+                            !hasLevel && "border-dashed border-primary/40"
+                          )
+                    )}
+                  >
+                    <span className="relative flex items-center gap-2">
+                      <span
+                        className={cn(
+                          "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-colors",
+                          active ? "bg-white/20" : "bg-primary/10 text-primary group-hover:bg-primary/15"
+                        )}
+                      >
+                        {active ? (
+                          <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        ) : (
+                          <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                        )}
+                      </span>
+                      <span className="text-[13px] font-semibold leading-tight">{lvl.label}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
 
           <Textarea
             id="audience-description"
