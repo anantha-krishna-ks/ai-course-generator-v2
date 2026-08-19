@@ -4,6 +4,7 @@ import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
+import { ContentDepthPreviewPicker } from "./ContentDepthPreview";
 import blueprintImportIllustration from "@/assets/blueprint-import.png";
 import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 
@@ -91,18 +92,8 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           onChange={(v) => onChange({ title: v })}
           language={state.language}
           onLanguageChange={(code) => onChange({ language: code })}
-          contentDepth={state.contentDepth}
-          onContentDepthChange={(v) => onChange({ contentDepth: v })}
-          contentDepthInvalid={Boolean(errors.contentDepth)}
           placeholder="What will you teach?"
         />
-
-        {errors.contentDepth && (
-          <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 font-medium flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
-            {errors.contentDepth}
-          </p>
-        )}
 
         {errors.title ? (
           <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
@@ -115,6 +106,13 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           </p>
         )}
       </div>
+
+      {/* Content depth — visual, show-don't-tell required choice */}
+      <ContentDepthPreviewPicker
+        value={state.contentDepth}
+        onChange={(v) => onChange({ contentDepth: v })}
+        error={errors.contentDepth}
+      />
 
       {/* Learning Outcome — hidden for now */}
 
