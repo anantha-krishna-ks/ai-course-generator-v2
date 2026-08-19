@@ -74,7 +74,7 @@ export function ContentDepthInline({ value, onChange, error, className }: Props)
         {value && (
           <motion.div
             layoutId="content-depth-pill"
-            className="absolute inset-y-1 rounded-full bg-background shadow-sm border border-border"
+            className="absolute inset-y-1 rounded-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground shadow-[0_0_16px_-4px_hsl(var(--primary)/0.5)]"
             initial={false}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             style={{
@@ -95,8 +95,8 @@ export function ContentDepthInline({ value, onChange, error, className }: Props)
               aria-checked={selected}
               onClick={() => onChange(tier.id)}
               className={cn(
-                "relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-full py-1.5 px-2 text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                "relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-full py-1.5 px-2 text-[11px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                selected ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
               <Icon className="h-3 w-3" aria-hidden="true" focusable="false" />
