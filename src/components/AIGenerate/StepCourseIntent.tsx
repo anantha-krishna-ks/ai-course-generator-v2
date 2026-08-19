@@ -95,24 +95,27 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           placeholder="What will you teach?"
         />
 
-        {errors.title ? (
-          <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
-            {errors.title}
-          </p>
-        ) : (
-          <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-1.5 sm:mt-2">
-            💡 Used as the primary prompt for AI content generation
-          </p>
-        )}
+        <div className="mt-1.5 sm:mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
+          {errors.title ? (
+            <p role="alert" className="text-[11px] sm:text-xs text-destructive font-medium flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
+              {errors.title}
+            </p>
+          ) : (
+            <p className="text-[10px] sm:text-[11px] text-muted-foreground">
+              💡 Used as the primary prompt for AI content generation
+            </p>
+          )}
+
+          {/* Content depth — inline, embedded next to the title helper line */}
+          <ContentDepthInline
+            value={state.contentDepth}
+            onChange={(v) => onChange({ contentDepth: v })}
+            error={errors.contentDepth}
+          />
+        </div>
       </div>
 
-      {/* Content depth — visual, show-don't-tell required choice */}
-      <ContentDepthPreviewPicker
-        value={state.contentDepth}
-        onChange={(v) => onChange({ contentDepth: v })}
-        error={errors.contentDepth}
-      />
 
       {/* Learning Outcome — hidden for now */}
 
