@@ -726,17 +726,18 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
                       next[idx] = e.target.value;
                       onChange({ learningObjectives: next });
                       e.target.style.height = "auto";
-                      e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+                      e.target.style.height = `${Math.min(e.target.scrollHeight, 220)}px`;
                     }}
                     ref={(el) => {
                       if (el) {
                         el.style.height = "auto";
-                        el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+                        el.style.height = `${Math.min(el.scrollHeight, 220)}px`;
                       }
                     }}
                     placeholder={`Objective ${idx + 1}`}
                     rows={1}
-                    className="flex-1 min-h-[36px] max-h-[160px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
+                    className="flex-1 min-h-[36px] max-h-[220px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
+
                     aria-label={`Learning objective ${idx + 1}`}
                   />
                   <Popover>
@@ -848,53 +849,6 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
         )}
       </div>
 
-      {/* Bloom's Taxonomy — read from the objectives above */}
-      <div
-        data-field="bloomsTaxonomy"
-        className={cn(
-          "rounded-xl border p-4 bg-primary/5",
-          errors.bloomsTaxonomy ? "border-destructive" : "border-primary/20"
-        )}
-      >
-        <div className="mb-2.5">
-          <div className="text-[16px] font-semibold text-foreground leading-tight">
-            Bloom's Taxonomy
-            <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">Read from your objectives. Adjust if needed.</p>
-        </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Bloom's taxonomy levels">
-          {BLOOMS_OPTIONS.map((b) => {
-            const selected = state.bloomsTaxonomy.includes(b.value);
-            return (
-              <button
-                key={b.value}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => {
-                  const set = new Set(state.bloomsTaxonomy);
-                  if (set.has(b.value)) set.delete(b.value);
-                  else set.add(b.value);
-                  onChange({ bloomsTaxonomy: Array.from(set) });
-                }}
-                aria-label={b.label}
-                className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  selected
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
-                )}
-              >
-                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
-                {b.label}
-              </button>
-            );
-          })}
-        </div>
-        {errors.bloomsTaxonomy && (
-          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.bloomsTaxonomy}</p>
-        )}
-      </div>
     </>
   );
 }
