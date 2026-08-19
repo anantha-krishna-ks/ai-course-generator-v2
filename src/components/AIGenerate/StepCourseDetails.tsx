@@ -781,13 +781,25 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
 
-      {/* Intended Learners */}
-      <AudienceSection state={state} onChange={onChange} errors={errors} />
+      {/* ── Audience ───────────────────────────────── */}
+      <section aria-labelledby="group-audience" className="space-y-4">
+        <h3 id="group-audience" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Audience
+        </h3>
+        <AudienceSection state={state} onChange={onChange} errors={errors} />
+      </section>
+
+      {/* ── Outcomes ───────────────────────────────── */}
+      <section aria-labelledby="group-outcomes" className="space-y-4">
+        <h3 id="group-outcomes" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Outcomes
+        </h3>
 
       {/* Learning Outcome with AI suggestions */}
       <div data-field="learningOutcome">
+
         <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground mb-2 block">
           What do you want learners to be able to do after this course?
           <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
@@ -828,15 +840,18 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-
-
-
-
-
       {/* Learning Objectives + Bloom's Taxonomy */}
       <OutcomesSection state={state} onChange={onChange} errors={errors} />
+      </section>
+
+      {/* ── Generation settings ────────────────────── */}
+      <section aria-labelledby="group-generation" className="space-y-4">
+        <h3 id="group-generation" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Generation settings
+        </h3>
 
       <div data-field="pageSpanTime">
+
         <PageDurationDefaultCard
           valueSec={(state.pageSpanTime || 5) * 60}
           onChange={(sec) => onChange({ pageSpanTime: Math.max(1, Math.round(sec / 60)), scormPageDurationSec: sec } as Partial<AIGenerateState>)}
@@ -959,9 +974,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
           <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.contentDepth}</p>
         )}
       </div>
-
-
+      </section>
 
     </div>
+
   );
 }
