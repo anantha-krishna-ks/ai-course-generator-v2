@@ -46,10 +46,12 @@ import imgStyleSketch from "@/assets/image-style-sketch.jpg";
 import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
+import { ContentDepthSelect } from "@/components/AIGenerate/ContentDepthSelect";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
   onChange: (partial: Partial<AIGenerateState>) => void;
+  errors?: Record<string, string>;
 }
 
 const TONE_OPTIONS = [
