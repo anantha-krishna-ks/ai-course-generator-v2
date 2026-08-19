@@ -4,7 +4,7 @@ import { Upload, Sparkles, Info, Loader2, X, FileText, Plus, Minus, Layers, File
 import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { TitleAutocomplete } from "./TitleAutocomplete";
-import { ContentDepthPreviewPicker } from "./ContentDepthPreview";
+import { ContentDepthInline } from "./ContentDepthInline";
 import blueprintImportIllustration from "@/assets/blueprint-import.png";
 import blueprintAiIllustration from "@/assets/blueprint-ai.png";
 
