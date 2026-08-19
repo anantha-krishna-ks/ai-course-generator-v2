@@ -505,10 +505,11 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
                     <motion.span
                       layoutId="audience-level-chip"
                       transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      className="absolute inset-0 rounded-lg bg-primary shadow-sm"
+                      className="pointer-events-none absolute inset-0 rounded-lg bg-primary shadow-sm"
                       aria-hidden="true"
                     />
                   )}
+
                   <Icon className="relative w-3.5 h-3.5" aria-hidden="true" focusable="false" />
                   <span className="relative">{lvl.label}</span>
                 </button>
