@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, Rabbit, Scale, Gem, Layers, Coins, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, Rabbit, Scale, Gem, Layers, Coins, GripVertical, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
@@ -783,6 +783,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
   return (
     <div className="space-y-6">
 
+      {/* Intended Learners */}
+      <AudienceSection state={state} onChange={onChange} errors={errors} />
+
       {/* Learning Outcome with AI suggestions */}
       <div data-field="learningOutcome">
         <label htmlFor="learning-outcome" className="text-base font-semibold text-foreground mb-2 block">
@@ -825,8 +828,6 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-      {/* Intended Learners */}
-      <AudienceSection state={state} onChange={onChange} errors={errors} />
 
 
 
