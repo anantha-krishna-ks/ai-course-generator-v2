@@ -840,15 +840,18 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-
-
-
-
-
       {/* Learning Objectives + Bloom's Taxonomy */}
       <OutcomesSection state={state} onChange={onChange} errors={errors} />
+      </section>
+
+      {/* ── Generation settings ────────────────────── */}
+      <section aria-labelledby="group-generation" className="space-y-4">
+        <h3 id="group-generation" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Generation settings
+        </h3>
 
       <div data-field="pageSpanTime">
+
         <PageDurationDefaultCard
           valueSec={(state.pageSpanTime || 5) * 60}
           onChange={(sec) => onChange({ pageSpanTime: Math.max(1, Math.round(sec / 60)), scormPageDurationSec: sec } as Partial<AIGenerateState>)}
