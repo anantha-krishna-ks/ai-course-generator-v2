@@ -400,10 +400,11 @@ function AISuggestions({
 }
 
 const AUDIENCE_LEVELS = [
-  { value: "beginners", label: "Beginner", icon: Sprout },
-  { value: "intermediate", label: "Intermediate", icon: Rocket },
-  { value: "expert", label: "Expert", icon: Crown },
+  { value: "beginners", label: "Beginner", icon: Sprout, hint: "New to the topic — start from fundamentals." },
+  { value: "intermediate", label: "Intermediate", icon: Rocket, hint: "Knows the basics — build practical depth." },
+  { value: "expert", label: "Expert", icon: Crown, hint: "Highly experienced — focus on nuance and mastery." },
 ] as const;
+
 
 const AUDIENCE_EXAMPLE =
   "Learners have foundational sales knowledge and are actively engaging with customers. They want to improve prospecting, communication, negotiation, objection handling, and closing skills to achieve higher sales performance and career growth.";
@@ -500,20 +501,28 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
 
         <div
           className={cn(
-            "relative rounded-2xl border bg-card p-4 pt-5 transition-all duration-300",
-            errors.intendedLearners ? "border-destructive/50" : "border-border hover:border-primary/20"
+            "relative overflow-hidden rounded-2xl border bg-card p-4 pt-6 transition-all duration-300",
+            errors.intendedLearners ? "border-destructive/50" : "border-border hover:border-primary/25"
           )}
         >
+          {/* Ambient glow */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 opacity-60 bg-[radial-gradient(120%_80%_at_50%_-20%,hsl(var(--primary)/0.08),transparent_70%)]"
+          />
+
           {/* Real slider */}
-          <div className="relative h-9">
+          <div className="relative h-10">
             {/* Track */}
-            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-2 rounded-full bg-muted border border-border/60 overflow-hidden">
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 rounded-full bg-muted border border-border/70 shadow-inner overflow-hidden">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-primary to-violet-500"
+                className="relative h-full rounded-full bg-gradient-to-r from-emerald-500 via-primary to-violet-500"
                 initial={false}
                 animate={{ width: hasLevel ? `${(levelIndex / (AUDIENCE_LEVELS.length - 1)) * 100}%` : "0%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
+              >
+                <span className="absolute inset-x-0 top-0 h-1/2 rounded-full bg-gradient-to-b from-white/40 to-transparent" />
+              </motion.div>
             </div>
 
             {/* Tick marks */}
@@ -522,9 +531,9 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
                 <span
                   key={`tick-${lvl.value}`}
                   className={cn(
-                    "h-2.5 w-2.5 rounded-full border transition-colors duration-300",
+                    "h-3 w-3 rounded-full border-2 transition-colors duration-300",
                     hasLevel && levelIndex >= i
-                      ? "bg-primary border-primary"
+                      ? "bg-background border-primary"
                       : "bg-background border-border"
                   )}
                 />
@@ -536,20 +545,23 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
               className="pointer-events-none absolute top-1/2 z-10"
               initial={false}
               animate={{ left: `${(hasLevel ? levelIndex : 0) / (AUDIENCE_LEVELS.length - 1) * 100}%` }}
-              transition={{ type: "spring", stiffness: 320, damping: 28 }}
+              transition={{ type: "spring", stiffness: 320, damping: 26 }}
               style={{ translateX: "-50%", translateY: "-50%" }}
             >
               <span
                 className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-full border-2 bg-background shadow-[0_2px_10px_-2px_hsl(var(--foreground)/0.25)] transition-colors duration-300",
-                  hasLevel ? "border-primary" : "border-border"
+                  "relative flex h-9 w-9 items-center justify-center rounded-full border-2 bg-background transition-colors duration-300",
+                  hasLevel
+                    ? "border-primary shadow-[0_0_0_5px_hsl(var(--primary)/0.12),0_8px_20px_-6px_hsl(var(--primary)/0.5)]"
+                    : "border-border shadow-[0_2px_10px_-2px_hsl(var(--foreground)/0.2)]"
                 )}
               >
+                <span className="absolute inset-0.5 rounded-full bg-gradient-to-b from-primary/10 to-transparent" />
                 {(() => {
                   const Icon = AUDIENCE_LEVELS[hasLevel ? levelIndex : 0].icon;
                   return (
                     <Icon
-                      className={cn("w-3.5 h-3.5", hasLevel ? "text-primary" : "text-muted-foreground")}
+                      className={cn("relative w-4 h-4", hasLevel ? "text-primary" : "text-muted-foreground")}
                       aria-hidden="true"
                       focusable="false"
                     />
@@ -568,12 +580,12 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
               onChange={(e) => onChange({ intendedLearners: AUDIENCE_LEVELS[Number(e.target.value)].value })}
               aria-label="Experience level"
               aria-valuetext={hasLevel ? AUDIENCE_LEVELS[levelIndex].label : "Not set"}
-              className="absolute inset-0 z-20 w-full h-full cursor-pointer appearance-none bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-transparent [&::-moz-range-thumb]:h-7 [&::-moz-range-thumb]:w-7 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent"
+              className="absolute inset-0 z-20 w-full h-full cursor-pointer appearance-none bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-9 [&::-webkit-slider-thumb]:w-9 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-transparent [&::-moz-range-thumb]:h-9 [&::-moz-range-thumb]:w-9 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent"
             />
           </div>
 
           {/* Labels */}
-          <div className="flex justify-between mt-3">
+          <div className="relative flex justify-between mt-3">
             {AUDIENCE_LEVELS.map((lvl, i) => {
               const active = hasLevel && levelIndex === i;
               return (
@@ -582,8 +594,9 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
                   type="button"
                   onClick={() => onChange({ intendedLearners: lvl.value })}
                   className={cn(
-                    "text-xs font-medium transition-colors duration-200 rounded-md px-1.5 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
-                    active ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+                    "text-xs transition-colors duration-200 rounded-md px-1.5 py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
+                    i === 0 ? "text-left" : i === AUDIENCE_LEVELS.length - 1 ? "text-right" : "text-center",
+                    active ? "text-primary font-semibold" : "text-muted-foreground font-medium hover:text-foreground"
                   )}
                   aria-label={`Select ${lvl.label}`}
                 >
@@ -592,7 +605,21 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
               );
             })}
           </div>
+
+          {/* Contextual hint */}
+          <motion.p
+            key={hasLevel ? AUDIENCE_LEVELS[levelIndex].value : "unset-hint"}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="relative mt-3 rounded-lg border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+          >
+            {hasLevel
+              ? AUDIENCE_LEVELS[levelIndex].hint
+              : "Drag the slider or pick a label to set the learner experience level."}
+          </motion.p>
         </div>
+
 
       </div>
 
