@@ -248,12 +248,14 @@ function AISuggestions({
   generator = generateSuggestions,
   heading = "Suggested course goals",
   regenerateLabel = "Regenerate goals",
+  showBloom = false,
 }: {
   title: string;
   onSelect: (text: string) => void;
   generator?: (title: string) => string[];
   heading?: string;
   regenerateLabel?: string;
+  showBloom?: boolean;
 }) {
   const [suggestions, setSuggestions] = useState<string[]>(() => {
     if (title.trim().length >= 3) return generator(title);
