@@ -400,10 +400,11 @@ function AISuggestions({
 }
 
 const AUDIENCE_LEVELS = [
-  { value: "beginners", label: "Beginner", icon: Sprout },
-  { value: "intermediate", label: "Intermediate", icon: Rocket },
-  { value: "expert", label: "Expert", icon: Crown },
+  { value: "beginners", label: "Beginner", icon: Sprout, hint: "New to the topic — start from fundamentals." },
+  { value: "intermediate", label: "Intermediate", icon: Rocket, hint: "Knows the basics — build practical depth." },
+  { value: "expert", label: "Expert", icon: Crown, hint: "Highly experienced — focus on nuance and mastery." },
 ] as const;
+
 
 const AUDIENCE_EXAMPLE =
   "Learners have foundational sales knowledge and are actively engaging with customers. They want to improve prospecting, communication, negotiation, objection handling, and closing skills to achieve higher sales performance and career growth.";
