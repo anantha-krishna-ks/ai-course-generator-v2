@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, Rabbit, Scale, Gem, Layers, Coins, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, Rabbit, Scale, Gem, Layers, Coins, GripVertical, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
@@ -522,10 +522,269 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
   );
 }
 
+const BLOOM_VERBS: Record<string, string[]> = {
+  remember: ["define", "list", "recall", "identify", "name", "state", "recognize", "label"],
+  understand: ["explain", "summarize", "interpret", "describe", "classify", "discuss", "illustrate"],
+  apply: ["apply", "use", "implement", "demonstrate", "perform", "conduct", "execute", "solve", "practice"],
+  analyze: ["analyze", "analyse", "compare", "differentiate", "examine", "diagnose", "investigate", "distinguish"],
+  evaluate: ["evaluate", "assess", "justify", "critique", "recommend", "prioritize", "validate", "judge"],
+  create: ["create", "design", "develop", "build", "compose", "plan", "produce", "formulate", "generate"],
+};
+
+function detectBloom(text: string): string | null {
+  const first = text.trim().split(/\s+/)[0]?.toLowerCase().replace(/[^a-z]/g, "");
+  if (!first) return null;
+  for (const [level, verbs] of Object.entries(BLOOM_VERBS)) {
+    if (verbs.includes(first)) return level;
+  }
+  return null;
+}
+
+function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & { errors: Record<string, string> }) {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
+
+  const objectives = state.learningObjectives;
+  const detected = objectives.map((o) => detectBloom(o)).filter(Boolean) as string[];
+  const detectedKey = Array.from(new Set(detected)).sort().join(",");
+
+  // Read Bloom levels from the objectives; the user can still adjust them.
+  useEffect(() => {
+    if (!detectedKey) return;
+    const levels = detectedKey.split(",");
+    const merged = Array.from(new Set([...state.bloomsTaxonomy, ...levels]));
+    if (merged.length !== state.bloomsTaxonomy.length) {
+      onChange({ bloomsTaxonomy: merged });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detectedKey]);
+
+  const reorder = (from: number, to: number) => {
+    if (from === to) return;
+    const next = [...objectives];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    onChange({ learningObjectives: next });
+  };
+
+  const move = (idx: number, dir: -1 | 1) => {
+    const target = idx + dir;
+    if (target < 0 || target >= objectives.length) return;
+    reorder(idx, target);
+  };
+
+  return (
+    <>
+      {/* Learning Objectives */}
+      <div data-field="learningObjectives">
+        <label className="text-base font-semibold text-foreground mb-2 block">
+          Learning Objectives
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+        </label>
+        <div className={cn("rounded-xl border overflow-hidden bg-white", errors.learningObjectives ? "border-destructive" : "border-border")}>
+          <div className="p-3 space-y-2">
+            {objectives.length === 0 && (
+              <p className="text-xs text-muted-foreground px-1 py-2">
+                Add one or more measurable objectives, or pick from AI suggestions below.
+              </p>
+            )}
+            {objectives.map((obj, idx) => {
+              const bloom = detectBloom(obj);
+              const bloomLabel = BLOOMS_OPTIONS.find((b) => b.value === bloom)?.label;
+              return (
+                <div
+                  key={idx}
+                  draggable
+                  onDragStart={() => setDragIndex(idx)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setOverIndex(idx);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (dragIndex !== null) reorder(dragIndex, idx);
+                    setDragIndex(null);
+                    setOverIndex(null);
+                  }}
+                  onDragEnd={() => {
+                    setDragIndex(null);
+                    setOverIndex(null);
+                  }}
+                  className={cn(
+                    "flex items-start gap-2 rounded-lg border bg-background px-3 py-2 transition-colors focus-within:border-primary/50",
+                    overIndex === idx && dragIndex !== null && dragIndex !== idx
+                      ? "border-primary/60 bg-primary/5"
+                      : "border-border",
+                    dragIndex === idx && "opacity-60"
+                  )}
+                >
+                  <button
+                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Reorder objective ${idx + 1}. Use arrow up or arrow down keys to move.`}
+                    onKeyDown={(e) => {
+                      if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        move(idx, -1);
+                      } else if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        move(idx, 1);
+                      }
+                    }}
+                    className="mt-2 w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <GripVertical className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  </button>
+                  <Textarea
+                    value={obj}
+                    onChange={(e) => {
+                      const next = [...objectives];
+                      next[idx] = e.target.value;
+                      onChange({ learningObjectives: next });
+                      e.target.style.height = "auto";
+                      e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+                    }}
+                    ref={(el) => {
+                      if (el) {
+                        el.style.height = "auto";
+                        el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+                      }
+                    }}
+                    placeholder={`Objective ${idx + 1}`}
+                    rows={1}
+                    className="flex-1 min-h-[36px] max-h-[160px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
+                    aria-label={`Learning objective ${idx + 1}`}
+                  />
+                  {bloomLabel && (
+                    <span className="mt-1.5 shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                      {bloomLabel}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => onChange({ learningObjectives: objectives.filter((_, i) => i !== idx) })}
+                    aria-label={`Remove objective ${idx + 1}`}
+                    className="mt-1 w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  </button>
+                </div>
+              );
+            })}
+
+            <div className="flex flex-wrap items-center gap-4 pt-0.5">
+              <button
+                type="button"
+                onClick={() => onChange({ learningObjectives: [...objectives, ""] })}
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
+                aria-label="Add another learning objective"
+              >
+                <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+                Add objective
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowSuggestions((v) => !v)}
+                aria-expanded={showSuggestions}
+                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
+              >
+                <Sparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
+                Suggested learning objectives
+              </button>
+            </div>
+          </div>
+
+          {showSuggestions && (
+            <AISuggestions
+              title={state.title}
+              generator={generateObjectiveSuggestions}
+              heading="Suggested learning objectives"
+              regenerateLabel="Regenerate objectives"
+              onSelect={(text) => {
+                const current = state.learningObjectives;
+                const existingIdx = current.indexOf(text);
+                if (existingIdx !== -1) {
+                  onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
+                } else {
+                  const emptyIdx = current.findIndex((o) => !o.trim());
+                  if (emptyIdx !== -1) {
+                    const next = [...current];
+                    next[emptyIdx] = text;
+                    onChange({ learningObjectives: next });
+                  } else {
+                    onChange({ learningObjectives: [...current, text] });
+                  }
+                }
+              }}
+            />
+          )}
+        </div>
+        {errors.learningObjectives && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningObjectives}</p>
+        )}
+      </div>
+
+      {/* Bloom's Taxonomy — read from the objectives above */}
+      <div
+        data-field="bloomsTaxonomy"
+        className={cn(
+          "rounded-xl border p-4 bg-primary/5",
+          errors.bloomsTaxonomy ? "border-destructive" : "border-primary/20"
+        )}
+      >
+        <div className="mb-2.5">
+          <div className="text-[16px] font-semibold text-foreground leading-tight">
+            Bloom's Taxonomy
+            <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Read from your objectives. Adjust if needed.</p>
+        </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Bloom's taxonomy levels">
+          {BLOOMS_OPTIONS.map((b) => {
+            const selected = state.bloomsTaxonomy.includes(b.value);
+            return (
+              <button
+                key={b.value}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => {
+                  const set = new Set(state.bloomsTaxonomy);
+                  if (set.has(b.value)) set.delete(b.value);
+                  else set.add(b.value);
+                  onChange({ bloomsTaxonomy: Array.from(set) });
+                }}
+                aria-label={b.label}
+                className={cn(
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  selected
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                )}
+              >
+                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
+                {b.label}
+              </button>
+            );
+          })}
+        </div>
+        {errors.bloomsTaxonomy && (
+          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.bloomsTaxonomy}</p>
+        )}
+      </div>
+    </>
+  );
+}
+
 export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDetailsProps) {
+
 
   return (
     <div className="space-y-6">
+
+      {/* Intended Learners */}
+      <AudienceSection state={state} onChange={onChange} errors={errors} />
 
       {/* Learning Outcome with AI suggestions */}
       <div data-field="learningOutcome">
@@ -569,12 +828,13 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-      {/* Intended Learners */}
-      <AudienceSection state={state} onChange={onChange} errors={errors} />
 
 
 
 
+
+      {/* Learning Objectives + Bloom's Taxonomy */}
+      <OutcomesSection state={state} onChange={onChange} errors={errors} />
 
       <div data-field="pageSpanTime">
         <PageDurationDefaultCard
@@ -700,139 +960,7 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         )}
       </div>
 
-      {/* Bloom's Taxonomy */}
-      <div data-field="bloomsTaxonomy" className={cn("rounded-xl border bg-card p-4", errors.bloomsTaxonomy ? "border-destructive" : "border-border")}>
-        <div className="mb-2.5">
-          <div className="text-[16px] font-semibold text-foreground leading-tight">
-            Bloom's Taxonomy
-            <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Bloom's taxonomy levels">
-          {BLOOMS_OPTIONS.map((b) => {
-            const selected = state.bloomsTaxonomy.includes(b.value);
-            return (
-              <button
-                key={b.value}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => {
-                  const set = new Set(state.bloomsTaxonomy);
-                  if (set.has(b.value)) set.delete(b.value);
-                  else set.add(b.value);
-                  onChange({ bloomsTaxonomy: Array.from(set) });
-                }}
-                aria-label={b.label}
-                className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                  selected
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                {selected && <Check className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />}
-                {b.label}
-              </button>
-            );
-          })}
-        </div>
-        {errors.bloomsTaxonomy && (
-          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.bloomsTaxonomy}</p>
-        )}
-      </div>
 
-      {/* Learning Objectives with AI suggestions */}
-      <div data-field="learningObjectives">
-        <label className="text-base font-semibold text-foreground mb-2 block">
-          Learning Objectives
-          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-        </label>
-        <div className={cn("rounded-xl border overflow-hidden bg-white", errors.learningObjectives ? "border-destructive" : "border-border")}>
-          <div className="p-3 space-y-2">
-            {state.learningObjectives.length === 0 && (
-              <p className="text-xs text-muted-foreground px-1 py-2">
-                Add one or more measurable objectives, or pick from AI suggestions below.
-              </p>
-            )}
-            {state.learningObjectives.map((obj, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-2 rounded-lg border border-border bg-background px-3 py-2 focus-within:border-primary/50 transition-colors"
-              >
-                <div className="mt-2 w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
-                  <Target className="w-3.5 h-3.5 text-primary" aria-hidden="true" focusable="false" />
-                </div>
-                <Textarea
-                  value={obj}
-                  onChange={(e) => {
-                    const next = [...state.learningObjectives];
-                    next[idx] = e.target.value;
-                    onChange({ learningObjectives: next });
-                    e.target.style.height = "auto";
-                    e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
-                  }}
-                  ref={(el) => {
-                    if (el) {
-                      el.style.height = "auto";
-                      el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
-                    }
-                  }}
-                  placeholder={`Objective ${idx + 1}`}
-                  rows={1}
-                  className="flex-1 min-h-[36px] max-h-[160px] resize-none text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-1 py-1.5"
-                  aria-label={`Learning objective ${idx + 1}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const next = state.learningObjectives.filter((_, i) => i !== idx);
-                    onChange({ learningObjectives: next });
-                  }}
-                  aria-label={`Remove objective ${idx + 1}`}
-                  className="mt-1 w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => onChange({ learningObjectives: [...state.learningObjectives, ""] })}
-              className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
-              aria-label="Add another learning objective"
-            >
-              <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-              Add objective
-            </button>
-          </div>
-          <AISuggestions
-            title={state.title}
-            generator={generateObjectiveSuggestions}
-            heading="Suggested learning objectives"
-            regenerateLabel="Regenerate objectives"
-            onSelect={(text) => {
-              const current = state.learningObjectives;
-              const existingIdx = current.indexOf(text);
-              if (existingIdx !== -1) {
-                onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
-              } else {
-                // Replace first empty slot if any, otherwise append
-                const emptyIdx = current.findIndex((o) => !o.trim());
-                if (emptyIdx !== -1) {
-                  const next = [...current];
-                  next[emptyIdx] = text;
-                  onChange({ learningObjectives: next });
-                } else {
-                  onChange({ learningObjectives: [...current, text] });
-                }
-              }
-            }}
-          />
-        </div>
-        {errors.learningObjectives && (
-          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningObjectives}</p>
-        )}
-      </div>
 
     </div>
   );
