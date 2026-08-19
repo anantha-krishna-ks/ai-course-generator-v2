@@ -378,8 +378,19 @@ function AISuggestions({
                             )}>
                               {isSelected && <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />}
                             </div>
-                            <span>{text}</span>
+                            <span className="flex-1">{text}</span>
+                            {showBloom && (() => {
+                              const lvl = detectBloom(text);
+                              const label = BLOOMS_OPTIONS.find((b) => b.value === lvl)?.label;
+                              if (!label) return null;
+                              return (
+                                <span className="shrink-0 mt-0.5 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                                  {label}
+                                </span>
+                              );
+                            })()}
                           </div>
+
                         </motion.button>
                       );
                     })}
