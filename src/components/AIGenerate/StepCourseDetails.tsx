@@ -501,18 +501,19 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
 
         <div
           className={cn(
-            "relative overflow-hidden rounded-2xl border bg-card p-4 pt-6 transition-all duration-300",
+            "relative rounded-2xl border bg-card p-4 pt-6 transition-all duration-300",
             errors.intendedLearners ? "border-destructive/50" : "border-border hover:border-primary/25"
           )}
         >
           {/* Ambient glow */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-60 bg-[radial-gradient(120%_80%_at_50%_-20%,hsl(var(--primary)/0.08),transparent_70%)]"
+            className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl opacity-60 bg-[radial-gradient(120%_80%_at_50%_-20%,hsl(var(--primary)/0.08),transparent_70%)]"
           />
 
           {/* Real slider */}
-          <div className="relative h-10">
+          <div className="relative h-10 mx-[18px]">
+
             {/* Track */}
             <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-3 rounded-full bg-muted border border-border/70 shadow-inner overflow-hidden">
               <motion.div
@@ -585,7 +586,7 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
           </div>
 
           {/* Labels */}
-          <div className="relative flex justify-between mt-3">
+          <div className="relative flex justify-between mt-3 mx-[18px]">
             {AUDIENCE_LEVELS.map((lvl, i) => {
               const active = hasLevel && levelIndex === i;
               return (
