@@ -974,9 +974,9 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
           <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.contentDepth}</p>
         )}
       </div>
-
-
+      </section>
 
     </div>
+
   );
 }
