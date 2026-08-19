@@ -97,26 +97,31 @@ function generateObjectiveSuggestions(title: string): string[] {
     return [
       `Identify and describe the core components of ${title} workflows, including data preparation, model training, and evaluation.`,
       `Apply appropriate ${title} techniques to solve a defined problem and interpret the resulting model performance metrics.`,
+      `Evaluate model results against business criteria and recommend improvements to data, features, or algorithms.`,
     ];
   }
   if (t.includes("leadership") || t.includes("management") || t.includes("manager")) {
     return [
       `Describe key ${title} frameworks and explain how they influence team dynamics and decision-making.`,
       `Apply ${title} principles in role-play scenarios to deliver constructive feedback and resolve workplace conflicts.`,
+      `Evaluate team performance signals and recommend coaching actions that improve engagement and delivery.`,
     ];
   }
   if (t.includes("design") || t.includes("ux") || t.includes("ui")) {
     return [
       `Explain core ${title} principles and identify how they shape user experience across digital products.`,
       `Apply ${title} methodologies to produce wireframes that address a specified user need.`,
+      `Evaluate interface designs against usability and accessibility heuristics and justify design revisions.`,
     ];
   }
-  // Generic fallback — exactly 2
+  // Generic fallback — 3 suggestions
   return [
     `Identify and explain the foundational concepts of ${title || "the subject"} and describe their relevance in real-world contexts.`,
     `Apply ${title || "subject"} techniques to complete a guided task and assess the outcome against defined criteria.`,
+    `Evaluate common approaches in ${title || "this domain"} and recommend the most effective option for a given scenario.`,
   ];
 }
+
 
 function ChipGroup({
   options,
