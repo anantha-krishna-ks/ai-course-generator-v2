@@ -40,6 +40,8 @@ export interface AIGenerateState {
   audienceDescription: string;
   learningOutcome: string;
   learningObjectives: string[];
+  /** Per-objective Bloom level override, parallel to learningObjectives ( = auto-detect) */
+  objectiveBlooms?: string[];
   bloomsTaxonomy: string[];
   supportingDocuments: string[];
   contentRules: string;
@@ -110,6 +112,7 @@ const initialState: AIGenerateState = {
   audienceDescription: "",
   learningOutcome: "",
   learningObjectives: [""],
+  objectiveBlooms: [""],
   bloomsTaxonomy: [],
   supportingDocuments: [],
   contentRules: "",
