@@ -97,26 +97,31 @@ function generateObjectiveSuggestions(title: string): string[] {
     return [
       `Identify and describe the core components of ${title} workflows, including data preparation, model training, and evaluation.`,
       `Apply appropriate ${title} techniques to solve a defined problem and interpret the resulting model performance metrics.`,
+      `Evaluate model results against business criteria and recommend improvements to data, features, or algorithms.`,
     ];
   }
   if (t.includes("leadership") || t.includes("management") || t.includes("manager")) {
     return [
       `Describe key ${title} frameworks and explain how they influence team dynamics and decision-making.`,
       `Apply ${title} principles in role-play scenarios to deliver constructive feedback and resolve workplace conflicts.`,
+      `Evaluate team performance signals and recommend coaching actions that improve engagement and delivery.`,
     ];
   }
   if (t.includes("design") || t.includes("ux") || t.includes("ui")) {
     return [
       `Explain core ${title} principles and identify how they shape user experience across digital products.`,
       `Apply ${title} methodologies to produce wireframes that address a specified user need.`,
+      `Evaluate interface designs against usability and accessibility heuristics and justify design revisions.`,
     ];
   }
-  // Generic fallback — exactly 2
+  // Generic fallback — 3 suggestions
   return [
     `Identify and explain the foundational concepts of ${title || "the subject"} and describe their relevance in real-world contexts.`,
     `Apply ${title || "subject"} techniques to complete a guided task and assess the outcome against defined criteria.`,
+    `Evaluate common approaches in ${title || "this domain"} and recommend the most effective option for a given scenario.`,
   ];
 }
+
 
 function ChipGroup({
   options,
@@ -243,12 +248,14 @@ function AISuggestions({
   generator = generateSuggestions,
   heading = "Suggested course goals",
   regenerateLabel = "Regenerate goals",
+  showBloom = false,
 }: {
   title: string;
   onSelect: (text: string) => void;
   generator?: (title: string) => string[];
   heading?: string;
   regenerateLabel?: string;
+  showBloom?: boolean;
 }) {
   const [suggestions, setSuggestions] = useState<string[]>(() => {
     if (title.trim().length >= 3) return generator(title);
@@ -371,8 +378,19 @@ function AISuggestions({
                             )}>
                               {isSelected && <Check className="w-2.5 h-2.5 text-primary-foreground" aria-hidden="true" focusable="false" />}
                             </div>
-                            <span>{text}</span>
+                            <span className="flex-1">{text}</span>
+                            {showBloom && (() => {
+                              const lvl = detectBloom(text);
+                              const label = BLOOMS_OPTIONS.find((b) => b.value === lvl)?.label;
+                              if (!label) return null;
+                              return (
+                                <span className="shrink-0 mt-0.5 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                                  {label}
+                                </span>
+                              );
+                            })()}
                           </div>
+
                         </motion.button>
                       );
                     })}
@@ -594,7 +612,7 @@ function detectBloom(text: string): string | null {
 }
 
 function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & { errors: Record<string, string> }) {
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
@@ -797,42 +815,33 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
                 <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
                 Add objective
               </button>
-              <button
-                type="button"
-                onClick={() => setShowSuggestions((v) => !v)}
-                aria-expanded={showSuggestions}
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
-              >
-                <Sparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
-                Suggested learning objectives
-              </button>
             </div>
           </div>
 
-          {showSuggestions && (
-            <AISuggestions
-              title={state.title}
-              generator={generateObjectiveSuggestions}
-              heading="Suggested learning objectives"
-              regenerateLabel="Regenerate objectives"
-              onSelect={(text) => {
-                const current = state.learningObjectives;
-                const existingIdx = current.indexOf(text);
-                if (existingIdx !== -1) {
-                  onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
+          <AISuggestions
+            title={state.title}
+            generator={generateObjectiveSuggestions}
+            heading="Suggested learning objectives"
+            regenerateLabel="Regenerate objectives"
+            showBloom
+            onSelect={(text) => {
+              const current = state.learningObjectives;
+              const existingIdx = current.indexOf(text);
+              if (existingIdx !== -1) {
+                onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
+              } else {
+                const emptyIdx = current.findIndex((o) => !o.trim());
+                if (emptyIdx !== -1) {
+                  const next = [...current];
+                  next[emptyIdx] = text;
+                  onChange({ learningObjectives: next });
                 } else {
-                  const emptyIdx = current.findIndex((o) => !o.trim());
-                  if (emptyIdx !== -1) {
-                    const next = [...current];
-                    next[emptyIdx] = text;
-                    onChange({ learningObjectives: next });
-                  } else {
-                    onChange({ learningObjectives: [...current, text] });
-                  }
+                  onChange({ learningObjectives: [...current, text] });
                 }
-              }}
-            />
-          )}
+              }
+            }}
+          />
+
         </div>
         {errors.learningObjectives && (
           <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningObjectives}</p>
