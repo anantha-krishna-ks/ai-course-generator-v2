@@ -29,6 +29,7 @@ export function ContentDepthAffix({ value, onChange, invalid, className }: Conte
             <PopoverTrigger asChild>
               <button
                 type="button"
+                data-field="contentDepth"
                 aria-label={
                   tier
                     ? `Content depth: ${tier.label}. Click to change.`
