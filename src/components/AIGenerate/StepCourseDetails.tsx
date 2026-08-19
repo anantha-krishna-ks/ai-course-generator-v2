@@ -7,6 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 import { CONTENT_DEPTH_TIERS, type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
+
 
 interface StepCourseDetailsProps {
   state: AIGenerateState;
@@ -397,7 +399,131 @@ function AISuggestions({
   );
 }
 
+const AUDIENCE_LEVELS = [
+  { value: "beginners", label: "Beginner", icon: Sprout },
+  { value: "intermediate", label: "Intermediate", icon: Rocket },
+  { value: "expert", label: "Expert", icon: Crown },
+] as const;
+
+const AUDIENCE_EXAMPLE =
+  "Learners have foundational sales knowledge and are actively engaging with customers. They want to improve prospecting, communication, negotiation, objection handling, and closing skills to achieve higher sales performance and career growth.";
+
+function draftAudience(title: string, level: string) {
+  const topic = title.trim() || "this subject";
+  const levelLabel = AUDIENCE_LEVELS.find((l) => l.value === level)?.label.toLowerCase() ?? "mixed-level";
+  const familiarity =
+    level === "expert"
+      ? "deep, hands-on experience"
+      : level === "intermediate"
+      ? "working knowledge and practical exposure"
+      : "little to no prior exposure";
+  return `Learners are ${levelLabel} practitioners with ${familiarity} in ${topic}. They want to strengthen the core skills covered in this course and apply them confidently in day-to-day work to improve performance and career growth.`;
+}
+
+function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & { errors: Record<string, string> }) {
+  const [regenerating, setRegenerating] = useState(false);
+  const levelIndex = Math.max(0, AUDIENCE_LEVELS.findIndex((l) => l.value === state.intendedLearners));
+  const hasLevel = AUDIENCE_LEVELS.some((l) => l.value === state.intendedLearners);
+
+  const regenerate = () => {
+    setRegenerating(true);
+    window.setTimeout(() => {
+      onChange({ audienceDescription: draftAudience(state.title, state.intendedLearners) });
+      setRegenerating(false);
+    }, 700);
+  };
+
+  return (
+    <div
+      data-field="intendedLearners"
+      className={cn(
+        "rounded-xl border bg-card p-4",
+        errors.intendedLearners ? "border-destructive" : "border-border"
+      )}
+    >
+      <div className="mb-2.5">
+        <div className="text-[16px] font-semibold text-foreground leading-tight">
+          Intended Learners
+          <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
+        </div>
+      </div>
+
+      {/* Description */}
+      <div className="rounded-xl border border-border bg-white overflow-hidden">
+        <Textarea
+          id="audience-description"
+          aria-label="Describe your intended learners"
+          value={state.audienceDescription ?? ""}
+          onChange={(e) => onChange({ audienceDescription: e.target.value })}
+          placeholder={`e.g., ${AUDIENCE_EXAMPLE}`}
+          className="min-h-[96px] max-h-[220px] resize-none text-sm border-0 rounded-none bg-white focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
+        />
+        <div className="flex items-center justify-between gap-3 px-3 py-2 border-t border-border bg-muted/30">
+          <span className="text-xs text-muted-foreground">
+            {state.title.trim() ? "Drafted from your course title." : "Add a course title for a sharper draft."}
+          </span>
+          <button
+            type="button"
+            onClick={regenerate}
+            disabled={regenerating}
+            className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1.5 py-1"
+            aria-label="Regenerate learner description from course title"
+          >
+            <RefreshCw className={cn("w-3.5 h-3.5", regenerating && "animate-spin")} aria-hidden="true" focusable="false" />
+            {regenerating ? "Regenerating…" : "Regenerate"}
+          </button>
+        </div>
+      </div>
+
+      {/* Level slider */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-foreground">Experience level</span>
+          <span className="text-xs text-muted-foreground">
+            {hasLevel ? AUDIENCE_LEVELS[levelIndex].label : "Not set"}
+          </span>
+        </div>
+        <Slider
+          value={[hasLevel ? levelIndex : 0]}
+          min={0}
+          max={2}
+          step={1}
+          aria-label="Learner experience level"
+          onValueChange={(v) => onChange({ intendedLearners: AUDIENCE_LEVELS[v[0]].value })}
+          className={cn("py-1", !hasLevel && "opacity-70")}
+        />
+        <div className="flex justify-between mt-2">
+          {AUDIENCE_LEVELS.map((lvl, i) => {
+            const Icon = lvl.icon;
+            const active = hasLevel && levelIndex === i;
+            return (
+              <button
+                key={lvl.value}
+                type="button"
+                onClick={() => onChange({ intendedLearners: lvl.value })}
+                className={cn(
+                  "flex items-center gap-1.5 text-xs font-medium rounded-md px-1.5 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                )}
+                aria-pressed={active}
+              >
+                <Icon className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                {lvl.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {errors.intendedLearners && (
+        <p role="alert" className="text-xs text-destructive mt-3 font-medium">{errors.intendedLearners}</p>
+      )}
+    </div>
+  );
+}
+
 export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDetailsProps) {
+
   return (
     <div className="space-y-6">
 
@@ -444,27 +570,8 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
       </div>
 
       {/* Intended Learners */}
-      <div data-field="intendedLearners" className={cn("rounded-xl border bg-card p-4", errors.intendedLearners ? "border-destructive" : "border-border")}>
-        <div className="mb-2.5">
-          <div className="text-[16px] font-semibold text-foreground leading-tight">
-            Intended Learners
-            <span className="text-destructive ml-0.5" aria-hidden="true">*</span>
-          </div>
-        </div>
-        <ChipGroup
-          options={[
-            { value: "beginners", label: "Beginners", icon: Sprout },
-            { value: "intermediate", label: "Intermediate", icon: Rocket },
-            { value: "expert", label: "Expert", icon: Crown },
-          ]}
-          value={state.intendedLearners}
-          onChange={(v) => onChange({ intendedLearners: v })}
-          ariaLabel="Intended learners"
-        />
-        {errors.intendedLearners && (
-          <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.intendedLearners}</p>
-        )}
-      </div>
+      <AudienceSection state={state} onChange={onChange} errors={errors} />
+
 
 
 

@@ -37,6 +37,7 @@ const STEPS = [
 export interface AIGenerateState {
   title: string;
   intendedLearners: string;
+  audienceDescription: string;
   learningOutcome: string;
   learningObjectives: string[];
   bloomsTaxonomy: string[];
@@ -106,6 +107,7 @@ const defaultQuizScope: QuizScopeConfig = {
 const initialState: AIGenerateState = {
   title: "",
   intendedLearners: "",
+  audienceDescription: "",
   learningOutcome: "",
   learningObjectives: [""],
   bloomsTaxonomy: [],
