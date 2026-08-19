@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { type ContentDepth } from "@/components/Dashboard/AIOptionsPanel";
-import { ContentDepthSelect } from "@/components/AIGenerate/ContentDepthSelect";
+import { ContentDepthSegmented } from "@/components/AIGenerate/ContentDepthSelect";
 
 interface StepDocumentIntentProps {
   state: AIGenerateState;
@@ -226,19 +226,11 @@ export function StepDocumentIntent({ state, onChange, errors = {} }: StepDocumen
       </div>
 
       {/* Content Depth */}
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-2.5">
-        <ContentDepthSelect
-          value={state.contentDepth ?? "balanced"}
-          onChange={(v) => onChange({ contentDepth: v as ContentDepth })}
-          error={errors.contentDepth}
-        />
-        <span className="hidden md:inline text-[11px] text-muted-foreground">
-          Controls how thorough generated content is
-        </span>
-      </div>
-
-
-
+      <ContentDepthSegmented
+        value={state.contentDepth}
+        onChange={(v) => onChange({ contentDepth: v as ContentDepth })}
+        error={errors.contentDepth}
+      />
 
       {/* Content Rules Upload Helper */}
       <ContentRulesUpload
