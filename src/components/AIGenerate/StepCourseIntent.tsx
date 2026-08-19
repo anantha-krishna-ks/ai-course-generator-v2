@@ -95,7 +95,7 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           placeholder="What will you teach?"
         />
 
-        <div className="mt-1.5 sm:mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
+        <div className="mt-1.5 sm:mt-2">
           {errors.title ? (
             <p role="alert" className="text-[11px] sm:text-xs text-destructive font-medium flex items-center gap-1">
               <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
@@ -106,15 +106,16 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
               💡 Used as the primary prompt for AI content generation
             </p>
           )}
-
-          {/* Content depth — inline, embedded next to the title helper line */}
-          <ContentDepthInline
-            value={state.contentDepth}
-            onChange={(v) => onChange({ contentDepth: v })}
-            error={errors.contentDepth}
-          />
         </div>
       </div>
+
+      {/* Content depth — its own required field row */}
+      <ContentDepthInline
+        value={state.contentDepth}
+        onChange={(v) => onChange({ contentDepth: v })}
+        error={errors.contentDepth}
+      />
+
 
 
       {/* Learning Outcome — hidden for now */}
