@@ -210,6 +210,8 @@ export default function AIGenerateCourse() {
         if (!formState.pageSpanTime) fail("pageSpanTime", "Please set a page duration");
         if (formState.bloomsTaxonomy.length === 0) fail("bloomsTaxonomy", "Select at least one Bloom's Taxonomy level");
         if (!formState.learningObjectives.some((o) => o.trim())) fail("learningObjectives", "Add at least one learning objective");
+        break;
+      case 3:
         if (!formState.contentDepth) fail("contentDepth", "Select a content depth");
         break;
     }
