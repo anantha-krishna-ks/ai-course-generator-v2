@@ -91,8 +91,18 @@ export function StepCourseIntent({ state, onChange, errors = {} }: StepCourseInt
           onChange={(v) => onChange({ title: v })}
           language={state.language}
           onLanguageChange={(code) => onChange({ language: code })}
+          contentDepth={state.contentDepth}
+          onContentDepthChange={(v) => onChange({ contentDepth: v })}
+          contentDepthInvalid={Boolean(errors.contentDepth)}
           placeholder="What will you teach?"
         />
+
+        {errors.contentDepth && (
+          <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 font-medium flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" aria-hidden="true" focusable="false" />
+            {errors.contentDepth}
+          </p>
+        )}
 
         {errors.title ? (
           <p role="alert" className="text-[11px] sm:text-xs text-destructive mt-1.5 sm:mt-2 font-medium flex items-center gap-1">
