@@ -434,6 +434,17 @@ function AudienceSection({ state, onChange, errors }: StepCourseDetailsProps & {
     }, 700);
   };
 
+  const selectLevel = (value: string) => {
+    const current = (state.audienceDescription ?? "").trim();
+    const wasAutoDraft =
+      current === "" || AUDIENCE_LEVELS.some((l) => draftAudience(state.title, l.value) === current);
+    onChange({
+      intendedLearners: value,
+      ...(wasAutoDraft ? { audienceDescription: draftAudience(state.title, value) } : {}),
+    });
+  };
+
+
   return (
     <div
       data-field="intendedLearners"
