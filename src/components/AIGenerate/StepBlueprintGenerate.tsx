@@ -46,7 +46,7 @@ import imgStyleSketch from "@/assets/image-style-sketch.jpg";
 import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
-import { ContentDepthSelect } from "@/components/AIGenerate/ContentDepthSelect";
+import { ContentDepthSegmented } from "@/components/AIGenerate/ContentDepthSelect";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -329,17 +329,12 @@ export function StepBlueprintGenerate({ state, onChange, errors }: StepBlueprint
 
   return (
     <div className="space-y-4">
-      {/* Content depth — compact model-picker style selector */}
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-2.5">
-        <ContentDepthSelect
-          value={state.contentDepth ?? "balanced"}
-          onChange={(v) => onChange({ contentDepth: v } as Partial<AIGenerateState>)}
-          error={errors?.contentDepth}
-        />
-        <span className="hidden md:inline text-[11px] text-muted-foreground">
-          Controls how thorough generated content is
-        </span>
-      </div>
+      {/* Content depth — always-visible required choice */}
+      <ContentDepthSegmented
+        value={state.contentDepth}
+        onChange={(v) => onChange({ contentDepth: v } as Partial<AIGenerateState>)}
+        error={errors?.contentDepth}
+      />
 
       {/* Assessment scopes — Course / Section / Page quizzes */}
       <QuizScopeCard

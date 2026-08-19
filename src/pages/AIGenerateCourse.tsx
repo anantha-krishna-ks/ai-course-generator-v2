@@ -81,7 +81,7 @@ export interface AIGenerateState {
   scormBgOpacity: number;
   scormPassMessage: string;
   scormFailMessage: string;
-  contentDepth: ContentDepth;
+  contentDepth?: ContentDepth;
   language: string;
 }
 
@@ -152,7 +152,7 @@ const initialState: AIGenerateState = {
   scormBgOpacity: 40,
   scormPassMessage: "Congratulations! You have successfully completed the course.",
   scormFailMessage: "You did not meet the passing criteria. Please review the material and try again.",
-  contentDepth: "balanced",
+  contentDepth: undefined,
   language: "en",
 };
 
