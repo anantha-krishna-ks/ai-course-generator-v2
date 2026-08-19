@@ -815,42 +815,33 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
                 <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
                 Add objective
               </button>
-              <button
-                type="button"
-                onClick={() => setShowSuggestions((v) => !v)}
-                aria-expanded={showSuggestions}
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
-              >
-                <Sparkles className="w-4 h-4" aria-hidden="true" focusable="false" />
-                Suggested learning objectives
-              </button>
             </div>
           </div>
 
-          {showSuggestions && (
-            <AISuggestions
-              title={state.title}
-              generator={generateObjectiveSuggestions}
-              heading="Suggested learning objectives"
-              regenerateLabel="Regenerate objectives"
-              onSelect={(text) => {
-                const current = state.learningObjectives;
-                const existingIdx = current.indexOf(text);
-                if (existingIdx !== -1) {
-                  onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
+          <AISuggestions
+            title={state.title}
+            generator={generateObjectiveSuggestions}
+            heading="Suggested learning objectives"
+            regenerateLabel="Regenerate objectives"
+            showBloom
+            onSelect={(text) => {
+              const current = state.learningObjectives;
+              const existingIdx = current.indexOf(text);
+              if (existingIdx !== -1) {
+                onChange({ learningObjectives: current.filter((_, i) => i !== existingIdx) });
+              } else {
+                const emptyIdx = current.findIndex((o) => !o.trim());
+                if (emptyIdx !== -1) {
+                  const next = [...current];
+                  next[emptyIdx] = text;
+                  onChange({ learningObjectives: next });
                 } else {
-                  const emptyIdx = current.findIndex((o) => !o.trim());
-                  if (emptyIdx !== -1) {
-                    const next = [...current];
-                    next[emptyIdx] = text;
-                    onChange({ learningObjectives: next });
-                  } else {
-                    onChange({ learningObjectives: [...current, text] });
-                  }
+                  onChange({ learningObjectives: [...current, text] });
                 }
-              }}
-            />
-          )}
+              }
+            }}
+          />
+
         </div>
         {errors.learningObjectives && (
           <p role="alert" className="text-xs text-destructive mt-2 font-medium">{errors.learningObjectives}</p>
