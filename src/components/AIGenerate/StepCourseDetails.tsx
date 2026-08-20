@@ -807,16 +807,18 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
             })}
 
             <div className="flex flex-wrap items-center gap-4 pt-0.5">
-              <button
-                type="button"
-                onClick={() => onChange({ learningObjectives: [...objectives, ""], objectiveBlooms: [...tags, ""] })}
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
-                aria-label="Add another learning objective"
-              >
-                <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                Add objective
-              </button>
+              <AddObjectiveMenu
+                title={state.title}
+                onAddManual={() => onChange({ learningObjectives: [...objectives, ""], objectiveBlooms: [...tags, ""] })}
+                onAddGenerated={(items) =>
+                  onChange({
+                    learningObjectives: [...objectives, ...items.map((i) => i.text)],
+                    objectiveBlooms: [...tags, ...items.map((i) => i.bloom)],
+                  })
+                }
+              />
             </div>
+
           </div>
 
           <AISuggestions
