@@ -1627,43 +1627,62 @@ const ResultsHeader = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border p-6 flex items-start gap-5",
+        "relative overflow-hidden rounded-2xl border bg-card text-center p-6 sm:p-8",
         passed
-          ? "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/40 dark:via-emerald-950/30 dark:to-teal-950/30 border-green-500/30"
-          : "bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-red-950/30 border-amber-500/30"
+          ? "border-success/30"
+          : "border-destructive/30"
       )}
     >
+      {/* Top accent strip */}
       <div
-        className={cn(
-          "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg",
-          passed ? "bg-green-600 text-white" : "bg-amber-500 text-white"
-        )}
-      >
-        <Trophy className="w-8 h-8" aria-hidden="true" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quiz complete</p>
-        <h3 className="text-2xl font-semibold text-foreground mt-0.5">
-          {passed ? "Great work!" : "Keep going"}
-        </h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          You scored <span className="font-semibold text-foreground">{correct} / {total}</span> ({pct}%) · Pass mark {passCriteria}
-        </p>
-        {message && (
-          <div
-            className={cn(
-              "mt-3 flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 bg-card/70 backdrop-blur-sm [overflow-wrap:anywhere]",
-              passed ? "border-green-500/30" : "border-amber-500/30"
-            )}
-          >
-            {passed ? (
-              <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" aria-hidden="true" />
-            ) : (
-              <XCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-destructive" aria-hidden="true" />
-            )}
-            <p className="text-sm text-foreground leading-relaxed">{message}</p>
-          </div>
-        )}
+        className={cn("absolute inset-x-0 top-0 h-1", passed ? "bg-success" : "bg-destructive")}
+        aria-hidden="true"
+      />
+
+      <div className="relative flex flex-col items-center gap-4">
+        {/* Large status icon */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 18 }}
+          className={cn(
+            "w-16 h-16 rounded-full flex items-center justify-center shadow-lg",
+            passed ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
+          )}
+        >
+          {passed ? (
+            <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
+          ) : (
+            <XCircle className="w-8 h-8" aria-hidden="true" />
+          )}
+        </motion.div>
+
+        {/* Verdict + message */}
+        <div className="max-w-xl space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Quiz complete
+          </p>
+          <h3 className="text-2xl font-semibold text-foreground">
+            {passed ? "You passed!" : "Keep going"}
+          </h3>
+          {message && (
+            <p className={cn(
+              "text-base leading-relaxed [overflow-wrap:anywhere]",
+              passed ? "text-foreground" : "text-foreground/90"
+            )}>
+              {message}
+            </p>
+          )}
+        </div>
+
+        {/* Compact score pill */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground tabular-nums">{correct}/{total}</span>
+          <span aria-hidden="true">·</span>
+          <span className="tabular-nums">{pct}%</span>
+          <span aria-hidden="true">·</span>
+          <span>Pass mark {passCriteria}</span>
+        </div>
       </div>
     </div>
   );
