@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, ChevronDown, Trophy, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer, User } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, Lock, Info, ChevronLeft, ChevronRight, ChevronDown, Sparkles, ListChecks, CircleCheck, Circle, PencilLine, ToggleLeft, Flag, ShieldCheck, FileCheck2, AlertTriangle, LayoutGrid, Award, Target, Percent, Timer, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -321,6 +321,11 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
+                    <p className={cn("text-sm text-foreground mt-2 leading-relaxed [overflow-wrap:anywhere]", passed ? "text-success/90" : "text-destructive/90")}>
+                      {passed
+                        ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                        : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+                    </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                       <span aria-hidden="true"> · </span>
@@ -334,6 +339,11 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     <h3 className="text-base font-semibold text-foreground leading-snug">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
+                    <p className={cn("text-xs text-foreground mt-1.5 leading-relaxed [overflow-wrap:anywhere]", passed ? "text-success/90" : "text-destructive/90")}>
+                      {passed
+                        ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                        : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                       Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                       <span aria-hidden="true"> · </span>
@@ -387,36 +397,6 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
           </div>
         </div>
 
-        {/* Pass / fail criteria message */}
-        <div
-          className={cn(
-            "rounded-2xl border p-4 flex items-start gap-3 [overflow-wrap:anywhere]",
-            passed ? "border-success/30 bg-success/5" : "border-destructive/30 bg-destructive/5"
-          )}
-        >
-          <div
-            className={cn(
-              "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
-              passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
-            )}
-          >
-            {passed ? (
-              <CheckCircle2 className="w-4.5 h-4.5" aria-hidden="true" />
-            ) : (
-              <XCircle className="w-4.5 h-4.5" aria-hidden="true" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {passed ? "Pass criteria message" : "Fail criteria message"}
-            </div>
-            <p className={cn("text-sm text-foreground leading-relaxed mt-0.5", isMobilePreview && "text-xs")}>
-              {passed
-                ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
-                : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
-            </p>
-          </div>
-        </div>
 
         {/* Stats grid */}
         <div className={cn("grid grid-cols-3 gap-3", isMobilePreview && "gap-2")}>
@@ -1647,43 +1627,62 @@ const ResultsHeader = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border p-6 flex items-start gap-5",
+        "relative overflow-hidden rounded-2xl border bg-card text-center p-6 sm:p-8",
         passed
-          ? "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/40 dark:via-emerald-950/30 dark:to-teal-950/30 border-green-500/30"
-          : "bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-red-950/30 border-amber-500/30"
+          ? "border-success/30"
+          : "border-destructive/30"
       )}
     >
+      {/* Top accent strip */}
       <div
-        className={cn(
-          "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg",
-          passed ? "bg-green-600 text-white" : "bg-amber-500 text-white"
-        )}
-      >
-        <Trophy className="w-8 h-8" aria-hidden="true" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quiz complete</p>
-        <h3 className="text-2xl font-semibold text-foreground mt-0.5">
-          {passed ? "Great work!" : "Keep going"}
-        </h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          You scored <span className="font-semibold text-foreground">{correct} / {total}</span> ({pct}%) · Pass mark {passCriteria}
-        </p>
-        {message && (
-          <div
-            className={cn(
-              "mt-3 flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 bg-card/70 backdrop-blur-sm [overflow-wrap:anywhere]",
-              passed ? "border-green-500/30" : "border-amber-500/30"
-            )}
-          >
-            {passed ? (
-              <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" aria-hidden="true" />
-            ) : (
-              <XCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-destructive" aria-hidden="true" />
-            )}
-            <p className="text-sm text-foreground leading-relaxed">{message}</p>
-          </div>
-        )}
+        className={cn("absolute inset-x-0 top-0 h-1", passed ? "bg-success" : "bg-destructive")}
+        aria-hidden="true"
+      />
+
+      <div className="relative flex flex-col items-center gap-4">
+        {/* Large status icon */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 18 }}
+          className={cn(
+            "w-16 h-16 rounded-full flex items-center justify-center shadow-lg",
+            passed ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
+          )}
+        >
+          {passed ? (
+            <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
+          ) : (
+            <XCircle className="w-8 h-8" aria-hidden="true" />
+          )}
+        </motion.div>
+
+        {/* Verdict + message */}
+        <div className="max-w-xl space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Quiz complete
+          </p>
+          <h3 className="text-2xl font-semibold text-foreground">
+            {passed ? "You passed!" : "Keep going"}
+          </h3>
+          {message && (
+            <p className={cn(
+              "text-base leading-relaxed [overflow-wrap:anywhere]",
+              passed ? "text-foreground" : "text-foreground/90"
+            )}>
+              {message}
+            </p>
+          )}
+        </div>
+
+        {/* Compact score pill */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground tabular-nums">{correct}/{total}</span>
+          <span aria-hidden="true">·</span>
+          <span className="tabular-nums">{pct}%</span>
+          <span aria-hidden="true">·</span>
+          <span>Pass mark {passCriteria}</span>
+        </div>
       </div>
     </div>
   );
