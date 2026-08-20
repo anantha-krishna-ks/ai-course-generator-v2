@@ -379,6 +379,37 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
           </div>
         </div>
 
+        {/* Pass / fail criteria message */}
+        <div
+          className={cn(
+            "rounded-2xl border p-4 flex items-start gap-3 [overflow-wrap:anywhere]",
+            passed ? "border-success/30 bg-success/5" : "border-destructive/30 bg-destructive/5"
+          )}
+        >
+          <div
+            className={cn(
+              "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
+              passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+            )}
+          >
+            {passed ? (
+              <CheckCircle2 className="w-4.5 h-4.5" aria-hidden="true" />
+            ) : (
+              <XCircle className="w-4.5 h-4.5" aria-hidden="true" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {passed ? "Pass criteria message" : "Fail criteria message"}
+            </div>
+            <p className={cn("text-sm text-foreground leading-relaxed mt-0.5", isMobilePreview && "text-xs")}>
+              {passed
+                ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+            </p>
+          </div>
+        </div>
+
         {/* Stats grid */}
         <div className={cn("grid grid-cols-3 gap-3", isMobilePreview && "gap-2")}>
           {stats.map((s) => (
