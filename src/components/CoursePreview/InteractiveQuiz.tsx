@@ -1127,7 +1127,11 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           total={total}
           passed={passed}
           passCriteria={passCriteria}
+          message={passed
+            ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+            : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
         />
+
 
         {/* Review list */}
         <div className="space-y-3">
