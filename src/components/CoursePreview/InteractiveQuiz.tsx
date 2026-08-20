@@ -29,7 +29,15 @@ interface QuizSettings {
   retries?: string | number; // "unlimited" | "none" | "0".."5"
   revealAnswers?: RevealMode;
   quizType?: string; // "formative" | "summative"
+  passMessage?: string;
+  failMessage?: string;
 }
+
+export const DEFAULT_PASS_MESSAGE =
+  "Congratulations! You have successfully completed this course.";
+export const DEFAULT_FAIL_MESSAGE =
+  "You did not meet the passing criteria. Please review the content and try again.";
+
 
 interface InteractiveQuizProps {
   questions: QuizQuestion[];
@@ -376,6 +384,37 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Pass / fail criteria message */}
+        <div
+          className={cn(
+            "rounded-2xl border p-4 flex items-start gap-3 [overflow-wrap:anywhere]",
+            passed ? "border-success/30 bg-success/5" : "border-destructive/30 bg-destructive/5"
+          )}
+        >
+          <div
+            className={cn(
+              "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
+              passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+            )}
+          >
+            {passed ? (
+              <CheckCircle2 className="w-4.5 h-4.5" aria-hidden="true" />
+            ) : (
+              <XCircle className="w-4.5 h-4.5" aria-hidden="true" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {passed ? "Pass criteria message" : "Fail criteria message"}
+            </div>
+            <p className={cn("text-sm text-foreground leading-relaxed mt-0.5", isMobilePreview && "text-xs")}>
+              {passed
+                ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+            </p>
           </div>
         </div>
 
@@ -1127,7 +1166,11 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           total={total}
           passed={passed}
           passCriteria={passCriteria}
+          message={passed
+            ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+            : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
         />
+
 
         {/* Review list */}
         <div className="space-y-3">
@@ -1592,17 +1635,19 @@ const ResultsHeader = ({
   total,
   passed,
   passCriteria,
+  message,
 }: {
   correct: number;
   total: number;
   passed: boolean;
   passCriteria: number;
+  message?: string;
 }) => {
   const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border p-6 flex items-center gap-5",
+        "relative overflow-hidden rounded-2xl border p-6 flex items-start gap-5",
         passed
           ? "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/40 dark:via-emerald-950/30 dark:to-teal-950/30 border-green-500/30"
           : "bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-red-950/30 border-amber-500/30"
@@ -1624,10 +1669,26 @@ const ResultsHeader = ({
         <p className="text-sm text-muted-foreground mt-1">
           You scored <span className="font-semibold text-foreground">{correct} / {total}</span> ({pct}%) · Pass mark {passCriteria}
         </p>
+        {message && (
+          <div
+            className={cn(
+              "mt-3 flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 bg-card/70 backdrop-blur-sm [overflow-wrap:anywhere]",
+              passed ? "border-green-500/30" : "border-amber-500/30"
+            )}
+          >
+            {passed ? (
+              <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" aria-hidden="true" />
+            ) : (
+              <XCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-destructive" aria-hidden="true" />
+            )}
+            <p className="text-sm text-foreground leading-relaxed">{message}</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 
 /* ---------------------------------------------------------------------- */
 /* Classic list-style quiz (existing behaviour, unchanged)                */
