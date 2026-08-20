@@ -29,7 +29,15 @@ interface QuizSettings {
   retries?: string | number; // "unlimited" | "none" | "0".."5"
   revealAnswers?: RevealMode;
   quizType?: string; // "formative" | "summative"
+  passMessage?: string;
+  failMessage?: string;
 }
+
+export const DEFAULT_PASS_MESSAGE =
+  "Congratulations! You have successfully completed this course.";
+export const DEFAULT_FAIL_MESSAGE =
+  "You did not meet the passing criteria. Please review the content and try again.";
+
 
 interface InteractiveQuizProps {
   questions: QuizQuestion[];
