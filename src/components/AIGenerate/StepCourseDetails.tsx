@@ -1,7 +1,7 @@
 import { AIGenerateState } from "@/pages/AIGenerateCourse";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, Rabbit, Scale, Gem, Layers, Coins, GripVertical, type LucideIcon } from "lucide-react";
+import { RefreshCw, Sparkles, Check, ChevronDown, Sprout, Rocket, Crown, Timer, Clock, Hourglass, Minus, Plus, FileText, Plus as PlusIcon, X, Target, Rabbit, Scale, Gem, Layers, Coins, GripVertical, PenLine, type LucideIcon } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
@@ -611,7 +611,218 @@ function detectBloom(text: string): string | null {
   return null;
 }
 
+const BLOOM_TEMPLATES: Record<string, string[]> = {
+  remember: ["Recall the key terms and core concepts of {topic}.", "Identify the essential components involved in {topic}.", "List the standards and best practices that govern {topic}."],
+  understand: ["Explain how the core principles of {topic} work in practice.", "Summarise the main ideas behind {topic} in your own words.", "Describe the relationship between the key elements of {topic}."],
+  apply: ["Apply {topic} techniques to solve a realistic workplace scenario.", "Use the frameworks of {topic} to complete a hands-on task.", "Demonstrate {topic} skills in a guided practice activity."],
+  analyze: ["Analyse a real-world {topic} case to identify what drives the outcome.", "Compare different approaches to {topic} and explain the trade-offs.", "Diagnose common failure points in a {topic} workflow."],
+  evaluate: ["Evaluate the effectiveness of a {topic} solution against defined criteria.", "Critique an existing {topic} implementation and justify improvements.", "Recommend the most suitable {topic} approach for a given context."],
+  create: ["Design an original {topic} plan tailored to a specific audience.", "Develop a complete {topic} deliverable from scratch.", "Create a measurable {topic} strategy and outline its rollout."],
+};
+
+function buildObjective(bloom: string, title: string, n: number): string {
+  const topic = title.trim() || "the subject";
+  const list = BLOOM_TEMPLATES[bloom] || BLOOM_TEMPLATES.understand;
+  return list[n % list.length].replace("{topic}", topic);
+}
+
+function AddObjectiveMenu({
+  title,
+  onAddManual,
+  onAddGenerated,
+}: {
+  title: string;
+  onAddManual: () => void;
+  onAddGenerated: (items: { text: string; bloom: string }[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [view, setView] = useState<"menu" | "auto">("menu");
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [generating, setGenerating] = useState(false);
+
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  const reset = () => {
+    setView("menu");
+    setCounts({});
+    setGenerating(false);
+  };
+
+  const setCount = (level: string, n: number) =>
+    setCounts((c) => ({ ...c, [level]: Math.max(0, Math.min(5, n)) }));
+
+  const handleGenerate = () => {
+    if (total === 0 || generating) return;
+    setGenerating(true);
+    setTimeout(() => {
+      const items: { text: string; bloom: string }[] = [];
+      BLOOMS_OPTIONS.forEach((b) => {
+        const n = counts[b.value] || 0;
+        for (let i = 0; i < n; i++) items.push({ text: buildObjective(b.value, title, i), bloom: b.value });
+      });
+      onAddGenerated(items);
+      setOpen(false);
+      reset();
+    }, 700);
+  };
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o);
+        if (!o) reset();
+      }}
+    >
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
+          aria-label="Add another learning objective"
+        >
+          <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
+          Add objective
+          <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className={cn("p-0 bg-background overflow-hidden", view === "menu" ? "w-72" : "w-[22rem]")}>
+        <AnimatePresence mode="wait" initial={false}>
+          {view === "menu" ? (
+            <motion.div
+              key="menu"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.15 }}
+              className="p-1.5"
+            >
+              <p className="px-2 pt-1.5 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                How do you want to add it?
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  onAddManual();
+                  setOpen(false);
+                }}
+                className="w-full flex items-start gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span className="mt-0.5 w-7 h-7 rounded-lg bg-secondary text-foreground flex items-center justify-center shrink-0">
+                  <PenLine className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </span>
+                <span>
+                  <span className="block text-sm font-medium text-foreground">Write it myself</span>
+                  <span className="block text-xs text-muted-foreground leading-snug">Add a blank objective and tag its level.</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setView("auto")}
+                className="w-full flex items-start gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <span className="mt-0.5 w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                </span>
+                <span className="flex-1">
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium text-foreground">Draft with AI</span>
+                    <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-muted-foreground" aria-hidden="true" focusable="false" />
+                  </span>
+                  <span className="block text-xs text-muted-foreground leading-snug">Choose Bloom's levels and how many of each.</span>
+                </span>
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="auto"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 8 }}
+              transition={{ duration: 0.15 }}
+            >
+              <div className="flex items-center gap-2 border-b border-border px-2.5 py-2">
+                <button
+                  type="button"
+                  onClick={() => setView("menu")}
+                  aria-label="Back to add options"
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <ChevronDown className="w-4 h-4 rotate-90" aria-hidden="true" focusable="false" />
+                </button>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground leading-tight">Draft with AI</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">Set how many objectives per Bloom's level.</p>
+                </div>
+              </div>
+
+              <div className="p-1.5 max-h-72 overflow-y-auto">
+                {BLOOMS_OPTIONS.map((b) => {
+                  const n = counts[b.value] || 0;
+                  return (
+                    <div
+                      key={b.value}
+                      className={cn(
+                        "flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors",
+                        n > 0 ? "bg-primary/5" : "hover:bg-muted/60"
+                      )}
+                    >
+                      <span className={cn("flex-1 text-sm", n > 0 ? "font-medium text-primary" : "text-foreground")}>{b.label}</span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setCount(b.value, n - 1)}
+                          disabled={n === 0}
+                          aria-label={`Decrease ${b.label} objectives`}
+                          className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center text-foreground hover:bg-muted disabled:opacity-40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <Minus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        </button>
+                        <span className={cn("w-6 text-center text-sm tabular-nums", n > 0 ? "font-semibold text-primary" : "text-muted-foreground")}>
+                          {n}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setCount(b.value, n + 1)}
+                          disabled={n >= 5}
+                          aria-label={`Increase ${b.label} objectives`}
+                          className="w-6 h-6 rounded-full border border-border bg-background flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary disabled:opacity-40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <Plus className="w-3 h-3" aria-hidden="true" focusable="false" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center justify-between gap-2 border-t border-border px-2.5 py-2 bg-muted/30">
+                <span className="text-xs text-muted-foreground">
+                  {total === 0 ? "Nothing selected yet" : `${total} objective${total !== 1 ? "s" : ""} to generate`}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  disabled={total === 0 || generating}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 disabled:opacity-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  {generating ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" focusable="false" />
+                  ) : (
+                    <Sparkles className="w-3.5 h-3.5" aria-hidden="true" focusable="false" />
+                  )}
+                  {generating ? "Generating…" : "Generate"}
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & { errors: Record<string, string> }) {
+
   
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
@@ -807,16 +1018,18 @@ function OutcomesSection({ state, onChange, errors }: StepCourseDetailsProps & {
             })}
 
             <div className="flex flex-wrap items-center gap-4 pt-0.5">
-              <button
-                type="button"
-                onClick={() => onChange({ learningObjectives: [...objectives, ""], objectiveBlooms: [...tags, ""] })}
-                className="flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md px-1 py-1.5"
-                aria-label="Add another learning objective"
-              >
-                <PlusIcon className="w-4 h-4" aria-hidden="true" focusable="false" />
-                Add objective
-              </button>
+              <AddObjectiveMenu
+                title={state.title}
+                onAddManual={() => onChange({ learningObjectives: [...objectives, ""], objectiveBlooms: [...tags, ""] })}
+                onAddGenerated={(items) =>
+                  onChange({
+                    learningObjectives: [...objectives, ...items.map((i) => i.text)],
+                    objectiveBlooms: [...tags, ...items.map((i) => i.bloom)],
+                  })
+                }
+              />
             </div>
+
           </div>
 
           <AISuggestions
