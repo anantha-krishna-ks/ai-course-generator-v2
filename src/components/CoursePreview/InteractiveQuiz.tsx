@@ -1592,17 +1592,19 @@ const ResultsHeader = ({
   total,
   passed,
   passCriteria,
+  message,
 }: {
   correct: number;
   total: number;
   passed: boolean;
   passCriteria: number;
+  message?: string;
 }) => {
   const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border p-6 flex items-center gap-5",
+        "relative overflow-hidden rounded-2xl border p-6 flex items-start gap-5",
         passed
           ? "bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/40 dark:via-emerald-950/30 dark:to-teal-950/30 border-green-500/30"
           : "bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-red-950/30 border-amber-500/30"
@@ -1624,10 +1626,26 @@ const ResultsHeader = ({
         <p className="text-sm text-muted-foreground mt-1">
           You scored <span className="font-semibold text-foreground">{correct} / {total}</span> ({pct}%) · Pass mark {passCriteria}
         </p>
+        {message && (
+          <div
+            className={cn(
+              "mt-3 flex items-start gap-2.5 rounded-xl border px-3.5 py-2.5 bg-card/70 backdrop-blur-sm [overflow-wrap:anywhere]",
+              passed ? "border-green-500/30" : "border-amber-500/30"
+            )}
+          >
+            {passed ? (
+              <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-green-600" aria-hidden="true" />
+            ) : (
+              <XCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-destructive" aria-hidden="true" />
+            )}
+            <p className="text-sm text-foreground leading-relaxed">{message}</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
 
 /* ---------------------------------------------------------------------- */
 /* Classic list-style quiz (existing behaviour, unchanged)                */
