@@ -1127,7 +1127,7 @@ const MiniStat = ({ label, value, tone, icon: Icon }: { label: string; value: st
 /* Formative card-based quiz — one question at a time, modern progress    */
 /* ---------------------------------------------------------------------- */
 
-const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[]; settings?: QuizSettings }) => {
+const FormativeCardQuiz = ({ questions, settings, isCompactView, isMobilePreview }: { questions: QuizQuestion[]; settings?: QuizSettings; isCompactView?: boolean; isMobilePreview?: boolean }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string[]>>({});
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
