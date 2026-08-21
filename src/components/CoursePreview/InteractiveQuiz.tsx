@@ -1616,6 +1616,66 @@ const ProgressRing = ({ pct }: { pct: number }) => {
   );
 };
 
+const ResultMessage = ({
+  passed,
+  message,
+  size = "md",
+  className,
+}: {
+  passed: boolean;
+  message?: string;
+  size?: "sm" | "md";
+  className?: string;
+}) => {
+  if (!message) return null;
+  return (
+    <div
+      className={cn(
+        "relative flex items-start gap-3 rounded-xl border text-left",
+        passed
+          ? "bg-success/[0.06] border-success/20"
+          : "bg-destructive/[0.06] border-destructive/20",
+        size === "md" ? "p-3.5" : "p-2.5",
+        className
+      )}
+    >
+      <div
+        className={cn(
+          "flex-shrink-0 rounded-full flex items-center justify-center",
+          passed ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground",
+          size === "md" ? "w-8 h-8" : "w-6 h-6"
+        )}
+        aria-hidden="true"
+      >
+        {passed ? (
+          <Award className={size === "md" ? "w-4 h-4" : "w-3.5 h-3.5"} />
+        ) : (
+          <AlertTriangle className={size === "md" ? "w-4 h-4" : "w-3.5 h-3.5"} />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p
+          className={cn(
+            "font-semibold",
+            passed ? "text-success" : "text-destructive",
+            size === "md" ? "text-xs" : "text-[10px]"
+          )}
+        >
+          {passed ? "Success" : "Action needed"}
+        </p>
+        <p
+          className={cn(
+            "leading-relaxed [overflow-wrap:anywhere] text-foreground",
+            size === "md" ? "text-sm mt-0.5" : "text-xs mt-0.5"
+          )}
+        >
+          {message}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const ResultsHeader = ({
   correct,
   total,
@@ -1664,18 +1724,19 @@ const ResultsHeader = ({
         </motion.div>
 
         {/* Verdict + message */}
-        <div className="max-w-xl space-y-1">
+        <div className="max-w-xl space-y-1 w-full">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Quiz complete
           </p>
           <h3 className="text-2xl font-semibold text-foreground">
             {passed ? "You passed!" : "Keep going"}
           </h3>
-          {message && (
-            <p className="text-base leading-relaxed [overflow-wrap:anywhere] text-foreground">
-              {message}
-            </p>
-          )}
+          <ResultMessage
+            passed={passed}
+            message={message}
+            size="md"
+            className="mt-3 text-left"
+          />
         </div>
 
         {/* Compact score pill */}
