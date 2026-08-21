@@ -65,7 +65,7 @@ const isQuestionCorrect = (q: QuizQuestion, selected: string[]): boolean => {
 export const InteractiveQuiz = ({ questions, settings, isCompactView, isMobilePreview }: InteractiveQuizProps) => {
   const qt = (settings?.quizType || "").toLowerCase();
   if (qt === "formative") {
-    return <FormativeCardQuiz questions={questions} settings={settings} />;
+    return <FormativeCardQuiz questions={questions} settings={settings} isCompactView={isCompactView} isMobilePreview={isMobilePreview} />;
   }
   if (qt === "summative") {
     return <SummativeExamQuiz questions={questions} settings={settings} isCompactView={isCompactView} isMobilePreview={isMobilePreview} />;
