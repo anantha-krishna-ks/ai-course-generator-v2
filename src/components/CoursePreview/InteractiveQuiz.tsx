@@ -213,13 +213,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     </span>
                     <span
                       className={cn(
-                        "self-start inline-flex items-center gap-1.5 pl-1 pr-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_10px_-3px_hsl(var(--success)/0.28)] ring-1 ring-inset ring-white/20 backdrop-blur-sm",
+                        "self-start inline-flex items-center gap-1.5 pl-1 pr-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_10px_-3px_hsl(var(--success)/0.28)] ring-1 ring-inset ring-white/30 backdrop-blur-md",
                         passed
-                          ? "bg-gradient-to-r from-success via-success to-success/85 text-success-foreground"
-                          : "bg-gradient-to-r from-destructive via-destructive to-destructive/85 text-destructive-foreground shadow-[0_2px_10px_-3px_hsl(var(--destructive)/0.28)]"
+                          ? "bg-gradient-to-r from-success/95 via-success/90 to-success/80 text-success-foreground"
+                          : "bg-gradient-to-r from-destructive/95 via-destructive/90 to-destructive/80 text-destructive-foreground shadow-[0_2px_10px_-3px_hsl(var(--destructive)/0.28)]"
                       )}
                     >
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/15">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 backdrop-blur-sm">
                         {passed ? (
                           <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
                         ) : (
@@ -316,13 +316,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                       </span>
                       <span
                         className={cn(
-                          "inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_12px_-4px_hsl(var(--success)/0.3)] ring-1 ring-inset ring-white/20 backdrop-blur-sm",
+                          "inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_12px_-4px_hsl(var(--success)/0.3)] ring-1 ring-inset ring-white/30 backdrop-blur-md",
                           passed
-                            ? "bg-gradient-to-r from-success via-success to-success/85 text-success-foreground"
-                            : "bg-gradient-to-r from-destructive via-destructive to-destructive/85 text-destructive-foreground shadow-[0_2px_12px_-4px_hsl(var(--destructive)/0.3)]"
+                            ? "bg-gradient-to-r from-success/95 via-success/90 to-success/80 text-success-foreground"
+                            : "bg-gradient-to-r from-destructive/95 via-destructive/90 to-destructive/80 text-destructive-foreground shadow-[0_2px_12px_-4px_hsl(var(--destructive)/0.3)]"
                         )}
                       >
-                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/15">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 backdrop-blur-sm">
                           {passed ? (
                             <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
                           ) : (
@@ -1719,13 +1719,13 @@ const ResultsHeader = ({
                 </span>
                   <span
                     className={cn(
-                      "self-start inline-flex items-center gap-1.5 pl-1 pr-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_10px_-3px_hsl(var(--success)/0.28)] ring-1 ring-inset ring-white/20 backdrop-blur-sm",
+                      "self-start inline-flex items-center gap-1.5 pl-1 pr-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_10px_-3px_hsl(var(--success)/0.28)] ring-1 ring-inset ring-white/30 backdrop-blur-md",
                       passed
-                        ? "bg-gradient-to-r from-success via-success to-success/85 text-success-foreground"
-                        : "bg-gradient-to-r from-destructive via-destructive to-destructive/85 text-destructive-foreground shadow-[0_2px_10px_-3px_hsl(var(--destructive)/0.28)]"
+                        ? "bg-gradient-to-r from-success/95 via-success/90 to-success/80 text-success-foreground"
+                        : "bg-gradient-to-r from-destructive/95 via-destructive/90 to-destructive/80 text-destructive-foreground shadow-[0_2px_10px_-3px_hsl(var(--destructive)/0.28)]"
                     )}
                   >
-                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/15">
+                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 backdrop-blur-sm">
                       {passed ? (
                         <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
                       ) : (
@@ -1822,13 +1822,13 @@ const ResultsHeader = ({
                   </span>
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_12px_-4px_hsl(var(--success)/0.3)] ring-1 ring-inset ring-white/20 backdrop-blur-sm",
+                      "inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] shadow-[0_2px_12px_-4px_hsl(var(--success)/0.3)] ring-1 ring-inset ring-white/30 backdrop-blur-md",
                       passed
-                        ? "bg-gradient-to-r from-success via-success to-success/85 text-success-foreground"
-                        : "bg-gradient-to-r from-destructive via-destructive to-destructive/85 text-destructive-foreground shadow-[0_2px_12px_-4px_hsl(var(--destructive)/0.3)]"
+                        ? "bg-gradient-to-r from-success/95 via-success/90 to-success/80 text-success-foreground"
+                        : "bg-gradient-to-r from-destructive/95 via-destructive/90 to-destructive/80 text-destructive-foreground shadow-[0_2px_12px_-4px_hsl(var(--destructive)/0.3)]"
                     )}
                   >
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/15">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20 backdrop-blur-sm">
                       {passed ? (
                         <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
                       ) : (
