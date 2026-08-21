@@ -1666,10 +1666,7 @@ const ResultsHeader = ({
             {passed ? "You passed!" : "Keep going"}
           </h3>
           {message && (
-            <p className={cn(
-              "text-base leading-relaxed [overflow-wrap:anywhere]",
-              passed ? "text-foreground" : "text-foreground/90"
-            )}>
+            <p className="text-base leading-relaxed [overflow-wrap:anywhere] text-foreground">
               {message}
             </p>
           )}
