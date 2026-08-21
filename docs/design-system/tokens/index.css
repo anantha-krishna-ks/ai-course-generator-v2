@@ -37,7 +37,7 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 35%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
@@ -94,7 +94,7 @@
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
-    --success: 142 65% 42%;
+    --success: 142 71% 50%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
