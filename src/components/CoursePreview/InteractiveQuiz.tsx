@@ -321,7 +321,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
-                    <p className={cn("text-sm text-foreground mt-2 leading-relaxed [overflow-wrap:anywhere]", passed ? "text-success/90" : "text-destructive/90")}>
+                    <p className="text-sm text-foreground mt-2 leading-relaxed [overflow-wrap:anywhere]">
                       {passed
                         ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
                         : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
