@@ -342,12 +342,15 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     <h3 className="text-base font-semibold text-foreground leading-snug">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
-                    <p className="text-xs text-foreground mt-1.5 leading-relaxed [overflow-wrap:anywhere]">
-                      {passed
+                    <ResultMessage
+                      passed={passed}
+                      message={passed
                         ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
                         : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                      size="sm"
+                      className="mt-2"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                       Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                       <span aria-hidden="true"> · </span>
                       Pass mark <span className="font-semibold text-foreground">{passCriteria}</span>
