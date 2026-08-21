@@ -331,12 +331,38 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
-                    <p className={cn("text-sm text-foreground mt-2 leading-relaxed [overflow-wrap:anywhere]", passed ? "text-success/90" : "text-destructive/90")}>
-                      {passed
-                        ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
-                        : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <div
+                      className={cn(
+                        "mt-3 flex items-start gap-3 rounded-xl border p-3.5",
+                        passed
+                          ? "bg-success/5 border-success/15"
+                          : "bg-destructive/5 border-destructive/15"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "mt-0.5 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0",
+                          passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+                        )}
+                      >
+                        {passed ? (
+                          <Award className="w-3.5 h-3.5" aria-hidden="true" />
+                        ) : (
+                          <Info className="w-3.5 h-3.5" aria-hidden="true" />
+                        )}
+                      </div>
+                      <p
+                        className={cn(
+                          "text-sm leading-relaxed [overflow-wrap:anywhere]",
+                          passed ? "text-success" : "text-destructive"
+                        )}
+                      >
+                        {passed
+                          ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                          : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-3">
                       Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                       <span aria-hidden="true"> · </span>
                       <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
