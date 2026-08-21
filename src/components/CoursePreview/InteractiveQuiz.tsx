@@ -1760,8 +1760,8 @@ const ResultsHeader = ({
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-base font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
-                  <span className="text-[8px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">Accuracy</span>
+                  <span className="text-base font-semibold text-foreground tabular-nums leading-none">{correct}/{total}</span>
+                  <span className="text-[8px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">Score</span>
                 </div>
               </div>
             </div>
@@ -1800,8 +1800,8 @@ const ResultsHeader = ({
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
-                <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground mt-0.5">Accuracy</span>
+                <span className="text-xl font-semibold text-foreground tabular-nums leading-none">{correct}/{total}</span>
+                <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground mt-0.5">Score</span>
               </div>
             </div>
           )}
