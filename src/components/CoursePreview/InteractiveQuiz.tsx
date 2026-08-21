@@ -314,12 +314,17 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                       </span>
                       <span
                         className={cn(
-                          "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                          "inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-subtle border",
                           passed
-                            ? "bg-success text-success-foreground"
-                            : "bg-destructive text-destructive-foreground"
+                            ? "bg-gradient-to-r from-success to-success/85 text-success-foreground border-success/30"
+                            : "bg-gradient-to-r from-destructive to-destructive/85 text-destructive-foreground border-destructive/30"
                         )}
                       >
+                        {passed ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                        )}
                         {passed ? "Passed" : "Not passed"}
                       </span>
                     </div>
