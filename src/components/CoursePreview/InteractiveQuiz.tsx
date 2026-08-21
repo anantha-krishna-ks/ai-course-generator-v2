@@ -446,11 +446,11 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     : "flex sm:flex-col items-stretch justify-center gap-3 sm:w-36 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-6"
                 )}
               >
-                <div className={cn("flex-1 rounded-2xl bg-success/10 border border-success/20 p-3.5 text-center shadow-subtle", isMobilePreview && "p-2.5 rounded-lg")}>
+                <div className={cn("flex-1 rounded-2xl bg-success/10 border border-success/20 p-3.5 text-center shadow-subtle flex flex-col items-center justify-center", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isMobilePreview && "text-[9px] tracking-wide")}>Score</div>
                   <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{correctCount}/{total}</div>
                 </div>
-                <div className={cn("flex-1 rounded-2xl bg-muted border border-border/60 p-3.5 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
+                <div className={cn("flex-1 rounded-2xl bg-muted border border-border/60 p-3.5 text-center flex flex-col items-center justify-center", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide")}>Pass mark</div>
                   <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{passCriteria}</div>
                 </div>
