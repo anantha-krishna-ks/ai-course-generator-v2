@@ -1207,6 +1207,7 @@ const FormativeCardQuiz = ({ questions, settings, isCompactView, isMobilePreview
           total={total}
           passed={passed}
           passCriteria={passCriteria}
+          isMobilePreview={isMobilePreview}
           message={passed
             ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
             : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
