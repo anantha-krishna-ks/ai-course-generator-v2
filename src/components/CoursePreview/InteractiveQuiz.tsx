@@ -292,8 +292,8 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={cn("font-semibold text-foreground tabular-nums", isMobilePreview ? "text-lg" : "text-2xl")}>{accuracyPct}%</span>
-                  <span className={cn("font-medium uppercase tracking-wider text-muted-foreground", isMobilePreview ? "text-[9px]" : "text-[10px]")}>Accuracy</span>
+                  <span className={cn("font-semibold text-foreground tabular-nums", isMobilePreview ? "text-base" : "text-xl")}>{accuracyPct}%</span>
+                  <span className={cn("font-medium uppercase tracking-wider text-muted-foreground", isMobilePreview ? "text-[8px]" : "text-[9px]")}>Accuracy</span>
                 </div>
               </div>
 
