@@ -388,16 +388,16 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                 className={cn(
                   isMobilePreview
                     ? "w-full grid grid-cols-2 gap-2 border-t border-border/60 pt-3"
-                    : "flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5"
+                    : "flex sm:flex-col items-stretch justify-center gap-3 sm:w-36 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-6"
                 )}
               >
-                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
+                <div className={cn("flex-1 rounded-2xl bg-success/10 border border-success/20 p-3.5 text-center shadow-subtle", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isMobilePreview && "text-[9px] tracking-wide")}>Score</div>
-                  <div className={cn("text-lg font-semibold text-foreground tabular-nums", isMobilePreview && "text-sm")}>{correctCount}/{total}</div>
+                  <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{correctCount}/{total}</div>
                 </div>
-                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
+                <div className={cn("flex-1 rounded-2xl bg-muted border border-border/60 p-3.5 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide")}>Pass mark</div>
-                  <div className={cn("text-lg font-semibold text-foreground tabular-nums", isMobilePreview && "text-sm")}>{passCriteria}</div>
+                  <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{passCriteria}</div>
                 </div>
               </div>
             </div>
