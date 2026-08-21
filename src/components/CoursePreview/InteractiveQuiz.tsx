@@ -1658,9 +1658,9 @@ const ResultMessage = ({
         aria-hidden="true"
       >
         {passed ? (
-          <Award className={size === "md" ? "w-4.5 h-4.5" : "w-3.5 h-3.5"} />
+          <Award className={size === "md" ? "w-5 h-5" : "w-3.5 h-3.5"} />
         ) : (
-          <AlertTriangle className={size === "md" ? "w-4.5 h-4.5" : "w-3.5 h-3.5"} />
+          <AlertTriangle className={size === "md" ? "w-5 h-5" : "w-3.5 h-3.5"} />
         )}
       </div>
 
