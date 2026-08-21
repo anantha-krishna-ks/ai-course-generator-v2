@@ -1676,12 +1676,11 @@ const ResultsHeader = ({
           <h3 className="text-2xl font-semibold text-foreground">
             {passed ? "You passed!" : "Keep going"}
           </h3>
-          <ResultMessage
-            passed={passed}
-            message={message}
-            size="md"
-            className="mt-3 text-left"
-          />
+          {message && (
+            <p className="text-base leading-relaxed [overflow-wrap:anywhere] text-foreground mt-2">
+              {message}
+            </p>
+          )}
         </div>
 
         {/* Compact score pill */}
