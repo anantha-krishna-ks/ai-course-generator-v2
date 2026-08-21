@@ -353,8 +353,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                       </div>
                       <p
                         className={cn(
-                          "text-sm leading-relaxed [overflow-wrap:anywhere]",
-                          passed ? "text-success" : "text-destructive"
+                          "text-sm leading-relaxed [overflow-wrap:anywhere] text-foreground"
                         )}
                       >
                         {passed
