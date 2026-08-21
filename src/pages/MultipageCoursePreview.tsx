@@ -60,7 +60,7 @@ interface PreviewState {
 const MultipageCoursePreview = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const previewState = (location.state as PreviewState | null) ?? (typeof window !== 'undefined' ? (window as any).__PREVIEW_STATE__ as PreviewState | null : null);
+  const previewState = location.state as PreviewState | null;
   const [data, setData] = useState<PreviewState | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
