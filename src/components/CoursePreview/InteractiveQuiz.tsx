@@ -1631,47 +1631,47 @@ const ResultMessage = ({
   return (
     <div
       className={cn(
-        "relative flex items-start gap-3 rounded-xl border text-left",
+        "relative overflow-hidden rounded-full border flex items-center gap-3",
         passed
-          ? "bg-success/[0.06] border-success/20"
-          : "bg-destructive/[0.06] border-destructive/20",
-        size === "md" ? "p-3.5" : "p-2.5",
+          ? "bg-gradient-to-r from-success/15 via-success/5 to-transparent border-success/25"
+          : "bg-gradient-to-r from-destructive/15 via-destructive/5 to-transparent border-destructive/25",
+        size === "md" ? "px-4 py-3" : "px-3 py-2",
         className
       )}
     >
+      {/* Soft glow orb */}
       <div
         className={cn(
-          "flex-shrink-0 rounded-full flex items-center justify-center",
+          "absolute -left-4 top-1/2 -translate-y-1/2 rounded-full blur-2xl opacity-40",
+          passed ? "bg-success" : "bg-destructive",
+          size === "md" ? "w-16 h-16" : "w-12 h-12"
+        )}
+        aria-hidden="true"
+      />
+
+      <div
+        className={cn(
+          "relative flex-shrink-0 rounded-full flex items-center justify-center shadow-sm",
           passed ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground",
-          size === "md" ? "w-8 h-8" : "w-6 h-6"
+          size === "md" ? "w-9 h-9" : "w-7 h-7"
         )}
         aria-hidden="true"
       >
         {passed ? (
-          <Award className={size === "md" ? "w-4 h-4" : "w-3.5 h-3.5"} />
+          <Award className={size === "md" ? "w-4.5 h-4.5" : "w-3.5 h-3.5"} />
         ) : (
-          <AlertTriangle className={size === "md" ? "w-4 h-4" : "w-3.5 h-3.5"} />
+          <AlertTriangle className={size === "md" ? "w-4.5 h-4.5" : "w-3.5 h-3.5"} />
         )}
       </div>
-      <div className="flex-1 min-w-0">
-        <p
-          className={cn(
-            "font-semibold",
-            passed ? "text-success" : "text-destructive",
-            size === "md" ? "text-xs" : "text-[10px]"
-          )}
-        >
-          {passed ? "Success" : "Action needed"}
-        </p>
-        <p
-          className={cn(
-            "leading-relaxed [overflow-wrap:anywhere] text-foreground",
-            size === "md" ? "text-sm mt-0.5" : "text-xs mt-0.5"
-          )}
-        >
-          {message}
-        </p>
-      </div>
+
+      <p
+        className={cn(
+          "relative flex-1 min-w-0 font-medium leading-relaxed [overflow-wrap:anywhere] text-foreground",
+          size === "md" ? "text-sm" : "text-xs"
+        )}
+      >
+        {message}
+      </p>
     </div>
   );
 };
