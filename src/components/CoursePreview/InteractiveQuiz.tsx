@@ -195,14 +195,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
     return (
       <div className={cn("space-y-5", isMobilePreview && "space-y-3")}>
         {/* Verdict card */}
-        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-          <div
-            className={cn(
-              "h-1.5 w-full",
-              passed ? "bg-success" : "bg-destructive"
-            )}
-            aria-hidden="true"
-          />
+        <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
           <div className={cn("p-5 sm:p-6", isMobilePreview && "p-3")}>
             <div
               className={cn(
