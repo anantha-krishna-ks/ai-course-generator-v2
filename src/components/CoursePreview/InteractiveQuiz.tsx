@@ -65,7 +65,7 @@ const isQuestionCorrect = (q: QuizQuestion, selected: string[]): boolean => {
 export const InteractiveQuiz = ({ questions, settings, isCompactView, isMobilePreview }: InteractiveQuizProps) => {
   const qt = (settings?.quizType || "").toLowerCase();
   if (qt === "formative") {
-    return <FormativeCardQuiz questions={questions} settings={settings} />;
+    return <FormativeCardQuiz questions={questions} settings={settings} isCompactView={isCompactView} isMobilePreview={isMobilePreview} />;
   }
   if (qt === "summative") {
     return <SummativeExamQuiz questions={questions} settings={settings} isCompactView={isCompactView} isMobilePreview={isMobilePreview} />;
@@ -1127,7 +1127,7 @@ const MiniStat = ({ label, value, tone, icon: Icon }: { label: string; value: st
 /* Formative card-based quiz — one question at a time, modern progress    */
 /* ---------------------------------------------------------------------- */
 
-const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[]; settings?: QuizSettings }) => {
+const FormativeCardQuiz = ({ questions, settings, isCompactView, isMobilePreview }: { questions: QuizQuestion[]; settings?: QuizSettings; isCompactView?: boolean; isMobilePreview?: boolean }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string[]>>({});
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -1207,6 +1207,7 @@ const FormativeCardQuiz = ({ questions, settings }: { questions: QuizQuestion[];
           total={total}
           passed={passed}
           passCriteria={passCriteria}
+          isMobilePreview={isMobilePreview}
           message={passed
             ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
             : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
@@ -1677,72 +1678,271 @@ const ResultsHeader = ({
   passed,
   passCriteria,
   message,
+  isMobilePreview,
 }: {
   correct: number;
   total: number;
   passed: boolean;
   passCriteria: number;
   message?: string;
+  isMobilePreview?: boolean;
 }) => {
-  const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
-  return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-2xl border bg-card text-center p-6 sm:p-8",
-        passed
-          ? "border-success/30"
-          : "border-destructive/30"
-      )}
-    >
-      {/* Top accent strip */}
-      <div
-        className={cn("absolute inset-x-0 top-0 h-1", passed ? "bg-success" : "bg-destructive")}
-        aria-hidden="true"
-      />
+  const accuracyPct = total === 0 ? 0 : Math.round((correct / total) * 100);
+  const passPct = Math.round((passCriteria / total) * 100);
 
-      <div className="relative flex flex-col items-center gap-4">
-        {/* Large status icon */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 18 }}
+  const scoreRingSize = isMobilePreview ? 76 : 112;
+  const scoreRingRadius = isMobilePreview ? 32 : 48;
+  const stroke = isMobilePreview ? 6 : 7;
+  const circumference = 2 * Math.PI * scoreRingRadius;
+  const scoreOffset = circumference - (accuracyPct / 100) * circumference;
+
+  return (
+    <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
+      <div className={cn("p-5 sm:p-6", isMobilePreview && "p-3")}>
+        <div
           className={cn(
-            "w-16 h-16 rounded-full flex items-center justify-center shadow-lg",
-            passed ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
+            isMobilePreview
+              ? "flex flex-col items-stretch gap-4 w-full"
+              : "flex flex-col sm:flex-row items-stretch gap-5 sm:gap-6"
           )}
         >
-          {passed ? (
-            <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
-          ) : (
-            <XCircle className="w-8 h-8" aria-hidden="true" />
+          {/* Header row (mobile): status pill + label, right-align ring */}
+          {isMobilePreview && (
+            <div className="flex items-center justify-between gap-3 w-full">
+              <div className="min-w-0 flex flex-col gap-1.5">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  Formative Quiz · Result
+                </span>
+                <span
+                  className={cn(
+                    "self-start inline-flex items-center gap-1 pl-1.5 pr-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-subtle border",
+                    passed
+                      ? "bg-gradient-to-r from-success to-success/85 text-success-foreground border-success/30"
+                      : "bg-gradient-to-r from-destructive to-destructive/85 text-destructive-foreground border-destructive/30"
+                  )}
+                >
+                  {passed ? (
+                    <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+                  ) : (
+                    <XCircle className="w-3 h-3" aria-hidden="true" />
+                  )}
+                  {passed ? "Passed" : "Not passed"}
+                </span>
+              </div>
+              <div className="relative flex-shrink-0 w-[76px] h-[76px]">
+                <svg
+                  width={scoreRingSize}
+                  height={scoreRingSize}
+                  viewBox={`0 0 ${scoreRingSize} ${scoreRingSize}`}
+                  className="rotate-[-90deg]"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx={scoreRingSize / 2}
+                    cy={scoreRingSize / 2}
+                    r={scoreRingRadius}
+                    stroke="currentColor"
+                    strokeWidth={stroke}
+                    fill="transparent"
+                    className="text-muted/40"
+                  />
+                  <circle
+                    cx={scoreRingSize / 2}
+                    cy={scoreRingSize / 2}
+                    r={scoreRingRadius}
+                    stroke="currentColor"
+                    strokeWidth={stroke}
+                    fill="transparent"
+                    strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={scoreOffset}
+                    className={cn("transition-all duration-700", passed ? "text-success" : "text-destructive")}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-base font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
+                  <span className="text-[8px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">Accuracy</span>
+                </div>
+              </div>
+            </div>
           )}
-        </motion.div>
 
-        {/* Verdict + message */}
-        <div className="max-w-xl space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Quiz complete
-          </p>
-          <h3 className="text-2xl font-semibold text-foreground">
-            {passed ? "You passed!" : "Keep going"}
-          </h3>
-          {message && (
-            <p className={cn(
-              "text-base leading-relaxed [overflow-wrap:anywhere]",
-              passed ? "text-foreground" : "text-foreground/90"
-            )}>
-              {message}
-            </p>
+          {/* Score ring (desktop/tablet) */}
+          {!isMobilePreview && (
+            <div className="relative flex-shrink-0 w-28 h-28 self-center sm:self-auto">
+              <svg
+                width={scoreRingSize}
+                height={scoreRingSize}
+                viewBox={`0 0 ${scoreRingSize} ${scoreRingSize}`}
+                className="rotate-[-90deg]"
+                aria-hidden="true"
+              >
+                <circle
+                  cx={scoreRingSize / 2}
+                  cy={scoreRingSize / 2}
+                  r={scoreRingRadius}
+                  stroke="currentColor"
+                  strokeWidth={stroke}
+                  fill="transparent"
+                  className="text-muted/40"
+                />
+                <circle
+                  cx={scoreRingSize / 2}
+                  cy={scoreRingSize / 2}
+                  r={scoreRingRadius}
+                  stroke="currentColor"
+                  strokeWidth={stroke}
+                  fill="transparent"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={scoreOffset}
+                  className={cn("transition-all duration-700", passed ? "text-success" : "text-destructive")}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xl font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
+                <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground mt-0.5">Accuracy</span>
+              </div>
+            </div>
           )}
-        </div>
 
-        {/* Compact score pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground tabular-nums">{correct}/{total}</span>
-          <span aria-hidden="true">·</span>
-          <span className="tabular-nums">{pct}%</span>
-          <span aria-hidden="true">·</span>
-          <span>Pass mark {passCriteria}</span>
+          {/* Verdict + message */}
+          <div className={cn("flex-1 min-w-0 flex flex-col justify-between gap-4", isMobilePreview && "gap-3 w-full")}>
+            {!isMobilePreview && (
+              <div className="text-center sm:text-left">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    Formative Quiz · Result
+                  </span>
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-subtle border",
+                      passed
+                        ? "bg-gradient-to-r from-success to-success/85 text-success-foreground border-success/30"
+                        : "bg-gradient-to-r from-destructive to-destructive/85 text-destructive-foreground border-destructive/30"
+                    )}
+                  >
+                    {passed ? (
+                      <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
+                    ) : (
+                      <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                    )}
+                    {passed ? "Passed" : "Not passed"}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
+                  {passed ? "You passed the quiz." : "Keep practicing."}
+                </h3>
+                <div
+                  className={cn(
+                    "mt-3 flex items-start gap-3 rounded-xl border p-3.5",
+                    passed
+                      ? "bg-success/5 border-success/15"
+                      : "bg-destructive/5 border-destructive/15"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "mt-0.5 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0",
+                      passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+                    )}
+                  >
+                    {passed ? (
+                      <Award className="w-3.5 h-3.5" aria-hidden="true" />
+                    ) : (
+                      <Info className="w-3.5 h-3.5" aria-hidden="true" />
+                    )}
+                  </div>
+                  <p className="text-sm leading-relaxed [overflow-wrap:anywhere] text-foreground">
+                    {message}
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground mt-3">
+                  Score <span className="font-semibold text-foreground">{correct}/{total}</span>
+                  <span aria-hidden="true"> · </span>
+                  <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
+                </p>
+              </div>
+            )}
+
+            {isMobilePreview && (
+              <div className="w-full">
+                <h3 className="text-base font-semibold text-foreground leading-snug">
+                  {passed ? "You passed the quiz." : "Keep practicing."}
+                </h3>
+                <div
+                  className={cn(
+                    "mt-2.5 flex items-start gap-2.5 rounded-xl border p-2.5",
+                    passed
+                      ? "bg-success/5 border-success/15"
+                      : "bg-destructive/5 border-destructive/15"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "mt-0.5 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0",
+                      passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+                    )}
+                  >
+                    {passed ? (
+                      <Award className="w-3 h-3" aria-hidden="true" />
+                    ) : (
+                      <Info className="w-3 h-3" aria-hidden="true" />
+                    )}
+                  </div>
+                  <p className="text-xs leading-relaxed [overflow-wrap:anywhere] text-foreground">
+                    {message}
+                  </p>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                  Score <span className="font-semibold text-foreground">{correct}/{total}</span>
+                  <span aria-hidden="true"> · </span>
+                  Pass mark <span className="font-semibold text-foreground">{passCriteria}</span>
+                </p>
+              </div>
+            )}
+
+            {/* Score progress bar */}
+            <div className="w-full">
+              <div className="relative h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={cn(
+                    "absolute inset-y-0 left-0 rounded-full transition-all duration-700",
+                    passed ? "bg-success" : "bg-destructive"
+                  )}
+                  style={{ width: `${accuracyPct}%` }}
+                />
+                <div
+                  className="absolute inset-y-[-3px] w-px bg-foreground/40"
+                  style={{ left: `${passPct}%` }}
+                  aria-hidden="true"
+                />
+              </div>
+              <div className={cn("flex justify-between text-[10px] font-medium text-muted-foreground mt-1.5", isMobilePreview && "text-[9px]")}>
+                <span>0</span>
+                <span>Pass mark {passPct}%</span>
+                <span>100%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Mini score tiles */}
+          <div
+            className={cn(
+              isMobilePreview
+                ? "w-full grid grid-cols-2 gap-2 border-t border-border/60 pt-3"
+                : "flex sm:flex-col items-stretch justify-center gap-3 sm:w-36 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-6"
+            )}
+          >
+            <div className={cn("flex-1 rounded-2xl bg-success/10 border border-success/20 p-3.5 text-center shadow-subtle flex flex-col items-center justify-center", isMobilePreview && "p-2.5 rounded-lg")}>
+              <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isMobilePreview && "text-[9px] tracking-wide")}>Score</div>
+              <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{correct}/{total}</div>
+            </div>
+            <div className={cn("flex-1 rounded-2xl bg-primary/10 border border-primary/20 p-3.5 text-center shadow-subtle flex flex-col items-center justify-center", isMobilePreview && "p-2.5 rounded-lg")}>
+              <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-primary", isMobilePreview && "text-[9px] tracking-wide")}>Pass mark</div>
+              <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{passCriteria}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
