@@ -196,6 +196,13 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
       <div className={cn("space-y-5", isMobilePreview && "space-y-3")}>
         {/* Verdict card */}
         <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+          <div
+            className={cn(
+              "h-1.5 w-full",
+              passed ? "bg-success" : "bg-destructive"
+            )}
+            aria-hidden="true"
+          />
           <div className={cn("p-5 sm:p-6", isMobilePreview && "p-3")}>
             <div
               className={cn(
@@ -253,8 +260,8 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-lg font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
-                      <span className="text-[9px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">Accuracy</span>
+                      <span className="text-base font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
+                      <span className="text-[8px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">Accuracy</span>
                     </div>
                   </div>
                 </div>
@@ -293,8 +300,8 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-semibold text-foreground tabular-nums">{accuracyPct}%</span>
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Accuracy</span>
+                    <span className="text-xl font-semibold text-foreground tabular-nums leading-none">{accuracyPct}%</span>
+                    <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground mt-0.5">Accuracy</span>
                   </div>
                 </div>
               )}
@@ -381,16 +388,16 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                 className={cn(
                   isMobilePreview
                     ? "w-full grid grid-cols-2 gap-2 border-t border-border/60 pt-3"
-                    : "flex sm:flex-col items-stretch justify-center gap-2 sm:w-32 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-5"
+                    : "flex sm:flex-col items-stretch justify-center gap-3 sm:w-36 border-t sm:border-t-0 sm:border-l border-border/60 pt-4 sm:pt-0 sm:pl-6"
                 )}
               >
-                <div className={cn("flex-1 rounded-xl bg-success/10 border border-success/20 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
+                <div className={cn("flex-1 rounded-2xl bg-success/10 border border-success/20 p-3.5 text-center shadow-subtle", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-success", isMobilePreview && "text-[9px] tracking-wide")}>Score</div>
-                  <div className={cn("text-lg font-semibold text-foreground tabular-nums", isMobilePreview && "text-sm")}>{correctCount}/{total}</div>
+                  <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{correctCount}/{total}</div>
                 </div>
-                <div className={cn("flex-1 rounded-xl bg-muted border border-border/60 p-3 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
+                <div className={cn("flex-1 rounded-2xl bg-muted border border-border/60 p-3.5 text-center", isMobilePreview && "p-2.5 rounded-lg")}>
                   <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide")}>Pass mark</div>
-                  <div className={cn("text-lg font-semibold text-foreground tabular-nums", isMobilePreview && "text-sm")}>{passCriteria}</div>
+                  <div className={cn("text-xl font-bold text-foreground tabular-nums mt-0.5", isMobilePreview && "text-sm")}>{passCriteria}</div>
                 </div>
               </div>
             </div>
@@ -404,17 +411,17 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
             <div
               key={s.label}
               className={cn(
-                "rounded-xl border border-border/60 p-3 flex items-center gap-3",
-                isMobilePreview && "rounded-lg p-2 flex-col items-center justify-center gap-1 text-center min-w-0",
+                "rounded-2xl border border-border/60 bg-card p-3.5 flex items-center gap-3 shadow-subtle",
+                isMobilePreview && "rounded-xl p-2 flex-col items-center justify-center gap-1 text-center min-w-0",
                 s.bg
               )}
             >
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center bg-card border border-border/60", isMobilePreview && "w-7 h-7 rounded-md", s.tone)}>
+              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-background border border-border/60", isMobilePreview && "w-7 h-7 rounded-md", s.tone)}>
                 <s.icon className={cn("w-4 h-4", isMobilePreview && "w-3.5 h-3.5")} aria-hidden="true" />
               </div>
               <div className="min-w-0">
                 <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide leading-tight")}>{s.label}</div>
-                <div className={cn("text-lg font-semibold text-foreground tabular-nums leading-tight", isMobilePreview && "text-sm")}>{s.value}</div>
+                <div className={cn("text-lg font-bold text-foreground tabular-nums leading-tight", isMobilePreview && "text-sm")}>{s.value}</div>
               </div>
             </div>
           ))}
