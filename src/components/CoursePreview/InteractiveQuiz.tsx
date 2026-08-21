@@ -411,17 +411,17 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
             <div
               key={s.label}
               className={cn(
-                "rounded-xl border border-border/60 p-3 flex items-center gap-3",
-                isMobilePreview && "rounded-lg p-2 flex-col items-center justify-center gap-1 text-center min-w-0",
+                "rounded-2xl border border-border/60 bg-card p-3.5 flex items-center gap-3 shadow-subtle",
+                isMobilePreview && "rounded-xl p-2 flex-col items-center justify-center gap-1 text-center min-w-0",
                 s.bg
               )}
             >
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center bg-card border border-border/60", isMobilePreview && "w-7 h-7 rounded-md", s.tone)}>
+              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center bg-background border border-border/60", isMobilePreview && "w-7 h-7 rounded-md", s.tone)}>
                 <s.icon className={cn("w-4 h-4", isMobilePreview && "w-3.5 h-3.5")} aria-hidden="true" />
               </div>
               <div className="min-w-0">
                 <div className={cn("text-[10px] font-semibold uppercase tracking-wider text-muted-foreground", isMobilePreview && "text-[9px] tracking-wide leading-tight")}>{s.label}</div>
-                <div className={cn("text-lg font-semibold text-foreground tabular-nums leading-tight", isMobilePreview && "text-sm")}>{s.value}</div>
+                <div className={cn("text-lg font-bold text-foreground tabular-nums leading-tight", isMobilePreview && "text-sm")}>{s.value}</div>
               </div>
             </div>
           ))}
