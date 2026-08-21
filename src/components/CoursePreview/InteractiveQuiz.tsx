@@ -195,14 +195,7 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
     return (
       <div className={cn("space-y-5", isMobilePreview && "space-y-3")}>
         {/* Verdict card */}
-        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-          <div
-            className={cn(
-              "h-1.5 w-full",
-              passed ? "bg-success" : "bg-destructive"
-            )}
-            aria-hidden="true"
-          />
+        <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
           <div className={cn("p-5 sm:p-6", isMobilePreview && "p-3")}>
             <div
               className={cn(
@@ -220,12 +213,17 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     </span>
                     <span
                       className={cn(
-                        "self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                        "self-start inline-flex items-center gap-1 pl-1.5 pr-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-subtle border",
                         passed
-                          ? "bg-success text-success-foreground"
-                          : "bg-destructive text-destructive-foreground"
+                          ? "bg-gradient-to-r from-success to-success/85 text-success-foreground border-success/30"
+                          : "bg-gradient-to-r from-destructive to-destructive/85 text-destructive-foreground border-destructive/30"
                       )}
                     >
+                      {passed ? (
+                        <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+                      ) : (
+                        <XCircle className="w-3 h-3" aria-hidden="true" />
+                      )}
                       {passed ? "Passed" : "Not passed"}
                     </span>
                   </div>
@@ -316,24 +314,55 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                       </span>
                       <span
                         className={cn(
-                          "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                          "inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-subtle border",
                           passed
-                            ? "bg-success text-success-foreground"
-                            : "bg-destructive text-destructive-foreground"
+                            ? "bg-gradient-to-r from-success to-success/85 text-success-foreground border-success/30"
+                            : "bg-gradient-to-r from-destructive to-destructive/85 text-destructive-foreground border-destructive/30"
                         )}
                       >
+                        {passed ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                        )}
                         {passed ? "Passed" : "Not passed"}
                       </span>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-semibold text-foreground">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
-                    <p className={cn("text-sm text-foreground mt-2 leading-relaxed [overflow-wrap:anywhere]", passed ? "text-success/90" : "text-destructive/90")}>
-                      {passed
-                        ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
-                        : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <div
+                      className={cn(
+                        "mt-3 flex items-start gap-3 rounded-xl border p-3.5",
+                        passed
+                          ? "bg-success/5 border-success/15"
+                          : "bg-destructive/5 border-destructive/15"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "mt-0.5 w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0",
+                          passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+                        )}
+                      >
+                        {passed ? (
+                          <Award className="w-3.5 h-3.5" aria-hidden="true" />
+                        ) : (
+                          <Info className="w-3.5 h-3.5" aria-hidden="true" />
+                        )}
+                      </div>
+                      <p
+                        className={cn(
+                          "text-sm leading-relaxed [overflow-wrap:anywhere]",
+                          passed ? "text-success" : "text-destructive"
+                        )}
+                      >
+                        {passed
+                          ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                          : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-3">
                       Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                       <span aria-hidden="true"> · </span>
                       <span className="whitespace-nowrap">Pass mark <span className="font-semibold text-foreground">{passCriteria}</span></span>
@@ -346,12 +375,38 @@ const SummativeExamQuiz = ({ questions, settings, isCompactView, isMobilePreview
                     <h3 className="text-base font-semibold text-foreground leading-snug">
                       {passed ? "You've cleared the exam." : "You didn't clear the exam."}
                     </h3>
-                    <p className={cn("text-xs text-foreground mt-1.5 leading-relaxed [overflow-wrap:anywhere]", passed ? "text-success/90" : "text-destructive/90")}>
-                      {passed
-                        ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
-                        : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                    <div
+                      className={cn(
+                        "mt-2.5 flex items-start gap-2.5 rounded-xl border p-2.5",
+                        passed
+                          ? "bg-success/5 border-success/15"
+                          : "bg-destructive/5 border-destructive/15"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "mt-0.5 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0",
+                          passed ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
+                        )}
+                      >
+                        {passed ? (
+                          <Award className="w-3 h-3" aria-hidden="true" />
+                        ) : (
+                          <Info className="w-3 h-3" aria-hidden="true" />
+                        )}
+                      </div>
+                      <p
+                        className={cn(
+                          "text-xs leading-relaxed [overflow-wrap:anywhere]",
+                          passed ? "text-success" : "text-destructive"
+                        )}
+                      >
+                        {passed
+                          ? (settings?.passMessage || DEFAULT_PASS_MESSAGE)
+                          : (settings?.failMessage || DEFAULT_FAIL_MESSAGE)}
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                       Score <span className="font-semibold text-foreground">{correctCount}/{total}</span>
                       <span aria-hidden="true"> · </span>
                       Pass mark <span className="font-semibold text-foreground">{passCriteria}</span>
