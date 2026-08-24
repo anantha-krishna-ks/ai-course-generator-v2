@@ -917,21 +917,6 @@ function QuizScopeCard({
   );
 }
 
-function PageDurationCard({
-  state,
-  onChange,
-}: {
-  state: AIGenerateState;
-  onChange: (partial: Partial<AIGenerateState>) => void;
-}) {
-  return (
-    <PageDurationDefaultCard
-      valueSec={state.scormPageDurationSec}
-      onChange={(sec) => onChange({ scormPageDurationSec: sec })}
-      description="Default time budget AI uses to size each page's content. You can override any individual page in the next step."
-    />
-  );
-}
 
 
 function ScormPreferencesAccordion({
