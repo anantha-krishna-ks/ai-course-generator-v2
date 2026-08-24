@@ -440,6 +440,8 @@ export function StepBlueprintGenerate({ state, onChange, errors }: StepBlueprint
           </div>
         )}
       </PrefCard>
+
+      <PrefCard>
         <SectionHeader icon={MessageSquare} title="Course Tone" desc="Voice and style of the content" />
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Course tone">
           {TONE_OPTIONS.map((opt) => {
