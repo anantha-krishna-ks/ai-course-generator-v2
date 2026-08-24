@@ -45,7 +45,6 @@ import imgStyle3d from "@/assets/image-style-3d.jpg";
 import imgStyleSketch from "@/assets/image-style-sketch.jpg";
 import imgStyleWatercolor from "@/assets/image-style-watercolor.jpg";
 import { FONT_OPTIONS, getFontStack } from "@/components/CourseCreation/FontSelectorDropdown";
-import { PageDurationDefaultCard } from "@/components/AIGenerate/PageDurationDefaultCard";
 
 interface StepBlueprintGenerateProps {
   state: AIGenerateState;
@@ -441,13 +440,6 @@ export function StepBlueprintGenerate({ state, onChange, errors }: StepBlueprint
           </div>
         )}
       </PrefCard>
-
-
-
-
-      {/* Page Duration */}
-      <PageDurationCard state={state} onChange={onChange} />
-
 
       <PrefCard>
         <SectionHeader icon={MessageSquare} title="Course Tone" desc="Voice and style of the content" />
@@ -925,21 +917,6 @@ function QuizScopeCard({
   );
 }
 
-function PageDurationCard({
-  state,
-  onChange,
-}: {
-  state: AIGenerateState;
-  onChange: (partial: Partial<AIGenerateState>) => void;
-}) {
-  return (
-    <PageDurationDefaultCard
-      valueSec={state.scormPageDurationSec}
-      onChange={(sec) => onChange({ scormPageDurationSec: sec })}
-      description="Default time budget AI uses to size each page's content. You can override any individual page in the next step."
-    />
-  );
-}
 
 
 function ScormPreferencesAccordion({

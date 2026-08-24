@@ -1144,7 +1144,7 @@ export function StepCourseDetails({ state, onChange, errors = {} }: StepCourseDe
         <PageDurationDefaultCard
           valueSec={(state.pageSpanTime || 5) * 60}
           onChange={(sec) => onChange({ pageSpanTime: Math.max(1, Math.round(sec / 60)), scormPageDurationSec: sec } as Partial<AIGenerateState>)}
-          description="Default time budget per page. You can override individual pages in the next step."
+          description="Default time budget AI uses to size each page's content. You can override any individual page in the next step."
           className={cn(errors.pageSpanTime ? "border-destructive" : undefined)}
         />
         {errors.pageSpanTime && (
