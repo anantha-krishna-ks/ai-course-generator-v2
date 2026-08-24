@@ -78,8 +78,8 @@ export function ContentDepthInline({ value, onChange, error, className }: Props)
             initial={false}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             style={{
-              width: `${100 / CONTENT_DEPTH_TIERS.length}%`,
-              left: `${(CONTENT_DEPTH_TIERS.findIndex((t) => t.id === value) * 100) / CONTENT_DEPTH_TIERS.length}%`,
+              width: `calc(${100 / CONTENT_DEPTH_TIERS.length}% - 8px)`,
+              left: `calc(4px + ${(CONTENT_DEPTH_TIERS.findIndex((t) => t.id === value) * 100) / CONTENT_DEPTH_TIERS.length}%)`,
             }}
           />
         )}
