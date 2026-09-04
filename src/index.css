@@ -156,6 +156,14 @@ All colors MUST be HSL.
     0% { transform: translateX(-100%); }
     100% { transform: translateX(200%); }
   }
+  @keyframes toast-progress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+  }
+  .animate-toast-progress {
+    transform-origin: left;
+    animation: toast-progress var(--toast-duration, 5000ms) linear forwards;
+  }
 }
 
 @layer base {
