@@ -15,15 +15,7 @@ export const PremiumToastButton = () => {
     toast({
       variant: "success",
       duration: TOAST_DURATION,
-      title: (
-        <span className="flex items-center gap-2">
-          Course published
-          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-success ring-1 ring-inset ring-success/20">
-            <Sparkles className="w-3 h-3" aria-hidden="true" focusable="false" />
-            Live
-          </span>
-        </span>
-      ),
+      title: "Course published",
       description: (
         <span className="block">
           <span className="flex items-start gap-2">
