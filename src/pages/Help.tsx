@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "@/components/Header";
+import { PremiumToastButton } from "@/components/Help/PremiumToastButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -131,6 +132,7 @@ const Help = () => {
                   Open in new tab
                 </a>
               </Button>
+              <PremiumToastButton />
             </div>
           </div>
         </section>
